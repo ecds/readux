@@ -1,0 +1,11 @@
+# Example of how to use cronjob to run do your housekeeping often
+# "neekware.com" should be replaced with your site domain name
+###########################################################################
+
+# run google sitemap every week
+# 01 03 * * 0 /bin/bash /srv/www/neekware.com/pri/venv/webroot/bin/google.sh
+
+# clear sessions every week (if using dbsession backend)
+# 01 03 * * 0 /bin/bash /srv/www/neekware.com/pri/venv/webroot/bin/sessions.sh
+
+

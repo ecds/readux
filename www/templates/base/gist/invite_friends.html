@@ -1,0 +1,4 @@
+
+<a href="mailto:?subject={{SITE_NAME}} » {{SITE_DESCRIPTION}}&amp;body=I found this site ( {{SITE_DOMAIN}} ) useful and thought you might like it as well.%0d%0a%0d%0aIt has a lot of features including:%0d%0a%0d%0a-- Member Search ( List / Map View)%0d%0a-- Follow, Like or Bookmark Members%0d%0a-- Social Login and Profiles%0d%0a-- Members Contact Info%0d%0a-- Free Accounts%0d%0a%0d%0aHere is the link:%0d%0a{{SITE_PROTOCOL}}://{{SITE_DOMAIN}}/%0d%0a%0d%0aCheck it out today!%0d%0a%0d%0a{% if request.user.is_authenticated %}{{request.user.profile.first_name}}{% endif %}%0d%0a%0d%0a%0d%0a-------------%0d%0a{% now "M d, Y H:i" %}" rel="tooltip" data-placement="bottom" data-original-title="Invite Friends">
+    <i class='icon-bullhorn info'></i>
+</a>

@@ -1,0 +1,31 @@
+{# called like: {% include "base/gist/form_generic.html" with form=form %} #}
+
+{# Include CSRF #}
+{% csrf_token %}
+
+{# Include the visible fields #}
+{% for field in form.visible_fields %}
+    <div class="field_wrapper">
+        <span>{{ field.label_tag }}: {% if field.field.required %}<span class="required_field">ddd *</span>{% endif %}</span>
+        {% if field.errors %}
+            <p class="field_errors">
+                {{ field }}
+            </p>
+            <p class="errors_box">
+                {{ field.errors|join:", " }}
+            </p>
+        {% else %}
+            {{ field }}
+            {% if field.help_text %}
+                <p class="help_box">
+                    {{ field.help_text }}
+                </p>           
+            {% endif %}
+        {% endif %}
+    </div>
+{% endfor %}
+
+{# Include the hidden fields in the form #}
+{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
+

@@ -1,0 +1,26 @@
+{% extends "user/account.html" %}
+
+{% block www_hd_title %}{% trans "Admin Settings » Switch User" %}{% endblock www_hd_title %}
+
+{% block www_content_box_2 %}
+
+<div class="group_outter_box">
+    <div class="title">Switch User<i class="icon-group pull-right"></i></div>
+    <div class="group_inner_box">
+        <ul class="group_list">
+            <li class="clearfix">
+                <form class="form-horizontal"  action="" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    <fieldset>
+                        {{ form.as_p }}
+                    </fieldset>
+                    <button type="submit" class="btn">Switch User</button>
+                </form>
+                <div class="pull-right">{% include "base/gist/bd_report_problems.html" %}</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% endblock www_content_box_2 %}
+

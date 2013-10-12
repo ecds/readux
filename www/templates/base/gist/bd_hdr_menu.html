@@ -1,0 +1,76 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a id="logo" class="brand" href="/" rel="tooltip" data-placement="bottom" data-original-title="{{SITE_TITLE}}"><span class="lightgreen">Djan</span><span class="lightorange">guru</span></a>
+            <div class="nav-collapse collapse">
+                <ul class="nav pull-left">
+                    {% with request|header_menu_left as menu %}
+                        {% for item in menu %}
+                            {% if item.sub_menu != None %}
+                                <li class="{% if item.selected %} active {% endif %} dropdown">
+                                    <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">{{item.name}} <i class="{{item.icon}}"></i></a>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li class="nav-header"></li>
+                                        {% for menu in item.sub_menu %}
+                                            <li class="{% if menu.selected %}selected{% endif %}">
+                                                <a class="{% if menu.selected %}selected{% endif %}" href="{{menu.url}}">
+                                                    {% if menu.icon %}<i class="{{menu.icon}} icon-mini pull-left"></i>{% endif %}<span>{{menu.name}}</span>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li class="{% if item.selected %} active {% endif %}">
+                                    <a href="{{item.url}}">{{item.name}} <i class="{{item.icon}}"></i></a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </ul>
+                <ul class="nav pull-right">
+                    {% with request|header_menu_right as menu %}
+                        {% for item in menu %}
+                            {% if item.sub_menu != None %}
+                                <li class="{% if item.selected %} active {% endif %} dropdown">
+                                    <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">{{item.name}} <i class="{{item.icon}}"></i></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li class="nav-header"></li>
+                                        {% for menu in item.sub_menu %}
+                                            <li class="{% if menu.selected %}selected{% endif %}">
+                                                <a class="{% if menu.selected %}selected{% endif %}" href="{{menu.url}}">
+                                                    {% if menu.icon %}<i class="{{menu.icon}} icon-mini pull-left"></i>{% endif %}<span>{{menu.name}}</span>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li class="{% if item.selected %} active {% endif %}">
+                                    <a href="{{item.url}}">{{item.name}} <i class="{{item.icon}}"></i></a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                    {% if user.is_authenticated %}
+                        <li id="top_nav_gravatar"  rel="tooltip" data-placement="bottom" data-original-title="{{user.username}}">
+                            {% gravatar_img user.profile.personal_gravatar 21 pg %}
+                        </li>
+                    {% endif %}
+                    <li id="top_nav_flag">
+                        {% with request|geo_country_name as country %}
+                            {% if country %}
+                                <img rel="tooltip" data-placement="bottom" data-original-title="Visiting From {{request|geo_country_name}}" src="{{SITE_COMMON_DOWNLOADABLE_STATIC_URL}}images/flags/{{request|geo_country_code|lower}}_32.png"/>
+                            {% endif %}
+                        {% endwith %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+        
+        

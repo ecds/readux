@@ -1,0 +1,31 @@
+{% extends "user/account.html" %}
+
+{% block www_hd_title %}{% trans "Account Settings » Your Profile" %}{% endblock www_hd_title %}
+
+{% block www_content_box_2 %}
+
+<div class="group_outter_box">
+    <div class="title">Preferences<i class="icon-cogs pull-right"></i></div>
+    <div class="group_inner_box">
+        <ul class="group_list">
+            <li class="clearfix">
+                <form class="form-horizontal"  action="{% url 'profileware_preferences_update' %}" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                    {% csrf_token %}
+                    <fieldset>
+                        {{ form.as_p }}
+                    </fieldset>
+                    <input class="btn" type="submit" value="{% trans "Save" %}" />
+                </form>
+                <div class="popover_info_box popover_small pull-left">
+                    <div rel="popover" data-original-title="Your Profile Preferences" data-trigger="hover" data-placement="right"
+                        data-content="This is your profile preference section. Set your preferences based on your needs."
+                      <i class="icon-info-sign icon-large center info"></i>
+                    </div>
+                </div>
+                <div class="pull-right">{% include "base/gist/bd_report_problems.html" %}</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% endblock www_content_box_2 %}

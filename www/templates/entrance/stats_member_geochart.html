@@ -1,0 +1,31 @@
+{% block www_hd_extra %}
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+{% endblock www_hd_extra %}
+
+<div class="clear_both"></div>
+<div class="full_line_message">
+    <p>{{SITE_NAME}} is used by Python developers & Django developers all around the world.&nbsp;&nbsp;&nbsp;Count yourself in.</p>
+</div>
+    
+<script type='text/javascript'>
+ google.load('visualization', '1', {'packages': ['geochart']});
+ google.setOnLoadCallback(drawRegionsMap);
+
+  function drawRegionsMap() {
+    var data = google.visualization.arrayToDataTable([
+        ['Country', 'Members'],
+        {% for country in country_stats.items %}
+            ['{{country.0}}', {{country.1}}]{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]);
+    var options = {
+        'backgroundColor': '#f8f8f8',
+    };
+    var chart = new google.visualization.GeoChart(document.getElementById('map_chart_div'));
+    chart.draw(data, options);
+};
+</script>
+<div id="map_chart_div" style="width: 980px; height: 540px;"></div>
+
+
+

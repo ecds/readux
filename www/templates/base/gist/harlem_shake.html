@@ -1,0 +1,13 @@
+
+<script type='text/javascript' src="{{ STATIC_URL }}common/harlem_shake/shake.js"></script>
+
+<a href="#" id="harlem_shake" class="harlemshake">
+    <button class="btn checkbox toggle"><i class="icon-glass center attention"></i> Shake It</button>
+</a> 
+
+<script type='text/javascript'>
+    $('#harlem_shake').on( 'click', function(){
+        window.scroll(0,0);
+        harlem_shake();
+    });
+</script>

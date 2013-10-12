@@ -1,0 +1,77 @@
+{% extends "layout/lay_2col_small_big.html" %}
+
+{% block www_content_box_1 %}
+<div id="settings_sidenav">
+    <div class="sidenav_group_outter_box pull-left">
+        <div class="title">
+            <span class="text">Account Settings</span>
+            <i class="icon-cog pull-right"></i>
+        </div>
+        <div class="sidenav_group_inner_box">
+            <ul class="sidenav_group_list">
+                {% with request|account_settings_menu as account_menu %}
+                    {% for item in account_menu %}
+                        <li class="{% if item.selected %}selected{% endif %}">
+                            <a class="{% if item.selected %}selected{% endif %}" href="{{item.url}}">{{item.name}}
+                                {% if item.icon %}<i class="{{item.icon}} icon-mini pull-right"></i>{% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% endwith %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% if request.user.is_superuser %}
+    <div id="settings_sidenav">
+        <div class="sidenav_group_outter_box pull-left">
+            <div class="title">
+                <span class="text">Admin Settings</span>
+                <i class="icon-cog pull-right"></i>
+            </div>
+            <div class="sidenav_group_inner_box">
+                <ul class="sidenav_group_list">
+                    {% with request|account_admin_menu as admin_menu %}
+                        {% for item in admin_menu %}
+                            <li class="{% if item.selected %}selected{% endif %}">
+                                <a class="{% if item.selected %}selected{% endif %}" href="{{item.url}}">{{item.name}}
+                                    {% if item.icon %}<i class="{{item.icon}} icon-mini pull-right"></i>{% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    {% endwith %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<ul id="trac" class="account">
+    <li>
+        <a href="{% url 'profileware_stats_management' 'follow' %}">
+            <strong class="tracker" id="following">{{request.user.profile.following}}</strong> <span>following</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'profileware_stats_management' 'like' %}">
+            <strong class="tracker" id="liked">{{request.user.profile.liked}}</strong> <span>liked</span>
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'profileware_stats_management' 'bookmark' %}">
+            <strong class="tracker" id="bookmarked">{{request.user.profile.bookmarked}}</strong> <span>bookmarked</span>
+        </a>
+    </li>
+</ul>
+
+<div class="public_view_link">
+    {% if request.user.profile.username %}
+        <a class="btn info" href="{% url 'member_profile_view' request.user.profile.username %}">view your public profile</a>
+    {% endif %}
+</div>
+
+
+
+{% endblock www_content_box_1 %}
+

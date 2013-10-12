@@ -1,0 +1,27 @@
+{% extends "base/frame.html" %}
+
+{% block www_bd_hdr_menu %}
+    {% include "base/gist/bd_hdr_menu.html" %}
+{% endblock www_bd_hdr_menu %}
+
+{% block www_bd_footer %}
+    {% include "base/gist/bd_ftr_menu.html" %}
+{% endblock www_bd_footer %}
+
+{% block www_notifications %}
+    <div id="message_box">
+    {% if messages %}
+        {% for message in messages %}
+            {% if forloop.last %}
+                <div class="alert_{{message.tags}}">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    &raquo; {{ message }} &laquo;
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </div>
+{% endblock www_notifications %}
+
+
+

@@ -1,5 +1,9 @@
+from django.contrib.sites.models import Site
 
 import defaults
+
+# Current Site Object (site: name, site: domain)
+SITE_OBJECT_CURRENT = getattr(settings, 'SITE_OBJECT_CURRENT', Site.objects.get_current())
 
 def contextify(request):
     """ Bring few goodies into the context. """
@@ -15,7 +19,7 @@ def contextify(request):
         'SITE_COMMON_DOWNLOADABLE_STATIC_URL': defaults.SITE_COMMON_DOWNLOADABLE_STATIC_URL,
         'SITE_COMMON_STREAMING_STATIC_URL': defaults.SITE_COMMON_STREAMING_STATIC_URL,
         'SITE_GOOGLE_ANALYTICS': defaults.SITE_GOOGLE_ANALYTICS,
-        'SITE_OBJECT_CURRENT': defaults.SITE_OBJECT_CURRENT,
+        'SITE_OBJECT_CURRENT': SITE_OBJECT_CURRENT,
     }
 
     return ctx

@@ -12,7 +12,7 @@ SERVER_ROOT_DIR = '/srv/www/'
 
 # Domain / Project Name
 #######################################
-PROJ_NAME = 'Wisach'
+PROJ_NAME = 'Djangoware'
 PROJ_DOMAIN = PROJ_NAME.lower()+'.com'
 ALLOWED_HOSTS = [PROJ_DOMAIN,]
 
@@ -86,7 +86,6 @@ DEFAULT_FROM_EMAIL = '%s <support@%s>' % (PROJ_NAME, PROJ_DOMAIN)
 EMAIL_SUBJECT_PREFIX = '[%s]' % PROJ_NAME
 # Server error messges are sent by this email
 SERVER_EMAIL = 'support@{0}'.format(PROJ_DOMAIN)
-SEND_BROKEN_LINK_EMAILS = True
 # System erros (5XX) are sent to this address
 ADMINS = (('Server Admin', 'support@{0}'.format(PROJ_DOMAIN)),)
 # Page Not Found (404) errors are sent to this address
@@ -117,15 +116,17 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_IDLE_TIMEOUT = 60 * 60 * 24
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# Ignore few request by robots
+# Broken Link emails: Ignore few request by robots
 #######################################
-IGNORABLE_404_URLS = (
-    re.compile(r'\.(php|cgi|asp|css|js|aspx)'),
-    re.compile(r'^/phpmyadmin/'),
-    re.compile(r'^/beta/'),
-    re.compile(r'^/favicon\.ico$'),
-    re.compile(r'^/robots\.txt$'),
-)
+SEND_BROKEN_LINK_EMAILS = False
+if SEND_BROKEN_LINK_EMAILS:
+    IGNORABLE_404_URLS = (
+        re.compile(r'\.(php|cgi|asp|css|js|aspx)'),
+        re.compile(r'^/phpmyadmin/'),
+        re.compile(r'^/beta/'),
+        re.compile(r'^/favicon\.ico$'),
+        re.compile(r'^/robots\.txt$'),
+    )
 
 
 # Basic logging
@@ -174,7 +175,7 @@ LOGGING = {
 }
 
 # Template Tags we need to load up automatically
-#######################################
+################################################
 AUTO_LOAD_TEMPLATE_TAGS_LIST = [
     # django tags
     'django.templatetags.cache',

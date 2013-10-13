@@ -1,11 +1,7 @@
 from django.conf import settings
-from django.contrib.sites.models import Site
-
-# Current Site Object (site: name, site: domain)
-SITE_OBJECT_CURRENT = getattr(settings, 'SITE_OBJECT_CURRENT', Site.objects.get_current())
 
 # Automatically create the site objects for this website
-SITE_OBJECTS_INFO = getattr(settings, 'SITE_OBJECTS_INFO', None)
+SITE_OBJECTS_INFO_DICT = getattr(settings, 'SITE_OBJECTS_INFO_DICT', None)
 
 # Location of common downloadable static assests (example: Amazon S3 bucket configured for downloading)
 SITE_COMMON_DOWNLOADABLE_STATIC_URL = getattr(settings, 'SITE_COMMON_DOWNLOADABLE_STATIC_URL', '')

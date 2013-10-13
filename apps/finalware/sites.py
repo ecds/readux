@@ -9,10 +9,9 @@ def setup_sites():
     """
     Setup sites (name, domain) available for this project (SITE_ID will decide the active site)
     """
-    site_info = getattr(defaults, 'SITE_OBJECTS_INFO')
+    site_info = getattr(defaults, 'SITE_OBJECTS_INFO_DICT')
     if site_info:
-        site_ids = site_info.keys()
-        for pk in site_ids.sort():
+        for pk in sorted(site_info.iterkeys()):
             site, created = Site.objects.get_or_create(pk=pk)
             if site:
                 site.name = site_info[pk]['name']

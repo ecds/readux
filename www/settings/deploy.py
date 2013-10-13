@@ -89,7 +89,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',
+    # 'django.contrib.gis',
     # 'django.contrib.comments',
     'django.contrib.contenttypes',
     'django.contrib.messages',
@@ -102,14 +102,11 @@ INSTALLED_APPS = [
     'south',
 
     # apps
-    'activityware',
-    'userware',
-    'menuware',
-    'emailware',
-    'signupware',
-    'contactware',
-    'profileware',
-    'portalware',
+    # 'activityware',
+    # 'userware',
+    # 'signupware',
+    # 'contactware',
+    # 'profileware',
 
 
     # last app
@@ -164,14 +161,15 @@ FRESHLY_ASSETS_VERSION = '0000'
 # Site objects auto config
 #######################################
 # site info (you need at least one site)
-SITE_OBJECTS_INFO = {
+SITE_OBJECTS_INFO_DICT = {
     '1': {
         'name': PROJ_NAME,
         'domain': PROJ_DOMAIN
     },
 }
-
 SITE_ID = 1
+
+# Site Specific Info - What does your site do?
 SITE_TITLE = 'Western Influenced South Asian Content Hub'
 SITE_KEYWORDS = "South Asian Video Content Culture Hub"
 SITE_DESCRIPTION = "A Social Hub for Western Influenced South Asian Content"
@@ -181,7 +179,7 @@ EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
 POSTMARK_SENDER = DEFAULT_FROM_EMAIL
 
 # Google Analytics
-SITE_GOOGLE_ANALYTICS = 'UA-38163038-x'
+SITE_GOOGLE_ANALYTICS = ''
 
 
 

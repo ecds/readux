@@ -5,7 +5,7 @@ from deploy import *
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-DEBUG_USE_SQLITE3 = False
+DEBUG_USE_SQLITE3 = True
 DEBUG_SKIP_CSRF_MIDDLEWARE = True
 DEBUG_SKIP_CLICKJACKING_MIDDLEWARE = True
 DEBUG_ENABLE_TOOLBAR = True
@@ -13,8 +13,6 @@ DEBUG_ENABLE_COMMAND_EXTENSSION = True
 DEBUG_LOGGING_ONLY = True
 DEBUG_CONSOLE_LOG_LEVEL = 'ERROR'
 DEBUG_ENABLE_LOCAL_CACHE_BACKEND = False
-DEBUG_SOCIAL_LOGIN = True
-DEBUG_USE_DEV_SERVER = True
 DEV_IP_ADDRESS = '192.168.211.130'
 
 # quick test of project with sqlite3
@@ -147,7 +145,7 @@ MEDIA_URL = '/m/'
 
 # Falls on development IP from finalize.sites
 #######################################
-SITE_OBJECTS_INFO = {
+SITE_OBJECTS_INFO_DICT = {
     '1': {
         'name': PROJ_NAME,
         'domain': PROJ_DOMAIN

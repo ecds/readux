@@ -1,8 +1,8 @@
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
-
-TESTWARE_EMAIL_DOMAIN_NAME = 'wisach.com'
-TESTWARE_TEMP_PASS = 'wisach'
+TESTWARE_EMAIL_DOMAIN_NAME = getattr(settings, "PROJ_DOMAIN", "djangoware.com")
+TESTWARE_TEMP_USER_PASS = 'changeme'
 TESTWARE_LOREM_IPSUM = """Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor 
                    invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores"""
 
@@ -543,3 +543,4 @@ TESTWARE_USER_NAME_OPTIONS = (
     ("Zane", _(u"Form of John")),
     ("Zebediah", _(u"God's Gift")),
 )
+

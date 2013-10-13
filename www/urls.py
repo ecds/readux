@@ -6,9 +6,6 @@ from django.contrib.sitemaps import views as sitemap_views
 from django.contrib.sitemaps import FlatPageSitemap, GenericSitemap
 from django.conf import settings
 
-from userware.views import UserLoginView, UserLogoutView
-from portalware.views import MemberProfileView
-from portalware.views import MemberSitemap
 from views import *
 
 # Uncomment the next two lines to enable the admin:
@@ -22,29 +19,6 @@ urlpatterns = patterns('',
     
     # Admin
     url(r'^a/admin/', include(admin.site.urls)),
-
-    # Signup, Login / Logout
-    url(r'^signup/', include('signupware.urls')),
-    url(r'^login/$', UserLoginView.as_view(), name='site_user_login'),
-    url(r'^logout/$', UserLogoutView.as_view(), name='site_user_logout'),
-
-
-    # Account Settings Related
-    url(r'^user/settings/email/', include('emailware.urls')),
-
-    # User auth, pass, delete ... etc
-    url(r'^user/settings/', include('userware.urls')),
-
-    # Contact form
-    url(r'^contact/', include('contactware.urls')),
-
-    # Portal
-    url(r'^search/', include('portalware.urls')),
-
-    # Users
-    url(r'^(?P<username>[a-zA-Z0-9-]{3,})/$', MemberProfileView.as_view(), name='member_profile_view'),
-    url(r'^(?P<username>[a-zA-Z0-9-]{3,})/stats/$', MemberProfileView.as_view(template_name="portal/member_profile_stats_view.html"), name='member_profile_stats_view'),
-
 )
 
 # Specific flatpages urls

@@ -1,4 +1,5 @@
 from django.contrib.sites.models import Site
+from django.conf import settings
 
 import defaults
 

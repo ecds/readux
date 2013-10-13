@@ -32,12 +32,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    'geoware.middleware.GeowareSessionMiddleware',
     'freshly.middleware.assets.AssetVersioningMiddleware',
-    'userware.middleware.switch.UserSwitchMiddleware',
-    'activityware.middleware.user.UserActivityAuitMiddleware',
-    'activityware.middleware.logout.LogoutEnforcementMiddleware',
-    'profileware.middleware.UserProfileSetCountryMiddleware',
 
     # last resort, keep last
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
@@ -60,7 +55,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 # Authentication backend
 #######################################
 AUTHENTICATION_BACKENDS = [
-    'userware.backends.ModelBackend',
+    # 'userware.backends.ModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -100,10 +95,12 @@ INSTALLED_APPS = [
     'django.contrib.redirects',
     'postware',
     'south',
+    'toolware',
 
-    # apps
-    # 'activityware',
-    # 'userware',
+    'menuware',
+
+    'activityware',
+    'userware',
     # 'signupware',
     # 'contactware',
     # 'profileware',

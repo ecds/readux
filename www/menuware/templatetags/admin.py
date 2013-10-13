@@ -14,8 +14,8 @@ def account_admin_menu(request):
     NAV_MENU = {
         "100": {
             "name": "Switch User",
-            "reversible": "user_switch_on",
-            "url": "",
+            "reversible": "",
+            "url": "/",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,

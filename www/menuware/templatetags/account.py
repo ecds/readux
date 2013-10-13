@@ -14,8 +14,8 @@ def account_settings_menu(request):
     NAV_MENU = {
         "100": {
             "name": "Profile",
-            "reversible": "profileware_update",
-            "url": "",
+            "reversible": "",
+            "url": "/",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,
@@ -26,8 +26,8 @@ def account_settings_menu(request):
         },
         "240": {
             "name": "Preferences",
-            "reversible": "profileware_preferences_update",
-            "url": "",
+            "reversible": "",
+            "url": "/",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,
@@ -38,8 +38,8 @@ def account_settings_menu(request):
         },
         "300": {
             "name": "Password Change",
-            "reversible": "user_password_change",
-            "url": "",
+            "reversible": "",
+            "url": "/",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,

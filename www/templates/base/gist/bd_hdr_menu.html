@@ -53,17 +53,8 @@
                         {% endfor %}
                     {% endwith %}
                     {% if user.is_authenticated %}
-                        <li id="top_nav_gravatar"  rel="tooltip" data-placement="bottom" data-original-title="{{user.username}}">
-                            {% gravatar_img user.profile.personal_gravatar 21 pg %}
-                        </li>
+
                     {% endif %}
-                    <li id="top_nav_flag">
-                        {% with request|geo_country_name as country %}
-                            {% if country %}
-                                <img rel="tooltip" data-placement="bottom" data-original-title="Visiting From {{request|geo_country_name}}" src="{{SITE_COMMON_DOWNLOADABLE_STATIC_URL}}images/flags/{{request|geo_country_code|lower}}_32.png"/>
-                            {% endif %}
-                        {% endwith %}
-                    </li>
                 </ul>
             </div>
         </div>

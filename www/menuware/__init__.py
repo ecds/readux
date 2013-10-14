@@ -1,6 +1,6 @@
 __author__ = 'Val Neekman [neekware.com]'
 __version__ = '0.0.1'
-__note__ = 'This application simplified navigation menus'
+__description__ = 'This application simplified navigation menus'
 
 import defaults
 

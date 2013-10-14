@@ -44,10 +44,8 @@ class UserLogoutView(
     """ Logout and redirect to LOGOUT_REDIRECT_URL """
     
     def get(self, request, *args, **kwargs):
-        try:
+        if 'switched_username' in request.session:
             del request.session['switched_username']
-        except:
-            pass
         if request.user.is_authenticated():
             auth_logout(request)
             messages.add_message(self.request, messages.SUCCESS, _('You are logged out'))

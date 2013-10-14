@@ -43,7 +43,7 @@ class UserCreationForm(DjangoUserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data["username"]
-        if username not in defaults.USERWARE_RESERVED_USERNAMES and len(username) >= defaults.USERWARE_USERNAME_MIN_LENGTH:
+        if username not in defaults.USERWARE_RESERVED_USERNAMES and len(username) >= self.pass_len:
             try:
                 User.objects.get(username__iexact=username)
             except User.DoesNotExist:
@@ -147,8 +147,7 @@ class UserPasswordResetForm(DjangoPasswordResetForm):
                 raise forms.ValidationError(self.error_messages['unknown_email'])
             if not any(user.is_active for user in self.users_cache):
                 raise forms.ValidationError(self.error_messages['unknown_email'])
-            if any((user.password == UNUSABLE_PASSWORD)
-                   for user in self.users_cache):
+            if any(has_usable_password for user in self.users_cache):
                 raise forms.ValidationError(self.error_messages['unusable_email'])
             return username_or_email
         else:

@@ -62,7 +62,8 @@ USERWARE_RESERVED_USERNAMES = list(
     
     
     # Forbidden words
-    'porn fuck shit xxx cunt pr0n p0rn abuse pussy vigina dick piense pee piss urinate god religion'
+    'porn fuck shit xxx cunt pr0n p0rn abuse pussy vigina dick piense pee piss urinate '
+    'god religion'
     .split()
 )
 

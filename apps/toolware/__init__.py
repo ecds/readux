@@ -4,7 +4,7 @@ __note__ = 'This application handles all common tasks'
 
 import defaults
 
-if defaults.TOOLWARE_INCLUDE_TEMPLATE_TAGS:
+if defaults.TOOLWARE_TEMPLATE_TAGS_AUTO_LOAD:
     from django import template
     application_tags = [
         'toolware.templatetags.forms',

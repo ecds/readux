@@ -74,7 +74,7 @@ def user_audit_create(sender, user, request, **kwargs):
 
     audit_key = get_hashed(request.session.session_key)
     try:
-        uaa = UserAudit.objects.get(audit_key=audit_key)
+        audit = UserAudit.objects.get(audit_key=audit_key)
     except UserAudit.DoesNotExist:
         data = {
             'user': request.user,
@@ -84,9 +84,9 @@ def user_audit_create(sender, user, request, **kwargs):
             'referrer': request.META.get('HTTP_REFERER', 'Unknown'),
             'last_page': request.path or '/',
         }
-        uaa = UserAudit(**data)
+        audit = UserAudit(**data)
     logger.info(_('User {0} logged in'.format(request.user.username)))
-    uaa.save()
+    audit.save()
     request.session[constants.USERWARE_AUDIT_KEY] = audit_key
     request.session.modified = True
     cleanup_user_audits(request.user)

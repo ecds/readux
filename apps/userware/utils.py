@@ -39,20 +39,20 @@ def get_logged_in_users(last_activity_in_minutes=5):
 def get_sessions_for_user(user):
     """Returns all activity audit sessions for user"""
 
-    uaa_sessions = UserAudit.objects.filter(user=user)
-    return uaa_sessions
+    audit_sessions = UserAudit.objects.filter(user=user)
+    return audit_sessions
 
 
 def force_logout(user, request=None):
     """ logout all other sessions of this active user """
 
-    uaa_sessions = get_sessions_for_user(user=user)
-    for uaa in uaa_sessions:
-        if request and uaa.audit_key == request.session.get(constants.USERWARE_AUDIT_KEY, ''):
-            uaa.force_logout = False
+    audit_sessions = get_sessions_for_user(user=user)
+    for audit in audit_sessions:
+        if request and audit.audit_key == request.session.get(constants.USERWARE_AUDIT_KEY, ''):
+            audit.force_logout = False
         else:
-            uaa.force_logout = True
-        uaa.save()
+            audit.force_logout = True
+        audit.save()
 
 def get_audit_object_for_session(request):
     """ Given a request, returns a Audit object or logs user out """
@@ -80,10 +80,10 @@ def cleanup_user_audits(user, audit_age_in_days=14):
 
     last_active_delta = datetime.timedelta(days=audit_age_in_days)
     last_active = timezone.now() - last_active_delta
-    uaa_sessions = get_sessions_for_user(user=user)
-    for uaa in uaa_sessions:
-        if uaa.updated_at < last_active:
-            uaa.delete()
+    audit_sessions = get_sessions_for_user(user=user)
+    for audit in audit_sessions:
+        if audit.updated_at < last_active:
+            audit.delete()
 
 
 

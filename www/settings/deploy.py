@@ -33,6 +33,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'freshly.middleware.assets.AssetVersioningMiddleware',
+    'userware.middleware.logout.LogoutEnforcementMiddleware',
+    'userware.middleware.switch.UserSwitchMiddleware',
+    'userware.middleware.audit.UserAuditMiddleware',
 
     # last resort, keep last
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
@@ -99,7 +102,6 @@ INSTALLED_APPS = [
 
     'menuware',
 
-    'activityware',
     'userware',
     # 'signupware',
     # 'contactware',

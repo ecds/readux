@@ -81,6 +81,37 @@ except:
     pass
 admin.site.register(User, UserAdmin)
 
+from models import UserAudit
+
+# Register UserAudit
+class UserAuditAdmin(admin.ModelAdmin):
+    
+    list_display = [
+        'id', 
+        'user',
+        'audit_key',
+        'ip_address',
+        'user_agent',
+        'referrer',
+        'last_page',
+        'pages_viwed',
+        'force_logout',
+        'updated_at',
+        'created_at',
+    ]
+
+    search_fields = [
+        'user__username',
+        'ip_address',
+        'user_agent',
+        'referrer',
+    ]
+
+    list_per_page = 25
+
+admin.site.register(UserAudit, UserAuditAdmin)
+
+
 
 ##### show session if session db is selected #######
 # from django.contrib.sessions.models import Session

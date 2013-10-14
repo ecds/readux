@@ -18,8 +18,7 @@ from toolware.utils.mixin import CsrfProtectMixin
 from toolware.utils.mixin import NeverCacheMixin
 from toolware.utils.mixin import SensitivePostParametersMixin
 
-from activityware.utils import force_logout
-
+from utils import force_logout
 from forms import UserPasswordChangeForm
 from forms import UserAuthenticationForm
 from forms import UserDeletionForm

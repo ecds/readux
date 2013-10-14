@@ -12,8 +12,8 @@ from django.contrib.auth import get_user_model; User = get_user_model()
 
 from toolware.utils.mixin import CleanSpacesMixin
 from toolware.utils.generic import is_valid_email
-from activityware.utils import force_logout
 
+from utils import force_logout
 from utils import get_user_by_username_or_email
 import defaults
 

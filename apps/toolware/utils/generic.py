@@ -20,6 +20,10 @@ def get_integer(value='0'):
     except:
         return 0
 
+def get_hashed(key):
+    """ Given a key, returns a one-way hash of it """
+    return hashlib.md5(key).hexdigest()
+
 def get_days_ago(days=0):
     """ Return X 'days' ago in datetime format """
     return (datetime.date.today() - datetime.timedelta(days))

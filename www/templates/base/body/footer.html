@@ -8,7 +8,7 @@
             </li>
         {% endfor %}
 
-        <li class="pull-right"><a href="/">&copy; 2012-{% now "Y" %} <strong>{{SITE_DOMAIN|lower}}</strong></a></li>
+        <li class="pull-right"><a href="/">&copy; 2012-{% now "Y" %} <strong>{{SITE_OBJECT_CURRENT.domain|lower}}</strong></a></li>
     </ul>
     <form id='csrf_post_form' action="" enctype="multipart/form-data" method="post" accept-charset="utf-8">{% csrf_token %}</form>
 {% endwith %}

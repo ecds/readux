@@ -23,12 +23,12 @@
                         <meta name="description" content="{% block www_hd_desc_inner %}{{SITE_DESCRIPTION}}{% endblock www_hd_desc_inner %}">
                     {% endblock www_hd_desc %}
                     {% block www_hd_kw %}<meta name="keywords" content="{{SITE_KEYWORDS}}">{% endblock www_hd_kw %}
-                    {% block www_hd_extra_meta %}{% include "base/gist/hd_meta.html" %}{% endblock www_hd_extra_meta %}
+                    {% block www_hd_extra_meta %}{% include "base/head/meta.html" %}{% endblock www_hd_extra_meta %}
                 {% endblock www_hd_meta %}
 
-                {% block www_hd_css %}{% include "base/gist/hd_css.html" %}{% endblock www_hd_css %}
-                {% block www_hd_ico %}{% include "base/gist/hd_ico.html" %}{% endblock www_hd_ico %}
-                {% block www_hd_js %}{% include "base/gist/hd_js.html" %}{% endblock www_hd_js %}
+                {% block www_hd_css %}{% include "base/head/css.html" %}{% endblock www_hd_css %}
+                {% block www_hd_ico %}{% include "base/head/ico.html" %}{% endblock www_hd_ico %}
+                {% block www_hd_js %}{% include "base/head/js.html" %}{% endblock www_hd_js %}
                 {% block www_hd_extra %}{% endblock www_hd_extra %}
 
             {% endblock www_hd %}
@@ -80,8 +80,8 @@
             {% endblock www_bd %}
 
             {% block www_bd_extra %}
-                {% block www_bd_js %}{% include "base/gist/bd_js.html" %}{% endblock www_bd_js %}
-                {% block www_bd_ga %}{% include "base/gist/bd_ga.html" %}{% endblock www_bd_ga %}
+                {% block www_bd_js %}{% include "base/body/js.html" %}{% endblock www_bd_js %}
+                {% block www_bd_analytics %}{% include "base/body/analytics.html" %}{% endblock www_bd_analytics %}
             {% endblock www_bd_extra %}
         </body>
 

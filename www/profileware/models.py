@@ -1,98 +1,117 @@
-import datetime, string
-from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
-from django.db.models import signals
-from django.contrib.auth import get_user_model; User = get_user_model()
-from django.utils.translation import gettext as _
+import re
+from django.db import models
+from django.utils import timezone
+from django.core import validators
+from django.utils.translation import ugettext_lazy as _
+from django.core.mail import send_mail
 from django.core.validators import MinLengthValidator, MaxLengthValidator
-from django.core.cache import cache
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 
-from uuslug import slugify
-from django.utils.functional import lazy
+try:
+    from uuslug import slugify
+except ImportError:
+    from django.template.defaultfilters import slugify
 
+USERNAME_PATTERN = re.compile('^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$')
 
-import defaults
-
-class UserProfile(models.Model):
-    """ Each user gets a profile automatically."""
-
-    user = models.OneToOneField(User, related_name="%(class)s", unique=True)
-
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
+class ExtendedUser(AbstractBaseUser, PermissionsMixin):
+    """ A drop-in replacement of Django User class that allows filed extensions """
 
     username = models.CharField(
-                _("Username"), 
-                max_length=32, 
-                blank=True,
-                editable=False,
+            _('username'),
+            max_length=30,
+            unique=True,
+            help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash"),
+            validators=[
+                validators.RegexValidator(USERNAME_PATTERN, _('Enter a valid username.'), 'invalid')
+            ]
     )
 
     first_name = models.CharField(
-                _("First Name"),
-                max_length=58,
-                help_text=_('Your first name. (what your friends call you)'),
-                blank=False,
+        _('first name'),
+        max_length=30,
+        blank=True,
     )
 
     last_name = models.CharField(
-                _("Last Name"), 
-                max_length=58, 
-                help_text=_('Your last name, also known as surname or family name.'),
-                blank=False,
+        _('last name'),
+        max_length=30,
+        blank=True,
+    )
+
+    email = models.EmailField(
+        _('email address'),
+        blank=True,
+    )
+
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
+
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+        help_text=_('User status. Inactive users cannot login. Treat as suspended user.'),
+    )
+
+    date_joined = models.DateTimeField(
+        _('date joined'),
+        default=timezone.now,
+    )
+    ############ Don't touch above this line ###############
+
+    date_updated = models.DateTimeField(
+        auto_now = True,
     )
 
     slug = models.CharField(
-                _("Slug"), 
-                max_length=50, 
-                blank=True,
-                editable=False,
+        _("Slug"),
+        max_length=50,
+        blank=True,
+        editable=False,
     )
 
-    personal_about = models.TextField(
-                _('About (Your Bio)'), 
-                blank=True, 
-                validators=[MaxLengthValidator(1000)],
-                help_text = _("Tell others a little about youself. (highly recommended)")
+    about = models.TextField(
+        _('About'), 
+        blank=True, 
+        validators=[MaxLengthValidator(1000)],
+        help_text = _("Tell others a little about youself. (highly recommended)")
     )
 
-    primary_email = models.CharField(
-                max_length=254,
-                blank=True,
-                editable=False,
-    )
+    ########### Add new fields above this line #############
+    objects = UserManager()
 
-    def __unicode__(self):
-        return self.get_full_name()
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
 
     def get_absolute_url(self):
+        """ User's URI """
         return "/%s/" % (self.username)
 
     def get_full_name(self):
-        return u'{0} {1}'.format(self.first_name, self.last_name)
+        """ User's first and last name with space between """
+        return u'{0} {1}'.format(self.first_name, self.last_name).strip()
 
-    def _sync_user_info(self):
-        user_info_changed = False
-        if self.first_name and self.first_name != self.user.first_name:
-            self.user.first_name = self.first_name
-            user_info_changed = True
-        if self.last_name and self.last_name != self.user.last_name:
-            self.user.last_name = self.last_name
-            user_info_changed = True
-        if not self.primary_email and self.user.email:
-            self.primary_email = self.user.email
-            user_info_changed = True
-        if user_info_changed:
-            self.user.save()
+    def get_short_name(self):
+        """ User's first name """
+        return self.first_name
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """ Sends an email to this User """
+        send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.get_full_name())
-        self._sync_user_info()
-        super(UserProfile, self).save(*args, **kwargs)
+        super(ExtendedUser, self).save(*args, **kwargs)
 
 
-# Create a profile on demand if not already created
-User.profile = property(lambda self: UserProfile.objects.get_or_create(user=self)[0])
+
 
 
 

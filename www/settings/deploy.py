@@ -101,11 +101,11 @@ INSTALLED_APPS = [
     'toolware',
 
     'menuware',
-
     'userware',
+    'profileware',
+
     # 'signupware',
     # 'contactware',
-    # 'profileware',
 
 
     # last app
@@ -119,6 +119,10 @@ LOGIN_REDIRECT_URL = '/user/settings/profile/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/user/settings/login/'
 LOGOUT_URL = '/user/settings/logout/'
+
+# Custom User
+#######################################
+AUTH_USER_MODEL = 'profileware.ExtendedUser'
 
 
 # Database

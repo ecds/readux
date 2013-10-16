@@ -2,6 +2,7 @@ import datetime
 import hashlib
 from django.utils import timezone
 from django.core.cache import cache
+from django.contrib.auth import logout
 from django.contrib.auth import get_user_model; User = get_user_model()
 
 from toolware.utils.generic import is_valid_email

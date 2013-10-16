@@ -1,4 +1,3 @@
-import pprint
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import get_user_model; User = get_user_model()
@@ -68,7 +67,7 @@ class UserAdmin(DjangoUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff',)
+    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login', 'date_joined',  )
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups',)
     search_fields = ('first_name', 'last_name', 'username', 'email', 'id',)
     ordering = ('username', 'email',)
@@ -114,6 +113,7 @@ admin.site.register(UserAudit, UserAuditAdmin)
 
 
 ##### show session if session db is selected #######
+# import pprint
 # from django.contrib.sessions.models import Session
 # class SessionAdmin(admin.ModelAdmin):
 #     def _session_data(self, obj):

@@ -1,5 +1,4 @@
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import logout
 from django.contrib import messages
 
 from ..models import UserAudit

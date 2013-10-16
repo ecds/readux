@@ -1,15 +1,10 @@
-from django.conf.urls import patterns, include, url
-from django.core.urlresolvers import reverse_lazy
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views.decorators.cache import cache_page
-from django.contrib.sitemaps import views as sitemap_views
-from django.contrib.sitemaps import FlatPageSitemap, GenericSitemap
 from django.conf import settings
+from django.contrib import admin
+from django.conf.urls import patterns, include, url
 
 from views import *
 
-# # Uncomment the next two lines to enable the admin:
-from django.contrib import admin
+# comment the next line to disable the admin interface
 admin.autodiscover()
 
 # Basics

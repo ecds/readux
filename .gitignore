@@ -24,7 +24,8 @@ dist
 build
 eggs
 parts
-bin
+*/bin
+!bin
 var
 sdist
 develop-eggs

@@ -154,9 +154,9 @@ for index, app in enumerate(INSTALLED_APPS, start=0):
 # Static / Media URL
 #######################################
 # URL to the static assets
-STATIC_URL = '//{0}/s/'.format(PROJ_DOMAIN)
+STATIC_URL = '//{}/s/'.format(PROJ_DOMAIN)
 # URL to the user uploaded assets
-MEDIA_URL = '//{0}/m/'.format(PROJ_DOMAIN)
+MEDIA_URL = '//{}/m/'.format(PROJ_DOMAIN)
 # Bump this up if you have changed a static file with .xyz ext
 FRESHLY_ASSETS_VERSION = '0000'
 

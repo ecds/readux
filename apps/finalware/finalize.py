@@ -9,7 +9,7 @@ def finalize(sender, **kwargs):
     After syncdb, finalize the required adjustements in order to prepare and secure the site
     """
     # only trigger if we have installed the last app
-    if kwargs['app'].__name__ == '{0}.models'.format(settings.INSTALLED_APPS[-1]):
+    if kwargs['app'].__name__ == '{}.models'.format(settings.INSTALLED_APPS[-1]):
 
         # setup sites
         setup_sites()

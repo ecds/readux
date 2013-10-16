@@ -96,7 +96,7 @@ if DEBUG_LOGGING_ONLY:
                 'class': 'django.utils.log.AdminEmailHandler'
             },
             "console": {
-                "level": "{0}".format(DEBUG_CONSOLE_LOG_LEVEL),
+                "level": "{}".format(DEBUG_CONSOLE_LOG_LEVEL),
                 "class": "logging.StreamHandler",
                 "formatter": "simple",
             },
@@ -152,7 +152,7 @@ SITE_OBJECTS_INFO_DICT = {
     },
     '2':{
         'name': 'Development',  # dev  (optional)
-        'domain': '{0}:8080'.format(DEV_IP_ADDRESS)
+        'domain': '{}:8080'.format(DEV_IP_ADDRESS)
     },
 }
 SITE_ID = 2

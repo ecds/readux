@@ -96,7 +96,7 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         """ User's first and last name with space between """
-        return u'{0} {1}'.format(self.first_name, self.last_name).strip()
+        return u'{} {}'.format(self.first_name, self.last_name).strip()
 
     def get_short_name(self):
         """ User's first name """

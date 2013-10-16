@@ -11,7 +11,7 @@ def app_name(instance):
 
 @register.filter
 def model_name(instance):
-    return '{0}.{1}'.format(app_name(instance), class_name(instance))
+    return '{}.{}'.format(app_name(instance), class_name(instance))
 
 
 

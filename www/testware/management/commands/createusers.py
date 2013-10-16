@@ -39,10 +39,10 @@ class Command(BaseCommand):
 
         class MemoryUsageWidget(progressbar.ProgressBarWidget):
             def update(self, pbar):
-                return '{0} kB'.format(str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss).rjust(8))
+                return '{} kB'.format(str(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss).rjust(8))
 
         self.widgets = [
-            '{0}|RAM usage:'.format("|Running:  {0}".format((self.cmd_name[:10] + (self.cmd_name[10:] and '..')).rjust(12))),
+            '{}|RAM usage:'.format("|Running:  {}".format((self.cmd_name[:10] + (self.cmd_name[10:] and '..')).rjust(12))),
             MemoryUsageWidget(),
             '|',
             progressbar.ETA(),
@@ -67,7 +67,7 @@ class Command(BaseCommand):
             count += 1; progress.update(count)
             first_name, last_name = name
             username = slugify(first_name)
-            email = '{0}@{1}'.format(username, defaults.TESTWARE_EMAIL_DOMAIN_NAME)
+            email = '{}@{}'.format(username, defaults.TESTWARE_EMAIL_DOMAIN_NAME)
             u, created = User.objects.get_or_create(username=username)
             if not created and not self.options['overwrite']:
                 continue
@@ -78,9 +78,9 @@ class Command(BaseCommand):
             u.save()
             p = u.profile
             p.first_name, p.last_name = name # this is automatic for users created through a request
-            p.personal_about = '{0} {1} {2}'.format(p.first_name, defaults.TESTWARE_LOREM_IPSUM, p.last_name)
+            p.personal_about = '{} {} {}'.format(p.first_name, defaults.TESTWARE_LOREM_IPSUM, p.last_name)
             p.save()
-            logger.debug(_('Created User {0} {1}').format(p.first_name, p.last_name))
+            logger.debug(_('Created User {} {}').format(p.first_name, p.last_name))
 
     def purge_users(self):
         """ Remove all non superuser `test` Users """

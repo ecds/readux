@@ -41,7 +41,7 @@ MEDIA_URL = '/m/'
 
 # Path to our secret file outside out project directory (not under this version control)
 #######################################
-SECRET_FILE = path.abspath(path.join(SERVER_ROOT_DIR, 'seekrets/{0}/settings/seekrets.json'.format(PROJ_DOMAIN)))
+SECRET_FILE = path.abspath(path.join(SERVER_ROOT_DIR, 'seekrets/{}/settings/seekrets.json'.format(PROJ_DOMAIN)))
 if not os.path.exists(SECRET_FILE):
     warnings.warn("Secret file not found")
     sys.exit(0)
@@ -87,11 +87,11 @@ EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = '%s <support@%s>' % (PROJ_NAME, PROJ_DOMAIN)
 EMAIL_SUBJECT_PREFIX = '[%s]' % PROJ_NAME
 # Server error messges are sent by this email
-SERVER_EMAIL = 'support@{0}'.format(PROJ_DOMAIN)
+SERVER_EMAIL = 'support@{}'.format(PROJ_DOMAIN)
 # System erros (5XX) are sent to this address
-ADMINS = (('Server Admin', 'support@{0}'.format(PROJ_DOMAIN)),)
+ADMINS = (('Server Admin', 'support@{}'.format(PROJ_DOMAIN)),)
 # Page Not Found (404) errors are sent to this address
-MANAGERS = (('Site Admin', 'support@{0}'.format(PROJ_DOMAIN)),)
+MANAGERS = (('Site Admin', 'support@{}'.format(PROJ_DOMAIN)),)
 
 # Cache Related Stuff
 #######################################
@@ -133,7 +133,7 @@ if SEND_BROKEN_LINK_EMAILS:
 
 # Basic logging
 #######################################
-SITE_LOG_FILE = path.abspath(path.join(SERVER_ROOT_DIR, '{0}/log/{0}.log'.format(PROJ_DOMAIN)))
+SITE_LOG_FILE = path.abspath(path.join(SERVER_ROOT_DIR, '{}/log/{}.log'.format(PROJ_DOMAIN, PROJ_DOMAIN)))
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,

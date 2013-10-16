@@ -29,7 +29,7 @@ execfile(activate_this, dict(__file__=activate_this))
 
 # Bootstrap Django
 for item in ['apps', 'www']:
-    sys.path.insert(0, path.abspath(path.join(path.dirname(__file__), '../{0}'.format(item))))
+    sys.path.insert(0, path.abspath(path.join(path.dirname(__file__), '../{}'.format(item))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", 'settings.deploy')
 
 from django.core.wsgi import get_wsgi_application

@@ -51,7 +51,7 @@ def custom_create_superuser(sender, **kwargs):
     """ After syncdb, finalize the required adjustements in order to prepare and secure the site """
 
     # only trigger if we have installed the last app
-    if kwargs['app'].__name__ == '{0}.models'.format(settings.INSTALLED_APPS[-1]):
+    if kwargs['app'].__name__ == '{}.models'.format(settings.INSTALLED_APPS[-1]):
 
         # setup or update superuser
         _create_superuser(
@@ -85,7 +85,7 @@ def user_audit_create(sender, user, request, **kwargs):
             'last_page': request.path or '/',
         }
         audit = UserAudit(**data)
-    logger.info(_('User {0} logged in'.format(request.user.username)))
+    logger.info(_('User {} logged in'.format(request.user.username)))
     audit.save()
     request.session[constants.USERWARE_AUDIT_KEY] = audit_key
     request.session.modified = True
@@ -103,7 +103,7 @@ def user_audit_delete(sender, user, request, **kwargs):
         UserAudit.objects.get(audit_key=request.session[constants.USERWARE_AUDIT_KEY]).delete()
     except:
         pass
-    logger.info(_('User {0} logged out'.format(request.user.username)))
+    logger.info(_('User {} logged out'.format(request.user.username)))
 
 # Latch on logout signal
 django_auth_signals.user_logged_out.connect(user_audit_delete, sender=User,

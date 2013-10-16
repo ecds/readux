@@ -53,7 +53,7 @@ def get_unique_key_from_post(params_dict):
 
     site = Site.objects.get_current()
     key = get_dict_to_encoded_url(remove_csrf_from_params_dict(params_dict))
-    cache_key = '{0}_{1}'.format(site.domain, key)
+    cache_key = '{}_{}'.format(site.domain, key)
     return hashlib.md5(cache_key).hexdigest()
 
 def get_unique_key_from_get(get_data):
@@ -61,7 +61,7 @@ def get_unique_key_from_get(get_data):
 
     site = Site.objects.get_current()
     key = get_dict_to_encoded_url(get_data)
-    cache_key = '{0}_{1}'.format(site.domain, key)
+    cache_key = '{}_{}'.format(site.domain, key)
     return hashlib.md5(cache_key).hexdigest()
 
 def tobin(deci_num, len=32):

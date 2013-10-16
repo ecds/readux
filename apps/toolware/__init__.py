@@ -1,6 +1,6 @@
 __author__ = 'Val Neekman [neekware.com]'
-__version__ = '0.0.1'
 __description__ = 'This application handles all common tasks'
+__version__ = '0.0.1'
 
 import defaults
 

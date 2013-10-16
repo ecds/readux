@@ -1,6 +1,6 @@
 __author__ = 'Val Neekman [neekware.com]'
-__version__ = '0.0.1'
 __description__ = 'This application runs after all other applications'
+__version__ = '0.0.1'
 
 from django.db.models import signals
 

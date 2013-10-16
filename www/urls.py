@@ -8,7 +8,7 @@ from django.conf import settings
 
 from views import *
 
-# Uncomment the next two lines to enable the admin:
+# # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^$', HomeView.as_view(), name='home_page'),
     
     # Admin
-    url(r'^a/admin/', include(admin.site.urls)),
+    url(r'^{}'.format(getattr(settings, 'SITE_ADMIN_URL_PATH', 'admin')), include(admin.site.urls)),
 )
 
 # Specific flatpages urls

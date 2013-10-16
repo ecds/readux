@@ -52,17 +52,19 @@ else:
 #######################################
 try:
     SECRET_KEY = str(SEEKRETS['secret_key'])
-    USERWARE_SUPERUSER_USERNAME = str(SEEKRETS['superuser_username'])
-    USERWARE_SUPERUSER_EMAIL = str(SEEKRETS['superuser_email'])
-    USERWARE_SUPERUSER_PASSWORD = str(SEEKRETS['superuser_password'])
-    POSTMARK_API_KEY = str(SEEKRETS['postmark_api_key'])
     DB_NAME = str(SEEKRETS['database_name'])
     DB_USER = str(SEEKRETS['database_user'])
     DB_PASS = str(SEEKRETS['database_pass'])
+    
 except:
-    warnings.warn("Failed to load up secrets")
+    warnings.warn("Failed to load secrets")
     sys.exit(0)
-
+    
+USERWARE_SUPERUSER_USERNAME = str(SEEKRETS.get('superuser_username', ''))
+USERWARE_SUPERUSER_EMAIL = str(SEEKRETS.get('superuser_email', ''))
+USERWARE_SUPERUSER_PASSWORD = str(SEEKRETS.get('superuser_password', ''))
+SITE_ADMIN_URL_PATH = str(SEEKRETS.get('admin_url_path', 'admin'))
+POSTMARK_API_KEY = str(SEEKRETS.get('postmark_api_key', ''))
 
 # Site Specifics
 #######################################

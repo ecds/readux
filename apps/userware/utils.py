@@ -21,8 +21,11 @@ def get_user_by_username_or_email(username_or_email):
     except User.DoesNotExist:
         try:
             from emailware.models import EmailAddress
+        except ImportError:
+            return None
+        try:
             user = EmailAddress.objects.get(email__iexact=username_or_email).user
-        except:
+        except EmailAddress.DoesNotExist:
             return None
     return user
 
@@ -31,8 +34,8 @@ def get_logged_in_users(last_activity_in_minutes=5):
 
     last_active_delta = datetime.timedelta(minutes=last_activity_in_minutes)
     last_active = timezone.now() - last_active_delta
-    query = Q(**{"useractivityaudit__updated_at__gte": last_active.isoformat()})
-    related_fields = ['useractivityaudit__updated_at']
+    query = Q(**{"useraudit__updated_at__gte": last_active.isoformat()})
+    related_fields = ['useraudit__updated_at']
     users = User.objects.select_related(*related_fields).filter(query)
     return users
 

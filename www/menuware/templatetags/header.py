@@ -15,8 +15,8 @@ def header_menu_right(request):
     NAV_MENU = {
         "104": {
             "name": "Login",
-            "reversible": "",
-            "url": "/",
+            "reversible": "userware_login",
+            "url": "",
             "pre_login_visible": True,
             "post_login_visible": False,
             "superuser_required": False,
@@ -51,8 +51,8 @@ def header_menu_right(request):
         },
         "108": {
             "name": "Logout",
-            "reversible": "",
-            "url": "/",
+            "reversible": "userware_logout",
+            "url": "",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,

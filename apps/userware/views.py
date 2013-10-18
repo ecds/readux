@@ -114,7 +114,7 @@ class UserChangePassword(
     """ Change password for existing user """
 
     form_class = UserPasswordChangeForm
-    success_url = reverse_lazy('user_password_change')
+    success_url = reverse_lazy('userware_password_change')
     template_name = 'user/password_change_form.html'
     message_text = {
         'success': _('Your password changed.'),

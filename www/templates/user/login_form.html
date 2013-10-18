@@ -9,42 +9,19 @@
     <div class="group_inner_box">
         <ul class="group_list">
             <li class="clearfix">
-                <form class="form-horizontal pull-left"  action="?next={% if request.GET.next %}{{request.GET.next}}{% else %}{% url 'profileware_update' %}{% endif %}" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                <form class="form-horizontal pull-left"  action="?next={% if request.GET.next %}{{request.GET.next}}{% else %}{% url 'home_page' %}{% endif %}" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                     {% csrf_token %}
                     <fieldset>
                         {{ form.as_p }}
                     </fieldset>
                     <input class="btn" type="submit" value="{% trans "Login" %}" />
                     <span class="form_alternate_suggestions pull-right">
-                        <a class="info" href="{% url 'user_password_reset' %}">Forgot Password</a>&nbsp;
-                        <a class="info" href="{% url 'signup_form_process' %}">New User</a>
+                        <a class="info" href="{% url 'userware_password_reset' %}">Forgot Password</a>&nbsp;
                     </span>
                 </form>
             </li>
         </ul>
     </div>
 </div>
-
-{% get_available_providers as social_network_auth_providers %}
-{% if social_network_auth_providers %}
-<div class="group_outter_box center form_box_centered">
-    <div class="title">Social Login <span class="text">( Existing Members Only )</span><i class="icon-lock pull-right"></i><i class="icon-comments pull-right"></i></div>
-    <div class="group_inner_box">
-        <ul class="group_list">
-            <li class="clearfix">
-                {% for slp in social_network_auth_providers %}
-                <a rel="nofollow" href="{% url 'socialware_network_provider_login' slp|lower %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" class="">
-                    <img rel="tooltip" data-placement="bottom" data-original-title="Login with {{ slp }}" src="{{ SITE_COMMON_DOWNLOADABLE_STATIC_URL }}images/social/{{ slp|lower }}_48.png" /> 
-                </a>
-                {% endfor %}
-                <span style="margin-top:13px;" class="form_alternate_suggestions pull-right">
-                    <a red="nofollow" class="info" href="{% url 'signup_form_process' %}">New User</a>
-                </span>
-            </li>
-        </ul>
-    </div>
-</div>
-{% endif %}
-
 
 {% endblock www_content_box_1 %}

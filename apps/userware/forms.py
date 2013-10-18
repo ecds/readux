@@ -112,9 +112,9 @@ class UserPasswordResetForm(DjangoPasswordResetForm):
     def __init__(self, *args, **kwargs):
         super(UserPasswordResetForm, self).__init__(*args, **kwargs)
         del self.fields['email']
-                                           
-        self.error_messages['invalid_login'] = _("Please enter a username or a valid email address.")
+
         self.error_messages = {
+            'invalid_login': _("Please enter a username or a valid email address."),
             'unknown_email': _("That email address doesn't have an associated "
                          "user account or is not a primary email address."),
             'unusable_email': _("The user account associated with this email "
@@ -147,7 +147,7 @@ class UserPasswordResetForm(DjangoPasswordResetForm):
                 raise forms.ValidationError(self.error_messages['unknown_email'])
             if not any(user.is_active for user in self.users_cache):
                 raise forms.ValidationError(self.error_messages['unknown_email'])
-            if any(has_usable_password for user in self.users_cache):
+            if any(user.has_usable_password for user in self.users_cache):
                 raise forms.ValidationError(self.error_messages['unusable_email'])
             return username_or_email
         else:

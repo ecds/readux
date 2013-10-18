@@ -16,7 +16,13 @@ urlpatterns = patterns('',
     url(r'^{}'.format(getattr(settings, 'SITE_ADMIN_URL_PATH', 'admin')), include(admin.site.urls)),
 )
 
-# Specific flatpages urls
+# User related urls
+urlpatterns += patterns('',
+
+    url(r'^account/', include('userware.urls')),
+)
+
+# Flatpages  urls
 urlpatterns += patterns('django.contrib.flatpages.views',
     url(r'^site/about/$', 'flatpage', {'url': '/site/about/'}, name='about_us'),
     url(r'^site/privacy/$', 'flatpage', {'url': '/site/privacy/'}, name='privacy_policy'),

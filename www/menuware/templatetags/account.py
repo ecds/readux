@@ -38,8 +38,8 @@ def account_settings_menu(request):
         },
         "300": {
             "name": "Password Change",
-            "reversible": "",
-            "url": "/",
+            "reversible": "userware_password_change",
+            "url": "",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,
@@ -50,7 +50,7 @@ def account_settings_menu(request):
         },        
         "900": {
             "name": "Delete Account",
-            "reversible": "user_delete_account",
+            "reversible": "userware_delete_account",
             "url": "",
             "pre_login_visible": False,
             "post_login_visible": True,

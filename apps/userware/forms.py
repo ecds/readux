@@ -43,7 +43,7 @@ class UserCreationForm(DjangoUserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data["username"]
-        if username not in defaults.USERWARE_RESERVED_USERNAMES and len(username) >= self.pass_len:
+        if username not in defaults.USERWARE_RESERVED_USERNAMES and len(username) >= defaults.USERWARE_USERNAME_MIN_LENGTH:
             try:
                 User.objects.get(username__iexact=username)
             except User.DoesNotExist:
@@ -108,55 +108,49 @@ class UserPasswordResetForm(DjangoPasswordResetForm):
     """Customized password reset form"""
 
     required_css_class = 'required_field'
-
-    def __init__(self, *args, **kwargs):
-        super(UserPasswordResetForm, self).__init__(*args, **kwargs)
-        del self.fields['email']
-
-        self.error_messages = {
-            'invalid_login': _("Please enter a username or a valid email address."),
-            'unknown_email': _("That email address doesn't have an associated "
-                         "user account or is not a primary email address."),
-            'unusable_email': _("The user account associated with this email "
-                          "address cannot reset the password."),
-            'unknown_username': _("That username doesn't have an associated "
-                         "user account. Are you sure you've registered?"),
-            'unusable_username': _("The user account associated with this username "
-                          "address cannot reset the password."),
-        }
-    
+    error_messages = {
+        'unknown_email': _("That email address doesn't have an associated "
+                     "user account or is not a primary email address."),
+        'unusable_email': _("The user account associated with this email "
+                      "address cannot reset the password."),
+        'unknown_username': _("That username doesn't have an associated "
+                     "user account. Are you sure you've registered?"),
+        'unusable_username': _("The user account associated with this username "
+                      "address cannot reset the password."),
+    }
 
     # accept username or email
-    username_or_email = forms.CharField(
+    email = forms.CharField(
             label=_("Username or Email"), 
             max_length=254,
             help_text = _("Enter your username or primary email address to receive "
                           "instructions on how to reset your password.")
     )
 
-
-    def clean_username_or_email(self):
+    def clean_email(self):
         """
         Validates that an active user exists with the given username / email address.
         """
 
-        username_or_email = self.cleaned_data["username_or_email"]
+        username_or_email = self.cleaned_data["email"]
         if is_valid_email(username_or_email):
-            self.users_cache = User.objects.filter(email__iexact=username_or_email)
-            if not len(self.users_cache):
+            try:
+                user = User.objects.get(email__iexact=username_or_email)
+            except User.DoesNotExist:
                 raise forms.ValidationError(self.error_messages['unknown_email'])
-            if not any(user.is_active for user in self.users_cache):
+            if not user.is_active:
                 raise forms.ValidationError(self.error_messages['unknown_email'])
-            if any(user.has_usable_password for user in self.users_cache):
+            if not user.has_usable_password():
                 raise forms.ValidationError(self.error_messages['unusable_email'])
             return username_or_email
         else:
-            self.users_cache = User.objects.filter(username__iexact=username_or_email)
-            if not len(self.users_cache):
+            try:
+                user = User.objects.get(username__iexact=username_or_email)
+            except User.DoesNotExist:
                 raise forms.ValidationError(self.error_messages['unknown_username'])
-            if not any(user.is_active for user in self.users_cache):
+            if not user.is_active:
                 raise forms.ValidationError(self.error_messages['unknown_username'])
-            if any(user.has_usable_password() for user in self.users_cache):
+            if not user.has_usable_password():
                 raise forms.ValidationError(self.error_messages['unusable_username'])
             return username_or_email
 

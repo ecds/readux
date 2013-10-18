@@ -72,8 +72,9 @@ def tobin(deci_num, len=32):
 
 def is_valid_email(email):
     """ Validates emails to ensure they follow the <name>@domain[.extenion] patterns """
+
     try:
-        validate_email("foo.bar@baz.qux")
+        validate_email(email)
         return True
     except ValidationError:
         return False

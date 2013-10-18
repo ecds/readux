@@ -58,7 +58,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 # Authentication backend
 #######################################
 AUTHENTICATION_BACKENDS = [
-    # 'userware.backends.ModelBackend',
+    'userware.backends.ModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 

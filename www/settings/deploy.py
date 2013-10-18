@@ -177,7 +177,8 @@ SITE_TITLE = 'Western Influenced South Asian Content Hub'
 SITE_KEYWORDS = "South Asian Video Content Culture Hub"
 SITE_DESCRIPTION = "A Social Hub for Western Influenced South Asian Content"
 
-# Email send key
+# Email send using Postmark key
+#######################################
 EMAIL_BACKEND = 'postmark.django_backend.EmailBackend'
 POSTMARK_SENDER = DEFAULT_FROM_EMAIL
 

@@ -15,6 +15,7 @@ USERWARE_RESERVED_USERNAMES = getattr(settings, 'USERWARE_RESERVED_USERNAMES', c
 LOGIN_REDIRECT_URL = getattr(settings, 'LOGIN_REDIRECT_URL', '/')
 LOGOUT_REDIRECT_URL = getattr(settings, 'LOGOUT_REDIRECT_URL', '/')
 
+# By default, Userware autoloads its template tags. Allow to turn autoload off via settings
 USERWARE_TEMPLATE_TAGS_AUTO_LOAD = getattr(settings, 'USERWARE_TEMPLATE_TAGS_AUTO_LOAD', True)
 
 USERWARE_SUPERUSER_ID = getattr(settings, 'USERWARE_SUPERUSER_ID', 139)

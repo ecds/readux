@@ -82,7 +82,7 @@ class UserLoginView(
         if self.request.session.test_cookie_worked():
             self.request.session.delete_test_cookie()
         messages.add_message(self.request, messages.SUCCESS, 
-                    _("You are now logged in as '%s'." % self.request.user.username))
+                    _("You are now logged in as") + " [{}]".format(self.request.user.username))
         return super(UserLoginView, self).form_valid(form)
  
     def get_context_data(self, **kwargs):
@@ -161,7 +161,7 @@ class UserDeleteView(
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, 
-                _("Account '%s' was permanently deleted. Sorry to see you go!" % self.request.user.username))
+                _("Account was permanently deleted. Sorry to see you go") + " [{}]".format(self.request.user.username))
         self.request.user.delete()
         return super(UserDeleteView, self).form_valid(form)
 
@@ -189,7 +189,7 @@ class UserSwitchOnView(
     def form_valid(self, form):
         switched_username = form.cleaned_data['switched_username']
         messages.add_message(self.request, messages.SUCCESS, 
-                            _("switched to user '%s'" % switched_username))
+                            _("switched to user") +" [{}]".format(switched_username))
         self.request.session['switched_username'] = switched_username
         user_switched_on.send(sender=self.request.user, switched_username=form.cleaned_data['switched_username'])
         return super(UserSwitchOnView, self).form_valid(form)

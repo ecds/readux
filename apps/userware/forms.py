@@ -18,28 +18,34 @@ from utils import get_user_by_username_or_email
 import defaults
 
 class UserCreationForm(CleanSpacesMixin, DjangoUserCreationForm):
-    """A form to create a user based on a unique email and a verified password """
+    """ Customized User Creation Form """
 
     required_css_class = 'required_field'
     pass_len = defaults.USERWARE_PASSWORD_MIN_LENGTH
+    custom_error_messages = {
+        'invalid_username': _("Username may only contain alphanumeric characters "
+                              "or dashes and cannot begin or end with a dash. (maximum 30 characters)"),
+        'duplicate_username': _("A user with that username already exists."),
+        'duplicate_email': _("A user with that email already exists."),
+        'password_too_short': _("Password too short! minimum length is") +" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH),
+    }
     
     username = forms.RegexField(
-        label=_("Username"), min_length=3, max_length=30, regex=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$",
-        help_text=_("Username may only contain alphanumeric or dashes "
-                    "and cannot begin or end with a dash"),
-        error_messages={
-            'invalid': _("Username may only contain alphanumeric characters "
-                    " or dashes and cannot begin or end with a dash. (maximum 30 characters)")})
+        label=_("Username"),
+        min_length=defaults.USERWARE_USERNAME_MIN_LENGTH,
+        max_length=defaults.USERWARE_USERNAME_MAX_LENGTH,
+        regex=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$",
+        help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash"),
+        error_messages={'invalid': custom_error_messages['invalid_username']},
+    )
 
     email = forms.EmailField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(UserCreationForm, self).__init__(*args, **kwargs)
-        self.error_messages['duplicate_email'] = _("A user with that email already exists.")
         self.fields['email'].help_text = _("A valid email address")
-        self.fields['password1'].help_text = _("Password must be minimum of %s characters" % self.pass_len)
+        self.fields['new_password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
         self.fields.keyOrder = ['username','email', 'password1', 'password2']
-
 
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -48,7 +54,7 @@ class UserCreationForm(CleanSpacesMixin, DjangoUserCreationForm):
                 User.objects.get(username__iexact=username)
             except User.DoesNotExist:
                 return username
-        raise forms.ValidationError(self.error_messages['duplicate_username'])
+        raise forms.ValidationError(self.custom_error_messages['duplicate_username'])
 
     def clean_email(self):
         email = self.cleaned_data["email"]
@@ -56,25 +62,34 @@ class UserCreationForm(CleanSpacesMixin, DjangoUserCreationForm):
             User.objects.get(email__iexact=email)
         except User.DoesNotExist:
             return email
-        raise forms.ValidationError(self.error_messages['duplicate_email'])
+        raise forms.ValidationError(self.custom_error_messages['duplicate_email'])
 
     def clean_password2(self):
         password2 = super(UserCreationForm, self).clean_password2()
         if len(password2) < self.pass_len:
-            raise forms.ValidationError(_("Password too short! minimum length is ")+" [%d]" % self.pass_len)
+            raise forms.ValidationError(self.custom_error_messages['password_too_short'])
         return password2
 
 
 class UserChangeForm(CleanSpacesMixin, DjangoUserChangeForm):
+    """ Customized User Change Form """
+
     required_css_class = 'required_field'
+    custom_error_messages = {
+        'invalid_username': _("Username may only contain alphanumeric characters "
+                              "or dashes and cannot begin or end with a dash. (maximum 30 characters)"),
+        'duplicate_username': _("A user with that username already exists."),
+        'duplicate_email': _("A user with that email already exists."),
+    }
 
     username = forms.RegexField(
-        label=_("Username"), min_length=3, max_length=30, regex=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$",
-        help_text=_("Username may only contain alphanumeric or dashes "
-                    "and cannot begin or end with a dash"),
-        error_messages={
-            'invalid': _("Username may only contain alphanumeric characters "
-                    " or dashes and cannot begin or end with a dash. (maximum 30 characters)")})
+        label=_("Username"),
+        min_length=defaults.USERWARE_USERNAME_MIN_LENGTH,
+        max_length=defaults.USERWARE_USERNAME_MAX_LENGTH,
+        regex=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$",
+        help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash"),
+        error_messages={'invalid': custom_error_messages['invalid_username']},
+    )
 
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -82,39 +97,39 @@ class UserChangeForm(CleanSpacesMixin, DjangoUserChangeForm):
             users = User.objects.filter(username__iexact=username).exclude(id=self.instance.id)
             if not users:
                 return username
-        raise forms.ValidationError(_("A user with that username already exists."))
+        raise forms.ValidationError(self.custom_error_messages['duplicate_username'])
 
     def clean_email(self):        
         email = self.cleaned_data["email"]
         users = User.objects.filter(email__iexact=email).exclude(id=self.instance.id)
         if users:
-            raise forms.ValidationError(_("A user with that email already exists."))
-        return email.lower()
+            raise forms.ValidationError(self.custom_error_messages['duplicate_email'])
+        return email
 
 
 class UserAuthenticationForm(CleanSpacesMixin, DjangoAuthenticationForm):
-    """Customized authentication form"""
+    """ Customized authentication form """
 
     required_css_class = 'required_field'
 
     def __init__(self, *args, **kwargs):
         super(UserAuthenticationForm, self).__init__(*args, **kwargs)
-        self.error_messages['invalid_login'] = _("Please enter your account username or email address.")
+        self.error_messages['invalid_login'] = _("Please enter your username or email address.")
         self.fields['username'].label = "Username or Email"
-        self.fields['username'].help_text = "Enter your account's username or email address"
+        self.fields['username'].help_text = "Enter your username or email address"
 
 
 class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
-    """Customized password reset form"""
+    """ Customized password reset form """
 
     required_css_class = 'required_field'
-    error_messages = {
+    custom_error_messages = {
         'unknown_email': _("That email address doesn't have an associated "
-                     "user account or doesn't exist."),
+                     "user account. Are you registered?"),
         'unusable_email': _("The user account associated with this email "
                       "address cannot reset the password."),
         'unknown_username': _("That username doesn't have an associated "
-                     "user account. Are you sure you've registered?"),
+                     "user account. Are you registered?"),
         'unusable_username': _("The user account associated with this username "
                       "address cannot reset the password."),
     }
@@ -128,51 +143,52 @@ class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
     )
 
     def clean_email(self):
-        """
-        Validates that an active user exists with the given username / email address.
-        """
+        """ Validates that an active user exists with the given username / email address """
 
         username_or_email = self.cleaned_data["email"]
         if is_valid_email(username_or_email):
             try:
                 user = User.objects.get(email__iexact=username_or_email)
             except User.DoesNotExist:
-                raise forms.ValidationError(self.error_messages['unknown_email'])
+                raise forms.ValidationError(self.custom_error_messages['unknown_email'])
             if not user.is_active:
-                raise forms.ValidationError(self.error_messages['unknown_email'])
+                raise forms.ValidationError(self.custom_error_messages['unknown_email'])
             if not user.has_usable_password():
-                raise forms.ValidationError(self.error_messages['unusable_email'])
-            return username_or_email
+                raise forms.ValidationError(self.custom_error_messages['unusable_email'])
         else:
             try:
                 user = User.objects.get(username__iexact=username_or_email)
             except User.DoesNotExist:
-                raise forms.ValidationError(self.error_messages['unknown_username'])
+                raise forms.ValidationError(self.custom_error_messages['unknown_username'])
             if not user.is_active:
-                raise forms.ValidationError(self.error_messages['unknown_username'])
+                raise forms.ValidationError(self.custom_error_messages['unknown_username'])
             if not user.has_usable_password():
-                raise forms.ValidationError(self.error_messages['unusable_username'])
-            return user.email
+                raise forms.ValidationError(self.custom_error_messages['unusable_username'])
+
+        return user.email
 
 
 class UserPasswordChangeForm(CleanSpacesMixin, DjangoPasswordChangeForm):
     """Customized password change form"""
 
     required_css_class = 'required_field'
-    pass_len = defaults.USERWARE_PASSWORD_MIN_LENGTH
+    custom_error_messages = {
+        'password_too_short': _("Password too short! minimum length is") +" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH),
+        'password_same_as_before': _("New password is too similar to the old password. Please choose a different password."),
+    }
 
     def __init__(self, *args, **kwargs):
         super(UserPasswordChangeForm, self).__init__(*args, **kwargs)
         self.fields['old_password'].label = _("Current Password")
-        self.fields['old_password'].help_text = _("Changing your password will log you out of all of your other sessions")
-        self.fields['new_password1'].help_text = _("Password must be minimum of %s characters" % self.pass_len)
+        self.fields['old_password'].help_text = _("Changing your password will log you out of all your other sessions")
+        self.fields['new_password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
 
     def clean_new_password2(self):
         new_password2 = super(UserPasswordChangeForm, self).clean_new_password2()
-        if len(new_password2) < self.pass_len:
-            raise forms.ValidationError(_("Password too short! minimum length is ")+" [%d]" % self.pass_len)
+        if len(new_password2) < defaults.USERWARE_PASSWORD_MIN_LENGTH:
+            raise forms.ValidationError(self.custom_error_messages['password_too_short'])
         if self.user.check_password(new_password2):
-            raise forms.ValidationError(_("New password is too similar to the old password. Please choose a different password."))
+            raise forms.ValidationError(self.custom_error_messages['password_same_as_before'])
         return new_password2
 
 
@@ -180,20 +196,22 @@ class UserSetPasswordForm(CleanSpacesMixin, DjangoSetPasswordForm):
     """ Customized password reset form """
 
     required_css_class = 'required_field'
-    pass_len = defaults.USERWARE_PASSWORD_MIN_LENGTH
+    custom_error_messages = {
+        'password_too_short': _("Password too short! minimum length is") +" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH),
+        'password_same_as_before': _("New password is too similar to the old password. Please choose a different password."),
+    }
 
     def __init__(self, user, *args, **kwargs):
         super(UserSetPasswordForm, self).__init__(user, *args, **kwargs)
-        self.fields['new_password1'].help_text = _("Password must be minimum of %s characters" % self.pass_len)
+        self.fields['new_password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
         self.fields['new_password2'].help_text = _("Resetting your password will log you out of all of your other sessions")
 
     def clean_new_password2(self):
         new_password2 = super(UserSetPasswordForm, self).clean_new_password2()
-        if len(new_password2) < self.pass_len:
-            raise forms.ValidationError(_("Password too short! minimum length is ")+" [%d]" % self.pass_len)
+        if len(new_password2) < defaults.USERWARE_PASSWORD_MIN_LENGTH:
+            raise forms.ValidationError(self.custom_error_messages['password_too_short'])
         if self.user.check_password(new_password2):
-            raise forms.ValidationError(_("New password is too similar to the old password. Please choose a different password."))
-        force_logout(self.user)
+            raise forms.ValidationError(self.custom_error_messages['password_same_as_before'])
         return new_password2
 
 
@@ -223,7 +241,7 @@ class UserDeletionForm(CleanSpacesMixin, forms.Form):
         except:
             pass
         if self.user != user:
-            raise forms.ValidationError(_("Invalid username. '%s' is not your username" % username))
+            raise forms.ValidationError(_("Invalid username. Your username is not") + " [{}]".format(username))
         return username
 
     def clean_password(self):

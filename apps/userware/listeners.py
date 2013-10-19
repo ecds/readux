@@ -43,7 +43,7 @@ def _create_superuser(username, email, password):
             user.is_superuser = True
             user.save()
             action = "Created" if created else "Updated"
-            print >> sys.stderr, "%s Superuser: [username=%s, email=%s, id=%d]" % (action, username, email, user.id)
+            print >> sys.stderr, "{} Superuser: [username={}, email={}, id={}]".format(action, username, email, user.id)
 
 
 # run only after the completion of syncdb

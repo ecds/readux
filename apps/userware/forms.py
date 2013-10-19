@@ -99,9 +99,9 @@ class UserAuthenticationForm(CleanSpacesMixin, DjangoAuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super(UserAuthenticationForm, self).__init__(*args, **kwargs)
-        self.error_messages['invalid_login'] = _("Please enter your account username or primary email address.")
+        self.error_messages['invalid_login'] = _("Please enter your account username or email address.")
         self.fields['username'].label = "Username or Email"
-        self.fields['username'].help_text = "Enter your account's username or primary email address"
+        self.fields['username'].help_text = "Enter your account's username or email address"
 
 
 class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
@@ -110,7 +110,7 @@ class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
     required_css_class = 'required_field'
     error_messages = {
         'unknown_email': _("That email address doesn't have an associated "
-                     "user account or is not a primary email address."),
+                     "user account or doesn't exist."),
         'unusable_email': _("The user account associated with this email "
                       "address cannot reset the password."),
         'unknown_username': _("That username doesn't have an associated "
@@ -123,7 +123,7 @@ class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
     email = forms.CharField(
             label=_("Username or Email"), 
             max_length=254,
-            help_text = _("Enter your username or primary email address to receive "
+            help_text = _("Enter your username or email address to receive "
                           "instructions on how to reset your password.")
     )
 
@@ -239,7 +239,7 @@ class UserSwitchForm(CleanSpacesMixin, forms.Form):
     required_css_class = 'required_field'
 
     switched_username = forms.CharField(max_length=30, label=_('Username'),
-                    help_text=_("Enter the username or the primary email address of the account you want to switch to"))
+                    help_text=_("Enter the username or the email address of the account you want to switch to"))
 
     def clean_switched_username(self):
         username = self.cleaned_data['switched_username']

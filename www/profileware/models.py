@@ -92,21 +92,27 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
 
     def get_absolute_url(self):
         """ User's URI """
-        return "/%s/" % (self.username)
+
+        return "/{}/".format(self.username)
 
     def get_full_name(self):
         """ User's first and last name with space between """
+
         return u'{} {}'.format(self.first_name, self.last_name).strip()
 
     def get_short_name(self):
         """ User's first name """
+
         return self.first_name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """ Sends an email to this User """
+
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def save(self, *args, **kwargs):
+        """ Overwitten save to do extra starff """
+
         self.slug = slugify(self.get_full_name())
         super(ExtendedUser, self).save(*args, **kwargs)
 

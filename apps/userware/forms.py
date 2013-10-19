@@ -17,7 +17,7 @@ from utils import force_logout
 from utils import get_user_by_username_or_email
 import defaults
 
-class UserCreationForm(DjangoUserCreationForm):
+class UserCreationForm(CleanSpacesMixin, DjangoUserCreationForm):
     """A form to create a user based on a unique email and a verified password """
 
     required_css_class = 'required_field'
@@ -65,7 +65,7 @@ class UserCreationForm(DjangoUserCreationForm):
         return password2
 
 
-class UserChangeForm(DjangoUserChangeForm):
+class UserChangeForm(CleanSpacesMixin, DjangoUserChangeForm):
     required_css_class = 'required_field'
 
     username = forms.RegexField(
@@ -92,7 +92,7 @@ class UserChangeForm(DjangoUserChangeForm):
         return email.lower()
 
 
-class UserAuthenticationForm(DjangoAuthenticationForm):
+class UserAuthenticationForm(CleanSpacesMixin, DjangoAuthenticationForm):
     """Customized authentication form"""
 
     required_css_class = 'required_field'
@@ -104,7 +104,7 @@ class UserAuthenticationForm(DjangoAuthenticationForm):
         self.fields['username'].help_text = "Enter your account's username or primary email address"
 
 
-class UserPasswordResetForm(DjangoPasswordResetForm):
+class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
     """Customized password reset form"""
 
     required_css_class = 'required_field'
@@ -152,10 +152,10 @@ class UserPasswordResetForm(DjangoPasswordResetForm):
                 raise forms.ValidationError(self.error_messages['unknown_username'])
             if not user.has_usable_password():
                 raise forms.ValidationError(self.error_messages['unusable_username'])
-            return username_or_email
+            return user.email
 
 
-class UserPasswordChangeForm(DjangoPasswordChangeForm):
+class UserPasswordChangeForm(CleanSpacesMixin, DjangoPasswordChangeForm):
     """Customized password change form"""
 
     required_css_class = 'required_field'
@@ -176,7 +176,7 @@ class UserPasswordChangeForm(DjangoPasswordChangeForm):
         return new_password2
 
 
-class UserSetPasswordForm(DjangoSetPasswordForm):
+class UserSetPasswordForm(CleanSpacesMixin, DjangoSetPasswordForm):
     """ Customized password reset form """
 
     required_css_class = 'required_field'

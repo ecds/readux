@@ -173,9 +173,9 @@ SITE_OBJECTS_INFO_DICT = {
 SITE_ID = 1
 
 # Site Specific Info - What does your site do?
-SITE_TITLE = 'Western Influenced South Asian Content Hub'
-SITE_KEYWORDS = "South Asian Video Content Culture Hub"
-SITE_DESCRIPTION = "A Social Hub for Western Influenced South Asian Content"
+SITE_TITLE = 'Djangoware.org is simple site build with the Django framework'
+SITE_KEYWORDS = "Django Framework Python Site"
+SITE_DESCRIPTION = "A site that is used as a live example of Django in action"
 
 # Email send using Postmark key
 #######################################

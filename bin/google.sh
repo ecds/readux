@@ -6,7 +6,7 @@
 #######################################################################################
 
 PROJ_NAME=djangoware
-DOMAIN_EXTENSION=.com
+DOMAIN_EXTENSION=.org
 PROJ_DOMAIN=$PROJ_NAME$DOMAIN_EXTENSION
 source /srv/www/$PROJ_DOMAIN/pri/venv/bin/activate
 cd /srv/www/$PROJ_DOMAIN/pri/venv/webroot

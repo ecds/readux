@@ -13,6 +13,7 @@ DEBUG_ENABLE_COMMAND_EXTENSSION = True
 DEBUG_LOGGING_ONLY = True
 DEBUG_CONSOLE_LOG_LEVEL = 'ERROR'
 DEBUG_ENABLE_LOCAL_CACHE_BACKEND = False
+DEBUG_USE_LOCAL_SMTP = False
 DEV_IP_ADDRESS = '192.168.211.130'
 
 # quick test of project with sqlite3
@@ -158,13 +159,18 @@ SITE_OBJECTS_INFO_DICT = {
 SITE_ID = 2
 SITE_PROTOCOL = 'http'
 
-# Admin User Overwrite
+# Admin User Overwrite (warning: not to be used in production)
 #######################################
 USERWARE_SUPERUSER_PASSWORD = 'hello'
 
 # Always load a fresh copy of assets during the development
 #######################################
 FRESHLY_ASSETS_ALWAYS_FRESH = True
+
+# Email send using Postmark key
+#######################################
+if DEBUG_USE_LOCAL_SMTP:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
 

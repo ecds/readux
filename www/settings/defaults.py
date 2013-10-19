@@ -13,7 +13,7 @@ SERVER_ROOT_DIR = '/srv/www/'
 # Domain / Project Name
 #######################################
 PROJ_NAME = 'Djangoware'
-PROJ_DOMAIN = PROJ_NAME.lower()+'.com'
+PROJ_DOMAIN = PROJ_NAME.lower()+'.org'
 ALLOWED_HOSTS = [PROJ_DOMAIN,]
 
 # Path to the main project containing PROJ_SITE_NAME
@@ -59,7 +59,7 @@ try:
 except:
     warnings.warn("Failed to load secrets")
     sys.exit(0)
-    
+
 USERWARE_SUPERUSER_USERNAME = str(SEEKRETS.get('superuser_username', ''))
 USERWARE_SUPERUSER_EMAIL = str(SEEKRETS.get('superuser_email', ''))
 USERWARE_SUPERUSER_PASSWORD = str(SEEKRETS.get('superuser_password', ''))

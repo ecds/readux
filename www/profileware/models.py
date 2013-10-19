@@ -111,7 +111,7 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def save(self, *args, **kwargs):
-        """ Overwitten save to do extra starff """
+        """ Overwritten to do extra starff. Note: Is ignored by South migration """
 
         self.slug = slugify(self.get_full_name())
         super(ExtendedUser, self).save(*args, **kwargs)

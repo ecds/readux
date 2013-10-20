@@ -44,7 +44,7 @@ class UserCreationForm(CleanSpacesMixin, DjangoUserCreationForm):
     def __init__(self, *args, **kwargs):
         super(UserCreationForm, self).__init__(*args, **kwargs)
         self.fields['email'].help_text = _("A valid email address")
-        self.fields['new_password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
+        self.fields['password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
         self.fields.keyOrder = ['username','email', 'password1', 'password2']
 
     def clean_username(self):

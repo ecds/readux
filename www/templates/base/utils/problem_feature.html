@@ -1,5 +1,19 @@
 <span class="">
-    <a rel="tooltip" data-placement="bottom" data-original-title="Report Problems Request Features" class="send_page_title info" href="{% url 'contact_form' %}">
+    <a rel="tooltip" data-placement="bottom" data-original-title="Report Problems Request Features" 
+    class="send_page_title info" href="{% url 'contact_form' %}">
         <i class="icon-flag attention"></i>
     </a>
 </span>
+
+<script>
+$(document).ready(function(){
+    // Page title inserter for contact form
+    /////////////////////////////////////////
+    $('a.send_page_title').click(function () {
+        var current_title = $(document).attr('title');
+        var link = $(this).attr("href") + "?page_title=" + encodeURI(current_title);
+        document.location = link;
+        return false;
+    });
+});
+</script>

@@ -1,7 +1,8 @@
 
 USERWARE_RESERVED_USERNAMES = list(
     # company names
-    'company companies github twitter facebook google apple msn cnn bbc flickr '
+    'company companies github twitter facebook google apple msn cnn bbc flickr  '
+    'instagram linkedin '
 
     # Country TLDs ISO2
     'ac ad ae af ag ai al am an ao aq ar as at au aw ax az ba bb bd be bf bg bh '
@@ -56,7 +57,7 @@ USERWARE_RESERVED_USERNAMES = list(
     'complaints information imap forum weblog team forum features discussion skills tags '
     'ajax comet poll polling filter zoom machinetags django people profiles profile person '
     'navigate nav browse  static css img javascript js code flags flag country countries'
-    'thereyet  region place places photos owner upload geocode geocoding openids  recover '
+    'thereyet region place places photos owner upload geocode geocoding openids  recover '
     'lost reports report  upcoming mashups recent irc bulletin bulletins messages message admin '
     'newsfeed events active forum faq you me us his her theirs yours your avatar gravatar'
     

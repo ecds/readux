@@ -1239,6 +1239,9 @@ label {
 
 #bd_header_box .dropdown-menu {
     min-width: 175px;
+    margin-right: -5px;
+    border: 2px solid black;
+}
 }
 
 .search_form_horizontal ul.errorlist {

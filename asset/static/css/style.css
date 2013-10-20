@@ -432,6 +432,7 @@ label {
 
 .form_alternate_suggestions {
     vertical-align: middle;
+    margin-top: 9px;
 }
 
 .form_alternate_suggestions a:before {
@@ -1236,6 +1237,9 @@ label {
     height: 140px;
 }
 
+#bd_header_box .dropdown-menu {
+    min-width: 175px;
+}
 
 .search_form_horizontal ul.errorlist {
     display: none;

@@ -17,6 +17,15 @@ USERNAME_PATTERN = re.compile('^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$')
 class ExtendedUser(AbstractBaseUser, PermissionsMixin):
     """ A drop-in replacement of Django User class that allows filed extensions """
 
+    PROFILEWARE_EMAIL_PRIVACY_PUBLIC = 1
+    PROFILEWARE_EMAIL_PRIVACY_MEMBERS = 2
+    PROFILEWARE_EMAIL_PRIVACY_PRIVATE = 3
+    PROFILEWARE_EMAIL_PRIVACY_OPTIONS = (
+        (PROFILEWARE_EMAIL_PRIVACY_PUBLIC, _('Anyone can see my email')),
+        (PROFILEWARE_EMAIL_PRIVACY_MEMBERS, _('Members can see my email')),
+        (PROFILEWARE_EMAIL_PRIVACY_PRIVATE, _('No one can see my email')),
+    )
+
     username = models.CharField(
             _('username'),
             max_length=30,
@@ -78,6 +87,25 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
         blank=True, 
         validators=[MaxLengthValidator(1000)],
         help_text = _("Tell others a little about youself. (highly recommended)")
+    )
+
+    email_privacy = models.IntegerField(
+        _('Email Privacy'), 
+        choices=PROFILEWARE_EMAIL_PRIVACY_OPTIONS, 
+        default=PROFILEWARE_EMAIL_PRIVACY_MEMBERS,
+        help_text = _("Your email privacy setting.")
+    )
+
+    is_public = models.BooleanField(
+        _('Public Profile'),
+        default=True,
+        help_text = _("Your profile status. (only public profiles are viewable by others)")
+    )
+
+    is_search_engine_friendly = models.BooleanField(
+        _('Search Engine Friendly'),
+        default=True,
+        help_text = _("Whether to allow search engines see your profile. (ex: Google, Bing, ...)")
     )
 
     ########### Add new fields above this line #############

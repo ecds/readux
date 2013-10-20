@@ -13,9 +13,9 @@ def account_settings_menu(request):
     """
     NAV_MENU = {
         "100": {
-            "name": "Profile",
-            "reversible": "",
-            "url": "/",
+            "name": "Personal Details",
+            "reversible": "profileware_personal_update",
+            "url": "",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,
@@ -24,9 +24,9 @@ def account_settings_menu(request):
             'sub_menu': None,
         },
         "240": {
-            "name": "Preferences",
-            "reversible": "",
-            "url": "/",
+            "name": "Account Preferences",
+            "reversible": "profileware_preferences_update",
+            "url": "",
             "pre_login_visible": False,
             "post_login_visible": True,
             "superuser_required": False,

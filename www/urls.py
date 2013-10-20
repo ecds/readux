@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
 # User related urls
 urlpatterns += patterns('',
+    url(r'^account/settings/', include('profileware.urls')),
     url(r'^account/', include('userware.urls')),
 )
 

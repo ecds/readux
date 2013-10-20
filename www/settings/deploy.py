@@ -71,7 +71,7 @@ CACHES = {
     }
 }
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
-CACHE_MIDDLEWARE_KEY_PREFIX = '{}:'.format(PROJ_NAME.lower())
+CACHE_MIDDLEWARE_KEY_PREFIX = '{}:'.format(SITE_PROJ_NAME.lower())
 CACHE_MIDDLEWARE_SECONDS = 15*60
 
 
@@ -105,7 +105,7 @@ INSTALLED_APPS = [
     'profileware',
 
     # 'signupware',
-    # 'contactware',
+    'contactware',
 
 
     # last app
@@ -154,9 +154,9 @@ for index, app in enumerate(INSTALLED_APPS, start=0):
 # Static / Media URL
 #######################################
 # URL to the static assets
-STATIC_URL = '//{}/s/'.format(PROJ_DOMAIN)
+STATIC_URL = '//{}/s/'.format(SITE_DOMAIN_NAME)
 # URL to the user uploaded assets
-MEDIA_URL = '//{}/m/'.format(PROJ_DOMAIN)
+MEDIA_URL = '//{}/m/'.format(SITE_DOMAIN_NAME)
 # Bump this up if you have changed a static file with .xyz ext
 FRESHLY_ASSETS_VERSION = '0000'
 
@@ -166,8 +166,8 @@ FRESHLY_ASSETS_VERSION = '0000'
 # site info (you need at least one site)
 SITE_OBJECTS_INFO_DICT = {
     '1': {
-        'name': PROJ_NAME,
-        'domain': PROJ_DOMAIN
+        'name': SITE_PROJ_NAME,
+        'domain': SITE_DOMAIN_NAME
     },
 }
 SITE_ID = 1

@@ -31,6 +31,8 @@ requests==2.0.0
 # You need to keep track of time? Let this app help you with your time manipulation needs.
 python-dateutil==2.1
 
+# You should localize all your events. So let's user timezone everywhere
+pytz==2013.7
 
 # Generic Stuff
 argparse==1.2.1

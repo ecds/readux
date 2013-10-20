@@ -12,9 +12,9 @@ SERVER_ROOT_DIR = '/srv/www/'
 
 # Domain / Project Name
 #######################################
-PROJ_NAME = 'Djangoware'
-PROJ_DOMAIN = PROJ_NAME.lower()+'.org'
-ALLOWED_HOSTS = [PROJ_DOMAIN,]
+SITE_PROJ_NAME = 'Djangoware'
+SITE_DOMAIN_NAME = SITE_PROJ_NAME.lower()+'.org'
+ALLOWED_HOSTS = [SITE_DOMAIN_NAME,]
 
 # Path to the main project containing PROJ_SITE_NAME
 #######################################
@@ -41,7 +41,7 @@ MEDIA_URL = '/m/'
 
 # Path to our secret file outside out project directory (not under this version control)
 #######################################
-SECRET_FILE = path.abspath(path.join(SERVER_ROOT_DIR, 'seekrets/{}/settings/seekrets.json'.format(PROJ_DOMAIN)))
+SECRET_FILE = path.abspath(path.join(SERVER_ROOT_DIR, 'seekrets/{}/settings/seekrets.json'.format(SITE_DOMAIN_NAME)))
 if not os.path.exists(SECRET_FILE):
     warnings.warn("Secret file not found")
     sys.exit(0)
@@ -84,14 +84,14 @@ USE_TZ = True
 #######################################
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
-DEFAULT_FROM_EMAIL = '%s <support@%s>' % (PROJ_NAME, PROJ_DOMAIN)
-EMAIL_SUBJECT_PREFIX = '[%s]' % PROJ_NAME
+DEFAULT_FROM_EMAIL = '%s <support@%s>' % (SITE_PROJ_NAME, SITE_DOMAIN_NAME)
+EMAIL_SUBJECT_PREFIX = '[%s]' % SITE_PROJ_NAME
 # Server error messges are sent by this email
-SERVER_EMAIL = 'support@{}'.format(PROJ_DOMAIN)
+SERVER_EMAIL = 'support@{}'.format(SITE_DOMAIN_NAME)
 # System erros (5XX) are sent to this address
-ADMINS = (('Server Admin', 'support@{}'.format(PROJ_DOMAIN)),)
+ADMINS = (('Server Admin', 'support@{}'.format(SITE_DOMAIN_NAME)),)
 # Page Not Found (404) errors are sent to this address
-MANAGERS = (('Site Admin', 'support@{}'.format(PROJ_DOMAIN)),)
+MANAGERS = (('Site Admin', 'support@{}'.format(SITE_DOMAIN_NAME)),)
 
 # Cache Related Stuff
 #######################################
@@ -107,13 +107,13 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': path.abspath(path.join(PROJ_ROOT_DIR, PROJ_NAME.lower()+'_db')),
+        'NAME': path.abspath(path.join(PROJ_ROOT_DIR, SITE_PROJ_NAME.lower()+'_db')),
     }
 }
 
 ######################################
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-SESSION_COOKIE_DOMAIN = '.' + PROJ_DOMAIN
+SESSION_COOKIE_DOMAIN = '.' + SITE_DOMAIN_NAME
 SESSION_COOKIE_HTTPONLY = True
 SESSION_IDLE_TIMEOUT = 60 * 60 * 24
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
@@ -133,7 +133,7 @@ if SEND_BROKEN_LINK_EMAILS:
 
 # Basic logging
 #######################################
-SITE_LOG_FILE = path.abspath(path.join(SERVER_ROOT_DIR, '{}/log/{}.log'.format(PROJ_DOMAIN, PROJ_DOMAIN)))
+SITE_LOG_FILE = path.abspath(path.join(SERVER_ROOT_DIR, '{}/log/{}.log'.format(SITE_DOMAIN_NAME, SITE_DOMAIN_NAME)))
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,

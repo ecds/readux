@@ -10,7 +10,7 @@ def contextify(request):
     """ Bring few goodies into the context. """
 
     ctx = {
-        'SITE_ORG': defaults.SITE_ORG,
+        'SITE_ORGANIZATION': defaults.SITE_ORGANIZATION,
         'SITE_NAME': defaults.SITE_NAME,
         'SITE_DOMAIN': defaults.SITE_DOMAIN,
         'SITE_PROTOCOL': defaults.SITE_PROTOCOL or (request.is_secure() and 'https' or 'http'),

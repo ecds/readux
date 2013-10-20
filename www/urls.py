@@ -18,8 +18,12 @@ urlpatterns = patterns('',
 
 # User related urls
 urlpatterns += patterns('',
-
     url(r'^account/', include('userware.urls')),
+)
+
+# Communication related urls
+urlpatterns += patterns('',
+    url(r'^contact/', include('contactware.urls')),
 )
 
 # Flatpages  urls

@@ -10,9 +10,9 @@ SITE_COMMON_DOWNLOADABLE_STATIC_URL = getattr(settings, 'SITE_COMMON_DOWNLOADABL
 SITE_COMMON_STREAMING_STATIC_URL = getattr(settings, 'SITE_COMMON_STREAMING_STATIC_URL', '')
 
 # Site Specific Info
-SITE_ORG = getattr(settings, 'SITE_ORG', 'MyOrg')
-SITE_NAME = getattr(settings, 'PROJ_NAME', 'MySite')
-SITE_DOMAIN = getattr(settings, 'PROJ_DOMAIN', 'mysite.com')
+SITE_ORGANIZATION = getattr(settings, 'SITE_ORGANIZATION', 'MyOrg')
+SITE_NAME = getattr(settings, 'SITE_PROJ_NAME', 'MySite')
+SITE_DOMAIN = getattr(settings, 'SITE_DOMAIN_NAME', 'mysite.com')
 SITE_PROTOCOL = getattr(settings, 'SITE_PROTOCOL', '')
 SITE_TITLE = getattr(settings, 'SITE_TITLE', SITE_DOMAIN.upper())
 SITE_KEYWORDS = getattr(settings, 'SITE_KEYWORDS', 'MyOrg MySite Related Keywords')

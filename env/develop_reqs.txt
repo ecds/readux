@@ -23,6 +23,7 @@ psycopg2==2.5.1
 python-memcached==1.53
 python-postmark==0.3.2
 python-dateutil==2.1
+pytz==2013.7
 requests==2.0.0
 six==1.4.1
 wsgiref==0.1.2

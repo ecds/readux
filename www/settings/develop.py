@@ -22,7 +22,7 @@ if DEBUG_USE_SQLITE3:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': path.abspath(path.join(PROJ_ROOT_DIR, PROJ_NAME.lower()+'_db')),
+            'NAME': path.abspath(path.join(PROJ_ROOT_DIR, SITE_PROJ_NAME.lower()+'_db')),
         }
     }
 
@@ -148,8 +148,8 @@ MEDIA_URL = '/m/'
 #######################################
 SITE_OBJECTS_INFO_DICT = {
     '1': {
-        'name': PROJ_NAME,
-        'domain': PROJ_DOMAIN
+        'name': SITE_PROJ_NAME,
+        'domain': SITE_DOMAIN_NAME
     },
     '2':{
         'name': 'Development',  # dev  (optional)

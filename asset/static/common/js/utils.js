@@ -1,3 +1,7 @@
+//__author__ = 'Val Neekman [neekware.com]'
+//__description__ = 'This is a very site specific collection of JS utils.'
+//__version__ = '0.0.1'
+
 $(document).ready(function(){
 
     jQuery.fn.hasAttr = function(name) {  

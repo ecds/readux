@@ -115,10 +115,10 @@ INSTALLED_APPS = [
 
 # Account activities
 #######################################
-LOGIN_REDIRECT_URL = '/user/settings/profile/'
+LOGIN_REDIRECT_URL = '/account/settings/personal/'
 LOGOUT_REDIRECT_URL = '/'
-LOGIN_URL = '/user/settings/login/'
-LOGOUT_URL = '/user/settings/logout/'
+LOGIN_URL = '/account/login/'
+LOGOUT_URL = '/account/logout/'
 
 # Custom User
 #######################################
@@ -173,7 +173,7 @@ SITE_OBJECTS_INFO_DICT = {
 SITE_ID = 1
 
 # Site Specific Info - What does your site do?
-SITE_TITLE = 'Djangoware.org is simple site build with the Django framework'
+SITE_TITLE = 'Powered by Django'
 SITE_KEYWORDS = "Django Framework Python Site"
 SITE_DESCRIPTION = "A site that is used as a live example of Django in action"
 

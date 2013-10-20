@@ -1,4 +1,3 @@
-from django.contrib.auth import views as auth_views
 from forms import UserPasswordResetForm
 from forms import UserSetPasswordForm
 from django.conf.urls import patterns, include, url
@@ -40,7 +39,7 @@ urlpatterns = patterns('',
     # user forgot his/her password again. ask for username or email and send a reset link
     url(
         r'^password/reset/$',
-        auth_views.password_reset,
+        'django.contrib.auth.views.password_reset',
         {
             'password_reset_form': UserPasswordResetForm,
             'template_name': 'user/password_reset_form.html',
@@ -54,7 +53,7 @@ urlpatterns = patterns('',
     # an email has been sent to the provided email address with the link to reset password
     url(
         r'^password/reset/done/$',
-        auth_views.password_reset_done,
+        'django.contrib.auth.views.password_reset_done',
         {
             'template_name': 'user/password_reset_done.html',
         },
@@ -63,11 +62,12 @@ urlpatterns = patterns('',
        
     # password reset link has been clicked on, forms allows for a new password and confirmation
     url(
-        r'^password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
-        auth_views.password_reset_confirm,
+        r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        'django.contrib.auth.views.password_reset_confirm',
         {
             'set_password_form': UserSetPasswordForm,
             'template_name': 'user/password_reset_confirm.html',
+            'post_reset_redirect': 'userware_password_reset_complete',
         },
         name='userware_password_reset_confirm',
     ),
@@ -75,7 +75,7 @@ urlpatterns = patterns('',
     # system has changed the password and redirect to this template for the final success message
     url(
         r'^password/reset/complete/$',
-        auth_views.password_reset_complete,
+        'django.contrib.auth.views.password_reset_complete',
         {
             'template_name': 'user/password_reset_complete.html',
         },

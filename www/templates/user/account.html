@@ -47,12 +47,5 @@
     </div>
 {% endif %}
 
-<div class="public_view_link">
-    {% if request.user.username %}
-        <a class="btn info" href="{% url 'member_profile_view' request.user.profile.username %}">view your public profile</a>
-    {% endif %}
-</div>
-
-
 {% endblock www_content_box_1 %}
 

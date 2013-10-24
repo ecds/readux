@@ -425,6 +425,25 @@ label {
     line-height: 17px;
 }
 
+.form-horizontal select {
+    width: auto;
+}
+
+.form-horizontal ul{
+    margin-top: -10px;
+}
+
+.form-horizontal li{
+    list-style: none;
+    margin-left: -23px;
+}
+
+.form-horizontal input[type="radio"],
+.form-horizontal input[type="checkbox"]
+{
+    margin: -3px 0 0;
+}
+
 .form_box_centered {
     width: 616px !important;
     margin-top: 50px !important;

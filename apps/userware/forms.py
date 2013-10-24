@@ -35,7 +35,7 @@ class UserCreationForm(CleanSpacesMixin, DjangoUserCreationForm):
         min_length=defaults.USERWARE_USERNAME_MIN_LENGTH,
         max_length=defaults.USERWARE_USERNAME_MAX_LENGTH,
         regex=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$",
-        help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash"),
+        help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash."),
         error_messages={'invalid': custom_error_messages['invalid_username']},
     )
 
@@ -87,7 +87,7 @@ class UserChangeForm(CleanSpacesMixin, DjangoUserChangeForm):
         min_length=defaults.USERWARE_USERNAME_MIN_LENGTH,
         max_length=defaults.USERWARE_USERNAME_MAX_LENGTH,
         regex=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$",
-        help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash"),
+        help_text=_("Username may only contain alphanumeric or dashes and cannot begin or end with a dash."),
         error_messages={'invalid': custom_error_messages['invalid_username']},
     )
 
@@ -116,7 +116,7 @@ class UserAuthenticationForm(CleanSpacesMixin, DjangoAuthenticationForm):
         super(UserAuthenticationForm, self).__init__(*args, **kwargs)
         self.error_messages['invalid_login'] = _("Please enter your username or email address.")
         self.fields['username'].label = "Username or Email"
-        self.fields['username'].help_text = "Enter your username or email address"
+        self.fields['username'].help_text = _("Enter your username or email address.")
 
 
 class UserPasswordResetForm(CleanSpacesMixin, DjangoPasswordResetForm):
@@ -177,11 +177,23 @@ class UserPasswordChangeForm(CleanSpacesMixin, DjangoPasswordChangeForm):
         'password_same_as_before': _("New password is too similar to the old password. Please choose a different password."),
     }
 
+    USERWARE_STAY_LOGGED_IN = 1
+    USERWARE_LOGOUT_OTHER_DEVICES = 2
+    LOGOUT_OPTIONS=[
+        (USERWARE_STAY_LOGGED_IN, _('Keep me logged in')),
+        (USERWARE_LOGOUT_OTHER_DEVICES, _('Log me out of other devices')),
+    ]
+
+    logout_options = forms.ChoiceField(
+        choices=LOGOUT_OPTIONS,
+    )
+
     def __init__(self, *args, **kwargs):
         super(UserPasswordChangeForm, self).__init__(*args, **kwargs)
         self.fields['old_password'].label = _("Current Password")
-        self.fields['old_password'].help_text = _("Changing your password will log you out of all your other sessions")
-        self.fields['new_password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
+        self.fields['old_password'].help_text = _("Please enter your current password.")
+        self.fields['new_password1'].help_text = _("Please enter your new password.  Minimum length is")+" [{}].".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
+        self.fields['new_password2'].help_text = _("Please confirm your new password.")
 
     def clean_new_password2(self):
         new_password2 = super(UserPasswordChangeForm, self).clean_new_password2()
@@ -197,7 +209,7 @@ class UserSetPasswordForm(CleanSpacesMixin, DjangoSetPasswordForm):
 
     required_css_class = 'required_field'
     custom_error_messages = {
-        'password_too_short': _("Password too short! minimum length is") +" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH),
+        'password_too_short': _("Password too short! minimum length is") +" [{}].".format(defaults.USERWARE_PASSWORD_MIN_LENGTH),
         'password_same_as_before': _("New password is too similar to the old password. Please choose a different password."),
     }
 
@@ -222,12 +234,12 @@ class UserDeletionForm(CleanSpacesMixin, forms.Form):
 
     username = forms.CharField(
             label=_("Username Confirmation"),
-            help_text=_("Please enter your username to confirm"))
+            help_text=_("Please enter your username to confirm."))
 
     password = forms.CharField(
             label=_("Password Confirmation"),
             widget=forms.PasswordInput,
-            help_text=_("Please enter your password to confirm"))
+            help_text=_("Please enter your password to confirm."))
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
@@ -241,7 +253,7 @@ class UserDeletionForm(CleanSpacesMixin, forms.Form):
         except:
             pass
         if self.user != user:
-            raise forms.ValidationError(_("Invalid username. Your username is not") + " [{}]".format(username))
+            raise forms.ValidationError(_("Invalid username. Your username is not") + " [{}].".format(username))
         return username
 
     def clean_password(self):
@@ -257,7 +269,7 @@ class UserSwitchForm(CleanSpacesMixin, forms.Form):
     required_css_class = 'required_field'
 
     switched_username = forms.CharField(max_length=30, label=_('Username'),
-                    help_text=_("Enter the username or the email address of the account you want to switch to"))
+                    help_text=_("Enter the username or the email address of the account you want to switch to."))
 
     def clean_switched_username(self):
         username = self.cleaned_data['switched_username']

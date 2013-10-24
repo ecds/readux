@@ -118,7 +118,7 @@ class UserChangePassword(
     template_name = 'user/password_change_form.html'
     message_text = {
         'success': _('Your password changed.'),
-        'warning': _('Changing your password will log you out of all of your other sessions.'),
+        'warning': _('To keep your account secure, we can log you out on all other devices.'),
     }
 
     def get_form_kwargs(self):
@@ -128,7 +128,8 @@ class UserChangePassword(
 
     def form_valid(self, form):
         form.save()
-        force_logout(self.request.user, self.request)
+        if form.cleaned_data['logout_options'] == str(form.USERWARE_LOGOUT_OTHER_DEVICES):
+            force_logout(self.request.user, self.request)
         messages.add_message(self.request, messages.SUCCESS, self.message_text['success'])
         return super(UserChangePassword, self).form_valid(form)
 

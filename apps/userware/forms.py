@@ -216,7 +216,7 @@ class UserSetPasswordForm(CleanSpacesMixin, DjangoSetPasswordForm):
     def __init__(self, user, *args, **kwargs):
         super(UserSetPasswordForm, self).__init__(user, *args, **kwargs)
         self.fields['new_password1'].help_text = _("Password minimum length is")+" [{}]".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)
-        self.fields['new_password2'].help_text = _("For extra security, resetting your password will log you out on all other devices")
+        self.fields['new_password2'].help_text = _("For extra security, resetting your password will log you out of any other devices")
 
     def clean_new_password2(self):
         new_password2 = super(UserSetPasswordForm, self).clean_new_password2()

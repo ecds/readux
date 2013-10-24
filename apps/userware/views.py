@@ -118,7 +118,7 @@ class UserChangePassword(
     template_name = 'user/password_change_form.html'
     message_text = {
         'success': _('Your password changed.'),
-        'warning': _('To keep your account secure, we can log you out on all other devices.'),
+        'warning': _('To keep your account secure, we can log you out of any other devices.'),
     }
 
     def get_form_kwargs(self):

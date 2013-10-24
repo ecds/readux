@@ -81,7 +81,7 @@ urlpatterns = patterns('',
         },
         name='userware_password_reset_complete',
     ),
-    
+
     url(
         r'^',
         UserAccountView.as_view(),

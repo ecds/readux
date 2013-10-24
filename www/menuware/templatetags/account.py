@@ -35,7 +35,7 @@ def account_settings_menu(request):
             'sub_menu': None,
         },
         "300": {
-            "name": "Password Change",
+            "name": "Change Password",
             "reversible": "userware_password_change",
             "url": "",
             "pre_login_visible": False,

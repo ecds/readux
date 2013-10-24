@@ -177,19 +177,12 @@ class UserPasswordChangeForm(CleanSpacesMixin, DjangoPasswordChangeForm):
         'password_same_as_before': _("New password is too similar to the old password. Please choose a different password."),
     }
 
-    USERWARE_STAY_LOGGED_IN = 1
-    USERWARE_LOGOUT_OTHER_DEVICES = 2
-    LOGOUT_OPTIONS=[
-        (USERWARE_STAY_LOGGED_IN, _('Keep me logged in')),
-        (USERWARE_LOGOUT_OTHER_DEVICES, _('Log me out of other devices')),
-    ]
-
-    logout_options = forms.ChoiceField(
-        choices=LOGOUT_OPTIONS,
-    )
+    logout_other_sessions = forms.BooleanField()
 
     def __init__(self, *args, **kwargs):
         super(UserPasswordChangeForm, self).__init__(*args, **kwargs)
+        self.fields['logout_other_sessions'].label = _("Log me out of other devices")
+        self.fields['logout_other_sessions'].required = False
         self.fields['old_password'].label = _("Current Password")
         self.fields['old_password'].help_text = _("Please enter your current password.")
         self.fields['new_password1'].help_text = _("Please enter your new password.  Minimum length is")+" [{}].".format(defaults.USERWARE_PASSWORD_MIN_LENGTH)

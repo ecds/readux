@@ -128,7 +128,7 @@ class UserChangePassword(
 
     def form_valid(self, form):
         form.save()
-        if form.cleaned_data['logout_options'] == str(form.USERWARE_LOGOUT_OTHER_DEVICES):
+        if form.cleaned_data['logout_other_sessions']:
             force_logout(self.request.user, self.request)
         messages.add_message(self.request, messages.SUCCESS, self.message_text['success'])
         return super(UserChangePassword, self).form_valid(form)

@@ -8,7 +8,7 @@
     <div class="title">Account Preferences<i class="icon-cogs pull-right"></i></div>
     <div class="group_inner_box">
         <ul class="group_list">
-            <li class="clearfix">
+            <li class="clearfix nohover">
                 <form class="form-horizontal"  action="{% url 'profileware_preferences_update' %}" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                     {% csrf_token %}
                     <fieldset>
@@ -16,12 +16,10 @@
                     </fieldset>
                     <input class="btn" type="submit" value="{% trans "Save" %}" />
                 </form>
-                <div class="popover_info_box popover_small pull-left">
-                    <div rel="popover" data-original-title="Your Account Preferences" data-trigger="hover" data-placement="right"
-                        data-content="This is your account preference section. Set your preferences based on your needs."
-                      <i class="icon-info-sign icon-large center info"></i>
-                    </div>
-                </div>
+            </li>
+            <li class="clearfix">
+                <i class="icon-hand-right info"></i>
+                This is your account preference section. Set your preferences based on your needs.
                 <div class="pull-right">{% include "base/utils/problem_feature.html" %}</div>
             </li>
         </ul>

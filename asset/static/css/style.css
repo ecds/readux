@@ -134,7 +134,7 @@ label {
 /* Bootstrap,Font-Awesome Touch */
 /* **************************** */
 
-[class^="icon-"], [class*=" icon-"]{
+[class^="fa-"], [class*=" fa-"]{
     background:none; /* disable bootstrap strips */
 }
 
@@ -839,7 +839,7 @@ label {
 }
 
 .sidenav_group_inner_box 
-.sidenav_group_list > li a i [class^="icon-"], li [class*=" icon-"] {
+.sidenav_group_list > li a i [class^="fa-"], li [class*=" fa-"] {
     display: inline-block;
     width: 1.25em;
     text-align: center;
@@ -1180,7 +1180,7 @@ label {
 }
 
 .searchnav_group_inner_box 
-.searchnav_group_list > li a i [class^="icon-"], li [class*=" icon-"] {
+.searchnav_group_list > li a i [class^="fa-"], li [class*=" fa-"] {
     display: inline-block;
     width: 1.25em;
     text-align: center;
@@ -1448,7 +1448,7 @@ label {
 }
 
 .map_search_result_group_inner_box 
-.map_result_group_list > li a i [class^="icon-"], li [class*=" icon-"] {
+.map_result_group_list > li a i [class^="fa-"], li [class*=" fa-"] {
     display: inline-block;
     width: 1.25em;
     text-align: center;
@@ -1600,7 +1600,7 @@ label {
 }
 
 .right_side_info_box_group_inner_box 
-.right_side_info_box_group_list > li a i [class^="icon-"], li [class*=" icon-"] {
+.right_side_info_box_group_list > li a i [class^="fa-"], li [class*=" fa-"] {
     display: inline-block;
     width: 1.25em;
     text-align: center;

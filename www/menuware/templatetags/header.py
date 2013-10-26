@@ -43,7 +43,7 @@ def header_menu_right(request):
             "post_login_visible": True,
             "superuser_required": False,
             "staff_required": False,
-            "icon": "icon-caret-down",
+            "icon": "fa fa-caret-down",
             'sub_menu': account_settings_menu(request),
         },
         "108": {

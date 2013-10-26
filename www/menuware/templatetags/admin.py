@@ -20,7 +20,7 @@ def account_admin_menu(request):
             "post_login_visible": True,
             "superuser_required": False,
             "staff_required": True,
-            "icon": "icon-group",
+            "icon": "fa fa-group",
             'sub_menu': None,
         },
         "200": {
@@ -31,7 +31,7 @@ def account_admin_menu(request):
             "post_login_visible": True,
             "superuser_required": False, # superuser should be set as staff as well 
             "staff_required": True,
-            "icon": "icon-tasks",
+            "icon": "fa fa-tasks",
             'sub_menu': None,
         },
     }

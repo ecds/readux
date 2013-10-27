@@ -26,8 +26,8 @@ def header_menu_right(request):
         },
         "105": {
             "name": "Signup",
-            "reversible": "",
-            "url": "/",
+            "reversible": "signupware_signup_form_process",
+            "url": "",
             "pre_login_visible": True,
             "post_login_visible": False,
             "superuser_required": False,

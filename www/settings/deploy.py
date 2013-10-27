@@ -104,7 +104,7 @@ INSTALLED_APPS = [
     'userware',
     'profileware',
 
-    # 'signupware',
+    'signupware',
     'contactware',
 
 

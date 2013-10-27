@@ -18,11 +18,11 @@ $(document).ready(function(){
         if($(this).hasClass('disabled')){
             return
         }
-        if($(this).children('i').hasClass('icon-check')){
-            $(this).children('i').removeClass('icon-check').addClass('icon-check-empty');
+        if($(this).children('i').hasClass('fa-check')){
+            $(this).children('i').removeClass('fa-check').addClass('fa-check-empty');
         }
-        else if($(this).children('i').hasClass('icon-check-empty')){
-            $(this).children('i').removeClass('icon-check-empty').addClass('icon-check');
+        else if($(this).children('i').hasClass('fa-check-empty')){
+            $(this).children('i').removeClass('fa-check-empty').addClass('fa-check');
         }
     });
 
@@ -131,7 +131,7 @@ $(document).ready(function(){
     // Status related
     //////////////////////////////////////////
     // $("a").click(function(){
-    //     $('i.icon-cog').addClass('icon-spin');
+    //     $('i.fa-cog').addClass('fa-spin');
     // });
 
     // Tooltip related
@@ -183,9 +183,9 @@ function trac_document_bind(){
 function trac_update_fields(element, parent_li, data, result){
     element.attr('trac-state', result['state']);
     if (result['state'] == 'TICK_OFF'){
-        element.find('i').removeClass('icon-check').addClass('icon-check-empty');
+        element.find('i').removeClass('fa-check').addClass('fa-check-empty');
     }else if (result['state'] == 'TICK_ON'){
-        element.find('i').removeClass('icon-check-empty').addClass('icon-check');
+        element.find('i').removeClass('fa-check-empty').addClass('fa-check');
     }
     var me = null;
     if (result['trac_stats_tracked_obj']){

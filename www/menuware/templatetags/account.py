@@ -20,7 +20,7 @@ def account_settings_menu(request):
             "post_login_visible": True,
             "superuser_required": False,
             "staff_required": False,
-            "icon": " icon-user",
+            "icon": " fa fa-user",
             'sub_menu': None,
         },
         "240": {
@@ -31,7 +31,7 @@ def account_settings_menu(request):
             "post_login_visible": True,
             "superuser_required": False,
             "staff_required": False,
-            "icon": "icon-cogs",
+            "icon": "fa fa-cogs",
             'sub_menu': None,
         },
         "300": {
@@ -42,7 +42,7 @@ def account_settings_menu(request):
             "post_login_visible": True,
             "superuser_required": False,
             "staff_required": False,
-            "icon": "icon-key",
+            "icon": "fa fa-key",
             'sub_menu': None,
         },        
         "900": {
@@ -53,7 +53,7 @@ def account_settings_menu(request):
             "post_login_visible": True,
             "superuser_required": False,
             "staff_required": False,
-            "icon": "icon-trash",
+            "icon": "fa fa-trash-o",
             'sub_menu': None,
         },
     }

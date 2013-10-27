@@ -14,7 +14,7 @@
                                         {% for menu in item.sub_menu %}
                                             <li class="{% if menu.selected %}selected{% endif %}">
                                                 <a class="{% if menu.selected %}selected{% endif %}" href="{{menu.url}}">
-                                                    {% if menu.icon %}<i class="{{menu.icon}} icon-mini pull-left"></i>{% endif %}<span>{{menu.name}}</span>
+                                                    {% if menu.icon %}<i class="{{menu.icon}} fa fa-mini pull-left"></i>{% endif %}<span>{{menu.name}}</span>
                                                 </a>
                                             </li>
                                         {% endfor %}
@@ -39,7 +39,7 @@
                                         {% for menu in item.sub_menu %}
                                             <li class="{% if menu.selected %}selected{% endif %}">
                                                 <a class="{% if menu.selected %}selected{% endif %}" href="{{menu.url}}">
-                                                    {% if menu.icon %}<i class="{{menu.icon}} icon-mini pull-left"></i>{% endif %}<span>{{menu.name}}</span>
+                                                    {% if menu.icon %}<i class="{{menu.icon}} fa fa-mini pull-left"></i>{% endif %}<span>{{menu.name}}</span>
                                                 </a>
                                             </li>
                                         {% endfor %}

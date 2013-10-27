@@ -5,7 +5,7 @@
     <div class="sidenav_group_outter_box pull-left">
         <div class="title">
             <span class="text">Account Settings</span>
-            <i class="icon-cog pull-right"></i>
+            <i class="fa fa-cog pull-right"></i>
         </div>
         <div class="sidenav_group_inner_box">
             <ul class="sidenav_group_list">
@@ -13,7 +13,7 @@
                     {% for item in account_menu %}
                         <li class="{% if item.selected %}selected{% endif %}">
                             <a class="{% if item.selected %}selected{% endif %}" href="{{item.url}}">{{item.name}}
-                                {% if item.icon %}<i class="{{item.icon}} icon-mini pull-right"></i>{% endif %}
+                                {% if item.icon %}<i class="{{item.icon}} fa fa-mini pull-right"></i>{% endif %}
                             </a>
                         </li>
                     {% endfor %}
@@ -28,7 +28,7 @@
         <div class="sidenav_group_outter_box pull-left">
             <div class="title">
                 <span class="text">Admin Settings</span>
-                <i class="icon-cog pull-right"></i>
+                <i class="fa fa-cog pull-right"></i>
             </div>
             <div class="sidenav_group_inner_box">
                 <ul class="sidenav_group_list">
@@ -36,7 +36,7 @@
                         {% for item in admin_menu %}
                             <li class="{% if item.selected %}selected{% endif %}">
                                 <a class="{% if item.selected %}selected{% endif %}" href="{{item.url}}">{{item.name}}
-                                    {% if item.icon %}<i class="{{item.icon}} icon-mini pull-right"></i>{% endif %}
+                                    {% if item.icon %}<i class="{{item.icon}} fa fa-mini pull-right"></i>{% endif %}
                                 </a>
                             </li>
                         {% endfor %}

@@ -1,4 +1,4 @@
-https://www.djangoproject.com/download/1.6c1/tarball/
+https://www.djangoproject.com/download/1.6b4/tarball/
 #Django==1.5.4
 
 # Gets visitors IP address, simply!

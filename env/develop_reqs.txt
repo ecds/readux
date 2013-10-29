@@ -5,7 +5,7 @@ django-ipware==0.0.1
 django-freshly==0.1.1
 django-uuslug==1.0.0
 
-django-devserver==0.6.2
+django-devserver==0.7.0
 django-extensions==1.2.2
 django-debug-toolbar==0.9.4
 

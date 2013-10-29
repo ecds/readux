@@ -10,7 +10,7 @@ DOMAIN_EXTENSION=.org
 SITE_DOMAIN_NAME=$SITE_PROJ_NAME$DOMAIN_EXTENSION
 source /srv/www/$SITE_DOMAIN_NAME/pri/venv/bin/activate
 cd /srv/www/$SITE_DOMAIN_NAME/pri/venv/webroot
-bin/deploy.py ping_google /sitemap.xml
+bin/production.py ping_google /sitemap.xml
 
 exit
 

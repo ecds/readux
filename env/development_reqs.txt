@@ -1,4 +1,4 @@
-https://www.djangoproject.com/download/1.6c1/tarball/
+https://www.djangoproject.com/download/1.6b4/tarball/
 #Django==1.5.4
 
 django-ipware==0.0.1
@@ -7,7 +7,9 @@ django-uuslug==1.0.0
 
 django-devserver==0.7.0
 django-extensions==1.2.2
-django-debug-toolbar==0.9.4
+
+https://github.com/django-debug-toolbar/django-debug-toolbar.git
+#django-debug-toolbar==0.9.4
 
 Dozer==0.4
 Mako==0.9.0

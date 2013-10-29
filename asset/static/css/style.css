@@ -844,7 +844,7 @@ label {
     width: 1.25em;
     text-align: center;
     margin-top: 5px;
-    margin-right: -5px;
+    margin-right: -3px;
 }
 
 /* **************************** */
@@ -2075,3 +2075,16 @@ ul#trac li span {
     left: 375px !important;
 }
 
+.fa-hand-o-top {
+    margin-top: 2px;
+}
+
+.fa-hand-o-right {
+    margin-right: 2px !important;
+}
+.fa-hand-o-left {
+    margin-left: 2px;
+}
+.fa-hand-o-bottom {
+    margin-bottom: 2px;
+}

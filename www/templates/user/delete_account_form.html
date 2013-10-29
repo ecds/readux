@@ -10,7 +10,10 @@
         <ul class="group_list">
             <li class="clearfix">
                 <h4>Make sure you know what you are doing!</h4>
-                <p><i class="fa fa-warning-sign fa fa-large danger"></i>&nbsp;&nbsp;Please review the <a class="info" href="{% url 'terms_of_service' %}">Terms of Service</a> regarding account deletion.</p>
+                <p><i class="fa fa-warning danger"></i>&nbsp;&nbsp;Please review the <a class="info" href="{% url 'terms_of_service' %}">Terms of Service</a> regarding account deletion.</p>
+                <i class="fa fa-hand-o-right red"></i>
+                Account deletion is immediate and permanent. If you decided to come back later, then you must
+                create a new account again and your old username may no longer be available to you.
             </li>
         </ul>
     </div>
@@ -30,12 +33,9 @@
                 </form>
             </li>
             <li class="clearfix">
-                <i class="fa fa-hand-right info"></i>
+                <i class="fa fa-hand-o-right info"></i>
                 Do you want to delete your account? Why not consider disabling it instead? This way it would be private so
-                no one can see it and if later on you change your mind, you can just re-enable it without losing your data.<br/>
-                <i class="fa fa-hand-right red"></i>
-                Please note that account deletion is immediate and permanent. If you decided to come back later, then you must
-                create a new account again and your old username may no longer be available to you.
+                no one can see it and if later on you change your mind, you can just re-enable it without losing your data.
                 <div class="pull-right">{% include "base/utils/problem_feature.html" %}</div>
             </li>
         </ul>

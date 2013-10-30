@@ -9,6 +9,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 
+simple_email_re.compile(r'^\S+@\S+\.\S+$')
+
+
 def uuid(length=32):
     """ Return an uuid of a given length"""
     return uuid.uuid4().hex[:length]
@@ -71,13 +74,15 @@ def tobin(deci_num, len=32):
     return bitstr
 
 def is_valid_email(email):
-    """ Validates emails to ensure they follow the <name>@domain[.extenion] patterns """
+    """ Validates emails to ensure they follow the <name>@<domain><.extenion> patterns """
 
     try:
         validate_email(email)
-        return True
     except ValidationError:
         return False
+    if simple_email_re.match(email):
+        return True
+    return False
 
 
 

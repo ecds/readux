@@ -1,3 +1,4 @@
+import re
 import uuid
 import datetime
 import hashlib
@@ -9,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 
-simple_email_re.compile(r'^\S+@\S+\.\S+$')
+simple_email_re = re.compile(r'^\S+@\S+\.\S+$')
 
 
 def uuid(length=32):

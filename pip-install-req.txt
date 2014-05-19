@@ -1,0 +1,8 @@
+Django
+# dev eulcm content model objects (until initial eulcm release)
+-e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
+# development version of eultheme
+-e git://github.com/emory-libraries/django-eultheme@develop#egg=django_eultheme
+django-widget-tweaks
+sunburnt
+httplib2

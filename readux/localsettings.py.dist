@@ -29,6 +29,29 @@ DATABASES = {
     }
 }
 
+# configure which IP addresses are allowed to access the index data service
+EUL_INDEXER_ALLOWED_IPS = []
+
+# Solr index that will be used for searching
+SOLR_SERVER_URL = "http://server.name:8983/solr/readux/"
+# path to Solr cert if running under HTTPS and cert is not auto-loaded
+# SOLR_CA_CERT_PATH = ''
+# disable SSL validation - DO NOT use this in production!
+# SOLR_DISABLE_CERT_CHECK = False
+
+# Fedora Repository settings
+FEDORA_ROOT = 'https://localhost:8443/fedora/'
+# optional fedora credentials
+# FEDORA_PIDSPACE = 'readux'
+# FEDORA_USER = 'fedoraAdmin'
+# FEDORA_PASSWORD = 'fedoraAdmin'
+# use this to explicitly configure a test pidspace; by default, uses pidspace-test
+# FEDORA_TEST_PIDSPACE = 'testme'
+FEDORA_TEST_ROOT = 'https://localhost:8543/fedora/'
+# FEDORA_TEST_USER = 'fedoraAdmin'
+# FEDORA_TEST_PASSWORD = 'fedoraAdmin'
+
+
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/
 LOGGING = {

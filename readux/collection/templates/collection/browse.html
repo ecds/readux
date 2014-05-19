@@ -1,0 +1,18 @@
+{% extends 'site_base.html' %}
+
+{% block content %}
+<div class="container">
+    <header class="page-header">
+        <h1>Collections</h1>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="media-list collection-list">
+                {% for coll in collections %}
+                    {% include 'collection/snippets/list_collection.html' %}
+                {% endfor %}
+            </ul>
+        </div><!-- /.container-->
+    <section>
+</div>
+{% endblock %}

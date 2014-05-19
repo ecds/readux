@@ -25,6 +25,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'eulfedora',
+    'eultheme',
+    'readux.collection',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -36,10 +39,34 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    # django default context processors
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.contrib.messages.context_processors.messages",
+    # additional context processors
+    "django.core.context_processors.request",  # always include request in render context
+    "django.core.context_processors.static",
+    "eultheme.context_processors.template_settings",
+    "readux.version_context",  # include app version
+)
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+#     'django.template.loaders.eggs.Loader',
+)
+
+TEMPLATE_DIRS = [
+    os.path.join(BASE_DIR, 'templates'),
+]
+
 ROOT_URLCONF = 'readux.urls'
 
 WSGI_APPLICATION = 'readux.wsgi.application'
-
 
 
 # Internationalization
@@ -60,6 +87,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# path to local copy of solr schema
+SOLR_SCHEMA = os.path.join(BASE_DIR, 'solr', 'schema.xml')
 
 try:
     from localsettings import *

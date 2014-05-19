@@ -1,0 +1,17 @@
+{% extends "eultheme/site_base.html" %}
+{% load static %}
+{% block nav-title %}
+<span class="glyphicon glyphicon-book"></span>
+<span class="site-title">Readux</span>
+  {% endblock %}
+{% block page-title %}Readux{% block page-subtitle %}{% endblock %}{% endblock %}
+{% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
+
+{% block navlinks %}
+<li><a href="{% url 'collection:browse' %}">Collections</a></li>
+{% endblock %}
+
+
+{% block content %}
+<p>(home page content still TBD)</p>
+{% endblock %}

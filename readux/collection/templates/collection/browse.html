@@ -1,5 +1,7 @@
 {% extends 'site_base.html' %}
 
+{% block page-subtitle %}| Collections{% endblock %}
+
 {% block content %}
 <div class="container">
     <header class="page-header">
@@ -8,7 +10,7 @@
     <section>
         <div class="container">
             <ul class="media-list collection-list">
-                {% for coll in collections %}
+                {% for coll, count in collections %}
                     {% include 'collection/snippets/list_collection.html' %}
                 {% endfor %}
             </ul>

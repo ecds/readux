@@ -1,6 +1,8 @@
+from UserDict import UserDict
 from eulfedora.models import DigitalObject, Relation, FileDatastream, \
     XmlDatastream
 from eulfedora.rdfns import relsext
+from eulfedora.indexdata.util import pdf_to_text
 
 from readux.books import abbyyocr
 from readux.collection.models import Collection
@@ -20,7 +22,33 @@ class Book(DigitalObject):
 
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
-class Volume(DigitalObject):
+
+class BaseVolume(object):
+    '''Common functionality for :class:`Volume` and :class:`SolrVolume`'''
+
+    @property
+    def control_key(self):
+        'Control key for this Book title (e.g., ocm02872816)'
+        # LSDI Volume object label is ocm#_vol, e.g. ocn460678076_V.0
+        ocm, sep, vol = self.label.partition('_')
+        return ocm
+
+    @property
+    def volume(self):
+        'volume label for this Book (e.g., v.1)'
+        # LSDI Volume object label is ocm#_vol, e.g. ocn460678076_V.0
+        ocm, sep, vol = self.label.partition('_')
+        # if V.0, return no volume
+        if vol.lower() == 'v.0':
+            return ''
+        return vol
+
+    @property
+    def noid(self):
+        pidspace, sep, noid = self.pid.partition(':')
+        return noid
+
+class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume Object.  Extends :class:`~eulfedora.models.DigitalObject`.'''
     VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.0'
     CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
@@ -60,28 +88,6 @@ class Volume(DigitalObject):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
     @property
-    def control_key(self):
-        'Control key for this Book title (e.g., ocm02872816)'
-        # LSDI Volume object label is ocm#_vol, e.g. ocn460678076_V.0
-        ocm, sep, vol = self.label.partition('_')
-        return ocm
-
-    @property
-    def volume(self):
-        'volume label for this Book (e.g., v.1)'
-        # LSDI Volume object label is ocm#_vol, e.g. ocn460678076_V.0
-        ocm, sep, vol = self.label.partition('_')
-        # if V.0, return no volume
-        if vol.lower() == 'v.0':
-            return ''
-        return vol
-
-    @property
-    def noid(self):
-        pidspace, sep, noid = self.pid.partition(':')
-        return noid
-
-    @property
     def page_count(self):
         'Number of pages associated with this volume, based on RELS-EXT isConstituentOf'
         if self.pages:
@@ -102,20 +108,38 @@ class Volume(DigitalObject):
         objects.'''
 
         data = super(Volume, self).index_data()
-        if self.ocr.exists:
-            data['fulltext'] = self.get_fulltext()
-        # pulling text content from the PDF is significantly slower;
-        # - only pdf if ocr xml is not available
-        elif self.pdf.exists:
-            data['fulltext'] = pdf_to_text(self.pdf.content)
+        # if self.ocr.exists:
+        #     data['fulltext'] = self.get_fulltext()
+        # # pulling text content from the PDF is significantly slower;
+        # # - only pdf if ocr xml is not available
+        # elif self.pdf.exists:
+        #     data['fulltext'] = pdf_to_text(self.pdf.content)
 
         # index primary image pid to construct urls for cover image, first page
-        if self.primary_image:
-            data['hasPrimaryImage'] = self.primary_image.pid
+        # if self.primary_image:
+        #     data['hasPrimaryImage'] = self.primary_image.pid
 
         # index collection info
         data['collection_id'] = self.book.collection.pid
-        data['collection'] = self.book.collection.short_label()
+        # data['collection'] = self.book.collection.short_label()
 
 
         return data
+
+
+class SolrVolume(UserDict, BaseVolume):
+
+    def __init__(self, **kwargs):
+        # sunburnt passes fields as kwargs; userdict wants them as a dict
+        UserDict.__init__(self, kwargs)
+
+    @property
+    def label(self):
+        return self.data.get('label')
+
+    @property
+    def pid(self):
+        return self.data.get('pid')
+
+
+

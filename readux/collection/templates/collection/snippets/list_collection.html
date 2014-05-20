@@ -1,5 +1,9 @@
 {% extends 'eultheme/snippets/collection_list_item.html' %}
 
-{% block url %}#{% endblock %} {# todo #}
+{% block url %}{% url 'collection:view' coll.pid %}{% endblock %}
 {% block title %}{{ coll.title }}{% endblock %}
-{% block info %}{% endblock %} {# TODO: include count if possible #}
+{% block info %}
+{% if count %}
+  {{ count }} volume{{ count|pluralize }}
+{% endif %}
+{% endblock %}

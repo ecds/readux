@@ -1,0 +1,40 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %}| Collections | {{ collection.short_label }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="page-header">
+        <h1>{{ collection.short_label }}</h1>
+
+        <div class="page-breadcrumbs">
+            <div class="container">
+                <div class="row">
+                    {# breadcrumb with collection hierarchy #}
+                    <ol class="breadcrumb">
+                      <li><a href="{% url 'collection:browse' %}">Collections</a></li>
+                      <li class="active">{{ collection.short_label }}</li>
+                  </ol>
+              </div>
+          </div>
+      </div>
+
+    </header>
+    <section>
+        <div class="container">
+            <ul class="media-list">
+              {% for obj in items.object_list %}
+              <li>{{ obj.title }}
+                {% if obj.volume %}({{ obj.volume }}){% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+        </div><!-- /.container-->
+
+    {% if items.has_other_pages %}
+      {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}
+    {% endif %}
+
+    <section>
+</div>
+{% endblock %}

@@ -2,7 +2,9 @@ from eulfedora.models import DigitalObject, Relation, FileDatastream, \
     XmlDatastream
 from eulfedora.rdfns import relsext
 
+from readux.books import abbyyocr
 from readux.collection.models import Collection
+
 
 
 class Book(DigitalObject):
@@ -48,14 +50,14 @@ class Volume(DigitalObject):
 
     book = Relation(relsext.isConstituentOf, type=Book)
 
-    @permalink
-    def get_absolute_url(self):
-        'Absolute url to view this object within the site'
-        # currently, there is no book overview page; using all-pages view for now
-        return ('books:book-pages', [str(self.pid)])
+    # @permalink
+    # def get_absolute_url(self):
+    #     'Absolute url to view this object within the site'
+    #     # currently, there is no book overview page; using all-pages view for now
+    #     return ('books:book-pages', [str(self.pid)])
 
-    def get_pdf_url(self):
-        return reverse('books:pdf', kwargs={'pid': self.pid})
+    # def get_pdf_url(self):
+    #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
     @property
     def control_key(self):

@@ -28,6 +28,7 @@ INSTALLED_APPS = (
     'eulfedora',
     'eultheme',
     'readux.collection',
+    'readux.books',
 )
 
 MIDDLEWARE_CLASSES = (

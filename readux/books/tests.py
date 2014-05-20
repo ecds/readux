@@ -4,6 +4,32 @@ from django.test import TestCase
 from eulxml.xmlmap import load_xmlobject_from_file
 
 from readux.books import abbyyocr
+from readux.books.models import SolrVolume
+
+class SolrVolumeTest(TestCase):
+    # primarily testing BaseVolume logic here
+
+    def test_properties(self):
+        ocm = 'ocn460678076'
+        vol = 'V.1'
+        noid = '1234'
+        volume = SolrVolume(label='%s_%s' % (ocm, vol),
+                         pid='testpid:%s' % noid)
+
+        self.assertEqual(ocm, volume.control_key)
+        self.assertEqual(vol, volume.volume)
+        self.assertEqual(noid, volume.noid)
+
+        # don't display volume zero
+        vol = 'V.0'
+        volume.data['label'] = '%s_%s' % (ocm, vol)
+        self.assertEqual('', volume.volume)
+
+        # should also work without volume info
+        volume.data['label'] = ocm
+        self.assertEqual(ocm, volume.control_key)
+        self.assertEqual('', volume.volume)
+
 
 class AbbyyOCRTestCase(TestCase):
 

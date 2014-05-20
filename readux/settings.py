@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,7 +29,7 @@ INSTALLED_APPS = (
     'eultheme',
     'readux.collection',
     'readux.books',
-)
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -99,3 +99,23 @@ except ImportError:
     print >> sys.stderr, '''Settings not defined.  Please configure a version of
     localsettings.py for this site.  See localsettings.py.dist for an example.'''
     del sys
+
+
+django_nose = None
+try:
+    # NOTE: errors if DATABASES is not configured (in some cases),
+    # so this must be done after importing localsettings
+    import django_nose
+except ImportError:
+    pass
+
+# - only if django_nose is installed, so it is only required for development
+if django_nose is not None:
+    INSTALLED_APPS.append('django_nose')
+    TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+    NOSE_PLUGINS = [
+        'eulfedora.testutil.EulfedoraSetUp',
+        # ...
+    ]
+    NOSE_ARGS = ['--with-eulfedorasetup']
+

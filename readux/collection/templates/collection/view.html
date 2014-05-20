@@ -1,6 +1,7 @@
 {% extends 'site_base.html' %}
+{% load humanize %}
 
-{% block page-subtitle %}| Collections | {{ collection.short_label }}{% endblock %}
+{% block page-subtitle %} | Collections | {{ collection.short_label }}{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -19,6 +20,16 @@
           </div>
       </div>
 
+    {% if items.paginator.count %}
+    <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} in this collection</h2>
+    <p class="lead">
+        {% if items.has_other_pages and items.object_list|length > 1 %}
+        displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
+        {# if more than one item on this page, display range of results #}
+    </p>
+    {% else %}
+    <h2 id="no-results-found">No volumes in this collection.</h2>
+    {% endif %}
     </header>
     <section>
         <div class="container">

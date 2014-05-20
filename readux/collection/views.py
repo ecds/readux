@@ -18,9 +18,9 @@ def browse(request):
     solr = solr_interface()
     # FIXME: this filter should probably be commonly used across all LSDI
     # search and browse
-    results = solr.query().filter(owner='LSDI-project') \
-                .query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
-                .sort_by('title_exact')
+    results = solr.query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
+                  .filter(owner='LSDI-project') \
+                  .sort_by('title_exact')
 
     # Use a facet query to get a count of the number of volumes in each collection
     q = solr.query(content_model=Volume.VOLUME_CONTENT_MODEL) \

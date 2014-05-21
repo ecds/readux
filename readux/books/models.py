@@ -17,9 +17,11 @@ class Book(DigitalObject):
         This is a bare-minimum model, only implemented enough to support
         indexing and access to volumes.
     '''
+    #: content model for books
     BOOK_CONTENT_MODEL = 'info:fedora/emory-control:ScannedBook-1.0'
     CONTENT_MODELS = [ BOOK_CONTENT_MODEL ]
 
+    #: :class:`~readux.collection.models.Collection` this book belongs to
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
 
@@ -45,11 +47,13 @@ class BaseVolume(object):
 
     @property
     def noid(self):
+        'short-form of pid'
         pidspace, sep, noid = self.pid.partition(':')
         return noid
 
 class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume Object.  Extends :class:`~eulfedora.models.DigitalObject`.'''
+    #: volume content model
     VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.0'
     CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
     # NEW_OBJECT_VIEW = 'books:book-pages'
@@ -57,25 +61,25 @@ class Volume(DigitalObject, BaseVolume):
     # inherits DC, RELS-EXT
     # related to parent Book object via isConstituentOf
 
+    #: pdf :class:`~eulfedora.models.FileDatastream` with the content
+    #: of the Volume (page images with OCR text behind)
     pdf = FileDatastream("PDF", "PDF datastream", defaults={
         'mimetype': 'application/pdf',
         'versionable': True,
     })
-    '''pdf :class:`~eulfedora.models.FileDatastream` with the content
-    of the Volume (page images with OCR text behind'''
 
-    # ABBYY FineReader OCR XML is available as OCR datastream
+    #: :class:`~eulfedora.models.XmlDatastream` for ABBYY
+    #: FineReader OCR XML; content as :class:`AbbyyOCRXml`'''
     ocr = XmlDatastream("OCR", "ABBYY Finereader OCR XML", abbyyocr.Document, defaults={
         'control_group': 'M',
         'versionable': True,
     })
-    ''':class:`~eulfedora.models.XmlDatastream` for ABBYY
-    FineReader OCR XML; content as :class:`AbbyyOCRXml`'''
 
     # pages still todo
     # primary_image = Relation(REPOMGMT.hasPrimaryImage, Page, repomgmt_ns)
     # pages = ReverseRelation(relsext.isConstituentOf, Page, multiple=True)
 
+    #: :class:`Book` this volume is associated with
     book = Relation(relsext.isConstituentOf, type=Book)
 
     # @permalink
@@ -87,14 +91,14 @@ class Volume(DigitalObject, BaseVolume):
     # def get_pdf_url(self):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
-    @property
-    def page_count(self):
-        'Number of pages associated with this volume, based on RELS-EXT isConstituentOf'
-        if self.pages:
-            return len(self.pages)
+    # @property
+    # def page_count(self):
+    #     'Number of pages associated with this volume, based on RELS-EXT isConstituentOf'
+    #     if self.pages:
+    #         return len(self.pages)
 
-        # If no pages are ingested as self.pages is None, return 0
-        return 0
+    #     # If no pages are ingested as self.pages is None, return 0
+    #     return 0
 
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
@@ -104,8 +108,7 @@ class Volume(DigitalObject, BaseVolume):
     def index_data(self):
         '''Extend the default
         :meth:`eulfedora.models.DigitalObject.index_data`
-        method to include additional fields specific to Book
-        objects.'''
+        method to include additional fields specific to Volumes.'''
 
         data = super(Volume, self).index_data()
         # if self.ocr.exists:
@@ -128,6 +131,10 @@ class Volume(DigitalObject, BaseVolume):
 
 
 class SolrVolume(UserDict, BaseVolume):
+    '''Extension of :class:`~UserDict.UserDict` for use with Solr results
+    for volume-specific content.  Extends :class:`BaseVolume` for common
+    Volume fields based on existing fields such as label.
+    '''
 
     def __init__(self, **kwargs):
         # sunburnt passes fields as kwargs; userdict wants them as a dict
@@ -135,10 +142,12 @@ class SolrVolume(UserDict, BaseVolume):
 
     @property
     def label(self):
+        'object label'
         return self.data.get('label')
 
     @property
     def pid(self):
+        'object pid'
         return self.data.get('pid')
 
 

@@ -14,7 +14,8 @@ def site_index(request):
     return render(request, 'site_base.html')
 
 def browse(request):
-    'Browse a list of all collections'
+    ''''Browse list of all collections sorted by title, with the
+    count of volumes in each'''
     solr = solr_interface()
     # FIXME: this filter should probably be commonly used across all LSDI
     # search and browse
@@ -38,7 +39,7 @@ def browse(request):
 
 def view(request, pid):
     '''View a single collection, with a paginated list of the volumes
-    it includes.'''
+    it includes (volumes sorted by title and then ocm number/volume).'''
 
     repo = Repository(request=request)
     obj = repo.get_object(pid, type=Collection)

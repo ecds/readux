@@ -7,8 +7,9 @@ class Collection(Collectionv1_0):
     '''Fedora Collection Object.  Extends
     :class:`~eulcm.models.collection.v1_0.Collection`.
     '''
-
+    #: common label prefix on all collections
     LABEL_PREFIX = 'Large-Scale Digitization Initiative \(LSDI\) -'
+    #: common label suffix on all collections
     LABEL_SUFFIX = 'Collection'
 
     @property

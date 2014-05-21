@@ -1,14 +1,14 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from django.http import Http404
 from eulfedora.server import Repository, RequestFailed
-from eulfedora.views import raw_datastream, datastream_etag
+from eulfedora.views import raw_datastream
 
 from readux.books.models import Volume
 
 
 def pdf(request, pid):
     '''View to allow access the PDF datastream of a
-    :class:`readux.books.models.Volume` object.  Sets a
+    :class:`~readux.books.models.Volume` object.  Sets a
     content-disposition header that will prompt the file to be saved
     with a default title based on the object label.
     '''

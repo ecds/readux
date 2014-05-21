@@ -37,6 +37,7 @@
               {% for obj in items.object_list %}
               <li>{{ obj.title }}
                 {% if obj.volume %}({{ obj.volume }}){% endif %}
+                <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
               </li>
               {% endfor %}
             </ul>

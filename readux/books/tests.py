@@ -1,10 +1,14 @@
 import os
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from mock import patch, Mock
+
 from eulxml.xmlmap import load_xmlobject_from_file
+from eulfedora.util import RequestFailed
 
 from readux.books import abbyyocr
-from readux.books.models import SolrVolume
+from readux.books.models import SolrVolume, Volume
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -29,6 +33,58 @@ class SolrVolumeTest(TestCase):
         volume.data['label'] = ocm
         self.assertEqual(ocm, volume.control_key)
         self.assertEqual('', volume.volume)
+
+
+class BookViewsTest(TestCase):
+
+    @patch('readux.books.views.Repository')
+    @patch('readux.books.views.raw_datastream')
+    def test_pdf(self, mockraw_ds, mockrepo):
+        mockobj = Mock()
+        mockobj.pid = 'vol:1'
+        mockobj.label = 'ocm30452349_1908'
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        pdf_url = reverse('books:pdf', kwargs={'pid': mockobj.pid})
+        response = self.client.get(pdf_url)
+
+        # only check custom logic implemented here, via mocks
+        # (not testing eulfedora.views.raw_datastream logic)
+        self.assertEqual(mockraw_ds.return_value.render(), response,
+            'result of fedora raw_datastream should be returned')
+
+        # can't check full call args because we can't match request
+        args, kwargs = mockraw_ds.call_args
+
+        # second arg should be pid
+        self.assertEqual(mockobj.pid, args[1])
+        # third arg should be datstream id
+        self.assertEqual(Volume.pdf.id, args[2])
+        # digital object class should be specified
+        self.assertEqual(Volume, kwargs['type'])
+        self.assertEqual(mockrepo.return_value, kwargs['repo'])
+        self.assertEqual({'Content-Disposition': 'filename=%s.pdf' % mockobj.label},
+            kwargs['headers'])
+
+        # volume with a space in the label
+        mockobj.label = 'ocm30452349_1908 V0.1'
+        response = self.client.get(pdf_url)
+        args, kwargs = mockraw_ds.call_args
+        content_disposition = kwargs['headers']['Content-Disposition']
+        self.assertEqual('filename=%s.pdf' % mockobj.label.replace(' ', '-'),
+            content_disposition,
+            'content disposition filename should not include spaces even if label does')
+
+        # fedora error should 404
+        mockresponse = Mock()
+        mockresponse.status = 500
+        mockresponse.reason = 'server error'
+        mockraw_ds.side_effect = RequestFailed(mockresponse, '')
+        response = self.client.get(pdf_url)
+        expected, got = 404, response.status_code
+        self.assertEqual(expected, got,
+            'expected %s for %s when there is a fedora error, got %s' % \
+            (expected, pdf_url, got))
 
 
 class AbbyyOCRTestCase(TestCase):

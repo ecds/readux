@@ -1,11 +1,27 @@
-# from django.shortcuts import render
 from django.http import Http404
+from django.shortcuts import render
+from django.views.decorators.http import condition
+
 from eulfedora.server import Repository, RequestFailed
-from eulfedora.views import raw_datastream
+from eulfedora.views import raw_datastream, datastream_etag
 
 from readux.books.models import Volume
 
 
+def pdf_etag(request, pid):
+    return datastream_etag(request, pid, Volume.pdf.id)
+
+def pdf_lastmodified(request, pid):
+    repo = Repository()
+    try:
+        # retrieve the object so we can use it to set the download filename
+        obj = repo.get_object(pid, type=Volume)
+        return obj.pdf.created
+    except RequestFailed:
+        pass
+
+
+@condition(etag_func=pdf_etag, last_modified_func=pdf_lastmodified)
 def pdf(request, pid):
     '''View to allow access the PDF datastream of a
     :class:`~readux.books.models.Volume` object.  Sets a

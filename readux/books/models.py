@@ -111,8 +111,8 @@ class Volume(DigitalObject, BaseVolume):
         method to include additional fields specific to Volumes.'''
 
         data = super(Volume, self).index_data()
-        # if self.ocr.exists:
-        #     data['fulltext'] = self.get_fulltext()
+        if self.ocr.exists:
+            data['fulltext'] = self.get_fulltext()
         # # pulling text content from the PDF is significantly slower;
         # # - only pdf if ocr xml is not available
         # elif self.pdf.exists:
@@ -124,8 +124,19 @@ class Volume(DigitalObject, BaseVolume):
 
         # index collection info
         data['collection_id'] = self.book.collection.pid
-        # data['collection'] = self.book.collection.short_label()
+        # book this volume is part of, for access to book-level metadata
+        data['book_id'] = self.book.pid
 
+        # add book-level metadata to text for keyword searching purposes
+        # (preliminary; may want broken out for facets/fielded searching;
+        # would be better to index on book object and use joins for that if possible...)
+        book_info = []
+        book_info.extend(self.book.dc.content.creator_list)
+        book_info.extend(self.book.dc.content.date_list)
+        book_info.extend(self.book.dc.content.subject_list)
+        # include collection label (short form) in fulltext search also
+        book_info.append(self.book.collection.short_label)
+        data['text'] = book_info
 
         return data
 

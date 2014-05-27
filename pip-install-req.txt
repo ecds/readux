@@ -9,4 +9,8 @@ django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as
 -e git://github.com/tow/sunburnt.git@0faa3ed842d00661ec50b9cb96b41a6144ab3e6f#egg=sunburnt
+# (MAYBE) 05/2014 need local version of sunburnt for Solr 4 join query support
+#-e git://github.com/rlskoeser/sunburnt.git@solr4-join-support#egg=sunburnt
+# sunburnt requires *either* httplib2 or python-requests
 httplib2
+eulcommon

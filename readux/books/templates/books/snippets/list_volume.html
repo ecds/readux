@@ -1,0 +1,15 @@
+<li>
+    {% if obj.score %}
+    <div class="clearfix"> </div>
+    {# display numerical score in debug mode #}
+    <div class="col-xs-1 pull-right">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{ obj.score }}" aria-valuemin="0" aria-valuemax="1.5" style="width:{% widthratio obj.score 1 90 %}%"> </div>
+        </div>
+    </div>
+    {% if debug %}<span class="pull-right">{{ obj.score }}</span>{% endif %}
+    {% endif %}
+    {{ obj.title|truncatechars:100 }}
+    {% if obj.volume %}({{ obj.volume }}){% endif %}
+    <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
+</li>

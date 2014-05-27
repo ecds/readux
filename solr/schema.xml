@@ -279,6 +279,7 @@ Solr Schema for projects using eulfedora and indexdata.
 
    <!-- *** readux-specific fields -->
    <field name="collection_id" type="string" indexed="true" stored="true"/>
+   <field name="book_id" type="string" indexed="true" stored="true"/>
    <field name="page_order" type="sint" indexed="true" stored="true"/>
    <!-- document full text; NOT configured to allow highlighting -->
    <field name="fulltext" type="text" indexed="true" stored="false"

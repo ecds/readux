@@ -1,8 +1,9 @@
 import os
 from django.conf import settings
+from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from mock import patch, Mock
+from mock import patch, Mock, NonCallableMock
 
 from eulxml.xmlmap import load_xmlobject_from_file
 from eulfedora.util import RequestFailed
@@ -85,6 +86,58 @@ class BookViewsTest(TestCase):
         self.assertEqual(expected, got,
             'expected %s for %s when there is a fedora error, got %s' % \
             (expected, pdf_url, got))
+
+    @patch('readux.books.views.Paginator', spec=Paginator)
+    @patch('readux.books.views.solr_interface')
+    def test_search(self, mocksolr_interface, mockpaginator):
+
+        # no search terms - invalid form
+        search_url = reverse('books:search')
+        response = self.client.get(search_url)
+        self.assertContains(response, 'Please enter one or more search terms')
+
+        mocksolr = mocksolr_interface.return_value
+        # simulate sunburnt's fluid interface
+        mocksolr.query.return_value = mocksolr.query
+        for method in ['query', 'facet_by', 'sort_by', 'field_limit',
+                       'exclude', 'filter', 'join', 'paginate']:
+            getattr(mocksolr.query, method).return_value = mocksolr.query
+
+        # set up mock results for collection query and facet counts
+        solr_result = [
+            {'pid': 'vol:1', 'title': 'Lecoq, the detective'},
+            {'pid': 'vol:2', 'title': 'Mabel Meredith'},
+        ]
+        mocksolr.query.__iter__.return_value = iter(solr_result)
+        mocksolr.count.return_value = 2
+
+        # use a noncallable for the pagination result that is used in the template
+        # because passing callables into django templates does weird things
+        mockpage = NonCallableMock()
+        mockpaginator.return_value.page.return_value = mockpage
+        mockpage.object_list = solr_result
+        mockpage.has_other_pages = False
+        mockpage.paginator.count = 2
+        mockpage.paginator.page_range = [1]
+
+        # query with search terms
+        response = self.client.get(search_url, {'keyword': 'yellowbacks'})
+
+        mocksolr.query.filter.assert_called_with(content_model=Volume.VOLUME_CONTENT_MODEL)
+        mocksolr.query.query.assert_called_with('yellowbacks')
+        mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label'], score=True)
+
+        # check that items are displayed
+        for item in solr_result:
+            self.assertContains(response, item['title'],
+                msg_prefix='title should be displayed')
+            self.assertContains(response, reverse('books:pdf', kwargs={'pid': item['pid']}),
+                msg_prefix='link to pdf should be included in response')
+
+
+        # multiple terms and phrase
+        response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})
+        mocksolr.query.query.assert_called_with('yellowbacks', 'lecoq the detective', 'mystery')
 
 
 class AbbyyOCRTestCase(TestCase):

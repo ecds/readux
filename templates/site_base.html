@@ -1,5 +1,12 @@
 {% extends "eultheme/site_base.html" %}
 {% load static %}
+{% load widget_tweaks %}
+
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/readux.css' %}" />
+{% endblock %}
+
 {% block nav-title %}
 <span class="glyphicon glyphicon-book"></span>
 <span class="site-title">Readux</span>
@@ -9,6 +16,23 @@
 
 {% block navlinks %}
 <li><a href="{% url 'collection:browse' %}">Collections</a></li>
+{% endblock %}
+
+{% block navbar-extra %}
+{% if search_form %}
+<div class="navbar-right">
+<form class="form-inline navbar-form" role="form" method="GET" action="{% url 'books:search' %}">
+   <div class="form-group">
+    <label class="sr-only" for="{{ search_form.keyword.name }}">{{ search_form.keyword.label }}</label>
+    {% render_field search_form.keyword class+="form-control" placeholder="Search" %}
+    {# TODO: help text #}
+    <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span>
+    </button>
+  </div>
+</form>
+</div>
+{% endif %}
 {% endblock %}
 
 

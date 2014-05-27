@@ -6,7 +6,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'readux.collection.views.site_index', name="site-index"),
     url(r'^collections/', include('readux.collection.urls', namespace='collection')),
-    url(r'^volumes/', include('readux.books.urls', namespace='books')),
+    url(r'^books/', include('readux.books.urls', namespace='books')),
 
     # Examples:
 

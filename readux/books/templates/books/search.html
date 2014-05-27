@@ -1,0 +1,54 @@
+{% extends 'site_base.html' %}
+{% load humanize %} {% load widget_tweaks %}
+
+{% block page-subtitle %} | Search Results{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="page-header">
+        <h1>Search Results</h1>
+
+      {% if form.errors %}
+      <div class="bg-warning">
+        {{ form.errors.keyword }}
+      </div>
+      {% endif %}
+
+      {# fixme: possibly have snippet for navbar search and this one? #}
+      <form class="search-bar" role="form" method="GET" action="{% url 'books:search' %}">
+        <div class="form-inline">
+        <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
+        {% render_field form.keyword class+="form-control keyword" placeholder="Search" %}
+        {# TODO: help text #}
+        <button type="submit" class="btn btn-primary">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </div>
+    </form>
+
+        {% if not form.errors %}
+          {% if items.paginator.count %}
+          <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} found</h2>
+          <p class="lead">
+            {% if items.has_other_pages and items.object_list|length > 1 %}
+            displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
+            {# if more than one item on this page, display range of results #}
+          </p>
+          {% else %}
+          <h2 id="no-results-found">No results for your search terms.</h2>
+          {% endif %} {# no results #}
+        {% endif %} {# valid form #}
+    </header>
+    <section>
+      {% if items %} {# results to display #}
+        <div class="container">
+          <ul class="media-list">
+              {% for obj in items.object_list %}
+                {% include 'books/snippets/list_volume.html' %}
+              {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

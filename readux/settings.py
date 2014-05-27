@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'eulfedora',
     'eultheme',
+    'widget_tweaks',
     'readux.collection',
     'readux.books',
 ]
@@ -53,6 +54,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "eultheme.context_processors.template_settings",
     "readux.version_context",  # include app version
+    "readux.books.context_processors.book_search",  # book search form
 )
 
 # List of callables that know how to import templates from various sources.
@@ -89,6 +91,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Additional locations of static files
+STATICFILES_DIRS = [
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASE_DIR, 'sitemedia'),
+]
+
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'solr', 'schema.xml')

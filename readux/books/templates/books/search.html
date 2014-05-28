@@ -3,6 +3,10 @@
 
 {% block page-subtitle %} | Search Results{% endblock %}
 
+{% block head_extras %}
+<link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <header class="page-header">

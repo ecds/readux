@@ -112,3 +112,34 @@ def text(request, pid):
     # generate a default filename based on the object label
     response['Content-Disposition'] = 'filename="%s.txt"' % obj.label.replace(' ', '-')
     return response
+
+
+def unapi(request):
+    '''unAPI service point for volume objects, to make content available
+    for harvest via Zotero.'''
+    item_id = request.GET.get('id', None)
+    format = request.GET.get('format', None)
+    context = {}
+    if item_id is not None:
+        context['id'] = item_id
+        repo = Repository(request=request)
+        obj = repo.get_object(item_id, type=Volume)
+
+        formats = obj.unapi_formats
+
+        if format is None:
+            # display formats for this item
+            context['formats'] = formats
+        else:
+            current_format = formats[format]
+            # return requested format for this item
+            meth = getattr(obj, current_format['method'])
+            return HttpResponse(meth(), content_type=current_format['type'])
+
+    else:
+        # display formats for all items
+        context['formats'] = Volume.unapi_formats
+
+    return render(request, 'books/unapi_format.xml', context,
+        content_type='application/xml')
+

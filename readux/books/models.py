@@ -2,14 +2,21 @@ from UserDict import UserDict
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
+import rdflib
+from rdflib import Graph
+from rdflib.namespace import RDF
+
 from eulfedora.models import DigitalObject, Relation, FileDatastream, \
     XmlDatastream
 from eulfedora.rdfns import relsext
-from eulfedora.indexdata.util import pdf_to_text
+# from eulfedora.indexdata.util import pdf_to_text
 
 from readux.books import abbyyocr
 from readux.collection.models import Collection
 
+
+BIBO = rdflib.Namespace('http://purl.org/ontology/bibo/')
+DC = rdflib.Namespace('http://purl.org/dc/terms/')
 
 
 class Book(DigitalObject):
@@ -150,6 +157,78 @@ class Volume(DigitalObject, BaseVolume):
         data['text'] = book_info
 
         return data
+
+    #: supported unAPI formats, for use with :meth:`readux.books.views.unapi`
+    unapi_formats = {
+            'rdf_dc': {'type': 'application/rdf+xml', 'method': 'rdf_dc'}
+    }
+
+    @property
+    def ark_uri(self):
+        'fully-resolvable form of ARK URI'
+        for identifier in self.dc.content.identifier_list:
+            if 'ark:' in identifier:
+                return identifier
+
+    def rdf_dc(self):
+        '''RDF Dublin Core for use with unAPI and for harvest by Zotero'''
+        g = Graph()
+        g.bind('dc', DC)
+        g.bind('bibo', BIBO)
+        # use ARk Uri as identifier
+        u = rdflib.URIRef(self.ark_uri)
+        g.add((u, RDF.type, BIBO.book))
+
+        # add information from dublin core
+        dc = self.dc.content
+        g.add((u, DC.title, rdflib.Literal(dc.title)))
+        if self.volume:
+            g.add((u, BIBO.volume, rdflib.Literal(self.volume)))
+        g.add((u, DC.identifier, u))
+        g.add((u, BIBO.uri, u))
+
+        # creator info seems to be at book level, rather than volume
+        for creator in dc.creator_list:
+            g.add((u, DC.creator, rdflib.Literal(creator)))
+        if not dc.creator_list:
+            for creator in self.book.dc.content.creator_list:
+                g.add((u, DC.creator, rdflib.Literal(creator)))
+        # same for publisher
+        if dc.publisher:
+            g.add((u, DC.publisher, rdflib.Literal(dc.publisher)))
+        elif self.book.dc.content.publisher:
+            g.add((u, DC.publisher, rdflib.Literal(self.book.dc.content.publisher)))
+        # seems to be also the case for date
+        # NOTE: we have multiple dates; seems to be one for original edition
+        # and one for the digitial edition. Zotero only picks up one (randomly?);
+        # do we want to privilege the earlier date ?
+        for date in dc.date_list:
+            g.add((u, DC.date, rdflib.Literal(date)))
+        if not dc.date_list:
+            for date in self.book.dc.content.date_list:
+                g.add((u, DC.date, rdflib.Literal(date)))
+
+        for description in dc.description_list:
+            g.add((u, DC.description, rdflib.Literal(description)))
+        if not dc.description_list:
+            for description in self.book.dc.content.description_list:
+                g.add((u, DC.description, rdflib.Literal(description)))
+
+        if dc.format:
+            g.add((u, DC['format'], rdflib.Literal(dc.format)))
+            # NOTE: can't use DC.format because namespaces have a format method
+        if dc.language:
+            g.add((u, DC.language, rdflib.Literal(dc.language)))
+        if dc.rights:
+            g.add((u, DC.rights, rdflib.Literal(dc.rights)))
+
+        for rel in dc.relation_list:
+            if rel.endswith('PDF'):
+                g.add((u, RDF.value, rdflib.URIRef(rel)))
+            else:
+                g.add((u, DC.relation, rdflib.URIRef(rel)))
+
+        return g.serialize()
 
 
 class SolrVolume(UserDict, BaseVolume):

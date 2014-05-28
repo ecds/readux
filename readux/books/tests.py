@@ -1,5 +1,7 @@
 import os
+from datetime import datetime
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -35,6 +37,16 @@ class SolrVolumeTest(TestCase):
         self.assertEqual(ocm, volume.control_key)
         self.assertEqual('', volume.volume)
 
+    def test_fulltext_absolute_url(self):
+        volume = SolrVolume(label='ocn460678076_V.1',
+                         pid='testpid:1234')
+
+        url = volume.fulltext_absolute_url()
+        self.assert_(url.startswith('http://'))
+        self.assert_(url.endswith(reverse('books:text', kwargs={'pid': volume.pid})))
+        current_site = Site.objects.get_current()
+        self.assert_(current_site.domain in url)
+
 
 class BookViewsTest(TestCase):
 
@@ -45,6 +57,8 @@ class BookViewsTest(TestCase):
         mockobj.pid = 'vol:1'
         mockobj.label = 'ocm30452349_1908'
         mockrepo.return_value.get_object.return_value = mockobj
+        # to support for last modified conditional
+        mockobj.pdf.created = datetime.now()
 
         pdf_url = reverse('books:pdf', kwargs={'pid': mockobj.pid})
         response = self.client.get(pdf_url)
@@ -64,7 +78,7 @@ class BookViewsTest(TestCase):
         # digital object class should be specified
         self.assertEqual(Volume, kwargs['type'])
         self.assertEqual(mockrepo.return_value, kwargs['repo'])
-        self.assertEqual({'Content-Disposition': 'filename=%s.pdf' % mockobj.label},
+        self.assertEqual({'Content-Disposition': 'filename="%s.pdf"' % mockobj.label},
             kwargs['headers'])
 
         # volume with a space in the label
@@ -72,7 +86,7 @@ class BookViewsTest(TestCase):
         response = self.client.get(pdf_url)
         args, kwargs = mockraw_ds.call_args
         content_disposition = kwargs['headers']['Content-Disposition']
-        self.assertEqual('filename=%s.pdf' % mockobj.label.replace(' ', '-'),
+        self.assertEqual('filename="%s.pdf"' % mockobj.label.replace(' ', '-'),
             content_disposition,
             'content disposition filename should not include spaces even if label does')
 
@@ -138,6 +152,45 @@ class BookViewsTest(TestCase):
         # multiple terms and phrase
         response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})
         mocksolr.query.query.assert_called_with('yellowbacks', 'lecoq the detective', 'mystery')
+
+    @patch('readux.books.views.Repository')
+    @patch('readux.books.views.raw_datastream')
+    def test_text(self, mockraw_ds, mockrepo):
+        mockobj = Mock()
+        mockobj.pid = 'vol:1'
+        mockobj.label = 'ocm30452349_1908'
+        mockrepo.return_value.get_object.return_value = mockobj
+        mockobj.get_fulltext.return_value = 'sample text content'
+        # to support for last modified conditional
+        mockobj.ocr.created = datetime.now()
+
+        text_url = reverse('books:text', kwargs={'pid': mockobj.pid})
+        response = self.client.get(text_url)
+
+        self.assertEqual(mockobj.get_fulltext.return_value, response.content,
+            'volume full text should be returned as response content')
+        self.assertEqual(response['Content-Type'], "text/plain")
+        self.assertEqual(response['Content-Disposition'],
+            'filename="%s.txt"' % mockobj.label)
+
+        # various 404 conditions
+        # - no ocr
+        mockobj.ocr.exists = False
+        response = self.client.get(text_url)
+        self.assertEqual(404, response.status_code,
+            'text view should 404 if ocr datastream does not exist')
+        # - not a volume
+        mockobj.has_requisite_content_models = False
+        mockobj.ocr.exists = True
+        response = self.client.get(text_url)
+        self.assertEqual(404, response.status_code,
+            'text view should 404 if object is not a Volume')
+        # - object doesn't exist
+        mockobj.exists = False
+        mockobj.has_requisite_content_models = True
+        response = self.client.get(text_url)
+        self.assertEqual(404, response.status_code,
+            'text view should 404 if object does not exist')
 
 
 class AbbyyOCRTestCase(TestCase):

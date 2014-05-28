@@ -1,4 +1,7 @@
 from UserDict import UserDict
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
+
 from eulfedora.models import DigitalObject, Relation, FileDatastream, \
     XmlDatastream
 from eulfedora.rdfns import relsext
@@ -50,6 +53,14 @@ class BaseVolume(object):
         'short-form of pid'
         pidspace, sep, noid = self.pid.partition(':')
         return noid
+
+    def fulltext_absolute_url(self):
+        '''Generate an absolute url to the text view for this volume
+        for use with external services such as voyant-tools.org'''
+        current_site = Site.objects.get_current()
+        return ''.join(['http://', current_site.domain,
+                        reverse('books:text', kwargs={'pid': self.pid})])
+
 
 class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume Object.  Extends :class:`~eulfedora.models.DigitalObject`.'''

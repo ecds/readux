@@ -12,4 +12,13 @@
     {{ obj.title|truncatechars:100 }}
     {% if obj.volume %}({{ obj.volume }}){% endif %}
     <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
+
+    <a href="http://voyant-tools.org/?input={{ obj.fulltext_absolute_url }}&amp;stopList=stop.en.taporware.txt"
+       title="send text to Voyant" target="_blank">
+       <button class="btn btn-default btn-xs">
+       Send to Voyant
+        <span class="glyphicon glyphicon-send"></span>
+    </button>
+    </a>
+
 </li>

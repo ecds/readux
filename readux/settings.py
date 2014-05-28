@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
@@ -68,6 +69,8 @@ TEMPLATE_LOADERS = (
 TEMPLATE_DIRS = [
     os.path.join(BASE_DIR, 'templates'),
 ]
+
+SITE_ID = 1
 
 ROOT_URLCONF = 'readux.urls'
 

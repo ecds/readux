@@ -28,7 +28,8 @@ urlpatterns = patterns('',
     url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps}),
     url(r'^sitemap-(?P<section>.+)\.xml$', sitemap_views.sitemap, {'sitemaps': sitemaps}),
 
-
+    # django admin
+    url(r'^admin/', include(admin.site.urls)),
 )
 
 

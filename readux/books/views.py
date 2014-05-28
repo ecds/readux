@@ -27,8 +27,6 @@ def search(request):
                 .field_limit(['pid', 'title', 'label'], score=True) \
                 .results_as(SolrVolume)
 
-        print q[0].fulltext_absolute_url()
-
         # paginate the solr result set
         paginator = Paginator(q, 30)
         try:

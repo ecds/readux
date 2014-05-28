@@ -1,5 +1,5 @@
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import condition
 from urllib import urlencode
@@ -8,7 +8,7 @@ from eulcommon.searchutil import search_terms
 from eulfedora.server import Repository, RequestFailed
 from eulfedora.views import raw_datastream, datastream_etag
 
-from readux.books.models import Volume
+from readux.books.models import Volume, SolrVolume
 from readux.books.forms import BookSearch
 from readux.utils import solr_interface
 
@@ -24,7 +24,10 @@ def search(request):
         solr = solr_interface()
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(*terms) \
-                .field_limit(['pid', 'title', 'label'], score=True)
+                .field_limit(['pid', 'title', 'label'], score=True) \
+                .results_as(SolrVolume)
+
+        print q[0].fulltext_absolute_url()
 
         # paginate the solr result set
         paginator = Paginator(q, 30)
@@ -74,10 +77,40 @@ def pdf(request, pid):
         obj = repo.get_object(pid, type=Volume)
         extra_headers = {
             # generate a default filename based on the object label
-            'Content-Disposition': "filename=%s.pdf" % obj.label.replace(' ', '-')
+            'Content-Disposition': 'filename="%s.pdf"' % obj.label.replace(' ', '-')
         }
         # use generic raw datastream view from eulfedora
         return raw_datastream(request, pid, Volume.pdf.id, type=Volume,
            repo=repo, headers=extra_headers)
     except RequestFailed:
         raise Http404
+
+
+def ocr_etag(request, pid):
+    return datastream_etag(request, pid, Volume.ocr.id)
+
+def ocr_lastmodified(request, pid):
+    repo = Repository()
+    try:
+        # retrieve the object so we can use it to set the download filename
+        obj = repo.get_object(pid, type=Volume)
+        return obj.ocr.created
+    except RequestFailed:
+        pass
+
+
+@condition(etag_func=ocr_etag, last_modified_func=ocr_lastmodified)
+def text(request, pid):
+    '''View to allow access the plain text content of a
+    :class:`~readux.books.models.Volume` object.
+    '''
+    repo = Repository()
+    obj = repo.get_object(pid, type=Volume)
+    # if object doesn't exist, isn't a volume, or doesn't have ocr text - 404
+    if not obj.exists or not obj.has_requisite_content_models or not obj.ocr.exists:
+        raise Http404
+
+    response = HttpResponse(obj.get_fulltext(), 'text/plain')
+    # generate a default filename based on the object label
+    response['Content-Disposition'] = 'filename="%s.txt"' % obj.label.replace(' ', '-')
+    return response

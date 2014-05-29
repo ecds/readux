@@ -68,7 +68,7 @@ class CollectionViewsTest(TestCase):
 
     @patch('readux.collection.views.Repository')
     @patch('readux.collection.views.Paginator', spec=Paginator)
-    def test_browse(self, mockpaginator, mockrepo, mocksolr_interface):
+    def test_view(self, mockpaginator, mockrepo, mocksolr_interface):
         mocksolr = mocksolr_interface.return_value
         view_url = reverse('collection:view', kwargs={'pid': 'coll'})
 
@@ -140,5 +140,18 @@ class CollectionViewsTest(TestCase):
         self.assertContains(response, '(V.2)',
             msg_prefix='volume number should be displayed when present')
 
-
+        # check that unapi / zotero harvest is enabled
+        self.assertContains(response,
+            '<link rel="unapi-server" type="application/xml" title="unAPI" href="%s" />' % \
+            reverse('books:unapi'),
+            html=True,
+            msg_prefix='link to unAPI server URL should be specified in header')
+        self.assertContains(response,
+            '<abbr class="unapi-id" title="%s"></abbr>' % solr_result[0]['pid'],
+            msg_prefix='unapi item id for %s should be included to allow zotero harvest' % \
+                        solr_result[0]['pid'])
+        self.assertContains(response,
+            '<abbr class="unapi-id" title="%s"></abbr>' % solr_result[1]['pid'],
+            msg_prefix='unapi item id for %s should be included to allow zotero harvest' % \
+                       solr_result[1]['pid'])
 

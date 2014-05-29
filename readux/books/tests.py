@@ -6,12 +6,15 @@ from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from mock import patch, Mock, NonCallableMock
+import rdflib
+from rdflib import RDF
 
 from eulxml.xmlmap import load_xmlobject_from_file
+from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
 from readux.books import abbyyocr
-from readux.books.models import SolrVolume, Volume
+from readux.books.models import SolrVolume, Volume, Book, BIBO, DC
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -46,6 +49,93 @@ class SolrVolumeTest(TestCase):
         self.assert_(url.endswith(reverse('books:text', kwargs={'pid': volume.pid})))
         current_site = Site.objects.get_current()
         self.assert_(current_site.domain in url)
+
+class VolumeTest(TestCase):
+
+    def setUp(self):
+        # use uningested objects for testing purposes
+        repo = Repository()
+        self.vol = repo.get_object(type=Volume)
+        self.vol.label = 'ocn460678076_V.1'
+
+    def test_ark_uri(self):
+        ark_uri = 'http://pid.co/ark:/12345/ba45'
+        self.vol.dc.content.identifier_list.extend([ark_uri, 'pid:ba45', 'otherid'])
+        self.assertEqual(ark_uri, self.vol.ark_uri)
+
+    def test_rdf_dc(self):
+        # add metadata to test rdf generated
+        ark_uri = 'http://pid.co/ark:/12345/ba45'
+        self.vol.dc.content.identifier_list.append(ark_uri)
+        self.vol.dc.content.title = 'Sunset, a novel'
+        self.vol.dc.content.format = 'application/pdf'
+        self.vol.dc.content.language = 'eng'
+        self.vol.dc.content.rights = 'public domain'
+
+        # NOTE: patching on class instead of instance because related object is a descriptor
+        with patch.object(Volume, 'book', new=Mock(spec=Book)) as mockbook:
+
+            mockbook.dc.content.creator_list = ['Author, Joe']
+            mockbook.dc.content.date_list = ['1801', '2010']
+            mockbook.dc.content.description_list = ['digitized edition', 'mystery novel']
+            mockbook.dc.content.publisher = 'Nashville, Tenn. : Barbee &amp; Smith'
+            mockbook.dc.content.relation_list = [
+                'http://pid.co/ark:/12345/book',
+                'http://pid.co/ark:/12345/volpdf'
+            ]
+
+            graph = self.vol.rdf_dc_graph()
+
+            lit = rdflib.Literal
+
+            uri = rdflib.URIRef(self.vol.ark_uri)
+            self.assert_((uri, RDF.type, BIBO.book) in graph,
+                'rdf graph type should be bibo:book')
+            self.assert_((uri, DC.title, lit(self.vol.dc.content.title)) in graph,
+                'title should be set as dc:title')
+            self.assert_((uri, BIBO.volume, lit(self.vol.volume)) in graph,
+                'volume label should be set as bibo:volume')
+            self.assert_((uri, DC['format'], lit(self.vol.dc.content.format)) in graph,
+                'format should be set as dc:format')
+            self.assert_((uri, DC.language, lit(self.vol.dc.content.language)) in graph,
+                'language should be set as dc:language')
+            self.assert_((uri, DC.rights, lit(self.vol.dc.content.rights)) in graph,
+                'rights should be set as dc:rights')
+            for rel in self.vol.dc.content.relation_list:
+                self.assert_((uri, DC.relation, lit(rel)) in graph,
+                    'related item %s should be set as dc:relation' % rel)
+
+            # metadata pulled from book obj because not present in volume
+            self.assert_((uri, DC.creator, lit(mockbook.dc.content.creator_list[0])),
+                'creator from book metadata should be set as dc:creator when not present in volume metadata')
+            self.assert_((uri, DC.publisher, lit(mockbook.dc.content.publisher)),
+                'publisher from book metadata should be set as dc:publisher when not present in volume metadata')
+            for d in mockbook.dc.content.date_list:
+                self.assert_((uri, DC.date, lit(d)),
+                    'date %s from book metadata should be set as dc:date when not present in volume metadata' \
+                    % d)
+            for d in mockbook.dc.content.description_list:
+                self.assert_((uri, DC.description, lit(d)),
+                    'description from book metadata should be set as dc:description when not present in volume metadata')
+
+        # volume-level metadata should be used when present instead of book
+        self.vol.dc.content.creator_list = ['Writer, Jane']
+        self.vol.dc.content.date_list = ['1832', '2012']
+        self.vol.dc.content.description_list = ['digital edition']
+        self.vol.dc.content.publisher = 'So &amp; So Publishers'
+
+        graph = self.vol.rdf_dc_graph()
+        self.assert_((uri, DC.creator, lit(self.vol.dc.content.creator_list[0])),
+            'creator from volume metadata should be set as dc:creator when present')
+        self.assert_((uri, DC.publisher, lit(self.vol.dc.content.publisher)),
+            'publisher from volume metadata should be set as dc:publisher when present')
+        for d in self.vol.dc.content.date_list:
+            self.assert_((uri, DC.date, lit(d)),
+                'date %s from volume metadata should be set as dc:date when present' \
+                % d)
+        for d in self.vol.dc.content.description_list:
+            self.assert_((uri, DC.description, lit(d)),
+                'description from volume metadata should be set as dc:description when present')
 
 
 class BookViewsTest(TestCase):
@@ -141,21 +231,30 @@ class BookViewsTest(TestCase):
         mocksolr.query.query.assert_called_with('yellowbacks')
         mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label'], score=True)
 
+        # check that unapi / zotero harvest is enabled
+        self.assertContains(response,
+            '<link rel="unapi-server" type="application/xml" title="unAPI" href="%s" />' % \
+            reverse('books:unapi'),
+            html=True,
+            msg_prefix='link to unAPI server URL should be specified in header')
+
         # check that items are displayed
         for item in solr_result:
             self.assertContains(response, item['title'],
                 msg_prefix='title should be displayed')
             self.assertContains(response, reverse('books:pdf', kwargs={'pid': item['pid']}),
                 msg_prefix='link to pdf should be included in response')
-
+            self.assertContains(response,
+                '<abbr class="unapi-id" title="%s"></abbr>' % item['pid'],
+                msg_prefix='unapi item id for %s should be included to allow zotero harvest' \
+                           % item['pid'])
 
         # multiple terms and phrase
         response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})
         mocksolr.query.query.assert_called_with('yellowbacks', 'lecoq the detective', 'mystery')
 
     @patch('readux.books.views.Repository')
-    @patch('readux.books.views.raw_datastream')
-    def test_text(self, mockraw_ds, mockrepo):
+    def test_text(self, mockrepo):
         mockobj = Mock()
         mockobj.pid = 'vol:1'
         mockobj.label = 'ocm30452349_1908'
@@ -191,6 +290,50 @@ class BookViewsTest(TestCase):
         response = self.client.get(text_url)
         self.assertEqual(404, response.status_code,
             'text view should 404 if object does not exist')
+
+    @patch('readux.books.views.Repository')
+    def test_unapi(self, mockrepo):
+        unapi_url = reverse('books:unapi')
+
+        # no params - should list available formats
+        response = self.client.get(unapi_url)
+        self.assertEqual('application/xml', response['content-type'],
+            'response should be returned as xml')
+        self.assertContains(response, '<formats>',
+            msg_prefix='request with no parameters should return all formats')
+        # volume formats only for now
+        formats = Volume.unapi_formats
+        for fmt_name, fmt_info in formats.iteritems():
+            self.assertContains(response, '<format name="%s" type="%s"' \
+                % (fmt_name, fmt_info['type']),
+                msg_prefix='formats should include %s' % fmt_name)
+
+        mockobj = Mock()
+        mockobj.pid = 'vol:1'
+        mockobj.label = 'ocm30452349_1908'
+        mockobj.unapi_formats = Volume.unapi_formats
+        # actual rdf dc logic tested elsewhere
+        mockobj.rdf_dc.return_value = 'sample bogus rdf for testing purposes'
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        # request with id but no format
+        response = self.client.get(unapi_url, {'id': mockobj.pid})
+        self.assertEqual('application/xml', response['content-type'],
+            'response should be returned as xml')
+        self.assertContains(response, '<formats id="%s">' % mockobj.pid,
+            msg_prefix='request with id specified should return formats for that id')
+        # volume formats only for now
+        for fmt_name, fmt_info in formats.iteritems():
+            self.assertContains(response, '<format name="%s" type="%s"' \
+                % (fmt_name, fmt_info['type']),
+                msg_prefix='formats should include %s' % fmt_name)
+
+        # request with id and format
+        response = self.client.get(unapi_url, {'id': mockobj.pid, 'format': 'rdf_dc'})
+        self.assertEqual(formats['rdf_dc']['type'], response['content-type'],
+            'response content-type should be set based on requested format')
+        self.assertEqual(mockobj.rdf_dc.return_value, response.content,
+            'response content should be set based on result of method corresponding to requested format')
 
 
 class AbbyyOCRTestCase(TestCase):

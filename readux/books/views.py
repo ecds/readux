@@ -115,14 +115,20 @@ def text(request, pid):
 
 
 def unapi(request):
-    '''unAPI service point for volume objects, to make content available
-    for harvest via Zotero.'''
+    '''unAPI service point for :class:`~readux.books.models.Volume` objects,
+    to make content available for harvest via Zotero.'''
+
+    # NOTE: this could probably be generalized into a re-usable view
+    # (maybe an extensible class-based view?) for re-use
+
     item_id = request.GET.get('id', None)
     format = request.GET.get('format', None)
     context = {}
     if item_id is not None:
         context['id'] = item_id
         repo = Repository(request=request)
+        # generalized class-based view would need probably a get-item method
+        # for repo objects, could use type-inferring repo variant
         obj = repo.get_object(item_id, type=Volume)
 
         formats = obj.unapi_formats
@@ -138,8 +144,11 @@ def unapi(request):
 
     else:
         # display formats for all items
+        # NOTE: if multiple classes, should be able to combine the formats
         context['formats'] = Volume.unapi_formats
 
+    # NOTE: doesn't really even need to be a template, could be generated
+    # with eulxml just as easily if that simplifies reuse
     return render(request, 'books/unapi_format.xml', context,
         content_type='application/xml')
 

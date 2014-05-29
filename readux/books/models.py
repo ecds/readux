@@ -170,12 +170,15 @@ class Volume(DigitalObject, BaseVolume):
             if 'ark:' in identifier:
                 return identifier
 
-    def rdf_dc(self):
-        '''RDF Dublin Core for use with unAPI and for harvest by Zotero'''
+    def rdf_dc_graph(self):
+        '''Generate an :class:`rdflib.Graph` of RDF Dublin Core for use
+        with unAPI and for harvest by Zotero.  Content is based on
+        Volume Dublin Core content as well as Dublin Core information
+        from the parent :class:`Book` object'''
         g = Graph()
         g.bind('dc', DC)
         g.bind('bibo', BIBO)
-        # use ARk Uri as identifier
+        # use ARK URI as identifier
         u = rdflib.URIRef(self.ark_uri)
         g.add((u, RDF.type, BIBO.book))
 
@@ -190,6 +193,7 @@ class Volume(DigitalObject, BaseVolume):
         # creator info seems to be at book level, rather than volume
         for creator in dc.creator_list:
             g.add((u, DC.creator, rdflib.Literal(creator)))
+
         if not dc.creator_list:
             for creator in self.book.dc.content.creator_list:
                 g.add((u, DC.creator, rdflib.Literal(creator)))
@@ -223,12 +227,14 @@ class Volume(DigitalObject, BaseVolume):
             g.add((u, DC.rights, rdflib.Literal(dc.rights)))
 
         for rel in dc.relation_list:
-            if rel.endswith('PDF'):
-                g.add((u, RDF.value, rdflib.URIRef(rel)))
-            else:
-                g.add((u, DC.relation, rdflib.URIRef(rel)))
+            # NOTE: tried adding PDF as RDF.value, but Zotero doesn't pick it up as an attachment
+            g.add((u, DC.relation, rdflib.URIRef(rel)))
 
-        return g.serialize()
+        return g
+
+    def rdf_dc(self):
+        'Serialized form of :meth:`rdf_dc_graph` for use with unAPI'
+        return self.rdf_dc_graph().serialize()
 
 
 class SolrVolume(UserDict, BaseVolume):

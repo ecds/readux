@@ -14,7 +14,7 @@
     <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
 
     {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
-    <a href="http://voyant-tools.org/?input={{ obj.fulltext_absolute_url }}{% if obj.dc.content.language == "eng" %}&amp;stopList=stop.en.taporware.txt{% endif %}"
+    <a href="http://voyant-tools.org/?input={{ obj.fulltext_absolute_url }}{% if "eng" in obj.language %}&amp;stopList=stop.en.taporware.txt{% endif %}"
        title="send text to Voyant" target="_blank">
        <button class="btn btn-default btn-xs">
        Send to Voyant

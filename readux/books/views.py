@@ -24,7 +24,7 @@ def search(request):
         solr = solr_interface()
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(*terms) \
-                .field_limit(['pid', 'title', 'label'], score=True) \
+                .field_limit(['pid', 'title', 'label', 'language'], score=True) \
                 .results_as(SolrVolume)
 
         # paginate the solr result set
@@ -79,7 +79,7 @@ def pdf(request, pid):
         }
         # use generic raw datastream view from eulfedora
         return raw_datastream(request, pid, Volume.pdf.id, type=Volume,
-           repo=repo, headers=extra_headers)
+            repo=repo, headers=extra_headers)
     except RequestFailed:
         raise Http404
 

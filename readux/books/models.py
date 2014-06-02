@@ -1,6 +1,8 @@
 from UserDict import UserDict
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
+from lxml.etree import XMLSyntaxError
+import logging
 
 import rdflib
 from rdflib import Graph
@@ -9,10 +11,13 @@ from rdflib.namespace import RDF
 from eulfedora.models import DigitalObject, Relation, FileDatastream, \
     XmlDatastream
 from eulfedora.rdfns import relsext
-# from eulfedora.indexdata.util import pdf_to_text
+from eulfedora.indexdata.util import pdf_to_text
 
 from readux.books import abbyyocr
 from readux.collection.models import Collection
+
+
+logger = logging.getLogger(__name__)
 
 
 BIBO = rdflib.Namespace('http://purl.org/ontology/bibo/')
@@ -130,11 +135,16 @@ class Volume(DigitalObject, BaseVolume):
 
         data = super(Volume, self).index_data()
         if self.ocr.exists:
-            data['fulltext'] = self.get_fulltext()
-        # # pulling text content from the PDF is significantly slower;
-        # # - only pdf if ocr xml is not available
-        # elif self.pdf.exists:
-        #     data['fulltext'] = pdf_to_text(self.pdf.content)
+            try:
+                data['fulltext'] = self.get_fulltext()
+
+            except XMLSyntaxError:
+                logger.warn('XML Syntax error attempting to retrieve text from OCR xml for %s' % self.pid)
+
+        # pulling text content from the PDF is significantly slower;
+        # - only pdf if ocr xml is not available or errored
+        if 'fulltext' not in data:
+            data['fulltext'] = pdf_to_text(self.pdf.content)
 
         # index primary image pid to construct urls for cover image, first page
         # if self.primary_image:

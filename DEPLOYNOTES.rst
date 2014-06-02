@@ -40,3 +40,22 @@ After configuring your database, run syncdb:
 
 Use eulindexer to index Repository content into the configured Solr instance.
 
+Initial QA/production deploy
+----------------------------
+
+* Use fabric deploy method
+* Configure localsettings (particularly **DATABASES**, **SOLR**, and **FEDORA**
+  settings)
+
+   * Note that Fedora access requires a non-privileged guest account, in order
+     to acess an API-M method for information about a datastream, used for
+     PDF download view, etc.
+* Run ``python manage.py syncdb``
+* Configure the site to run under apache (see ``apache/readux.conf`` for a
+  sample apache configuration)
+* Use Django admin interface to configure the site domain name (used to generate
+  absolute urls to full-text content for use with Voyant)
+* Configure eulindexer to point to the new site url, restart eulindexer service,
+  and reindex the site
+* Update/deploy xacml to allow API-A access to LSDI collections
+

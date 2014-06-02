@@ -229,7 +229,7 @@ class BookViewsTest(TestCase):
 
         mocksolr.query.filter.assert_called_with(content_model=Volume.VOLUME_CONTENT_MODEL)
         mocksolr.query.query.assert_called_with('yellowbacks')
-        mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label'], score=True)
+        mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label', 'language'], score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,

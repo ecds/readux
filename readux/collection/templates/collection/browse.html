@@ -11,7 +11,9 @@
         <div class="container">
             <ul class="media-list collection-list">
                 {% for coll, count in collections %}
-                    {% include 'collection/snippets/list_collection.html' %}
+                    {% if count %} {# don't display empty collections #}
+                        {% include 'collection/snippets/list_collection.html' %}
+                    {% endif %}
                 {% endfor %}
             </ul>
         </div><!-- /.container-->

@@ -24,7 +24,8 @@ def search(request):
         solr = solr_interface()
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(*terms) \
-                .field_limit(['pid', 'title', 'label', 'language'], score=True) \
+                .field_limit(['pid', 'title', 'label', 'language',
+                              'creator', 'date'], score=True) \
                 .results_as(SolrVolume)
 
         # paginate the solr result set

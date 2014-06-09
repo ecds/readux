@@ -9,8 +9,9 @@
     </div>
     {% if debug %}<span class="pull-right">{{ obj.score }}</span>{% endif %}
     {% endif %}
-    {{ obj.title|truncatechars:100 }}
-    {% if obj.volume %}({{ obj.volume }}){% endif %}
+    <b>{{ obj.title|truncatechars:100 }}</b>
+    {% if obj.volume %}[{{ obj.volume }}]{% endif %}
+    {% if obj.date %}({{ obj.date.0 }}){% endif %}
     <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
 
     {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
@@ -20,7 +21,8 @@
        Send to Voyant
         <span class="glyphicon glyphicon-send"></span>
     </button>
-    </a>
+     </a>
+     <p>{{ obj.creator|join:'; ' }}</p>
 
     <abbr class="unapi-id" title="{{ obj.pid }}"></abbr>
 </li>

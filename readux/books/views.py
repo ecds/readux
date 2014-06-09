@@ -22,8 +22,17 @@ def search(request):
         # get list of keywords and phrases
         terms = search_terms(kw)
         solr = solr_interface()
+        # generate queries text and boost-field queries
+        text_query = solr.Q()
+        author_query = solr.Q()
+        title_query = solr.Q()
+        for t in terms:
+            text_query |= solr.Q(t)
+            author_query |= solr.Q(creator=t)
+            title_query |= solr.Q(title=t)
+
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
-                .query(*terms) \
+                .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(['pid', 'title', 'label', 'language',
                               'creator', 'date'], score=True) \
                 .results_as(SolrVolume)

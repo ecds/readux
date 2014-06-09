@@ -158,10 +158,24 @@ class Volume(DigitalObject, BaseVolume):
         # add book-level metadata to text for keyword searching purposes
         # (preliminary; may want broken out for facets/fielded searching;
         # would be better to index on book object and use joins for that if possible...)
+
+        book_dc = self.book.dc.content
+
+        # convert xmlmap lists to straight lists for json output
+        data['creator'] = list(book_dc.creator_list)
+
+        # some books (at least) include the digitization date (date of the
+        # electronic ediction). If there are multiple dates, only include the oldest.
+        dates = book_dc.date_list
+        if len(dates) > 1:
+            data['date'] = sorted([d.strip('[]') for d in dates])[0]
+        else:
+            data['date'] = list(dates)
+
+        if self.book.dc.content.subject_list:
+            data['subject'] = list(book_dc.subject_list)
+
         book_info = []
-        book_info.extend(self.book.dc.content.creator_list)
-        book_info.extend(self.book.dc.content.date_list)
-        book_info.extend(self.book.dc.content.subject_list)
         # include collection label (short form) in fulltext search also
         book_info.append(self.book.collection.short_label)
         data['text'] = book_info

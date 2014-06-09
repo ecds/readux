@@ -11,7 +11,7 @@
     {% endif %}
     <b>{{ obj.title|truncatechars:100 }}</b>
     {% if obj.volume %}[{{ obj.volume }}]{% endif %}
-    {% if obj.date %}({{ obj.date.0 }}){% endif %}
+    {% if obj.date %}({{ obj.date|join:', ' }}){% endif %}
     <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
 
     {# link to voyant with full document plain text as input; preset english stopwords for english texts #}

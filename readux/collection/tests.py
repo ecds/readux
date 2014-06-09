@@ -102,8 +102,10 @@ class CollectionViewsTest(TestCase):
 
         # set up mock results for display on template
         solr_result = [
-            SolrVolume(**{'pid': 'vol:1', 'title': 'Asodecoan'}),
-            SolrVolume(**{'pid': 'vol:2', 'title': 'Sugar Crop of Lousiana', 'label': 'ocm123_V.2'}),
+            SolrVolume(**{'pid': 'vol:1', 'title': 'Asodecoan',
+                'creator': ['Atlanta-Southern Dental College.; Emory University Archives.']}),
+            SolrVolume(**{'pid': 'vol:2', 'title': 'Sugar Crop of Lousiana', 'label': 'ocm123_V.2',
+                         'date': ['1831']}),
         ]
 
         # - using a noncallable for the pagination result that is used in the template
@@ -137,8 +139,13 @@ class CollectionViewsTest(TestCase):
             msg_prefix='volume title %(title)s should be displayed' % solr_result[0])
         self.assertContains(response, solr_result[1]['title'],
             msg_prefix='volume title %(title)s should be displayed' % solr_result[1])
-        self.assertContains(response, '(V.2)',
+        self.assertContains(response, '[V.2]',
             msg_prefix='volume number should be displayed when present')
+        # date/creator
+        self.assertContains(response, '(%s)' % solr_result[1]['date'][0],
+            msg_prefix='volume date should be displayed when present')
+        self.assertContains(response, '%s' % solr_result[0]['creator'][0],
+            msg_prefix='volume author/creator should be displayed when present')
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,

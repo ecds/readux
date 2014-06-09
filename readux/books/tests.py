@@ -228,8 +228,13 @@ class BookViewsTest(TestCase):
         response = self.client.get(search_url, {'keyword': 'yellowbacks'})
 
         mocksolr.query.filter.assert_called_with(content_model=Volume.VOLUME_CONTENT_MODEL)
-        mocksolr.query.query.assert_called_with('yellowbacks')
-        mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label', 'language'], score=True)
+        # because of creator/title search boosting, actual query is a little difficult to test
+        mocksolr.Q.assert_any_call('yellowbacks')
+        mocksolr.Q.assert_any_call(creator='yellowbacks')
+        mocksolr.Q.assert_any_call(title='yellowbacks')
+        # not sure how to test query on Q|Q**3|Q**3
+        mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label',
+            'language', 'creator', 'date'], score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,
@@ -251,7 +256,8 @@ class BookViewsTest(TestCase):
 
         # multiple terms and phrase
         response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})
-        mocksolr.query.query.assert_called_with('yellowbacks', 'lecoq the detective', 'mystery')
+        for term in ['yellowbacks', 'lecoq the detective', 'mystery']:
+            mocksolr.Q.assert_any_call(term)
 
     @patch('readux.books.views.Repository')
     def test_text(self, mockrepo):

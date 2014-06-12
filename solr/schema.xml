@@ -279,6 +279,7 @@ Solr Schema for projects using eulfedora and indexdata.
 
    <!-- *** readux-specific fields -->
    <field name="collection_id" type="string" indexed="true" stored="true"/>
+   <field name="collection_label" type="text" indexed="true" stored="true"/>
    <field name="book_id" type="string" indexed="true" stored="true"/>
    <field name="page_order" type="sint" indexed="true" stored="true"/>
    <!-- document full text; NOT configured to allow highlighting -->
@@ -331,7 +332,8 @@ Solr Schema for projects using eulfedora and indexdata.
 
    <!-- non-tokenized versions of terms to for sorting and/or facets -->
    <field name="title_exact" type="string" indexed="true" stored="false"/>
-   <field name="subject_facet" type="string" indexed="true" stored="false" multiValued="true"/>
+   <!-- create via dynamic facet field -->
+   <dynamicField name="*_facet" type="string" indexed="true" stored="false" multiValued="true"/>
 
    <!-- Here, default is used to create a "timestamp" field indicating
         When each document was indexed.
@@ -381,6 +383,7 @@ Solr Schema for projects using eulfedora and indexdata.
    <copyField source="title" dest="title_exact"/>
    <!-- copy text fields into string fields for faceting -->
    <copyField source="subject" dest="subject_facet"/>
+   <copyField source="collection_label" dest="collection_label_facet"/>
 
    <!-- fields that should be included in the default search -->
    <!--    top-level object properties: label, pid, owner -->
@@ -406,7 +409,10 @@ Solr Schema for projects using eulfedora and indexdata.
    <copyField source="source" dest="text"/>
    <copyField source="subject" dest="text"/>
    <copyField source="type" dest="text"/>
+   <!-- readux-specific fields -->
+   <copyField source="collection_label" dest="text"/>
    <!-- include full text in default text -->
+   <!-- FIXME: possibly redundant / requires extra storage ? -->
    <copyField source="fulltext" dest="text"/>
 
 

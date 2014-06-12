@@ -152,6 +152,7 @@ class Volume(DigitalObject, BaseVolume):
 
         # index collection info
         data['collection_id'] = self.book.collection.pid
+        data['collection_label'] = self.book.collection.short_label
         # book this volume is part of, for access to book-level metadata
         data['book_id'] = self.book.pid
 
@@ -174,11 +175,6 @@ class Volume(DigitalObject, BaseVolume):
 
         if self.book.dc.content.subject_list:
             data['subject'] = list(book_dc.subject_list)
-
-        book_info = []
-        # include collection label (short form) in fulltext search also
-        book_info.append(self.book.collection.short_label)
-        data['text'] = book_info
 
         return data
 

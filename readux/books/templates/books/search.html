@@ -30,6 +30,13 @@
       </div>
     </form>
 
+    {% if filters %}
+    with
+       {% for field, val, rm_link in filters %}
+         {{ field }} <a href="?{{ rm_link }}">{{ val }} <span class="glyphicon glyphicon-remove"></span></a>
+       {% endfor %}
+    {% endif %}
+
         {% if not form.errors %}
           {% if items.paginator.count %}
           <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} found</h2>
@@ -44,6 +51,16 @@
         {% endif %} {# valid form #}
     </header>
     <section>
+      {% if facets.collection %}
+      <p>Filter results by collection:</p>
+      <ul>
+        {% for label, count in facets.collection %}
+        <li><a href="?{{ url_params }}&amp;collection={{ label }} ">{{ label }}</a> ({{ count }})</li>
+        {% endfor %}
+      </ul>
+      <hr/>
+      {% endif %}
+
       {% if items %} {# results to display #}
         <div class="container">
           <ul class="media-list">
@@ -55,7 +72,7 @@
         {% endif %}
 
     {% if items.has_other_pages %}
-      {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}
+    {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}
     {% endif %}
 
     </section>

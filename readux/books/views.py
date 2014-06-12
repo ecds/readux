@@ -35,7 +35,23 @@ def search(request):
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(['pid', 'title', 'label', 'language',
                               'creator', 'date'], score=True) \
+                .facet_by('collection_label_facet', sort='index',mincount=1) \
                 .results_as(SolrVolume)
+
+        # url parameters for pagination and facet links
+        url_params = request.GET.copy()
+
+        # generate list for display and removal of active filters
+        display_filters = []
+        if 'collection' in request.GET:
+            filter_val = request.GET['collection']
+            # filter the solr query based on the requested collection
+            q = solr.query(collection_label='"%s"' % filter_val)
+            # generate link to remove the facet
+            unfacet_urlopts = url_params.copy()
+            del unfacet_urlopts['collection']
+            display_filters.append(('collection', filter_val,
+                                    unfacet_urlopts.urlencode()))
 
         # paginate the solr result set
         paginator = Paginator(q, 30)
@@ -48,13 +64,21 @@ def search(request):
         except (EmptyPage, InvalidPage):
             results = paginator.page(paginator.num_pages)
 
-        # url parameters for pagination links
-        url_params = request.GET.copy()
         if 'page' in url_params:
             del url_params['page']
 
-        context.update({'items': results,
-         'url_params': urlencode(url_params)})
+        # adjust facets as returned from solr for diplay
+        facet_fields = results.object_list.facet_counts.facet_fields
+        facets = {
+            'collection': facet_fields.get('collection_label_facet', []),
+        }
+
+        context.update({
+            'items': results,
+            'url_params': urlencode(url_params),
+            'facets': facets,  # available facets
+            'filters': display_filters  # active filters
+        })
 
     return render(request, 'books/search.html', context)
 

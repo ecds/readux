@@ -31,8 +31,10 @@ class CollectionViewsTest(TestCase):
 
         # set up mock results for collection query and facet counts
         solr_result = [
-            {'pid': 'coll:1', 'title': 'Yellowbacks'},
-            {'pid': 'coll:2', 'title': 'Emory Yearbooks'},
+            {'pid': 'coll:1', 'title': 'Yellowbacks',
+            'description': ['Cheap 19thc paperbacks, often bound in yellow.']},
+            {'pid': 'coll:2', 'title': 'Emory Yearbooks',
+            'description': ['Digitized copies of Emory yearbooks from various schools.']},
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.query.execute.return_value.facet_counts.facet_fields = {
@@ -58,12 +60,16 @@ class CollectionViewsTest(TestCase):
             msg_prefix='page should link to collection view for %(pid)s' % solr_result[0])
         self.assertContains(response, '1 volume',
             msg_prefix='volume count should be displayed')
+        self.assertContains(response, solr_result[0]['description'][0],
+            msg_prefix='collection description for %(pid)s should be displayed' % solr_result[0])
         self.assertContains(response, solr_result[1]['title'],
             msg_prefix='collection title %(title)s should be displayed' % solr_result[1])
         self.assertContains(response, reverse('collection:view', kwargs={'pid': solr_result[1]['pid']}),
             msg_prefix='page should link to collection view for %(pid)s' % solr_result[1])
         self.assertContains(response, '5 volumes',
             msg_prefix='volume count should be displayed and properly pluralized')
+        self.assertContains(response, solr_result[1]['description'][0],
+            msg_prefix='collection description for %(pid)s should be displayed' % solr_result[1])
 
 
     @patch('readux.collection.views.Repository')
@@ -95,6 +101,7 @@ class CollectionViewsTest(TestCase):
         mockcoll.has_requisite_content_models = True
         mockcoll.short_label = 'Yellowbacks'
         mockcoll.pid = 'coll:1'
+        mockcoll.dc.content.description = 'Cheap 19thc paperbacks, often bound in yellow.'
         # simulate sunburnt's fluid interface
         mocksolr.query.return_value = mocksolr.query
         for method in ['query', 'sort_by', 'results_as']:
@@ -133,6 +140,8 @@ class CollectionViewsTest(TestCase):
             '<title>Readux | Collections | %s</title>' % mockcoll.short_label,
             html=True,
             msg_prefix='collection label should be included in html title')
+        self.assertContains(response, mockcoll.dc.content.description,
+            msg_prefix='collection dc:description should be displayed')
         self.assertContains(response, '2 volumes in this collection',
             msg_prefix='total count of volumes in the collection should be displayed')
         self.assertContains(response, solr_result[0]['title'],

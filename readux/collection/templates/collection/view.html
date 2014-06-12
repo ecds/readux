@@ -22,6 +22,9 @@
                   </ol>
               </div>
           </div>
+          {% if collection.dc.content.description %}
+          <p>{{ collection.dc.content.description }}</p>
+          {% endif %}
       </div>
 
     {% if items.paginator.count %}

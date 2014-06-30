@@ -6,10 +6,11 @@
 <div class="container">
     <header class="page-header">
         <h1>Collections</h1>
+        <p class="lead">Digital archives grouped by topic or assortment.</p>
     </header>
     <section>
         <div class="container">
-            <ul class="media-list collection-list">
+            <ul class="media-list collection-list cover-view">
                 {% for coll, count in collections %}
                     {% if count %} {# don't display empty collections #}
                         {% include 'collection/snippets/list_collection.html' %}

@@ -4,8 +4,14 @@
 
 {% block css %}
   {{ block.super }}
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="{% static 'css/readux.css' %}" />
 {% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/isotope.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/local.js' %}"></script>
+{% endblock %} 
 
 {% block nav-title %}
 <span class="glyphicon glyphicon-book"></span>

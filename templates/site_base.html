@@ -11,7 +11,7 @@
 {% block javascript %}
     <script type="text/javascript" src="{% static 'js/isotope.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/local.js' %}"></script>
-{% endblock %} 
+{% endblock %}
 
 {% block nav-title %}
 <span class="glyphicon glyphicon-book"></span>
@@ -32,7 +32,7 @@
     <label class="sr-only" for="{{ search_form.keyword.name }}">{{ search_form.keyword.label }}</label>
     {% render_field search_form.keyword class+="form-control" placeholder="Search" %}
     {# TODO: help text #}
-    <button type="submit" class="btn btn-primary">
+    <button type="submit" class="btn">
         <span class="glyphicon glyphicon-search"></span>
     </button>
   </div>

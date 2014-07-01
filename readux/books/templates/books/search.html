@@ -55,7 +55,8 @@
       <p>Filter results by collection:</p>
       <ul class="nav nav-pills">
         {% for label, count in facets.collection %}
-        <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label }} ">{{ label }}({{ count }})</a> </li>
+        <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label }}">{{ label }}
+            <small>({{ count }})</small></a> </li>
         {% endfor %}
       </ul>
       <hr/>

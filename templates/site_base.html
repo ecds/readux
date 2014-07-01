@@ -21,7 +21,8 @@
 {% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
 
 {% block navlinks %}
-<li><a href="{% url 'collection:browse' %}">Collections</a></li>
+{# NOTE: suppressed for now because collection browse is site home page #}
+{# <li><a href="{% url 'collection:browse' %}">Collections</a></li> #}
 {% endblock %}
 
 {% block navbar-extra %}

@@ -14,7 +14,10 @@ sitemaps = {
 }
 
 urlpatterns = patterns('',
-    url(r'^$', 'readux.collection.views.site_index', name="site-index"),
+    # for now, using collection browse as site index
+    # url(r'^$', 'readux.collection.views.site_index', name="site-index"),
+    url(r'^$', 'readux.collection.views.browse', name="site-index"),
+
     url(r'^collections/', include('readux.collection.urls', namespace='collection')),
     url(r'^books/', include('readux.books.urls', namespace='books')),
 

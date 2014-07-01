@@ -6,17 +6,38 @@
 <div class="container">
     <header class="page-header">
         <h1>Collections</h1>
+
+        <div id="view-toggle" class="pull-right">
+            <a id="covers" class="btn disabled"><span class="glyphicon glyphicon-th"></span></a>
+            <a id="list" class="btn"><span class="glyphicon glyphicon-th-list"></span></a>
+        </div>
         <p class="lead">Digital archives grouped by topic or assortment.</p>
     </header>
     <section>
         <div class="container">
-            <ul class="media-list collection-list cover-view">
-                {% for coll, count in collections %}
-                    {% if count %} {# don't display empty collections #}
-                        {% include 'collection/snippets/list_collection.html' %}
-                    {% endif %}
-                {% endfor %}
-            </ul>
+
+            {# thumbnail view #}
+            <div id="collection-covers">
+                <ul class="media-list collection-list cover-view">
+                    {% for coll, count in collections %}
+                       {% if count %} {# don't display empty collections #}
+                           {% include 'collection/snippets/list_collection_cover.html' %}
+                       {% endif %}
+                   {% endfor %}
+               </ul>
+           </div>
+
+            {# list view #}
+            <div id="collection-list" class="hidden">
+                <ul class="media-list collection-list">
+                    {% for coll, count in collections %}
+                        {% if count %} {# don't display empty collections #}
+                            {% include 'collection/snippets/list_collection.html' %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div><!-- /.container-->
     <section>
 </div>

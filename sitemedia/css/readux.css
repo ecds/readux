@@ -120,3 +120,7 @@ body{
 .collection-list.cover-view .collection>a:hover header .badge{
 	background-color: #318F6D;
 }
+
+.collection-list .media {
+    max-width: none;
+}

@@ -15,3 +15,5 @@ django-widget-tweaks
 # sunburnt requires *either* httplib2 or python-requests
 requests
 eulcommon
+# local pid manager client
+https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.1.tar.gz

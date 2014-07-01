@@ -51,6 +51,12 @@ FEDORA_TEST_ROOT = 'https://localhost:8543/fedora/'
 # FEDORA_TEST_USER = 'fedoraAdmin'
 # FEDORA_TEST_PASSWORD = 'fedoraAdmin'
 
+# pidman PID management
+PIDMAN_HOST = '' # web root of pid manager
+PIDMAN_USER = ''
+PIDMAN_PASSWORD = ''
+# PIDMAN_DOMAIN = '' # default domain (e.g., for creating pids)
+
 
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/

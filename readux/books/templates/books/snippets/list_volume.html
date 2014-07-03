@@ -1,4 +1,10 @@
 <li>
+    {% comment %} {# testing: sample code for displaying page images #}
+    {% if obj.hasPrimaryImage %}
+      <img src="{% url 'books:page-thumbnail' obj.hasPrimaryImage %}"/>
+    {% endif %}
+    {% endcomment %}
+
     {% if obj.score %}
     <div class="clearfix"> </div>
     {# display numerical score in debug mode #}

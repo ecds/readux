@@ -62,3 +62,7 @@ Initial QA/production deploy
   (be sure that the site domain name is configured correctly before running)::
 
     python manage.py update_arks
+
+* Run a manage script to populate initial collection descriptions::
+
+    python manage.py collection_descriptions

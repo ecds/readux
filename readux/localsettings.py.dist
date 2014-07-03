@@ -64,6 +64,9 @@ FEDORA_ROOT = 'https://localhost:8443/fedora/'
 # FEDORA_PIDSPACE = 'readux'
 # FEDORA_USER = 'fedoraAdmin'
 # FEDORA_PASSWORD = 'fedoraAdmin'
+# fedora user with access to manage content; used for ingest scripts etc.
+FEDORA_MANAGEMENT_USER = 'fedoraAdmin'
+FEDORA_MANAGEMENT_PASSWORD = 'fedoraAdmin'
 # use this to explicitly configure a test pidspace; by default, uses pidspace-test
 # FEDORA_TEST_PIDSPACE = 'testme'
 FEDORA_TEST_ROOT = 'https://localhost:8543/fedora/'

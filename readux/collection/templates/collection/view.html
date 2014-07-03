@@ -8,6 +8,13 @@
 {% endblock %}
 
 {% block content %}
+{# sample/possible banner image logic #}
+{% comment %}
+ {% if collection.cover %} {# testing; probably should use collection.banner instead of collection.cover #}
+ <img src="{{ collection.cover.get__blurred__banner }}"
+     alt="{{ collection.cover.alt_text }}" title="{{ collection.cover.title }}"/>
+ {% endif %}
+{% endcomment %}
 <div class="container">
     <header class="page-header">
         <h1>{{ collection.short_label }}</h1>

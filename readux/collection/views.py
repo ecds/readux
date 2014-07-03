@@ -6,7 +6,7 @@ from urllib import urlencode
 
 from readux.utils import solr_interface
 from readux.books.models import Volume, SolrVolume
-from readux.collection.models import Collection
+from readux.collection.models import Collection, SolrCollection
 
 
 def site_index(request):
@@ -21,7 +21,10 @@ def browse(request):
     # search and browse
     results = solr.query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
                   .filter(owner='LSDI-project') \
-                  .sort_by('title_exact')
+                  .sort_by('title_exact') \
+                  .results_as(SolrCollection)
+    # NOTE: returning as SolrCollection in order to provide access to
+    # associated CollectionImage db model
 
     # Use a facet query to get a count of the number of volumes in each collection
     q = solr.query(content_model=Volume.VOLUME_CONTENT_MODEL) \

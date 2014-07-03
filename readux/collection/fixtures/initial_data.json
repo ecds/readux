@@ -13,7 +13,7 @@
   "pk": 2,
   "model": "django_image_tools.size",
   "fields": {
-    "width": 450,
+    "width": 150,
     "name": "banner",
     "auto": 0,
     "height": 1400

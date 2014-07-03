@@ -1,22 +1,6 @@
-{# {% extends 'eultheme/snippets/collection_list_item.html' %} #}
 {% load humanize %}
 
-{% comment %}
-
-{% block url %}{% url 'collection:view' coll.pid %}{% endblock %}
-{% block title %}{{ coll.title }}{% endblock %}
-{% block info %}
-{% if count %}
-  {{ count|intcomma }} volume{{ count|pluralize }}
-{% endif %}
-{% if coll.description %}
-<p>{{ coll.description|join:' ' }}</p>
-{% endif %}
-{% endblock %}
-
-{% endcomment %}
-
-<li class="collection" {% if coll.thumbnail %}style="background-image:url({{coll.thumbnail}})"{% endif %}>
+<li class="collection" {% if coll.cover %}style="background-image:url({{ coll.cover.get__blurred__thumbnail }})"{% endif %}>
 	<a href="{% url 'collection:view' coll.pid %}">
 		<header>
 			<h3 class="title">{{ coll.title }}</h3>

@@ -1,14 +1,14 @@
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
-from django.views.decorators.http import condition
+from django.views.decorators.http import condition, last_modified, require_http_methods
 from urllib import urlencode
 
 from eulcommon.searchutil import search_terms
 from eulfedora.server import Repository, RequestFailed
 from eulfedora.views import raw_datastream, datastream_etag
 
-from readux.books.models import Volume, SolrVolume
+from readux.books.models import Volume, SolrVolume, Page
 from readux.books.forms import BookSearch
 from readux.utils import solr_interface
 
@@ -186,3 +186,61 @@ def unapi(request):
     return render(request, 'books/unapi_format.xml', context,
         content_type='application/xml')
 
+
+# place-holder view to allow minting pids with ARK targets to devreadux site
+def view_page(request, pid):
+    return HttpResponse('not yet implemented')
+
+
+def page_image_etag(request, pid, **kwargs):
+    return datastream_etag(request, pid, Page.image.id, type=Page)
+
+@condition(etag_func=page_image_etag)
+@require_http_methods(['GET', 'HEAD'])
+def page_image(request, pid, mode=None):
+    '''Return a page image, resized according to mode.
+
+    :param pid: the pid of the :class:`~readux.books.models.Page`
+        object
+    :param mode: image mode (used to determine image size to return);
+        currently one of thumbnail, singe-page, or fullsize
+    '''
+    try:
+        repo = Repository()
+        page = repo.get_object(pid, type=Page)
+        if page.image.exists:
+            # Explicitly support HEAD for efficiency (skip API call)
+            if request.method == 'HEAD':
+                content = ''
+            else:
+                if mode == 'thumbnail':
+                    content = page.get_region(scale=150)
+                elif mode == 'single-page':
+                    content = page.get_region_chunks(scale=1000)
+                elif mode == 'fullsize':
+                    content = page.get_region_chunks(level='') # default (max) level
+
+            response = HttpResponse(content, mimetype='image/jpeg')
+
+            # Set response headers to enable caching.
+            # If the image datastream has a checksum, use it as ETag
+            if page.image.checksum_type != 'DISABLED':
+                response['ETag'] = page.image.checksum
+            # TODO/FIXME: can we get LastModified ?
+
+            # NOTE: some overlap in headers/error checking with
+            # eulfedora.views.raw_datastream
+            # Consider pulling out common functionality, or writing
+            # another generic eulfedora view for serving out
+            # datastream-based dissemination content
+
+            return response
+
+        else:
+            # 404 if the page image doesn't exist
+            raise Http404
+
+    except RequestFailed as rf:
+        if rf.code in [404, 401]:
+            raise Http404
+        raise

@@ -86,7 +86,7 @@ def collection_choices():
 
 
 class CollectionImage(models.Model):
-    # NOTE: collection field  should be selected from fedora lsdi collections;
+    # NOTE: collection field should be selected from fedora lsdi collections;
     # stores the pid, but displays the collection label to the user
     collection = models.CharField(max_length=255, unique=True, choices=collection_choices())
     cover = models.ForeignKey(Image, related_name='coverimage_set')
@@ -103,3 +103,16 @@ class CollectionImage(models.Model):
         else:
             # return collection pid as fallback if lookup title fails
             return self.collection
+
+    # NOTE: borrowing special properties from Image to make thumbnails
+    # displayable in django admin
+
+    @property
+    def cover_thumbnail(self):
+        if self.cover:
+            return self.cover.thumbnail
+
+    @property
+    def banner_thumbnail(self):
+        if self.banner:
+            return self.banner.thumbnail

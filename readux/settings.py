@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sitemaps',
+    'django_image_tools',
     'eulfedora',
     'eultheme',
     'widget_tweaks',
@@ -111,6 +112,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'sitemedia'),
 ]
 
+# base url for user-uploaded content
+MEDIA_URL = '/media/'
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'solr', 'schema.xml')

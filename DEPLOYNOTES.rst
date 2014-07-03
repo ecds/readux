@@ -44,8 +44,8 @@ Initial QA/production deploy
 ----------------------------
 
 * Use fabric deploy method
-* Configure localsettings (particularly **DATABASES**, **SOLR**, and **FEDORA**
-  settings)
+* Configure localsettings (particularly **DATABASES**, **SOLR**, **FEDORA**,
+  **MEDIA_ROOT** and **UPLOAD_TO** settings)
 
    * Note that Fedora access requires a non-privileged guest account, in order
      to acess an API-M method for information about a datastream, used for
@@ -58,4 +58,7 @@ Initial QA/production deploy
 * Configure eulindexer to point to the new site url, restart eulindexer service,
   and reindex the site
 * Update/deploy xacml to allow API-A access to LSDI collections
+* Run manage script to update Volume PDF ARKs to resolve to the new readux site
+  (be sure that the site domain name is configured correctly before running)::
 
+    python manage.py update_arks

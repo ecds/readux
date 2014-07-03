@@ -29,7 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django_image_tools',
+    # 'south',  # NOTE: disabled for now due to conflict with django_image_tools
     'eulfedora',
+    'eullocal.django.emory_ldap',
     'eultheme',
     'widget_tweaks',
     'readux.collection',
@@ -114,6 +116,15 @@ STATICFILES_DIRS = [
 
 # base url for user-uploaded content
 MEDIA_URL = '/media/'
+
+# supported mechanisms for login
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
+)
+
+# use eullocal emory ldap model as user model
+AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'solr', 'schema.xml')

@@ -18,3 +18,7 @@ eulcommon
 # local pid manager client
 https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.1.tar.gz
 django-image-tools
+# local python library for emory ldap
+https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.21.0.tar.gz
+# NOTE: eullocal uses south migrations, but there is a current conflict with django_image_tools
+#south

@@ -1,23 +1,28 @@
-<li>
-    {% comment %} {# testing: sample code for displaying page images #}
+<div class="media">
+  <a class="pull-left" href="#">
     {% if obj.hasPrimaryImage %}
-      <img src="{% url 'books:page-thumbnail' obj.hasPrimaryImage %}"/>
+      <img class="media-object" src="{% url 'books:page-mini-thumb' obj.hasPrimaryImage %}"/>
     {% endif %}
-    {% endcomment %}
+  </a>
 
     {% if obj.score %}
-    <div class="clearfix"> </div>
     {# display numerical score in debug mode #}
     <div class="col-xs-1 pull-right">
         <div class="progress">
             <div class="progress-bar" role="progressbar" aria-valuenow="{{ obj.score }}" aria-valuemin="0" aria-valuemax="1.5" style="width:{% widthratio obj.score 1 90 %}%"> </div>
         </div>
+        {% if debug %}<p class="pull-right">{{ obj.score }}</p>{% endif %}
     </div>
-    {% if debug %}<span class="pull-right">{{ obj.score }}</span>{% endif %}
     {% endif %}
-    <b>{{ obj.title|truncatechars:100 }}</b>
-    {% if obj.volume %}[{{ obj.volume }}]{% endif %}
-    {% if obj.date %}({{ obj.date|join:', ' }}){% endif %}
+
+  <div class="media-body">
+    <h4 class="media-heading">
+        {{ obj.title|truncatechars:100 }}
+        {% if obj.volume %}[{{ obj.volume }}]{% endif %}
+        {% if obj.date %}({{ obj.date|join:', ' }}){% endif %}
+    </h4>
+    <p>{{ obj.creator|join:'; ' }}</p>
+
     <a href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
 
     {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
@@ -27,8 +32,12 @@
        Send to Voyant
         <span class="glyphicon glyphicon-send"></span>
     </button>
-     </a>
-     <p>{{ obj.creator|join:'; ' }}</p>
+    </a>
 
     <abbr class="unapi-id" title="{{ obj.pid }}"></abbr>
-</li>
+  </div>
+</div>
+
+
+
+

@@ -34,7 +34,8 @@ def search(request):
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(['pid', 'title', 'label', 'language',
-                              'creator', 'date'], score=True) \
+                              'creator', 'date', 'hasPrimaryImage'],
+                              score=True) \
                 .facet_by('collection_label_facet', sort='index',mincount=1) \
                 .results_as(SolrVolume)
 
@@ -214,7 +215,10 @@ def page_image(request, pid, mode=None):
                 content = ''
             else:
                 if mode == 'thumbnail':
-                    content = page.get_region(scale=150)
+                    content = page.get_region(scale=300)
+                elif mode == 'mini-thumbnail':
+                    # mini thumbnail for list view - try 100x100 or 120x120
+                    content = page.get_region(level='1', region='0,0,100,100')
                 elif mode == 'single-page':
                     content = page.get_region_chunks(scale=1000)
                 elif mode == 'fullsize':

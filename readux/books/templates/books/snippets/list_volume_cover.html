@@ -1,0 +1,8 @@
+<li class="cover" {% if obj.hasPrimaryImage %}style="background-image:url('{% url 'books:page-thumbnail' obj.hasPrimaryImage %}')"{% endif %}>
+    {# show the title if there is no image #}
+    {% if not obj.hasPrimaryImage %}
+      {{ obj.title|truncatechars:300 }}
+    {% endif %}
+    <a href="#" title="{{ obj.title|truncatechars:100 }}"></a>
+    {# TODO: link to volume page once we have one #}
+</li>

@@ -16,6 +16,7 @@
  {% endif %}
 {% endcomment %}
 <div class="container">
+
     <header class="page-header">
         <h1>{{ collection.short_label }}</h1>
 
@@ -34,6 +35,8 @@
           {% endif %}
       </div>
 
+      {% include "snippets/coverlist_toggle.html" with start='list' %}
+
     {% if items.paginator.count %}
     <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} in this collection</h2>
     <p class="lead">
@@ -46,13 +49,7 @@
     {% endif %}
     </header>
     <section>
-        <div class="container">
-            <ul class="media-list">
-              {% for obj in items.object_list %}
-                {% include 'books/snippets/list_volume.html' %}
-              {% endfor %}
-            </ul>
-        </div><!-- /.container-->
+      {% include 'books/snippets/volumes.html' %}
 
     {% if items.has_other_pages %}
       {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}

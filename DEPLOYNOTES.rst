@@ -51,6 +51,7 @@ Initial QA/production deploy
      to acess an API-M method for information about a datastream, used for
      PDF download view, etc.
 * Run ``python manage.py syncdb``
+* Run ``python manage.py migrate``
 * Configure the site to run under apache (see ``apache/readux.conf`` for a
   sample apache configuration)
 * Use Django admin interface to configure the site domain name (used to generate

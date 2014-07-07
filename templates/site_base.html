@@ -42,7 +42,11 @@
 {% endif %}
 {% endblock %}
 
-
 {% block content %}
-<p>(home page content still TBD)</p>
+{% endblock %}
+
+{% block footer-content %}
+  {% if not debug %} {# google analytics tracking code #}
+    {% include 'snippets/google_analytics.html' %}
+  {% endif %}
 {% endblock %}

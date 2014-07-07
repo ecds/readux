@@ -1,10 +1,10 @@
 $(document).ready(function() {
     // collection browse cover view
-    var $container = $('#collection-covers');
+    var $container = $('#cover-list');
     // init
     $container.isotope({
       // options
-      itemSelector: '.collection',
+      itemSelector: '.cover',
       masonry: {
         columnWidth: 220,
         isFitWidth: true
@@ -12,17 +12,12 @@ $(document).ready(function() {
     });
 
     // collection browse toggle view modes
-
     $('#view-toggle a').click(function() {
-        console.log(this);
-        console.log($(this).attr('id'));
         $('#view-toggle a').removeClass('disabled');
-        var show_id = '#collection-' + $(this).attr('id');
-        console.log('show id = ' + show_id);
-        $('div[id^="collection-"]').hide().removeClass('hidden');
-        $(show_id).show();
+        var show_filter = '.coverlist-toggle > .item-' + $(this).attr('id');
+        $('.coverlist-toggle > div[class^="item-"]').hide().removeClass('hidden');
+        $(show_filter).show();
         $(this).addClass('disabled');
-
     });
 
 

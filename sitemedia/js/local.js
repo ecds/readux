@@ -16,12 +16,12 @@ $(document).ready(function() {
     $('#view-toggle a').click(function() {
         console.log(this);
         console.log($(this).attr('id'));
-        $('#view-toggle a').removeClass('disabled');
+        $('#view-toggle a').removeClass('active');
         var show_id = '#collection-' + $(this).attr('id');
         console.log('show id = ' + show_id);
         $('div[id^="collection-"]').hide().removeClass('hidden');
         $(show_id).show();
-        $(this).addClass('disabled');
+        $(this).addClass('active');
 
     });
 

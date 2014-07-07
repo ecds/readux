@@ -4,16 +4,21 @@
 
 {% block content %}
 <div class="container">
-    <header class="page-header">
+    <header class="page-header" id="collection-header">
         <h1>Collections</h1>
-
-        <div id="view-toggle" class="pull-right">
-            <a id="covers" class="btn disabled"><span class="glyphicon glyphicon-th"></span></a>
-            <a id="list" class="btn"><span class="glyphicon glyphicon-th-list"></span></a>
-        </div>
         <p class="lead">Digital archives grouped by topic or assortment.</p>
     </header>
-    <section>
+
+    <div class="container">
+        <div id="view-toggle" class="pull-right">
+            <div class="btn-group">
+                <a id="covers" class="btn btn-default active"><span class="glyphicon glyphicon-th"></span></a>
+                <a id="list" class="btn btn-default"><span class="glyphicon glyphicon-th-list"></span></a>
+            </div>
+        </div>
+    </div>
+
+    <section class="collections">
         <div class="container">
 
             {# thumbnail view #}

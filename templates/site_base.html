@@ -14,8 +14,11 @@
 {% endblock %}
 
 {% block nav-title %}
-<span class="glyphicon glyphicon-book"></span>
-<span class="site-title">Readux</span>
+<div class="logo">
+  <img src="{% static 'img/readux.png' %}"/>
+  <span class="site-title">Readux</span>
+</div>
+
   {% endblock %}
 {% block page-title %}Readux{% block page-subtitle %}{% endblock %}{% endblock %}
 {% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
@@ -30,12 +33,16 @@
 <div class="navbar-right">
 <form class="form-inline navbar-form" role="form" method="GET" action="{% url 'books:search' %}">
    <div class="form-group">
-    <label class="sr-only" for="{{ search_form.keyword.name }}">{{ search_form.keyword.label }}</label>
-    {% render_field search_form.keyword class+="form-control" placeholder="Search" %}
-    {# TODO: help text #}
-    <button type="submit" class="btn">
-        <span class="glyphicon glyphicon-search"></span>
-    </button>
+      <div class="input-group">
+      <label class="sr-only" for="{{ search_form.keyword.name }}">{{ search_form.keyword.label }}</label>
+      {% render_field search_form.keyword class+="form-control" placeholder="Search" %}
+      {# TODO: help text #}
+      <span class="input-group-btn">
+        <button type="submit" class="btn">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </span>
+    </div>
   </div>
 </form>
 </div>

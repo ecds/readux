@@ -3,27 +3,14 @@
 
 {% block url %}{% url 'collection:view' coll.pid %}{% endblock %}
 {% block title %}{{ coll.title }}{% endblock %}
-{% block info %}
-{% if count %}
-  {{ count|intcomma }} volume{{ count|pluralize }}
-{% endif %}
-{% if coll.description %}
-<p>{{ coll.description|join:' ' }}</p>
-{% endif %}
-{% endblock %}
 
-<li class="collection" {% if coll.thumbnail %}style="background-image:url({{coll.thumbnail}})"{% endif %}>
-	<a href="{% url 'collection:view' coll.pid %}">
-		<header>
-			<h3 class="title">{{ coll.title }}</h3>
-			<p class="number">
-				{% if coll.count %}
-					<span class="badge">{{col.count}} items</span>
-				{% endif %}
-			</p>
-		</header>
-		{% if coll.description %}
-			<p class="desc">{{ coll.description|join:' ' }}</p>
-		{% endif %}
-	</a>
-</li>
+{% block media-body-style %}style="background-image:url({{ coll.cover.get__blurred__thumbnail }});"{% endblock %}
+
+{% block info %}
+	{% if count %}
+	  {{ count|intcomma }} volume{{ count|pluralize }}
+	{% endif %}
+	{% if coll.description %}
+		<p>{{ coll.description|join:' ' }}</p>
+	{% endif %}
+{% endblock %}

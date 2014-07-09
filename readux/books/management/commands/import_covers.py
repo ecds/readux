@@ -3,6 +3,7 @@ import glob
 import logging
 import os
 from optparse import make_option
+import tempfile
 
 from PIL import Image
 from django.conf import settings
@@ -148,9 +149,11 @@ the configured fedora instance.'''
                 if not os.path.exists(posfile):
                     self.stdout.write('Error: position file does not exist %s\n' % posfile)
 
-            # TODO: if images are not already jpeg2000, convert them
+            # If image is not already jpeg200, convert it before ingest
+            coverfile, jp2_tmpfile = self.convert_to_jp2(coverfile)
             # NOTE: jp2 support in Pillow requires additional libraries,
-            # figure out how to get this installed on osx
+            # TODO: document openjpeg installation!
+
             if verbosity > self.v_normal:
                 self.stdout.write('Ingesting %s as cover' % coverfile)
                 self.stdout.write('  text: %s\n' % txtfile)
@@ -174,7 +177,8 @@ the configured fedora instance.'''
             if not dry_run:
                 # calculate checksums for ingest
                 dsfiles = {
-                    page.image: imgfile,
+                    # page.image: imgfile,
+                    page.image: coverfile,
                     page.text: txtfile,
                     page.position: posfile
                     }
@@ -215,6 +219,12 @@ the configured fedora instance.'''
                                          % (pageindex, vol.pid))
                     logger.debug('page ingested as %s' % page.pid)
                     stats['pages'] += 1
+
+                    # if a temporary file was created, remove it
+                    if jp2_tmpfile:
+                        logger.debug('removing temporary JPEG2000 file %s' % coverfile)
+                        os.remove(coverfile)
+
                 except RequestFailed as rf:
                     stats['errors'] += 1
                     self.stdout.write('Failed to ingest page image: %s\n' % rf)
@@ -272,4 +282,27 @@ the configured fedora instance.'''
             return True
         else:
             return False
+
+    def convert_to_jp2(self, imgfile):
+        ''''Convert an image file to JPEG2000 if it isn't already.
+
+        Returns tuple of image file path and boolean indicating if the
+        path refers to a tempfile that should be deleted after processing
+        is done.
+        '''
+        img = Image.open(imgfile, mode='r')
+        # if already jpeg200, do nothing
+        if img.format == 'JPEG2000':
+            return imgfile, False
+        # 1-bit tiffs need to be converted before they can be saved as jp2
+        if img.format == 'TIFF' and img.mode == '1':
+            img = img.convert(mode='L')
+        # generate tempfile to save new jp2
+        tmp = tempfile.NamedTemporaryFile(prefix='readux-img-', suffix='.jp2',
+            delete=False)
+        img.save(tmp, format='jpeg2000')
+        return tmp.name, True
+
+
+
 

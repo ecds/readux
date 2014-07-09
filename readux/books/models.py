@@ -266,6 +266,27 @@ class Volume(DigitalObject, BaseVolume):
     #     # If no pages are ingested as self.pages is None, return 0
     #     return 0
 
+    # shortcuts for consistency with solr result
+
+    @property
+    def title(self):
+        return self.dc.content.title
+
+    @property
+    def creator(self):
+        return self.book.dc.content.creator_list
+
+    @property
+    def date(self):
+        # some books (at least) include the digitization date (date of the
+        # electronic ediction). If there are multiple dates, only include the oldest.
+        dates = self.book.dc.content.date_list
+        if len(dates) > 1:
+            date = sorted([d.strip('[]') for d in dates])[0]
+            return [date]
+        else:
+            return dates
+
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
         if self.ocr.exists:

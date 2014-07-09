@@ -1,32 +1,53 @@
 {% extends 'site_base.html' %}
 
-{% block page-subtitle %} | {% endblock %}
+{% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}]{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container">
     <header class="page-header">
         {% if vol.primary_image %}
-            <img class="pull-left" src="{% url 'books:page-thumbnail' vol.primary_image %}"/>
+        <img class="pull-right thumbnail" src="{% url 'books:page-thumbnail' vol.primary_image %}"/>
         {% endif %}
-        <h1>{{ vol.dc.content.title }}
-            {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}</h1>
-
-
-        {% if vol.dc.content.dates %}({{ vol.dc.content.dates|join:', ' }}){% endif %}
+        <h1>{{ vol.title }}
+            <span class="small">
+                {% if vol.volume %}[{{ vol.volume }}]{% endif %}
+                {% if vol.date %}({{ vol.date|join:', ' }}){% endif %}
+            </span>
+        </h1>
     </header>
     <article>
-        {# TODO: snippetize / share between list view and this one #}
+        <p>{{ vol.creator|join:'; ' }}</p>
+        <p><b>Collection:</b> <a href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
 
-    <a href="{% url 'books:pdf' vol.pid %}" title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}"><span class="glyphicon glyphicon-file"></span></a>
+        {% if vol.book.dc.content.publisher %}
+           <p><b>Publisher:</b> {{ vol.book.dc.content.publisher }}</p>
+        {% endif %}
 
-    {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
-    <a href="http://voyant-tools.org/?input={{ vol.fulltext_absolute_url }}{% if "eng" in vol.language %}&amp;stopList=stop.en.taporware.txt{% endif %}"
-       title="send text to Voyant" target="_blank">
-       <button class="btn btn-default">
-       Send to Voyant
-        <span class="glyphicon glyphicon-send"></span>
-    </button>
-    </a>
+        {# NOTE: some descriptions are potentially useful, some less so... #}
+        <ul>
+            {% for desc in vol.book.dc.content.description_list %}
+            <li>{{ desc }}</li>
+            {% endfor %}
+        </ul>
+        {# some information in dc:type might be useful (but other info not...) #}
+
+        {% include 'books/snippets/volume_links.html' with small_buttons=False %}
+
+        {# link to any other volumes associated with the same book #}
+        {% if vol.book.volume_set|length > 1 %}
+        <div><b>Related volumes</b>
+            <ul>
+            {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
+                {% if rel_vol.pid != vol.pid %}
+                <li>
+                    <a href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title }}</a>
+                        {% if rel_vol.volume %}[{{ rel_vol.volume }}]{% endif %}
+                </li>
+               {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
     </article>
 </div>

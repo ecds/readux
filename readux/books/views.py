@@ -84,6 +84,15 @@ def search(request):
     return render(request, 'books/search.html', context)
 
 
+def volume(request, pid):
+    # landing page for a single volume
+    repo = Repository()
+    obj = repo.get_object(pid, type=Volume)
+    if not obj.exists or not obj.has_requisite_content_models:
+        raise Http404
+    return render(request, 'books/volume.html', {'vol': obj})
+
+
 def pdf_etag(request, pid):
     return datastream_etag(request, pid, Volume.pdf.id)
 

@@ -2,6 +2,10 @@
 
 {% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}]{% endif %}{% endblock %}
 
+{% block head_extras %}
+  <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <header class="page-header">

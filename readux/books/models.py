@@ -390,11 +390,8 @@ class Volume(DigitalObject, BaseVolume):
         # NOTE: we have multiple dates; seems to be one for original edition
         # and one for the digitial edition. Zotero only picks up one (randomly?);
         # do we want to privilege the earlier date ?
-        for date in dc.date_list:
-            g.add((u, DC.date, rdflib.Literal(date)))
-        if not dc.date_list:
-            for date in self.book.dc.content.date_list:
-                g.add((u, DC.date, rdflib.Literal(date)))
+        if self.date:
+            g.add((u, DC.date, rdflib.Literal(self.date[0])))
 
         for description in dc.description_list:
             g.add((u, DC.description, rdflib.Literal(description)))

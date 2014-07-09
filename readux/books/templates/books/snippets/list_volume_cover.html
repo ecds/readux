@@ -3,6 +3,5 @@
     {% if not obj.hasPrimaryImage %}
       {{ obj.title|truncatechars:300 }}
     {% endif %}
-    <a href="#" title="{{ obj.title|truncatechars:100 }}"></a>
-    {# TODO: link to volume page once we have one #}
+    <a href="{% url 'books:volume' obj.pid %}" title="{{ obj.title|truncatechars:100 }}"></a>
 </li>

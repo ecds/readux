@@ -1,5 +1,5 @@
 <div class="media">
-  <a class="pull-left" href="#">
+  <a class="pull-left" href="{% url 'books:volume' obj.pid %}">
     {% if obj.hasPrimaryImage %}
       <img class="media-object" src="{% url 'books:page-mini-thumb' obj.hasPrimaryImage %}"/>
     {% endif %}
@@ -17,7 +17,7 @@
 
   <div class="media-body">
     <h4 class="media-heading">
-        {{ obj.title|truncatechars:100 }}
+        <a href="{% url 'books:volume' obj.pid %}">{{ obj.title|truncatechars:100 }}</a>
         {% if obj.volume %}[{{ obj.volume }}]{% endif %}
         {% if obj.date %}({{ obj.date|join:', ' }}){% endif %}
     </h4>

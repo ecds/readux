@@ -10,12 +10,16 @@
 {% block content %}
 {# sample/possible banner image logic #}
 
- {% if collection.cover %} {# testing; probably should use collection.banner instead of collection.cover #}
+ {% if collection.banner or collection.cover %}
   <style type="text/css">
     header#page-bg{
+      {% if collection.banner %}
+      background-image:url({{ collection.banner.get__blurred__banner }});
+      {% else %}  {# use cover image as fallback if banner is not set #}
       background-image:url({{ collection.cover.get__blurred__banner }});
+      {% endif %}
     }
-  
+
   </style>
  {% endif %}
 <header class="page-header" id="page-bg">

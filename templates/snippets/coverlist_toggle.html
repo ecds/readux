@@ -1,5 +1,7 @@
 {# links to toggle cover view / list view for collection/volume browse #}
-<div id="view-toggle" class="pull-right">
-    <a id="covers" class="btn {% if start|default:'covers' == 'covers' %}disabled{% endif %}"><span class="glyphicon glyphicon-th"></span></a>
-    <a id="list" class="btn {% if start == 'list' %}disabled{% endif %}"><span class="glyphicon glyphicon-th-list"></span></a>
+<div class="container">
+    <div id="view-toggle" class="pull-right">
+        <a id="covers" class="btn {% if start|default:'covers' == 'covers' %}active{% endif %}"><span class="glyphicon glyphicon-th"></span></a>
+        <a id="list" class="btn {% if start == 'list' %}active{% endif %}"><span class="glyphicon glyphicon-th-list"></span></a>
+    </div>
 </div>

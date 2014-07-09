@@ -4,14 +4,14 @@
 
 {% block content %}
 <div class="container">
-    <header class="page-header">
+    <header class="page-header" id="collection-header">
         <h1>Collections</h1>
-
-        {% include "snippets/coverlist_toggle.html" %}
         <p class="lead">Digital archives grouped by topic or assortment.</p>
     </header>
-    <section>
-        <div class="container coverlist-toggle">
+
+    {% include "snippets/coverlist_toggle.html" %}
+    <section class="collections">
+            <div class="container coverlist-toggle">
 
             {# thumbnail view #}
             <div id="cover-list" class="item-covers">

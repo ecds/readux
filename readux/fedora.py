@@ -24,6 +24,7 @@ except:
     else:
         raise
 
+
 class ManagementRepository(server.Repository):
     '''Convenience class to initialize an instance of :class:`eulfedora.server.Repository`
     with Fedora management/maintenance account credentials defined in Django settings.
@@ -49,6 +50,7 @@ class ManagementRepository(server.Repository):
         # this as a regular repo will get errors rather than confusing behavior
         super(ManagementRepository, self).__init__(username=settings.FEDORA_MANAGEMENT_USER,
                                                    password=settings.FEDORA_MANAGEMENT_PASSWORD)
+
 
 class DigitalObject(models.DigitalObject):
     """Extend the default fedora DigitalObject class with logic for setting
@@ -102,3 +104,4 @@ class DigitalObject(models.DigitalObject):
         else:
             # if pidmanager is not available, fall back to default pid behavior
             return super(DigitalObject, self).get_default_pid()
+

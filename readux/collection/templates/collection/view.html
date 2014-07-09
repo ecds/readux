@@ -4,52 +4,60 @@
 {% block page-subtitle %} | Collections | {{ collection.short_label }}{% endblock %}
 
 {% block head_extras %}
-<link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
+  <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
+
+  {% if collection.cover or collection.banner %} {# testing; probably should use collection.banner instead of collection.cover #}
+  <style type="text/css">
+    header#page-bg{
+      {% if collection.banner %}
+      background-image:url({{ collection.banner.get__blurred__banner }});
+      {% elif collection.cover %} {# use cover as fallback image if banner is not set #}
+      background-image:url({{ collection.cover.get__blurred__banner }});
+      {% endif %}
+    }
+  </style>
+ {% endif %}
 {% endblock %}
 
 {% block content %}
-{# sample/possible banner image logic #}
-{% comment %}
- {% if collection.cover %} {# testing; probably should use collection.banner instead of collection.cover #}
- <img src="{{ collection.cover.get__blurred__banner }}"
-     alt="{{ collection.cover.alt_text }}" title="{{ collection.cover.title }}"/>
- {% endif %}
-{% endcomment %}
-<div class="container">
-
-    <header class="page-header">
-        <h1>{{ collection.short_label }}</h1>
-
-        <div class="page-breadcrumbs">
-            <div class="container">
-                <div class="row">
-                    {# breadcrumb with collection hierarchy #}
-                    <ol class="breadcrumb">
-                      <li><a href="{% url 'collection:browse' %}">Collections</a></li>
-                      <li class="active">{{ collection.short_label }}</li>
-                  </ol>
-              </div>
-          </div>
-          {% if collection.dc.content.description %}
-          <p>{{ collection.dc.content.description }}</p>
-          {% endif %}
+<header class="page-header" id="page-bg">
+  <div class="container">
+    <div class="page-breadcrumbs">
+      <div class="container">
+          <div class="row">
+              {# breadcrumb with collection hierarchy #}
+              <ol class="breadcrumb">
+                <li><a href="{% url 'collection:browse' %}">Collections</a></li>
+                <li class="active">{{ collection.short_label }}</li>
+            </ol>
+        </div>
       </div>
-
-      {% include "snippets/coverlist_toggle.html" with start='list' %}
-
-    {% if items.paginator.count %}
-    <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} in this collection</h2>
-    <p class="lead">
-        {% if items.has_other_pages and items.object_list|length > 1 %}
-        displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
-        {# if more than one item on this page, display range of results #}
-    </p>
-    {% else %}
-    <h2 id="no-results-found">No volumes in this collection.</h2>
-    {% endif %}
-    </header>
-    <section>
-      {% include 'books/snippets/volumes.html' %}
+    </div>
+  </div>
+  <div class="container">
+      <h1>{{ collection.short_label }}</h1>
+      {% if collection.dc.content.description %}
+        <p>{{ collection.dc.content.description }}</p>
+      {% endif %}
+  </div>
+</header>
+<div class="container">
+    <section class="collection-section">
+      {% if items.paginator.count %}
+        <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} in this collection</h2>
+        <p class="lead">
+            {% if items.has_other_pages and items.object_list|length > 1 %}
+            displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
+            {# if more than one item on this page, display range of results #}
+        </p>
+      {% else %}
+        <h2 id="no-results-found">No volumes in this collection.</h2>
+      {% endif %}
+        <div class="container">
+          {% for obj in items.object_list %}
+            {% include 'books/snippets/list_volume.html' %}
+          {% endfor %}
+        </div><!-- /.container-->
 
     {% if items.has_other_pages %}
       {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}

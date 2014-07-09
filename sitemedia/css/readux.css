@@ -10,7 +10,7 @@ body{
 }
 
 .nav>li>a {
-	background: rgb(236, 236, 236);
+	/*background: rgb(236, 236, 236);*/
 	padding: 7px;
 	margin:0 2px 5px 0;
 }
@@ -20,6 +20,90 @@ body{
 	font-size: 3em;
 	font-weight: bold;
 	margin-bottom: 0;
+}
+
+header#page-bg {
+	margin: 0 0 15px;
+	padding: 40px 0px 80px;
+	position: relative;
+
+	background: rgb(206,220,231); /* Old browsers */
+	background: -moz-linear-gradient(-45deg,  rgba(206,220,231,1) 0%, rgba(89,106,114,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(206,220,231,1)), color-stop(100%,rgba(89,106,114,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* IE10+ */
+	background: linear-gradient(135deg,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', endColorstr='#596a72',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+	background-position:center;
+	background-size:cover;
+
+}
+
+header#page-bg h1{
+	margin-bottom:5px;
+}
+
+header#page-bg .breadcrumb{
+	background-color: transparent;
+}
+
+header#page-bg .breadcrumb>.active{
+	color:#FFF;
+}
+
+@media(min-width:767px){
+	header#page-bg .breadcrumb{
+		text-align: left;
+		opacity:0.7;
+	}
+}
+
+header#page-bg p{
+	width: 90%;
+	margin: auto;
+	font-size: 1.1em;
+	color: #FFF;
+	font-weight: 300;
+	text-align:center;
+}
+
+@media(min-width:767px){
+	header#page-bg p{
+		width: 70%;
+		font-size: 1.25em;
+	}
+}
+
+@media(min-width:993px){
+	header#page-bg p{
+		width: 60%;
+		font-size: 1.25em;
+	}
+}
+
+header#page-bg:after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    left:0px;
+    z-index: 1;
+	background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.65) 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(0,0,0,0.25)), color-stop(100%,rgba(0,0,0,0.65))); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.65) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.65) 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.65) 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center,  rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.65) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40000000', endColorstr='#a6000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+header#page-bg .container{
+    z-index:2;
+    color:#FFF;
+    position:relative;
 }
 
 .page-header .lead{
@@ -33,6 +117,11 @@ body{
 
 .media-list.collection-list.cover-view {
 	float:none;
+	margin: auto;
+}
+
+/*div#collection-covers {*/
+.item-covers  {
 	margin: auto;
 }
 
@@ -126,4 +215,114 @@ body{
 .collection-list .media {
     max-width: none;
 }
+
+header.page-header#collection-header+.container {
+	margin-top: -10px;
+	margin-bottom: 10px;
+}
+
+
+
+.logo-container+div.container .nav>li>a.site-title {
+        background: #E6E6E6;
+        color: #3C3C3C;
+        margin-top: -10px;
+}
+@media(min-width:767px){
+    .logo-container+div.container .nav>li>a.site-title {
+        background: white;
+        opacity: 1;
+        margin-bottom: -30px;
+        border: 1px solid #CFCFCF;
+        border-top: none;
+        position: relative;
+        font-size: 1.1em;
+        padding: 1em 5px;
+        box-shadow: -1px 1px 5px rgba(75, 75, 75, 0.36);
+        margin-top: -4px;
+	}
+	.logo-container+div.container .nav>li>a.site-title:hover,
+	.logo-container+div.container .nav>li>a.site-title:focus{
+		background-color: #E7F9FF;
+
+		color: #2E4BA8;
+	}
+}
+
+.logo img {
+    width: 40px;
+    margin-left: 17%;
+}
+div.logo {
+    position: relative;
+    width: 100px;
+    margin: auto;
+}
+span.site-title {
+    margin-left: 5px;
+}
+
+.logo-container+div.container {
+	background: rgb(33,33,33); /* Old browsers */
+	background: -moz-linear-gradient(-45deg,  rgba(33,33,33,1) 0%, rgba(69,72,77,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(33,33,33,1)), color-stop(100%,rgba(69,72,77,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg,  rgba(33,33,33,1) 0%,rgba(69,72,77,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg,  rgba(33,33,33,1) 0%,rgba(69,72,77,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg,  rgba(33,33,33,1) 0%,rgba(69,72,77,1) 100%); /* IE10+ */
+	background: linear-gradient(135deg,  rgba(33,33,33,1) 0%,rgba(69,72,77,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#212121', endColorstr='#45484d',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+.navbar.navbar-fixed-top.navbar-inverse {
+	border-color: rgba(255, 255, 255, 0.02);
+}
+
+@media(min-width:767px){
+	div.logo {
+		width:60px;
+	}
+    .logo-container {
+        padding-right: 0em;
+    }
+}
+.logo-container .logo {
+    padding-right: 9em;
+}
+
+#view-toggle .btn.active {
+	background-color: #6CACE7;
+	color: #FFF;
+}
+
+.collection-list .media-info p{
+	font-size: 1.2em;
+}
+
+.collection-list div.media-body-link-to {
+	padding: 10px 30px;
+	background-position: center;
+	background-size: 120%;
+	background-color:#9AA7AD;
+	background-size: cover;
+}
+
+.collection-list a:hover .media-body-link-to, .collection-list a:focus .media-body-link-to {
+    background-color: #71838B;
+}
+
+.collection-list div.media-body-link-to .glyphicon{
+    display:none;
+}
+
+.media-list .media>a:hover,
+.media-list .media>a:focus{
+	color: #186FB4;
+	border-color: #CAD6FF;
+}
+
+.collection-section h2.section-heading {
+	color: #5A5A5A;
+	border-bottom: 1px solid #F0F0F0;
+}
+
 

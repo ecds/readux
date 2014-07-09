@@ -13,11 +13,11 @@ $(document).ready(function() {
 
     // collection browse toggle view modes
     $('#view-toggle a').click(function() {
-        $('#view-toggle a').removeClass('disabled');
+        $('#view-toggle a').removeClass('active');
         var show_filter = '.coverlist-toggle > .item-' + $(this).attr('id');
         $('.coverlist-toggle > div[class^="item-"]').hide().removeClass('hidden');
         $(show_filter).show();
-        $(this).addClass('disabled');
+        $(this).addClass('active');
     });
 
 

@@ -106,35 +106,37 @@ class VolumeTest(TestCase):
                     'related item %s should be set as dc:relation' % rel)
 
             # metadata pulled from book obj because not present in volume
-            self.assert_((uri, DC.creator, lit(mockbook.dc.content.creator_list[0])),
+            self.assert_((uri, DC.creator, lit(mockbook.dc.content.creator_list[0])) in graph,
                 'creator from book metadata should be set as dc:creator when not present in volume metadata')
-            self.assert_((uri, DC.publisher, lit(mockbook.dc.content.publisher)),
+            self.assert_((uri, DC.publisher, lit(mockbook.dc.content.publisher)) in graph,
                 'publisher from book metadata should be set as dc:publisher when not present in volume metadata')
-            for d in mockbook.dc.content.date_list:
-                self.assert_((uri, DC.date, lit(d)),
-                    'date %s from book metadata should be set as dc:date when not present in volume metadata' \
-                    % d)
+            # earliest date only
+            self.assert_((uri, DC.date, lit('1801')) in graph,
+                'earliest date 1801 from book metadata should be set as dc:date when not present in volume metadata')
+
             for d in mockbook.dc.content.description_list:
-                self.assert_((uri, DC.description, lit(d)),
+                self.assert_((uri, DC.description, lit(d)) in graph,
                     'description from book metadata should be set as dc:description when not present in volume metadata')
 
-        # volume-level metadata should be used when present instead of book
-        self.vol.dc.content.creator_list = ['Writer, Jane']
-        self.vol.dc.content.date_list = ['1832', '2012']
-        self.vol.dc.content.description_list = ['digital edition']
-        self.vol.dc.content.publisher = 'So &amp; So Publishers'
+            # volume-level metadata should be used when present instead of book
+            self.vol.dc.content.creator_list = ['Writer, Jane']
+            self.vol.dc.content.date_list = ['1832', '2012']
+            self.vol.dc.content.description_list = ['digital edition']
+            self.vol.dc.content.publisher = 'So &amp; So Publishers'
 
-        graph = self.vol.rdf_dc_graph()
-        self.assert_((uri, DC.creator, lit(self.vol.dc.content.creator_list[0])),
+            graph = self.vol.rdf_dc_graph()
+
+        self.assert_((uri, DC.creator, lit(self.vol.dc.content.creator_list[0])) in graph,
             'creator from volume metadata should be set as dc:creator when present')
-        self.assert_((uri, DC.publisher, lit(self.vol.dc.content.publisher)),
+        self.assert_((uri, DC.publisher, lit(self.vol.dc.content.publisher)) in graph,
             'publisher from volume metadata should be set as dc:publisher when present')
-        for d in self.vol.dc.content.date_list:
-            self.assert_((uri, DC.date, lit(d)),
-                'date %s from volume metadata should be set as dc:date when present' \
-                % d)
+
+        # earliest date *only* should be present
+        self.assert_((uri, DC.date, lit('1832')) in graph,
+            'earliest date 1832 from volume metadata should be set as dc:date when present')
+
         for d in self.vol.dc.content.description_list:
-            self.assert_((uri, DC.description, lit(d)),
+            self.assert_((uri, DC.description, lit(d)) in graph,
                 'description from volume metadata should be set as dc:description when present')
 
 

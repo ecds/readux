@@ -280,7 +280,14 @@ class Volume(DigitalObject, BaseVolume):
     def date(self):
         # some books (at least) include the digitization date (date of the
         # electronic ediction). If there are multiple dates, only include the oldest.
-        dates = self.book.dc.content.date_list
+
+        # if dates are present in current volume dc, use those
+        if self.dc.content.date_list:
+            dates = self.dc.content.date_list
+        # otherwise, use dates from book dc
+        else:
+            dates = self.book.dc.content.date_list
+
         if len(dates) > 1:
             date = sorted([d.strip('[]') for d in dates])[0]
             return [date]
@@ -390,8 +397,8 @@ class Volume(DigitalObject, BaseVolume):
         # NOTE: we have multiple dates; seems to be one for original edition
         # and one for the digitial edition. Zotero only picks up one (randomly?);
         # do we want to privilege the earlier date ?
-        if self.date:
-            g.add((u, DC.date, rdflib.Literal(self.date[0])))
+        for d in self.date:
+            g.add((u, DC.date, rdflib.Literal(d)))
 
         for description in dc.description_list:
             g.add((u, DC.description, rdflib.Literal(description)))

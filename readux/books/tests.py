@@ -8,7 +8,6 @@ from django.test import TestCase
 from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
 import rdflib
 from rdflib import RDF
-from urllib import urlencode
 
 from eulxml.xmlmap import load_xmlobject_from_file
 from eulfedora.server import Repository
@@ -406,6 +405,22 @@ class BookViewsTest(TestCase):
         self.assertContains(response,
             reverse('books:volume', kwargs={'pid': mockobj.book.volume_set[0].pid}),
             msg_prefix='response should link to related volumes')
+
+        # non-existent should 404
+        mockobj.exists = False
+        response = self.client.get(vol_url)
+        expected, got = 404, response.status_code
+        self.assertEqual(expected, got,
+            'expected %s for %s when object does not exist, got %s' % \
+            (expected, vol_url, got))
+        # exists but isn't a volume - should also 404
+        mockobj.exists = True
+        mockobj.has_requisite_content_models = False
+        response = self.client.get(vol_url)
+        expected, got = 404, response.status_code
+        self.assertEqual(expected, got,
+            'expected %s for %s when object is not a volume, got %s' % \
+            (expected, vol_url, got))
 
 
 class AbbyyOCRTestCase(TestCase):

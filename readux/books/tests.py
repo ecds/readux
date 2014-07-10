@@ -366,6 +366,47 @@ class BookViewsTest(TestCase):
         self.assertEqual(mockobj.rdf_dc.return_value, response.content,
             'response content should be set based on result of method corresponding to requested format')
 
+    @patch('readux.books.views.Repository')
+    def test_volume(self, mockrepo):
+        mockobj = NonCallableMock()
+        mockobj.pid = 'vol:1'
+        mockobj.title = 'Lecoq, the detective'
+        mockobj.volume = 'V.1'
+        mockobj.date = ['1801']
+        mockobj.creator = ['Gaboriau, Emile']
+        mockobj.book.dc.content.description_list = [
+           'Translation of: Monsieur Lecoq.',
+           'Victorian yellowbacks + paperbacks, 1849-1905'
+        ]
+        mockobj.book.dc.content.publisher = 'London : Vizetelly'
+        mockobj.book.volume_set = [mockobj, NonCallableMock(pid='vol:2')]
+        mockrepo.return_value.get_object.return_value = mockobj
+        # to support for last modified conditional
+        mockobj.ocr.created = datetime.now()
+        vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
+        response = self.client.get(vol_url)
+        self.assertContains(response, mockobj.title,
+            msg_prefix='response should include title')
+        self.assertContains(response, mockobj.volume,
+            msg_prefix='response should include volume label')
+        self.assertContains(response, mockobj.date[0],
+            msg_prefix='response should include date')
+        self.assertContains(response, mockobj.creator[0],
+            msg_prefix='response should include creator')
+        for desc in mockobj.book.dc.content.description_list:
+            self.assertContains(response, desc,
+                msg_prefix='response should include dc:description')
+        self.assertContains(response, mockobj.book.dc.content.publisher,
+            msg_prefix='response should include publisher')
+        self.assertContains(response, reverse('books:pdf', kwargs={'pid': mockobj.pid}),
+            msg_prefix='response should include link to pdf')
+        # related volumes
+        self.assertContains(response, 'Related volumes',
+            msg_prefix='response should include related volumes when present')
+        self.assertContains(response,
+            reverse('books:volume', kwargs={'pid': mockobj.book.volume_set[0].pid}),
+            msg_prefix='response should link to related volumes')
+
 
 class AbbyyOCRTestCase(TestCase):
 

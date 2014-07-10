@@ -5,9 +5,10 @@ from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from mock import patch, Mock, NonCallableMock
+from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
 import rdflib
 from rdflib import RDF
+from urllib import urlencode
 
 from eulxml.xmlmap import load_xmlobject_from_file
 from eulfedora.server import Repository
@@ -210,12 +211,18 @@ class BookViewsTest(TestCase):
             getattr(mocksolr.query, method).return_value = mocksolr.query
 
         # set up mock results for collection query and facet counts
-        solr_result = [
+        solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
+        # *only* mock iter, to avoid weirdness with django templates & callables
+        solr_result.__iter__.return_value = [
             {'pid': 'vol:1', 'title': 'Lecoq, the detective'},
             {'pid': 'vol:2', 'title': 'Mabel Meredith'},
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
+        # mock facets
+        solr_result.facet_counts.facet_fields = {
+            'collection_label_facet': [('Civil War Literature', 2), ('Yellowbacks', 4)]
+        }
 
         # use a noncallable for the pagination result that is used in the template
         # because passing callables into django templates does weird things
@@ -236,7 +243,7 @@ class BookViewsTest(TestCase):
         mocksolr.Q.assert_any_call(title='yellowbacks')
         # not sure how to test query on Q|Q**3|Q**3
         mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label',
-            'language', 'creator', 'date'], score=True)
+            'language', 'creator', 'date', 'hasPrimaryImage'], score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,
@@ -256,10 +263,26 @@ class BookViewsTest(TestCase):
                 msg_prefix='unapi item id for %s should be included to allow zotero harvest' \
                            % item['pid'])
 
+        # check that collection facets are displayed / linked
+        for coll, count in solr_result.facet_counts.facet_fields['collection_label_facet']:
+            self.assertContains(response, coll,
+                msg_prefix='collection facet label should be displayed on search results page')
+            # not a very definitive test, but at least check the number is displayed
+            self.assertContains(response, count,
+                msg_prefix='collection facet count should be displayed on search results page')
+            self.assertContains(response,
+                '?keyword=yellowbacks&amp;collection=%s' % coll.replace(' ', '%20'),
+                msg_prefix='response should include link to search filtered by collection facet')
+
         # multiple terms and phrase
         response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})
         for term in ['yellowbacks', 'lecoq the detective', 'mystery']:
             mocksolr.Q.assert_any_call(term)
+
+        # filtered by collection
+        response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
+        mocksolr.query.assert_any_call(collection_label='"%s"' % 'Yellowbacks')
+
 
     @patch('readux.books.views.Repository')
     def test_text(self, mockrepo):

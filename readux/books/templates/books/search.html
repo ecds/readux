@@ -19,32 +19,43 @@
       {% endif %}
 
       {# fixme: possibly have snippet for navbar search and this one? #}
-      <form class="search-bar" role="form" method="GET" action="{% url 'books:search' %}">
-        <div class="form-inline">
-        <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
-        {% render_field form.keyword class+="form-control keyword" placeholder="Search" %}
-        {# TODO: help text #}
-        <button type="submit" class="btn btn-primary">
-          <span class="glyphicon glyphicon-search"></span>
-        </button>
+      <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+          <form class="search-bar" role="form" method="GET" action="{% url 'books:search' %}">
+            <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
+            <div class="input-group">
+              {% render_field form.keyword class+="form-control keyword" placeholder="Search" %}
+              <span class="input-group-btn">
+                <button class="btn" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+              </span>
+            </div><!-- /input-group -->
+          </form>
+        </div>
       </div>
-    </form>
 
     {% if filters %}
-    with
-       {% for field, val, rm_link in filters %}
-         {{ field }} <a href="?{{ rm_link }}">{{ val }} <span class="glyphicon glyphicon-remove"></span></a>
-       {% endfor %}
+
+      <div class="facets active-filters">
+        <ul class="nav nav-pills">
+         {% for field, val, rm_link in filters %}
+           <li><a href="#" class="disabled pill-text">with {{field}}:</a></li>
+           <li><a href="?{{ rm_link }}">{{ val }} <span class="glyphicon glyphicon-remove"></span></a></li>
+         {% endfor %}
+       </ul>
     {% endif %}
 
         {% if not form.errors %}
           {% if items.paginator.count %}
           <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} found</h2>
-          <p class="lead">
+
             {% if items.has_other_pages and items.object_list|length > 1 %}
-            displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
+            <p class="lead">
+              displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}
+            </p>
+
+            {% endif %}
             {# if more than one item on this page, display range of results #}
-          </p>
+
           {% else %}
           <h2 id="no-results-found">No results for your search terms.</h2>
           {% endif %} {# no results #}
@@ -54,14 +65,15 @@
       {% include "snippets/coverlist_toggle.html" with start='list' %}
 
       {% if facets.collection %}
-      <p>Filter results by collection:</p>
-      <ul class="nav nav-pills">
-        {% for label, count in facets.collection %}
-        <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label|urlencode }}">{{ label }}
-            <small>({{ count }})</small></a> </li>
-        {% endfor %}
-      </ul>
-      <hr/>
+      <div class="facets">
+        <p>Filter results by collection:</p>
+        <ul class="nav nav-pills">
+          {% for label, count in facets.collection %}
+          <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label }}">{{ label }}
+              <small>({{ count|intcomma }})</small></a> </li>
+          {% endfor %}
+        </ul>
+      </div>
       {% endif %}
 
       {% if items %} {# results to display #}

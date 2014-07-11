@@ -87,10 +87,37 @@ def search(request):
 def volume(request, pid):
     # landing page for a single volume
     repo = Repository()
-    obj = repo.get_object(pid, type=Volume)
-    if not obj.exists or not obj.has_requisite_content_models:
+    vol = repo.get_object(pid, type=Volume)
+    print vol.book
+    if not vol.exists or not vol.has_requisite_content_models:
         raise Http404
-    return render(request, 'books/volume.html', {'vol': obj})
+    return render(request, 'books/volume.html', {'vol': vol})
+
+
+def volume_pages(request, pid):
+    # paginated thumbnails for all pages in a book
+    repo = Repository()
+    vol = repo.get_object(pid, type=Volume)
+    if not vol.exists or not vol.has_requisite_content_models:
+        raise Http404
+    # search for page images in solr so we can easily sort by order
+    pagequery = vol.find_solr_pages()
+
+    # paginate pages, 30 per page
+    per_page = 30
+    paginator = Paginator(pagequery, per_page, orphans=5)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        results = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        results = paginator.page(paginator.num_pages)
+
+    return render(request, 'books/pages.html',
+        {'vol': vol, 'pages': results})
 
 
 def pdf_etag(request, pid):
@@ -205,6 +232,7 @@ def view_page(request, pid):
 def page_image_etag(request, pid, **kwargs):
     return datastream_etag(request, pid, Page.image.id, type=Page)
 
+
 @condition(etag_func=page_image_etag)
 @require_http_methods(['GET', 'HEAD'])
 def page_image(request, pid, mode=None):
@@ -227,7 +255,9 @@ def page_image(request, pid, mode=None):
                     content = page.get_region(scale=300)
                 elif mode == 'mini-thumbnail':
                     # mini thumbnail for list view - try 100x100 or 120x120
-                    content = page.get_region(level='1', region='0,0,100,100')
+                    content = page.get_region(level=1, scale=100)
+                    # NOTE: this works, but doesn't consistently get centered content
+                    # content = page.get_region(level='1', region='0,0,100,100')
                 elif mode == 'single-page':
                     content = page.get_region_chunks(scale=1000)
                 elif mode == 'fullsize':

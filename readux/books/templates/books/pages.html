@@ -1,0 +1,34 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}] | Pages{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="page-header">
+        <h1>
+            <a href="{% url 'books:volume' vol.pid %}">{{ vol.title }}</a>
+            <span class="small">
+                {% if vol.volume %}[{{ vol.volume }}]{% endif %}
+                {% if vol.date %}({{ vol.date|join:', ' }}){% endif %}
+            </span>
+        </h1>
+    </header>
+    <article>
+        <div id="cover-list" class="item-covers">
+            <ul class="media-list cover-view">
+                {% for page in pages.object_list %}
+                {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}
+                <li class="cover" style="background-image:url('{% url 'books:page-thumbnail' page.pid %}')">
+                    <a href="#" title="{{ page.page_order }}"/>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    {% if pages.has_other_pages %}
+       {% include 'eultheme/snippets/pagination_all_pages.html' with results=pages %}
+    {% endif %}
+
+    </article>
+</div>
+{% endblock %}

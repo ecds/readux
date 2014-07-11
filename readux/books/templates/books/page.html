@@ -1,0 +1,23 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %} | {{ page.volume.title }}
+   {% if page.volume.volume %} [{{ page.volume.volume }}] | Page {{ page.page_order }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="page-header">
+        {# TODO: snippet (volume, pages, page) #}
+        <h1>
+            <a href="{% url 'books:volume' page.volume.pid %}">{{ page.volume.title }}</a>
+            <span class="small">
+                {% if page.volume.volume %}[{{ page.volume.volume }}]{% endif %}
+                {% if page.volume.date %}({{ page.volume.date|join:', ' }}){% endif %}
+            </span>
+        </h1>
+    </header>
+    <article>
+        <img src="{% url 'books:page-image' page.pid %}"/>
+
+    </article>
+</div>
+{% endblock %}

@@ -120,6 +120,14 @@ def volume_pages(request, pid):
         {'vol': vol, 'pages': results})
 
 
+def view_page(request, pid):
+    repo = Repository()
+    page = repo.get_object(pid, type=Page)
+    if not page.exists or not page.has_requisite_content_models:
+        raise Http404
+    return render(request, 'books/page.html', {'page': page})
+
+
 def pdf_etag(request, pid):
     return datastream_etag(request, pid, Volume.pdf.id)
 
@@ -222,11 +230,6 @@ def unapi(request):
     # with eulxml just as easily if that simplifies reuse
     return render(request, 'books/unapi_format.xml', context,
         content_type='application/xml')
-
-
-# place-holder view to allow minting pids with ARK targets to devreadux site
-def view_page(request, pid):
-    return HttpResponse('not yet implemented')
 
 
 def page_image_etag(request, pid, **kwargs):

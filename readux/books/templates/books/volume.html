@@ -19,7 +19,8 @@
     <article>
         <div class="media">
             {% if vol.primary_image %}
-              <img class="pull-left thumbnail media-object" src="{% url 'books:page-thumbnail' vol.primary_image %}"/>
+            {# TODO: link to single page view if volume has pages #}
+            <img class="pull-left thumbnail media-object" src="{% url 'books:page-thumbnail' vol.primary_image %}"/>
             {% endif %}
 
             <div class="media-body">

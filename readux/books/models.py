@@ -457,3 +457,7 @@ class SolrVolume(UserDict, BaseVolume):
         return self.data.get('pid')
 
 
+# hack: patch in volume as the related item type for pages
+# (can't be done in page declaration because of primary image rel)
+Page.volume.object_type = Volume
+

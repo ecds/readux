@@ -17,4 +17,6 @@ urlpatterns = patterns('',
         name='page-thumbnail'),
     url(r'^pages/(?P<pid>[^/]+)/thumbnail/mini/$', views.page_image, {'mode': 'mini-thumbnail'},
         name='page-mini-thumb'),
+    url(r'^pages/(?P<pid>[^/]+)/image/$', views.page_image, {'mode': 'single-page'},
+        name='page-image'),
 )

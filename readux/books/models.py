@@ -18,6 +18,7 @@ from eulfedora.indexdata.util import pdf_to_text
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
+from readux.utils import solr_interface
 
 
 logger = logging.getLogger(__name__)
@@ -257,16 +258,16 @@ class Volume(DigitalObject, BaseVolume):
     # def get_pdf_url(self):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
-    # @property
-    # def page_count(self):
-    #     'Number of pages associated with this volume, based on RELS-EXT isConstituentOf'
-    #     if self.pages:
-    #         return len(self.pages)
+    @property
+    def page_count(self):
+        'Number of pages associated with this volume, based on RELS-EXT isConstituentOf'
+        if self.pages:
+            return len(self.pages)
 
-    #     # If no pages are ingested as self.pages is None, return 0
-    #     return 0
+        # If no pages are ingested as self.pages is None, return 0
+        return 0
 
-    # shortcuts for consistency with solr result
+    # shortcuts for consistency with SolrVolume
 
     @property
     def title(self):
@@ -331,21 +332,17 @@ class Volume(DigitalObject, BaseVolume):
         # (preliminary; may want broken out for facets/fielded searching;
         # would be better to index on book object and use joins for that if possible...)
 
-        book_dc = self.book.dc.content
+        # book_dc = self.book.dc.content
 
         # convert xmlmap lists to straight lists for json output
-        data['creator'] = list(book_dc.creator_list)
+        data['creator'] = list(self.book.dc.content.creator_list)
 
         # some books (at least) include the digitization date (date of the
-        # electronic ediction). If there are multiple dates, only include the oldest.
-        dates = book_dc.date_list
-        if len(dates) > 1:
-            data['date'] = sorted([d.strip('[]') for d in dates])[0]
-        else:
-            data['date'] = list(dates)
+        # electronic ediction). Use local date property that returns only the oldest
+        data['date'] = self.date
 
         if self.book.dc.content.subject_list:
-            data['subject'] = list(book_dc.subject_list)
+            data['subject'] = list(self.book.dc.content.subject_list)
 
         return data
 
@@ -423,6 +420,20 @@ class Volume(DigitalObject, BaseVolume):
     def rdf_dc(self):
         'Serialized form of :meth:`rdf_dc_graph` for use with unAPI'
         return self.rdf_dc_graph().serialize()
+
+    def find_solr_pages(self):
+        '''Find pages for the current volume, sorted by page order; returns solr query
+        for any further filtering or pagination.'''
+        solr = solr_interface()
+        # find all pages that belong to the same volume and sort by page order
+        # - filtering separately should allow solr to cache filtered result sets more efficiently
+        solrquery = solr.query(isConstituentOf=self.uri) \
+                       .filter(content_model=Page.PAGE_CONTENT_MODEL) \
+                       .filter(state='A').sort_by('page_order')
+        # only return fields we actually need (pid, page_order)
+        solrquery = solrquery.field_limit(['pid', 'page_order'])  # ??
+        # return so it can be filtered, paginated as needed
+        return solrquery
 
 
 class SolrVolume(UserDict, BaseVolume):

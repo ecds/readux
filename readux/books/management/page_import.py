@@ -172,7 +172,8 @@ class BasePageImport(BaseCommand):
         return tmp.name, True
 
 
-    def ingest_page(self, imgfile, vol, vol_info, cover=False):
+    def ingest_page(self, imgfile, vol, vol_info, cover=False,
+        pageindex=1):
         'Create and ingest a page object'
 
         # create the page image object and associate with volume
@@ -196,9 +197,6 @@ class BasePageImport(BaseCommand):
         if self.verbosity > self.v_normal:
             self.stdout.write('Ingesting page %s' % imgfile)
             self.stdout.write('  text: %s\n' % txtfile)
-
-        pageindex = 0  # store page order starting with 1, no matter what the actual index
-        # (will be important once we add pages other than cover)
 
         page = self.repo.get_object(type=Page)
         # object label based on volume label (ocm# + volume info)

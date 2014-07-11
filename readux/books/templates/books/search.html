@@ -34,7 +34,7 @@
       </div>
 
     {% if filters %}
-    
+
       <div class="facets active-filters">
         <ul class="nav nav-pills">
          {% for field, val, rm_link in filters %}
@@ -47,7 +47,7 @@
         {% if not form.errors %}
           {% if items.paginator.count %}
           <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} found</h2>
-          
+
             {% if items.has_other_pages and items.object_list|length > 1 %}
             <p class="lead">
               displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}
@@ -55,7 +55,7 @@
 
             {% endif %}
             {# if more than one item on this page, display range of results #}
-          
+
           {% else %}
           <h2 id="no-results-found">No results for your search terms.</h2>
           {% endif %} {# no results #}
@@ -68,7 +68,7 @@
         <ul class="nav nav-pills">
           {% for label, count in facets.collection %}
           <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label }}">{{ label }}
-              <small>({{ count }})</small></a> </li>
+              <small>({{ count|intcomma }})</small></a> </li>
           {% endfor %}
         </ul>
       </div>

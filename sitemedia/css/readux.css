@@ -1,8 +1,8 @@
 body{
 	font-family: 'Lato', sans-serif;
 }
-.search-bar .keyword {
-    width: 90%;
+.search-bar {
+	padding:1em 0 0;
 }
 
 .progress {
@@ -10,15 +10,41 @@ body{
 }
 
 .nav>li>a {
-	/*background: rgb(236, 236, 236);*/
 	padding: 7px;
 	margin:0 2px 5px 0;
+}
+
+.facets{
+	padding:1em 0;
+	margin-bottom:2em;
+	border-bottom: 1px solid #EEE;
+}
+.facets .nav>li>a {
+	background: rgb(236, 236, 236);
+	transition: background-color 0.2s;
+}
+
+.facets .nav>li>a:hover, 
+.facets .nav>li>a:focus{
+	background-color: #E4ECF1;
+}
+.facets.active-filters .nav>li>a:hover, 
+.facets.active-filters .nav>li>a:focus{
+    color: #661919;
+	
+    background-color: #ECDFDF;
+}
+
+.facets .nav>li>a.pill-text {
+    background: transparent;
+    color: #555;
+    cursor:default;
 }
 
 .page-header h1 {
 	text-align: center;
 	font-size: 3em;
-	font-weight: bold;
+	font-weight: 700;
 	margin-bottom: 0;
 }
 
@@ -224,6 +250,7 @@ header.page-header#collection-header+.container {
         background: #E6E6E6;
         color: #3C3C3C;
         margin-top: -10px;
+        display: none;
 }
 @media(min-width:767px){
     .logo-container+div.container .nav>li>a.site-title {
@@ -237,6 +264,7 @@ header.page-header#collection-header+.container {
         padding: 1em 5px;
         box-shadow: -1px 1px 5px rgba(75, 75, 75, 0.36);
         margin-top: -4px;
+        display: block;
 	}
 	.logo-container+div.container .nav>li>a.site-title:hover,
 	.logo-container+div.container .nav>li>a.site-title:focus{
@@ -258,6 +286,35 @@ div.logo {
 span.site-title {
     margin-left: 5px;
 }
+
+h1.site-title {
+    margin: 8px;
+}
+.site-title img {
+    height: 35px;
+    float: left;
+    display: block;
+}
+
+.site-title>a>img+span {
+    padding-top: 11px;
+    position: relative;
+    display: block;
+    float: left;
+}
+
+h1.site-title a{
+	opacity:0.8;	
+	transition:opacity 0.2s;
+	position: relative;
+	float: left;
+}
+
+h1.site-title a:hover,
+h1.site-title a:focus{
+	opacity:1;	
+}
+
 
 .logo-container+div.container {
 	background: rgb(33,33,33); /* Old browsers */

@@ -2,6 +2,10 @@
 {% load static %}
 {% load widget_tweaks %}
 
+{% block favicon %}
+    <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+  {% endblock %}
+
 {% block css %}
   {{ block.super }}
   <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
@@ -13,13 +17,17 @@
     <script type="text/javascript" src="{% static 'js/local.js' %}"></script>
 {% endblock %}
 
-{% block nav-title %}
-<div class="logo">
-  <img src="{% static 'img/readux.png' %}"/>
-  <span class="site-title">Readux</span>
-</div>
+{% block xs-nav-title %}
+  <img src="{% static 'img/readux-inverse.png' %}"/><span>Readux</span>
+{% endblock %}
 
-  {% endblock %}
+{% block nav-title %}
+  <div class="logo">
+    <img src="{% static 'img/readux.png' %}"/>
+    <span class="site-title">Readux</span>
+  </div>
+{% endblock %}
+
 {% block page-title %}Readux{% block page-subtitle %}{% endblock %}{% endblock %}
 {% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
 

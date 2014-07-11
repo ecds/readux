@@ -30,7 +30,9 @@
         {# NOTE: some descriptions are potentially useful, some less so... #}
         <ul>
             {% for desc in vol.book.dc.content.description_list %}
-            <li>{{ desc }}</li>
+              {% ifchanged %} {# in some cases, 'digitized' not is repeated multiple times #}
+                <li>{{ desc }}</li>
+              {% endifchanged %}
             {% endfor %}
         </ul>
         {# some information in dc:type might be useful (but other info not...) #}

@@ -16,6 +16,25 @@
         </h1>
     </header>
     <article>
+        <div class="pull-right">
+            {% if prev %}
+            <a class="btn btn-default" href="{% url 'books:page' prev.pid %}" title="{{ prev.page_order }}">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            {% endif %}
+
+            {% if next %}
+            <a class="btn btn-default" href="{% url 'books:page' next.pid %}" title="{{ next.page_order }}">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+            {% endif %}
+
+            <a class="btn btn-default {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' page.volume.pid %}">
+                <span class="glyphicon glyphicon-th"></span>
+                <span>Browse all pages</span>
+            </a>
+        </div>
+
         <img src="{% url 'books:page-image' page.pid %}"/>
 
     </article>

@@ -91,7 +91,6 @@ def volume(request, pid):
     # landing page for a single volume
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
-    print vol.book
     if not vol.exists or not vol.has_requisite_content_models:
         raise Http404
     return render(request, 'books/volume.html', {'vol': vol})
@@ -128,7 +127,28 @@ def view_page(request, pid):
     page = repo.get_object(pid, type=Page)
     if not page.exists or not page.has_requisite_content_models:
         raise Http404
-    return render(request, 'books/page.html', {'page': page})
+
+    # use solr to find adjacent pages to this one
+    pagequery = page.volume.find_solr_pages()
+    # search range around current page order
+    # (+/-1 should probably work, but using 2 to allow some margin for error)
+    pagequery = pagequery.query(page_order__range=(page.page_order - 2,
+                                                   page.page_order + 2))
+
+    # find the index of the current page in the sorted solr result
+    index = 0
+    prev = next = None
+    for p in pagequery:
+        if p['pid'] == page.pid:
+            break
+        index += 1
+        prev = p
+
+    if len(pagequery) > index + 1:
+        next = pagequery[index + 1]
+
+    return render(request, 'books/page.html',
+        {'page': page, 'next': next, 'prev': prev})
 
 
 def pdf_etag(request, pid):

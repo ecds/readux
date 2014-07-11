@@ -438,7 +438,8 @@ class Volume(DigitalObject, BaseVolume):
         # - filtering separately should allow solr to cache filtered result sets more efficiently
         solrquery = solr.query(isConstituentOf=self.uri) \
                        .filter(content_model=Page.PAGE_CONTENT_MODEL) \
-                       .filter(state='A').sort_by('page_order')
+                       .filter(state='A') \
+                       .sort_by('page_order')
         # only return fields we actually need (pid, page_order)
         solrquery = solrquery.field_limit(['pid', 'page_order'])  # ??
         # return so it can be filtered, paginated as needed

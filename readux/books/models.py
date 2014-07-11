@@ -267,6 +267,15 @@ class Volume(DigitalObject, BaseVolume):
         # If no pages are ingested as self.pages is None, return 0
         return 0
 
+    @property
+    def has_pages(self):
+        'boolean flag indicating if this volume has pages loaded'
+        if self.pages:
+            # pages exist and more than just the cover / primary image
+            return len(self.pages) > 1
+        else:
+            return False
+
     # shortcuts for consistency with SolrVolume
 
     @property
@@ -456,8 +465,11 @@ class SolrVolume(UserDict, BaseVolume):
         'object pid'
         return self.data.get('pid')
 
+    # TODO: how can we determine via solr query if a volume has pages loaded?
+    # join query on pages? index page_count in solr?
+
 
 # hack: patch in volume as the related item type for pages
-# (can't be done in page declaration because of primary image rel)
+# (can't be done in page declaration due to order / volume primary image rel)
 Page.volume.object_type = Volume
 

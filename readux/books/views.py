@@ -36,8 +36,11 @@ def search(request):
                 .field_limit(['pid', 'title', 'label', 'language',
                               'creator', 'date', 'hasPrimaryImage'],
                               score=True) \
-                .facet_by('collection_label_facet', sort='index',mincount=1) \
+                .facet_by('collection_label_facet', sort='index', mincount=1) \
                 .results_as(SolrVolume)
+
+        # TODO: how can we determine via solr query if a volume has pages loaded?
+        # join query on pages? index page_count in solr?
 
         # url parameters for pagination and facet links
         url_params = request.GET.copy()

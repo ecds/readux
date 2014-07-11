@@ -9,9 +9,6 @@
 {% block content %}
 <div class="container">
     <header class="page-header">
-        {% if vol.primary_image %}
-        <img class="pull-right thumbnail" src="{% url 'books:page-thumbnail' vol.primary_image %}"/>
-        {% endif %}
         <h1>{{ vol.title }}
             <span class="small">
                 {% if vol.volume %}[{{ vol.volume }}]{% endif %}
@@ -20,41 +17,48 @@
         </h1>
     </header>
     <article>
-        <p>{{ vol.creator|join:'; ' }}</p>
-        <p><b>Collection:</b> <a href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
+        <div class="media">
+            {% if vol.primary_image %}
+              <img class="pull-left thumbnail media-object" src="{% url 'books:page-thumbnail' vol.primary_image %}"/>
+            {% endif %}
 
-        {% if vol.book.dc.content.publisher %}
-           <p><b>Publisher:</b> {{ vol.book.dc.content.publisher }}</p>
-        {% endif %}
+            <div class="media-body">
+                <p>{{ vol.creator|join:'; ' }}</p>
+                <p><b>Collection:</b> <a href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
 
-        {# NOTE: some descriptions are potentially useful, some less so... #}
-        <ul>
-            {% for desc in vol.book.dc.content.description_list %}
-              {% ifchanged %} {# in some cases, 'digitized' not is repeated multiple times #}
-                <li>{{ desc }}</li>
-              {% endifchanged %}
-            {% endfor %}
-        </ul>
-        {# some information in dc:type might be useful (but other info not...) #}
+                {% if vol.book.dc.content.publisher %}
+                    <p><b>Publisher:</b> {{ vol.book.dc.content.publisher }}</p>
+                {% endif %}
 
-        {% include 'books/snippets/volume_links.html' with small_buttons=False %}
+                {# NOTE: some descriptions are potentially useful, some less so... #}
+                <ul>
+                    {% for desc in vol.book.dc.content.description_list %}
+                        {% ifchanged %} {# in some cases, 'digitized' not is repeated multiple times #}
+                            <li>{{ desc }}</li>
+                        {% endifchanged %}
+                    {% endfor %}
+                </ul>
+                {# some information in dc:type might be useful (but other info not...) #}
 
-        {# link to any other volumes associated with the same book #}
-        {% if vol.book.volume_set|length > 1 %}
-        <div><b>Related volumes</b>
-            <ul>
-            {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
-                {% if rel_vol.pid != vol.pid %}
-                <li>
-                    <a href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title }}</a>
-                        {% if rel_vol.volume %}[{{ rel_vol.volume }}]{% endif %}
-                </li>
-               {% endif %}
-            {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
+                {% include 'books/snippets/volume_links.html' with small_buttons=False %}
 
+                {# link to any other volumes associated with the same book #}
+                {% if vol.book.volume_set|length > 1 %}
+                <div><b>Related volumes</b>
+                    <ul>
+                        {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
+                            {% if rel_vol.pid != vol.pid %}
+                            <li>
+                                <a href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title }}</a>
+                                {% if rel_vol.volume %}[{{ rel_vol.volume }}]{% endif %}
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div> {# end media-body #}
+        </div> {# end media #}
     </article>
 </div>
 {% endblock %}

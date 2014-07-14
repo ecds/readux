@@ -152,8 +152,12 @@ def view_page(request, pid):
     if len(pagequery) > index + 1:
         next = pagequery[index + 1]
 
+
+    # calculates which pagignated page the page is part of based on 30 items per page
+    page_chunk = ((page.page_order-1)//30)+1
+
     return render(request, 'books/page.html',
-        {'page': page, 'next': next, 'prev': prev})
+        {'page': page, 'next': next, 'prev': prev, 'page_chunk':page_chunk})
 
 
 def pdf_etag(request, pid):

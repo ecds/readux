@@ -1,6 +1,6 @@
 {% load humanize %}
 
-<li class="collection cover" {% if coll.cover %}style="background-image:url({{ coll.cover.get__blurred__thumbnail }})"{% endif %}>
+<li class="collection cover" {% if coll.cover %}style="background-image:url({{ coll.cover.get__blurred__thumbnail }});background-color:#EEE;"{% endif %}>
 	<a href="{% url 'collection:view' coll.pid %}">
 		<header>
 			<h3 class="title">{{ coll.title }}</h3>

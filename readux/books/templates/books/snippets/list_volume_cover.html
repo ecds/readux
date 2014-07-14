@@ -1,4 +1,4 @@
-<li class="cover" {% if obj.hasPrimaryImage %}style="background-image:url('{% url 'books:page-thumbnail' obj.hasPrimaryImage %}')"{% endif %}>
+<li class="cover" {% if obj.hasPrimaryImage %}style="background-image:url('{% url 'books:page-thumbnail' obj.hasPrimaryImage %}');background-color:#EEE;"{% endif %}>
     {# show the title if there is no image #}
     {% if not obj.hasPrimaryImage %}
       {{ obj.title|truncatechars:300 }}

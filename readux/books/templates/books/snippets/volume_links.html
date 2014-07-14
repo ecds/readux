@@ -1,14 +1,14 @@
 {# buttons for view pdf and send to voyant #}
 
 {% if vol.has_pages %}
-<a class="btn btn-primary{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:page' vol.primary_image.pid %}">
+<!--<a class="btn btn-primary{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:page' vol.primary_image.pid %}">
     <span class="glyphicon glyphicon-book"></span>
     <span>Read online</span>
-</a>
+</a>-->
 
-<a class="btn btn-default {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' vol.pid %}">
-    <span class="glyphicon glyphicon-th"></span>
-    <span>Browse pages</span>
+<a class="btn btn-primary {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' vol.pid %}">
+    <span class="glyphicon glyphicon-book"></span>
+    <span>Read online</span>
 </a>
 {% endif %}
 

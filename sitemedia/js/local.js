@@ -4,11 +4,12 @@ $(document).ready(function() {
     // init
     $container.isotope({
       // options
-      itemSelector: '.cover',
+      itemSelector: 'li',
       masonry: {
         columnWidth: 220,
         isFitWidth: true
-      }
+      },
+      transitionDuration:'0.4s'
     });
 
     // collection browse toggle view modes
@@ -18,7 +19,18 @@ $(document).ready(function() {
         $('.coverlist-toggle > div[class^="item-"]').hide().removeClass('hidden');
         $(show_filter).show();
         $(this).addClass('active');
+        var href= $(this).attr('href') ||'';
+        window.location.hash = href;
     });
 
+    var hash = window.location.hash; 
 
+    if(hash){
+      if(hash.indexOf('list-view')>0){
+        $("a#list").click();
+      }
+      else if(hash.indexOf('covers-view')>0){
+        $("a#covers").click();
+      }
+    }
 });

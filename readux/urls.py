@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemap_views
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 
 from readux.collection.sitemaps import CollectionSitemap
 from readux.books.sitemaps import VolumePdfSitemap
@@ -25,6 +26,9 @@ urlpatterns = patterns('',
 
     # index data for solr
     url(r'^indexdata/', include('eulfedora.indexdata.urls', namespace='indexdata')),
+
+     # add redirect for favicon at root of site
+    (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
 
     # robots.txt and sitemaps
     url(r'^robots\.txt$',

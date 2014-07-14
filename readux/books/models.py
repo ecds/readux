@@ -173,7 +173,7 @@ class Page(Image):
         '''Extend the default :meth:`eulfedora.models.DigitalObject.index_data`
         method to include fields needed for Page objects.'''
         data = super(Page, self).index_data()
-        if self.page_order:
+        if self.page_order is not None:
             data['page_order'] = self.page_order
 
         # if OCR text is available, index it as fulltext

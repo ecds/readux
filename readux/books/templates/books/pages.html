@@ -18,8 +18,10 @@
             <ul class="media-list cover-view">
                 {% for page in pages.object_list %}
                 {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}
-                <li class="cover" style="background-image:url('{% url 'books:page-thumbnail' page.pid %}')">
-                    <a href="{% url 'books:page' page.pid %}" title="{{ page.page_order }}"/>
+                <li class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' page.pid %}')">
+                    <a href="{% url 'books:page' page.pid %}" title="{{ page.page_order }}">
+                        <p class="sr-only">Page {{page.page_order}}</p>
+                    </a>
                 </li>
                 {% endfor %}
             </ul>

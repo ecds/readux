@@ -382,4 +382,8 @@ h1.site-title a:focus{
 	border-bottom: 1px solid #F0F0F0;
 }
 
+article img {
+    max-width: 100%;
+}
+
 

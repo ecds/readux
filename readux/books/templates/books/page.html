@@ -34,9 +34,9 @@
                 <span>Browse all pages</span>
             </a>
         </div>
-
-        <img src="{% url 'books:page-image' page.pid %}"/>
-
+        <div class="text-center">
+            <img src="{% url 'books:page-image' page.pid %}"/>
+        </div>
     </article>
 </div>
 {% endblock %}

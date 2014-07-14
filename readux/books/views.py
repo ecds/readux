@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.http import condition, last_modified, require_http_methods
 from urllib import urlencode
+import os
 
 from eulcommon.searchutil import search_terms
 from eulfedora.server import Repository, RequestFailed
@@ -255,6 +257,25 @@ def unapi(request):
         content_type='application/xml')
 
 
+def _error_image_response(mode):
+    # error image http response for 401/404/500 errors when serving out
+    # images from fedora
+    error_images = {
+        'thumbnail': 'notfound_thumbnail.png',
+        'single-page': 'notfound_page.png',
+    }
+    # need a different way to catch it
+    if mode in error_images:
+        img = error_images[mode]
+
+        if settings.DEBUG:
+            base_path = settings.STATICFILES_DIRS[0]
+        else:
+            base_path = settings.STATIC_ROOT
+        with open(os.path.join(base_path, 'img', img)) as content:
+            return HttpResponseNotFound(content.read(), mimetype='image/png')
+
+
 def page_image_etag(request, pid, **kwargs):
     return datastream_etag(request, pid, Page.image.id, type=Page)
 
@@ -285,7 +306,13 @@ def page_image(request, pid, mode=None):
                     # NOTE: this works, but doesn't consistently get centered content
                     # content = page.get_region(level='1', region='0,0,100,100')
                 elif mode == 'single-page':
-                    content = page.get_region_chunks(scale=1000)
+                    # NOTE: using get_region instead of get_region_chunks here
+                    # to make it possible to catch the error and serve out
+                    # an error image; page images at this size shouldn't
+                    # be large enough to really need chunking
+                    content = page.get_region(scale=1000)
+                    # content = page.get_region_chunks(scale=1000)
+                    print 'chunked content'
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level
 
@@ -307,9 +334,22 @@ def page_image(request, pid, mode=None):
 
         else:
             # 404 if the page image doesn't exist
-            raise Http404
+            # - 404 with error image if in a supported mode
+            response = _error_image_response(mode)
+            if response:
+                return response
+            else:
+                raise Http404
 
     except RequestFailed as rf:
+        # generate error image response, if in a supported mode
+        response = _error_image_response(mode)
+        if response:
+            # update response status code to match fedora error
+            # (401, 404, or 500)
+            response.status_code = rf.code
+            return response
+
         if rf.code in [404, 401]:
             raise Http404
         raise

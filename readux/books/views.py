@@ -312,7 +312,6 @@ def page_image(request, pid, mode=None):
                     # be large enough to really need chunking
                     content = page.get_region(scale=1000)
                     # content = page.get_region_chunks(scale=1000)
-                    print 'chunked content'
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level
 

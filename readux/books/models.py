@@ -324,8 +324,9 @@ class Volume(DigitalObject, BaseVolume):
 
         # pulling text content from the PDF is significantly slower;
         # - only pdf if ocr xml is not available or errored
-        if 'fulltext' not in data:
-            data['fulltext'] = pdf_to_text(self.pdf.content)
+        # NOTE: pdf to text seems to be hanging; disabling for now
+        # if 'fulltext' not in data:
+        #     data['fulltext'] = pdf_to_text(self.pdf.content)
 
         # index primary image pid to construct urls for cover image, first page
         if self.primary_image:
@@ -352,6 +353,9 @@ class Volume(DigitalObject, BaseVolume):
 
         if self.book.dc.content.subject_list:
             data['subject'] = list(self.book.dc.content.subject_list)
+
+        # number of pages loaded for this book, to allow determining if page view is available
+        data['page_count'] = self.page_count
 
         return data
 
@@ -466,8 +470,17 @@ class SolrVolume(UserDict, BaseVolume):
         'object pid'
         return self.data.get('pid')
 
-    # TODO: how can we determine via solr query if a volume has pages loaded?
-    # join query on pages? index page_count in solr?
+    @property
+    def has_pages(self):
+        return int(self.data.get('page_count')) > 1
+
+    @property
+    def primary_image(self):
+        # allow template access to cover image pid to work the same way as
+        # it does with Volume - vol.primary_image.pid
+        if 'hasPrimaryImage' in self.data:
+            return {'pid': self.data.get('hasPrimaryImage')}
+
 
 
 # hack: patch in volume as the related item type for pages

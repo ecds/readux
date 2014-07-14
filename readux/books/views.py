@@ -36,7 +36,8 @@ def search(request):
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(['pid', 'title', 'label', 'language',
-                              'creator', 'date', 'hasPrimaryImage'],
+                              'creator', 'date', 'hasPrimaryImage',
+                              'page_count'],
                               score=True) \
                 .facet_by('collection_label_facet', sort='index', mincount=1) \
                 .results_as(SolrVolume)
@@ -78,6 +79,8 @@ def search(request):
         facets = {
             'collection': facet_fields.get('collection_label_facet', []),
         }
+
+        print results.object_list[0].has_pages
 
         context.update({
             'items': results,

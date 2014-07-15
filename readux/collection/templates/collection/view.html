@@ -19,6 +19,8 @@
  {% endif %}
 {% endblock %}
 
+{% block body_attrs %} typeof="schema:CollectionPage"{% endblock %}
+
 {% block content %}
 <header class="page-header" id="page-bg">
   <div class="container">
@@ -35,9 +37,9 @@
     </div>
   </div>
   <div class="container">
-      <h1>{{ collection.short_label }}</h1>
+      <h1 property="schema:name">{{ collection.short_label }}</h1>
       {% if collection.dc.content.description %}
-        <p>{{ collection.dc.content.description }}</p>
+        <p property="schema:description">{{ collection.dc.content.description }}</p>
       {% endif %}
   </div>
 </header>

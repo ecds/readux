@@ -46,7 +46,7 @@ def search(request):
         if 'collection' in request.GET:
             filter_val = request.GET['collection']
             # filter the solr query based on the requested collection
-            q = solr.query(collection_label='"%s"' % filter_val)
+            q = q.query(collection_label='"%s"' % filter_val)
             # generate link to remove the facet
             unfacet_urlopts = url_params.copy()
             del unfacet_urlopts['collection']

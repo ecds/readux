@@ -8,6 +8,7 @@ from PIL import Image
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from eulfedora.util import RequestFailed
+import magic
 
 from readux.books import digwf
 from readux.books.models import Page
@@ -212,7 +213,9 @@ class BasePageImport(BaseCommand):
            (pageindex, page.rels_ext.content.serialize(pretty=True)))
 
         if not self.dry_run:
-            # calculate checksums for ingest
+            # calculate checksums and mimetypes for ingest
+            m = magic.Magic(mime=True)
+
             dsfiles = {
                 page.image: imgfile,
                 page.text: txtfile,
@@ -226,6 +229,12 @@ class BasePageImport(BaseCommand):
                 logger.debug('checksum for %s is %s' % \
                             (filepath, ds.checksum))
                 ds.checksum_type = 'MD5'
+
+                # make sure image mimetype gets set correctly (should be image/jp2)
+                # most reliable, general way to do this is to set mimetype based on mime magic
+                mimetype = m.from_file(filepath)
+                mimetype, separator, options = mimetype.partition(';')
+                ds.mimetype = mimetype
 
                 # set datastream content
                 openfile = open(filepath)

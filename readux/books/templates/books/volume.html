@@ -4,6 +4,8 @@
 
 {% block head_extras %}
   <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
+  <link rel="bookmark" href="{{ vol.ark_uri }}" />
+  <link rel="alternate" href="{% url 'books:pdf' vol.pid %}" /> {# PDF #}
 {% endblock %}
 
 {% block content %}
@@ -47,11 +49,11 @@
                 {% if vol.has_pages %}
                  <meta property="schema:numberOfPages" content="{{ vol.page_count }}"/>
                 {% endif %}
+                {# Using base ARK url for schema:url #}
+                <a href="{{ vol.ark_uri }}" property="schema:url" class="hidden"></a>
                 {# NOTE: could include schema:inLanguage, but would need to convert to IETF BCP 47 standard format #}
                 {# TODO: add schema:license if/when we can add a public domain license or mark #}
-                {# TODO: use base ARK url for schema:url ? #}
                 {# possibly bookFormat EBook (closest option? not paper or hardback) #}
-
                 {# FIXME: technically isPartOf belongs on the *webpage*, not the *book* #}
                 <p><b>Collection:</b> <a property="schema:isPartOf" href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
 

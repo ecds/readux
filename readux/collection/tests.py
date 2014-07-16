@@ -26,7 +26,7 @@ class CollectionViewsTest(TestCase):
         # simulate sunburnt's fluid interface
         mocksolr.query.return_value = mocksolr.query
         for method in ['query', 'facet_by', 'sort_by', 'field_limit',
-                       'exclude', 'filter', 'join', 'paginate']:
+                       'exclude', 'filter', 'join', 'paginate', 'results_as']:
             getattr(mocksolr.query, method).return_value = mocksolr.query
 
         # set up mock results for collection query and facet counts
@@ -41,7 +41,9 @@ class CollectionViewsTest(TestCase):
             'collection_id': [('coll:1', 1), ('coll:2', 5)]
         }
 
-        response = self.client.get(reverse('collection:browse'))
+        # response = self.client.get(reverse('collection:browse'))
+        # collection browse is actually site index, at least for now
+        response = self.client.get(reverse('site-index'))
 
         # inspect solr query args
         # - collection search

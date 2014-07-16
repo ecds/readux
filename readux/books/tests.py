@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from mock import patch, Mock, NonCallableMock
+from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
 import rdflib
 from rdflib import RDF
 
@@ -219,7 +219,13 @@ class BookViewsTest(TestCase):
         # because passing callables into django templates does weird things
         mockpage = NonCallableMock()
         mockpaginator.return_value.page.return_value = mockpage
-        mockpage.object_list = solr_result
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+        results.__iter__.return_value = iter(solr_result)
+        results.facet_counts.facet_fields = {
+            'collection_label_facet': [('Emory Yearbooks', 1), ('Yellowbacks', 4)]
+        }
+
+        mockpage.object_list = results
         mockpage.has_other_pages = False
         mockpage.paginator.count = 2
         mockpage.paginator.page_range = [1]
@@ -253,6 +259,13 @@ class BookViewsTest(TestCase):
                 '<abbr class="unapi-id" title="%s"></abbr>' % item['pid'],
                 msg_prefix='unapi item id for %s should be included to allow zotero harvest' \
                            % item['pid'])
+
+        # facets should be displayed also
+        for collection, count in results.facet_counts.facet_fields['collection_label_facet']:
+            self.assertContains(response, collection,
+                msg_prefix='collection facet label should be displayed')
+            self.assertContains(response, count,
+                msg_prefix='collection facet count should be displayed')
 
         # multiple terms and phrase
         response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})

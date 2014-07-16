@@ -1,0 +1,17 @@
+{% load humanize %}
+
+<li class="collection" {% if coll.cover %}style="background-image:url({{ coll.cover.get__blurred__thumbnail }})"{% endif %}>
+	<a href="{% url 'collection:view' coll.pid %}">
+		<header>
+			<h3 class="title">{{ coll.title }}</h3>
+			<p class="number">
+				{% if count %}
+					<span class="badge">{{ count|intcomma }} item{{ count|pluralize }}</span>
+				{% endif %}
+			</p>
+		</header>
+		{% if coll.description %}
+			<p class="desc">{{ coll.description|join:' ' }}</p>
+		{% endif %}
+	</a>
+</li>

@@ -1,0 +1,67 @@
+{% extends "eultheme/site_base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block favicon %}
+    <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+  {% endblock %}
+
+{% block css %}
+  {{ block.super }}
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/readux.css' %}" />
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript" src="{% static 'js/isotope.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/local.js' %}"></script>
+{% endblock %}
+
+{% block xs-nav-title %}
+  <img src="{% static 'img/readux-inverse.png' %}"/><span>Readux</span>
+{% endblock %}
+
+{% block nav-title %}
+  <div class="logo">
+    <img src="{% static 'img/readux.png' %}"/>
+    <span class="site-title">Readux</span>
+  </div>
+{% endblock %}
+
+{% block page-title %}Readux{% block page-subtitle %}{% endblock %}{% endblock %}
+{% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
+
+{% block navlinks %}
+{# NOTE: suppressed for now because collection browse is site home page #}
+{# <li><a href="{% url 'collection:browse' %}">Collections</a></li> #}
+{% endblock %}
+
+{% block navbar-extra %}
+{% if search_form %}
+<div class="navbar-right">
+<form class="form-inline navbar-form" role="form" method="GET" action="{% url 'books:search' %}">
+   <div class="form-group">
+      <div class="input-group">
+      <label class="sr-only" for="{{ search_form.keyword.name }}">{{ search_form.keyword.label }}</label>
+      {% render_field search_form.keyword class+="form-control" placeholder="Search" %}
+      {# TODO: help text #}
+      <span class="input-group-btn">
+        <button type="submit" class="btn">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </span>
+    </div>
+  </div>
+</form>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% block footer-content %}
+  {% if not debug %} {# google analytics tracking code #}
+    {% include 'snippets/google_analytics.html' %}
+  {% endif %}
+{% endblock %}

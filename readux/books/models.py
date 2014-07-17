@@ -302,7 +302,8 @@ class Volume(DigitalObject, BaseVolume):
             date = sorted([d.strip('[]') for d in dates])[0]
             return [date]
         else:
-            return dates
+            # convert eulxml list to normal list so it can be serialized via json
+            return list(dates)
 
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
@@ -472,7 +473,7 @@ class SolrVolume(UserDict, BaseVolume):
 
     @property
     def has_pages(self):
-        return int(self.data.get('page_count')) > 1
+        return int(self.data.get('page_count', 0)) > 1
 
     @property
     def primary_image(self):

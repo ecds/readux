@@ -86,6 +86,21 @@ Upgrade Notes
 Release 1.0
 -----------
 
+
+* Run the manage script to import covers for all books::
+
+    python manage.py import_covers
+
+.. Note::
+
+    Ingesting page images requires access to the Digitization Workflow
+    web application and file-level access to the content managed by the
+    Digitization Workflow (e.g., /mnt/lsdi).
+
+* Run the manage script to import pages for *selected* books by pid::
+
+    python manage.py import_covers pid1 pid2 pid3 ...
+
 * Run manage script to update Volume PDF ARKs to resolve to the new readux site
   (be sure that the site domain name is configured correctly before running)::
 

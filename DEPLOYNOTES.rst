@@ -50,20 +50,43 @@ Initial QA/production deploy
    * Note that Fedora access requires a non-privileged guest account, in order
      to acess an API-M method for information about a datastream, used for
      PDF download view, etc.
+
 * Run ``python manage.py syncdb``
 * Run ``python manage.py migrate``
 * Configure the site to run under apache (see ``apache/readux.conf`` for a
   sample apache configuration)
 * Use Django admin interface to configure the site domain name (used to generate
   absolute urls to full-text content for use with Voyant)
+* Use Django console to update LSDI collection objects with an owner value
+  that can be used for xacml policies and filtering::
+
+     python manage.py shell
+     >>> from readux.fedora import ManagementRepository
+     >>> from readux.collection.models import Collection
+     >>> repo = ManagementRepository()
+     >>> colls = repo.get_objects_with_cmodel(Collection.COLLECTION_CONTENT_MODEL, type=Collection)
+     >>> for c in colls:
+     ...    if 'LSDI' in c.label:
+     ...        c.owner = 'LSDI-project'
+     ...        c.save('set owner to "LSDI-project" for xacml policy')
+     ...
+
 * Configure eulindexer to point to the new site url, restart eulindexer service,
   and reindex the site
 * Update/deploy xacml to allow API-A access to LSDI collections
-* Run manage script to update Volume PDF ARKs to resolve to the new readux site
-  (be sure that the site domain name is configured correctly before running)::
-
-    python manage.py update_arks
 
 * Run a manage script to populate initial collection descriptions::
 
     python manage.py collection_descriptions
+
+
+Upgrade Notes
+=============
+
+Release 1.0
+-----------
+
+* Run manage script to update Volume PDF ARKs to resolve to the new readux site
+  (be sure that the site domain name is configured correctly before running)::
+
+    python manage.py update_arks

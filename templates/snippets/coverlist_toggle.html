@@ -1,0 +1,9 @@
+{# links to toggle cover view / list view for collection/volume browse #}
+<div class="container">
+    <div id="view-toggle" class="pull-right">
+    	<div class="btn-group">
+	        <a id="covers" href="#covers-view" class="btn {% if start|default:'covers' == 'covers' %}active{% endif %}"><span class="glyphicon glyphicon-th"></span></a>
+	        <a id="list" href="#list-view" class="btn {% if start == 'list' %}active{% endif %}"><span class="glyphicon glyphicon-th-list"></span></a>
+    	</div>
+    </div>
+</div>

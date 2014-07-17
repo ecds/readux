@@ -1,29 +1,32 @@
-<li>
+<div class="media">
+  <a class="pull-left" href="{% url 'books:volume' obj.pid %}">
+    {% if obj.hasPrimaryImage %}
+      <img class="media-object" src="{% url 'books:page-mini-thumb' obj.hasPrimaryImage %}"/>
+    {% endif %}
+  </a>
+
     {% if obj.score %}
-    <div class="clearfix"> </div>
     {# display numerical score in debug mode #}
     <div class="col-xs-1 pull-right">
         <div class="progress">
             <div class="progress-bar" role="progressbar" aria-valuenow="{{ obj.score }}" aria-valuemin="0" aria-valuemax="1.5" style="width:{% widthratio obj.score 1 90 %}%"> </div>
         </div>
+        {% if debug %}<p class="pull-right">{{ obj.score }}</p>{% endif %}
     </div>
-    {% if debug %}<span class="pull-right">{{ obj.score }}</span>{% endif %}
     {% endif %}
-    <b>{{ obj.title|truncatechars:100 }}</b>
-    {% if obj.volume %}[{{ obj.volume }}]{% endif %}
-    {% if obj.date %}({{ obj.date|join:', ' }}){% endif %}
-    <a class="btn btn-primary btn-xs" href="{% url 'books:pdf' obj.pid %}" title="PDF for {{ obj.title|truncatechars:100 }} {{ obj.volume|default:'' }}">
-        <span class="glyphicon glyphicon-file"></span>
-        <span>View PDF</span>
-    </a>
 
-    {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
-    <a href="http://voyant-tools.org/?input={{ obj.fulltext_absolute_url }}{% if "eng" in obj.language %}&amp;stopList=stop.en.taporware.txt{% endif %}"
-       title="send text to Voyant" target="_blank" class="btn btn-default btn-xs">
-            <span class="glyphicon glyphicon-send"></span>
-            <span>Send to Voyant</span>
-     </a>
-     <p>{{ obj.creator|join:'; ' }}</p>
+  <div class="media-body">
+    <h4 class="media-heading">
+        <a href="{% url 'books:volume' obj.pid %}">{{ obj.title|truncatechars:100 }}</a>
+        {% if obj.volume %}[{{ obj.volume }}]{% endif %}
+        {% if obj.date %}({{ obj.date|join:', ' }}){% endif %}
+    </h4>
+    <p>{{ obj.creator|join:'; ' }}</p>
 
-    <abbr class="unapi-id" title="{{ obj.pid }}"></abbr>
-</li>
+    {% include 'books/snippets/volume_links.html' with vol=obj small_buttons=True %}
+  </div>
+</div>
+
+
+
+

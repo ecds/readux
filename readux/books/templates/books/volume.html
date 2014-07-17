@@ -1,0 +1,101 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}]{% endif %}{% endblock %}
+
+{% block head_extras %}
+  <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
+  <link rel="bookmark" href="{{ vol.ark_uri }}" />
+  <link rel="alternate" href="{% url 'books:pdf' vol.pid %}" /> {# PDF #}
+{% endblock %}
+
+{% block content %}
+<div class="container" typeof="schema:Book">
+    <header class="page-header">
+        <h1><span property="schema:name">{{ vol.title }}
+            {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
+            </span>
+            {# NOTE: including volume in title since there isn't another obvious schema.org field to use #}
+        </h1>
+        <p class="lead">
+            {% for d in vol.date %} {# NOTE: assuming earliest date we have is publication date...  #}
+            (<span property="schema:datePublished">{{ d }}</span>){% if not forloop.last %}; {% endif %}
+            {# FIXME: or should we use schema:copyrightYear? #}
+            {% endfor %}
+        </p>
+        </h1>
+    </header>
+    <article>
+        <div class="media">
+            {% if vol.primary_image %}
+                <div class="pull-left">
+                    {% url 'books:page-thumbnail' vol.primary_image as cover_url %}
+                    {% if vol.has_pages %}<a href="{% url 'books:page' vol.primary_image.pid %}">{% endif %}
+                    <img class="thumbnail media-object" property="schema:image" src="{{ cover_url }}"/>
+                    {% if vol.has_pages %}</a>{% endif %}
+                    <a property="schema:thumbnailUrl" href="{{ cover_url }}" class="hidden"></a>
+                </div>
+            {% endif %}
+
+            <div class="media-body">
+                <p>
+                    {% for author in vol.creator %}
+                    {% spaceless %}
+                    <span property="schema:author" typeof="schema:Person"> {# NOTE: could be organization... #}
+                        <span property="schema:name">{{ author }}</span>
+                    </span>{% if not forloop.last %}; {% endif %}
+                    {% endspaceless %}
+                    {% endfor %}
+                </p>
+                {% if vol.has_pages %}
+                 <meta property="schema:numberOfPages" content="{{ vol.page_count }}"/>
+                {% endif %}
+                {# Using base ARK url for schema:url #}
+                <a href="{{ vol.ark_uri }}" property="schema:url" class="hidden"></a>
+                {# NOTE: could include schema:inLanguage, but would need to convert to IETF BCP 47 standard format #}
+                {# TODO: add schema:license if/when we can add a public domain license or mark #}
+                {# possibly bookFormat EBook (closest option? not paper or hardback) #}
+                {# FIXME: technically isPartOf belongs on the *webpage*, not the *book* #}
+                <p><b>Collection:</b> <a property="schema:isPartOf" href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
+
+                {% if vol.book.dc.content.publisher %}
+                    <p><b>Publisher:</b>
+                        <span property="schema:publisher" typeof="schema:Organization">
+                            <span property="schema:name">{{ vol.book.dc.content.publisher }}</span>
+                        </span>
+                    </p>
+                {% endif %}
+
+                {# NOTE: some descriptions are potentially useful, some less so... #}
+                {# one or more of these descriptions *could* be used for schema.org/Description, but which? #}
+                <ul>
+                    {% for desc in vol.book.dc.content.description_list %}
+                        {% ifchanged %} {# in some cases, 'digitized' note is repeated multiple times #}
+                            <li>{{ desc }}</li>
+                        {% endifchanged %}
+                    {% endfor %}
+                </ul>
+                {# some information in dc:type might be useful (but other info not...) #}
+
+                {% include 'books/snippets/volume_links.html' with small_buttons=False %}
+
+                {# link to any other volumes associated with the same book #}
+                {% if vol.book.volume_set|length > 1 %}
+                <div><b>Related volumes</b>
+                    <ul>
+                        {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
+                            {% if rel_vol.pid != vol.pid %}
+                            <li>
+                                {# FIXME: technically, relatedLink belongs to *webPage*, not *book* entity #}
+                                <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title }}</a>
+                                {% if rel_vol.volume %}[{{ rel_vol.volume }}]{% endif %}
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div> {# end media-body #}
+        </div> {# end media #}
+    </article>
+</div>
+{% endblock %}

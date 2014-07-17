@@ -31,7 +31,6 @@ class BaseCollection(object):
             return self.images.banner
 
 
-
 class Collection(Collectionv1_0, BaseCollection):
     '''Fedora Collection Object.  Extends
     :class:`~eulcm.models.collection.v1_0.Collection`.
@@ -88,10 +87,18 @@ def collection_choices():
 class CollectionImage(models.Model):
     # NOTE: collection field should be selected from fedora lsdi collections;
     # stores the pid, but displays the collection label to the user
-    collection = models.CharField(max_length=255, unique=True, choices=collection_choices())
+    collection = models.CharField(max_length=255, unique=True, choices=[])
     cover = models.ForeignKey(Image, related_name='coverimage_set')
     banner = models.ForeignKey(Image, blank=True, null=True,
                                related_name='bannerimage_set')
+
+    def __init__(self, *args, **kwargs):
+       super(CollectionImage, self).__init__(*args, **kwargs)
+       # set collection choices at first class init instead of load time
+       # (only load when needed, make it possible to mock solr for tests)
+       collection_field = self._meta.get_field_by_name('collection')[0]
+       if not collection_field._choices:
+            collection_field._choices = collection_choices()
 
     @property
     def collection_label(self):

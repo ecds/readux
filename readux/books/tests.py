@@ -106,35 +106,37 @@ class VolumeTest(TestCase):
                     'related item %s should be set as dc:relation' % rel)
 
             # metadata pulled from book obj because not present in volume
-            self.assert_((uri, DC.creator, lit(mockbook.dc.content.creator_list[0])),
+            self.assert_((uri, DC.creator, lit(mockbook.dc.content.creator_list[0])) in graph,
                 'creator from book metadata should be set as dc:creator when not present in volume metadata')
-            self.assert_((uri, DC.publisher, lit(mockbook.dc.content.publisher)),
+            self.assert_((uri, DC.publisher, lit(mockbook.dc.content.publisher)) in graph,
                 'publisher from book metadata should be set as dc:publisher when not present in volume metadata')
-            for d in mockbook.dc.content.date_list:
-                self.assert_((uri, DC.date, lit(d)),
-                    'date %s from book metadata should be set as dc:date when not present in volume metadata' \
-                    % d)
+            # earliest date only
+            self.assert_((uri, DC.date, lit('1801')) in graph,
+                'earliest date 1801 from book metadata should be set as dc:date when not present in volume metadata')
+
             for d in mockbook.dc.content.description_list:
-                self.assert_((uri, DC.description, lit(d)),
+                self.assert_((uri, DC.description, lit(d)) in graph,
                     'description from book metadata should be set as dc:description when not present in volume metadata')
 
-        # volume-level metadata should be used when present instead of book
-        self.vol.dc.content.creator_list = ['Writer, Jane']
-        self.vol.dc.content.date_list = ['1832', '2012']
-        self.vol.dc.content.description_list = ['digital edition']
-        self.vol.dc.content.publisher = 'So &amp; So Publishers'
+            # volume-level metadata should be used when present instead of book
+            self.vol.dc.content.creator_list = ['Writer, Jane']
+            self.vol.dc.content.date_list = ['1832', '2012']
+            self.vol.dc.content.description_list = ['digital edition']
+            self.vol.dc.content.publisher = 'So &amp; So Publishers'
 
-        graph = self.vol.rdf_dc_graph()
-        self.assert_((uri, DC.creator, lit(self.vol.dc.content.creator_list[0])),
+            graph = self.vol.rdf_dc_graph()
+
+        self.assert_((uri, DC.creator, lit(self.vol.dc.content.creator_list[0])) in graph,
             'creator from volume metadata should be set as dc:creator when present')
-        self.assert_((uri, DC.publisher, lit(self.vol.dc.content.publisher)),
+        self.assert_((uri, DC.publisher, lit(self.vol.dc.content.publisher)) in graph,
             'publisher from volume metadata should be set as dc:publisher when present')
-        for d in self.vol.dc.content.date_list:
-            self.assert_((uri, DC.date, lit(d)),
-                'date %s from volume metadata should be set as dc:date when present' \
-                % d)
+
+        # earliest date *only* should be present
+        self.assert_((uri, DC.date, lit('1832')) in graph,
+            'earliest date 1832 from volume metadata should be set as dc:date when present')
+
         for d in self.vol.dc.content.description_list:
-            self.assert_((uri, DC.description, lit(d)),
+            self.assert_((uri, DC.description, lit(d)) in graph,
                 'description from volume metadata should be set as dc:description when present')
 
 
@@ -208,12 +210,18 @@ class BookViewsTest(TestCase):
             getattr(mocksolr.query, method).return_value = mocksolr.query
 
         # set up mock results for collection query and facet counts
-        solr_result = [
+        solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
+        # *only* mock iter, to avoid weirdness with django templates & callables
+        solr_result.__iter__.return_value = [
             {'pid': 'vol:1', 'title': 'Lecoq, the detective'},
             {'pid': 'vol:2', 'title': 'Mabel Meredith'},
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
+        # mock facets
+        solr_result.facet_counts.facet_fields = {
+            'collection_label_facet': [('Civil War Literature', 2), ('Yellowbacks', 4)]
+        }
 
         # use a noncallable for the pagination result that is used in the template
         # because passing callables into django templates does weird things
@@ -240,7 +248,7 @@ class BookViewsTest(TestCase):
         mocksolr.Q.assert_any_call(title='yellowbacks')
         # not sure how to test query on Q|Q**3|Q**3
         mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label',
-            'language', 'creator', 'date'], score=True)
+            'language', 'creator', 'date', 'hasPrimaryImage'], score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,
@@ -260,17 +268,26 @@ class BookViewsTest(TestCase):
                 msg_prefix='unapi item id for %s should be included to allow zotero harvest' \
                            % item['pid'])
 
-        # facets should be displayed also
-        for collection, count in results.facet_counts.facet_fields['collection_label_facet']:
-            self.assertContains(response, collection,
-                msg_prefix='collection facet label should be displayed')
+        # check that collection facets are displayed / linked
+        for coll, count in solr_result.facet_counts.facet_fields['collection_label_facet']:
+            self.assertContains(response, coll,
+                msg_prefix='collection facet label should be displayed on search results page')
+            # not a very definitive test, but at least check the number is displayed
             self.assertContains(response, count,
-                msg_prefix='collection facet count should be displayed')
+                msg_prefix='collection facet count should be displayed on search results page')
+            self.assertContains(response,
+                '?keyword=yellowbacks&amp;collection=%s' % coll.replace(' ', '%20'),
+                msg_prefix='response should include link to search filtered by collection facet')
 
         # multiple terms and phrase
         response = self.client.get(search_url, {'keyword': 'yellowbacks "lecoq the detective" mystery'})
         for term in ['yellowbacks', 'lecoq the detective', 'mystery']:
             mocksolr.Q.assert_any_call(term)
+
+        # filtered by collection
+        response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
+        mocksolr.query.assert_any_call(collection_label='"%s"' % 'Yellowbacks')
+
 
     @patch('readux.books.views.Repository')
     def test_text(self, mockrepo):
@@ -353,6 +370,63 @@ class BookViewsTest(TestCase):
             'response content-type should be set based on requested format')
         self.assertEqual(mockobj.rdf_dc.return_value, response.content,
             'response content should be set based on result of method corresponding to requested format')
+
+    @patch('readux.books.views.Repository')
+    def test_volume(self, mockrepo):
+        mockobj = NonCallableMock()
+        mockobj.pid = 'vol:1'
+        mockobj.title = 'Lecoq, the detective'
+        mockobj.volume = 'V.1'
+        mockobj.date = ['1801']
+        mockobj.creator = ['Gaboriau, Emile']
+        mockobj.book.dc.content.description_list = [
+           'Translation of: Monsieur Lecoq.',
+           'Victorian yellowbacks + paperbacks, 1849-1905'
+        ]
+        mockobj.book.dc.content.publisher = 'London : Vizetelly'
+        mockobj.book.volume_set = [mockobj, NonCallableMock(pid='vol:2')]
+        mockrepo.return_value.get_object.return_value = mockobj
+        # to support for last modified conditional
+        mockobj.ocr.created = datetime.now()
+        vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
+        response = self.client.get(vol_url)
+        self.assertContains(response, mockobj.title,
+            msg_prefix='response should include title')
+        self.assertContains(response, mockobj.volume,
+            msg_prefix='response should include volume label')
+        self.assertContains(response, mockobj.date[0],
+            msg_prefix='response should include date')
+        self.assertContains(response, mockobj.creator[0],
+            msg_prefix='response should include creator')
+        for desc in mockobj.book.dc.content.description_list:
+            self.assertContains(response, desc,
+                msg_prefix='response should include dc:description')
+        self.assertContains(response, mockobj.book.dc.content.publisher,
+            msg_prefix='response should include publisher')
+        self.assertContains(response, reverse('books:pdf', kwargs={'pid': mockobj.pid}),
+            msg_prefix='response should include link to pdf')
+        # related volumes
+        self.assertContains(response, 'Related volumes',
+            msg_prefix='response should include related volumes when present')
+        self.assertContains(response,
+            reverse('books:volume', kwargs={'pid': mockobj.book.volume_set[0].pid}),
+            msg_prefix='response should link to related volumes')
+
+        # non-existent should 404
+        mockobj.exists = False
+        response = self.client.get(vol_url)
+        expected, got = 404, response.status_code
+        self.assertEqual(expected, got,
+            'expected %s for %s when object does not exist, got %s' % \
+            (expected, vol_url, got))
+        # exists but isn't a volume - should also 404
+        mockobj.exists = True
+        mockobj.has_requisite_content_models = False
+        response = self.client.get(vol_url)
+        expected, got = 404, response.status_code
+        self.assertEqual(expected, got,
+            'expected %s for %s when object is not a volume, got %s' % \
+            (expected, vol_url, got))
 
 
 class AbbyyOCRTestCase(TestCase):

@@ -9,20 +9,12 @@
         <p class="lead">Digital archives grouped by topic or assortment.</p>
     </header>
 
-    <div class="container">
-        <div id="view-toggle" class="pull-right">
-            <div class="btn-group">
-                <a id="covers" class="btn btn-default active"><span class="glyphicon glyphicon-th"></span></a>
-                <a id="list" class="btn btn-default"><span class="glyphicon glyphicon-th-list"></span></a>
-            </div>
-        </div>
-    </div>
-
+    {% include "snippets/coverlist_toggle.html" %}
     <section class="collections">
-        <div class="container">
+            <div class="container coverlist-toggle">
 
             {# thumbnail view #}
-            <div id="collection-covers">
+            <div id="cover-list" class="item-covers">
                 <ul class="media-list collection-list cover-view">
                     {% for coll, count in collections %}
                        {% if count %} {# don't display empty collections #}
@@ -33,7 +25,7 @@
            </div>
 
             {# list view #}
-            <div id="collection-list" class="hidden">
+            <div id="collection-list" class="item-list hidden">
                 <ul class="media-list collection-list">
                     {% for coll, count in collections %}
                         {% if count %} {# don't display empty collections #}

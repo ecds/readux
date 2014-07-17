@@ -1,0 +1,66 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %} | {{ page.volume.title }}
+   {% if page.volume.volume %} [{{ page.volume.volume }}] | Page {{ page.page_order }}{% endif %}{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="container">
+        {# TODO: snippet (volume, pages, page) #}
+        <h1>
+            <a href="{% url 'books:volume' page.volume.pid %}">{{ page.volume.title }}{% if page.volume.volume %} <span class="small">[{{ page.volume.volume }}]</span>{% endif %}</a>
+        </h1>
+        <p class="lead">
+            {% if page.volume.date %}({{ page.volume.date|join:', ' }}){% endif %}
+        </p>
+
+        <div class="container">
+            <div id="view-toggle" class="pull-right">
+                <div class="btn-group">
+                    <a id="covers" href="#" class="btn active"><span class="glyphicon glyphicon-file"></span></a>
+                    
+                    <a id="list" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</header>
+    <article class="carousel">
+        <div class="carousel-inner">
+            <div class="text-center">
+                <p class="text-muted">Page {{page.page_order}}</p>
+                <img src="{% url 'books:page-image' page.pid %}"/>
+            </div>
+        </div>
+        <!--<div class="pull-right">
+            {% if prev %}
+            <a class="btn btn-default" href="{% url 'books:page' prev.pid %}" title="{{ prev.page_order }}">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            {% endif %}
+
+            {% if next %}
+            <a class="btn btn-default" href="{% url 'books:page' next.pid %}" title="{{ next.page_order }}">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+            {% endif %}
+
+            <a class="btn btn-default {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' page.volume.pid %}">
+                <span class="glyphicon glyphicon-th"></span>
+                <span>Browse all pages</span>
+            </a>
+        </div>-->
+        {% if prev %}
+        <a class="left carousel-control" href="{% url 'books:page' prev.pid %}" role="button" data-slide="prev" title="Prev: Page {{ prev.page_order }}">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        {% endif %}
+        {% if next %}
+        <a class="right carousel-control" href="{% url 'books:page' next.pid %}" role="button" data-slide="next" title="Next: Page {{ next.page_order }}">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        {% endif %}
+    </article>
+</div>
+{% endblock %}

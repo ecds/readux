@@ -1,0 +1,63 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}] | Pages{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="page-header">
+        <h1>
+            <a href="{% url 'books:volume' vol.pid %}">
+                {{ vol.title }}
+            
+                {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
+            </a>
+        </h1>
+        <p class="lead">
+            {% if vol.date %}({{ vol.date|join:', ' }}){% endif %}
+        </p>
+
+        <div class="container">
+            <div id="view-toggle" class="pull-right">
+                <div class="btn-group">
+                    {% for page in pages.object_list %}
+                        {% if forloop.first %}  
+                            <a id="covers" href="{% url 'books:page' page.pid %}" class="btn"><span class="glyphicon glyphicon-file"></span></a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <a id="list" href="{% url 'books:pages' vol.pid %}" class="btn active"><span class="glyphicon glyphicon-th"></span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <article>
+        <div class="text-center text-muted">
+            {% for page in pages.object_list %}
+                {% if forloop.first %}  
+                    Pages {{ page.page_order }}
+                {% endif %}
+                {% if forloop.last %}
+                    - {{ page.page_order|default:'end' }}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="cover-list" class="item-covers">
+            <ul class="media-list cover-view">
+                {% for page in pages.object_list %}
+                {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}
+                <li class="">
+                    <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' page.pid %}')" href="{% url 'books:page' page.pid %}" title="Page {{ page.page_order }}">
+                        <p class="page-number">Page {{page.page_order}}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    {% if pages.has_other_pages %}
+       {% include 'eultheme/snippets/pagination_all_pages.html' with results=pages %}
+    {% endif %}
+
+    </article>
+</div>
+{% endblock %}

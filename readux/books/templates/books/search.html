@@ -62,6 +62,8 @@
         {% endif %} {# valid form #}
     </header>
     <section>
+      {% include "snippets/coverlist_toggle.html" with start='list' %}
+
       {% if facets.collection %}
       <div class="facets">
         <p>Filter results by collection:</p>
@@ -75,14 +77,8 @@
       {% endif %}
 
       {% if items %} {# results to display #}
-        <div class="container">
-          <ul class="media-list">
-              {% for obj in items.object_list %}
-                {% include 'books/snippets/list_volume.html' %}
-              {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
+        {% include 'books/snippets/show_volumes.html' %}
+      {% endif %}
 
     {% if items.has_other_pages %}
     {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}

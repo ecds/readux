@@ -17,18 +17,17 @@ the configured fedora instance.'''
     help = __doc__
 
     option_list = BaseCommand.option_list + (
-        make_option('--noact', '-n',
+        make_option('--dry-run', '-n',
             action='store_true',
-            dest='noact',
             default=False,
             help='Don\'t make any changes; just report on what would be done'),
         )
 
     v_normal = 1
 
-    def handle(self, *args, **options):
+    def handle(self, *pids, **options):
 
-        noact = options.get('noact', False)
+        dry_run = options.get('dry_run', False)
         verbosity = int(options.get('verbosity', self.v_normal))
 
         repo = Repository()
@@ -39,8 +38,8 @@ the configured fedora instance.'''
             raise CommandError(err)
 
         # if pids are specified on command line, only process those objects
-        if args:
-            objs = [repo.get_object(pid, type=Volume) for pid in args]
+        if pids:
+            objs = [repo.get_object(pid, type=Volume) for pid in pids]
 
         # otherwise, look for all volume objects in fedora
         else:
@@ -73,8 +72,8 @@ the configured fedora instance.'''
                 targets = [t.get('qualifier', None) for t in ark_info['targets']]
                 # only update if this ARK already has a qualified PDF ARK
                 if qual in targets:
-                    stats['updated'] += 1   # count as updated in noact mode (would be updated)
-                    if not noact:
+                    stats['updated'] += 1   # count as updated in dry run mode (would be updated)
+                    if not dry_run:
                         pidman.update_ark_target(noid, qual,
                             target_uri=self.pdf_url(obj),
                             active=True)
@@ -83,7 +82,7 @@ the configured fedora instance.'''
         # output summary
         if verbosity >= self.v_normal:
             msg = 'Processed %(objs)d object%%s; skipped %(skipped)d,%%s updated %(updated)d' % stats
-            msg = msg % ('s' if stats['objs'] != 1 else '', ' would have' if noact else '')
+            msg = msg % ('s' if stats['objs'] != 1 else '', ' would have' if dry_run else '')
             self.stdout.write(msg)
 
     def pdf_url(self, obj):

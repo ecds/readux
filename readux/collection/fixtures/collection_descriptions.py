@@ -86,6 +86,10 @@ descriptions = {
     'emory-control:LSDI-Yellowbacks':
     '''What people read on the train in the late 19th century.''',
 
+    'emory-control:LSDI-MedicalHeritage':
+    '''Eighteenth and nineteenth century medical treatises.'''
+
+
 }
 
 

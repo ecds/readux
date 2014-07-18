@@ -2,6 +2,7 @@ import logging
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.encoding import iri_to_uri
+import httplib
 
 from eulfedora import models, server
 from pidservices.clients import parse_ark
@@ -75,6 +76,7 @@ class DigitalObject(models.DigitalObject):
         metadata (if available) or Dublin Core, and use the noid
         portion of the ARK for a Fedora pid in the site-configured
         Fedora pidspace.'''
+        global pidman
 
         if pidman is not None:
             # pidman wants a target for the new pid
@@ -90,7 +92,12 @@ class DigitalObject(models.DigitalObject):
             # pid name is not required, but helpful for managing pids
             pid_name = self.label
             # ask pidman for a new ark in the configured pidman domain
-            ark = pidman.create_ark(settings.PIDMAN_DOMAIN, target, name=pid_name)
+            try:
+                ark = pidman.create_ark(settings.PIDMAN_DOMAIN, target, name=pid_name)
+            except httplib.BadStatusLine:
+                logger.warn('Error creating ARK; re-initializing pidman client and trying again')
+                pidman = DjangoPidmanRestClient()
+                ark = pidman.create_ark(settings.PIDMAN_DOMAIN, target, name=pid_name)
             # pidman returns the full, resolvable ark
             # parse into dictionary with nma, naan, and noid
             parsed_ark = parse_ark(ark)

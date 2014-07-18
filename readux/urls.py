@@ -7,13 +7,14 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
 from readux.collection.sitemaps import CollectionSitemap
-from readux.books.sitemaps import VolumePdfSitemap
+from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap
 
 admin.autodiscover()
 
 sitemaps = {
     'collections': CollectionSitemap,
     'volume-pdfs': VolumePdfSitemap,
+    'volumes': VolumeSitemap,
 }
 
 urlpatterns = patterns('',

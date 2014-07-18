@@ -125,11 +125,19 @@ class BasePageImport(BaseCommand):
 
     def is_blank_page(self, imgfile):
         '''Check whether or not a specified image is blank.'''
+
+        # in some cases, there are empty files; consider empty == blank
+        if os.path.getsize(imgfile) == 0:
+            logger.debug('%s is an empty file; considering blank')
+            return True
+
         img = Image.open(imgfile, mode='r')
         colors = img.getcolors()
         # getcolors returns None if maxcolors (default=256) is exceeded
         if colors is None:
             colors = img.getcolors(1000000)  # set maxcolors ridiculously high
+            # FIXME: colors still could be none at this point
+            # -- if so, can we assume not blank?
 
         # returns a list of (count, pixel)
         white = 255

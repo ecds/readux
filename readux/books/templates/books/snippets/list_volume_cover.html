@@ -1,7 +1,8 @@
 <li class="cover" {% if obj.hasPrimaryImage %}style="background-image:url('{% url 'books:page-thumbnail' obj.hasPrimaryImage %}');background-color:#EEE;"{% endif %}>
-    {# show the title if there is no image #}
-    {% if not obj.hasPrimaryImage %}
-      {{ obj.title|truncatechars:300 }}
-    {% endif %}
-    <a href="{% url 'books:volume' obj.pid %}" title="{{ obj.title|truncatechars:100 }}"></a>
+    <a href="{% url 'books:volume' obj.pid %}" title="{{ obj.title|truncatechars:100 }}">
+        {# show the title if there is no image #}
+        {% if not obj.hasPrimaryImage %}
+            <span>{{ obj.title|truncatechars:300 }}</span>
+        {% endif %}
+    </a>
 </li>

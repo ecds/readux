@@ -26,7 +26,8 @@ the configured fedora instance.'''
         for coll in objs:
             if coll.pid in descriptions:
                 coll.dc.content.description = descriptions[coll.pid]
-                coll.save('updating description')
+                if coll.dc.isModified():
+                    coll.save('updating description')
 
 
 

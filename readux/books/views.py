@@ -37,7 +37,7 @@ def search(request):
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(['pid', 'title', 'label', 'language',
                               'creator', 'date', 'hasPrimaryImage',
-                              'page_count'],
+                              'page_count', 'collection_id', 'collection_label'],
                               score=True) \
                 .facet_by('collection_label_facet', sort='index', mincount=1) \
                 .results_as(SolrVolume)
@@ -79,8 +79,6 @@ def search(request):
         facets = {
             'collection': facet_fields.get('collection_label_facet', []),
         }
-
-        print results.object_list[0].has_pages
 
         context.update({
             'items': results,

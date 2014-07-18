@@ -19,4 +19,6 @@ urlpatterns = patterns('',
         name='page-mini-thumb'),
     url(r'^pages/(?P<pid>[^/]+)/image/$', views.page_image, {'mode': 'single-page'},
         name='page-image'),
+    url(r'^pages/(?P<pid>[^/]+)/image/fs/$', views.page_image, {'mode': 'fullsize'},
+        name='page-image-fs'),
 )

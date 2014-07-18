@@ -206,7 +206,7 @@ class BookViewsTest(TestCase):
         # simulate sunburnt's fluid interface
         mocksolr.query.return_value = mocksolr.query
         for method in ['query', 'facet_by', 'sort_by', 'field_limit',
-                       'exclude', 'filter', 'join', 'paginate']:
+                       'exclude', 'filter', 'join', 'paginate', 'results_as']:
             getattr(mocksolr.query, method).return_value = mocksolr.query
 
         # set up mock results for collection query and facet counts
@@ -219,9 +219,9 @@ class BookViewsTest(TestCase):
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
         # mock facets
-        solr_result.facet_counts.facet_fields = {
-            'collection_label_facet': [('Civil War Literature', 2), ('Yellowbacks', 4)]
-        }
+        # solr_result.facet_counts.facet_fields = {
+        #     'collection_label_facet': [('Civil War Literature', 2), ('Yellowbacks', 4)]
+        # }
 
         # use a noncallable for the pagination result that is used in the template
         # because passing callables into django templates does weird things
@@ -248,7 +248,8 @@ class BookViewsTest(TestCase):
         mocksolr.Q.assert_any_call(title='yellowbacks')
         # not sure how to test query on Q|Q**3|Q**3
         mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label',
-            'language', 'creator', 'date', 'hasPrimaryImage'], score=True)
+            'language', 'creator', 'date', 'hasPrimaryImage', 'page_count',
+            'collection_id', 'collection_label'], score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,
@@ -269,7 +270,7 @@ class BookViewsTest(TestCase):
                            % item['pid'])
 
         # check that collection facets are displayed / linked
-        for coll, count in solr_result.facet_counts.facet_fields['collection_label_facet']:
+        for coll, count in results.facet_counts.facet_fields['collection_label_facet']:
             self.assertContains(response, coll,
                 msg_prefix='collection facet label should be displayed on search results page')
             # not a very definitive test, but at least check the number is displayed
@@ -286,7 +287,7 @@ class BookViewsTest(TestCase):
 
         # filtered by collection
         response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
-        mocksolr.query.assert_any_call(collection_label='"%s"' % 'Yellowbacks')
+        mocksolr.query.query.assert_any_call(collection_label='"%s"' % 'Yellowbacks')
 
 
     @patch('readux.books.views.Repository')

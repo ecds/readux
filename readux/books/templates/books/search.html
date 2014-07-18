@@ -69,7 +69,7 @@
         <p>Filter results by collection:</p>
         <ul class="nav nav-pills">
           {% for label, count in facets.collection %}
-          <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label }}">{{ label }}
+          <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label|urlencode }}">{{ label }}
               <small>({{ count|intcomma }})</small></a> </li>
           {% endfor %}
         </ul>

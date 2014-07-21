@@ -3,7 +3,11 @@
 {% load widget_tweaks %}
 
 {% block favicon %}
-    <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    {% if debug %}
+        <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-beta.ico' %}">
+    {% else %}
+      <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    {% endif %}
   {% endblock %}
 
 {% block css %}

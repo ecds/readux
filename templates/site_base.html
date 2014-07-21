@@ -3,8 +3,10 @@
 {% load widget_tweaks %}
 
 {% block favicon %}
-    {% if debug %}
-        <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-beta.ico' %}">
+    {% if ENABLE_BETA_WARNING %}
+      <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-beta.ico' %}">
+    {% elif debug %}
+        <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-dev.ico' %}">
     {% else %}
       <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
     {% endif %}

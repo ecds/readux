@@ -327,6 +327,8 @@ def page_image(request, pid, mode=None):
             if page.image.checksum_type != 'DISABLED':
                 response['ETag'] = page.image.checksum
             # TODO/FIXME: can we get LastModified ?
+            # NOTE: datastream (version) creation should be last modified,
+            # but may not be in an appropriate format for lastmodified header
 
             # NOTE: some overlap in headers/error checking with
             # eulfedora.views.raw_datastream

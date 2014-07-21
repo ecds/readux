@@ -429,6 +429,47 @@ class BookViewsTest(TestCase):
             'expected %s for %s when object is not a volume, got %s' % \
             (expected, vol_url, got))
 
+    @patch('readux.books.views.Repository')
+    def test_page_image(self, mockrepo):
+        mockobj = Mock()
+        mockobj.pid = 'page:1'
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        url = reverse('books:page-thumbnail', kwargs={'pid': mockobj.pid})
+
+        # no image datastream
+        mockobj.image.exists = False
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code,
+            'page-image should 404 when image datastream doesn\'t exist')
+        with open(os.path.join(settings.STATICFILES_DIRS[0], 'img', 'notfound_thumbnail.png')) as thumb:
+            self.assertEqual(thumb.read(), response.content,
+                '404 should serve out static not found image')
+        self.assertEqual('image/png', response['Content-Type'],
+            '404 should be served as image/png')
+
+        # image exists
+        mockobj.image.exists = True
+        mockobj.image.checksum_type = 'MD5'
+        mockobj.image.checksum = 'not-a-real-checksum'
+        mockobj.get_region.return_value = 'test thumbnail content'
+        response = self.client.get(url)
+        mockobj.get_region.assert_called_with(scale=300)
+        self.assertEqual(mockobj.get_region.return_value, response.content)
+        self.assertEqual(mockobj.image.checksum, response['ETag'])
+        self.assertEqual('image/jpeg', response['Content-Type'],
+            '404 should be served as image/jpeg')
+
+        # error generating image
+        mockobj.get_region.side_effect = RequestFailed(Mock(status=500,
+            reason='unknown error'), content='stack trace here...')
+        response = self.client.get(url)
+        self.assertEqual(500, response.status_code,
+            'page-image should return 500 when Fedora error is a 500')
+        with open(os.path.join(settings.STATICFILES_DIRS[0], 'img', 'notfound_thumbnail.png')) as thumb:
+            self.assertEqual(thumb.read(), response.content,
+                'fedora error should serve out static not found image')
+
 
 class AbbyyOCRTestCase(TestCase):
 

@@ -41,6 +41,12 @@ body{
     cursor:default;
 }
 
+article.carousel.page {
+    min-height: 30em;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .page-header h1 {
 	text-align: center;
 	font-size: 3em;

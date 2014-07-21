@@ -192,11 +192,15 @@ class BasePageImport(BaseCommand):
         txtfile = os.path.join(vol_info.ocr_file_path, imgbasename) + '.txt'
         posfile = os.path.join(vol_info.ocr_file_path, imgbasename) + '.pos'
 
-        if self.verbosity >= self.v_normal:
-            if not os.path.exists(txtfile):
-                self.stdout.write('Error: text file does not exist %s\n' % txtfile)
-            if not os.path.exists(posfile):
-                self.stdout.write('Error: position file does not exist %s\n' % posfile)
+        # make sure text and position files exist; if they don't, bail out
+        if not os.path.exists(txtfile):
+            if self.verbosity >= self.v_normal:
+                self.stdout.write('Error: text file %s does not exist; skipping\n' % txtfile)
+            return
+        if not os.path.exists(posfile):
+            if self.verbosity >= self.v_normal:
+                self.stdout.write('Error: position %s file does not exist;skipping \n' % posfile)
+            return
 
         # If image is not already jpeg200, convert it before ingest
         imgfile, jp2_tmpfile = self.convert_to_jp2(imgfile)

@@ -6,7 +6,7 @@ import sys
 
 from django.core.management.base import BaseCommand
 from progressbar import ProgressBar, Bar, Percentage, \
-         ETA, Counter, Timer
+         ETA, Counter
 
 from readux.books.models import Volume
 from readux.books.management.page_import import BasePageImport

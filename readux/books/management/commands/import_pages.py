@@ -1,5 +1,6 @@
 import logging
 from optparse import make_option
+import signal
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -26,7 +27,12 @@ the configured fedora instance).'''
 
     v_normal = 1
 
+    interrupted = False
+
     def handle(self, *pids, **options):
+        # bind a handler for interrupt signal
+        signal.signal(signal.SIGINT, self.interrupt_handler)
+
         self.setup(**options)
 
         # if pids are specified on command line, only process those objects
@@ -37,7 +43,13 @@ the configured fedora instance).'''
         else:
             raise CommandError('Please specify one or more volume pids')
 
+        self.total = len(objs)
+
         for vol in objs:
+            # if a SIGINT was received while ingesting pages for the last volume, stop now
+            if self.interrupted:
+                break
+
             self.stats['vols'] += 1
             # if object does not exist or cannot be accessed in fedora, skip it
             if not self.is_usable_volume(vol):
@@ -51,14 +63,20 @@ the configured fedora instance).'''
                         vol.pid)
                 continue
 
-            images, vol_info = self.find_page_images(vol)
+            # store volume, images, and processing index for access
+            # by interrupt handler
+            self.current_volume = vol
+            self.pageindex = None
+            self.images = None
+
+            self.images, vol_info = self.find_page_images(vol)
             # if either images or volume info were not found, skip
-            if not images or not vol_info:
+            if not self.images or not vol_info:
                 self.stats['skipped'] += 1   # or error?
                 continue
 
             # cover detection (currently first non-blank page)
-            coverfile, coverindex = self.identify_cover(images)
+            coverfile, coverindex = self.identify_cover(self.images)
             # use cover detection to determine where to start ingesting
             # - we want to start at coverindex + 1
 
@@ -73,13 +91,13 @@ the configured fedora instance).'''
 
             # Find the last page to ingest. If the last page is blank,
             # don't include it.
-            lastpage_index = len(images)
-            imgfile = images[lastpage_index-1]
+            lastpage_index = len(self.images)
+            imgfile = self.images[lastpage_index-1]
             if self.is_blank_page(imgfile):
                 lastpage_index -= 1
 
             # if the volume already has pages, check if they match
-            expected_pagecount = len(images[coverindex:lastpage_index])
+            expected_pagecount = len(self.images[coverindex:lastpage_index])
             logger.debug('Expected page count for %s is %d' % (vol.pid, expected_pagecount))
             if vol.page_count > 1:    # should have at least 1 for cover
                 # if the number of pages doesn't match what we expect, error
@@ -100,15 +118,20 @@ the configured fedora instance).'''
                 continue
 
             # ingest pages as volume constituents, starting with the first image after the cover
-            pageindex = 1  # store repo page order starting with 1, no matter what the actual index
+            self.pageindex = 1  # store repo page order starting with 1, no matter what the actual index
             # page index 1 is the cover image
 
             # progressbar todo?
 
+            # if we have received a SIGINT during this loop, stop *before* ingesting any pages;
+            # break out of volume loop and report on what was done
+            if self.interrupted:
+                break
+
             for index in range(coverindex + 1, lastpage_index):
-                pageindex += 1
-                imgfile = images[index]
-                self.ingest_page(imgfile, vol, vol_info, pageindex=pageindex)
+                self.pageindex += 1
+                imgfile = self.images[index]
+                self.ingest_page(imgfile, vol, vol_info, pageindex=self.pageindex)
 
 
         if self.verbosity >= self.v_normal:
@@ -118,6 +141,29 @@ the configured fedora instance).'''
                 self.stdout.write('%(pages)d page(s) ingested' % self.stats)
 
 
+    def interrupt_handler(self, signum, frame):
+        '''Gracefully handle a SIGINT, if possible.  Reports status if
+        main loop is currently part-way through pages for a volume,
+        sets a flag so main script loop can exit cleanly, and restores
+        the default SIGINT behavior, so that a second interrupt will
+        stop the script.
+        '''
+        if signum == signal.SIGINT:
+            # restore default signal handler so a second SIGINT can be used to quit
+            signal.signal(signal.SIGINT, signal.SIG_DFL)
+            # set interrupt flag so main loop knows to quit at a reasonable time
+            self.interrupted = True
+            # report if script is in the middle of ingesting pages for a volume
+            if self.pageindex and self.images:
+                print >> self.stdout, \
+                      '\nProcessing %d of %d pages for volume %s.' % \
+                      (self.pageindex, len(self.images), self.current_volume)
+                print >> self.stdout, \
+                      'Script will exit after all pages for the current volume are processed.'
+                print >> self.stdout, '(Ctrl-C / Interrupt again to quit now)'
 
-
+            else:
+                msg = '''\nProcessing %d of %d volumes; script will exit before %s page ingest starts or after it is complete.
+(Ctrl-C / Interrupt again to quit immediately)'''
+                print >> self.stdout, msg % (self.stats['vols'], self.total, self.current_volume)
 

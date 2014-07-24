@@ -1,8 +1,12 @@
 import logging
 from optparse import make_option
+import os
 import signal
+import sys
 
 from django.core.management.base import BaseCommand, CommandError
+from progressbar import ProgressBar, Bar, Percentage, \
+         ETA, Counter, Timer
 
 from readux.books.models import Volume
 from readux.books.management.page_import import BasePageImport
@@ -45,6 +49,15 @@ the configured fedora instance).'''
 
         self.total = len(objs)
 
+        vol_pbar = None
+        if self.total >= 3 and os.isatty(sys.stderr.fileno()):
+            # init progress bar if we're indexing enough items to warrant it
+            vol_pbar = ProgressBar(widgets=['Volumes: ', Percentage(),
+                                            ' (', Counter(), ')',
+                                            Bar(),
+                                            ETA()],
+                                   maxval=self.total).start()
+
         for vol in objs:
             # if a SIGINT was received while ingesting pages for the last volume, stop now
             if self.interrupted:
@@ -62,6 +75,11 @@ the configured fedora instance).'''
                     self.stdout.write('%s does not have a cover image; please ingest with import_covers script' % \
                         vol.pid)
                 continue
+
+            # progress bar needs to be updated *after* processing/error output
+            if vol_pbar:
+                # -1 because counter increments at beginning of loop
+                vol_pbar.update(self.stats['vols'] - 1)
 
             # store volume, images, and processing index for access
             # by interrupt handler
@@ -128,11 +146,26 @@ the configured fedora instance).'''
             if self.interrupted:
                 break
 
+            page_pbar = None
+            # NOTE: possibly disable page progress bar when dry-run verbose=2
+            if os.isatty(sys.stderr.fileno()):
+                total = expected_pagecount
+                # init progress bar if we're indexing enough items to warrant it
+                widgets = ['%s pages: ' % vol.pid, Percentage(),
+                           ' (', Counter(), ')', Bar(), Timer()]
+                page_pbar = ProgressBar(widgets=widgets, maxval=total).start()
+
             for index in range(coverindex + 1, lastpage_index):
                 self.pageindex += 1
+                if page_pbar:
+                    page_pbar.update(self.pageindex)
+
                 imgfile = self.images[index]
                 self.ingest_page(imgfile, vol, vol_info, pageindex=self.pageindex)
 
+
+        if vol_pbar and not self.interrupted:
+            vol_pbar.finish()
 
         if self.verbosity >= self.v_normal:
             self.stdout.write('\n%(vols)d volume(s); %(errors)d error(s), %(skipped)d skipped, %(updated)d updated' % \

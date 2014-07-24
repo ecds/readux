@@ -1,5 +1,6 @@
 import logging
 from optparse import make_option
+import signal
 
 from django.core.management.base import BaseCommand
 
@@ -25,7 +26,12 @@ the configured fedora instance.'''
 
     v_normal = 1
 
+    interrupted = False
+
     def handle(self, *pids, **options):
+        # bind a handler for interrupt signal
+        signal.signal(signal.SIGINT, self.interrupt_handler)
+
         self.setup(**options)
 
         # if pids are specified on command line, only process those objects
@@ -37,7 +43,13 @@ the configured fedora instance.'''
             objs = self.repo.get_objects_with_cmodel(Volume.VOLUME_CONTENT_MODEL,
                                                 type=Volume)
 
+        self.total = len(objs)
+
         for vol in objs:
+            # if a SIGINT was received while processing the last volume, stop now
+            if self.interrupted:
+                break
+
             self.stats['vols'] += 1
             # if object does not exist or cannot be accessed in fedora, skip it
             if not self.is_usable_volume(vol):
@@ -80,6 +92,23 @@ the configured fedora instance.'''
                 self.stats)
 
 
+    def interrupt_handler(self, signum, frame):
+        '''Gracefully handle a SIGINT, if possible.  Reports status,
+        sets a flag so main script loop can exit cleanly, and restores
+        the default SIGINT behavior, so that a second interrupt will
+        stop the script.
+        '''
+        if signum == signal.SIGINT:
+            # restore default signal handler so a second SIGINT can be used to quit
+            signal.signal(signal.SIGINT, signal.SIG_DFL)
+            # set interrupt flag so main loop knows to quit at a reasonable time
+            self.interrupted = True
+            # # report if script is in the middle of ingesting pages for a volume
+            # if self.index and self.images:
+            print >> self.stdout, \
+                  '\nProcessing %d of %d volumes; script will exit after current volume' % \
+                   (self.stats['vols'], self.total)
+            print >> self.stdout, '(Ctrl-C / Interrupt again to quit now)'
 
 
 

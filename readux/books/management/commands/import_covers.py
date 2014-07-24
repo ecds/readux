@@ -1,8 +1,12 @@
 import logging
 from optparse import make_option
+import os
 import signal
+import sys
 
 from django.core.management.base import BaseCommand
+from progressbar import ProgressBar, Bar, Percentage, \
+         ETA, Counter, Timer
 
 from readux.books.models import Volume
 from readux.books.management.page_import import BasePageImport
@@ -45,10 +49,22 @@ the configured fedora instance.'''
 
         self.total = len(objs)
 
+        pbar = None
+        # NOTE: possibly should not be displayed when verbosity is 0, also?
+        if self.total >= 5 and os.isatty(sys.stderr.fileno()):
+            # init progress bar if we're indexing enough items to warrant it
+            pbar = ProgressBar(widgets=['Volumes: ', Percentage(),
+                                        ' (', Counter(), ')',
+                                        Bar(),
+                                        ETA()], maxval=self.total).start()
+
         for vol in objs:
             # if a SIGINT was received while processing the last volume, stop now
             if self.interrupted:
                 break
+
+            if pbar:  # should this be after incrementd?
+                pbar.update(self.stats['vols'])
 
             self.stats['vols'] += 1
             # if object does not exist or cannot be accessed in fedora, skip it
@@ -87,6 +103,9 @@ the configured fedora instance.'''
             self.ingest_page(coverfile, vol, vol_info, cover=True)
 
 
+        if pbar and not self.interrupted:
+            pbar.finish()
+
         if self.verbosity >= self.v_normal:
             self.stdout.write('\n%(vols)d volume(s); %(errors)d error(s), %(skipped)d skipped, %(updated)d updated' % \
                 self.stats)
@@ -103,12 +122,10 @@ the configured fedora instance.'''
             signal.signal(signal.SIGINT, signal.SIG_DFL)
             # set interrupt flag so main loop knows to quit at a reasonable time
             self.interrupted = True
-            # # report if script is in the middle of ingesting pages for a volume
-            # if self.index and self.images:
-            print >> self.stdout, \
-                  '\nProcessing %d of %d volumes; script will exit after current volume' % \
-                   (self.stats['vols'], self.total)
-            print >> self.stdout, '(Ctrl-C / Interrupt again to quit now)'
+            msg = '''\nProcessing %d of %d volumes; script will exit after current volume.
+(Ctrl-C / Interrupt again to quit immediately)'''
+
+            print >> self.stdout, msg % (self.stats['vols'], self.total)
 
 
 

@@ -54,7 +54,7 @@
         </p>
 
         {% include "snippets/coverlist_toggle.html" with start='list' %}
-        {% include 'books/snippets/show_volumes.html' %}
+        {% include 'books/snippets/show_volumes.html' with show_collection='False' %}
 
       {% else %}
         <h2 id="no-results-found">No volumes in this collection.</h2>

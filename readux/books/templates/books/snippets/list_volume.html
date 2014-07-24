@@ -23,7 +23,7 @@
     </h4>
     <p>{{ obj.creator|join:'; ' }}</p>
 
-    {% if obj.collection_id and obj.collection_label %}
+    {% if show_collection|default:'True' == 'True' and obj.collection_id and obj.collection_label %}
     <p><b>Collection:</b> <a href="{% url 'collection:view' obj.collection_id %}">{{ obj.collection_label }}</a></p>
     {% endif %}
 

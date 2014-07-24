@@ -1,5 +1,7 @@
 Django
-eulfedora>=0.22.1
+# dev eulfedora for caching on related objects; should be 0.23
+#eulfedora>=0.22.1
+-e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm

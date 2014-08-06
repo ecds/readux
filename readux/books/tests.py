@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.utils import override_settings
 from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
 import rdflib
 from rdflib import RDF
@@ -430,6 +431,7 @@ class BookViewsTest(TestCase):
             (expected, vol_url, got))
 
     @patch('readux.books.views.Repository')
+    @override_settings(DEBUG=True)  # required so local copy of not-found image will be used
     def test_page_image(self, mockrepo):
         mockobj = Mock()
         mockobj.pid = 'page:1'

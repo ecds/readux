@@ -3,6 +3,34 @@
 {% block page-subtitle %} | {{ page.volume.title }}
    {% if page.volume.volume %} [{{ page.volume.volume }}] | Page {{ page.page_order }}{% endif %}{% endblock %}
 
+{% block javascript %}
+  {{ block.super }}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/seadragon-min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+     $(document).ready(function () {
+        // config seadragon, but don't load unless triggered by user
+        Seadragon.Config.imagePath = "{{ STATIC_URL }}/js/seadragon/img/";
+        var viewer = null;
+        var dzi_url = "{% url 'deepzoom:dzi' page.pid %}";
+
+        /* enable-zoom button toggles deep-zoom page view mode */
+        $("#enable-zoom").click(function(){
+          if ($(this).hasClass('zoom-active')) { // hide: move behind static image
+            $("#zoom-page").css('z-index', -3);
+          } else {  // enable and show
+            if (viewer == null) {   // init viewer first time
+              viewer = new Seadragon.Viewer("zoom-page");
+              viewer.openDzi(dzi_url);
+            }
+            $("#zoom-page").css('z-index', 3);  // show: move above
+          }
+          $(this).toggleClass('zoom-active');
+        });
+     });
+  </script>
+{% endblock %}
+
+
 {% block content %}
 <header class="page-header">
     <div class="container">
@@ -17,8 +45,10 @@
         <div class="container">
             <div id="view-toggle" class="pull-right">
                 <div class="btn-group">
+                    <a id="enable-zoom" href="#" class="btn"><span class="glyphicon glyphicon-zoom-in"></span></a>
+
                     <a id="covers" href="#" class="btn active"><span class="glyphicon glyphicon-file"></span></a>
-                    
+
                     <a id="list" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
                 </div>
             </div>
@@ -30,6 +60,8 @@
         <div class="carousel-inner">
             <div class="text-center">
                 <p class="text-muted">Page {{page.page_order}}</p>
+
+                <div id="zoom-page">&nbsp;</div>
                 <img src="{% url 'books:page-image' page.pid %}"/>
             </div>
         </div>

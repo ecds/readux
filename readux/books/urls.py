@@ -3,6 +3,7 @@ from readux.books import views
 
 urlpatterns = patterns('',
     url(r'^$', views.search, name='search'),
+    url(r'^covers/$', views.search, {'mode': 'covers'}, name='search-covers'),
     url(r'^unapi/$', views.unapi, name='unapi'),
     url(r'^(?P<pid>[^/]+)/$', views.volume, name='volume'),
     url(r'^(?P<pid>[^/]+)/pdf/$', views.pdf, name='pdf'),

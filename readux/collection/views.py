@@ -13,9 +13,14 @@ def site_index(request):
     # placeholder index page (probably shouldn't be in readux.collection)
     return render(request, 'site_base.html')
 
-def browse(request):
+def browse(request, mode='covers'):
     ''''Browse list of all collections sorted by title, with the
-    count of volumes in each'''
+    count of volumes in each.
+
+    :param mode: one of covers or list; determines whether collections
+        are displayed with covers only, or in list detail view
+
+    '''
     solr = solr_interface()
     # FIXME: this filter should probably be commonly used across all LSDI
     # search and browse
@@ -37,12 +42,16 @@ def browse(request):
     collections = [(r, collection_counts.get(r['pid'], 0)) for r in results]
 
     return render(request, 'collection/browse.html',
-        {'collections': collections})
+        {'collections': collections, 'mode': mode})
 
 
-def view(request, pid):
+def view(request, pid, mode='list'):
     '''View a single collection, with a paginated list of the volumes
-    it includes (volumes sorted by title and then ocm number/volume).'''
+    it includes (volumes sorted by title and then ocm number/volume).
+
+    :param mode: one of covers or list; determines whether books in the
+        collection are displayed with covers only, or in list detail view
+    '''
 
     repo = Repository(request=request)
     obj = repo.get_object(pid, type=Collection)
@@ -76,5 +85,6 @@ def view(request, pid):
         del url_params['page']
 
     return render(request, 'collection/view.html',
-        {'collection': obj, 'items': results,
-         'url_params': urlencode(url_params)})
+        {'collection': obj, 'items': results, 'mode': mode,
+         'url_params': urlencode(url_params),
+         'current_url_params': urlencode(request.GET.copy())})

@@ -14,6 +14,7 @@
             <div class="container coverlist-toggle">
 
             {# thumbnail view #}
+            {% if mode = 'covers' %}
             <div id="cover-list" class="item-covers">
                 <ul class="media-list collection-list cover-view">
                     {% for coll, count in collections %}
@@ -23,9 +24,11 @@
                    {% endfor %}
                </ul>
            </div>
+           {% endif %}
 
             {# list view #}
-            <div id="collection-list" class="item-list hidden">
+            {% if mode = 'list' %}
+            <div id="collection-list" class="item-list">
                 <ul class="media-list collection-list">
                     {% for coll, count in collections %}
                         {% if count %} {# don't display empty collections #}
@@ -34,6 +37,7 @@
                     {% endfor %}
                 </ul>
             </div>
+            {% endif %}
 
         </div><!-- /.container-->
     <section>

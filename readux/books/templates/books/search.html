@@ -62,10 +62,10 @@
         {% endif %} {# valid form #}
     </header>
     <section>
-      {% include "snippets/coverlist_toggle.html" with start='list' %}
+      {% include "books/snippets/search_coverlist_toggle.html" %}
 
-      {% if facets.collection %}
       <div class="facets">
+        {% if facets.collection %}
         <p>Filter results by collection:</p>
         <ul class="nav nav-pills">
           {% for label, count in facets.collection %}
@@ -73,8 +73,9 @@
               <small>({{ count|intcomma }})</small></a> </li>
           {% endfor %}
         </ul>
+        {% endif %}
       </div>
-      {% endif %}
+
 
       {% if items %} {# results to display #}
         {% include 'books/snippets/show_volumes.html' %}

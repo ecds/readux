@@ -14,7 +14,8 @@ from readux.books.models import Volume, SolrVolume, Page
 from readux.books.forms import BookSearch
 from readux.utils import solr_interface
 
-def search(request):
+
+def search(request, mode='list'):
 
     form = BookSearch(request.GET)
     context = {'form': form}
@@ -38,9 +39,13 @@ def search(request):
                 .field_limit(['pid', 'title', 'label', 'language',
                               'creator', 'date', 'hasPrimaryImage',
                               'page_count', 'collection_id', 'collection_label'],
-                              score=True) \
-                .facet_by('collection_label_facet', sort='index', mincount=1) \
+                              score=True)  \
                 .results_as(SolrVolume)
+
+        # don't need to facet on collection if we are already filtered on collection
+        if 'collection' not in request.GET:
+            q = q.facet_by('collection_label_facet', sort='index', mincount=1)
+
 
         # TODO: how can we determine via solr query if a volume has pages loaded?
         # join query on pages? index page_count in solr?
@@ -61,7 +66,7 @@ def search(request):
                                     unfacet_urlopts.urlencode()))
 
         # paginate the solr result set
-        paginator = Paginator(q, 30)
+        paginator = Paginator(q, 3)
         try:
             page = int(request.GET.get('page', '1'))
         except ValueError:
@@ -84,7 +89,10 @@ def search(request):
             'items': results,
             'url_params': urlencode(url_params),
             'facets': facets,  # available facets
-            'filters': display_filters  # active filters
+            'filters': display_filters,  # active filters
+            'mode': mode,  # list / cover view
+            'current_url_params': urlencode(request.GET.copy())
+
         })
 
     return render(request, 'books/search.html', context)

@@ -66,7 +66,7 @@ def search(request, mode='list'):
                                     unfacet_urlopts.urlencode()))
 
         # paginate the solr result set
-        paginator = Paginator(q, 3)
+        paginator = Paginator(q, 30)
         try:
             page = int(request.GET.get('page', '1'))
         except ValueError:

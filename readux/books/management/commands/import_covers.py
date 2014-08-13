@@ -91,7 +91,7 @@ the configured fedora instance.'''
             # what page the PDF should be opened to?
 
             # cover detection (currently first non-blank page)
-            coverfile, coverindex = self.identify_cover(images)
+            coverfile, coverindex = self.identify_cover(images, vol_info.pdf)
 
             # if a non-blank page was not found in the first 5 pages,
             # report as an error and skip this volume

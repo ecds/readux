@@ -58,6 +58,8 @@ class Item(xmlmap.XmlObject):
     'display image path'
     ocr_file_path = xmlmap.StringField('ocr_files_path')
     'path to OCR files (text & word position)'
+    pdf = xmlmap.StringField('pdf_file')
+    'path to PDF file'
 
     # incomplete - only mapping needed fields for now
 
@@ -70,4 +72,3 @@ class Items(xmlmap.XmlObject):
     'number of items in the result'
     items = xmlmap.NodeListField('item', Item)
     'List of items as instances of :class:`~readux.books.digwf.Item`'
-

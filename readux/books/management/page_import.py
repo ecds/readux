@@ -9,6 +9,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from eulfedora.util import RequestFailed
 import magic
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument, PDFNoOutlines
+from pdfminer.pdfpage import PDFPage
 
 from readux.books import digwf
 from readux.books.models import Page
@@ -113,13 +116,22 @@ class BasePageImport(BaseCommand):
     #: how many pages in to look for a cover (0-based)
     cover_range = 4
 
-    def identify_cover(self, images):
-        '''Look through the first few images; the first non-blank
-        one should be the cover.
+    def identify_cover(self, images, pdf):
+        '''Attempt to identify the image that should be used as the primary image
+        for this volume.  Use PDF outline information when avialable; otherwise,
+        look through the first few images and select the first non-blank one.
 
         Returns a tuple of the image filename and the index where it
         was found.
+
+        :param images: list of image file paths for this volume
+        :param pdf: path to the pdf file for this volume
         '''
+        coverindex = self.pdf_cover(pdf)
+        # if a cover file index was identified via PDF outline, use that
+        if coverindex is not None:
+            return images[coverindex], coverindex
+
         coverfile = coverindex = None
 
         for index in range(0, self.cover_range):
@@ -131,6 +143,37 @@ class BasePageImport(BaseCommand):
                 break
 
         return coverfile, coverindex
+
+    def pdf_cover(self, pdf):
+        with open(pdf, 'rb') as pdf_file:
+            parser = PDFParser(pdf_file)
+            document = PDFDocument(parser)
+            try:
+                outlines = document.get_outlines()
+                logger.debug('PDF %s includes outline information, using for cover identification',
+                             pdf)
+            except PDFNoOutlines:
+                logger.debug('PDF %s does not include outline information', pdf)
+                return None
+
+            # generate a dictionary of page object id and zero-based page number
+            pages = dict((page.pageid, pageno) for (pageno, page)
+                  in enumerate(PDFPage.create_pages(document)))
+
+            possible_coverpages = []
+            for (level, title, dest, a, se) in outlines:
+                # title is the label of the outline element
+                # we can probably use either Cover or Title Page; there
+                # may be multiple Covers (for back cover)
+                if title.lower() in ['cover', 'title page']:
+                    # determine page number for the reference
+                    page_num = pages[dest[0].objid]
+                    possible_coverpages.append(page_num)
+
+            if possible_coverpages:
+                # for now, just return the lowest page number, which should be
+                # the first cover
+                return sorted(possible_coverpages)[0]
 
     def is_blank_page(self, imgfile):
         '''Check whether or not a specified image is blank.'''

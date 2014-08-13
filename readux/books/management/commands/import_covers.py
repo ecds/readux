@@ -28,9 +28,11 @@ the configured fedora instance.'''
             help='Don\'t make any changes; just report on what would be done'),
         )
 
-    v_normal = 1
-
+    #: interruption flag set by :meth:`interrupt_handler`
     interrupted = False
+
+    #: number of objects to be processed; set in :meth:`handle`
+    total = None
 
     def handle(self, *pids, **options):
         # bind a handler for interrupt signal
@@ -126,6 +128,3 @@ the configured fedora instance.'''
 (Ctrl-C / Interrupt again to quit immediately)'''
 
             print >> self.stdout, msg % (self.stats['vols'], self.total)
-
-
-

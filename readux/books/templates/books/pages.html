@@ -8,32 +8,32 @@
         <h1>
             <a href="{% url 'books:volume' vol.pid %}">
                 {{ vol.title }}
-            
+
                 {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
             </a>
         </h1>
         <p class="lead">
             {% if vol.date %}({{ vol.date|join:', ' }}){% endif %}
         </p>
-
+    </header>
+    <article>
         <div class="container">
             <div id="view-toggle" class="pull-right">
                 <div class="btn-group">
                     {% for page in pages.object_list %}
-                        {% if forloop.first %}  
+                        {% if forloop.first %}
                             <a id="covers" href="{% url 'books:page' page.pid %}" class="btn"><span class="glyphicon glyphicon-file"></span></a>
                         {% endif %}
                     {% endfor %}
-                    
+
                     <a id="list" href="{% url 'books:pages' vol.pid %}" class="btn active"><span class="glyphicon glyphicon-th"></span></a>
                 </div>
             </div>
         </div>
-    </header>
-    <article>
+
         <div class="text-center text-muted">
             {% for page in pages.object_list %}
-                {% if forloop.first %}  
+                {% if forloop.first %}
                     Pages {{ page.page_order }}
                 {% endif %}
                 {% if forloop.last %}

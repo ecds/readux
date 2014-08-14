@@ -386,13 +386,18 @@ h1.site-title a:focus{
     padding-right: 9em;
 }
 
-#view-toggle .btn{
+#view-toggle .btn {
 	border: 1px solid #DDD;
 
 }
 #view-toggle .btn.active {
 	background-color: #6CACE7;
 	color: #FFF;
+}
+
+/* ensure view toggle buttons are clear of the page-navigation carousel links */
+.carousel #view-toggle {
+	margin-right: 10%;
 }
 
 p.page-number {
@@ -517,7 +522,8 @@ header.page-header {
    position: absolute;
    text-align:center;
    z-index: -3;
-   width: 100%;
+   width: 80%;
+   left: 10%;
    height: 1000px;
    /*border:1px solid gray;*/
    /*background-color: white;*/

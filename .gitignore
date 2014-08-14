@@ -4,7 +4,8 @@ readux/localsettings.py
 docs/_build
 parser.out
 parsetab.py
-static/
+# only ignore top-level static dir, not app-level static files
+./static/
 media/
 
 
@@ -64,4 +65,3 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
-

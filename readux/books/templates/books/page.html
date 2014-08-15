@@ -14,19 +14,28 @@
             id: "zoom-page",
             prefixUrl: "{{ STATIC_URL }}js/openseadragon/images/",
             tileSources: "{% url 'deepzoom:dzi' page.pid %}",
+            toolbar: 'deepzoom-controls',
+            showNavigator: true,
+            navigatorPosition: 'TOP_LEFT',
+            zoomInButton: 'dz-zoom-in',
+            zoomOutButton: 'dz-zoom-out',
+            homeButton: 'dz-home',
+            fullPageButton: 'dz-fs',
         };
 
         /* enable-zoom button toggles deep-zoom page view mode */
         $("#enable-zoom").click(function(){
-          if ($(this).hasClass('zoom-active')) { // hide: move behind static image
-            $("#zoom-page").css('z-index', -3);
-          } else {  // enable and show
+
             if (viewer == null) {   // init viewer first time
               viewer = OpenSeadragon(seadragon_opts);
+              console.log('init seadragon viewer');
             }
-            $("#zoom-page").css('z-index', 3);  // show: move above
-          }
-          $(this).toggleClass('zoom-active');
+            $('#zoom-page').css('z-index', 1); // move in front of page image
+            $("#deepzoom-controls").toggleClass('hidden'); // show the controls
+
+            // use not-visible class to set image opacity, but leave it visible
+            // to the browser because we need it for the page size/layout
+            $('#page-image').toggleClass('not-visible');
         });
      });
   </script>
@@ -59,14 +68,23 @@
 
                         <a id="list" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
                     </div>
+                    <br/>
+                    <div id="deepzoom-controls" class="hidden">
+                        <div class="btn-group">
+                            <a id="dz-zoom-in" href="#" class="btn"><span class="glyphicon glyphicon-plus"></span></a>
+                            <a id="dz-zoom-out" href="#" class="btn"><span class="glyphicon glyphicon-minus"></span></a>
+                            <a id="dz-home" href="#" class="btn"><span class="glyphicon glyphicon-home"></span></a>
+                            <a id="dz-fs" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
             <div class="text-center">
                 <p class="text-muted">Page {{page.page_order}}</p>
-
-                <div id="zoom-page">&nbsp;</div>
-                <img src="{% url 'books:page-image' page.pid %}"/>
+                <div id="zoom-page"></div>
+                <div id="page-image"><img src="{% url 'books:page-image' page.pid %}"/></div>
             </div>
         </div>
 

@@ -517,11 +517,17 @@ header.page-header {
     z-index: 10;
 }
 
+/* class to hide page image without losing its size for page layout	 */
+.not-visible {
+	opacity: 0;
+}
 
 #zoom-page {
    position: absolute;
+   margin: 0;
+   padding: 0;
    text-align:center;
-   z-index: -3;
+   z-index: -1;
    width: 80%;
    left: 10%;
    height: 1000px;

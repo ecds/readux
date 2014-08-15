@@ -23,20 +23,36 @@
             fullPageButton: 'dz-fs',
         };
 
-        /* enable-zoom button toggles deep-zoom page view mode */
-        $("#enable-zoom").click(function(){
-
-            if (viewer == null) {   // init viewer first time
+        function startzoom() {
+            // init seadragon viewer if this is first zoom
+            if (viewer == null) {
               viewer = OpenSeadragon(seadragon_opts);
-              console.log('init seadragon viewer');
             }
-            $('#zoom-page').css('z-index', 1); // move in front of page image
-            $("#deepzoom-controls").toggleClass('hidden'); // show the controls
-
+            // move deepzoom div in front of page image
+            $('#zoom-page').show().css('z-index', 1);
+            // show the deepzoom controls
+            $("#deepzoom-controls").removeClass('hidden');
             // use not-visible class to set image opacity, but leave it visible
             // to the browser because we need it for the page size/layout
-            $('#page-image').toggleClass('not-visible');
-        });
+            $('#page-image').addClass('not-visible');
+            // set enable-zoom button active
+            // $('#enable-zoom').aaddClass('active');
+        }
+
+        function endzoom() {
+            // reset deepzoom viewer to home
+            viewer.viewport.goHome();
+            // move deepzoom div behind page image
+            $('#zoom-page').css('z-index', -1).hide();
+            // hide the deepzoom controls
+            $("#deepzoom-controls").addClass('hidden');
+            // restore non-zoomable page image
+            $('#page-image').removeClass('not-visible');
+        }
+
+        /* enable-zoom button toggles deep-zoom page view mode */
+        $("#enable-zoom").click(startzoom);
+        $('#covers').click(endzoom);
      });
   </script>
 {% endblock %}

@@ -43,7 +43,7 @@ class CollectionViewsTest(TestCase):
 
         # response = self.client.get(reverse('collection:browse'))
         # collection browse is actually site index, at least for now
-        response = self.client.get(reverse('site-index'))
+        response = self.client.get(reverse('collection:list'))
 
         # inspect solr query args
         # - collection search
@@ -172,4 +172,3 @@ class CollectionViewsTest(TestCase):
             '<abbr class="unapi-id" title="%s"></abbr>' % solr_result[1]['pid'],
             msg_prefix='unapi item id for %s should be included to allow zotero harvest' % \
                        solr_result[1]['pid'])
-

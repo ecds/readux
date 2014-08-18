@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.1.1
 //! Built on 2014-08-18
-//! Git commit: v1.1.1-63-0d92737
+//! Git commit: v1.1.1-63-0d92737-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -10514,7 +10514,7 @@ function configureFromXML( tileSource, xmlDoc ){
 
             dispRectNodes = root.getElementsByTagName( "DisplayRect" );
             if (dispRectNodes.length === 0) {
-                dispRectNodes = root.getElementsByTagNameNS(ns, "DisplayRect" )[ 0 ];
+                dispRectNodes = root.getElementsByTagNameNS(ns, "DisplayRect" );
             }
             for ( i = 0; i < dispRectNodes.length; i++ ) {
                 dispRectNode = dispRectNodes[ i ];

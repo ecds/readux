@@ -6,11 +6,11 @@
 {% block javascript %}
   {{ block.super }}
   <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/deepzoom.js"></script>
   <script type="text/javascript" charset="utf-8">
      $(document).ready(function () {
-        // set up seadragon configuration, but don't load unless triggered by user
-        var viewer = null;
-        var seadragon_opts = {
+        // set up seadragon configuration (not loaded unless triggered by user)
+        set_seadragon_opts({
             id: "zoom-page",
             prefixUrl: "{{ STATIC_URL }}js/openseadragon/images/",
             tileSources: "{% url 'deepzoom:dzi' page.pid %}",
@@ -21,38 +21,7 @@
             zoomOutButton: 'dz-zoom-out',
             homeButton: 'dz-home',
             fullPageButton: 'dz-fs',
-        };
-
-        function startzoom() {
-            // init seadragon viewer if this is first zoom
-            if (viewer == null) {
-              viewer = OpenSeadragon(seadragon_opts);
-            }
-            // move deepzoom div in front of page image
-            $('#zoom-page').show().css('z-index', 1);
-            // show the deepzoom controls
-            $("#deepzoom-controls").removeClass('hidden');
-            // use not-visible class to set image opacity, but leave it visible
-            // to the browser because we need it for the page size/layout
-            $('#page-image').addClass('not-visible');
-            // set enable-zoom button active
-            // $('#enable-zoom').aaddClass('active');
-        }
-
-        function endzoom() {
-            // reset deepzoom viewer to home
-            viewer.viewport.goHome();
-            // move deepzoom div behind page image
-            $('#zoom-page').css('z-index', -1).hide();
-            // hide the deepzoom controls
-            $("#deepzoom-controls").addClass('hidden');
-            // restore non-zoomable page image
-            $('#page-image').removeClass('not-visible');
-        }
-
-        /* enable-zoom button toggles deep-zoom page view mode */
-        $("#enable-zoom").click(startzoom);
-        $('#covers').click(endzoom);
+        });
      });
   </script>
 {% endblock %}
@@ -77,7 +46,7 @@
 
             <div class="container">
                 <div id="view-toggle" class="pull-right">
-                    <div class="btn-group">
+                    <div class="btn-group pull-right">
                         <a id="enable-zoom" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
 
                         <a id="covers" href="#" class="btn active"><span class="glyphicon glyphicon-file"></span></a>

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'readux.collection',
     'readux.books',
+    'readux.dyndzi',
 ]
 
 MIDDLEWARE_CLASSES = (

@@ -24,4 +24,5 @@ https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild
 south
 python-magic
 progressbar
+-e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
 pdfminer

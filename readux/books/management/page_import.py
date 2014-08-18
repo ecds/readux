@@ -4,7 +4,7 @@ import logging
 import os
 import tempfile
 
-from PIL import Image
+from PIL import Image, ImageColor
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from eulfedora.util import RequestFailed
@@ -185,6 +185,7 @@ class BasePageImport(BaseCommand):
 
         img = Image.open(imgfile, mode='r')
         colors = img.getcolors()
+        # returns a list of (count, color)
         # getcolors returns None if maxcolors (default=256) is exceeded
         if colors is None:
             colors = img.getcolors(1000000)  # set maxcolors ridiculously high
@@ -194,21 +195,38 @@ class BasePageImport(BaseCommand):
                 logger.warn('%s has too many colors for retrieval; assuming non-blank', imgfile)
                 return False
 
-        # returns a list of (count, pixel)
-        white = 255
+        # color white, in various formats, for comparing against colors pulled from the image
+        whites = [
+            255,    # not sure how this matches anything, but must be in some images
+            ImageColor.colormap['white'],
+            ImageColor.getrgb('white')
+        ]
+
+        blacks = [
+            0,    # shows up as color value in some black/white images
+            ImageColor.colormap['black'],
+            ImageColor.getrgb('black')
+        ]
+
         # percent of the page that needs to be white for it to be
         # considered blank
         blank_page_threshold = 100.0
 
-        total, white_total = 0, 0
+        total, white_total, black_total = 0, 0, 0
         for count, color in colors:
             total += count
-            if color == white:
+            if color in whites:
                 white_total = count
+            if color in blacks:
+                black_total = count
         percent_white = (float(white_total) / float(total)) * 100
-        logger.debug('%s is %.1f%% percent white', imgfile, percent_white)
+        percent_black = (float(black_total) / float(total)) * 100
+        logger.debug('%s is %.1f%% percent white and %.1f%% black', imgfile,
+                     percent_white, percent_black)
 
-        if percent_white >= blank_page_threshold:
+        # if percent white is over configured threshold OR if image is
+        # completely black, consider it to be blank
+        if percent_white >= blank_page_threshold or percent_black == 100.0:
             return True
         else:
             return False

@@ -28,9 +28,11 @@ the configured fedora instance.'''
             help='Don\'t make any changes; just report on what would be done'),
         )
 
-    v_normal = 1
-
+    #: interruption flag set by :meth:`interrupt_handler`
     interrupted = False
+
+    #: number of objects to be processed; set in :meth:`handle`
+    total = None
 
     def handle(self, *pids, **options):
         # bind a handler for interrupt signal
@@ -89,7 +91,7 @@ the configured fedora instance.'''
             # what page the PDF should be opened to?
 
             # cover detection (currently first non-blank page)
-            coverfile, coverindex = self.identify_cover(images)
+            coverfile, coverindex = self.identify_cover(images, vol_info.pdf)
 
             # if a non-blank page was not found in the first 5 pages,
             # report as an error and skip this volume
@@ -126,6 +128,3 @@ the configured fedora instance.'''
 (Ctrl-C / Interrupt again to quit immediately)'''
 
             print >> self.stdout, msg % (self.stats['vols'], self.total)
-
-
-

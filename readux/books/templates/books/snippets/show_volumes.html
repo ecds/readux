@@ -1,6 +1,7 @@
 {# list volumes for collection browse or search results: both toggle-able cover and list views #}
 <div class="container coverlist-toggle">
       {# list view #}
+      {% if mode = 'list' %}
       <div id="volume-list" class="item-list">
         {# <ul class="media-list volume-list"> #}
             {% for obj in items.object_list %}
@@ -8,14 +9,17 @@
             {% endfor %}
         {# </ul> #}
     </div>
+    {% endif %}
 
     {# thumbnail view #}
-    <div id="cover-list" class="item-covers volume-covers hidden">
+    {% if mode = 'covers' %}
+    <div id="cover-list" class="item-covers volume-covers">
         <ul class="media-list cover-view">
             {% for obj in items.object_list %}
               {% include 'books/snippets/list_volume_cover.html' %}
              {% endfor %}
        </ul>
      </div>
+     {% endif %}
 
 </div><!-- /.container-->

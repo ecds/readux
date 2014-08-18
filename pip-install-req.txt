@@ -25,3 +25,4 @@ south
 python-magic
 progressbar
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
+pdfminer

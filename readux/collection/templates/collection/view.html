@@ -53,7 +53,7 @@
             {# if more than one item on this page, display range of results #}
         </p>
 
-        {% include "snippets/coverlist_toggle.html" with start='list' %}
+        {% include "collection/snippets/collection_coverlist_toggle.html" %}
         {% include 'books/snippets/show_volumes.html' with show_collection='False' %}
 
       {% else %}

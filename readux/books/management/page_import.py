@@ -9,6 +9,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from eulfedora.util import RequestFailed
 import magic
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument, PDFNoOutlines
+from pdfminer.pdfpage import PDFPage
 
 from readux.books import digwf
 from readux.books.models import Page
@@ -21,6 +24,19 @@ logger = logging.getLogger(__name__)
 class BasePageImport(BaseCommand):
     # common logic for importing covers and book pages
 
+    #: flag to indicate dry run/noact mode; set by :meth:`setup` based on args
+    dry_run = False
+    #: verbosity level; set by :meth:`setup` based on command-line arguments
+    verbosity = None
+    #: normal verbosity level
+    v_normal = 1
+    #: :class:`readux.books.digwf.Client`, initialized in :meth:`setup`
+    digwf_client = None
+    #: :class:`readux.fedora.ManagementRepository`, initialized in :meth:`setup`
+    repo = None
+    #: defaultdict to track stats about what has been done, errors, etc
+    stats = defaultdict(int)
+
     def setup(self, **options):
         self.dry_run = options.get('dry_run', False)
         self.verbosity = int(options.get('verbosity', self.v_normal))
@@ -30,8 +46,6 @@ class BasePageImport(BaseCommand):
 
         self.digwf_client = digwf.Client(settings.DIGITIZATION_WORKFLOW_API)
         self.repo = ManagementRepository()
-
-        self.stats = defaultdict(int)
 
     def is_usable_volume(self, vol):
         # if object does not exist or cannot be accessed in fedora, skip it
@@ -48,8 +62,6 @@ class BasePageImport(BaseCommand):
             return False
 
         return True
-
-
 
     def find_page_images(self, vol):
         '''Look up an item in the DigWf by pid (noid) and find display
@@ -104,13 +116,22 @@ class BasePageImport(BaseCommand):
     #: how many pages in to look for a cover (0-based)
     cover_range = 4
 
-    def identify_cover(self, images):
-        '''Look through the first few images; the first non-blank
-        one should be the cover.
+    def identify_cover(self, images, pdf):
+        '''Attempt to identify the image that should be used as the primary image
+        for this volume.  Use PDF outline information when avialable; otherwise,
+        look through the first few images and select the first non-blank one.
 
         Returns a tuple of the image filename and the index where it
         was found.
+
+        :param images: list of image file paths for this volume
+        :param pdf: path to the pdf file for this volume
         '''
+        coverindex = self.pdf_cover(pdf)
+        # if a cover file index was identified via PDF outline, use that
+        if coverindex is not None:
+            return images[coverindex], coverindex
+
         coverfile = coverindex = None
 
         for index in range(0, self.cover_range):
@@ -123,12 +144,43 @@ class BasePageImport(BaseCommand):
 
         return coverfile, coverindex
 
+    def pdf_cover(self, pdf):
+        with open(pdf, 'rb') as pdf_file:
+            parser = PDFParser(pdf_file)
+            document = PDFDocument(parser)
+            try:
+                outlines = document.get_outlines()
+                logger.debug('PDF %s includes outline information, using for cover identification',
+                             pdf)
+            except PDFNoOutlines:
+                logger.debug('PDF %s does not include outline information', pdf)
+                return None
+
+            # generate a dictionary of page object id and zero-based page number
+            pages = dict((page.pageid, pageno) for (pageno, page)
+                  in enumerate(PDFPage.create_pages(document)))
+
+            possible_coverpages = []
+            for (level, title, dest, a, se) in outlines:
+                # title is the label of the outline element
+                # we can probably use either Cover or Title Page; there
+                # may be multiple Covers (for back cover)
+                if title.lower() in ['cover', 'title page']:
+                    # determine page number for the reference
+                    page_num = pages[dest[0].objid]
+                    possible_coverpages.append(page_num)
+
+            if possible_coverpages:
+                # for now, just return the lowest page number, which should be
+                # the first cover
+                return sorted(possible_coverpages)[0]
+
     def is_blank_page(self, imgfile):
         '''Check whether or not a specified image is blank.'''
 
         # in some cases, there are empty files; consider empty == blank
         if os.path.getsize(imgfile) == 0:
-            logger.debug('%s is an empty file; considering blank' % imgfile)
+            logger.debug('%s is an empty file; considering blank', imgfile)
             return True
 
         img = Image.open(imgfile, mode='r')
@@ -139,7 +191,7 @@ class BasePageImport(BaseCommand):
             # NOTE: colors still could be none at this point
             # For now, assuming if we can't get colors that the image is *not* blank
             if colors is None:
-                logger.warn('%s has too many colors for retrieval; assuming non-blank' % imgfile)
+                logger.warn('%s has too many colors for retrieval; assuming non-blank', imgfile)
                 return False
 
         # returns a list of (count, pixel)
@@ -154,7 +206,7 @@ class BasePageImport(BaseCommand):
             if color == white:
                 white_total = count
         percent_white = (float(white_total) / float(total)) * 100
-        logger.debug('%s is %.1f%% percent white' % (imgfile, percent_white))
+        logger.debug('%s is %.1f%% percent white', imgfile, percent_white)
 
         if percent_white >= blank_page_threshold:
             return True
@@ -224,8 +276,8 @@ class BasePageImport(BaseCommand):
 
         # set page order
         page.page_order = pageindex
-        logger.debug('page %d rels-ext:%s' % \
-           (pageindex, page.rels_ext.content.serialize(pretty=True)))
+        logger.debug('page %d rels-ext:%s',
+           pageindex, page.rels_ext.content.serialize(pretty=True))
 
         if not self.dry_run:
             # calculate checksums and mimetypes for ingest
@@ -241,8 +293,8 @@ class BasePageImport(BaseCommand):
             for ds, filepath in dsfiles.iteritems():
                 # calculate checksum
                 ds.checksum = md5sum(filepath)
-                logger.debug('checksum for %s is %s' % \
-                            (filepath, ds.checksum))
+                logger.debug('checksum for %s is %s',
+                            filepath, ds.checksum)
                 ds.checksum_type = 'MD5'
 
                 # make sure image mimetype gets set correctly (should be image/jp2)
@@ -261,12 +313,12 @@ class BasePageImport(BaseCommand):
             try:
                 ingested = page.save('ingesting page image %d for %s' \
                                      % (pageindex, vol.pid))
-                logger.debug('page ingested as %s' % page.pid)
+                logger.debug('page ingested as %s', page.pid)
                 self.stats['pages'] += 1
 
                 # if a temporary file was created, remove it
                 if jp2_tmpfile:
-                    logger.debug('removing temporary JPEG2000 file %s' % imgfile)
+                    logger.debug('removing temporary JPEG2000 file %s', imgfile)
                     os.remove(imgfile)
 
             except RequestFailed as rf:
@@ -296,5 +348,3 @@ class BasePageImport(BaseCommand):
                     self.stats['errors'] += 1
                     self.stdout.write('Failed to update volume %s with relation to cover %s : %s' \
                                       % (vol.pid, page.pid, rf))
-
-

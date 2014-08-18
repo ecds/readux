@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.1.1
-//! Built on 2014-08-14
-//! Git commit: v1.1.1-55-8662bf9
+//! Built on 2014-08-18
+//! Git commit: v1.1.1-63-0d92737
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -383,6 +383,9 @@
   * @property {Boolean} [navigatorAutoResize=true]
   *     Set to false to prevent polling for navigator size changes. Useful for providing custom resize behavior.
   *     Setting to false can also improve performance when the navigator is configured to a fixed size.
+  *
+  * @property {Boolean} [navigatorRotate=true]
+  *     If true, the navigator will be rotated together with the viewer.
   *
   * @property {Number} [controlsFadeDelay=2000]
   *     The number of milliseconds to wait once the user has stopped interacting
@@ -961,6 +964,7 @@ window.OpenSeadragon = window.OpenSeadragon || function( options ){
             navigatorHeight:            null,
             navigatorWidth:             null,
             navigatorAutoResize:        true,
+            navigatorRotate:            true,
 
             // INITIAL ROTATION
             degrees:                0,
@@ -7946,7 +7950,8 @@ function openTileSource( viewer, source ) {
             minZoomLevel:       _this.minZoomLevel,
             maxZoomLevel:       _this.maxZoomLevel,
             viewer:             _this,
-            degrees:            _this.degrees
+            degrees:            _this.degrees,
+            navigatorRotate:    _this.navigatorRotate
         });
     }
 
@@ -8013,7 +8018,8 @@ function openTileSource( viewer, source ) {
                 tileSources:       source,
                 tileHost:          _this.tileHost,
                 prefixUrl:         _this.prefixUrl,
-                viewer:            _this
+                viewer:            _this,
+                navigatorRotate:   _this.navigatorRotate
             });
         }
     }
@@ -8979,6 +8985,7 @@ function onNext(){
 $.Navigator = function( options ){
 
     var viewer      = options.viewer,
+        _this = this,
         viewerSize,
         navigatorSize,
         unneededElement;
@@ -9090,6 +9097,11 @@ $.Navigator = function( options ){
         style.cursor        = 'default';
     }( this.displayRegion.style, this.borderWidth ));
 
+    this.displayRegionContainer = $.makeNeutralElement("div");
+    this.displayRegionContainer.id = this.element.id + '-displayregioncontainer';
+    this.displayRegionContainer.className = "displayregioncontainer";
+    this.displayRegionContainer.style.width = "100%";
+    this.displayRegionContainer.style.height = "100%";
 
     this.element.innerTracker = new $.MouseTracker({
         element:         this.element,
@@ -9132,12 +9144,22 @@ $.Navigator = function( options ){
 
     $.Viewer.apply( this, [ options ] );
 
-    this.element.getElementsByTagName( 'div' )[0].appendChild( this.displayRegion );
+    this.displayRegionContainer.appendChild(this.displayRegion);
+    this.element.getElementsByTagName('div')[0].appendChild(this.displayRegionContainer);
     unneededElement = this.element.getElementsByTagName('textarea')[0];
     if (unneededElement) {
         unneededElement.parentNode.removeChild(unneededElement);
     }
 
+    if (options.navigatorRotate)
+    {
+        options.viewer.addHandler("rotate", function (args) {
+            _setTransformRotate(_this.displayRegionContainer, args.degrees);
+            _setTransformRotate(_this.displayRegion, -args.degrees);
+            _this.viewport.setRotation(args.degrees);
+        });
+
+    }
 };
 
 $.extend( $.Navigator.prototype, $.EventSource.prototype, $.Viewer.prototype, /** @lends OpenSeadragon.Navigator.prototype */{
@@ -9154,7 +9176,7 @@ $.extend( $.Navigator.prototype, $.EventSource.prototype, $.Viewer.prototype, /*
                     (this.container.clientHeight === 0 ? 1 : this.container.clientHeight)
                 );
             if ( !containerSize.equals( this.oldContainerSize ) ) {
-                var oldBounds = this.viewport.getBounds();
+                var oldBounds = this.viewport.getBounds().rotate(this.viewport.degrees);
                 var oldCenter = this.viewport.getCenter();
                 this.viewport.resize( containerSize, true );
                 var imageHeight = 1 / this.source.aspectRatio;
@@ -9247,7 +9269,7 @@ $.extend( $.Navigator.prototype, $.EventSource.prototype, $.Viewer.prototype, /*
  */
 function onCanvasClick( event ) {
     if ( event.quick && this.viewer.viewport ) {
-        this.viewer.viewport.panTo( this.viewport.pointFromPixel( event.position ) );
+        this.viewer.viewport.panTo( this.viewport.pointFromPixel( event.position ).rotate( -this.viewer.viewport.degrees, this.viewer.viewport.getHomeBounds().getCenter() ) );
         this.viewer.viewport.applyConstraints();
     }
 }
@@ -9319,6 +9341,19 @@ function onCanvasScroll( event ) {
     return false;
 }
 
+/**
+    * @function
+    * @private
+    * @param {Object} element
+    * @param {Number} degrees
+    */
+function _setTransformRotate (element, degrees) {
+    element.style.webkitTransform = "rotate(" + degrees + "deg)";
+    element.style.mozTransform = "rotate(" + degrees + "deg)";
+    element.style.msTransform = "rotate(" + degrees + "deg)";
+    element.style.oTransform = "rotate(" + degrees + "deg)";
+    element.style.transform = "rotate(" + degrees + "deg)";
+}
 
 }( OpenSeadragon ));
 
@@ -10438,6 +10473,7 @@ function configureFromXML( tileSource, xmlDoc ){
 
     var root           = xmlDoc.documentElement,
         rootName       = root.localName,
+        ns             = xmlDoc.documentElement.namespaceURI,
         configuration  = null,
         displayRects   = [],
         dispRectNodes,
@@ -10450,6 +10486,11 @@ function configureFromXML( tileSource, xmlDoc ){
 
         try {
             sizeNode = root.getElementsByTagName( "Size" )[ 0 ];
+            // if finding by tag name failed, attempt to find with namespace
+            if (sizeNode === undefined) {
+                sizeNode = root.getElementsByTagNameNS(ns, "Size" )[ 0 ];
+            }
+
             configuration = {
                 Image: {
                     xmlns:       "http://schemas.microsoft.com/deepzoom/2008",
@@ -10472,9 +10513,15 @@ function configureFromXML( tileSource, xmlDoc ){
             }
 
             dispRectNodes = root.getElementsByTagName( "DisplayRect" );
+            if (dispRectNodes.length === 0) {
+                dispRectNodes = root.getElementsByTagNameNS(ns, "DisplayRect" )[ 0 ];
+            }
             for ( i = 0; i < dispRectNodes.length; i++ ) {
                 dispRectNode = dispRectNodes[ i ];
                 rectNode     = dispRectNode.getElementsByTagName( "Rect" )[ 0 ];
+                if (rectNode === undefined) {
+                    rectNode = dispRectNode.getElementsByTagNameNS(ns, "Rect" )[ 0 ];
+                }
 
                 displayRects.push({
                     Rect: {
@@ -16091,6 +16138,20 @@ $.Viewport.prototype = /** @lends OpenSeadragon.Viewport.prototype */{
         this.degrees = degrees;
         this.viewer.forceRedraw();
         
+        /**
+         * Raised when rotation has been changed.
+         *
+         * @event update-viewport
+         * @memberof OpenSeadragon.Viewer
+         * @type {object}
+         * @property {OpenSeadragon.Viewer} eventSource - A reference to the Viewer which raised the event.
+         * @property {Number} degrees - The number of degrees the rotation was set to.
+         * @property {?Object} userData - Arbitrary subscriber-defined object.
+         */
+        if (this.viewer !== null)
+        {
+            this.viewer.raiseEvent('rotate', {"degrees": degrees});
+        }
         return this;
     },
 

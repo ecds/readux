@@ -288,6 +288,8 @@ Solr Schema for projects using eulfedora and indexdata.
    <!-- document full text; NOT configured to allow highlighting -->
    <field name="fulltext" type="text" indexed="true" stored="false"
           termVectors="true" termPositions="true" termOffsets="true"/>
+   <!-- pdf size, for volume objects -->
+   <field name="pdf_size" type="sint" indexed="true" stored="true"/>
 
    <!-- Dublin Core fields -->
    <field name="title" type="text" indexed="true" stored="true"/>

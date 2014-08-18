@@ -358,6 +358,9 @@ class Volume(DigitalObject, BaseVolume):
         # number of pages loaded for this book, to allow determining if page view is available
         data['page_count'] = self.page_count
 
+        # size of the pdf
+        data['pdf_size'] = self.pdf.size
+
         return data
 
     #: supported unAPI formats, for use with :meth:`readux.books.views.unapi`
@@ -450,6 +453,12 @@ class Volume(DigitalObject, BaseVolume):
         # return so it can be filtered, paginated as needed
         return solrquery
 
+    @property
+    def pdf_size(self):
+        'size of the pdf, in bytes'
+        # exposing as a property here for consistency with SolrVolume result
+        return self.pdf.size
+
 
 class SolrVolume(UserDict, BaseVolume):
     '''Extension of :class:`~UserDict.UserDict` for use with Solr results
@@ -487,4 +496,3 @@ class SolrVolume(UserDict, BaseVolume):
 # hack: patch in volume as the related item type for pages
 # (can't be done in page declaration due to order / volume primary image rel)
 Page.volume.object_type = Volume
-

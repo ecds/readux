@@ -531,7 +531,10 @@ header.page-header {
    width: 80%;
    left: 10%;
    height: 1000px;
-   /*border:1px solid gray;*/
-   /*background-color: white;*/
-   color: black;
+  color: black;
+}
+
+.btn-primary .text-muted {
+	color: white;
+	opacity: 0.5;
 }

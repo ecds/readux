@@ -38,7 +38,8 @@ def search(request, mode='list'):
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(['pid', 'title', 'label', 'language',
                               'creator', 'date', 'hasPrimaryImage',
-                              'page_count', 'collection_id', 'collection_label'],
+                              'page_count', 'collection_id', 'collection_label',
+                              'pdf_size'],
                               score=True)  \
                 .results_as(SolrVolume)
 

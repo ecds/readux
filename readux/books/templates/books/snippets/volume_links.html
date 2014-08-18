@@ -15,6 +15,9 @@
 <a class="btn {% if vol.has_pages %}btn-default{% else %}btn-primary{% endif %}{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pdf' vol.pid %}" title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
     <span class="glyphicon glyphicon-file"></span>
     <span>View PDF</span>
+    {% if vol.pdf_size %}
+        <span class="text-muted">({{ vol.pdf_size|filesizeformat }})</span>
+    {% endif %}
 </a>
 
 {# link to voyant with full document plain text as input; preset english stopwords for english texts #}

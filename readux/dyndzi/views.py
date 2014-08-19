@@ -22,7 +22,7 @@ def get_image_object_or_404(request, id):
     try:
         # currently expected to return an Image cmodel with djatoka service
         repo = TypeInferringRepository()
-        return repo.get_object(pid)
+        return repo.get_object(id)
     except:
         raise Http404
 

@@ -52,6 +52,21 @@ class SolrVolumeTest(TestCase):
         current_site = Site.objects.get_current()
         self.assert_(current_site.domain in url)
 
+    def test_voyant_url(self):
+        voyant_url = ['voyant-tools.org/?corpus','archive=','&amp;stopList=stop.en.taporware.txt']
+        volume = SolrVolume(label='ocn460678076_V.1',
+                     pid='testpid:1234')
+        url = volume.voyant_url()
+        self.assert_(url.startswith('http://'))
+        current_site = Site.objects.get_current()
+        self.assert_(current_site.domain in url)
+
+        if( volume.language and "eng" in volume.language ):
+            self.assertTrue(url.startswith(voyant_url[2]))
+        else:
+            self.assertFalse(url.startswith(voyant_url[2]))
+
+
 class VolumeTest(TestCase):
 
     def setUp(self):

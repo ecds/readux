@@ -21,7 +21,7 @@
 </a>
 
 {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
-<a href="http://voyant-tools.org/?input={{ vol.fulltext_absolute_url }}{% if "eng" in vol.language %}&amp;stopList=stop.en.taporware.txt{% endif %}"
+<a href="{{ vol.voyant_url }}"
    title="send text to Voyant" target="_blank" class="btn btn-default{% if small_buttons %} btn-xs{% endif %}">
         <span class="glyphicon glyphicon-send"></span>
         <span>Send to Voyant</span>

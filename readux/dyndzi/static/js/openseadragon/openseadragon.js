@@ -1,6 +1,6 @@
 //! OpenSeadragon 1.1.1
-//! Built on 2014-08-18
-//! Git commit: v1.1.1-63-0d92737-dirty
+//! Built on 2014-08-19
+//! Git commit: v1.1.1-64-343f9ed-dirty
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -10485,11 +10485,7 @@ function configureFromXML( tileSource, xmlDoc ){
     if ( rootName == "Image" ) {
 
         try {
-            sizeNode = root.getElementsByTagName( "Size" )[ 0 ];
-            // if finding by tag name failed, attempt to find with namespace
-            if (sizeNode === undefined) {
-                sizeNode = root.getElementsByTagNameNS(ns, "Size" )[ 0 ];
-            }
+            sizeNode = root.getElementsByTagNameNS(ns, "Size" )[ 0 ];
 
             configuration = {
                 Image: {
@@ -10512,17 +10508,12 @@ function configureFromXML( tileSource, xmlDoc ){
                 );
             }
 
-            dispRectNodes = root.getElementsByTagName( "DisplayRect" );
-            if (dispRectNodes.length === 0) {
-                dispRectNodes = root.getElementsByTagNameNS(ns, "DisplayRect" );
-            }
+            dispRectNodes = root.getElementsByTagNameNS(ns, "DisplayRect" );
+
             for ( i = 0; i < dispRectNodes.length; i++ ) {
                 dispRectNode = dispRectNodes[ i ];
-                rectNode     = dispRectNode.getElementsByTagName( "Rect" )[ 0 ];
-                if (rectNode === undefined) {
-                    rectNode = dispRectNode.getElementsByTagNameNS(ns, "Rect" )[ 0 ];
-                }
-
+                rectNode     = dispRectNode.getElementsByTagNameNS(ns, "Rect" )[ 0 ];
+                
                 displayRects.push({
                     Rect: {
                         X: parseInt( rectNode.getAttribute( "X" ), 10 ),

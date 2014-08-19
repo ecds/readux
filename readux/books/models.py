@@ -222,21 +222,14 @@ class BaseVolume(object):
     def voyant_url(self):
         '''Generates the url for sending materials to Voyant for analysis.'''
 
-        voyant_url = ['voyant-tools.org/?corpus=','&amp;archive=','&amp;stopList=stop.en.taporware.txt']
-        absolute_url = self.fulltext_absolute_url()
+        language =''
+        
+        if( self.language and "eng" in self.language ):
+            language = '&amp;stopList=stop.en.taporware.txt'
 
-        if(voyant_url and absolute_url and self.pid):
-            url = ''.join(['http://', 
-                            voyant_url[0], 
-                            self.pid,voyant_url[1],
-                            absolute_url])
-
-            if( self.language and "eng" in self.language ):
-                url = ''.join([url,voyant_url[2]])
-
-            return url
+        voyant_url = "%svoyant-tools.org/?corpus=%s&amp;archive=%s%s" % ('http://', self.pid, self.fulltext_absolute_url(),language)
             
-        return False
+        return voyant_url
 
 
 class Volume(DigitalObject, BaseVolume):
@@ -384,9 +377,6 @@ class Volume(DigitalObject, BaseVolume):
         # size of the pdf
         data['pdf_size'] = self.pdf.size
 
-         # language of the pdf
-        data['language'] = self.pdf.book.dc.content.language_list
-
         return data
 
     #: supported unAPI formats, for use with :meth:`readux.books.views.unapi`
@@ -514,7 +504,7 @@ class SolrVolume(UserDict, BaseVolume):
     def language(self):
         'language of the pdf'
         # exposing as a property here for consistency with SolrVolume result
-        return self.data.get('language')
+        return self.get('language')
 
     @property
     def primary_image(self):

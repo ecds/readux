@@ -54,17 +54,28 @@ class SolrVolumeTest(TestCase):
 
     def test_voyant_url(self):
         voyant_url = ['voyant-tools.org/?corpus','archive=','&amp;stopList=stop.en.taporware.txt']
-        volume = SolrVolume(label='ocn460678076_V.1',
-                     pid='testpid:1234')
-        url = volume.voyant_url()
-        self.assert_(url.startswith('http://'))
+        volume1 = SolrVolume(label='ocn460678076_V.1',
+                     pid='testpid:1234', language ='eng')
+        
+        url = volume1.voyant_url()
+
         current_site = Site.objects.get_current()
         self.assert_(current_site.domain in url)
 
-        if( volume.language and "eng" in volume.language ):
-            self.assertTrue(url.startswith(voyant_url[2]))
-        else:
-            self.assertFalse(url.startswith(voyant_url[2]))
+        #Volume with English Lang
+        self.assertTrue("corpus=%s" % (volume1.pid) in url)
+        self.assertTrue("archive=%s" % (volume1.fulltext_absolute_url()) in url)
+        self.assertTrue("&amp;stopList=stop.en.taporware.txt" in url)
+
+        #volume language is French
+        volume2 = SolrVolume(label='ocn460678076_V.1',
+                     pid='testpid:1235', language ='fra')
+
+        url_fra = volume2.voyant_url() 
+        self.assertTrue("corpus=%s" % (volume2.pid) in url_fra)
+        self.assertTrue("archive=%s" % (volume2.fulltext_absolute_url()) in url_fra)
+        self.assertFalse("&amp;stopList=stop.en.taporware.txt" in url_fra)
+
 
 
 class VolumeTest(TestCase):

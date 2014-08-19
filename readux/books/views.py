@@ -216,6 +216,17 @@ def ocr_lastmodified(request, pid):
 
 
 @condition(etag_func=ocr_etag, last_modified_func=ocr_lastmodified)
+def ocr(request, pid):
+    '''View to allow access the raw OCR xml datastream of a
+    :class:`~readux.books.models.Volume` object.
+    '''
+    repo = Repository()
+    # use generic raw datastream view from eulfedora
+    return raw_datastream(request, pid, Volume.ocr.id, type=Volume,
+        repo=repo)
+
+
+@condition(etag_func=ocr_etag, last_modified_func=ocr_lastmodified)
 def text(request, pid):
     '''View to allow access the plain text content of a
     :class:`~readux.books.models.Volume` object.

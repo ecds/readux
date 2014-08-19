@@ -7,6 +7,7 @@ urlpatterns = patterns('',
     url(r'^unapi/$', views.unapi, name='unapi'),
     url(r'^(?P<pid>[^/]+)/$', views.volume, name='volume'),
     url(r'^(?P<pid>[^/]+)/pdf/$', views.pdf, name='pdf'),
+    url(r'^(?P<pid>[^/]+)/ocr/$', views.ocr, name='ocr'),
     url(r'^(?P<pid>[^/]+)/text/$', views.text, name='text'),
     url(r'^(?P<pid>[^/]+)/pages/$', views.volume_pages, name='pages'),
 

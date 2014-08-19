@@ -15,7 +15,7 @@ from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
 from readux.books import abbyyocr
-from readux.books.models import SolrVolume, Volume, Book, BIBO, DC
+from readux.books.models import SolrVolume, Volume, Book, BIBO, DC, Page
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -140,6 +140,76 @@ class VolumeTest(TestCase):
             self.assert_((uri, DC.description, lit(d)) in graph,
                 'description from volume metadata should be set as dc:description when present')
 
+    def test_index_data(self):
+        self.vol.owner = ''
+        self.vol.dc.content.date = 1842
+
+        # NOTE: patching on class instead of instance because related object is a descriptor
+        with patch.object(Volume, 'book', new=Mock(spec=Book)) as mockbook:
+            mockbook.pid = 'book:123'
+            mockbook.collection.pid = 'coll:123',
+            mockbook.collection.short_label = 'Pile O\' Books'
+            mockbook.dc.content.creator_list = ['Author, Joe']
+            mockbook.dc.content.date_list = ['1801', '2010']
+            mockbook.dc.content.description_list = ['digitized edition', 'mystery novel']
+            mockbook.dc.content.publisher = 'Nashville, Tenn. : Barbee &amp; Smith'
+            mockbook.dc.content.relation_list = [
+                'http://pid.co/ark:/12345/book',
+                'http://pid.co/ark:/12345/volpdf'
+            ]
+            mockbook.dc.content.subject_list = []
+
+            data = self.vol.index_data()
+
+            self.assert_('fulltext' not in data,
+                'fulltext should not be set in index data when volume has no ocr')
+            self.assert_('hasPrimaryImage' not in data,
+                'hasPrimaryImage should not be set in index data when volume has no cover')
+            self.assertEqual(mockbook.pid, data['book_id'],
+                'associated book pid should be set as book id')
+            self.assertEqual(mockbook.collection.pid, data['collection_id'],
+                'associated collection pid should be set as collection id')
+            self.assertEqual(mockbook.collection.short_label, data['collection_label'],
+                'associated collection label short label should be set as collection label')
+            self.assertEqual(mockbook.dc.content.creator_list, data['creator'],
+                'creator should be set from book DC creator')
+            self.assertEqual(self.vol.dc.content.date_list, data['date'],
+                'date should be set from earliest volume DC date')
+            self.assert_('subject' not in data,
+                'subject should not be set in index data when book has no subjects')
+            self.assertEqual(0, data['page_count'],
+                'page count should be set to zero when volume has no pages loaded')
+
+            # test hasPrimaryImage
+            mockpage = Mock(spec=Page)
+            mockpage.pid = 'page:1234'
+            mockpage.uriref = rdflib.URIRef('info:fedora/%s' % mockpage.pid)
+            self.vol.primary_image = mockpage
+            data = self.vol.index_data()
+            self.assertEqual(mockpage.pid, data['hasPrimaryImage'],
+                'hasPrimaryImage should be set to cover page pid, when present')
+
+            # test subjects
+            mockbook.dc.content.subject_list = ['subj1', 'subj2']
+            data = self.vol.index_data()
+            self.assertEqual(mockbook.dc.content.subject_list, data['subject'],
+                'subject should be set when present in book DC')
+
+            # test full-text
+            with patch.object(self.vol, 'ocr') as mockocr:
+                mockocr.exists = True
+                mockocr.content = 'this is the content of an entire book in ocr xml form...'
+                data = self.vol.index_data()
+                self.assertEqual(mockocr.content, data['fulltext'],
+                    'fulltext should be set in index data when OCR is available')
+
+            # use mock to test pdf size indexing
+            with patch.object(self.vol, 'pdf') as mockpdf:
+                mockpdf.size = 1234567
+                data = self.vol.index_data()
+                self.assertEqual(mockpdf.size, data['pdf_size'],
+                    'pdf_size should be set from pdf size, when available')
+
 
 class BookViewsTest(TestCase):
 
@@ -250,7 +320,7 @@ class BookViewsTest(TestCase):
         # not sure how to test query on Q|Q**3|Q**3
         mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label',
             'language', 'creator', 'date', 'hasPrimaryImage', 'page_count',
-            'collection_id', 'collection_label'], score=True)
+            'collection_id', 'collection_label', 'pdf_size'], score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,

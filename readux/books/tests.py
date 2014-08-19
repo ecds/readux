@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.template.defaultfilters import filesizeformat
 from django.test import TestCase
 from django.test.utils import override_settings
 from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
@@ -284,8 +285,8 @@ class BookViewsTest(TestCase):
         solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
         # *only* mock iter, to avoid weirdness with django templates & callables
         solr_result.__iter__.return_value = [
-            {'pid': 'vol:1', 'title': 'Lecoq, the detective'},
-            {'pid': 'vol:2', 'title': 'Mabel Meredith'},
+            {'pid': 'vol:1', 'title': 'Lecoq, the detective', 'pdf_size': 1024},
+            {'pid': 'vol:2', 'title': 'Mabel Meredith', 'pdf_size': 34665},
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
@@ -339,6 +340,9 @@ class BookViewsTest(TestCase):
                 '<abbr class="unapi-id" title="%s"></abbr>' % item['pid'],
                 msg_prefix='unapi item id for %s should be included to allow zotero harvest' \
                            % item['pid'])
+            # pdf size
+            self.assertContains(response, filesizeformat(item['pdf_size']),
+                msg_prefix='PDF size should be displayed in human-readable format')
 
         # check that collection facets are displayed / linked
         for coll, count in results.facet_counts.facet_fields['collection_label_facet']:
@@ -457,6 +461,7 @@ class BookViewsTest(TestCase):
         ]
         mockobj.book.dc.content.publisher = 'London : Vizetelly'
         mockobj.book.volume_set = [mockobj, NonCallableMock(pid='vol:2')]
+        mockobj.pdf_size = 1024
         mockrepo.return_value.get_object.return_value = mockobj
         # to support for last modified conditional
         mockobj.ocr.created = datetime.now()
@@ -483,6 +488,9 @@ class BookViewsTest(TestCase):
         self.assertContains(response,
             reverse('books:volume', kwargs={'pid': mockobj.book.volume_set[0].pid}),
             msg_prefix='response should link to related volumes')
+        # pdf size
+        self.assertContains(response, filesizeformat(mockobj.pdf_size),
+            msg_prefix='PDF size should be displayed in human-readable format')
 
         # non-existent should 404
         mockobj.exists = False

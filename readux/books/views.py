@@ -36,11 +36,7 @@ def search(request, mode='list'):
 
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(text_query | author_query**3 | title_query**3) \
-                .field_limit(['pid', 'title', 'label', 'language',
-                              'creator', 'date', 'hasPrimaryImage',
-                              'page_count', 'collection_id', 'collection_label',
-                              'pdf_size'],
-                              score=True)  \
+                .field_limit(SolrVolume.necessary_fields, score=True)  \
                 .results_as(SolrVolume)
 
         # don't need to facet on collection if we are already filtered on collection

@@ -482,6 +482,13 @@ class SolrVolume(UserDict, BaseVolume):
     Volume fields based on existing fields such as label.
     '''
 
+    #: fields that should be returned via Solr to support list display needs
+    necessary_fields = ['pid', 'title', 'label', 'language',
+        'creator', 'date', 'hasPrimaryImage',
+        'page_count', 'collection_id', 'collection_label',
+        'pdf_size'
+    ]
+
     def __init__(self, **kwargs):
         # sunburnt passes fields as kwargs; userdict wants them as a dict
         UserDict.__init__(self, kwargs)

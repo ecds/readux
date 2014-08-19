@@ -345,9 +345,8 @@ class BookViewsTest(TestCase):
         mocksolr.Q.assert_any_call(creator='yellowbacks')
         mocksolr.Q.assert_any_call(title='yellowbacks')
         # not sure how to test query on Q|Q**3|Q**3
-        mocksolr.query.field_limit.assert_called_with(['pid', 'title', 'label',
-            'language', 'creator', 'date', 'hasPrimaryImage', 'page_count',
-            'collection_id', 'collection_label', 'pdf_size'], score=True)
+        mocksolr.query.field_limit.assert_called_with(SolrVolume.necessary_fields,
+            score=True)
 
         # check that unapi / zotero harvest is enabled
         self.assertContains(response,

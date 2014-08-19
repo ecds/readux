@@ -36,9 +36,23 @@ Views
     :members:
 
 
+DynDZI
+------
+.. automodule:: readux.dyndzi
+    :members:
+
+Models
+^^^^^^
+.. automodule:: readux.dyndzi.models
+    :members:
+
+Views
+^^^^^^
+.. automodule:: readux.dyndzi.views
+    :members:
+
+
 Utilities
 ---------
 .. automodule:: readux.utils
     :members:
-
-

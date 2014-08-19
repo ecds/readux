@@ -14,19 +14,31 @@ from readux.dyndzi.models import DziImage
 logger = logging.getLogger(__name__)
 
 def get_image_object_or_404(request, id):
+    '''Utility method to get an image in Fedora or raise an
+    :class:`~django.http.Http404` if the image is not found or accessible.
+
+    :param id: image identifier (Fedora pid)
+    '''
     try:
         # currently expected to return an Image cmodel with djatoka service
         repo = TypeInferringRepository()
-        return repo.get_object(id)
+        return repo.get_object(pid)
     except:
         raise Http404
 
 def image_etag(request, id, **kwargs):
+    '''ETag method for Fedora Image datastream, to allow browser caching on DZI views
+
+    :param id: image identifier (Fedora pid)
+    '''
     return datastream_etag(request, id, Image.image.id, **kwargs)
 
 @condition(etag_func=image_etag)
 def image_dzi(request, id):
-    '''Generate and return the xml portion of a DZI file.'''
+    '''Generate and return the xml portion of a DZI file.
+
+    :param id: image identifier (i.e. fedora object pid)
+    '''
     img = get_image_object_or_404(request, id)
     return HttpResponse(DziImage(img).serialize(pretty=True),
                         mimetype='application/xml')
@@ -34,7 +46,15 @@ def image_dzi(request, id):
 @condition(etag_func=image_etag)
 def dzi_tile(request, id, level, column, row, format):
     '''Generate a single tile image for the specified level, column,
-    row, and format'''
+    row, and format.
+
+    :param id: image identifier
+    :param level: scale level in the dzi image pyramid
+    :param column: column number for the requested tile
+    :param row: row number for the requested tile
+    :param format: image format (currently ignored)
+
+    '''
     # FIXME: format is currently ignored
 
     # deepzoom functions expect numbers and not strings

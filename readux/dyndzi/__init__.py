@@ -1,5 +1,5 @@
 # file dyndzi/__init__.py
-# 
+#
 #   Copyright 2012 Emory University Libraries
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,8 @@ generating and displaying `Deep Zoom Images`_ (DZI).
 
 The current implementation uses `Fedora-Commons Repository`_ content
 (by way of :mod:`eulfedora`) which has the `Djatoka Image server`_
-configured as an image service, although it shoudl be possible te generalize this to work with arbitrary images and alternative image services.
+configured as an image service, although it should be possible te generalize
+this to work with arbitrary images and alternative image services.
 
 .. _Deep Zoom Images: http://msdn.microsoft.com/en-us/library/cc645077%28v=vs.95%29.aspx
 .. _Fedora-Commons repository: http://fedora-commons.org/
@@ -29,12 +30,14 @@ configured as an image service, although it shoudl be possible te generalize thi
 
 .. Note::
 
-  :mod:`readux.dyndzi` currently depends on `DeepZoomTools`_ for some
+  :mod:`readux.dyndzi` currently depends on `Python Deep Zoom Tools`_ for some
   of the DZI image tile calculations; however, that package is
   currently not available on PyPi and so is not installable via pip.
   To install directly from github with pip, use the following::
-  
+
     $ pip install -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
+
+.. _Python Deep Zoom Tools: https://github.com/openzoom/deepzoom.py
 
 The following configurations can be set in Django settings to
 customize the DZI images and tiles:
@@ -43,37 +46,20 @@ customize the DZI images and tiles:
  * **DYNDZI_TILE_OVERLAP** (default: 1)
  * **DYNDZI_IMAGE_FORMAT** (default: jpg)
 
-:mod:`readux.dyndzi` includes a copy of the `Seadragon Ajax
-Javascript`_ and default button images for embedding and displaying
-DZI.
+:mod:`readux.dyndzi` includes a copy of `OpenSeadragon`_ Javascript
+for embedding and displaying DZI.
 
-.. _Seadragon Ajax Javascript: http://expression.microsoft.com/en-us/gg413362
+.. _OpenSeadragon: http://openseadragon.github.io/
 
 To use this module, include :mod:`dyndzi` in your **INSTALLED_APPS**,
 and then bind the urls in your project, e.g.::
 
   url(r'^dzi/', include('readux.dyndzi.urls', namespace='deepzoom')),
 
+Then include the OpenSeadragon javascript and initialize the viewer as described
+in the OpenSeadragon documentation::
 
-Then include and the necessary javascript in the template where you
-will be displaying the DZI content::
-
-  <script type="text/javascript" src="{{ STATIC_URL }}js/seadragon-min.js"></script> 
-  <script type="text/javascript" charset="utf-8">
-     $(document).ready(function () {
-        // init seadragon
-        Seadragon.Config.imagePath = "{{ STATIC_URL }}/js/seadragon/img/"; 
-        viewer = new Seadragon.Viewer("dzi-container");
-        viewer.openDzi("{% url deepzoom:dzi image_id %}");
-     });
-  </script>
-
-  ...
-
-  <div id="dzi-container"> </div>
-
-
-See the `Seadragon Ajax Javascript`_ documentation for more details.
+  <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
 
 '''
 

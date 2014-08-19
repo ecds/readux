@@ -321,7 +321,8 @@ class Volume(DigitalObject, BaseVolume):
                 data['fulltext'] = self.get_fulltext()
 
             except XMLSyntaxError:
-                logger.warn('XML Syntax error attempting to retrieve text from OCR xml for %s' % self.pid)
+                logger.warn('XML Syntax error attempting to retrieve text from OCR xml for %s',
+                            self.pid)
 
         # pulling text content from the PDF is significantly slower;
         # - only pdf if ocr xml is not available or errored

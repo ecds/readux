@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 class BasePageImport(BaseCommand):
-    # common logic for importing covers and book pages
+    '''Local extension of :class:`django.core.management.base.BaseCommand` with
+    common logic for importing covers and book pages'''
 
     #: flag to indicate dry run/noact mode; set by :meth:`setup` based on args
     dry_run = False
@@ -38,6 +39,8 @@ class BasePageImport(BaseCommand):
     stats = defaultdict(int)
 
     def setup(self, **options):
+        '''common setup: initialze :attr:`digwf_client` and :attr:`repo` and
+        set verbosity level based on user options.'''
         self.dry_run = options.get('dry_run', False)
         self.verbosity = int(options.get('verbosity', self.v_normal))
 
@@ -176,7 +179,14 @@ class BasePageImport(BaseCommand):
                 return sorted(possible_coverpages)[0]
 
     def is_blank_page(self, imgfile):
-        '''Check whether or not a specified image is blank.'''
+        '''Check whether or not a specified image is blank.  Currently uses
+        :mod:`Pillow` to determine if the image has a percentage of white over
+        some threshold *or* if the image is 100% black (which seems to occur
+        in some cases with two-tone jpeg2000 images).
+
+        :param imgfile: path to the image to be checked
+        :returns: boolean
+        '''
 
         # in some cases, there are empty files; consider empty == blank
         if os.path.getsize(imgfile) == 0:
@@ -232,7 +242,7 @@ class BasePageImport(BaseCommand):
             return False
 
     def convert_to_jp2(self, imgfile):
-        ''''Convert an image file to JPEG2000 if it isn't already.
+        '''Convert an image file to JPEG2000 (if it isn't already a JP2).
 
         Returns tuple of image file path and boolean indicating if the
         path refers to a tempfile that should be deleted after processing

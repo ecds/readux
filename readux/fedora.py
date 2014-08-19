@@ -71,7 +71,7 @@ class DigitalObject(models.DigitalObject):
     PID_TOKEN = '{%PID%}'
     ENCODED_PID_TOKEN = iri_to_uri(PID_TOKEN)
     def get_default_pid(self):
-        '''Default pid logic for DigitalObjects in the Readux.  Mint a
+        '''Default pid logic for DigitalObjects in :mod:`readux`.  Mint a
         new ARK via the PID manager, store the ARK in the MODS
         metadata (if available) or Dublin Core, and use the noid
         portion of the ARK for a Fedora pid in the site-configured
@@ -111,4 +111,3 @@ class DigitalObject(models.DigitalObject):
         else:
             # if pidmanager is not available, fall back to default pid behavior
             return super(DigitalObject, self).get_default_pid()
-

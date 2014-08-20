@@ -53,29 +53,23 @@ class SolrVolumeTest(TestCase):
         self.assert_(current_site.domain in url)
 
     def test_voyant_url(self):
-        voyant_url = ['voyant-tools.org/?corpus','archive=','&amp;stopList=stop.en.taporware.txt']
+        # Volume with English Lang
         volume1 = SolrVolume(label='ocn460678076_V.1',
-                     pid='testpid:1234', language ='eng')
-        
+                             pid='testpid:1234', language ='eng')
         url = volume1.voyant_url()
+        self.assert_("corpus=%s" % volume1.pid in url,
+            'voyant url should include volume pid as corpus identifier')
+        self.assert_("archive=%s" % volume1.fulltext_absolute_url() in url,
+            'voyant url should include volume fulltext url as archive')
+        self.assert_("&amp;stopList=stop.en.taporware.txt" in url,
+            'voyant url should include english stopword list when volume is in english')
 
-        current_site = Site.objects.get_current()
-        self.assert_(current_site.domain in url)
-
-        #Volume with English Lang
-        self.assertTrue("corpus=%s" % (volume1.pid) in url)
-        self.assertTrue("archive=%s" % (volume1.fulltext_absolute_url()) in url)
-        self.assertTrue("&amp;stopList=stop.en.taporware.txt" in url)
-
-        #volume language is French
+        # volume language is French
         volume2 = SolrVolume(label='ocn460678076_V.1',
-                     pid='testpid:1235', language ='fra')
-
-        url_fra = volume2.voyant_url() 
-        self.assertTrue("corpus=%s" % (volume2.pid) in url_fra)
-        self.assertTrue("archive=%s" % (volume2.fulltext_absolute_url()) in url_fra)
-        self.assertFalse("&amp;stopList=stop.en.taporware.txt" in url_fra)
-
+                             pid='testpid:1235', language ='fra')
+        url_fra = volume2.voyant_url()
+        self.assert_("&amp;stopList=stop.en.taporware.txt" not in url_fra,
+            'voyant url should not include english stopword list when language is not english')
 
 
 class VolumeTest(TestCase):

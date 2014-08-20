@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractproperty
 from UserDict import UserDict
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
@@ -189,6 +190,8 @@ class Page(Image):
 class BaseVolume(object):
     '''Common functionality for :class:`Volume` and :class:`SolrVolume`'''
 
+    # expects properties for pid, label, language
+
     @property
     def control_key(self):
         'Control key for this Book title (e.g., ocm02872816)'
@@ -220,16 +223,17 @@ class BaseVolume(object):
                         reverse('books:text', kwargs={'pid': self.pid})])
 
     def voyant_url(self):
-        '''Generates the url for sending materials to Voyant for analysis.'''
+        '''Generate a url for sending the content of the current volume to Voyant
+        for text analysis.'''
 
         language =''
-        
-        if( self.language and "eng" in self.language ):
+        # if language is known to be english, set a default stopword list
+        # NOTE: we could add this for other languages at some point
+        if self.language and "eng" in self.language:
             language = '&amp;stopList=stop.en.taporware.txt'
 
-        voyant_url = "%svoyant-tools.org/?corpus=%s&amp;archive=%s%s" % ('http://', self.pid, self.fulltext_absolute_url(),language)
-            
-        return voyant_url
+        return "http://voyant-tools.org/?corpus=%s&amp;archive=%s%s" % \
+            (self.pid, self.fulltext_absolute_url(), language)
 
 
 class Volume(DigitalObject, BaseVolume):

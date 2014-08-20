@@ -231,6 +231,25 @@ class VolumeTest(TestCase):
                 self.assertEqual(mockpdf.size, data['pdf_size'],
                     'pdf_size should be set from pdf size, when available')
 
+    def test_voyant_url(self):
+        # NOTE: this test is semi-redundant with the same test for the SolrVolume,
+        # but since the method is implemented in BaseVolume and depends on
+        # properties set on the subclasses, testing here to ensure it works
+        # in both cases
+
+        # no language
+        url = self.vol.voyant_url()
+        self.assert_("corpus=%s" % self.vol.pid in url,
+            'voyant url should include volume pid as corpus identifier')
+        self.assert_("archive=%s" % self.vol.fulltext_absolute_url() in url,
+            'voyant url should include volume fulltext url as archive')
+        self.assert_("&amp;stopList=stop.en.taporware.txt" not in url,
+            'voyant url should include english stopword list when volume is not in english')
+        # english
+        self.vol.dc.content.language = 'eng'
+        url = self.vol.voyant_url()
+        self.assert_("&amp;stopList=stop.en.taporware.txt" in url,
+            'voyant url should include english stopword list when volume is in english')
 
 class BookViewsTest(TestCase):
 

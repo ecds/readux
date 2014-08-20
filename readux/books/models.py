@@ -478,6 +478,12 @@ class Volume(DigitalObject, BaseVolume):
         # exposing as a property here for consistency with SolrVolume result
         return self.pdf.size
 
+    @property
+    def language(self):
+        'language of the content'
+        # exposing as a property here for consistency with SolrVolume result
+        return self.dc.content.language
+
 
 class SolrVolume(UserDict, BaseVolume):
     '''Extension of :class:`~UserDict.UserDict` for use with Solr results
@@ -512,8 +518,8 @@ class SolrVolume(UserDict, BaseVolume):
 
     @property
     def language(self):
-        'language of the pdf'
-        # exposing as a property here for consistency with SolrVolume result
+        'language of the content'
+        # exposing as a property here for generating voyant url
         return self.get('language')
 
     @property

@@ -1,4 +1,3 @@
-from abc import ABCMeta, abstractproperty
 from UserDict import UserDict
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse

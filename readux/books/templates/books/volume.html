@@ -10,20 +10,7 @@
 
 {% block content %}
 <div class="container" typeof="schema:Book">
-    <header class="page-header">
-        <h1><span property="schema:name">{{ vol.title }}
-            {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
-            </span>
-            {# NOTE: including volume in title since there isn't another obvious schema.org field to use #}
-        </h1>
-        <p class="lead">
-            {% for d in vol.date %} {# NOTE: assuming earliest date we have is publication date...  #}
-            (<span property="schema:datePublished">{{ d }}</span>){% if not forloop.last %}; {% endif %}
-            {# FIXME: or should we use schema:copyrightYear? #}
-            {% endfor %}
-        </p>
-        </h1>
-    </header>
+    {% include 'books/snippets/volume_header.html' with rdfa=1 %}
     <article>
         <div class="media">
             {% if vol.primary_image %}

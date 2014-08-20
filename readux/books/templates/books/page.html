@@ -28,19 +28,7 @@
 
 
 {% block content %}
-<header class="page-header">
-    <div class="container">
-        {# TODO: snippet (volume, pages, page) #}
-        <h1>
-            <a href="{% url 'books:volume' page.volume.pid %}">{{ page.volume.title }}{% if page.volume.volume %} <span class="small">[{{ page.volume.volume }}]</span>{% endif %}</a>
-        </h1>
-        <p class="lead">
-            {% if page.volume.date %}({{ page.volume.date|join:', ' }}){% endif %}
-        </p>
-
-
-    </div>
-</header>
+    {% include 'books/snippets/volume_header.html' with vol=page.volume %}
     <article class="carousel page">
         <div class="carousel-inner">
 

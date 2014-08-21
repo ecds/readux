@@ -28,7 +28,9 @@
 
 
 {% block content %}
-    {% include 'books/snippets/volume_header.html' with vol=page.volume %}
+    <div class="container">
+        {% include 'books/snippets/volume_header.html' with vol=page.volume %}
+    </div>
     <article class="carousel page">
         <div class="carousel-inner">
 

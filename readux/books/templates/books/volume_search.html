@@ -1,0 +1,25 @@
+{% extends 'site_base.html' %}
+{# template for page results when searching within a single volume #}
+
+{% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}] | Search{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include 'books/snippets/volume_header.html' %}
+    <article>
+        <div class="container">
+            {# list view #}
+            <div class="item-list">
+                {% for page in pages.object_list %}
+                   {% include 'books/snippets/list_page.html' %}
+                {% endfor %}
+            </div>
+        </div> {# /.container #}
+
+    {% if pages.has_other_pages %}
+       {% include 'eultheme/snippets/pagination_all_pages.html' with results=pages %}
+    {% endif %}
+
+    </article>
+</div>
+{% endblock %}

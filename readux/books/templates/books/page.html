@@ -47,19 +47,22 @@
             <div class="container in-page-controls">
                 <div id="view-toggle" class="col-sm-4 pull-right">
                     <div class="btn-group pull-right">
-                        <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                        <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode" title="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
 
-                        <a id="covers" href="#" class="btn active"><span class="glyphicon glyphicon-file"></span></a>
+                        <a id="covers" href="#" class="btn active" alt="Single Page" title="Single Page"><span class="glyphicon glyphicon-file"></span></a>
 
-                        <a id="list" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
+                        <a id="list" alt="Gallery" title="Gallery" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
                     </div>
                     <br/>
                     <div id="deepzoom-controls" class="hidden">
                         <div class="btn-group">
-                            <a id="dz-zoom-in" href="#" class="btn"><span class="glyphicon glyphicon-plus"></span></a>
-                            <a id="dz-zoom-out" href="#" class="btn"><span class="glyphicon glyphicon-minus"></span></a>
-                            <a id="dz-home" href="#" class="btn"><span class="glyphicon glyphicon-home"></span></a>
-                            <a id="dz-fs" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                            <a id="dz-zoom-in" alt="Zoom In" title="Zoom In" href="#" class="btn"><span class="glyphicon glyphicon-plus"></span></a>
+
+                            <a id="dz-zoom-out" alt="Zoom Out" title="Zoom Out" href="#" class="btn"><span class="glyphicon glyphicon-minus"></span></a>
+
+                            <a id="dz-home" alt="Back to Start Position" title="Back to Start Position" href="#" class="btn"><span class="glyphicon glyphicon-home"></span></a>
+
+                            <a id="dz-fs" alt="Fullscreen Mode" title="Fullscreen Mode" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
                         </div>
                     </div>
                 </div>

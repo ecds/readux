@@ -443,6 +443,8 @@ h1.site-title a:focus{
 #deepzoom-controls .btn-group {
     background: #AFAFAF;
     border-radius:3px;
+    float: right;
+    right: 14%;
 }
 
 #deepzoom-controls .btn-group:before{
@@ -471,6 +473,7 @@ h1.site-title a:focus{
 
 #deepzoom-controls.visible{
 	margin-bottom: -50px;
+	width: 100%;
 }
 
 p.page-number {

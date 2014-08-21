@@ -47,7 +47,7 @@ body{
 }
 
 article.carousel.page {
-    min-height: 30em;
+    min-height: 50em;
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -437,6 +437,7 @@ h1.site-title a:focus{
 .pagination.pagination-dropdown{
 	margin-top: -10px;
 	margin-bottom: 30px;
+	width: 100%;
 }
 
 .collection-section .pagination-dropdown .h4 {

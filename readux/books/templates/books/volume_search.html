@@ -12,6 +12,8 @@
             <div class="item-list">
                 {% for page in pages.object_list %}
                    {% include 'books/snippets/list_page.html' %}
+                 {% empty %}
+                    <h2 id="no-results-found">No matching pages for your search terms.</h2>
                 {% endfor %}
             </div>
         </div> {# /.container #}

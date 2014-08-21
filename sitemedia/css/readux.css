@@ -145,6 +145,33 @@ header#page-bg .container{
     position:relative;
 }
 
+#volume-list .media a.pull-left {
+    border: 1px solid #CFCFCF;
+    border-bottom-width: 2px;
+    transition:border-color 0.2s ease;
+}
+
+#volume-list .media a.pull-left:hover,
+#volume-list .media a.pull-left:focus{
+    border-color: #7A95E9;
+}
+
+#cover-list .cover a span {
+    position: absolute;
+    top: 40%;
+    width: 90%;
+    text-align: center;
+    left: 5%;
+    font-size: 1.1em;
+    color: #2C2C2C;
+    transition: color 0.2s ease;
+}
+
+#cover-list .cover a:focus span,
+#cover-list .cover a:hover span {
+    color: #285CAA;
+}
+
 .page-header .lead{
 	text-align: center;
 	color: #8A8A8A;

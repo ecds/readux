@@ -5,6 +5,7 @@ from django.db.models import permalink
 from lxml.etree import XMLSyntaxError
 import json
 import logging
+from urllib import urlencode
 
 import rdflib
 from rdflib import Graph
@@ -225,14 +226,16 @@ class BaseVolume(object):
         '''Generate a url for sending the content of the current volume to Voyant
         for text analysis.'''
 
-        language =''
-        # if language is known to be english, set a default stopword list
+        url_params = {
+            'corpus': self.pid,
+            'archive': self.fulltext_absolute_url()
+        }
+            # if language is known to be english, set a default stopword list
         # NOTE: we could add this for other languages at some point
         if self.language and "eng" in self.language:
-            language = '&amp;stopList=stop.en.taporware.txt'
+            url_params['stopList'] = 'stop.en.taporware.txt'
 
-        return "http://voyant-tools.org/?corpus=%s&amp;archive=%s%s" % \
-            (self.pid, self.fulltext_absolute_url(), language)
+        return "http://voyant-tools.org/?%s" % urlencode(url_params)
 
 
 class Volume(DigitalObject, BaseVolume):

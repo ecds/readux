@@ -10,6 +10,7 @@ from django.test.utils import override_settings
 from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
 import rdflib
 from rdflib import RDF
+from urllib import urlencode
 
 from eulxml.xmlmap import load_xmlobject_from_file
 from eulfedora.server import Repository
@@ -57,18 +58,19 @@ class SolrVolumeTest(TestCase):
         volume1 = SolrVolume(label='ocn460678076_V.1',
                              pid='testpid:1234', language ='eng')
         url = volume1.voyant_url()
-        self.assert_("corpus=%s" % volume1.pid in url,
+
+        self.assert_(urlencode({'corpus': volume1.pid}) in url,
             'voyant url should include volume pid as corpus identifier')
-        self.assert_("archive=%s" % volume1.fulltext_absolute_url() in url,
+        self.assert_(urlencode({'archive': volume1.fulltext_absolute_url()}) in url,
             'voyant url should include volume fulltext url as archive')
-        self.assert_("&amp;stopList=stop.en.taporware.txt" in url,
-            'voyant url should include english stopword list when volume is in english')
+        self.assert_(urlencode({'stopList': 'stop.en.taporware.txt'}) in url,
+            'voyant url should not include english stopword list when volume is in english')
 
         # volume language is French
         volume2 = SolrVolume(label='ocn460678076_V.1',
                              pid='testpid:1235', language ='fra')
         url_fra = volume2.voyant_url()
-        self.assert_("&amp;stopList=stop.en.taporware.txt" not in url_fra,
+        self.assert_(urlencode({'stopList': 'stop.en.taporware.txt'}) not in url_fra,
             'voyant url should not include english stopword list when language is not english')
 
 
@@ -238,17 +240,19 @@ class VolumeTest(TestCase):
         # in both cases
 
         # no language
+        self.vol.pid = 'vol:1234'
         url = self.vol.voyant_url()
-        self.assert_("corpus=%s" % self.vol.pid in url,
+        self.assert_(urlencode({'corpus': self.vol.pid}) in url,
             'voyant url should include volume pid as corpus identifier')
-        self.assert_("archive=%s" % self.vol.fulltext_absolute_url() in url,
+        self.assert_(urlencode({'archive': self.vol.fulltext_absolute_url()}) in url,
             'voyant url should include volume fulltext url as archive')
-        self.assert_("&amp;stopList=stop.en.taporware.txt" not in url,
-            'voyant url should include english stopword list when volume is not in english')
+        self.assert_(urlencode({'stopList': 'stop.en.taporware.txt'}) not in url,
+            'voyant url should not include english stopword list when volume is not in english')
         # english
         self.vol.dc.content.language = 'eng'
         url = self.vol.voyant_url()
-        self.assert_("&amp;stopList=stop.en.taporware.txt" in url,
+        print url
+        self.assert_(urlencode({'stopList': 'stop.en.taporware.txt'}) in url,
             'voyant url should include english stopword list when volume is in english')
 
 class BookViewsTest(TestCase):

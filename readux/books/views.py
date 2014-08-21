@@ -21,9 +21,8 @@ def search(request, mode='list'):
     context = {'form': form}
 
     if form.is_valid():
-        kw = form.cleaned_data['keyword']
         # get list of keywords and phrases
-        terms = search_terms(kw)
+        terms = form.search_terms()
         solr = solr_interface()
         # generate queries text and boost-field queries
         text_query = solr.Q()
@@ -37,7 +36,8 @@ def search(request, mode='list'):
         q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(SolrVolume.necessary_fields, score=True)  \
-                .results_as(SolrVolume)
+                .results_as(SolrVolume) \
+                .sort_by('-score')
 
         # don't need to facet on collection if we are already filtered on collection
         if 'collection' not in request.GET:
@@ -96,12 +96,65 @@ def search(request, mode='list'):
 
 
 def volume(request, pid):
-    # landing page for a single volume
+    ''' Landing page for a single :class:`~readux.books.models.Volume`.
+
+    If keyword search terms are specified, searches within the book and
+    finds matching pages.
+    '''
+
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
     if not vol.exists or not vol.has_requisite_content_models:
         raise Http404
-    return render(request, 'books/volume.html', {'vol': vol})
+
+    form = BookSearch(request.GET)
+    context = {'vol': vol, 'form': form}
+    template = 'books/volume.html'
+
+    # if form is valid, then search within the book and display matching pages
+    # instead of volume info
+    if form.is_valid():
+        terms = form.search_terms()
+
+        solr = solr_interface()
+        query = solr.Q()
+        for t in terms:
+            # NOTE: should this be OR or AND?
+            query |= solr.Q(page_text=t)
+        # search for pages that belong to this book
+        q = solr.query().filter(content_model=Page.PAGE_CONTENT_MODEL,
+                                isConstituentOf=vol.uri) \
+                .query(query) \
+                .field_limit(['page_order', 'pid'], score=True) \
+                .highlight('page_text', snippets=3) \
+                .sort_by('-score').sort_by('page_order')
+        # return highlighted snippets from page text
+        # sort by relevance and then by page order
+
+        # paginate the solr result set
+        paginator = Paginator(q, 30)
+        try:
+            page = int(request.GET.get('page', '1'))
+        except ValueError:
+            page = 1
+        try:
+            results = paginator.page(page)
+        except (EmptyPage, InvalidPage):
+            results = paginator.page(paginator.num_pages)
+
+        # url parameters for pagination
+        url_params = request.GET.copy()
+        if 'page' in url_params:
+            del url_params['page']
+
+        # uses a different template than volume display
+        template = 'books/volume_search.html'
+        context.update({
+            'pages': results,
+            'url_params': urlencode(url_params),
+        })
+
+    return render(request, template, context)
 
 
 def volume_pages(request, pid):
@@ -126,8 +179,11 @@ def volume_pages(request, pid):
     except (EmptyPage, InvalidPage):
         results = paginator.page(paginator.num_pages)
 
+    # form for searching in this book
+    form = BookSearch()
+
     return render(request, 'books/pages.html',
-        {'vol': vol, 'pages': results})
+        {'vol': vol, 'pages': results, 'form': form})
 
 
 def view_page(request, pid):
@@ -145,7 +201,7 @@ def view_page(request, pid):
 
     # find the index of the current page in the sorted solr result
     index = 0
-    prev = next = None
+    prev = nxt = None
     for p in pagequery:
         if p['pid'] == page.pid:
             break
@@ -153,14 +209,18 @@ def view_page(request, pid):
         prev = p
 
     if len(pagequery) > index + 1:
-        next = pagequery[index + 1]
+        nxt = pagequery[index + 1]
 
 
-    # calculates which pagignated page the page is part of based on 30 items per page
-    page_chunk = ((page.page_order-1)//30)+1
+    # calculates which paginated page the page is part of based on 30 items per page
+    page_chunk = ((page.page_order - 1) // 30) + 1
+
+    # form for searching in this book
+    form = BookSearch()
 
     return render(request, 'books/page.html',
-        {'page': page, 'next': next, 'prev': prev, 'page_chunk':page_chunk})
+        {'page': page, 'next': nxt, 'prev': prev, 'page_chunk':page_chunk,
+         'form': form})
 
 
 def pdf_etag(request, pid):
@@ -284,6 +344,7 @@ def _error_image_response(mode):
     error_images = {
         'thumbnail': 'notfound_thumbnail.png',
         'single-page': 'notfound_page.png',
+        'mini-thumbnail': 'notfound_mini_thumbnail_page.png',
     }
     # need a different way to catch it
     if mode in error_images:

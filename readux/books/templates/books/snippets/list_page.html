@@ -1,0 +1,27 @@
+{# display a single page in volume search results #}
+<div class="media">
+    {% url 'books:page' page.pid as page_url %}
+    <a class="pull-left" href="{{ page_url }}" title="Page {{ page.page_order }}">
+        <img class="thumbnail" src="{% url 'books:page-mini-thumb' page.pid %}"/>
+    </a>
+    {% if page.score %}
+    <div class="col-xs-1 pull-right">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{ page.score }}" aria-valuemin="0" aria-valuemax="1.5" style="width:{% widthratio page.score 1 90 %}%"> </div>
+        </div>
+        {# display numerical score in debug mode #}
+        {% if debug %}<p class="pull-right">{{ page.score }}</p>{% endif %}
+    </div>
+    {% endif %}
+
+  <div class="media-body">
+    <h4 class="media-heading">
+        <a href="{{ page_url }}">Page {{ page.page_order }}</a>
+    </h4>
+    {% with snippets=page.solr_highlights.page_text %}
+        {% for snip in snippets %}
+            <p>... {{ snip|safe }} ...</p>
+        {% endfor %}
+    {% endwith %}
+  </div>
+</div>

@@ -179,9 +179,9 @@ class Page(Image):
         if self.page_order is not None:
             data['page_order'] = self.page_order
 
-        # if OCR text is available, index it as fulltext
+        # if OCR text is available, index it as page fulltext, for searching & highlighting
         if self.text.exists:
-            data['fulltext'] = self.get_fulltext()
+            data['page_text'] = self.get_fulltext()
 
         return data
 

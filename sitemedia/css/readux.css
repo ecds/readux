@@ -423,6 +423,17 @@ h1.site-title a:focus{
 	z-index: 300;
 }
 
+.page-header .btn[type='submit'] {
+    background: #CCCCCC;
+    color: #FFF;
+}
+
+.page-header .btn[type='submit']:focus,
+.page-header .btn[type='submit']:hover {
+    background: #BECBDD;
+    color: #F7F7F7;
+}
+
 .pagination.pagination-dropdown{
 	margin-top: -10px;
 	margin-bottom: 30px;

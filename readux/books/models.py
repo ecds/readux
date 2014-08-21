@@ -378,7 +378,8 @@ class Volume(DigitalObject, BaseVolume):
         data['page_count'] = self.page_count
 
         # size of the pdf
-        data['pdf_size'] = self.pdf.size
+        if self.pdf and self.pdf.size:
+            data['pdf_size'] = self.pdf.size
 
         return data
 

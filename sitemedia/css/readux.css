@@ -156,7 +156,7 @@ header#page-bg .container{
     border-color: #7A95E9;
 }
 
-#cover-list .cover a span {
+.item-covers.volume-covers .cover a span {
     position: absolute;
     top: 40%;
     width: 90%;
@@ -167,8 +167,8 @@ header#page-bg .container{
     transition: color 0.2s ease;
 }
 
-#cover-list .cover a:focus span,
-#cover-list .cover a:hover span {
+.item-covers.volume-covers .cover a:focus span,
+.item-covers.volume-covers .cover a:hover span {
     color: #285CAA;
 }
 

@@ -24,7 +24,7 @@
           <form class="search-bar" role="form" method="GET" action="{% url 'books:search' %}">
             <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
             <div class="input-group">
-              {% render_field form.keyword class+="form-control keyword" placeholder="Search" %}
+              {% render_field form.keyword class+="form-control keyword" placeholder="Search all volumes" %}
               <span class="input-group-btn">
                 <button class="btn" type="submit"><span class="glyphicon glyphicon-search"></span></button>
               </span>

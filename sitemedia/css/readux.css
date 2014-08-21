@@ -156,6 +156,10 @@ header#page-bg .container{
     border-color: #7A95E9;
 }
 
+#volume-list .media a.pull-left img{
+    width: 75px;
+}
+
 .item-covers.volume-covers .cover a span {
     position: absolute;
     top: 40%;
@@ -625,6 +629,26 @@ span.glyphicon.glyphicon-chevron-left {
 header.page-header {
     position: relative;
     z-index: 10;
+}
+
+header#page-bg .collection-image-info {
+    float: right;
+    display: block;
+    background: rgba(0, 0, 0, 0.62);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 2em;
+    font-size: 12px;
+    color: #A2A2A2;
+    z-index: 100;
+}
+header#page-bg .collection-image-info h3 {
+    margin: 0;
+}
+header#page-bg .collection-image-info p {
+    width: 100%;
+    color: #A2A2A2;
 }
 
 /* class to hide page image without losing its size for page layout	 */

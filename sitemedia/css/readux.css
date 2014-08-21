@@ -423,6 +423,15 @@ h1.site-title a:focus{
 	z-index: 300;
 }
 
+.pagination.pagination-dropdown{
+	margin-top: -10px;
+	margin-bottom: 30px;
+}
+#view-toggle.padding{
+	margin-top: 0px;
+	margin-right: 30px;
+}
+
 #view-toggle .btn {
 	border: 1px solid #DDD;
 	background-color: #FFF;

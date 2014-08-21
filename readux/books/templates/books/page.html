@@ -44,10 +44,10 @@
     <article class="carousel page">
         <div class="carousel-inner">
 
-            <div class="container">
-                <div id="view-toggle" class="pull-right">
+            <div class="container in-page-controls">
+                <div id="view-toggle" class="col-sm-4 pull-right">
                     <div class="btn-group pull-right">
-                        <a id="enable-zoom" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                        <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
 
                         <a id="covers" href="#" class="btn active"><span class="glyphicon glyphicon-file"></span></a>
 
@@ -64,10 +64,13 @@
                     </div>
                 </div>
 
+                <div class="col-sm-4 col-sm-offset-4 text-center">
+                    <p class="text-muted">Page {{page.page_order}}</p>
+                </div>
+
             </div>
 
             <div class="text-center">
-                <p class="text-muted">Page {{page.page_order}}</p>
                 <div id="zoom-page"></div>
                 <div id="page-image"><img src="{% url 'books:page-image' page.pid %}"/></div>
             </div>

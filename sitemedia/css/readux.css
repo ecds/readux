@@ -418,18 +418,59 @@ h1.site-title a:focus{
     padding-right: 9em;
 }
 
+.in-page-controls{
+	position: relative;
+	z-index: 300;
+}
+
 #view-toggle .btn {
 	border: 1px solid #DDD;
+	background-color: #FFF;
 
 }
 #view-toggle .btn.active {
 	background-color: #6CACE7;
 	color: #FFF;
 }
+#deepzoom-controls {
+    margin: auto;
+    display: block;
+    float: left;
+    padding: 7px 10px;
+    left: 10%;
+}
 
-/* ensure view toggle buttons are clear of the page-navigation carousel links */
-.carousel #view-toggle {
-	margin-right: 10%;
+#deepzoom-controls .btn-group {
+    background: #AFAFAF;
+    border-radius:3px;
+}
+
+#deepzoom-controls .btn-group:before{
+    content:'';
+    width: 0;
+    height: 0;
+    position:absolute;
+    top: -7px;
+    left:45%;
+    border-style: solid;
+    border-width: 0 10px 7px 10px;
+    border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) #B6B5B5 rgba(0, 0, 0, 0);
+}
+
+#deepzoom-controls .btn {
+    background: transparent;
+    border-color: #C4C4C4;
+    color: #FFFFFF;
+    transition:background-color 0.2s ease;
+}
+
+#deepzoom-controls .btn:focus,
+#deepzoom-controls .btn:hover{
+    background-color: #8B8B8B;
+}
+
+#deepzoom-controls.visible{
+	margin-bottom: -50px;
 }
 
 p.page-number {

@@ -52,8 +52,17 @@
             displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
             {# if more than one item on this page, display range of results #}
         </p>
-
-        {% include "collection/snippets/collection_coverlist_toggle.html" %}
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-3 col-sm-6 col-sm-offset-3 col-md-2 col-md-offset-5">
+                {% if items.has_other_pages %}
+                   {% include 'eultheme/snippets/pagination_dropdown.html' with results=items %}
+                {% endif %}
+            </div>
+            <div id="view-toggle" class="pull-right padding">
+                {% include "collection/snippets/collection_coverlist_toggle.html" %}
+            </div>
+        </div>
+        
         {% include 'books/snippets/show_volumes.html' with show_collection='False' %}
 
       {% else %}

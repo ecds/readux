@@ -438,6 +438,19 @@ h1.site-title a:focus{
 	margin-top: -10px;
 	margin-bottom: 30px;
 }
+
+.collection-section .pagination-dropdown .h4 {
+    margin-top: -20px;
+}
+
+@media (max-width:500px){
+    .collection-section .pagination-dropdown .h4{
+        margin-top: -11px;
+    	font-size: 12px;
+    }
+}
+
+
 #view-toggle.padding{
 	margin-top: 0px;
 	margin-right: 30px;

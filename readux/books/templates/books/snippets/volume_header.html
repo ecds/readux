@@ -14,10 +14,12 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
                     {{ vol.title }}
                 {% else %}
                     {{ vol.title|slice:":150"}}
-                    <span class="expand"></span>
-                    <span class="continued">
-                        {{ vol.title|slice:"150:"}}
-                    </span>
+                    {% if vol.title|length > 150 %}
+                        <span class="expand"></span>
+                        <span class="continued">
+                            {{ vol.title|slice:"150:"}}
+                        </span>
+                    {% endif %}
                 {% endif %}
                 {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
                 {# NOTE: including volume in title since there isn't another obvious schema.org field to use #}

@@ -21,6 +21,7 @@ class Command(BasePageImport):
 Takes an optional list of pids; otherwise, looks for all Volume objects in
 the configured fedora instance.'''
     help = __doc__
+    args = '<pid> [<pid> [<pid>]]'
 
     option_list = BaseCommand.option_list + (
         make_option('--dry-run', '-n',
@@ -30,6 +31,11 @@ the configured fedora instance.'''
         make_option('--collection', '-c',
             help='Find and process volumes that belong to the specified collection pid ' + \
             '(list of pids on the command line takes precedence over this option)'),
+        make_option('--update', '-u',
+            action='store_true',
+            default=False,
+            help='Update volumes even if they already have a cover ' + \
+            '(use current cover detection logic and update the existing cover if different)'),
         )
 
     #: interruption flag set by :meth:`interrupt_handler`
@@ -43,6 +49,8 @@ the configured fedora instance.'''
         signal.signal(signal.SIGINT, self.interrupt_handler)
 
         self.setup(**options)
+        # is update logic requested?
+        update = options.get('update', False)
 
         # if pids are specified on command line, only process those objects
         # (takes precedence over collection)
@@ -84,11 +92,22 @@ the configured fedora instance.'''
 
             # if volume already has a cover, don't re-ingest
             if vol.primary_image:
-                self.stats['skipped'] += 1
+                # special case for now: don't try to update volumes that have
+                # already had pages loaded (could mess up page order)
+                if update and vol.page_count > 1:
+                    self.stdout.write('Update was requested but %s has pages loaded; update is not supported' % \
+                                      vol.pid)
+                    self.stats['skipped'] += 1
+                    continue
+
                 if self.verbosity >= self.v_normal:
                     self.stdout.write('%s already has a cover image %s' % \
                         (vol.pid, vol.primary_image.pid))
-                continue
+
+                # otherwise, skip unless update was requested
+                if not update:
+                    self.stats['skipped'] += 1
+                    continue
 
             images, vol_info = self.find_page_images(vol)
             # if either images or volume info were not found, skip
@@ -110,8 +129,14 @@ the configured fedora instance.'''
                                       self.cover_range)
                 continue        # skip to next volume
 
-            # create the page image object and associate with volume
-            self.ingest_page(coverfile, vol, vol_info, cover=True)
+            # if volume already has a primary image and update was requested,
+            # update the existing image object if there is any change
+            if vol.primary_image and update:
+                self.ingest_page(coverfile, vol, vol_info, cover=True,
+                                 update=True, page=vol.primary_image)
+            else:
+                # create the page image object and associate with volume
+                self.ingest_page(coverfile, vol, vol_info, cover=True)
 
 
         if pbar and not self.interrupted:

@@ -6,13 +6,13 @@
     <span>Read online</span>
 </a>-->
 
-<a class="btn btn-primary {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' vol.pid %}">
+<a class="btn btn-success {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' vol.pid %}">
     <span class="glyphicon glyphicon-book"></span>
     <span>Read online</span>
 </a>
 {% endif %}
 
-<a class="btn {% if vol.has_pages %}btn-default{% else %}btn-primary{% endif %}{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pdf' vol.pid %}" title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
+<a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pdf' vol.pid %}" title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
     <span class="glyphicon glyphicon-file"></span>
     <span>View PDF</span>
     {% if vol.pdf_size %}

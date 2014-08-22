@@ -19,6 +19,34 @@ body{
 	opacity: 0.6;
 }
 
+.btn-pdf {
+    color: #D14747;
+    border-color: #CCCCCC;
+}
+.btn-pdf .text-muted {
+    color: #9B9393;
+}
+
+.btn-pdf:hover, 
+.btn-pdf:focus, 
+.btn-pdf:active{
+    color: #CF5B5B;
+    border-color: #E2DADA;
+    background-color: #FFEDED;
+}
+
+.btn-success {
+    color: #fff;
+    background-color: #51AD72;
+    border-color: #4cae4c
+}
+
+.btn-success:hover,.btn-success:focus,.btn-success:active,.btn-success.active,.open .dropdown-toggle.btn-success {
+    color: #fff;
+    background-color: #3F8360;
+    border-color: #398439
+}
+
 .facets{
 	padding:1em 0;
 	margin-bottom:2em;
@@ -54,10 +82,15 @@ article.carousel.page {
 
 .page-header h1 {
 	text-align: center;
-	font-size: 3em;
+	font-size: 2em;
 	font-weight: 700;
 	margin-bottom: 0;
 	color: #575757;
+}
+@media (min-width:768px){
+	.page-header h1 {
+		font-size: 3em;
+	}
 }
 
 header#page-bg {
@@ -642,7 +675,9 @@ header#page-bg .collection-image-info {
     font-size: 12px;
     color: #A2A2A2;
     z-index: 100;
-    transition: bottom 0.6s ease, right 0.6s ease;
+    -webkit-transition: bottom 0.6s ease, right 0.6s ease, background-color 0.6s ease, opacity 0.6s ease;
+    -moz-transition: bottom 0.6s ease, right 0.6s ease, background-color 0.6s ease, opacity 0.6s ease;
+    transition: bottom 0.6s ease, right 0.6s ease, background-color 0.6s ease, opacity 0.6s ease;
     max-width: 300px;
     min-height: 40px;
     cursor: pointer;
@@ -689,6 +724,49 @@ header#page-bg .collection-image-info.collasped:hover{
 header#page-bg .collection-image-info.collasped h3,
 header#page-bg .collection-image-info.collasped .info{
 	display: none;
+}
+
+.page-header .expand {
+    position: relative;
+    display: inline-block;
+    color: #84BAEC;
+}
+
+.page-header .expand:hover{
+	color: #5CA0DF;
+}
+
+.page-header .expand:before {
+    content: '...';
+}
+.page-header .continued {
+    display: none;
+    color: #969696;
+    font-size: 0.8em;
+    line-height: 0;
+}
+
+.page-header .expand,
+.page-header .continued{
+	cursor: pointer;
+}
+
+
+@media(max-width:500px){
+    .book .media>.pull-left,
+    .book .media>.media-body{
+        width: 100%;
+    }
+
+    .book .media>.pull-left a{
+        text-align:center;
+        width:100%;
+        display: block;
+    }
+    .book .media>.pull-left a img{
+        text-align: center;
+        display: inline;
+    }
 }
 
 

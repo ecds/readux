@@ -11,7 +11,7 @@
 {% block content %}
 <div class="container" typeof="schema:Book">
     {% include 'books/snippets/volume_header.html' with rdfa=1 %}
-    <article>
+    <article class="book">
         <div class="media">
             {% if vol.primary_image %}
                 <div class="pull-left">
@@ -42,10 +42,11 @@
                 {# TODO: add schema:license if/when we can add a public domain license or mark #}
                 {# possibly bookFormat EBook (closest option? not paper or hardback) #}
                 {# FIXME: technically isPartOf belongs on the *webpage*, not the *book* #}
-                <p><b>Collection:</b> <a property="schema:isPartOf" href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
+
+                <p><strong>Collection:</strong> <a property="schema:isPartOf" href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
 
                 {% if vol.book.dc.content.publisher %}
-                    <p><b>Publisher:</b>
+                    <p><strong>Publisher:</strong>
                         <span property="schema:publisher" typeof="schema:Organization">
                             <span property="schema:name">{{ vol.book.dc.content.publisher }}</span>
                         </span>
@@ -67,13 +68,13 @@
 
                 {# link to any other volumes associated with the same book #}
                 {% if vol.book.volume_set|length > 1 %}
-                <div><b>Related volumes</b>
+                <div class="related"><h4>Related volumes</h4>
                     <ul>
                         {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
                             {% if rel_vol.pid != vol.pid %}
                             <li>
                                 {# FIXME: technically, relatedLink belongs to *webPage*, not *book* entity #}
-                                <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title }}</a>
+                                <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title|truncatechars:150 }}</a>
                                 {% if rel_vol.volume %}[{{ rel_vol.volume }}]{% endif %}
                             </li>
                             {% endif %}

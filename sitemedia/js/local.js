@@ -59,6 +59,17 @@ $(document).ready(function() {
         $(this).toggleClass('collasped');
     });
 
+
+    $(".page-header .expand").on('click',function(evt){
+        evt.preventDefault();
+        $(this).toggle().siblings('.continued').toggle();
+    })
+    $('.page-header .continued').on('click',function(evt){
+        evt.preventDefault();
+        $(this).toggle().siblings('.expand').toggle();
+    })
+
+
 });
 
 

@@ -171,6 +171,7 @@ class BasePageImport(BaseCommand):
                 if title.lower() in ['cover', 'title page']:
                     # determine page number for the reference
                     page_num = pages[dest[0].objid]
+                    logger.debug('PDF outline places %s at page %s', title, page_num)
                     possible_coverpages.append(page_num)
 
             if possible_coverpages:

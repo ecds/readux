@@ -2,7 +2,7 @@
     <a href="{% url 'books:volume' obj.pid %}" title="{{ obj.title|truncatechars:100 }}">
         {# show the title if there is no image #}
         {% if not obj.hasPrimaryImage %}
-            <span>{{ obj.title|truncatechars:300 }}</span>
+            <span>{{ obj.title|truncatechars:100 }}</span>
         {% endif %}
     </a>
 </li>

@@ -43,6 +43,22 @@
       {% endif %}
   </div>
 
+  <div class="collection-image-info collasped">
+      {% if collection.banner %}
+        <h3>{{ collection.banner.title }}</h3>
+        <div class="info">
+          <p>{{ collection.banner.caption }}</p>
+          <p class="small credit">{{ collection.banner.credit }}</p>
+        </div>
+      {% else %}
+        <h3>{{ collection.cover.title }}</h3>
+        <div class="info">
+          <p>{{ collection.cover.caption }}</p>
+          <p class="small credit">{{ collection.cover.credit }}</p>
+        </div>
+      {% endif %}
+  </div>
+
 </header>
 <div class="container">
     <section class="collection-section">

@@ -53,6 +53,12 @@ $(document).ready(function() {
       transitionDuration:'0.4s'
     });
 
+    $bannerInfo = $('.collection-image-info');
+
+    $bannerInfo.on('click',function(){
+        $(this).toggleClass('collasped');
+    });
+
 });
 
 

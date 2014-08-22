@@ -504,6 +504,7 @@ class BookViewsTest(TestCase):
         mockobj.book.dc.content.publisher = 'London : Vizetelly'
         mockobj.book.volume_set = [mockobj, NonCallableMock(pid='vol:2')]
         mockobj.pdf_size = 1024
+        mockobj.has_pages = False
         mockrepo.return_value.get_object.return_value = mockobj
         # to support for last modified conditional
         mockobj.ocr.created = datetime.now()
@@ -533,6 +534,24 @@ class BookViewsTest(TestCase):
         # pdf size
         self.assertContains(response, filesizeformat(mockobj.pdf_size),
             msg_prefix='PDF size should be displayed in human-readable format')
+        # no pages loaded, should not include volume search or read online
+        self.assertNotContains(response, 'Read online',
+            msg_prefix='volume without pages loaded should not display read online option')
+        self.assertNotContains(response, reverse('books:pages', kwargs={'pid': mockobj.pid}),
+            msg_prefix='volume without pages loaded should not have link to read online')
+        self.assertNotContains(response, '<form id="volume-search" ',
+            msg_prefix='volume without pages loaded should not have volume search')
+
+        # simulate volume with pages loaded
+        mockobj.has_pages = True
+        response = self.client.get(vol_url)
+        # *should* include volume search and read online
+        self.assertContains(response, 'Read online',
+            msg_prefix='volume with pages loaded should display read online option')
+        self.assertContains(response, reverse('books:pages', kwargs={'pid': mockobj.pid}),
+            msg_prefix='volume with pages loaded should have link to read online')
+        self.assertContains(response, '<form id="volume-search" ',
+            msg_prefix='volume without pages loaded should have volume search')
 
         # non-existent should 404
         mockobj.exists = False
@@ -549,6 +568,56 @@ class BookViewsTest(TestCase):
         self.assertEqual(expected, got,
             'expected %s for %s when object is not a volume, got %s' % \
             (expected, vol_url, got))
+
+    @patch('readux.books.views.Repository')
+    @patch('readux.books.views.Paginator', spec=Paginator)
+    @patch('readux.books.views.solr_interface')
+    def test_volume_search(self, mocksolr_interface, mockpaginator, mockrepo):
+        mockobj = NonCallableMock()
+        mockobj.pid = 'vol:1'
+        mockobj.title = 'Lecoq, the detective'
+        mockobj.date = ['1801']
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        mocksolr = mocksolr_interface.return_value
+        # simulate sunburnt's fluid interface
+        mocksolr.query.return_value = mocksolr.query
+        for method in ['query', 'facet_by', 'sort_by', 'field_limit', 'highlight',
+                       'exclude', 'filter', 'join', 'paginate', 'results_as']:
+            getattr(mocksolr.query, method).return_value = mocksolr.query
+
+        # set up mock results for collection query and facet counts
+        solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
+        # *only* mock iter, to avoid weirdness with django templates & callables
+        solr_result.__iter__.return_value = [
+            {'pid': 'page:1', 'page_order': '1', 'score': 0.5},
+            {'pid': 'page:233', 'page_order': '123', 'score': 0.02},
+        ]
+        mocksolr.query.__iter__.return_value = iter(solr_result)
+        mocksolr.count.return_value = 2
+
+        mockpage = NonCallableMock()
+        mockpaginator.return_value.page.return_value = mockpage
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+        results.__iter__.return_value = iter(solr_result)
+
+        mockpage.object_list = results
+        mockpage.has_other_pages = False
+        mockpage.paginator.count = 2
+        mockpage.paginator.page_range = [1]
+
+        vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
+        response = self.client.get(vol_url, {'keyword': 'determine'})
+        for page in iter(solr_result):
+            self.assertContains(response,
+                reverse('books:page-mini-thumb', kwargs={'pid': page['pid']}),
+                msg_prefix='search results should mini page thumbnail')
+            self.assertContains(response, "Page %(page_order)s" % page,
+                msg_prefix='search results should include page number')
+            self.assertContains(response, page['score'],
+                msg_prefix='search results should display page relevance score')
+            self.assertContains(response, reverse('books:page', kwargs={'pid': page['pid']}),
+                msg_prefix='search results should link to full page view')
 
     @patch('readux.books.views.Repository')
     @override_settings(DEBUG=True)  # required so local copy of not-found image will be used

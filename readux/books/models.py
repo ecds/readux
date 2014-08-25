@@ -270,6 +270,10 @@ class Volume(DigitalObject, BaseVolume):
     #: :class:`Book` this volume is associated with
     book = Relation(relsext.isConstituentOf, type=Book)
 
+    #: start page - 1-based index of the first non-blank page in the PDF
+    start_page = Relation(REPOMGMT.startPage,
+                          ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int
+
     # @permalink
     # def get_absolute_url(self):
     #     'Absolute url to view this object within the site'

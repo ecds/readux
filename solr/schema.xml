@@ -285,6 +285,8 @@ Solr Schema for projects using eulfedora and indexdata.
    <field name="page_order" type="sint" indexed="true" stored="true"/>
    <!-- page count, for volume objects -->
    <field name="page_count" type="sint" indexed="true" stored="true"/>
+   <!-- start page, for volume objects -->
+   <field name="start_page" type="sint" indexed="false" stored="true"/>
    <!-- document full text; NOT configured to allow highlighting -->
    <field name="fulltext" type="text" indexed="true" stored="false"/>
    <!-- page-level full text; configured to allow highlighting -->
@@ -421,7 +423,7 @@ Solr Schema for projects using eulfedora and indexdata.
    <!-- include full text in default text -->
    <!-- FIXME: possibly redundant / requires extra storage ? -->
    <copyField source="fulltext" dest="text"/>
-   
+
  <!-- Similarity is the scoring routine for each document vs. a query.
       A custom similarity may be specified here, but the default is fine
       for most applications.  -->

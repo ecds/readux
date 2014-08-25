@@ -73,6 +73,17 @@ class SolrVolumeTest(TestCase):
         self.assert_(urlencode({'stopList': 'stop.en.taporware.txt'}) not in url_fra,
             'voyant url should not include english stopword list when language is not english')
 
+    def test_pdf_url(self):
+        # no start page set
+        vol = SolrVolume(pid='vol:123')
+        pdf_url = vol.pdf_url()
+        self.assertEqual(reverse('books:pdf', kwargs={'pid': vol.pid}), pdf_url)
+        # start page
+        vol = SolrVolume(pid='vol:123', start_page=6)
+        pdf_url = vol.pdf_url()
+        self.assert_(pdf_url.startswith(reverse('books:pdf', kwargs={'pid': vol.pid})))
+        self.assert_('#page=6' in pdf_url)
+
 
 class VolumeTest(TestCase):
 

@@ -115,9 +115,6 @@ the configured fedora instance.'''
                 self.stats['skipped'] += 1   # or error?
                 continue
 
-            # TODO: could we also use this logic to calculate and store
-            # what page the PDF should be opened to?
-
             # cover detection (currently first non-blank page)
             coverfile, coverindex = self.identify_cover(images, vol_info.pdf)
 
@@ -128,6 +125,14 @@ the configured fedora instance.'''
                     self.stdout.write('Error: could not identify cover page in first %d images; skipping' % \
                                       self.cover_range)
                 continue        # skip to next volume
+
+            # Also leverage cover-detection/title page logic to store the page index
+            # where the PDF should be opened by default
+            if not vol.start_page or (update and vol.start_page != coverindex + 1):
+                # needs to be 1-based page index
+                vol.start_page = coverindex + 1
+                vol.save('setting PDF start page')
+                logger.debug('Setting %s start page to %s', vol.pid, coverindex + 1)
 
             # if volume already has a primary image and update was requested,
             # update the existing image object if there is any change

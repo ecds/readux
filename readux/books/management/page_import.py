@@ -49,6 +49,13 @@ class BasePageImport(BaseCommand):
 
         self.digwf_client = digwf.Client(settings.DIGITIZATION_WORKFLOW_API)
         self.repo = ManagementRepository()
+        # double-check the repo connection here so we can report the error cleanly,
+        # rather than trying to catch the first time fedora is hit
+        try:
+            self.repo.api.describeRepository()
+        except Exception as err:
+            raise CommandError('Error connecting to Fedora at %s: %s' % \
+                               (settings.FEDORA_ROOT, err))
 
     def is_usable_volume(self, vol):
         # if object does not exist or cannot be accessed in fedora, skip it
@@ -130,7 +137,7 @@ class BasePageImport(BaseCommand):
         :param images: list of image file paths for this volume
         :param pdf: path to the pdf file for this volume
         '''
-        coverindex = self.pdf_cover(pdf)
+        coverindex = self.pdf_cover(pdf, images)
         # if a cover file index was identified via PDF outline, use that
         if coverindex is not None:
             return images[coverindex], coverindex
@@ -147,7 +154,13 @@ class BasePageImport(BaseCommand):
 
         return coverfile, coverindex
 
-    def pdf_cover(self, pdf):
+    def pdf_cover(self, pdf, images):
+        '''Attempt to use embedded outline information in the PDF to determine
+        which image to use as the cover or primary image for the volume.
+
+        :param pdf: path to the pdf file for this volume
+        :param images: list of image file paths for this volume
+        '''
         with open(pdf, 'rb') as pdf_file:
             parser = PDFParser(pdf_file)
             document = PDFDocument(parser)
@@ -171,12 +184,21 @@ class BasePageImport(BaseCommand):
                 if title.lower() in ['cover', 'title page']:
                     # determine page number for the reference
                     page_num = pages[dest[0].objid]
-                    logger.debug('PDF outline places %s at page %s', title, page_num)
-                    possible_coverpages.append(page_num)
+
+                    # check if the page is blank, as seems to be happening in some
+                    # cases for what is labeled as the cover
+                    print '*** checking if %s is blank or not' % images[page_num]
+                    if self.is_blank_page(images[page_num]):
+                        logger.debug('PDF outline places %s at page %s but it is blank', title, page_num)
+                        # do NOT include as a possible cover page
+                    else:
+                        # non-blank: include as possible cover page
+                        logger.debug('PDF outline places %s at page %s', title, page_num)
+                        possible_coverpages.append(page_num)
 
             if possible_coverpages:
                 # for now, just return the lowest page number, which should be
-                # the first cover
+                # the first cover or title page if cover is blank
                 return sorted(possible_coverpages)[0]
 
     def is_blank_page(self, imgfile):
@@ -195,7 +217,14 @@ class BasePageImport(BaseCommand):
             return True
 
         img = Image.open(imgfile, mode='r')
-        colors = img.getcolors()
+        try:
+            colors = img.getcolors()
+        except Exception as err:
+            logger.error('Error loading image %s: %s' % (imgfile, err))
+            # for now, going to return true/blank if the image can't be read
+            # (but this is an assumption)
+            return True
+
         # returns a list of (count, color)
         # getcolors returns None if maxcolors (default=256) is exceeded
         if colors is None:

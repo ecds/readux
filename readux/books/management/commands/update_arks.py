@@ -9,6 +9,7 @@ from pidservices.clients import is_ark, parse_ark
 from pidservices.djangowrapper.shortcuts import DjangoPidmanRestClient
 
 from readux.books.models import Volume
+from readux.utils import absolutize_url
 
 class Command(BaseCommand):
     '''Update LSDI Volume PDF ARKs to resolve to the current readux site.
@@ -66,6 +67,12 @@ the configured fedora instance.'''
                     stats['skipped'] += 1
                     continue
 
+                # update unqualified ark to resolve to readux volume landing page
+                if not dry_run:
+                    pidman.update_ark_target(noid,
+                        target_uri=self.volume_url(obj),
+                        active=True)
+
                 # we expected a qualified ARK target for the PDF
                 qual = 'PDF'
                 # list of all qualifiers for targets associated with this ARK
@@ -87,12 +94,8 @@ the configured fedora instance.'''
 
     def pdf_url(self, obj):
         # generate an absolute url to the pdf for a volume object
-        url = reverse('books:pdf', kwargs={'pid': obj.pid})
-        root = Site.objects.get_current().domain
-        # but also add the http:// if necessary, since most sites docs
-        # suggest using just the domain name
-        if not root.startswith('http'):
-            root = 'http://' + root.rstrip('/')
-        return root + url
+        return absolutize_url(reverse('books:pdf', kwargs={'pid': obj.pid}))
 
-
+    def volume_url(self, obj):
+        # generate an absolute url to the pdf for a volume object
+        return absolutize_url(reverse('books:volume', kwargs={'pid': obj.pid}))

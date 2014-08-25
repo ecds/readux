@@ -339,8 +339,8 @@ class BookViewsTest(TestCase):
         solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
         # *only* mock iter, to avoid weirdness with django templates & callables
         solr_result.__iter__.return_value = [
-            {'pid': 'vol:1', 'title': 'Lecoq, the detective', 'pdf_size': 1024},
-            {'pid': 'vol:2', 'title': 'Mabel Meredith', 'pdf_size': 34665},
+            SolrVolume(**{'pid': 'vol:1', 'title': 'Lecoq, the detective', 'pdf_size': 1024}),
+            SolrVolume(**{'pid': 'vol:2', 'title': 'Mabel Meredith', 'pdf_size': 34665}),
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
@@ -354,6 +354,7 @@ class BookViewsTest(TestCase):
         mockpage = NonCallableMock()
         mockpaginator.return_value.page.return_value = mockpage
         results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+
         results.__iter__.return_value = iter(solr_result)
         results.facet_counts.facet_fields = {
             'collection_label_facet': [('Emory Yearbooks', 1), ('Yellowbacks', 4)]
@@ -388,7 +389,7 @@ class BookViewsTest(TestCase):
             self.assertContains(response, item['title'],
                 msg_prefix='title should be displayed')
             self.assertContains(response, reverse('books:pdf', kwargs={'pid': item['pid']}),
-                msg_prefix='link to pdf should be included in response')
+                    msg_prefix='link to pdf should be included in response')
             self.assertContains(response,
                 '<abbr class="unapi-id" title="%s"></abbr>' % item['pid'],
                 msg_prefix='unapi item id for %s should be included to allow zotero harvest' \

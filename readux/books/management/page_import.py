@@ -187,7 +187,6 @@ class BasePageImport(BaseCommand):
 
                     # check if the page is blank, as seems to be happening in some
                     # cases for what is labeled as the cover
-                    print '*** checking if %s is blank or not' % images[page_num]
                     if self.is_blank_page(images[page_num]):
                         logger.debug('PDF outline places %s at page %s but it is blank', title, page_num)
                         # do NOT include as a possible cover page

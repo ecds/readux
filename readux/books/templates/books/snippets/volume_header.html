@@ -45,7 +45,10 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
                 <button class="btn" type="submit"><span class="glyphicon glyphicon-search"></span></button>
               </span>
             </div><!-- /input-group -->
-            <span class="help-block">{{ form.keyword.help_text }}</span>
+            <span class="help-block">
+                {{ form.keyword.help_text }}
+                <p class="text-warning">Note: searching uncorrected OCR text content.</sp>
+            </span>
           </form>
         </div>
       </div>

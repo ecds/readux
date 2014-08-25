@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.urlresolvers import reverse
-from django.contrib.sites.models import Site
 from optparse import make_option
 from collections import defaultdict
 
@@ -12,9 +11,13 @@ from readux.books.models import Volume
 from readux.utils import absolutize_url
 
 class Command(BaseCommand):
-    '''Update LSDI Volume PDF ARKs to resolve to the current readux site.
+    '''Update LSDI Volume ARKs to resolve to the current readux site.
 Takes an optional list of pids; otherwise, looks for all Volume objects in
-the configured fedora instance.'''
+the configured fedora instance.  Updates both unqualified and PDF ARK targets.
+
+NOTE: this script should be run after covers have been imported, so PDF start
+page information (if any) can be taken advantage when generating PDF target urls.
+'''
     help = __doc__
 
     option_list = BaseCommand.option_list + (
@@ -94,7 +97,7 @@ the configured fedora instance.'''
 
     def pdf_url(self, obj):
         # generate an absolute url to the pdf for a volume object
-        return absolutize_url(reverse('books:pdf', kwargs={'pid': obj.pid}))
+        return absolutize_url(obj.pdf_url())
 
     def volume_url(self, obj):
         # generate an absolute url to the pdf for a volume object

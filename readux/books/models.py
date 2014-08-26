@@ -1,11 +1,12 @@
 from UserDict import UserDict
-from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.db.models import permalink
 from django.template.defaultfilters import slugify
 from lxml.etree import XMLSyntaxError
 import json
 import logging
+import os
 from urllib import urlencode
 
 import rdflib
@@ -159,6 +160,7 @@ class Page(Image):
     def get_fulltext(self):
         '''Sanitized OCR full-text, e.g., for indexing or text analysis'''
 
+
         if self.text.exists:
             # if content is a StreamIO, use getvalue to avoid utf-8 issues
             if hasattr(self.text.content, 'getvalue'):
@@ -220,7 +222,7 @@ class BaseVolume(object):
 
 
     def metatag_host_url(self):
-        '''Generate the url for the host to prepend to resources that will 
+        '''Generate the url for the host to prepend to resources that will
         be referenced in meta tags'''
         current_site = Site.objects.get_current()
         return ''.join(['http://', current_site.domain])
@@ -353,10 +355,15 @@ class Volume(DigitalObject, BaseVolume):
             # convert eulxml list to normal list so it can be serialized via json
             return list(dates)
 
+    #: path to xslt for transforming abbyoccr to plain text with some structure
+    ocr_to_text_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'abbyocr-to-text.xsl')
+
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
         if self.ocr.exists:
-            return unicode(self.ocr.content)
+            transform =  self.ocr.content.xsl_transform(filename=self.ocr_to_text_xsl,
+                return_type=str)
+            return transform
 
     def index_data(self):
         '''Extend the default

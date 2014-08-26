@@ -353,9 +353,10 @@ class Volume(DigitalObject, BaseVolume):
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
         if self.ocr.exists:
-            transform =  self.ocr.content.xsl_transform(filename=self.ocr_to_text_xsl,
-                return_type=str)
-            return transform
+            with open(self.ocr_to_text_xsl) as xslfile:
+                transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=str)
+                return transform
 
     def index_data(self):
         '''Extend the default

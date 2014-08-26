@@ -49,6 +49,13 @@ class BasePageImport(BaseCommand):
 
         self.digwf_client = digwf.Client(settings.DIGITIZATION_WORKFLOW_API)
         self.repo = ManagementRepository()
+        # double-check the repo connection here so we can report the error cleanly,
+        # rather than trying to catch the first time fedora is hit
+        try:
+            self.repo.api.describeRepository()
+        except Exception as err:
+            raise CommandError('Error connecting to Fedora at %s: %s' % \
+                               (settings.FEDORA_ROOT, err))
 
     def is_usable_volume(self, vol):
         # if object does not exist or cannot be accessed in fedora, skip it
@@ -130,7 +137,7 @@ class BasePageImport(BaseCommand):
         :param images: list of image file paths for this volume
         :param pdf: path to the pdf file for this volume
         '''
-        coverindex = self.pdf_cover(pdf)
+        coverindex = self.pdf_cover(pdf, images)
         # if a cover file index was identified via PDF outline, use that
         if coverindex is not None:
             return images[coverindex], coverindex
@@ -147,7 +154,13 @@ class BasePageImport(BaseCommand):
 
         return coverfile, coverindex
 
-    def pdf_cover(self, pdf):
+    def pdf_cover(self, pdf, images):
+        '''Attempt to use embedded outline information in the PDF to determine
+        which image to use as the cover or primary image for the volume.
+
+        :param pdf: path to the pdf file for this volume
+        :param images: list of image file paths for this volume
+        '''
         with open(pdf, 'rb') as pdf_file:
             parser = PDFParser(pdf_file)
             document = PDFDocument(parser)
@@ -171,11 +184,20 @@ class BasePageImport(BaseCommand):
                 if title.lower() in ['cover', 'title page']:
                     # determine page number for the reference
                     page_num = pages[dest[0].objid]
-                    possible_coverpages.append(page_num)
+
+                    # check if the page is blank, as seems to be happening in some
+                    # cases for what is labeled as the cover
+                    if self.is_blank_page(images[page_num]):
+                        logger.debug('PDF outline places %s at page %s but it is blank', title, page_num)
+                        # do NOT include as a possible cover page
+                    else:
+                        # non-blank: include as possible cover page
+                        logger.debug('PDF outline places %s at page %s', title, page_num)
+                        possible_coverpages.append(page_num)
 
             if possible_coverpages:
                 # for now, just return the lowest page number, which should be
-                # the first cover
+                # the first cover or title page if cover is blank
                 return sorted(possible_coverpages)[0]
 
     def is_blank_page(self, imgfile):
@@ -194,7 +216,14 @@ class BasePageImport(BaseCommand):
             return True
 
         img = Image.open(imgfile, mode='r')
-        colors = img.getcolors()
+        try:
+            colors = img.getcolors()
+        except Exception as err:
+            logger.error('Error loading image %s: %s' % (imgfile, err))
+            # for now, going to return true/blank if the image can't be read
+            # (but this is an assumption)
+            return True
+
         # returns a list of (count, color)
         # getcolors returns None if maxcolors (default=256) is exceeded
         if colors is None:
@@ -265,8 +294,8 @@ class BasePageImport(BaseCommand):
 
 
     def ingest_page(self, imgfile, vol, vol_info, cover=False,
-        pageindex=1):
-        'Create and ingest a page object'
+        pageindex=1, update=False, page=None):
+        'Create and ingest a page object *or* update an existing page image'
 
         # create the page image object and associate with volume
         # calculate text & position file names
@@ -294,7 +323,8 @@ class BasePageImport(BaseCommand):
             self.stdout.write('Ingesting page %s' % imgfile)
             self.stdout.write('  text: %s\n' % txtfile)
 
-        page = self.repo.get_object(type=Page)
+        if page is None:
+            page = self.repo.get_object(type=Page)
         # object label based on volume label (ocm# + volume info)
         page.label = '%s page %d' % (vol.label, pageindex)
         # set the relation to the volume object
@@ -320,6 +350,10 @@ class BasePageImport(BaseCommand):
 
             for ds, filepath in dsfiles.iteritems():
                 # calculate checksum
+                checksum = md5sum(filepath)
+                # if this an update and the checksums match, don't modify the datastream
+                if update and checksum == ds.checksum:
+                    continue
                 ds.checksum = md5sum(filepath)
                 logger.debug('checksum for %s is %s',
                             filepath, ds.checksum)
@@ -339,10 +373,21 @@ class BasePageImport(BaseCommand):
                 # NOTE: removed code from readux v1 for optional file-uri based ingest
 
             try:
-                ingested = page.save('ingesting page image %d for %s' \
-                                     % (pageindex, vol.pid))
-                logger.debug('page ingested as %s', page.pid)
-                self.stats['pages'] += 1
+                # if this is not an update OR if the existing object has been
+                # modified, ingest/update in Fedora
+                ingested = False
+                if not update or any([page.image.isModified(),
+                                     page.text.isModified(), page.position.isModified()]):
+
+                    ingested = page.save('ingesting page image %d for %s' \
+                                         % (pageindex, vol.pid))
+                    verb = 'updated' if update else 'ingested'
+                    logger.debug('page %s %s', page.pid, verb)
+                    self.stats['pages'] += 1
+
+                elif update:
+                    if self.verbosity >= self.v_normal:
+                        self.stdout.write('No updates needed for %s' % page.pid)
 
                 # if a temporary file was created, remove it
                 if jp2_tmpfile:
@@ -361,8 +406,8 @@ class BasePageImport(BaseCommand):
                     of.close()
 
             # if ingesting a cover and ingest succeeded, update volume
-            # object with cover relation
-            if cover and ingested:
+            # object with cover relation *unless* this is an update
+            if cover and ingested and not update:
                 try:
                     # set current page as primary image for this volume
                     vol.primary_image = page

@@ -2,11 +2,10 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
-from django.views.decorators.http import condition, last_modified, require_http_methods
+from django.views.decorators.http import condition, require_http_methods  # last_modified ?
 from urllib import urlencode
 import os
 
-from eulcommon.searchutil import search_terms
 from eulfedora.server import Repository, RequestFailed
 from eulfedora.views import raw_datastream, datastream_etag
 

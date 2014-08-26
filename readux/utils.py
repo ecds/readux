@@ -57,8 +57,8 @@ def md5sum(filename):
     # possibly at some point this should be moved to a common codebase/library
     md5 = hashlib.md5()
     with open(filename,'rb') as f:
-        for chunk in iter(lambda: f.read(128*md5.block_size), ''):
-             md5.update(chunk)
+        for chunk in iter(lambda: f.read(128* md5.block_size), ''):
+            md5.update(chunk)
     return md5.hexdigest()
 
 
@@ -79,4 +79,9 @@ def absolutize_url(local_url):
     # suggest using just the domain name
     if not root.startswith('http'):
         root = 'http://' + root
+
+    # make sure there is no double slash between site url and local url
+    if local_url.startswith('/'):
+        root = root.rstrip('/')
+
     return root + local_url

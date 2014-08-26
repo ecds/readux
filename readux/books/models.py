@@ -15,12 +15,11 @@ from rdflib.namespace import RDF, Namespace
 from eulfedora.models import  Relation, ReverseRelation, \
     FileDatastream, XmlDatastream
 from eulfedora.rdfns import relsext
-from eulfedora.indexdata.util import pdf_to_text
 
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
-from readux.utils import solr_interface
+from readux.utils import solr_interface, absolutize_url
 
 
 logger = logging.getLogger(__name__)
@@ -172,8 +171,6 @@ class Page(Image):
             else:
                 return self.text.content
 
-
-
     def index_data(self):
         '''Extend the default :meth:`eulfedora.models.DigitalObject.index_data`
         method to include fields needed for Page objects.'''
@@ -219,9 +216,7 @@ class BaseVolume(object):
     def fulltext_absolute_url(self):
         '''Generate an absolute url to the text view for this volume
         for use with external services such as voyant-tools.org'''
-        current_site = Site.objects.get_current()
-        return ''.join(['http://', current_site.domain,
-                        reverse('books:text', kwargs={'pid': self.pid})])
+        return absolutize_url(reverse('books:text', kwargs={'pid': self.pid}))
 
     def metatag_host_url(self):
         '''Generate the url for the host to prepend to resources that will 
@@ -245,6 +240,13 @@ class BaseVolume(object):
 
         return "http://voyant-tools.org/?%s" % urlencode(url_params)
 
+    def pdf_url(self):
+        '''Local PDF url, including starting page directive (#page=N) if start
+        page is set.'''
+        url = reverse('books:pdf', kwargs={'pid': self.pid})
+        if self.start_page:
+            url = '%s#page=%d' % (url, self.start_page)
+        return url
 
 class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume Object.  Extends :class:`~eulfedora.models.DigitalObject`.'''
@@ -278,6 +280,10 @@ class Volume(DigitalObject, BaseVolume):
     #: :class:`Book` this volume is associated with
     book = Relation(relsext.isConstituentOf, type=Book)
 
+    #: start page - 1-based index of the first non-blank page in the PDF
+    start_page = Relation(REPOMGMT.startPage,
+                          ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
+
     # @permalink
     # def get_absolute_url(self):
     #     'Absolute url to view this object within the site'
@@ -309,7 +315,7 @@ class Volume(DigitalObject, BaseVolume):
 
     @property
     def title(self):
-        self.dc.content.title
+        return self.dc.content.title
 
 
     @property
@@ -374,6 +380,10 @@ class Volume(DigitalObject, BaseVolume):
         # index primary image pid to construct urls for cover image, first page
         if self.primary_image:
             data['hasPrimaryImage'] = self.primary_image.pid
+
+        # index pdf start page so we can link to correct page from search results
+        if self.start_page:
+            data['start_page'] = self.start_page
 
         # index collection info
         data['collection_id'] = self.book.collection.pid
@@ -519,7 +529,7 @@ class SolrVolume(UserDict, BaseVolume):
     necessary_fields = ['pid', 'title', 'label', 'language',
         'creator', 'date', 'hasPrimaryImage',
         'page_count', 'collection_id', 'collection_label',
-        'pdf_size'
+        'pdf_size', 'start_page'
     ]
 
     def __init__(self, **kwargs):
@@ -553,7 +563,9 @@ class SolrVolume(UserDict, BaseVolume):
         if 'hasPrimaryImage' in self.data:
             return {'pid': self.data.get('hasPrimaryImage')}
 
-
+    @property
+    def start_page(self):
+        return self.data.get('start_page')
 
 # hack: patch in volume as the related item type for pages
 # (can't be done in page declaration due to order / volume primary image rel)

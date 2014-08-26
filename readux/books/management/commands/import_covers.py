@@ -10,6 +10,7 @@ from progressbar import ProgressBar, Bar, Percentage, \
 
 from readux.books.models import Volume
 from readux.books.management.page_import import BasePageImport
+from readux.collection.models import Collection
 
 
 logger = logging.getLogger(__name__)
@@ -20,12 +21,21 @@ class Command(BasePageImport):
 Takes an optional list of pids; otherwise, looks for all Volume objects in
 the configured fedora instance.'''
     help = __doc__
+    args = '<pid> [<pid> [<pid>]]'
 
     option_list = BaseCommand.option_list + (
         make_option('--dry-run', '-n',
             action='store_true',
             default=False,
             help='Don\'t make any changes; just report on what would be done'),
+        make_option('--collection', '-c',
+            help='Find and process volumes that belong to the specified collection pid ' + \
+            '(list of pids on the command line takes precedence over this option)'),
+        make_option('--update', '-u',
+            action='store_true',
+            default=False,
+            help='Update volumes even if they already have a cover ' + \
+            '(use current cover detection logic and update the existing cover if different)'),
         )
 
     #: interruption flag set by :meth:`interrupt_handler`
@@ -39,10 +49,17 @@ the configured fedora instance.'''
         signal.signal(signal.SIGINT, self.interrupt_handler)
 
         self.setup(**options)
+        # is update logic requested?
+        update = options.get('update', False)
 
         # if pids are specified on command line, only process those objects
+        # (takes precedence over collection)
         if pids:
             objs = [self.repo.get_object(pid, type=Volume) for pid in pids]
+
+        # if collection is specified, find pids by collection
+        elif options['collection']:
+            objs = self.pids_by_collection(options['collection'])
 
         # otherwise, look for all volume objects in fedora
         else:
@@ -75,20 +92,28 @@ the configured fedora instance.'''
 
             # if volume already has a cover, don't re-ingest
             if vol.primary_image:
-                self.stats['skipped'] += 1
+                # special case for now: don't try to update volumes that have
+                # already had pages loaded (could mess up page order)
+                if update and vol.page_count > 1:
+                    self.stdout.write('Update was requested but %s has pages loaded; update is not supported' % \
+                                      vol.pid)
+                    self.stats['skipped'] += 1
+                    continue
+
                 if self.verbosity >= self.v_normal:
                     self.stdout.write('%s already has a cover image %s' % \
                         (vol.pid, vol.primary_image.pid))
-                continue
+
+                # otherwise, skip unless update was requested
+                if not update:
+                    self.stats['skipped'] += 1
+                    continue
 
             images, vol_info = self.find_page_images(vol)
             # if either images or volume info were not found, skip
             if not images or not vol_info:
                 self.stats['skipped'] += 1   # or error?
                 continue
-
-            # TODO: could we also use this logic to calculate and store
-            # what page the PDF should be opened to?
 
             # cover detection (currently first non-blank page)
             coverfile, coverindex = self.identify_cover(images, vol_info.pdf)
@@ -101,8 +126,22 @@ the configured fedora instance.'''
                                       self.cover_range)
                 continue        # skip to next volume
 
-            # create the page image object and associate with volume
-            self.ingest_page(coverfile, vol, vol_info, cover=True)
+            # Also leverage cover-detection/title page logic to store the page index
+            # where the PDF should be opened by default
+            if not vol.start_page or (update and vol.start_page != coverindex + 1):
+                # needs to be 1-based page index
+                vol.start_page = coverindex + 1
+                vol.save('setting PDF start page')
+                logger.debug('Setting %s start page to %s', vol.pid, coverindex + 1)
+
+            # if volume already has a primary image and update was requested,
+            # update the existing image object if there is any change
+            if vol.primary_image and update:
+                self.ingest_page(coverfile, vol, vol_info, cover=True,
+                                 update=True, page=vol.primary_image)
+            else:
+                # create the page image object and associate with volume
+                self.ingest_page(coverfile, vol, vol_info, cover=True)
 
 
         if pbar and not self.interrupted:
@@ -112,6 +151,30 @@ the configured fedora instance.'''
             self.stdout.write('\n%(vols)d volume(s); %(errors)d error(s), %(skipped)d skipped, %(updated)d updated' % \
                 self.stats)
 
+    def pids_by_collection(self, pid):
+        coll = self.repo.get_object(pid, type=Collection)
+        if not coll.exists:
+            self.stdout.write('Collection %s does not exist or is not accessible' % \
+                              pid)
+
+        if not coll.has_requisite_content_models:
+            self.stdout.write('Object %s does not seem to be a collection' % \
+                              pid)
+
+        # NOTE: this approach may not scale for large collections
+        # if necessary, use a sparql query to count and possibly return the objects
+        # or else sparql query query to count and generator for the objects
+        # this sparql query does what we need:
+        # select ?vol
+        # WHERE {
+        #    ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/emory-control:LSDI-Yellowbacks> .
+        #   ?vol <fedora-rels-ext:isConstituentOf> ?book
+        #}
+        volumes = []
+        for book in coll.book_set:
+            volumes.extend(book.volume_set)
+
+        return volumes
 
     def interrupt_handler(self, signum, frame):
         '''Gracefully handle a SIGINT, if possible.  Reports status,

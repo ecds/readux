@@ -12,7 +12,9 @@
 </a>
 {% endif %}
 
-<a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pdf' vol.pid %}" title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
+<a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}"
+    href="{{ vol.pdf_url }}"
+    title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
     <span class="fa fa-file-pdf-o"></span>
     <span>View PDF</span>
     {% if vol.pdf_size %}

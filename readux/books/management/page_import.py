@@ -179,6 +179,12 @@ class BasePageImport(BaseCommand):
             possible_coverpages = []
             for (level, title, dest, a, se) in outlines:
                 # title is the label of the outline element
+
+                # dest is the target page object; apparently in some cases this can be None ?
+                # if so, skip it
+                if dest is None:
+                    continue
+
                 # we can probably use either Cover or Title Page; there
                 # may be multiple Covers (for back cover)
                 if title.lower() in ['cover', 'title page']:
@@ -187,7 +193,14 @@ class BasePageImport(BaseCommand):
 
                     # check if the page is blank, as seems to be happening in some
                     # cases for what is labeled as the cover
-                    if self.is_blank_page(images[page_num]):
+                    try:
+                        img = images[page_num]
+                    except IndexError:
+                        logger.error('Not enough images for requested page number %s',
+                                     page_num)
+                        continue
+
+                    if self.is_blank_page(img):
                         logger.debug('PDF outline places %s at page %s but it is blank', title, page_num)
                         # do NOT include as a possible cover page
                     else:

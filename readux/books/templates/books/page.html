@@ -1,6 +1,6 @@
 {% extends 'site_base.html' %}
 
-{% block page-subtitle %}{{ page.volume.title|truncatechars:150 }}{% if page.volume.volume %} [{{ page.volume.volume }}], p. {{ page.page_order }}{% endif %} | {% endblock %}
+{% block page-subtitle %}{{ page.volume.title|truncatechars:150 }}{% if page.volume.volume %} [{{ page.volume.volume }}]{% endif %}, p. {{ page.page_order }} | {% endblock %}
 
 {% block javascript %}
   {{ block.super }}

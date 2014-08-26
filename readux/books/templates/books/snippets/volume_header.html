@@ -13,11 +13,15 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
                 {% if volume_url != request.get_full_path|urlencode %}
                     {{ vol.title }}
                 {% else %}
-                    {{ vol.title|slice:":150"}}
-                    <span class="expand"></span>
-                    <span class="continued">
-                        {{ vol.title|slice:"150:"}}
-                    </span>
+                    <span>{{ vol.title_part1}}</span>
+
+                    {% if vol.title_part2 %}
+                        <span class="expand"></span>
+                        <span class="continued">
+                            {{ vol.title_part2 }}
+                        </span>
+                    {% endif %}
+
                 {% endif %}
                 {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
                 {# NOTE: including volume in title since there isn't another obvious schema.org field to use #}

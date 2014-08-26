@@ -2,6 +2,7 @@ from UserDict import UserDict
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models import permalink
+from django.template.defaultfilters import slugify
 from lxml.etree import XMLSyntaxError
 import json
 import logging
@@ -222,6 +223,13 @@ class BaseVolume(object):
         return ''.join(['http://', current_site.domain,
                         reverse('books:text', kwargs={'pid': self.pid})])
 
+    def metatag_host_url(self):
+        '''Generate the url for the host to prepend to resources that will 
+        be referenced in meta tags'''
+        current_site = Site.objects.get_current()
+        return ''.join(['http://', current_site.domain])
+
+
     def voyant_url(self):
         '''Generate a url for sending the content of the current volume to Voyant
         for text analysis.'''
@@ -301,7 +309,19 @@ class Volume(DigitalObject, BaseVolume):
 
     @property
     def title(self):
-        return self.dc.content.title
+        self.dc.content.title
+
+
+    @property
+    def title_part1(self):
+        return self.title[:150]
+
+    @property
+    def title_part2(self):
+        part2 = self.title[150:]
+        if(len(slugify(part2))>0):
+            return part2
+        return
 
     @property
     def creator(self):

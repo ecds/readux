@@ -1,15 +1,6 @@
 {% extends 'site_base.html' %}
 
-{% block page-subtitle %}{{ vol.title|truncatechars:150 }}{% if vol.volume %} [{{ vol.volume }}], 
-{% for page in pages.object_list %}
-    {% if forloop.first %}
-        p.{{ page.page_order }}
-    {% endif %}
-    {% if forloop.last %}
-        - {{ page.page_order|default:'end' }}
-    {% endif %}
-{% endfor %}
-| {% endif %}{% endblock %}
+{% block page-subtitle %}{{ vol.title|truncatechars:150 }}{% if vol.volume %} [{{ vol.volume }}], {% endif %}p.{{ pages.start_index }}-{{ pages.end_index }} | {% endblock %}
 
 {% block content %}
 <div class="container">
@@ -37,14 +28,7 @@
     <article>
 
         <div class="text-center text-muted">
-            {% for page in pages.object_list %}
-                {% if forloop.first %}
-                    p. {{ page.page_order }}
-                {% endif %}
-                {% if forloop.last %}
-                    - {{ page.page_order|default:'end' }}
-                {% endif %}
-            {% endfor %}
+            p. {{ pages.start_index }} - {{ pages.end_index }}
         </div>
         <div id="cover-list" class="item-covers">
             <ul class="media-list cover-view">

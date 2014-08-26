@@ -45,10 +45,7 @@
 {% endblock %}
 
 {# The <title> for the page  #}
-{% block page-title %}
-{# If this page is set to display as the Home page, then don't prepend to the title #}
-{% if request.path != "/" %}{% block page-subtitle %}{% endblock %}{% endif %}
-Readux{% endblock %}
+{% block page-title %}{% block page-subtitle %}{% endblock %}Readux{% endblock %}
 
 {% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
 

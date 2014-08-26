@@ -94,7 +94,7 @@ the configured fedora instance).'''
                 continue
 
             # cover detection (currently first non-blank page)
-            coverfile, coverindex = self.identify_cover(self.images)
+            coverfile, coverindex = self.identify_cover(self.images, vol_info.pdf)
             # use cover detection to determine where to start ingesting
             # - we want to start at coverindex + 1
 
@@ -199,4 +199,3 @@ the configured fedora instance).'''
                 msg = '''\nProcessing %d of %d volumes; script will exit before %s page ingest starts or after it is complete.
 (Ctrl-C / Interrupt again to quit immediately)'''
                 print >> self.stdout, msg % (self.stats['vols'], self.total, self.current_volume)
-

@@ -74,21 +74,26 @@
                 {# some information in dc:type might be useful (but other info not...) #}
 
                 {% include 'books/snippets/volume_links.html' with small_buttons=False %}
-
+                <div class="clearfix"></div>
                 {# link to any other volumes associated with the same book #}
                 {% if vol.book.volume_set|length > 1 %}
-                <div class="related"><h4>Related volumes</h4>
-                    <ul>
-                        {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
-                            {% if rel_vol.pid != vol.pid %}
-                            <li>
-                                {# FIXME: technically, relatedLink belongs to *webPage*, not *book* entity #}
-                                <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title|truncatechars:150 }}</a>
-                                {% if rel_vol.volume %}[{{ rel_vol.volume }}]{% endif %}
-                            </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
+                <div class="related panel panel-default col-md-6">
+                    <div class="panel-heading">
+                        <h4>Related volumes</h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked">
+                            {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
+                                {% if rel_vol.pid != vol.pid %}
+                                <li>
+                                    {# FIXME: technically, relatedLink belongs to *webPage*, not *book* entity #}
+                                    <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title|truncatechars:150 }}
+                                    {% if rel_vol.volume %}<span class="text-muted">[{{ rel_vol.volume }}]</span>{% endif %}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
                 {% endif %}
             </div> {# end media-body #}

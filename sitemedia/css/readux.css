@@ -360,7 +360,17 @@ header.page-header#collection-header+.container {
 	margin-bottom: 10px;
 }
 
+.related.panel.panel-default {
+    margin: 15px 0;
+    padding: 0;
+}
+.related.panel.panel-default>.panel-heading {
+    padding: 5px 15px;
+}
 
+.related.panel.panel-default .panel-body {
+	padding: 5px 11px;
+}
 
 .logo-container+div.container .nav>li>a.site-title {
         background: #E6E6E6;

@@ -1,8 +1,10 @@
+from random import shuffle
+from urllib import urlencode
+
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404
 from django.shortcuts import render
 from eulfedora.server import Repository
-from urllib import urlencode
 
 from readux.utils import solr_interface
 from readux.books.models import Volume, SolrVolume
@@ -38,11 +40,20 @@ def browse(request, mode='covers'):
     facets = q.execute().facet_counts.facet_fields
     # convert into dictionary for access by pid
     collection_counts = dict([(pid, total) for pid, total in facets['collection_id']])
-    # generate a list of tuple of solr result, volume count
-    collections = [(r, collection_counts.get(r['pid'], 0)) for r in results]
+    # generate a list of tuple of solr result, volume count,
+    # filtering out any collections with no items
+    collections = [(r, collection_counts.get(r['pid'])) for r in results
+                  if r['pid'] in collection_counts]
+
+    # generate a random list of 4 covers for use in twitter gallery card
+    # - restrict to collections with cover images
+    covers = [coll.cover for coll, count in collections if coll.cover]
+    # - randomize the list in place so we can grab the first N
+    shuffle(covers)
 
     return render(request, 'collection/browse.html',
-        {'collections': collections, 'mode': mode})
+        {'collections': collections, 'mode': mode,
+         'meta_covers': covers[:4]})
 
 
 def view(request, pid, mode='list'):

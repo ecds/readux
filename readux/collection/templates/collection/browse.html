@@ -19,9 +19,7 @@
             <div id="cover-list" class="item-covers">
                 <ul class="media-list collection-list cover-view">
                     {% for coll, count in collections %}
-                       {% if count %} {# don't display empty collections #}
-                           {% include 'collection/snippets/list_collection_cover.html' %}
-                       {% endif %}
+                       {% include 'collection/snippets/list_collection_cover.html' %}
                    {% endfor %}
                </ul>
            </div>
@@ -32,9 +30,7 @@
             <div id="collection-list" class="item-list">
                 <ul class="media-list collection-list">
                     {% for coll, count in collections %}
-                        {% if count %} {# don't display empty collections #}
-                            {% include 'collection/snippets/list_collection.html' %}
-                        {% endif %}
+                        {% include 'collection/snippets/list_collection.html' %}
                     {% endfor %}
                 </ul>
             </div>

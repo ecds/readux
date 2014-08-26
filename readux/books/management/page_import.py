@@ -324,8 +324,14 @@ class BasePageImport(BaseCommand):
             return
         if not os.path.exists(posfile):
             if self.verbosity >= self.v_normal:
-                self.stdout.write('Error: position %s file does not exist;skipping \n' % posfile)
+                self.stdout.write('Error: position %s file does not exist; skipping \n' % posfile)
             return
+        # if the image file is zero-size (which apparently happens sometimes?), skip
+        if os.path.getsize(imgfile) == 0:
+            if self.verbosity >= self.v_normal:
+                self.stdout.write('Error: image file %s is zero-size; skipping \n' % imgfile)
+            return
+
 
         # If image is not already jpeg200, convert it before ingest
         imgfile, jp2_tmpfile = self.convert_to_jp2(imgfile)

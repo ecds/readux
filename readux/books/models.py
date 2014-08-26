@@ -218,6 +218,7 @@ class BaseVolume(object):
         for use with external services such as voyant-tools.org'''
         return absolutize_url(reverse('books:text', kwargs={'pid': self.pid}))
 
+
     def metatag_host_url(self):
         '''Generate the url for the host to prepend to resources that will 
         be referenced in meta tags'''

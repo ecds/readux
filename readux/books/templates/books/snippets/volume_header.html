@@ -13,6 +13,7 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
                 {% if volume_url != request.get_full_path|urlencode %}
                     {{ vol.title }}
                 {% else %}
+
                     <span>{{ vol.title_part1}}</span>
 
                     {% if vol.title_part2 %}

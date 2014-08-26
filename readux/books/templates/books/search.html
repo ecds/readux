@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load humanize %} {% load widget_tweaks %}
 
-{% block page-subtitle %} | Search Results{% endblock %}
+{% block page-subtitle %}Search Results | {% endblock %}
 
 {% block head_extras %}
 <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />

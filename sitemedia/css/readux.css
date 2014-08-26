@@ -197,6 +197,10 @@ header#page-bg .container{
 	margin-bottom: 5px;
 }
 
+.media>.pull-right {
+	min-width: 50px;
+}
+
 .item-covers.volume-covers .cover a span {
     position: absolute;
     top: 40%;

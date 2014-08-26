@@ -2,6 +2,12 @@
 {% load static %}
 {% load widget_tweaks %}
 
+{% block metadata %}
+  <meta property="og:site_name" content="Readux"/>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{request.build_absolute_uri}}"/>
+{% endblock %}
+
 {% block favicon %}
     {% if ENABLE_BETA_WARNING %}
       <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-beta.ico' %}">

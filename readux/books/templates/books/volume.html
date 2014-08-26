@@ -1,5 +1,14 @@
 {% extends 'site_base.html' %}
 
+
+{% block metadata %}
+{{ block.super }}
+<meta property="og:title" content="{{ vol.title }}"/>
+<meta property="og:image" content="{{vol.metatag_host_url}}{% url 'books:page-thumbnail' vol.primary_image %}"/>
+
+
+{% endblock %}
+
 {% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}]{% endif %}{% endblock %}
 
 {% block head_extras %}

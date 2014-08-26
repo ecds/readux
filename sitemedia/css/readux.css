@@ -20,7 +20,7 @@ body{
 }
 
 .btn-pdf {
-    color: #D14747;
+    color: #B13030;
     border-color: #CCCCCC;
 }
 .btn-pdf .text-muted {
@@ -191,6 +191,10 @@ header#page-bg .container{
 
 #volume-list .media a.pull-left img{
     width: 75px;
+}
+
+#volume-list .media .btn {
+	margin-bottom: 5px;
 }
 
 .item-covers.volume-covers .cover a span {

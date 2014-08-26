@@ -13,7 +13,7 @@
 {% endif %}
 
 <a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pdf' vol.pid %}" title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
-    <span class="glyphicon glyphicon-file"></span>
+    <span class="fa fa-file-pdf-o"></span>
     <span>View PDF</span>
     {% if vol.pdf_size %}
         <span class="text-muted">({{ vol.pdf_size|filesizeformat }})</span>

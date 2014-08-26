@@ -14,7 +14,8 @@
 {% block head_extras %}
   <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />
   <link rel="bookmark" href="{{ vol.ark_uri }}" />
-  <link rel="alternate" href="{% url 'books:pdf' vol.pid %}" /> {# PDF #}
+  <link rel="alternate" href="{% url 'books:pdf' vol.pid %}" type="application/pdf" /> {# PDF #}
+  <link rel="alternate" href="{% url 'books:text' vol.pid %}" type="text/plain" /> {# plain text #}
 {% endblock %}
 
 {% block content %}

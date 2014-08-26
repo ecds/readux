@@ -1,6 +1,15 @@
 {% extends 'site_base.html' %}
 
-{% block page-subtitle %} | {{ vol.title }}{% if vol.volume %} [{{ vol.volume }}] | Pages{% endif %}{% endblock %}
+{% block page-subtitle %}{{ vol.title }}{% if vol.volume %} [{{ vol.volume }}], 
+{% for page in pages.object_list %}
+    {% if forloop.first %}
+        p.{{ page.page_order }}
+    {% endif %}
+    {% if forloop.last %}
+        - {{ page.page_order|default:'end' }}
+    {% endif %}
+{% endfor %}
+| {% endif %}{% endblock %}
 
 {% block content %}
 <div class="container">

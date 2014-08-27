@@ -6,6 +6,8 @@
   <meta property="og:site_name" content="Readux"/>
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{request.build_absolute_uri}}"/>
+
+  <meta name="twitter:domain" content="{{request.get_host}}">
 {% endblock %}
 
 {% block favicon %}

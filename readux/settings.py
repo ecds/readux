@@ -59,6 +59,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",  # always include request in render context
     "django.core.context_processors.static",
     "eultheme.context_processors.template_settings",
+    "eultheme.context_processors.site_path",
     "readux.version_context",  # include app version
     "readux.books.context_processors.book_search",  # book search form
 )

@@ -6,15 +6,16 @@
     {{ block.super }}
     <meta property="og:title" content="{{ vol.title|truncatechars:150 }}"/>
     <meta itemprop="og:headline" content="{{ vol.title|truncatechars:150 }}" />
-    <meta property="og:image" content="{{vol.metatag_host_url}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}"/>
+    <meta property="og:image" content="{{site_root}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}"/>
 
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:title" content="{{ vol.title|truncatechars:150 }}" />
-    <meta property="twitter:image" content="{{vol.metatag_host_url}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}" />
+    <meta property="twitter:image" content="{{site_root}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}" />
     <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
 {% endblock %}
 
 {% block content %}
+
 <div class="container">
     {% include 'books/snippets/volume_header.html' %}
     <div class="row">

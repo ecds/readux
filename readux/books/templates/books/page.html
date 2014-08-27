@@ -29,11 +29,11 @@
     {{ block.super }}
     <meta property="og:title" content="{{ page.volume.title|truncatechars:150 }}"/>
     <meta itemprop="og:headline" content="{{ page.volume.title|truncatechars:150 }}" />
-    <meta property="og:image" content="http://{{request.get_host}}{% url 'books:page-image' page.pid %}"/>
+    <meta property="og:image" content="{{site_root}}{% url 'books:page-image' page.pid %}"/>
 
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:title" content="{{ page.volume.title|truncatechars:150 }}" />
-    <meta property="twitter:image" content="http://{{request.get_host}}{{vol.metatag_host_url}}{% url 'books:page-image' page.pid %}" />
+    <meta property="twitter:image" content="{{site_root}}{% url 'books:page-image' page.pid %}" />
     <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
 
 {% endblock %}

@@ -5,11 +5,11 @@
     {{ block.super }}
     <meta property="og:title" content="{{ vol.title }}"/>
     <meta itemprop="og:headline" content="{{ vol.title }}" />
-    <meta property="og:image" content="{{vol.metatag_host_url}}{% url 'books:page-thumbnail' vol.primary_image %}"/>
+    <meta property="og:image" content="{{site_root}}{% url 'books:page-thumbnail' vol.primary_image %}"/>
 
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:title" content="{{ vol.title|truncatechars:150 }}" />
-    <meta property="twitter:image" content="{{vol.metatag_host_url}}{% url 'books:page-thumbnail' vol.primary_image %}" />
+    <meta property="twitter:image" content="{{site_root}}{% url 'books:page-thumbnail' vol.primary_image %}" />
     <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
 {% endblock %}
 

@@ -27,6 +27,9 @@ the configured fedora instance).'''
             action='store_true',
             default=False,
             help='Don\'t make any changes; just report on what would be done'),
+        make_option('--collection', '-c',
+            help='Find and process volumes that belong to the specified collection pid ' + \
+            '(list of pids on the command line takes precedence over this option)'),
         )
 
     v_normal = 1
@@ -42,6 +45,10 @@ the configured fedora instance).'''
         # if pids are specified on command line, only process those objects
         if pids:
             objs = [self.repo.get_object(pid, type=Volume) for pid in pids]
+
+        # if collection is specified, find pids by collection
+        elif options['collection']:
+            objs = self.pids_by_collection(options['collection'])
 
         # otherwise, error
         else:

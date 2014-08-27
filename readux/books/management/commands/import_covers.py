@@ -10,7 +10,6 @@ from progressbar import ProgressBar, Bar, Percentage, \
 
 from readux.books.models import Volume
 from readux.books.management.page_import import BasePageImport
-from readux.collection.models import Collection
 
 
 logger = logging.getLogger(__name__)
@@ -150,31 +149,6 @@ the configured fedora instance.'''
         if self.verbosity >= self.v_normal:
             self.stdout.write('\n%(vols)d volume(s); %(errors)d error(s), %(skipped)d skipped, %(updated)d updated' % \
                 self.stats)
-
-    def pids_by_collection(self, pid):
-        coll = self.repo.get_object(pid, type=Collection)
-        if not coll.exists:
-            self.stdout.write('Collection %s does not exist or is not accessible' % \
-                              pid)
-
-        if not coll.has_requisite_content_models:
-            self.stdout.write('Object %s does not seem to be a collection' % \
-                              pid)
-
-        # NOTE: this approach may not scale for large collections
-        # if necessary, use a sparql query to count and possibly return the objects
-        # or else sparql query query to count and generator for the objects
-        # this sparql query does what we need:
-        # select ?vol
-        # WHERE {
-        #    ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/emory-control:LSDI-Yellowbacks> .
-        #   ?vol <fedora-rels-ext:isConstituentOf> ?book
-        #}
-        volumes = []
-        for book in coll.book_set:
-            volumes.extend(book.volume_set)
-
-        return volumes
 
     def interrupt_handler(self, signum, frame):
         '''Gracefully handle a SIGINT, if possible.  Reports status,

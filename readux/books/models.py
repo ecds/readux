@@ -356,7 +356,9 @@ class Volume(DigitalObject, BaseVolume):
             with open(self.ocr_to_text_xsl) as xslfile:
                 transform =  self.ocr.content.xsl_transform(filename=xslfile,
                     return_type=str)
-                return transform
+                # returns _XSLTResultTree, which is not JSON serializable;
+                # convert to unicode
+                return unicode(transform)
 
     def index_data(self):
         '''Extend the default

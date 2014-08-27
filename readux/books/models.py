@@ -319,8 +319,7 @@ class Volume(DigitalObject, BaseVolume):
 
     @property
     def title(self):
-        return self.dc.content.title
-
+        return self.dc.content.title.rstrip().rstrip('/')
 
     @property
     def title_part1(self):

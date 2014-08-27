@@ -8,6 +8,7 @@ from django.template.defaultfilters import filesizeformat
 from django.test import TestCase
 from django.test.utils import override_settings
 from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
+import re
 import rdflib
 from rdflib import RDF
 from urllib import urlencode
@@ -232,9 +233,11 @@ class VolumeTest(TestCase):
             # test full-text
             with patch.object(self.vol, 'ocr') as mockocr:
                 mockocr.exists = True
-                mockocr.content = 'this is the content of an entire book in ocr xml form...'
+                ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
+                    'books', 'fixtures', 'abbyyocr_fr8v2.xml'))
+                mockocr.content = ocr_xml
                 data = self.vol.index_data()
-                self.assertEqual(mockocr.content, data['fulltext'],
+                self.assert_('fulltext' in data,
                     'fulltext should be set in index data when OCR is available')
 
             # use mock to test pdf size indexing
@@ -262,9 +265,40 @@ class VolumeTest(TestCase):
         # english
         self.vol.dc.content.language = 'eng'
         url = self.vol.voyant_url()
-        print url
         self.assert_(urlencode({'stopList': 'stop.en.taporware.txt'}) in url,
             'voyant url should include english stopword list when volume is in english')
+
+    def test_get_fulltext(self):
+        with patch.object(self.vol, 'ocr') as mockocr:
+            mockocr.exists = True
+            # abbyy finereader v8
+            ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
+                'books', 'fixtures', 'abbyyocr_fr8v2.xml'))
+            mockocr.content = ocr_xml
+
+            text = self.vol.get_fulltext()
+            # check for arbitrary text content
+            self.assert_('In presenting this,  the initial volume of  the' in text,
+                'ocr text content should be present in plain text')
+            self.assert_('Now, kind reader, we ask that you do not crit' in text,
+                'ocr text content should be present in plain text')
+            self.assert_(re.search(r'Baldwin\s+Dellinger\s+Brice', text),
+                'table row content shoudl be displayed on a single line')
+
+            # abbyy finereader v6
+            ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
+                'books', 'fixtures', 'abbyyocr_fr6v1.xml'))
+            mockocr.content = ocr_xml
+
+            text = self.vol.get_fulltext()
+            # check for arbitrary text content
+            self.assert_('was late in the autumn, the vines yet kept their leaves,' in text,
+                'ocr text content should be present in plain text')
+            self.assert_('walked up the steps. The lady had not moved, and made' in text,
+                'ocr text content should be present in plain text')
+            self.assert_(re.search(r'Modern\.\s+New Standard\.\s+Popular\.', text),
+                'table row content shoudl be displayed on a single line')
+
 
 class BookViewsTest(TestCase):
 

@@ -2,6 +2,13 @@
 
 {% block page-subtitle %}{{ vol.title|truncatechars:150 }}{% if vol.volume %} [{{ vol.volume }}]{% endif %}, p.{{ pages.start_index }}-{{ pages.end_index }} | {% endblock %}
 
+{% block metadata %}
+    {{ block.super }}
+    <meta property="og:title" content="{{ vol.title|truncatechars:150 }}"/>
+    <meta itemprop="og:headline" content="{{ vol.title|truncatechars:150 }}" />
+    <meta property="og:image" content="{{vol.metatag_host_url}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}"/>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     {% include 'books/snippets/volume_header.html' %}

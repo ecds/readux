@@ -25,6 +25,12 @@
   </script>
 {% endblock %}
 
+{% block metadata %}
+    {{ block.super }}
+    <meta property="og:title" content="{{ page.volume.title|truncatechars:150 }}"/>
+    <meta itemprop="og:headline" content="{{ page.volume.title|truncatechars:150 }}" />
+    <meta property="og:image" content="{{vol.metatag_host_url}}{% url 'books:page-image' page.pid %}"/>
+{% endblock %}
 
 {% block content %}
     <div class="container">

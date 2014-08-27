@@ -636,8 +636,10 @@ class BookViewsTest(TestCase):
         solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
         # *only* mock iter, to avoid weirdness with django templates & callables
         solr_result.__iter__.return_value = [
-            {'pid': 'page:1', 'page_order': '1', 'score': 0.5},
-            {'pid': 'page:233', 'page_order': '123', 'score': 0.02},
+            {'pid': 'page:1', 'page_order': '1', 'score': 0.5,
+             'solr_highlights': {'page_text': ['snippet with search term']}},
+            {'pid': 'page:233', 'page_order': '123', 'score': 0.02,
+             'solr_highlights': {'page_text': ['sample text result from content']}},
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
@@ -664,6 +666,8 @@ class BookViewsTest(TestCase):
                 msg_prefix='search results should display page relevance score')
             self.assertContains(response, reverse('books:page', kwargs={'pid': page['pid']}),
                 msg_prefix='search results should link to full page view')
+            self.assertContains(response, '... %s ...' % page['solr_highlights']['page_text'][0],
+                msg_prefix='solr snippets should display when available')
 
     @patch('readux.books.views.Repository')
     @override_settings(DEBUG=True)  # required so local copy of not-found image will be used

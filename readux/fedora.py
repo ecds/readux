@@ -86,6 +86,7 @@ class DigitalObject(models.DigitalObject):
         metadata (if available) or Dublin Core, and use the noid
         portion of the ARK for a Fedora pid in the site-configured
         Fedora pidspace.'''
+        global pidman
 
         if pidman is not None:
             # pidman wants a target for the new pid

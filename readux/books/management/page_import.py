@@ -139,6 +139,11 @@ class BasePageImport(BaseCommand):
         if not len(images):
             images = glob.glob('%s/*.tif' % vol_info.display_image_path)
 
+        # if neither jp2s nor tiffs were found, look for jpgs
+        if not len(images):
+            images = glob.glob('%s/*.jpg' % vol_info.display_image_path)
+
+
         # make sure the files are sorted; images are expected to be named
         # so that they are ordered in page-sequence when sorted
         images.sort()

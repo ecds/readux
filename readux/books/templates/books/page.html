@@ -1,6 +1,6 @@
 {% extends 'site_base.html' %}
 
-{% block page-subtitle %}{{ page.volume.title|truncatechars:150 }}{% if page.volume.volume %} [{{ page.volume.volume }}]{% endif %}, p. {{ page.page_order }} | {% endblock %}
+{% block page-subtitle %}{{ page.display_label }} | {% endblock %}
 
 {% block javascript %}
   {{ block.super }}
@@ -27,15 +27,15 @@
 
 {% block metadata %}
     {{ block.super }}
-    <meta property="og:title" content="{{ page.volume.title|truncatechars:150 }}"/>
-    <meta itemprop="og:headline" content="{{ page.volume.title|truncatechars:150 }}" />
-    <meta property="og:image" content="{{site_root}}{% url 'books:page-image' page.pid %}"/>
+    {% url 'books:page-image' page.pid as image_url %}
+    <meta property="og:title" content="{{ page.display_label }}"/>
+    <meta itemprop="og:headline" content="{{ page.display_label }}" />
+    <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
 
-    <meta property="twitter:card" content="summary" />
-    <meta property="twitter:title" content="{{ page.volume.title|truncatechars:150 }}" />
-    <meta property="twitter:image" content="{{site_root}}{% url 'books:page-image' page.pid %}" />
-    <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
-
+    <meta property="twitter:card" content="photo" />
+    <meta property="twitter:title" content="{{ page.display_label }}" />
+    <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+    <meta property="twitter:url" content="{% firstof page.ark_uri request.build_absolute_uri %}" />
 {% endblock %}
 
 {% block content %}
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="col-xs-3 col-sm-4 col-sm-offset-4 text-center">
-                    <p class="text-muted">p. {{page.page_order}}</p>
+                    <p class="text-muted">p. {{ page.page_order }}</p>
                 </div>
 
             </div>

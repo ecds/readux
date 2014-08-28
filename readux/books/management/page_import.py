@@ -15,6 +15,7 @@ from pdfminer.pdfpage import PDFPage
 
 from readux.books import digwf
 from readux.books.models import Page
+from readux.collection.models import Collection
 from readux.fedora import ManagementRepository
 from readux.utils import md5sum
 
@@ -56,6 +57,32 @@ class BasePageImport(BaseCommand):
         except Exception as err:
             raise CommandError('Error connecting to Fedora at %s: %s' % \
                                (settings.FEDORA_ROOT, err))
+
+    def pids_by_collection(self, pid):
+        coll = self.repo.get_object(pid, type=Collection)
+        if not coll.exists:
+            self.stdout.write('Collection %s does not exist or is not accessible' % \
+                              pid)
+
+        if not coll.has_requisite_content_models:
+            self.stdout.write('Object %s does not seem to be a collection' % \
+                              pid)
+
+        # NOTE: this approach may not scale for large collections
+        # if necessary, use a sparql query to count and possibly return the objects
+        # or else sparql query query to count and generator for the objects
+        # this sparql query does what we need:
+        # select ?vol
+        # WHERE {
+        #    ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/emory-control:LSDI-Yellowbacks> .
+        #   ?vol <fedora-rels-ext:isConstituentOf> ?book
+        #}
+        volumes = []
+        for book in coll.book_set:
+            volumes.extend(book.volume_set)
+
+        return volumes
+
 
     def is_usable_volume(self, vol):
         # if object does not exist or cannot be accessed in fedora, skip it
@@ -101,6 +128,12 @@ class BasePageImport(BaseCommand):
         vol_info = info.items[0]
         logger.debug("image path for %s : %s" % \
            (vol.pid, vol_info.display_image_path))
+
+        if not vol_info.display_image_path:
+            self.stdout.write('Error: no display image path set for %s' % vol.pid)
+            # no images can possibly be found
+            return [], vol_info
+
         # look for JPEG2000 images first (preferred format)
         images = glob.glob(os.path.join(vol_info.display_image_path,
                                              '*.jp2'))
@@ -112,12 +145,17 @@ class BasePageImport(BaseCommand):
         if not len(images):
             images = glob.glob('%s/*.tif' % vol_info.display_image_path)
 
+        # if neither jp2s nor tiffs were found, look for jpgs
+        if not len(images):
+            images = glob.glob('%s/*.jpg' % vol_info.display_image_path)
+
+
         # make sure the files are sorted; images are expected to be named
         # so that they are ordered in page-sequence when sorted
         images.sort()
 
         if not len(images):
-            self.stdout.write('Error: no files matching *.tif or *.jp2 found for %s' % \
+            self.stdout.write('Error: no files matching *.tif, *.jp2, or *.jpg found for %s' % \
                               vol_info.display_image_path)
 
         # images could be empty list if no matches were found

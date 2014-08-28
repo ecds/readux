@@ -1,19 +1,19 @@
 {% extends 'site_base.html' %}
 
-
-{% block metadata %}
-    {{ block.super }}
-    <meta property="og:title" content="{{ vol.title }}"/>
-    <meta itemprop="og:headline" content="{{ vol.title }}" />
-    <meta property="og:image" content="{{site_root}}{% url 'books:page-thumbnail' vol.primary_image %}"/>
+{% block metadata %}{{ block.super }}
+    {% url 'books:page-thumbnail' vol.primary_image as image_url %}
+    <meta property="og:title" content="{{ vol.display_label }}"/>
+    <meta itemprop="og:headline" content="{{ vol.display_label }}" />
+    <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
+    <meta property="og:description" content="{{ vol.book.best_description }}" />
 
     <meta property="twitter:card" content="summary" />
-    <meta property="twitter:title" content="{{ vol.title|truncatechars:150 }}" />
-    <meta property="twitter:image" content="{{site_root}}{% url 'books:page-thumbnail' vol.primary_image %}" />
-    <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
+    <meta property="twitter:title" content="{{ vol.display_label }}" />
+    <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+    <meta property="twitter:description" content="{{ vol.book.best_description }}" />
 {% endblock %}
 
-{% block page-subtitle %}{{ vol.title|truncatechars:150 }}{% if vol.volume %} [{{ vol.volume }}]{% endif %} | {% endblock %}
+{% block page-subtitle %}{{ vol.display_label }} | {% endblock %}
 
 {% block head_extras %}
   <link rel="unapi-server" type="application/xml" title="unAPI" href="{% url 'books:unapi' %}" />

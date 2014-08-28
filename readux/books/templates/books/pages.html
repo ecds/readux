@@ -1,17 +1,20 @@
 {% extends 'site_base.html' %}
 
-{% block page-subtitle %}{{ vol.title|truncatechars:150 }}{% if vol.volume %} [{{ vol.volume }}]{% endif %}, p.{{ pages.start_index }}-{{ pages.end_index }} | {% endblock %}
+{% block page-subtitle %}{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }} | {% endblock %}
 
 {% block metadata %}
     {{ block.super }}
-    <meta property="og:title" content="{{ vol.title|truncatechars:150 }}"/>
+    <meta property="og:title" content="{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }}"/>
     <meta itemprop="og:headline" content="{{ vol.title|truncatechars:150 }}" />
-    <meta property="og:image" content="{{site_root}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}"/>
+    {# use first page image for facebook/g+ image #}
+    <meta property="og:image" content="{{ site_root }}{% url 'books:page-thumbnail' pages.object_list.0.pid as image_url %}"/>
 
-    <meta property="twitter:card" content="summary" />
-    <meta property="twitter:title" content="{{ vol.title|truncatechars:150 }}" />
-    <meta property="twitter:image" content="{{site_root}}{% with pages.object_list|first as first_page %}{% url 'books:page-thumbnail' first_page.pid %}{% endwith %}" />
-    <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
+    <meta property="twitter:card" content="gallery" />
+    <meta property="twitter:title" content="{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }}" />
+    {# use first four page images for twitter gallery card #}
+    {% for page in pages.object_list|slice:":4" %}
+    <meta name="twitter:image{{ forloop.counter0 }}:src" content="{{ site_root }}{% url 'books:page-thumbnail' page.pid %}">
+    {% endfor %}
 {% endblock %}
 
 {% block content %}

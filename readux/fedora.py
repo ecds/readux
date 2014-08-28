@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.encoding import iri_to_uri
 import httplib
+import urllib
 
 from eulfedora import models, server
 from pidservices.clients import parse_ark
@@ -68,25 +69,36 @@ class DigitalObject(models.DigitalObject):
         pidspace, noid = self.pid.split(':')
         return noid
 
+    @property
+    def ark_uri(self):
+        for dcid in self.dc.content.identifier_list:
+            print dcid
+            if 'ark:/' in dcid:
+                return dcid
+
+    #: special pid token that tells pid manager to put the newly minted
+    # pid into the url
     PID_TOKEN = '{%PID%}'
-    ENCODED_PID_TOKEN = iri_to_uri(PID_TOKEN)
+
     def get_default_pid(self):
         '''Default pid logic for DigitalObjects in :mod:`readux`.  Mint a
         new ARK via the PID manager, store the ARK in the MODS
         metadata (if available) or Dublin Core, and use the noid
         portion of the ARK for a Fedora pid in the site-configured
         Fedora pidspace.'''
-        global pidman
 
         if pidman is not None:
             # pidman wants a target for the new pid
-            '''Get a pidman-ready target for a named view.'''
+            # generate a pidman-ready target for a named view
 
             # first just reverse the view name.
             pid = '%s:%s' % (self.default_pidspace, self.PID_TOKEN)
             target = reverse(self.NEW_OBJECT_VIEW, kwargs={'pid': pid})
-            # reverse() encodes the PID_TOKEN, so unencode just that part
-            target = target.replace(self.ENCODED_PID_TOKEN, self.PID_TOKEN)
+
+            # reverse() encodes the PID_TOKEN and the :, so just unquote the url
+            # (shouldn't contain anything else that needs escaping)
+            target = urllib.unquote(target)
+
             # reverse() returns a full path - absolutize so we get scheme & server also
             target = absolutize_url(target)
             # pid name is not required, but helpful for managing pids

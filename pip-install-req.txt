@@ -27,6 +27,7 @@ django-image-tools>=0.8.b3
 https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.21.0.tar.gz
 south
 python-magic
-progressbar
+# NOTE: Counter widget missing in progessbar 2.2, but 3.3 package is unverified (?)
+progressbar<=2.3
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
 pdfminer

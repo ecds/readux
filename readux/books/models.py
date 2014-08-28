@@ -1,14 +1,13 @@
 from UserDict import UserDict
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.db.models import permalink
-from django.template.defaultfilters import slugify
+from django.template.defaultfilters import truncatechars
 from lxml.etree import XMLSyntaxError
 import json
 import logging
 import os
-from urllib import urlencode
+from urllib import urlencode, unquote
 
 import rdflib
 from rdflib import Graph
@@ -49,6 +48,16 @@ class Book(DigitalObject):
 
     #: :class:`~readux.collection.models.Collection` this book belongs to
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
+
+    @property
+    def best_description(self):
+        '''Single best description to use when only one can be displayed (e.g.,
+        for twitter or facebook integration)
+        '''
+        # for now, just return the longest description
+        # eventually we should be able to update this to make use of the MARCXML
+        descriptions = list(self.dc.content.description_list)
+        return sorted(descriptions, key=len, reverse=True)[0]
 
 
 # NOTE: Image and Page defined before Volume to allow referencing in
@@ -157,6 +166,10 @@ class Page(Image):
         'Absolute url to view this object within the site'
         return (self.NEW_OBJECT_VIEW, [str(self.pid)])
 
+    @property
+    def display_label(self):
+        '''Display label, for use in html titles, twitter/facebook metadata, etc.'''
+        return '%s, p. %d' % (self.volume.display_label, self.page_order)
 
     def get_fulltext(self):
         '''Sanitized OCR full-text, e.g., for indexing or text analysis'''
@@ -239,7 +252,7 @@ class BaseVolume(object):
     def pdf_url(self):
         '''Local PDF url, including starting page directive (#page=N) if start
         page is set.'''
-        url = reverse('books:pdf', kwargs={'pid': self.pid})
+        url = unquote(reverse('books:pdf', kwargs={'pid': self.pid}))
         if self.start_page:
             url = '%s#page=%d' % (url, self.start_page)
         return url
@@ -314,15 +327,23 @@ class Volume(DigitalObject, BaseVolume):
         return self.dc.content.title.rstrip().rstrip('/')
 
     @property
+    def display_label(self):
+        '''Display label, for use in html titles, twitter/facebook metadata, etc.
+        Truncates the title to the first 150 characters, and includes volume information
+        if any.
+        '''
+        vol = ' [%s]' % self.volume if self.volume else ''
+        return '%s%s' % (truncatechars(self.title.rstrip(), 150), vol)
+
+    @property
     def title_part1(self):
+        'Volume title, up to the first 150 characters'
         return self.title[:150]
 
     @property
     def title_part2(self):
-        part2 = self.title[150:]
-        if(len(slugify(part2))>0):
-            return part2
-        return
+        'Volume title after the first 150 characters'
+        return self.title[150:].strip()
 
     @property
     def creator(self):
@@ -353,9 +374,12 @@ class Volume(DigitalObject, BaseVolume):
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
         if self.ocr.exists:
-            transform =  self.ocr.content.xsl_transform(filename=self.ocr_to_text_xsl,
-                return_type=str)
-            return transform
+            with open(self.ocr_to_text_xsl) as xslfile:
+                transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # returns _XSLTResultTree, which is not JSON serializable;
+                # convert to unicode
+                return unicode(transform)
 
     def index_data(self):
         '''Extend the default

@@ -1,6 +1,5 @@
 Django
-# dev eulxml for xsl_transform text outupt; should be 0.22
--e git://github.com/emory-libraries/eulxml.git@develop#egg=eulxml
+eulxml>=0.21.1
 # dev eulfedora for caching on related objects; should be 0.23
 #eulfedora>=0.22.1
 -e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora

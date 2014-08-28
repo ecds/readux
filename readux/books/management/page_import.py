@@ -128,6 +128,12 @@ class BasePageImport(BaseCommand):
         vol_info = info.items[0]
         logger.debug("image path for %s : %s" % \
            (vol.pid, vol_info.display_image_path))
+
+        if not vol_info.display_image_path:
+            self.stdout.write('Error: no display image path set for %s' % vol.pid)
+            # no images can possibly be found
+            return [], vol_info
+
         # look for JPEG2000 images first (preferred format)
         images = glob.glob(os.path.join(vol_info.display_image_path,
                                              '*.jp2'))
@@ -149,7 +155,7 @@ class BasePageImport(BaseCommand):
         images.sort()
 
         if not len(images):
-            self.stdout.write('Error: no files matching *.tif or *.jp2 found for %s' % \
+            self.stdout.write('Error: no files matching *.tif, *.jp2, or *.jpg found for %s' % \
                               vol_info.display_image_path)
 
         # images could be empty list if no matches were found

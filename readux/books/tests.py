@@ -11,7 +11,7 @@ from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
 import re
 import rdflib
 from rdflib import RDF
-from urllib import urlencode
+from urllib import urlencode, unquote
 
 from eulxml.xmlmap import load_xmlobject_from_file
 from eulfedora.server import Repository
@@ -78,11 +78,11 @@ class SolrVolumeTest(TestCase):
         # no start page set
         vol = SolrVolume(pid='vol:123')
         pdf_url = vol.pdf_url()
-        self.assertEqual(reverse('books:pdf', kwargs={'pid': vol.pid}), pdf_url)
+        self.assertEqual(unquote(reverse('books:pdf', kwargs={'pid': vol.pid})), pdf_url)
         # start page
         vol = SolrVolume(pid='vol:123', start_page=6)
         pdf_url = vol.pdf_url()
-        self.assert_(pdf_url.startswith(reverse('books:pdf', kwargs={'pid': vol.pid})))
+        self.assert_(pdf_url.startswith(unquote(reverse('books:pdf', kwargs={'pid': vol.pid}))))
         self.assert_('#page=6' in pdf_url)
 
 
@@ -422,7 +422,7 @@ class BookViewsTest(TestCase):
         for item in solr_result:
             self.assertContains(response, item['title'],
                 msg_prefix='title should be displayed')
-            self.assertContains(response, reverse('books:pdf', kwargs={'pid': item['pid']}),
+            self.assertContains(response, unquote(reverse('books:pdf', kwargs={'pid': item['pid']})),
                     msg_prefix='link to pdf should be included in response')
             self.assertContains(response,
                 '<abbr class="unapi-id" title="%s"></abbr>' % item['pid'],

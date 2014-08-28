@@ -68,6 +68,13 @@ class DigitalObject(models.DigitalObject):
         pidspace, noid = self.pid.split(':')
         return noid
 
+    @property
+    def ark_uri(self):
+        for dcid in self.dc.content.identifier_list:
+            print dcid
+            if 'ark:/' in dcid:
+                return dcid
+
     PID_TOKEN = '{%PID%}'
     ENCODED_PID_TOKEN = iri_to_uri(PID_TOKEN)
     def get_default_pid(self):

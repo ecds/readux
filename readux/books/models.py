@@ -49,6 +49,16 @@ class Book(DigitalObject):
     #: :class:`~readux.collection.models.Collection` this book belongs to
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
+    @property
+    def best_description(self):
+        '''Single best description to use when only one can be displayed (e.g.,
+        for twitter or facebook integration)
+        '''
+        # for now, just return the longest description
+        # eventually we should be able to update this to make use of the MARCXML
+        descriptions = list(self.dc.content.description_list)
+        return sorted(descriptions, key=len, reverse=True)[0]
+
 
 # NOTE: Image and Page defined before Volume to allow referencing in
 # Volume relation definitions

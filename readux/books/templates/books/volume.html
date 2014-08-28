@@ -5,12 +5,12 @@
     <meta property="og:title" content="{{ vol.display_label }}"/>
     <meta itemprop="og:headline" content="{{ vol.display_label }}" />
     <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
+    <meta property="og:description" content="{{ vol.book.best_description }}" />
 
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:title" content="{{ vol.display_label }}" />
     <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
-    <meta property="twitter:url" content="{{ request.build_absolute_uri }}" />
-    {# TODO: use volume ARKs here once updated to resolve to readux #}
+    <meta property="twitter:description" content="{{ vol.book.best_description }}" />
 {% endblock %}
 
 {% block page-subtitle %}{{ vol.display_label }} | {% endblock %}

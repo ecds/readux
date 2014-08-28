@@ -5,22 +5,19 @@
 
 {% block metadata %}
   {{block.super}}
-
   <meta property="og:title" content="Readux Collections"/>
   <meta itemprop="og:headline" content="Readux Collections" />
-  
 
   <meta name="twitter:card" content="gallery">
   <meta name="twitter:title" content="Readux Collections">
   <meta name="twitter:description" content="Digital archives grouped by topic or assortment">
 
-  {% for item in meta_covers %}
+  {% for item in meta_covers %} {# display 4 random covers in twitter gallery card view #}
     {% if forloop.first %}
-    <meta property="og:image" content="{{site_root}}{{ item.get__thumbnail }}"/>
+    <meta property="og:image" content="{{ site_root }}{{ item.get__thumbnail }}"/>
     {% endif %}
-    <meta name="twitter:image{{forloop.counter0}}:src" content="{{site_root}}{{ item.get__thumbnail }}">
+    <meta name="twitter:image{{ forloop.counter0 }}:src" content="{{ site_root }}{{ item.get__thumbnail }}">
   {% endfor %}
-
 {% endblock %}
 
 {% block content %}

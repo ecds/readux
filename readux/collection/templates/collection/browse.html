@@ -6,13 +6,13 @@
 {% block metadata %}
   {{block.super}}
 
-  <meta property="og:title" content="Readux Collections"/>
-  <meta itemprop="og:headline" content="Readux Collections" />
+  <meta property="og:title" content="Readux"/>
+  <meta itemprop="og:headline" content="Readux" />
   
 
   <meta name="twitter:card" content="gallery">
-  <meta name="twitter:title" content="Readux Collections">
-  <meta name="twitter:description" content="Digital archives grouped by topic or assortment">
+  <meta name="twitter:title" content="Readux">
+  <meta name="twitter:description" content="Accessible collections. Unique books. Available online.">
 
   {% for item in meta_covers %}
     {% if forloop.first %}
@@ -26,8 +26,8 @@
 {% block content %}
 <div class="container">
     <header class="page-header" id="collection-header">
-        <h1>Collections</h1>
-        <p class="lead">Digital archives grouped by topic or assortment.</p>
+        <h1>Readux</h1>
+        <p class="lead">Accessible collections. Unique books. Available online.</p>
     </header>
 
     {% include "snippets/coverlist_toggle.html" %}

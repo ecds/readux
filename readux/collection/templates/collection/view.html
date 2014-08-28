@@ -23,19 +23,19 @@
     {{ block.super }}
     <meta property="og:title" content="{{ collection.short_label }}"/>
     <meta itemprop="og:headline" content="{{ collection.short_label }}" />
+    <meta property="og:description" content="{{ collection.dc.content.description }}" />
 
     {% if collection.banner %}
-    <meta property="twitter:image" content="http://{{request.get_host}}{{collection.banner.get__blurred__banner }}"/>
-    <meta property="og:image" content="http://{{request.get_host}}{{collection.banner.get__blurred__banner }}"/>
-    {% else %}  
-    <meta property="twitter:image" content="http://{{request.get_host}}{{collection.cover.get__blurred__banner }}"/>
-    <meta property="og:image" content="http://{{request.get_host}}{{collection.cover.get__blurred__banner }}"/>
+    <meta property="twitter:image" content="{{ site_root }}{{ collection.banner.get__blurred__banner }}"/>
+    <meta property="og:image" content="{{ site_root }}{{ collection.banner.get__blurred__banner }}"/>
+    {% else %}
+    <meta property="twitter:image" content="{{ site_root }}{{ collection.cover.get__blurred__banner }}"/>
+    <meta property="og:image" content="{{ site_root }}{{ collection.cover.get__blurred__banner }}"/>
     {% endif %}
-    
-    <meta property="twitter:card" content="summary" />
+
+    <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content="{{ collection.short_label }}" />
-    <meta property="twitter:description" content="{{collection.dc.content.description}}" />
-    <meta property="twitter:url" content="{{request.build_absolute_uri}}" />
+    <meta property="twitter:description" content="{{ collection.dc.content.description }}" />
 {% endblock %}
 
 {% block body_attrs %} typeof="schema:CollectionPage"{% endblock %}
@@ -98,7 +98,7 @@
                 {% include "collection/snippets/collection_coverlist_toggle.html" %}
             </div>
         </div>
-        
+
         {% include 'books/snippets/show_volumes.html' with show_collection='False' %}
 
       {% else %}

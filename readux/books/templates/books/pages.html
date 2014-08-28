@@ -15,7 +15,6 @@
     {% for page in pages.object_list|slice:":4" %}
     <meta name="twitter:image{{ forloop.counter0 }}:src" content="{{ site_root }}{% url 'books:page-thumbnail' page.pid %}">
     {% endfor %}
-    <meta property="twitter:url" content="{{ request.build_absolute_uri }}" />
 {% endblock %}
 
 {% block content %}

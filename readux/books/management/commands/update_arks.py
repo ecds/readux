@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.urlresolvers import reverse
 from optparse import make_option
 from collections import defaultdict
+import urllib
 
 from eulfedora.server import Repository
 from pidservices.clients import is_ark, parse_ark
@@ -52,6 +53,12 @@ page information (if any) can be taken advantage when generating PDF target urls
 
         stats = defaultdict(int)
         for obj in objs:
+            if not obj.exists:
+                if verbosity >= self.v_normal:
+                    self.stdout.write('%s does not exist or is not accessible' % obj.pid)
+                stats['skipped'] += 1
+                continue
+
             stats['objs'] += 1
             if is_ark(obj.dc.content.identifier):
                 parsed_ark = parse_ark(obj.dc.content.identifier)
@@ -76,18 +83,15 @@ page information (if any) can be taken advantage when generating PDF target urls
                         target_uri=self.volume_url(obj),
                         active=True)
 
-                # we expected a qualified ARK target for the PDF
+                # we expected a qualified ARK target for the PDF; update whether
+                # it currently exists or not
                 qual = 'PDF'
-                # list of all qualifiers for targets associated with this ARK
-                targets = [t.get('qualifier', None) for t in ark_info['targets']]
-                # only update if this ARK already has a qualified PDF ARK
-                if qual in targets:
-                    stats['updated'] += 1   # count as updated in dry run mode (would be updated)
-                    if not dry_run:
-                        pidman.update_ark_target(noid, qual,
-                            target_uri=self.pdf_url(obj),
-                            active=True)
-                        # FIXME: catch possible exceptions here?
+                stats['updated'] += 1   # count as updated in dry run mode (would be updated)
+                if not dry_run:
+                    pidman.update_ark_target(noid, qual,
+                        target_uri=self.pdf_url(obj),
+                        active=True)
+                    # FIXME: catch possible exceptions here?
 
         # output summary
         if verbosity >= self.v_normal:
@@ -101,4 +105,4 @@ page information (if any) can be taken advantage when generating PDF target urls
 
     def volume_url(self, obj):
         # generate an absolute url to the pdf for a volume object
-        return absolutize_url(reverse('books:volume', kwargs={'pid': obj.pid}))
+        return absolutize_url(urllib.unquote(reverse('books:volume', kwargs={'pid': obj.pid})))

@@ -2,12 +2,12 @@ from UserDict import UserDict
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.db.models import permalink
-from django.template.defaultfilters import slugify, truncatechars
+from django.template.defaultfilters import truncatechars
 from lxml.etree import XMLSyntaxError
 import json
 import logging
 import os
-from urllib import urlencode
+from urllib import urlencode, unquote
 
 import rdflib
 from rdflib import Graph
@@ -242,7 +242,7 @@ class BaseVolume(object):
     def pdf_url(self):
         '''Local PDF url, including starting page directive (#page=N) if start
         page is set.'''
-        url = reverse('books:pdf', kwargs={'pid': self.pid})
+        url = unquote(reverse('books:pdf', kwargs={'pid': self.pid}))
         if self.start_page:
             url = '%s#page=%d' % (url, self.start_page)
         return url

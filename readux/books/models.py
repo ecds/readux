@@ -1,9 +1,8 @@
 from UserDict import UserDict
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.db.models import permalink
-from django.template.defaultfilters import slugify
+from django.template.defaultfilters import slugify, truncatechars
 from lxml.etree import XMLSyntaxError
 import json
 import logging
@@ -157,6 +156,10 @@ class Page(Image):
         'Absolute url to view this object within the site'
         return (self.NEW_OBJECT_VIEW, [str(self.pid)])
 
+    @property
+    def display_label(self):
+        '''Display label, for use in html titles, twitter/facebook metadata, etc.'''
+        return '%s, p. %d' % (self.volume.display_label, self.page_order)
 
     def get_fulltext(self):
         '''Sanitized OCR full-text, e.g., for indexing or text analysis'''
@@ -314,15 +317,23 @@ class Volume(DigitalObject, BaseVolume):
         return self.dc.content.title.rstrip().rstrip('/')
 
     @property
+    def display_label(self):
+        '''Display label, for use in html titles, twitter/facebook metadata, etc.
+        Truncates the title to the first 150 characters, and includes volume information
+        if any.
+        '''
+        vol = ' [%s]' % self.volume if self.volume else ''
+        return '%s%s' % (truncatechars(self.title.rstrip(), 150), vol)
+
+    @property
     def title_part1(self):
+        'Volume title, up to the first 150 characters'
         return self.title[:150]
 
     @property
     def title_part2(self):
-        part2 = self.title[150:]
-        if(len(slugify(part2))>0):
-            return part2
-        return
+        'Volume title after the first 150 characters'
+        return self.title[150:].strip()
 
     @property
     def creator(self):

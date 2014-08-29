@@ -6,14 +6,15 @@
     {{ block.super }}
     <meta property="og:title" content="{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }}"/>
     <meta itemprop="og:headline" content="{{ vol.title|truncatechars:150 }}" />
-    {# use first page image for facebook/g+ image #}
-    <meta property="og:image" content="{{ site_root }}{% url 'books:page-thumbnail' pages.object_list.0.pid as image_url %}"/>
 
     <meta property="twitter:card" content="gallery" />
     <meta property="twitter:title" content="{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }}" />
     {# use first four page images for twitter gallery card #}
     {% for page in pages.object_list|slice:":4" %}
-    <meta name="twitter:image{{ forloop.counter0 }}:src" content="{{ site_root }}{% url 'books:page-thumbnail' page.pid %}">
+    {% if forloop.first %}   {# use first page image for facebook/g+ image #}
+    <meta property="og:image" content="{{ site_root }}{% url 'books:page-thumbnail' page.pid %}"/>
+    {% endif %}
+    <meta property="twitter:image{{ forloop.counter0 }}:src" content="{{ site_root }}{% url 'books:page-thumbnail' page.pid %}">
     {% endfor %}
 {% endblock %}
 

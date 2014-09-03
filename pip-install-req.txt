@@ -1,4 +1,4 @@
-Django<1.7
+Django==1.6.6
 eulxml>=0.21.1
 # dev eulfedora for caching on related objects; should be 0.23
 #eulfedora>=0.22.1

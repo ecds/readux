@@ -1,19 +1,15 @@
 Django==1.6.6
 eulxml>=0.21.1
-# dev eulfedora for caching on related objects; should be 0.23
-#eulfedora>=0.22.1
--e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora
+eulfedora>=0.23
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
-# now requires dev eultheme for new drop-down pagination
--e git://github.com/emory-libraries/django-eultheme.git@develop#egg=eultheme
-#-e git://github.com/emory-libraries/django-eultheme.git@0.4#egg=eultheme
+-e git://github.com/emory-libraries/django-eultheme.git@0.5#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as
 #-e git://github.com/tow/sunburnt.git@0faa3ed842d00661ec50b9cb96b41a6144ab3e6f#egg=sunburnt
-# (MAYBE) 05/2014 need local version of sunburnt for Solr 4 join query support
+# 05/2014 need local version of sunburnt for Solr 4 join query support
 # NOTE: also want new enough dev version for python-requests support
 -e git://github.com/rlskoeser/sunburnt.git@solr4-join-support#egg=sunburnt
 # sunburnt requires *either* httplib2 or python-requests
@@ -26,7 +22,7 @@ django-image-tools>=0.8.b3
 https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.21.0.tar.gz
 south
 python-magic
-# NOTE: Counter widget missing in progessbar 2.2, but 3.3 package is unverified (?)
+# NOTE: Counter widget missing in progessbar 2.2, but 2.3 package is unverified (?)
 progressbar<=2.3
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
 pdfminer

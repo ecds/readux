@@ -3,7 +3,92 @@
 CHANGELOG
 =========
 
-Release 0.3 - PDF Access
+Release 1.1 (pre)
+-----------------
+
+* As a user when I click on an ARK URL (PID) a readux resource resolves to the
+  pdf or volume landing page on the readux site so that I can access the content
+  in context.
+
+Release 1.0 - Page-Level Access
+-------------------------------
+
+Cover images and list view improvements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* As a researcher, when I'm viewing a list of titles, I want the option to
+  toggle to a cover view as an alternate way to view the content.
+* As a user, when I toggle between cover and list views I want to be able to
+  reload or go back in history without needing to reselect the mode I was last
+  viewing, so that the site doesn't disrupt my browsing experience.
+* As a user, when I page through a collection or search results, I expect the
+  display to stay in the mode that I've selected (covers or list view), so that
+  I don't have to reselect it each time.
+
+Volume landing page and Voyant improvements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* As a user when I select a title in the list view, I first see an information
+  page about the item, including pdf and page view selections, so that I know
+  more about the item before I access it.
+* As a user, I want to be able to see the full title of a book without longer
+  titles overwhelming the page, so I can get to the information I want
+  efficiently.
+* As a researcher, I want to pass a text to Voyant for analysis in a way that
+  takes advantage of caching, so that if the text has already been loaded in
+  Voyant I won't have to wait as long.
+* As a reseacher, I can easily read a page of text in Voyant, because the text
+  is neatly formatted, so that I can more readily comprehend the text.
+* As a user, I can see how large a pdf is before downloading it so that I can
+  make appropriate choices about where and how to view pdfs.
+* As a user, when I load a pdf I want to see the first page with content rather
+  than a blank page, so that I have easier access with less confusion.
+
+Page-level access / read online
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* As a researcher, I can page through a book viewing a single page at a time in
+  order to allow viewing the details or bookmarking individual pages.
+* As a user, when I'm browsing a collection or viewing search results, I can
+  select an option to read the book online if pages are available, so that I can
+  quickly access the content.
+* As a researcher, I want the option to view pages as thumbnails to enhance
+  navigation.
+* As a researcher, when I'm browsing page image thumbnails I want to see an
+  indicator when there's an error loading an image so that I don't mistake
+  errors for blank pages.
+* As a researcher, I want to be able to toggle to a mode where I can zoom in on
+  an image so that I can inspect the features of a page.
+* As a user, I want to be able to distinguish when I can and cannot use the zoom
+  function, so I can tell when the feature is unavailable (e.g., due to image
+  load error).
+* As a researcher, I want to search within a single book so that I can find
+  specific pages that contain terms relevant to my research.
+
+Navigation improvements
+^^^^^^^^^^^^^^^^^^^^^^^
+* As a user, I want to see a label or source information for the collection
+  banner image so that I know where the image comes from.
+* As a user, I want to be able to identify a resource in an open tab by title,
+  so I can quickly select the correct tab when using multiple tabs.
+* As a user, when paging through a collection list or viewing a set of pages in
+  the reading view, I can find the web page navigation at the top or bottom of
+  the page, so that I do not have to scroll far to click to go to another web
+  page in the series.
+
+Integrations with external services
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* As a twitter user, when I tweet a link to a readux collection, book, or page
+  image, I want a preview displayed on twitter so that my followers can see
+  something of the content without clicking through.
+* As a facebook user, when I share a link to a readux collection, book, or page
+  image, I want a preview displayed on facebook so that my friends can see
+  something of the content without clicking through.
+* A search engine crawling the readux site will be able to obtain basic semantic
+  data about collections and books on the site so the search engine’s results
+  can be improved.
+* A search engine can harvest information about volume content via site maps in
+  order to index the content and make it more discoverable.
+
+
+Release 0.9 - PDF Access
 -------------------------
 
 * As a researcher, I want to browse a list of collections in order to

@@ -25,4 +25,4 @@ python-magic
 # NOTE: Counter widget missing in progessbar 2.2, but 2.3 package is unverified (?)
 progressbar<=2.3
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
-pdfminer
+pdfminer<=20140328

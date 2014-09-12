@@ -52,12 +52,12 @@ The following management commands are available.  For more details, use
 ``manage.py help <command>``.  As much as possible, all custom commands honor the
 built-in django verbosity options.
 
- * **import_covers**
-    .. autoclass:: readux.books.management.commands.import_covers.Command
-       :members:
+* **import_covers**
+    .. automodule:: readux.books.management.commands.import_covers
+        :members:
 
 * **import_pages**
-    .. autoclass:: readux.books.management.commands.import_pages.Command
+    .. automodule:: readux.books.management.commands.import_pages
        :members:
 
 * **update_arks**

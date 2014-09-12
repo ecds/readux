@@ -10,6 +10,18 @@ Release 1.1 (pre)
   pdf or volume landing page on the readux site so that I can access the content
   in context.
 
+
+Release 1.0.1
+-------------
+
+* Include *.TIF in image file patterns searched when attempting to identify
+  page images in **import_covers** and **import_pages** scripts
+* Additional documentation and tips for running **import_covers** and
+  **import_pages** scripts
+* Bugfix: workaround for pdfminer maximum recursion error being triggered by
+  outline detection for some PDF documents
+* Enable custom 404, 403, and 500 error pages based on eultheme styles
+
 Release 1.0 - Page-Level Access
 -------------------------------
 

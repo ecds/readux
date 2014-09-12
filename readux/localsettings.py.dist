@@ -16,10 +16,18 @@ INTERNAL_IPS = ['127.0.0.1', 'localhost']
 
 ALLOWED_HOSTS = ['localhost']
 
+# users who should get automated django error emails
+ADMINS = (
+    # ('Your Name', 'your_email@domain.com'),
+)
+
+MANAGERS = ADMINS
+EMAIL_SUBJECT_PREFIX = '[Readux] '  # prefix for email subjects
+
 # Set to True if you want the beta warning banner displayed on the site (e.g., for QA)
 ENABLE_BETA_WARNING = False
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: keep the secret key use d in production secret!
 # Generate a new key here: http://www.miniwebtool.com/django-secret-key-generator/
 SECRET_KEY = ''
 

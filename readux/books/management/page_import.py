@@ -218,7 +218,17 @@ class BasePageImport(BaseCommand):
                   in enumerate(PDFPage.create_pages(document)))
 
             possible_coverpages = []
+            page_count = 0
             for (level, title, dest, a, se) in outlines:
+
+                # NOTE: some LSDI PDFs trigger a maximum recursion error in
+                # pdfminer; try to avoid this by bailing out after processing
+                # a set number of outline items
+                # caveat: outline entries are not necessarily returned in order
+                page_count += 1
+                if page_count > 15:
+                    break
+
                 # title is the label of the outline element
 
                 # dest is the target page object; apparently in some cases this can be None ?

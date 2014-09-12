@@ -20,12 +20,23 @@ to manage multiple instances of the script running on a remote server, both to
 avoid the script being interrupted by a connection error, and so you can easily
 check on and manage multiple instances of the script running at once.
 
+.. Note::
+
+    If the script detects that a Volume already has a cover image associated,
+    it will simply skip it and not make any changes or re-upload a cover, *unless*
+    the ``--update`` option is specified, in which case it will check to see if
+    the existing cover needs to be updated.  This means it is entirely safe to re-run
+    the import on a collection that has been partially imported or even all
+    Volumes in order to pick up covers for Volumes that were missed previously.
+
 If a cover has been detected and assigned incorrectly, use the ``--update`` command
 with the specified pid or collection to try detecting the cover and updating the
-record in Fedora.
+record in Fedora.  However, if neither the data in the Digitization Workflow nor
+the cover detection logic in readux have been changed since the last run, it is
+unlikely a different cover image will be detected.
 
-Note that the script does have an interrupt handler configured, so if you need
-to stop the import while it is in progress (e.g., if you know the Fedora Repository
+This script does have an interrupt handler configured, so if you need to stop
+the import while it is in progress (e.g., if you know the Fedora Repository
 needs to be restarted), first try a single control-c which will attempt to exit
 cleanly after processing the current volume, and should report on what was
 completed before the interruption.

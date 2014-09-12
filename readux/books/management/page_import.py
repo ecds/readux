@@ -145,17 +145,20 @@ class BasePageImport(BaseCommand):
         if not len(images):
             images = glob.glob('%s/*.tif' % vol_info.display_image_path)
 
+        # tif variant - in some cases, extension is upper case
+        if not len(images):
+            images = glob.glob('%s/*.TIF' % vol_info.display_image_path)
+
         # if neither jp2s nor tiffs were found, look for jpgs
         if not len(images):
             images = glob.glob('%s/*.jpg' % vol_info.display_image_path)
-
 
         # make sure the files are sorted; images are expected to be named
         # so that they are ordered in page-sequence when sorted
         images.sort()
 
         if not len(images):
-            self.stdout.write('Error: no files matching *.tif, *.jp2, or *.jpg found for %s' % \
+            self.stdout.write('Error: no files matching *.jp2, *.tif, *.TIF, or *.jpg found for %s' % \
                               vol_info.display_image_path)
 
         # images could be empty list if no matches were found

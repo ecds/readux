@@ -1,3 +1,34 @@
+'''
+This manage.py command should be used for loading cover images into Readux.
+Covers must be loaded before full page-image content can be loaded for a Volume.
+
+This script requires access to the Digitization Workflow application; the REST
+endpoint should be configured in localsettings via **DIGITIZATION_WORKFLOW_API**.
+Running this script also requires that the image paths referenced in the
+Digitization Workflow application be mounted locally at the same path, in order
+to access and identify page image content.
+
+Because identifying cover images and loading them into Fedora can be a slow
+process, if you want to load more covers at once you may find it useful to
+run the script in collection mode (load covers for a specific collection), e.g.::
+
+    python manage.py import_covers -c emory-control:LSDI-RegimentalHistories
+
+Then you can run multiple versions of the script in parallel, so that multiple
+collections can be loaded at once.  It is recommended to use the `screen` command
+to manage multiple instances of the script running on a remote server, both to
+avoid the script being interrupted by a connection error, and so you can easily
+check on and manage multiple instances of the script running at once.
+
+Note that the script does have an interrupt handler configured, so if you need
+to stop the import while it is in progress (e.g., if you know the Fedora Repository
+needs to be restarted), first try a single control-c which will attempt to exit
+cleanly after processing the current volume, and should report on what was
+completed before the interruption.
+
+----
+
+'''
 import logging
 from optparse import make_option
 import os
@@ -18,7 +49,7 @@ logger = logging.getLogger(__name__)
 class Command(BasePageImport):
     '''Identify and ingest cover images for Volume objects in Fedora.
 Takes an optional list of pids; otherwise, looks for all Volume objects in
-the configured fedora instance.'''
+the configured fedora instance, or in a single collection specified by pid.'''
     help = __doc__
     args = '<pid> [<pid> [<pid>]]'
 

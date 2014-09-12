@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from mock import patch, NonCallableMock
 
 from eulfedora.server import Repository
-from readux.collection.models import Collection
+from readux.collection.models import Collection, SolrCollection
 from readux.books.models import Volume, SolrVolume
 
 class CollectionTest(TestCase):
@@ -31,10 +31,10 @@ class CollectionViewsTest(TestCase):
 
         # set up mock results for collection query and facet counts
         solr_result = [
-            {'pid': 'coll:1', 'title': 'Yellowbacks',
-            'description': ['Cheap 19thc paperbacks, often bound in yellow.']},
-            {'pid': 'coll:2', 'title': 'Emory Yearbooks',
-            'description': ['Digitized copies of Emory yearbooks from various schools.']},
+            SolrCollection(**{'pid': 'coll:1', 'title': 'Yellowbacks',
+            'description': ['Cheap 19thc paperbacks, often bound in yellow.']}),
+            SolrCollection(**{'pid': 'coll:2', 'title': 'Emory Yearbooks',
+            'description': ['Digitized copies of Emory yearbooks from various schools.']}),
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.query.execute.return_value.facet_counts.facet_fields = {
@@ -43,7 +43,7 @@ class CollectionViewsTest(TestCase):
 
         # response = self.client.get(reverse('collection:browse'))
         # collection browse is actually site index, at least for now
-        response = self.client.get(reverse('site-index'))
+        response = self.client.get(reverse('collection:list'))
 
         # inspect solr query args
         # - collection search
@@ -139,7 +139,7 @@ class CollectionViewsTest(TestCase):
         self.assertContains(response, mockcoll.short_label,
             msg_prefix='collection short label should be displayed')
         self.assertContains(response,
-            '<title>Readux | Collections | %s</title>' % mockcoll.short_label,
+            '<title>%s Collection | Readux</title>' % mockcoll.short_label,
             html=True,
             msg_prefix='collection label should be included in html title')
         self.assertContains(response, mockcoll.dc.content.description,
@@ -172,4 +172,3 @@ class CollectionViewsTest(TestCase):
             '<abbr class="unapi-id" title="%s"></abbr>' % solr_result[1]['pid'],
             msg_prefix='unapi item id for %s should be included to allow zotero harvest' % \
                        solr_result[1]['pid'])
-

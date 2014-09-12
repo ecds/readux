@@ -50,20 +50,68 @@ Initial QA/production deploy
    * Note that Fedora access requires a non-privileged guest account, in order
      to acess an API-M method for information about a datastream, used for
      PDF download view, etc.
+
 * Run ``python manage.py syncdb``
 * Run ``python manage.py migrate``
 * Configure the site to run under apache (see ``apache/readux.conf`` for a
   sample apache configuration)
 * Use Django admin interface to configure the site domain name (used to generate
   absolute urls to full-text content for use with Voyant)
+* Use Django console to update LSDI collection objects with an owner value
+  that can be used for xacml policies and filtering::
+
+     python manage.py shell
+     >>> from readux.fedora import ManagementRepository
+     >>> from readux.collection.models import Collection
+     >>> repo = ManagementRepository()
+     >>> colls = repo.get_objects_with_cmodel(Collection.COLLECTION_CONTENT_MODEL, type=Collection)
+     >>> for c in colls:
+     ...    if 'LSDI' in c.label:
+     ...        c.owner = 'LSDI-project'
+     ...        c.save('set owner to "LSDI-project" for xacml policy')
+     ...
+
 * Configure eulindexer to point to the new site url, restart eulindexer service,
   and reindex the site
 * Update/deploy xacml to allow API-A access to LSDI collections
+
+* Run a manage script to populate initial collection descriptions::
+
+    python manage.py collection_descriptions
+
+
+Upgrade Notes
+=============
+
+Release 1.1
+-----------
+
 * Run manage script to update Volume PDF ARKs to resolve to the new readux site
   (be sure that the site domain name is configured correctly before running)::
 
     python manage.py update_arks
 
-* Run a manage script to populate initial collection descriptions::
+Release 1.0
+-----------
 
-    python manage.py collection_descriptions
+* Run the manage script to import covers for all books::
+
+    python manage.py import_covers
+
+  or by collection::
+
+    python manage.py import_covers -c emory-control:LSDI-Yellowbacks
+
+.. Note::
+
+    Ingesting page images requires access to the Digitization Workflow
+    web application and file-level access to the content managed by the
+    Digitization Workflow (e.g., /mnt/lsdi).
+
+* Run the manage script to import pages for *selected* books by pid::
+
+    python manage.py import_covers pid1 pid2 pid3 ...
+
+  or by collection::
+
+    python manage.py import_pages -c emory-control:LSDI-Yellowbacks

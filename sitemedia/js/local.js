@@ -1,29 +1,77 @@
+/*** deprecated browser function ***/
+(function() {
+    var matched, browser;
+
+    // Use of jQuery.browser is frowned upon.
+    // More details: http://api.jquery.com/jQuery.browser
+    // jQuery.uaMatch maintained for back-compat
+    jQuery.uaMatch = function( ua ) {
+        ua = ua.toLowerCase();
+
+        var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+            /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
+            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
+            /(msie) ([\w.]+)/.exec( ua ) ||
+            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
+            [];
+
+        return {
+            browser: match[ 1 ] || "",
+            version: match[ 2 ] || "0"
+        };
+    };
+
+    matched = jQuery.uaMatch( navigator.userAgent );
+    browser = {};
+
+    if ( matched.browser ) {
+        browser[ matched.browser ] = true;
+        browser.version = matched.version;
+    }
+
+    // Chrome is Webkit, but Webkit is also Safari.
+    if ( browser.chrome ) {
+        browser.webkit = true;
+    } else if ( browser.webkit ) {
+        browser.safari = true;
+    }
+
+    jQuery.browser = browser;
+})();
+
 $(document).ready(function() {
     // collection browse cover view
-    var $container = $('#collection-covers');
+    var $container = $('#cover-list');
     // init
     $container.isotope({
       // options
-      itemSelector: '.collection',
+      itemSelector: 'li',
       masonry: {
         columnWidth: 220,
         isFitWidth: true
-      }
+      },
+      transitionDuration:'0.4s'
     });
 
-    // collection browse toggle view modes
+    $bannerInfo = $('.collection-image-info');
 
-    $('#view-toggle a').click(function() {
-        console.log(this);
-        console.log($(this).attr('id'));
-        $('#view-toggle a').removeClass('active');
-        var show_id = '#collection-' + $(this).attr('id');
-        console.log('show id = ' + show_id);
-        $('div[id^="collection-"]').hide().removeClass('hidden');
-        $(show_id).show();
-        $(this).addClass('active');
-
+    $bannerInfo.on('click',function(){
+        $(this).toggleClass('collasped');
     });
+
+
+    $(".page-header .expand").on('click',function(evt){
+        evt.preventDefault();
+        $(this).toggle().siblings('.continued').toggle();
+    })
+    $('.page-header .continued').on('click',function(evt){
+        evt.preventDefault();
+        $(this).toggle().siblings('.expand').toggle();
+    })
 
 
 });
+
+
+
+

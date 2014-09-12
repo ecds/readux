@@ -40,14 +40,16 @@ descriptions = {
 
     # 'emory-control:LSDI-EmoryPublications':  ''' ''',
 
-    # 'emory-control:LSDI-EmoryYearbooks': ''' ''',
+    'emory-control:LSDI-EmoryYearbooks': '''The Emory Campus, the Asodecoan,
+    the Aesculapian, the Zodiac and other Emory yearbooks.''',
 
     'emory-control:LSDI-General':
-    '''This collection contains a true miscellany of books ranging from
-    Confessions of a Wife, by Mary Adams to Eight Lectures on Theoretical
-    Physics, by Max Planck, including such items as A Handy Reference Atlas
-    of the World, Hindu Logic as Preserved in China and Japan, and Only Peggy,
-    a Comedietta. Both fiction and non-fiction publications are included.''',
+    '''This collection contains a true miscellany of digitized brittle books
+    ranging from Confessions of a Wife, by Mary Adams to Eight Lectures on
+    Theoretical Physics, by Max Planck, including such items as A Handy
+    Reference Atlas of the World, Hindu Logic as Preserved in China and
+    Japan, and Only Peggy, a Comedietta. Both fiction and non-fiction
+    publications are included.''',
 
     'emory-control:LSDI-GeorgiaStateHouseJournals':
     '''Record of sessions from 1847 - 2004''',
@@ -55,7 +57,9 @@ descriptions = {
     'emory-control:LSDI-GeorgiaStateSenateJournals':
     '''Record of sessions from 1815 - 2006''',
 
-    # 'emory-control:LSDI-MARBL': ''' ''',
+    'emory-control:LSDI-MARBL': '''This collection of items from the Manuscript,
+    Archives, and Rare Book Library contains novels, Civil War memoirs, and
+    Italian literature.''',
 
     'emory-control:LSDI-Methodism':
     '''The Methodism collection contains materials that document the
@@ -75,10 +79,16 @@ descriptions = {
     '''Dictionaries and encyclopedias of bible, theology, religion, and
     archeology; hymnbooks; historic Greek and Hebrew lexicons; commentaries.''',
 
-    # 'emory-control:LSDI-TripleDeckers': ''' ''',
+    'emory-control:LSDI-TripleDeckers': '''Triple Deckers are novels
+    published in 3 volumes, generally in Britain in the 19th century.
+    These triple deckers are from the rare books in MARBL.''',
 
     'emory-control:LSDI-Yellowbacks':
     '''What people read on the train in the late 19th century.''',
+
+    'emory-control:LSDI-MedicalHeritage':
+    '''Eighteenth and nineteenth century medical treatises.'''
+
 
 }
 

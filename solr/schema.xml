@@ -281,10 +281,19 @@ Solr Schema for projects using eulfedora and indexdata.
    <field name="collection_id" type="string" indexed="true" stored="true"/>
    <field name="collection_label" type="text" indexed="true" stored="true"/>
    <field name="book_id" type="string" indexed="true" stored="true"/>
+   <!-- page order, for page objects -->
    <field name="page_order" type="sint" indexed="true" stored="true"/>
+   <!-- page count, for volume objects -->
+   <field name="page_count" type="sint" indexed="true" stored="true"/>
+   <!-- start page, for volume objects -->
+   <field name="start_page" type="sint" indexed="false" stored="true"/>
    <!-- document full text; NOT configured to allow highlighting -->
-   <field name="fulltext" type="text" indexed="true" stored="false"
-          termVectors="true" termPositions="true" termOffsets="true"/>
+   <field name="fulltext" type="text" indexed="true" stored="false"/>
+   <!-- page-level full text; configured to allow highlighting -->
+   <field name="page_text" type="text" indexed="true" stored="true"
+     termVectors="true" termPositions="true" termOffsets="true"/>
+   <!-- pdf size, for volume objects -->
+   <field name="pdf_size" type="sint" indexed="true" stored="true"/>
 
    <!-- Dublin Core fields -->
    <field name="title" type="text" indexed="true" stored="true"/>
@@ -414,7 +423,6 @@ Solr Schema for projects using eulfedora and indexdata.
    <!-- include full text in default text -->
    <!-- FIXME: possibly redundant / requires extra storage ? -->
    <copyField source="fulltext" dest="text"/>
-
 
  <!-- Similarity is the scoring routine for each document vs. a query.
       A custom similarity may be specified here, but the default is fine

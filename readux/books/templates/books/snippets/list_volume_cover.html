@@ -1,0 +1,8 @@
+<li class="cover" {% if obj.hasPrimaryImage %}style="background-image:url('{% url 'books:page-thumbnail' obj.hasPrimaryImage %}');background-color:#EEE;"{% endif %}>
+    <a href="{% url 'books:volume' obj.pid %}" title="{{ obj.title|truncatechars:100 }}">
+        {# show the title if there is no image #}
+        {% if not obj.hasPrimaryImage %}
+            <span>{{ obj.title|truncatechars:100 }}</span>
+        {% endif %}
+    </a>
+</li>

@@ -7,13 +7,14 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
 from readux.collection.sitemaps import CollectionSitemap
-from readux.books.sitemaps import VolumePdfSitemap
+from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap
 
 admin.autodiscover()
 
 sitemaps = {
     'collections': CollectionSitemap,
     'volume-pdfs': VolumePdfSitemap,
+    'volumes': VolumeSitemap,
 }
 
 urlpatterns = patterns('',
@@ -26,6 +27,9 @@ urlpatterns = patterns('',
 
     # index data for solr
     url(r'^indexdata/', include('eulfedora.indexdata.urls', namespace='indexdata')),
+
+    # deep-zoom for images
+    url(r'^dzi/', include('readux.dyndzi.urls', namespace='deepzoom')),
 
      # add redirect for favicon at root of site
     (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),

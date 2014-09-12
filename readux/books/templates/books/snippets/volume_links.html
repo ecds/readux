@@ -1,0 +1,33 @@
+{# buttons for view pdf and send to voyant #}
+
+{% if vol.has_pages %}
+<!--<a class="btn btn-primary{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:page' vol.primary_image.pid %}">
+    <span class="glyphicon glyphicon-book"></span>
+    <span>Read online</span>
+</a>-->
+
+<a class="btn btn-success {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' vol.pid %}">
+    <span class="glyphicon glyphicon-book"></span>
+    <span>Read online</span>
+</a>
+{% endif %}
+
+<a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}"
+    href="{{ vol.pdf_url }}"
+    title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
+    <span class="fa fa-file-pdf-o"></span>
+    <span>View PDF</span>
+    {% if vol.pdf_size %}
+        <span class="text-muted">({{ vol.pdf_size|filesizeformat }})</span>
+    {% endif %}
+</a>
+
+{# link to voyant with full document plain text as input; preset english stopwords for english texts #}
+<a href="{{ vol.voyant_url }}"
+   title="send text to Voyant" target="_blank" class="btn btn-default{% if small_buttons %} btn-xs{% endif %}">
+        <span class="glyphicon glyphicon-send"></span>
+        <span>Send to Voyant</span>
+</a>
+
+{# unapi id for zotero harvest #}
+<abbr class="unapi-id" title="{{ vol.pid }}"></abbr>

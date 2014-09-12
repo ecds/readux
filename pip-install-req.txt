@@ -1,22 +1,28 @@
-Django
-eulfedora>=0.22.1
+Django==1.6.6
+eulxml>=0.21.1
+eulfedora>=0.23
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
--e git://github.com/emory-libraries/django-eultheme.git@0.4#egg=eultheme
+-e git://github.com/emory-libraries/django-eultheme.git@0.5#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as
 #-e git://github.com/tow/sunburnt.git@0faa3ed842d00661ec50b9cb96b41a6144ab3e6f#egg=sunburnt
-# (MAYBE) 05/2014 need local version of sunburnt for Solr 4 join query support
+# 05/2014 need local version of sunburnt for Solr 4 join query support
 # NOTE: also want new enough dev version for python-requests support
 -e git://github.com/rlskoeser/sunburnt.git@solr4-join-support#egg=sunburnt
 # sunburnt requires *either* httplib2 or python-requests
 requests
 eulcommon
 # local pid manager client
-https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.1.tar.gz
+https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.2.tar.gz
 django-image-tools>=0.8.b3
 # local python library for emory ldap
 https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.21.0.tar.gz
 south
+python-magic
+# NOTE: Counter widget missing in progessbar 2.2, but 2.3 package is unverified (?)
+progressbar<=2.3
+-e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
+pdfminer<=20140328

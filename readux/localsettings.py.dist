@@ -63,10 +63,10 @@ SOLR_SERVER_URL = "http://server.name:8983/solr/readux/"
 
 # Fedora Repository settings
 FEDORA_ROOT = 'https://localhost:8443/fedora/'
-# optional fedora credentials
 # FEDORA_PIDSPACE = 'readux'
-# FEDORA_USER = 'fedoraAdmin'
-# FEDORA_PASSWORD = 'fedoraAdmin'
+# NOTE: should be configured with a limited access guest account
+FEDORA_USER = 'guest'
+FEDORA_PASSWORD = 'guest'
 # fedora user with access to manage content; used for ingest scripts etc.
 FEDORA_MANAGEMENT_USER = 'fedoraAdmin'
 FEDORA_MANAGEMENT_PASSWORD = 'fedoraAdmin'
@@ -82,6 +82,8 @@ PIDMAN_USER = ''
 PIDMAN_PASSWORD = ''
 # PIDMAN_DOMAIN = '' # default domain (e.g., for creating pids)
 
+# URL to the digitization workflow api, e.g. http://my.server.co/digwf_api/
+DIGITIZATION_WORKFLOW_API = ''
 
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/

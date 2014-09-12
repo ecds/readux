@@ -1,0 +1,94 @@
+{% extends 'site_base.html' %}
+
+{% block page-subtitle %}{{ page.display_label }} | {% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/deepzoom.js"></script>
+  <script type="text/javascript" charset="utf-8">
+     $(document).ready(function () {
+        // set up seadragon configuration (not loaded unless triggered by user)
+        set_seadragon_opts({
+            id: "zoom-page",
+            prefixUrl: "{{ STATIC_URL }}js/openseadragon/images/",
+            tileSources: "{% url 'deepzoom:dzi' page.pid %}",
+            toolbar: 'deepzoom-controls',
+            showNavigator: true,
+            navigatorPosition: 'TOP_LEFT',
+            zoomInButton: 'dz-zoom-in',
+            zoomOutButton: 'dz-zoom-out',
+            homeButton: 'dz-home',
+            fullPageButton: 'dz-fs',
+        });
+     });
+  </script>
+{% endblock %}
+
+{% block metadata %}
+    {{ block.super }}
+    {% url 'books:page-image' page.pid as image_url %}
+    <meta property="og:title" content="{{ page.display_label }}"/>
+    <meta itemprop="og:headline" content="{{ page.display_label }}" />
+    <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
+
+    <meta property="twitter:card" content="photo" />
+    <meta property="twitter:title" content="{{ page.display_label }}" />
+    <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% include 'books/snippets/volume_header.html' with vol=page.volume %}
+    </div>
+    <article class="carousel page">
+        <div class="carousel-inner">
+
+            <div class="container in-page-controls">
+                <div id="view-toggle" class="col-sm-4 pull-right">
+                    <div class="btn-group pull-right">
+                        <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode" title="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
+
+                        <a id="covers" href="#" class="btn active" alt="Single Page" title="Single Page"><span class="glyphicon glyphicon-file"></span></a>
+
+                        <a id="list" alt="Gallery" title="Gallery" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
+                    </div>
+
+                    <div id="deepzoom-controls" class="hidden">
+                        <div class="btn-group">
+                            <a id="dz-zoom-in" alt="Zoom In" title="Zoom In" href="#" class="btn"><span class="glyphicon glyphicon-plus"></span></a>
+
+                            <a id="dz-zoom-out" alt="Zoom Out" title="Zoom Out" href="#" class="btn"><span class="glyphicon glyphicon-minus"></span></a>
+
+                            <a id="dz-home" alt="Back to Start Position" title="Back to Start Position" href="#" class="btn"><span class="glyphicon glyphicon-home"></span></a>
+
+                            <a id="dz-fs" alt="Fullscreen Mode" title="Fullscreen Mode" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-3 col-sm-4 col-sm-offset-4 text-center">
+                    <p class="text-muted">p. {{ page.page_order }}</p>
+                </div>
+
+            </div>
+
+            <div class="text-center">
+                <div id="zoom-page"></div>
+                <div id="page-image"><img src="{% url 'books:page-image' page.pid %}"/></div>
+            </div>
+        </div>
+
+        {% if prev %}
+        <a class="left carousel-control" href="{% url 'books:page' prev.pid %}" role="button" data-slide="prev" title="Prev: Page {{ prev.page_order }}">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        {% endif %}
+        {% if next %}
+        <a class="right carousel-control" href="{% url 'books:page' next.pid %}" role="button" data-slide="next" title="Next: Page {{ next.page_order }}">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        {% endif %}
+    </article>
+</div>
+{% endblock %}

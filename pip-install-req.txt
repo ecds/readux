@@ -16,7 +16,7 @@ django-widget-tweaks
 requests
 eulcommon
 # local pid manager client
-https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.1.tar.gz
+https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.2.tar.gz
 django-image-tools>=0.8.b3
 # local python library for emory ldap
 https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.21.0.tar.gz
@@ -25,4 +25,4 @@ python-magic
 # NOTE: Counter widget missing in progessbar 2.2, but 2.3 package is unverified (?)
 progressbar<=2.3
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
-pdfminer
+pdfminer<=20140328

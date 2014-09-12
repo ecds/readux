@@ -83,13 +83,24 @@ Initial QA/production deploy
 Upgrade Notes
 =============
 
-Release 1.0
+Release 1.1
 -----------
 
+* Run manage script to update Volume PDF ARKs to resolve to the new readux site
+  (be sure that the site domain name is configured correctly before running)::
+
+    python manage.py update_arks
+
+Release 1.0
+-----------
 
 * Run the manage script to import covers for all books::
 
     python manage.py import_covers
+
+  or by collection::
+
+    python manage.py import_covers -c emory-control:LSDI-Yellowbacks
 
 .. Note::
 
@@ -101,7 +112,6 @@ Release 1.0
 
     python manage.py import_covers pid1 pid2 pid3 ...
 
-* Run manage script to update Volume PDF ARKs to resolve to the new readux site
-  (be sure that the site domain name is configured correctly before running)::
+  or by collection::
 
-    python manage.py update_arks
+    python manage.py import_pages -c emory-control:LSDI-Yellowbacks

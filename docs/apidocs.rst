@@ -57,7 +57,7 @@ built-in django verbosity options.
         :members:
 
 * **import_pages**
-    .. autoclass:: readux.books.management.commands.import_pages.Command
+    .. automodule:: readux.books.management.commands.import_pages
        :members:
 
 * **update_arks**

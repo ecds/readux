@@ -1,3 +1,44 @@
+'''
+This manage.py command should be used for loading page images for selected
+volumes and collections into Readux.  Note that covers *must* be loaded
+before full page-image content can be loaded for a Volume.  It is recommended
+to check that covers have been detected correctly for a volume before loading pages,
+since correcting the cover after all pages are loaded may be difficult.
+
+Like :mod:`~readux.books.management.commands.import_covers`, this script
+requires access to the Digitization Workflow application; the REST
+endpoint should be configured in localsettings via **DIGITIZATION_WORKFLOW_API**
+and image paths referenced in the Digitization Workflow application should be
+mounted locally at the same path, in order to access and identify page
+image content.
+
+Finding and loading page images into Fedora is a slow process.  If you want to
+load more pages at once you may find it useful to run the script in collection
+mode (load pages for all volumes in a specific collection), e.g.::
+
+    python manage.py import_pages -c emory-control:LSDI-Yellowbacks
+
+Then you can run multiple versions of the script in parallel, so that multiple
+collections can be loaded at once.  It is recommended to use the `screen` command
+to manage multiple instances of the script running on a remote server, both to
+avoid the script being interrupted by a connection error, and so you can easily
+check on and manage multiple instances of the script running at once.
+
+This script does have an interrupt handler configured, so if you need to stop
+the import while it is in progress (e.g., if you know the Fedora Repository
+needs to be restarted), first try a single control-c which will attempt to exit
+cleanly after loading all pages for the current volume, and should report on
+what was completed before the interruption.
+
+.. Note::
+
+    There is currently no mechanism for recovering or cleaning up if the script
+    is interrupted part of the way through loading pages for a volume; cleaning
+    up will either require manual effort or an update to this script.
+
+----
+
+'''
 import logging
 from optparse import make_option
 import os

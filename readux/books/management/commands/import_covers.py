@@ -15,10 +15,14 @@ run the script in collection mode (load covers for a specific collection), e.g.:
     python manage.py import_covers -c emory-control:LSDI-RegimentalHistories
 
 Then you can run multiple versions of the script in parallel, so that multiple
-collections can be loaded at once.  It is recommended to use the `screen` command
+collections can be loaded at once.  It is recommended to use the ``screen`` command
 to manage multiple instances of the script running on a remote server, both to
 avoid the script being interrupted by a connection error, and so you can easily
 check on and manage multiple instances of the script running at once.
+
+If a cover has been detected and assigned incorrectly, use the ``--update`` command
+with the specified pid or collection to try detecting the cover and updating the
+record in Fedora.
 
 Note that the script does have an interrupt handler configured, so if you need
 to stop the import while it is in progress (e.g., if you know the Fedora Repository

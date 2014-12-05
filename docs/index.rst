@@ -14,6 +14,7 @@ Contents:
    changelog
    deploynotes
    apidocs
+   devnotes
 
 
 Indices and tables

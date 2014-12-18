@@ -32,10 +32,11 @@ def collections_modified(request, *args, **kwargs):
                   .sort_by('-timestamp').field_limit('timestamp')
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified
-    return results[0]['timestamp']
+    if results.count():
+        return results[0]['timestamp']
 
 
-# @last_modified(collections_modified)
+@last_modified(collections_modified)
 def browse(request, mode='covers'):
     ''''Browse list of all collections sorted by title, with the
     count of volumes in each.
@@ -90,8 +91,8 @@ def collection_modified(request, pid, **kwargs):
                   .sort_by('-timestamp').field_limit('timestamp')
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified
-    return results[0]['timestamp']
-
+    if results.count():
+        return results[0]['timestamp']
 
 @last_modified(collection_modified)
 def view(request, pid, mode='list'):

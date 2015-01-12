@@ -115,7 +115,8 @@ class Image(DigitalObject):
             imgmeta = self.getDissemination(self.IMAGE_SERVICE, 'getMetadata')
             # getDissemination returns a tuple of result, url
             # load the image metadata returned by djatoka via json and return
-            self._image_metadata = json.loads(imgmeta[0])
+            # NOTE: this is eulfedora + requests syntax; old syntax was imgmeta[0]
+            self._image_metadata = json.loads(imgmeta.content)
         return self._image_metadata
 
     # expose width & height from image metadata as properties

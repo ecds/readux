@@ -1,10 +1,10 @@
 import logging
 from django.http import HttpResponse, HttpResponseBadRequest, Http404
-from django.views.decorators.http import condition, last_modified
+from django.views.decorators.http import condition
 
 from deepzoom import DeepZoomImageDescriptor
 
-from eulfedora.server import TypeInferringRepository
+from eulfedora.server import TypeInferringRepository, Repository
 from eulfedora.views import datastream_etag
 
 from readux.books.models import Image
@@ -33,7 +33,22 @@ def image_etag(request, img_id, **kwargs):
     '''
     return datastream_etag(request, img_id, Image.image.id, **kwargs)
 
-@condition(etag_func=image_etag)
+
+def image_lastmodified(request, img_id , **kwargs):
+    '''Last-modified for Fedora Image datastream, to allow browser caching
+    on DZI views.
+
+    :param img_id: image identifier (Fedora pid)
+    '''
+    # NOTE: next version of eulfedora should have a reusable datastream
+    # last-modified method similar to existing datastream_etag
+    repo = Repository()
+    img = repo.get_object(img_id, type=Image)
+    if img.image and img.image.exists:
+        return img.image.created
+
+
+@condition(etag_func=image_etag, last_modified_func=image_lastmodified)
 def image_dzi(request, img_id):
     '''Generate and return the xml portion of a DZI file.
 
@@ -43,7 +58,7 @@ def image_dzi(request, img_id):
     return HttpResponse(DziImage(img).serialize(pretty=True),
                         mimetype='application/xml')
 
-@condition(etag_func=image_etag)
+@condition(etag_func=image_etag, last_modified_func=image_lastmodified)
 def dzi_tile(request, img_id, level, column, row, fmt):
     '''Generate a single tile image for the specified level, column,
     row, and format.

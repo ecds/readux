@@ -401,15 +401,6 @@ class Volume(DigitalObject, BaseVolume):
 
         data = super(Volume, self).index_data()
 
-        # a few books have multiple titles;
-        # if title is a list, choose the longest one
-        if isinstance(data['title'], list):
-            title = ''
-            for d in data['title']:
-                if len(d) > len(title):
-                    title = d
-            data['title'] = title
-
         if self.ocr.exists:
             try:
                 data['fulltext'] = self.get_fulltext()

@@ -83,13 +83,13 @@ Initial QA/production deploy
 Upgrade Notes
 =============
 
-Release 1.1
------------
+Release 1.0.2
+-------------
 
-* Run manage script to update Volume PDF ARKs to resolve to the new readux site
-  (be sure that the site domain name is configured correctly before running)::
+* Run **syncrepo** manage script to ensure all Fedora content models are
+  loaded in the configured repository::
 
-    python manage.py update_arks
+    python manage.py syncrepo
 
 Release 1.0
 -----------

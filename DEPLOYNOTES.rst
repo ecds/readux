@@ -53,7 +53,7 @@ Initial QA/production deploy
 
 * Run ``python manage.py syncdb``
 * Run ``python manage.py migrate``
-* Configure the site to run under apache (see ``apache/readux.conf`` for a
+* Configure the site to run under apache (see ``deploy/apache/readux.conf`` for a
   sample apache configuration)
 * Use Django admin interface to configure the site domain name (used to generate
   absolute urls to full-text content for use with Voyant)

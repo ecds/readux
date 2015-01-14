@@ -698,9 +698,10 @@ class BookViewsTest(TestCase):
         response = self.client.get(url)
         mockobj.get_region.assert_called_with(scale=300)
         self.assertEqual(mockobj.get_region.return_value, response.content)
-        # etag & last-modified set by condition decorator, not testable here
         self.assertEqual('image/jpeg', response['Content-Type'],
             '404 should be served as image/jpeg')
+        # etag & last-modified set by condition decorator, not testable here
+        # NOTE: or possibly just not testable without mocking readux.books.view_helpers
 
         # error generating image
         mockobj.get_region.side_effect = RequestFailed(Mock(status_code=500,

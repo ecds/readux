@@ -45,7 +45,6 @@ def search(request, mode='list'):
         if 'collection' not in request.GET:
             q = q.facet_by('collection_label_facet', sort='index', mincount=1)
 
-
         # TODO: how can we determine via solr query if a volume has pages loaded?
         # join query on pages? index page_count in solr?
 
@@ -287,7 +286,7 @@ def unapi(request):
     # (maybe an extensible class-based view?) for re-use
 
     item_id = request.GET.get('id', None)
-    format = request.GET.get('format', None)
+    fmt = request.GET.get('format', None)
     context = {}
     if item_id is not None:
         context['id'] = item_id
@@ -298,11 +297,11 @@ def unapi(request):
 
         formats = obj.unapi_formats
 
-        if format is None:
+        if fmt is None:
             # display formats for this item
             context['formats'] = formats
         else:
-            current_format = formats[format]
+            current_format = formats[fmt]
             # return requested format for this item
             meth = getattr(obj, current_format['method'])
             return HttpResponse(meth(), content_type=current_format['type'])
@@ -337,9 +336,9 @@ def _error_image_response(mode):
         with open(os.path.join(base_path, 'img', img)) as content:
             return HttpResponseNotFound(content.read(), mimetype='image/png')
 
-
-@condition(etag_func=view_helpers.page_image_etag)
 @require_http_methods(['GET', 'HEAD'])
+@condition(etag_func=view_helpers.page_image_etag,
+           last_modified_func=view_helpers.page_image_lastmodified)
 def page_image(request, pid, mode=None):
     '''Return a page image, resized according to mode.
 
@@ -373,23 +372,15 @@ def page_image(request, pid, mode=None):
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level
 
-            response = HttpResponse(content, mimetype='image/jpeg')
-
-            # Set response headers to enable caching.
-            # If the image datastream has a checksum, use it as ETag
-            if page.image.checksum_type != 'DISABLED':
-                response['ETag'] = page.image.checksum
-            # TODO/FIXME: can we get LastModified ?
-            # NOTE: datastream (version) creation should be last modified,
-            # but may not be in an appropriate format for lastmodified header
+            return HttpResponse(content, mimetype='image/jpeg')
+            # NOTE: last-modified and etag headers are set on the response
+            # by the django condition decorator methods
 
             # NOTE: some overlap in headers/error checking with
             # eulfedora.views.raw_datastream
             # Consider pulling out common functionality, or writing
             # another generic eulfedora view for serving out
             # datastream-based dissemination content
-
-            return response
 
         else:
             # 404 if the page image doesn't exist

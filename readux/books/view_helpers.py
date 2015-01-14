@@ -131,7 +131,7 @@ def page_image_etag(request, pid, **kwargs):
     'etag for Page image datastream'
     return datastream_etag(request, pid, Page.image.id, type=Page)
 
-def page_image_lastmodified(request, pid):
+def page_image_lastmodified(request, pid, **kwargs):
     'last modified for Page image datastream'
     return datastream_lastmodified(request, pid, Page.image.id, type=Page)
 

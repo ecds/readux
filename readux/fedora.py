@@ -136,7 +136,7 @@ class DigitalObject(models.DigitalObject):
 
         # a few books have multiple titles;
         # if title is a list, choose the longest one
-        if isinstance(data['title'], list):
+        if 'title' in data and isinstance(data['title'], list):
             title = ''
             for d in data['title']:
                 if len(d) > len(title):

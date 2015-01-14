@@ -344,8 +344,9 @@ class BookViewsTest(TestCase):
 
         # fedora error should 404
         mockresponse = Mock()
-        mockresponse.status = 500
-        mockresponse.reason = 'server error'
+        mockresponse.status_code = 500
+        mockresponse.content = 'server error'
+        mockresponse.headers = {'content-type': 'text/plain'}
         mockraw_ds.side_effect = RequestFailed(mockresponse, '')
         response = self.client.get(pdf_url)
         expected, got = 404, response.status_code
@@ -697,13 +698,14 @@ class BookViewsTest(TestCase):
         response = self.client.get(url)
         mockobj.get_region.assert_called_with(scale=300)
         self.assertEqual(mockobj.get_region.return_value, response.content)
-        self.assertEqual(mockobj.image.checksum, response['ETag'])
+        # etag & last-modified set by condition decorator, not testable here
         self.assertEqual('image/jpeg', response['Content-Type'],
             '404 should be served as image/jpeg')
 
         # error generating image
-        mockobj.get_region.side_effect = RequestFailed(Mock(status=500,
-            reason='unknown error'), content='stack trace here...')
+        mockobj.get_region.side_effect = RequestFailed(Mock(status_code=500,
+            content='unknown error', headers={'content-type': 'text/plain'}),
+            content='stack trace here...')
         response = self.client.get(url)
         self.assertEqual(500, response.status_code,
             'page-image should return 500 when Fedora error is a 500')

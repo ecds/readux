@@ -83,6 +83,17 @@ Initial QA/production deploy
 Upgrade Notes
 =============
 
+**Patch affects all releases until further notice**
+
+Readux is currently affected by a bug in Django's debug logic; a patch is available
+but not yet included in any official Django releases.  To apply this patch to the
+locally installed copy of Django, use the patch file included in the deploy
+directory.  From the top level of your virtualenv directory, run::
+
+    patch -p0 < django-views-debug.patch
+
+----
+
 Release 1.0.2
 -------------
 

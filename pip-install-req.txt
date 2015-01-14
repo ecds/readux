@@ -1,6 +1,8 @@
 Django==1.6.6
 eulxml>=0.21.1
-eulfedora>=0.23
+#eulfedora>=0.23
+# switch to python-requests version; projected to be eulfedora 1.0
+-e git://github.com/emory-libraries/eulfedora.git@feature/requests#egg=eulfedora
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm

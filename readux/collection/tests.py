@@ -19,10 +19,13 @@ class CollectionTest(TestCase):
 
 
 @patch('readux.collection.views.solr_interface')
+@patch('readux.collection.view_helpers.solr_interface')
 class CollectionViewsTest(TestCase):
 
-    def test_browse(self, mocksolr_interface):
+    def test_browse(self, mocksolr_interface, mocksolr_iface):
+        # for simplicity, use the same mock for view and conditional view helpers
         mocksolr = mocksolr_interface.return_value
+        mocksolr_iface.return_value = mocksolr
 
         # simulate sunburnt's fluid interface
         mocksolr.query.return_value = mocksolr.query
@@ -91,8 +94,9 @@ class CollectionViewsTest(TestCase):
 
     @patch('readux.collection.views.Repository')
     @patch('readux.collection.views.Paginator', spec=Paginator)
-    def test_view(self, mockpaginator, mockrepo, mocksolr_interface):
+    def test_view(self, mockpaginator, mockrepo, mocksolr_interface, mocksolr_iface):
         mocksolr = mocksolr_interface.return_value
+        mocksolr_iface.return_value = mocksolr
         view_url = reverse('collection:view', kwargs={'pid': 'coll'})
 
         mocksolr.query.return_value = mocksolr.query

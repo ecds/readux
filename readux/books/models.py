@@ -9,12 +9,13 @@ import logging
 import os
 from urllib import urlencode, unquote
 
+from bs4 import BeautifulSoup
 import rdflib
 from rdflib import Graph
 from rdflib.namespace import RDF, Namespace
 
 from eulfedora.models import  Relation, ReverseRelation, \
-    FileDatastream, XmlDatastream
+    FileDatastream, XmlDatastream, DatastreamObject
 from eulfedora.rdfns import relsext
 
 from readux.books import abbyyocr
@@ -388,11 +389,20 @@ class Volume(DigitalObject, BaseVolume):
         '''Return OCR full text (if available)'''
         if self.ocr.exists:
             with open(self.ocr_to_text_xsl) as xslfile:
-                transform =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
-                # returns _XSLTResultTree, which is not JSON serializable;
-                # convert to unicode
-                return unicode(transform)
+                try:
+                    transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                        return_type=unicode)
+                    # returns _XSLTResultTree, which is not JSON serializable;
+                    # convert to unicode
+                    return unicode(transform)
+                except XMLSyntaxError:
+                    logger.warn('OCR xml for %s is invalid', self.pid)
+                    # use beautifulsoup as fallback, since it can handle invalid xml
+                    # explicitly request generic ds object to avoid attempting to parse as xml
+                    ds = self.getDatastreamObject(self.ocr.id, dsobj_type=DatastreamObject)
+                    xmlsoup = BeautifulSoup(ds.content)
+                    # simple get text seems to generate reasonable text + whitespace
+                    return xmlsoup.get_text()
 
     def index_data(self):
         '''Extend the default

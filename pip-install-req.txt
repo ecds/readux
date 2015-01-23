@@ -28,3 +28,4 @@ python-magic
 progressbar<=2.3
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
 pdfminer<=20140328
+beautifulsoup4

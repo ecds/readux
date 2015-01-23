@@ -3,14 +3,6 @@
 CHANGELOG
 =========
 
-Release 1.1 (pre)
------------------
-
-* As a user when I click on an ARK URL (PID) a readux resource resolves to the
-  pdf or volume landing page on the readux site so that I can access the content
-  in context.
-
-
 Release 1.0.1
 -------------
 

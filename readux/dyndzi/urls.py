@@ -17,8 +17,8 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('readux.dyndzi.views',
-    url(r'^(?P<id>[^/]+).dzi$', 'image_dzi', name='dzi'),
+    url(r'^(?P<img_id>[^/]+).dzi$', 'image_dzi', name='dzi'),
     # url with standard naming convention for DZI tile images
-    url(r'^(?P<id>[^/]+)_files/(?P<level>\d+)/(?P<column>\d+)_(?P<row>\d+).(?P<format>(jpg|png))$',
+    url(r'^(?P<img_id>[^/]+)_files/(?P<level>\d+)/(?P<column>\d+)_(?P<row>\d+).(?P<fmt>(jpg|png))$',
        'dzi_tile', name='tile'),
 )

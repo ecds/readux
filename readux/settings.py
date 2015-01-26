@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'readux.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -129,7 +129,7 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
 
 # path to local copy of solr schema
-SOLR_SCHEMA = os.path.join(BASE_DIR, 'solr', 'schema.xml')
+SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')
 
 try:
     from localsettings import *

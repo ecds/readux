@@ -1,10 +1,10 @@
 import logging
 from django.http import HttpResponse, HttpResponseBadRequest, Http404
-from django.views.decorators.http import condition, last_modified
+from django.views.decorators.http import condition
 
 from deepzoom import DeepZoomImageDescriptor
 
-from eulfedora.server import TypeInferringRepository
+from eulfedora.server import TypeInferringRepository, Repository
 from eulfedora.views import datastream_etag
 
 from readux.books.models import Image
@@ -13,49 +13,63 @@ from readux.dyndzi.models import DziImage
 
 logger = logging.getLogger(__name__)
 
-def get_image_object_or_404(request, id):
+def get_image_object_or_404(request, img_id):
     '''Utility method to get an image in Fedora or raise an
     :class:`~django.http.Http404` if the image is not found or accessible.
 
-    :param id: image identifier (Fedora pid)
+    :param img_id: image identifier (Fedora pid)
     '''
     try:
         # currently expected to return an Image cmodel with djatoka service
         repo = TypeInferringRepository()
-        return repo.get_object(id)
+        return repo.get_object(img_id)
     except:
         raise Http404
 
-def image_etag(request, id, **kwargs):
+def image_etag(request, img_id, **kwargs):
     '''ETag method for Fedora Image datastream, to allow browser caching on DZI views
 
-    :param id: image identifier (Fedora pid)
+    :param img_id: image identifier (Fedora pid)
     '''
-    return datastream_etag(request, id, Image.image.id, **kwargs)
+    return datastream_etag(request, img_id, Image.image.id, **kwargs)
 
-@condition(etag_func=image_etag)
-def image_dzi(request, id):
+
+def image_lastmodified(request, img_id , **kwargs):
+    '''Last-modified for Fedora Image datastream, to allow browser caching
+    on DZI views.
+
+    :param img_id: image identifier (Fedora pid)
+    '''
+    # NOTE: next version of eulfedora should have a reusable datastream
+    # last-modified method similar to existing datastream_etag
+    repo = Repository()
+    img = repo.get_object(img_id, type=Image)
+    if img.image and img.image.exists:
+        return img.image.created
+
+
+@condition(etag_func=image_etag, last_modified_func=image_lastmodified)
+def image_dzi(request, img_id):
     '''Generate and return the xml portion of a DZI file.
 
-    :param id: image identifier (i.e. fedora object pid)
+    :param img_id: image identifier (i.e. fedora object pid)
     '''
-    img = get_image_object_or_404(request, id)
+    img = get_image_object_or_404(request, img_id)
     return HttpResponse(DziImage(img).serialize(pretty=True),
                         mimetype='application/xml')
 
-@condition(etag_func=image_etag)
-def dzi_tile(request, id, level, column, row, format):
+@condition(etag_func=image_etag, last_modified_func=image_lastmodified)
+def dzi_tile(request, img_id, level, column, row, fmt):
     '''Generate a single tile image for the specified level, column,
     row, and format.
 
-    :param id: image identifier
+    :param img_id: image identifier
     :param level: scale level in the dzi image pyramid
     :param column: column number for the requested tile
     :param row: row number for the requested tile
-    :param format: image format (currently ignored)
-
+    :param fmt: image format (currently ignored)
     '''
-    # FIXME: format is currently ignored
+    # NOTE: format is currently ignored
 
     # deepzoom functions expect numbers and not strings
     level = int(level)
@@ -66,7 +80,7 @@ def dzi_tile(request, id, level, column, row, format):
     # or error if any of the parameters are wrong
 
     # get the object (expected to be one of the image cmodels with djatoka services)
-    img = get_image_object_or_404(request, id)
+    img = get_image_object_or_404(request, img_id)
 
     # generate a deepzoom.py tile descriptor to help with level/scale/tile calculations
     tiledescriptor = DeepZoomImageDescriptor(width=img.width, height=img.height,
@@ -75,7 +89,7 @@ def dzi_tile(request, id, level, column, row, format):
     # on invalid level or col/row, return 500 error
     columns, rows = tiledescriptor.get_num_tiles(float(level))
     if column == 1 and row == 1:
-        logger.debug("level %d [%d x %d]" % (level, columns, rows))
+        logger.debug("level %d [%d x %d]", level, columns, rows)
     invalid_msg = None
     if column > columns:
         invalid_msg = 'requested column %d exceeds number of columns (%d) for this level' % \
@@ -93,7 +107,7 @@ def dzi_tile(request, id, level, column, row, format):
         # get the width and height for the full image at this zoom level
         levelwidth, levelheight = tiledescriptor.get_dimensions(level)
         # scale full image to needed level size and return
-        logger.debug('Requesting scale=%d,%d' % (levelwidth, levelheight))
+        logger.debug('Requesting scale=%d,%d', levelwidth, levelheight)
         return HttpResponse(img.get_region(scale='%d,%d' % (levelwidth, levelheight)),
                             mimetype='image/jpeg')
 
@@ -124,9 +138,9 @@ def dzi_tile(request, id, level, column, row, format):
     # artifacts between tiles at certain zoom levels
     # (possibly a djatoka issue?)
 
-    logger.debug("Requesting scale=%d,%d region=%d,%d,%d,%d" % \
-                 (scaledtilewidth, scaledtileheight,
-                  y1, x1, cropheight, cropwidth))
+    logger.debug("Requesting scale=%d,%d region=%d,%d,%d,%d",
+                 scaledtilewidth, scaledtileheight,
+                 y1, x1, cropheight, cropwidth)
 
     # call image/djatoka get_region with calculated region and scale
     return HttpResponse(img.get_region(scale='%s,%s' % \

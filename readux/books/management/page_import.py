@@ -165,7 +165,7 @@ class BasePageImport(BaseCommand):
         return images, vol_info
 
     #: how many pages in to look for a cover (0-based)
-    cover_range = 4
+    cover_range = 7
 
     def identify_cover(self, images, pdf):
         '''Attempt to identify the image that should be used as the primary image

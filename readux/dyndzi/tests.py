@@ -1,7 +1,7 @@
+from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.test import TestCase
-from eulfedora.util import RequestFailed
 from mock import patch, Mock
 
 from readux.dyndzi.models import DziImage
@@ -11,6 +11,7 @@ from readux.dyndzi.views import get_image_object_or_404
 testimg = Mock()
 testimg.width = 5
 testimg.height = 9
+testimg.image.created = datetime.now()
 
 class DziImageTest(TestCase):
 
@@ -26,7 +27,7 @@ class DziImageTest(TestCase):
         self.assertEqual(3, dzimg.overlap)
         self.assertEqual('png', dzimg.format)
 
-        
+
 class DynDziViewsTestCase(TestCase):
 
     @patch('readux.dyndzi.views.TypeInferringRepository')
@@ -35,26 +36,30 @@ class DynDziViewsTestCase(TestCase):
         mockrepo.return_value.get_object.side_effect = Exception
         self.assertRaises(Http404, get_image_object_or_404, 'rqst', id)
 
+    @patch('readux.dyndzi.views.Repository')
     @patch('readux.dyndzi.views.TypeInferringRepository')
-    def test_image_dzi(self, mockrepo):
-        dzi_url = reverse('deepzoom:dzi', kwargs={'id': 'img:1'})
+    def test_image_dzi(self, mocktyperepo, mockrepo):
+        dzi_url = reverse('deepzoom:dzi', kwargs={'img_id': 'img:1'})
         mockrepo.return_value.get_object.return_value = testimg
+        mocktyperepo.return_value.get_object.return_value = testimg
         response = self.client.get(dzi_url)
         self.assertEqual('application/xml', response['Content-type'])
         self.assertContains(response, 'Width="%d' % testimg.width)
         self.assertContains(response, 'Height="%d' % testimg.height)
 
+    @patch('readux.dyndzi.views.Repository')
     @patch('readux.dyndzi.views.TypeInferringRepository')
-    def test_dzi_tile(self, mockrepo):
+    def test_dzi_tile(self, mocktyperepo, mockrepo):
         tile_args = {
-            'id': 'img:1',
+            'img_id': 'img:1',
             'level': 1,
             'column': 1,
             'row': 1,
-            'format': 'jpg'
+            'fmt': 'jpg'
         }
         dzitile_url = reverse('deepzoom:tile', kwargs=tile_args)
         mockrepo.return_value.get_object.return_value = testimg
+        mocktyperepo.return_value.get_object.return_value = testimg
         response = self.client.get(dzitile_url)
         self.assertEqual('image/jpeg', response['Content-type'])
         testimg.get_region_assert_called()
@@ -68,7 +73,7 @@ class DynDziViewsTestCase(TestCase):
         self.assertEqual(expected, got,
             'Expected %s (bad request) but returned %s for %s' \
                 % (expected, got, dzitile_bad_url))
-        
+
         bad_args = tile_args.copy()
         bad_args.update({'row': 87 })   # column out of range
         dzitile_bad_url = reverse('deepzoom:tile', kwargs=bad_args)

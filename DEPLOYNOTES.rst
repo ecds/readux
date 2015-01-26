@@ -53,7 +53,7 @@ Initial QA/production deploy
 
 * Run ``python manage.py syncdb``
 * Run ``python manage.py migrate``
-* Configure the site to run under apache (see ``apache/readux.conf`` for a
+* Configure the site to run under apache (see ``deploy/apache/readux.conf`` for a
   sample apache configuration)
 * Use Django admin interface to configure the site domain name (used to generate
   absolute urls to full-text content for use with Voyant)
@@ -83,13 +83,24 @@ Initial QA/production deploy
 Upgrade Notes
 =============
 
-Release 1.1
------------
+**Patch affects all releases until further notice**
 
-* Run manage script to update Volume PDF ARKs to resolve to the new readux site
-  (be sure that the site domain name is configured correctly before running)::
+Readux is currently affected by a bug in Django's debug logic; a patch is available
+but not yet included in any official Django releases.  To apply this patch to the
+locally installed copy of Django, use the patch file included in the deploy
+directory.  From the top level of your virtualenv directory, run::
 
-    python manage.py update_arks
+    patch -p0 < django-views-debug.patch
+
+----
+
+Release 1.0.2
+-------------
+
+* Run **syncrepo** manage script to ensure all Fedora content models are
+  loaded in the configured repository::
+
+    python manage.py syncrepo
 
 Release 1.0
 -----------

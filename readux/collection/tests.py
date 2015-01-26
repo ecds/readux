@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
@@ -18,10 +19,13 @@ class CollectionTest(TestCase):
 
 
 @patch('readux.collection.views.solr_interface')
+@patch('readux.collection.view_helpers.solr_interface')
 class CollectionViewsTest(TestCase):
 
-    def test_browse(self, mocksolr_interface):
+    def test_browse(self, mocksolr_interface, mocksolr_iface):
+        # for simplicity, use the same mock for view and conditional view helpers
         mocksolr = mocksolr_interface.return_value
+        mocksolr_iface.return_value = mocksolr
 
         # simulate sunburnt's fluid interface
         mocksolr.query.return_value = mocksolr.query
@@ -40,6 +44,8 @@ class CollectionViewsTest(TestCase):
         mocksolr.query.execute.return_value.facet_counts.facet_fields = {
             'collection_id': [('coll:1', 1), ('coll:2', 5)]
         }
+        # set a timestamp to be returned for last-modified conditional processing
+        mocksolr.query.return_value.__getitem__.return_value = {'timestamp': datetime.now()}
 
         # response = self.client.get(reverse('collection:browse'))
         # collection browse is actually site index, at least for now
@@ -54,6 +60,7 @@ class CollectionViewsTest(TestCase):
         mocksolr.query.assert_any_call(content_model=Volume.VOLUME_CONTENT_MODEL)
         mocksolr.query.facet_by.assert_called_with('collection_id', sort='count', mincount=1)
         mocksolr.query.paginate.assert_called_with(rows=0)
+
 
         # inspect titles and counts displayed in response
         self.assertContains(response, solr_result[0]['title'],
@@ -73,12 +80,31 @@ class CollectionViewsTest(TestCase):
         self.assertContains(response, solr_result[1]['description'][0],
             msg_prefix='collection description for %(pid)s should be displayed' % solr_result[1])
 
+        self.assertTrue(response.has_header('last-modified'),
+            'last modified header should be set on response')
+
+        # shouldn't error if no last modified date is found
+        mocksolr.query.return_value.count.return_value = 0
+
+        response = self.client.get(reverse('collection:list'))
+        self.assertEqual(200, response.status_code,
+            'response should not error when last-modified date is not available')
+        self.assertFalse(response.has_header('last-modified'),
+            'last modified header should not be set on response when no items are found in solr')
 
     @patch('readux.collection.views.Repository')
     @patch('readux.collection.views.Paginator', spec=Paginator)
-    def test_view(self, mockpaginator, mockrepo, mocksolr_interface):
+    def test_view(self, mockpaginator, mockrepo, mocksolr_interface, mocksolr_iface):
         mocksolr = mocksolr_interface.return_value
+        mocksolr_iface.return_value = mocksolr
         view_url = reverse('collection:view', kwargs={'pid': 'coll'})
+
+        mocksolr.query.return_value = mocksolr.query
+        for method in ['query', 'sort_by', 'results_as', 'field_limit']:
+            getattr(mocksolr.query, method).return_value = mocksolr.query
+
+        # set no solr results for last-modified query
+        mocksolr.query.count.return_value = 0
 
         # simulate 404
         mockcoll = NonCallableMock()
@@ -105,10 +131,6 @@ class CollectionViewsTest(TestCase):
         mockcoll.pid = 'coll:1'
         mockcoll.dc.content.description = 'Cheap 19thc paperbacks, often bound in yellow.'
         # simulate sunburnt's fluid interface
-        mocksolr.query.return_value = mocksolr.query
-        for method in ['query', 'sort_by', 'results_as']:
-            getattr(mocksolr.query, method).return_value = mocksolr.query
-
         # set up mock results for display on template
         solr_result = [
             SolrVolume(**{'pid': 'vol:1', 'title': 'Asodecoan',
@@ -127,7 +149,6 @@ class CollectionViewsTest(TestCase):
         mockpage.paginator.page_range = [1]
 
         response = self.client.get(view_url)
-        # print response
         # inspect solr query
         mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CONTENT_MODEL,
                                           collection_id=mockcoll.pid)
@@ -172,3 +193,15 @@ class CollectionViewsTest(TestCase):
             '<abbr class="unapi-id" title="%s"></abbr>' % solr_result[1]['pid'],
             msg_prefix='unapi item id for %s should be included to allow zotero harvest' % \
                        solr_result[1]['pid'])
+
+        self.assertFalse(response.has_header('last-modified'),
+            'last modified header should not be set when no results were found in solr')
+
+        # last-modified
+        mocksolr.query.count.return_value = 1
+        # set a timestamp to be returned for last-modified conditional processing
+        mocksolr.query.return_value.__getitem__.return_value = {'timestamp': datetime.now()}
+        response = self.client.get(view_url)
+        self.assertTrue(response.has_header('last-modified'),
+            'last modified header should be set')
+

@@ -1,6 +1,6 @@
 Django==1.6.6
 eulxml>=0.21.1
-eulfedora>=0.23
+eulfedora>=1.0
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
@@ -16,7 +16,7 @@ django-widget-tweaks
 requests
 eulcommon
 # local pid manager client
-https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.1.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.1.2.tar.gz
+https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.2.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.2.0.tar.gz
 django-image-tools>=0.8.b3
 # local python library for emory ldap
 https://wilson.library.emory.edu/jenkins/job/eullocal-0.21.x/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.21.0.tar.gz
@@ -26,3 +26,4 @@ python-magic
 progressbar<=2.3
 -e git://github.com/openzoom/deepzoom.py.git#egg=deepzoom
 pdfminer<=20140328
+beautifulsoup4

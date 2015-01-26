@@ -3,11 +3,13 @@ from urllib import urlencode
 
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404
+from django.views.decorators.http import last_modified
 from django.shortcuts import render
 from eulfedora.server import Repository
 
 from readux.utils import solr_interface
 from readux.books.models import Volume, SolrVolume
+from readux.collection import view_helpers
 from readux.collection.models import Collection, SolrCollection
 
 
@@ -15,6 +17,8 @@ def site_index(request):
     # placeholder index page (probably shouldn't be in readux.collection)
     return render(request, 'site_base.html')
 
+
+@last_modified(view_helpers.collections_modified)
 def browse(request, mode='covers'):
     ''''Browse list of all collections sorted by title, with the
     count of volumes in each.
@@ -56,6 +60,7 @@ def browse(request, mode='covers'):
          'meta_covers': covers[:4]})
 
 
+@last_modified(view_helpers.collection_modified)
 def view(request, pid, mode='list'):
     '''View a single collection, with a paginated list of the volumes
     it includes (volumes sorted by title and then ocm number/volume).

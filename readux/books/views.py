@@ -2,18 +2,21 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
-from django.views.decorators.http import condition, require_http_methods  # last_modified ?
+from django.views.decorators.http import condition, require_http_methods, \
+   last_modified
 from urllib import urlencode
 import os
 
 from eulfedora.server import Repository, RequestFailed
-from eulfedora.views import raw_datastream, datastream_etag
+from eulfedora.views import raw_datastream
 
 from readux.books.models import Volume, SolrVolume, Page
 from readux.books.forms import BookSearch
+from readux.books import view_helpers
 from readux.utils import solr_interface
 
 
+@last_modified(view_helpers.volumes_modified)
 def search(request, mode='list'):
 
     form = BookSearch(request.GET)
@@ -41,7 +44,6 @@ def search(request, mode='list'):
         # don't need to facet on collection if we are already filtered on collection
         if 'collection' not in request.GET:
             q = q.facet_by('collection_label_facet', sort='index', mincount=1)
-
 
         # TODO: how can we determine via solr query if a volume has pages loaded?
         # join query on pages? index page_count in solr?
@@ -94,6 +96,7 @@ def search(request, mode='list'):
     return render(request, 'books/search.html', context)
 
 
+@last_modified(view_helpers.volume_modified)
 def volume(request, pid):
     ''' Landing page for a single :class:`~readux.books.models.Volume`.
 
@@ -156,6 +159,7 @@ def volume(request, pid):
     return render(request, template, context)
 
 
+@last_modified(view_helpers.volume_pages_modified)
 def volume_pages(request, pid):
     # paginated thumbnails for all pages in a book
     repo = Repository()
@@ -185,6 +189,7 @@ def volume_pages(request, pid):
         {'vol': vol, 'pages': results, 'form': form})
 
 
+@last_modified(view_helpers.page_modified)
 def view_page(request, pid):
     repo = Repository()
     page = repo.get_object(pid, type=Page)
@@ -210,7 +215,6 @@ def view_page(request, pid):
     if len(pagequery) > index + 1:
         nxt = pagequery[index + 1]
 
-
     # calculates which paginated page the page is part of based on 30 items per page
     page_chunk = ((page.page_order - 1) // 30) + 1
 
@@ -222,22 +226,10 @@ def view_page(request, pid):
          'form': form})
 
 
-def pdf_etag(request, pid):
-    return datastream_etag(request, pid, Volume.pdf.id)
 
-def pdf_lastmodified(request, pid):
-    repo = Repository()
-    try:
-        # retrieve the object so we can use it to set the download filename
-        obj = repo.get_object(pid, type=Volume)
-        return obj.pdf.created
-    except RequestFailed:
-        pass
-
-
-@condition(etag_func=pdf_etag, last_modified_func=pdf_lastmodified)
+@condition(etag_func=view_helpers.pdf_etag, last_modified_func=view_helpers.pdf_lastmodified)
 def pdf(request, pid):
-    '''View to allow access the PDF datastream of a
+    '''View to allow access to the PDF datastream of a
     :class:`~readux.books.models.Volume` object.  Sets a
     content-disposition header that will prompt the file to be saved
     with a default title based on the object label.
@@ -257,20 +249,7 @@ def pdf(request, pid):
         raise Http404
 
 
-def ocr_etag(request, pid):
-    return datastream_etag(request, pid, Volume.ocr.id)
-
-def ocr_lastmodified(request, pid):
-    repo = Repository()
-    try:
-        # retrieve the object so we can use it to set the download filename
-        obj = repo.get_object(pid, type=Volume)
-        return obj.ocr.created
-    except RequestFailed:
-        pass
-
-
-@condition(etag_func=ocr_etag, last_modified_func=ocr_lastmodified)
+@condition(etag_func=view_helpers.ocr_etag, last_modified_func=view_helpers.ocr_lastmodified)
 def ocr(request, pid):
     '''View to allow access the raw OCR xml datastream of a
     :class:`~readux.books.models.Volume` object.
@@ -281,7 +260,7 @@ def ocr(request, pid):
         repo=repo)
 
 
-@condition(etag_func=ocr_etag, last_modified_func=ocr_lastmodified)
+@condition(etag_func=view_helpers.ocr_etag, last_modified_func=view_helpers.ocr_lastmodified)
 def text(request, pid):
     '''View to allow access the plain text content of a
     :class:`~readux.books.models.Volume` object.
@@ -298,6 +277,7 @@ def text(request, pid):
     return response
 
 
+@condition(etag_func=view_helpers.unapi_etag, last_modified_func=view_helpers.unapi_modified)
 def unapi(request):
     '''unAPI service point for :class:`~readux.books.models.Volume` objects,
     to make content available for harvest via Zotero.'''
@@ -306,7 +286,7 @@ def unapi(request):
     # (maybe an extensible class-based view?) for re-use
 
     item_id = request.GET.get('id', None)
-    format = request.GET.get('format', None)
+    fmt = request.GET.get('format', None)
     context = {}
     if item_id is not None:
         context['id'] = item_id
@@ -317,11 +297,11 @@ def unapi(request):
 
         formats = obj.unapi_formats
 
-        if format is None:
+        if fmt is None:
             # display formats for this item
             context['formats'] = formats
         else:
-            current_format = formats[format]
+            current_format = formats[fmt]
             # return requested format for this item
             meth = getattr(obj, current_format['method'])
             return HttpResponse(meth(), content_type=current_format['type'])
@@ -356,13 +336,9 @@ def _error_image_response(mode):
         with open(os.path.join(base_path, 'img', img)) as content:
             return HttpResponseNotFound(content.read(), mimetype='image/png')
 
-
-def page_image_etag(request, pid, **kwargs):
-    return datastream_etag(request, pid, Page.image.id, type=Page)
-
-
-@condition(etag_func=page_image_etag)
 @require_http_methods(['GET', 'HEAD'])
+@condition(etag_func=view_helpers.page_image_etag,
+           last_modified_func=view_helpers.page_image_lastmodified)
 def page_image(request, pid, mode=None):
     '''Return a page image, resized according to mode.
 
@@ -396,23 +372,15 @@ def page_image(request, pid, mode=None):
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level
 
-            response = HttpResponse(content, mimetype='image/jpeg')
-
-            # Set response headers to enable caching.
-            # If the image datastream has a checksum, use it as ETag
-            if page.image.checksum_type != 'DISABLED':
-                response['ETag'] = page.image.checksum
-            # TODO/FIXME: can we get LastModified ?
-            # NOTE: datastream (version) creation should be last modified,
-            # but may not be in an appropriate format for lastmodified header
+            return HttpResponse(content, mimetype='image/jpeg')
+            # NOTE: last-modified and etag headers are set on the response
+            # by the django condition decorator methods
 
             # NOTE: some overlap in headers/error checking with
             # eulfedora.views.raw_datastream
             # Consider pulling out common functionality, or writing
             # another generic eulfedora view for serving out
             # datastream-based dissemination content
-
-            return response
 
         else:
             # 404 if the page image doesn't exist

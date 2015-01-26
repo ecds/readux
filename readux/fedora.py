@@ -124,3 +124,23 @@ class DigitalObject(models.DigitalObject):
         else:
             # if pidmanager is not available, fall back to default pid behavior
             return super(DigitalObject, self).get_default_pid()
+
+    def index_data_descriptive(self):
+        '''Extend the default :meth:`eulfedora.models.DigitalObject.index_data`
+        to do common clean up for all Readux indexing:
+
+        - If there are multiple titles, choose the longest one.
+        '''
+
+        data = super(DigitalObject, self).index_data_descriptive()
+
+        # a few books have multiple titles;
+        # if title is a list, choose the longest one
+        if 'title' in data and isinstance(data['title'], list):
+            title = ''
+            for d in data['title']:
+                if len(d) > len(title):
+                    title = d
+            data['title'] = title
+
+        return data

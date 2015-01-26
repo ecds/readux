@@ -3,6 +3,15 @@
 CHANGELOG
 =========
 
+Release 1.0.2
+-------------
+
+* As a user, I want the website to support caching so I don't have to re-download
+  content that hasn't changed and the site will be faster.
+* bugfix: fix indexing error for items with multiple titles
+* error-handling & logging for volumes with incomplete or invalid OCR XML
+* adjust models to allow eulfedora syncrepo to create needed content model objects
+
 Release 1.0.1
 -------------
 

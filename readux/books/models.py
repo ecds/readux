@@ -17,6 +17,7 @@ from rdflib.namespace import RDF, Namespace
 from eulfedora.models import  Relation, ReverseRelation, \
     FileDatastream, XmlDatastream, DatastreamObject
 from eulfedora.rdfns import relsext
+from eulxml.xmlmap.core import XmlObject
 
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
@@ -47,8 +48,20 @@ class Book(DigitalObject):
     BOOK_CONTENT_MODEL = 'info:fedora/emory-control:ScannedBook-1.0'
     CONTENT_MODELS = [ BOOK_CONTENT_MODEL ]
 
+    #: marcxml :class:`~eulfedora.models.XMlDatastream` with the metadata
+    #: record for all associated volumes
+    #: NOTE: using generic xmlobject for now
+    marcxml = XmlDatastream("MARCXML", "MARC21 metadata", XmlObject, defaults={
+        'control_group': 'M',
+        'versionable': True,
+    })
+
     #: :class:`~readux.collection.models.Collection` this book belongs to
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
+
+    #: default view for new object
+    #: FIXME: needs at least preliminary book view to point to (?)
+    NEW_OBJECT_VIEW = 'books:volume'
 
     @property
     def best_description(self):
@@ -58,7 +71,8 @@ class Book(DigitalObject):
         # for now, just return the longest description
         # eventually we should be able to update this to make use of the MARCXML
         descriptions = list(self.dc.content.description_list)
-        return sorted(descriptions, key=len, reverse=True)[0]
+        if descriptions:
+            return sorted(descriptions, key=len, reverse=True)[0]
 
 
 # NOTE: Image and Page defined before Volume to allow referencing in
@@ -272,11 +286,8 @@ class BaseVolume(object):
         return url
 
 class Volume(DigitalObject, BaseVolume):
-    '''Fedora Volume Object.  Extends :class:`~eulfedora.models.DigitalObject`.'''
-    #: volume content model
-    VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.0'
-    CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
-    # NEW_OBJECT_VIEW = 'books:book-pages'
+    '''Fedora Volume object with common functionality for all versions.
+    Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.'''
 
     # inherits DC, RELS-EXT
     # related to parent Book object via isConstituentOf
@@ -285,13 +296,6 @@ class Volume(DigitalObject, BaseVolume):
     #: of the Volume (page images with OCR text behind)
     pdf = FileDatastream("PDF", "PDF datastream", defaults={
         'mimetype': 'application/pdf',
-        'versionable': True,
-    })
-
-    #: :class:`~eulfedora.models.XmlDatastream` for ABBYY
-    #: FineReader OCR XML; content as :class:`AbbyyOCRXml`'''
-    ocr = XmlDatastream("OCR", "ABBYY Finereader OCR XML", abbyyocr.Document, defaults={
-        'control_group': 'M',
         'versionable': True,
     })
 
@@ -307,11 +311,10 @@ class Volume(DigitalObject, BaseVolume):
     start_page = Relation(REPOMGMT.startPage,
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
 
-    # @permalink
-    # def get_absolute_url(self):
-    #     'Absolute url to view this object within the site'
-    #     # currently, there is no book overview page; using all-pages view for now
-    #     return ('books:book-pages', [str(self.pid)])
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return ('books:volume', [str(self.pid)])
 
     # def get_pdf_url(self):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
@@ -333,8 +336,6 @@ class Volume(DigitalObject, BaseVolume):
             return len(self.pages) > 1
         else:
             return False
-
-    # shortcuts for consistency with SolrVolume
 
     @property
     def title(self):
@@ -381,28 +382,6 @@ class Volume(DigitalObject, BaseVolume):
         else:
             # convert eulxml list to normal list so it can be serialized via json
             return list(dates)
-
-    #: path to xslt for transforming abbyoccr to plain text with some structure
-    ocr_to_text_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'abbyocr-to-text.xsl')
-
-    def get_fulltext(self):
-        '''Return OCR full text (if available)'''
-        if self.ocr.exists:
-            with open(self.ocr_to_text_xsl) as xslfile:
-                try:
-                    transform =  self.ocr.content.xsl_transform(filename=xslfile,
-                        return_type=unicode)
-                    # returns _XSLTResultTree, which is not JSON serializable;
-                    # convert to unicode
-                    return unicode(transform)
-                except XMLSyntaxError:
-                    logger.warn('OCR xml for %s is invalid', self.pid)
-                    # use beautifulsoup as fallback, since it can handle invalid xml
-                    # explicitly request generic ds object to avoid attempting to parse as xml
-                    ds = self.getDatastreamObject(self.ocr.id, dsobj_type=DatastreamObject)
-                    xmlsoup = BeautifulSoup(ds.content)
-                    # simple get text seems to generate reasonable text + whitespace
-                    return xmlsoup.get_text()
 
     def index_data(self):
         '''Extend the default
@@ -565,6 +544,76 @@ class Volume(DigitalObject, BaseVolume):
         'language of the content'
         # exposing as a property here for consistency with SolrVolume result
         return self.dc.content.language
+
+
+class VolumeV1_0(Volume):
+    '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''
+    #: volume content model
+    VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.0'
+    CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
+    # NEW_OBJECT_VIEW = 'books:book-pages'
+
+    # inherits dc, rels-ext, pdf
+
+    #: :class:`~eulfedora.models.XmlDatastream` for ABBYY
+    #: FineReader OCR XML; content as :class:`AbbyyOCRXml`'''
+    ocr = XmlDatastream("OCR", "ABBYY Finereader OCR XML", abbyyocr.Document, defaults={
+        'control_group': 'M',
+        'versionable': True,
+    })
+
+    # shortcuts for consistency with SolrVolume
+    #: path to xslt for transforming abbyoccr to plain text with some structure
+    ocr_to_text_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'abbyocr-to-text.xsl')
+
+    def get_fulltext(self):
+        '''Return OCR full text (if available)'''
+        if self.ocr.exists:
+            with open(self.ocr_to_text_xsl) as xslfile:
+                try:
+                    transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                        return_type=unicode)
+                    # returns _XSLTResultTree, which is not JSON serializable;
+                    # convert to unicode
+                    return unicode(transform)
+                except XMLSyntaxError:
+                    logger.warn('OCR xml for %s is invalid', self.pid)
+                    # use beautifulsoup as fallback, since it can handle invalid xml
+                    # explicitly request generic ds object to avoid attempting to parse as xml
+                    ds = self.getDatastreamObject(self.ocr.id, dsobj_type=DatastreamObject)
+                    xmlsoup = BeautifulSoup(ds.content)
+                    # simple get text seems to generate reasonable text + whitespace
+                    return xmlsoup.get_text()
+
+
+class VolumeV1_1(Volume):
+    '''Fedora object for ScannedVolume-1.1.  Extends :class:`Volume`.'''
+    #: volume content model
+    VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.1'
+    CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
+    NEW_OBJECT_VIEW = 'books:volume'
+
+    # inherits dc, rels-ext, pdf
+
+    # ocr datastream?  possibly not any at volume level but only per-page
+
+    def get_fulltext(self):
+        '''Return OCR full text (if available)'''
+        if self.ocr.exists:
+            with open(self.ocr_to_text_xsl) as xslfile:
+                try:
+                    transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                        return_type=unicode)
+                    # returns _XSLTResultTree, which is not JSON serializable;
+                    # convert to unicode
+                    return unicode(transform)
+                except XMLSyntaxError:
+                    logger.warn('OCR xml for %s is invalid', self.pid)
+                    # use beautifulsoup as fallback, since it can handle invalid xml
+                    # explicitly request generic ds object to avoid attempting to parse as xml
+                    ds = self.getDatastreamObject(self.ocr.id, dsobj_type=DatastreamObject)
+                    xmlsoup = BeautifulSoup(ds.content)
+                    # simple get text seems to generate reasonable text + whitespace
 
 
 class SolrVolume(UserDict, BaseVolume):

@@ -17,7 +17,7 @@ from rdflib.namespace import RDF, Namespace
 from eulfedora.models import  Relation, ReverseRelation, \
     FileDatastream, XmlDatastream, DatastreamObject
 from eulfedora.rdfns import relsext
-from eulxml.xmlmap.core import XmlObject
+from eulxml import xmlmap
 
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
@@ -36,6 +36,14 @@ REPOMGMT = Namespace(rdflib.URIRef('http://pid.emory.edu/ns/2011/repo-management
 repomgmt_ns = {'eul-repomgmt': REPOMGMT}
 
 
+class MinMarcxml(xmlmap.XmlObject):
+    # minimal marc xml with only fields needed for readux import/display
+    ROOT_NS = 'http://www.loc.gov/MARC21/slim'
+    ROOT_NAMESPACES = { 'marc21' : ROOT_NS }
+
+    ocm_number = xmlmap.StringField('marc21:record/marc21:controlfield[@tag="001"]')
+
+
 class Book(DigitalObject):
     '''Fedora Book Object.  Extends :class:`~eulfedora.models.DigitalObject`.
 
@@ -51,7 +59,7 @@ class Book(DigitalObject):
     #: marcxml :class:`~eulfedora.models.XMlDatastream` with the metadata
     #: record for all associated volumes
     #: NOTE: using generic xmlobject for now
-    marcxml = XmlDatastream("MARCXML", "MARC21 metadata", XmlObject, defaults={
+    marcxml = XmlDatastream("MARCXML", "MARC21 metadata", MinMarcxml, defaults={
         'control_group': 'M',
         'versionable': True,
     })
@@ -390,13 +398,8 @@ class Volume(DigitalObject, BaseVolume):
 
         data = super(Volume, self).index_data()
 
-        if self.ocr.exists:
-            try:
-                data['fulltext'] = self.get_fulltext()
-
-            except XMLSyntaxError:
-                logger.warn('XML Syntax error attempting to retrieve text from OCR xml for %s',
-                            self.pid)
+        if self.fulltext_available:
+            data['fulltext'] = self.get_fulltext()
 
         # pulling text content from the PDF is significantly slower;
         # - only pdf if ocr xml is not available or errored
@@ -566,6 +569,10 @@ class VolumeV1_0(Volume):
     #: path to xslt for transforming abbyoccr to plain text with some structure
     ocr_to_text_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'abbyocr-to-text.xsl')
 
+    @property
+    def fulltext_available(self):
+        return self.ocr.exists
+
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
         if self.ocr.exists:
@@ -597,23 +604,17 @@ class VolumeV1_1(Volume):
 
     # ocr datastream?  possibly not any at volume level but only per-page
 
+    @property
+    def fulltext_available(self):
+        # for now, no fulltext available until we determine how to access
+        # or assumple multipage ocr
+        # TODO: need a way to determine full text available for solr results...
+        return False
+
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
-        if self.ocr.exists:
-            with open(self.ocr_to_text_xsl) as xslfile:
-                try:
-                    transform =  self.ocr.content.xsl_transform(filename=xslfile,
-                        return_type=unicode)
-                    # returns _XSLTResultTree, which is not JSON serializable;
-                    # convert to unicode
-                    return unicode(transform)
-                except XMLSyntaxError:
-                    logger.warn('OCR xml for %s is invalid', self.pid)
-                    # use beautifulsoup as fallback, since it can handle invalid xml
-                    # explicitly request generic ds object to avoid attempting to parse as xml
-                    ds = self.getDatastreamObject(self.ocr.id, dsobj_type=DatastreamObject)
-                    xmlsoup = BeautifulSoup(ds.content)
-                    # simple get text seems to generate reasonable text + whitespace
+        pass
+        # TODO
 
 
 class SolrVolume(UserDict, BaseVolume):

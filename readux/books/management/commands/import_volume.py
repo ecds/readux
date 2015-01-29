@@ -24,7 +24,7 @@ from eulxml.xmlmap import load_xmlobject_from_file
 from eulxml.xmlmap.dc import DublinCore
 
 from readux.fedora import ManagementRepository
-from readux.books.models import Book, VolumeV1_1
+from readux.books.models import Book, VolumeV1_1, MinMarcxml
 from readux.collection.models import Collection
 
 
@@ -114,7 +114,7 @@ class Command(BaseCommand):
 
         # construct book and ingest
         try:
-            marcxml = load_xmlobject_from_file(files['marcxml'])
+            marcxml = load_xmlobject_from_file(files['marcxml'], MinMarcxml)
         except XMLSyntaxError as err:
             raise CommandError('Failed to load %s as xml: %s' % (files['marcxml'], err))
         try:
@@ -123,12 +123,14 @@ class Command(BaseCommand):
             raise CommandError('Failed to load %s as xml: %s' % (files['dc'], err))
 
         book = repo.get_object(type=Book)
-        # TODO: set label to ocm# (pull from marc)
+        # set book label to ocm number from the marc
+        book.label = marcxml.ocm_number
         # associate with collection
         if collection is not None:
             book.collection = collection
         book.marcxml.content = marcxml
-        book.marcxml.checksum = checksums['marcxml']
+        # NOTE: import checksum can't be used because xml may be serialized differently
+        # book.marcxml.checksum = checksums['marcxml']
         book.dc.content = dcxml
         # NOTE: import checksum can't be used because DC is modified to add ARK
         # book.dc.checksum = checksums['dc']
@@ -145,23 +147,33 @@ class Command(BaseCommand):
         # construct volume (v1.1), associate with book, and ingest
         with open(files['pdf']) as pdf_file:
             vol = repo.get_object(type=VolumeV1_1)
+            # set volume label to ocm number from the marc + volume number
+            # for consistency with lsdi content, use ocm_v# notation
+            # V.0 indicates single-volume book
+            vol.label = '%s_V.0' % marcxml.ocm_number
+            # set pdf content
             vol.pdf.content = pdf_file
             vol.pdf.checksum = checksums['pdf']
-            # TODO: object label ?
-            # TODO: minimal DC metadata derived from book ?
+            # set relation to parent book object
             vol.book = book
-            # TODO: fedora error handling
-            saved = vol.save('ingest')
+            # minimal DC metadata derived from book metadata
+            vol.dc.content.title = book.dc.content.title
+            for t in book.dc.content.type_list:
+                vol.dc.content.type_list.append(t)
+            vol.dc.content.format = book.dc.content.format
+            vol.dc.content.language = book.dc.content.language
+            vol.dc.content.rights = book.dc.content.rights
 
-        if not saved:
-            raise CommandError('Failed to ingest volume into repository')
+            try:
+                saved = vol.save('ingest')
+                if not saved:
+                    # NOTE: possibly, if this fails, we should deactivate the book object
+                    # but will leave that to manual processing for now
+                    raise CommandError('Failed to ingest volume into repository')
+
+            except RequestFailed as err:
+                raise CommandError('Error ingesting volume: %s' % err)
+
 
         self.stdout.write('Successfully ingested book %s and volume %s' % \
             (book.pid, vol.pid))
-
-
-
-
-
-
-

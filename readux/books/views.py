@@ -10,7 +10,7 @@ import os
 from eulfedora.server import Repository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page
+from readux.books.models import Volume, VolumeV1_0, SolrVolume, Page
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -35,7 +35,7 @@ def search(request, mode='list'):
             author_query |= solr.Q(creator=t)
             title_query |= solr.Q(title=t)
 
-        q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
+        q = solr.query().filter(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(SolrVolume.necessary_fields, score=True)  \
                 .results_as(SolrVolume) \

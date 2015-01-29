@@ -8,7 +8,7 @@ from django.shortcuts import render
 from eulfedora.server import Repository
 
 from readux.utils import solr_interface
-from readux.books.models import Volume, SolrVolume
+from readux.books.models import VolumeV1_0, SolrVolume
 from readux.collection import view_helpers
 from readux.collection.models import Collection, SolrCollection
 
@@ -38,7 +38,7 @@ def browse(request, mode='covers'):
     # associated CollectionImage db model
 
     # Use a facet query to get a count of the number of volumes in each collection
-    q = solr.query(content_model=Volume.VOLUME_CONTENT_MODEL) \
+    q = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) \
             .facet_by('collection_id', sort='count', mincount=1) \
             .paginate(rows=0)
     facets = q.execute().facet_counts.facet_fields
@@ -77,7 +77,7 @@ def view(request, pid, mode='list'):
 
     # search for all books that are in this collection
     solr = solr_interface()
-    q = solr.query(content_model=Volume.VOLUME_CONTENT_MODEL,
+    q = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL,
                    collection_id=obj.pid) \
                 .sort_by('title_exact').sort_by('label') \
                 .results_as(SolrVolume)

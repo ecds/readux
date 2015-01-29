@@ -98,9 +98,8 @@ Release 1.1
 -------------
 
 * Update Fedora XACML policies to include new variant content models
-  (ScannedBook-1.1 and ScannedVolume-1.1) and reload policies so that newly
-  ingested content will be accessible.
-
+  (ScannedVolume-1.1) and reload policies so that newly ingested content will
+  be accessible.
 
 Release 1.0.2
 -------------

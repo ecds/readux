@@ -5,7 +5,7 @@ import os
 from eulfedora.views import datastream_etag
 from eulfedora.server import Repository, RequestFailed
 
-from readux.books.models import VolumeV1_0, Page
+from readux.books.models import Volume, VolumeV1_0, Page
 from readux.utils import solr_interface, md5sum
 
 '''

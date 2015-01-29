@@ -25,6 +25,7 @@ from eulxml.xmlmap.dc import DublinCore
 
 from readux.fedora import ManagementRepository
 from readux.books.models import Book, VolumeV1_1
+from readux.collection.models import Collection
 
 
 class Command(BaseCommand):
@@ -32,7 +33,10 @@ class Command(BaseCommand):
     help = __doc__
 
     args = ' <path>'
-    # TODO: arg for collection id
+    option_list = BaseCommand.option_list + (
+        make_option('--collection', '-c',
+            help='Associate the new volume with the specified collection.'),
+    )
 
     def handle(self, *paths, **options):
 
@@ -43,8 +47,17 @@ class Command(BaseCommand):
             raise CommandError('Import currently only supports a single volume.')
         path = paths[0]
 
-        # should collection be required? maybe for now?
-        # TODO: check collection pid is set and exists as a collection
+        repo = ManagementRepository()
+
+        # should collection be required or is optional ok?
+        coll = options.get('collection', None)
+        collection = None
+        if coll is not None:
+            collection = repo.get_object(coll, type=Collection)
+            if not collection.exists:
+                raise CommandError('Collection %s does not exist' % coll)
+            if not collection.has_requisite_content_models:
+                raise CommandError('%s is not a collection' % coll)
 
         try:
             bag = bagit.Bag(path)
@@ -98,7 +111,6 @@ class Command(BaseCommand):
             raise CommandError('Cannot import without all required files and checksums.')
 
         # all pieces are available, so proceed with ingest
-        repo = ManagementRepository()
 
         # construct book and ingest
         try:
@@ -111,8 +123,10 @@ class Command(BaseCommand):
             raise CommandError('Failed to load %s as xml: %s' % (files['dc'], err))
 
         book = repo.get_object(type=Book)
-        # TODO: set label (to what?)
-        # TODO: associate with collection
+        # TODO: set label to ocm# (pull from marc)
+        # associate with collection
+        if collection is not None:
+            book.collection = collection
         book.marcxml.content = marcxml
         book.marcxml.checksum = checksums['marcxml']
         book.dc.content = dcxml

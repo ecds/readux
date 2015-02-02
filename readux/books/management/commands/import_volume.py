@@ -36,7 +36,14 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--collection', '-c',
             help='Associate the new volume with the specified collection.'),
+    make_option('--dry-run', '-n',
+            action='store_true',
+            default=False,
+            help='Don\'t make any changes; just report on what would be done'),
     )
+
+    #: default verbosity level
+    v_normal = 1
 
     def handle(self, *paths, **options):
 
@@ -46,6 +53,9 @@ class Command(BaseCommand):
             # this limitation is kind of arbitrary, but keep thing simple for now
             raise CommandError('Import currently only supports a single volume.')
         path = paths[0]
+
+        dry_run = options.get('dry_run', False)
+        verbosity = options.get('verbosity', self.v_normal)
 
         repo = ManagementRepository()
 
@@ -63,6 +73,8 @@ class Command(BaseCommand):
             bag = bagit.Bag(path)
             # NOTE: could consider using fast validation, but files probably are
             # not so large or so numerous that this will be an issue
+            if verbosity >= self.v_normal:
+                self.stdout.write('Validating bag %s' % path)
             bag.validate()
         except bagit.BagError as err:
             raise CommandError('Please supply a valid BagIt as input. %s' % err)
@@ -113,6 +125,8 @@ class Command(BaseCommand):
         # all pieces are available, so proceed with ingest
 
         # construct book and ingest
+        if verbosity > self.v_normal:
+            self.stdout.write('Creating book object with marxml %s' % files['marcxml'])
         try:
             marcxml = load_xmlobject_from_file(files['marcxml'], MinMarcxml)
         except XMLSyntaxError as err:
@@ -125,9 +139,14 @@ class Command(BaseCommand):
         book = repo.get_object(type=Book)
         # set book label to ocm number from the marc
         book.label = marcxml.ocm_number
+        if verbosity > self.v_normal:
+            self.stdout.write('Book label %s' % book.label)
+
         # associate with collection
         if collection is not None:
             book.collection = collection
+            if verbosity > self.v_normal:
+                self.stdout.write('Associating with collection %s' % collection.short_label)
         book.marcxml.content = marcxml
         # NOTE: import checksum can't be used because xml may be serialized differently
         # book.marcxml.checksum = checksums['marcxml']
@@ -136,15 +155,18 @@ class Command(BaseCommand):
         # book.dc.checksum = checksums['dc']
 
         # save; bail if error
-        try:
-            saved = book.save('ingest')
-            if not saved:
-                raise CommandError('Failed to ingest book into repository')
-        except RequestFailed as err:
-            raise CommandError('Error ingesting book: %s' % err)
+        if not dry_run:
+            try:
+                saved = book.save('ingest')
+                if not saved:
+                    raise CommandError('Failed to ingest book into repository')
+            except RequestFailed as err:
+                raise CommandError('Error ingesting book: %s' % err)
 
 
         # construct volume (v1.1), associate with book, and ingest
+        if verbosity > self.v_normal:
+            self.stdout.write('Creating volume with %s' % files['pdf'])
         with open(files['pdf']) as pdf_file:
             vol = repo.get_object(type=VolumeV1_1)
             # set volume label to ocm number from the marc + volume number
@@ -164,16 +186,29 @@ class Command(BaseCommand):
             vol.dc.content.language = book.dc.content.language
             vol.dc.content.rights = book.dc.content.rights
 
-            try:
-                saved = vol.save('ingest')
-                if not saved:
-                    # NOTE: possibly, if this fails, we should deactivate the book object
-                    # but will leave that to manual processing for now
-                    raise CommandError('Failed to ingest volume into repository')
+            if not dry_run:
+                try:
+                    saved = vol.save('ingest')
+                    if not saved:
+                        # NOTE: possibly, if this fails, we should deactivate the book object
+                        # but will leave that to manual processing for now
+                        raise CommandError('Failed to ingest volume into repository')
 
-            except RequestFailed as err:
-                raise CommandError('Error ingesting volume: %s' % err)
+                except RequestFailed as err:
+                    raise CommandError('Error ingesting volume: %s' % err)
 
 
-        self.stdout.write('Successfully ingested book %s and volume %s' % \
-            (book.pid, vol.pid))
+        if not dry_run:
+            self.stdout.write('Successfully ingested book %s and volume %s' % \
+                (book.pid, vol.pid))
+
+
+        # should page import happen here?
+        # - identify numeric jp2/jpf files in the bag and get total count
+        # - identify numeric .xml files in the bag and get total count
+        # - make sure counts match up
+        # Question: can we assume no blank pages for now?
+        # - start looping through, create page-1.1 and associate with book,
+        #   and ingest
+        # - set first page as primary image on the volume
+        # - report number of pages ingested

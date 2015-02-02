@@ -17,6 +17,7 @@ import bagit
 from lxml.etree import XMLSyntaxError
 from optparse import make_option
 import os
+import time
 
 from django.core.management.base import BaseCommand, CommandError
 from eulfedora.server import RequestFailed
@@ -36,10 +37,14 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--collection', '-c',
             help='Associate the new volume with the specified collection.'),
-    make_option('--dry-run', '-n',
+        make_option('--dry-run', '-n',
             action='store_true',
             default=False,
             help='Don\'t make any changes; just report on what would be done'),
+        make_option('--fast-validate', '-f',
+            action='store_true',
+            default=False,
+            help='Bagit fast validation (skip checking all checksums at bag load time)')
     )
 
     #: default verbosity level
@@ -70,15 +75,22 @@ class Command(BaseCommand):
                 raise CommandError('%s is not a collection' % coll)
 
         try:
+            start = time.time()
             bag = bagit.Bag(path)
             # NOTE: could consider using fast validation, but files probably are
             # not so large or so numerous that this will be an issue
-            if verbosity >= self.v_normal:
+            if verbosity > self.v_normal:
                 self.stdout.write('Validating bag %s' % path)
-            bag.validate()
+            fast_validate = options.get('fast_validate')
+            bag.validate(fast=fast_validate)
+            if verbosity >= self.v_normal:
+                self.stdout.write('Validated %s in %.02fs %s' % (path, time.time() - start,
+                    '(fast validation enabled)' if fast_validate else ''))
         except bagit.BagError as err:
+            # failed to load directory as a bag
             raise CommandError('Please supply a valid BagIt as input. %s' % err)
-        except bagit.ValidationError as err:
+        except bagit.BagValidationError as err:
+            # bag is not valid
             raise CommandError('Input is not a valid bag. %s' % err)
 
         files = {'pdf': None, 'marcxml': None, 'dc': None}

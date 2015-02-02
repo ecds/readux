@@ -96,8 +96,12 @@ class Command(BaseCommand):
         files = {'pdf': None, 'marcxml': None, 'dc': None}
         checksums = {}
 
+        # this is potentially a long list, but go ahead and store since we will
+        # be consulting it multiple times
+        payload_files = list(bag.payload_files())
+
         # identify required contents within the bag by extension and name
-        for data_path in bag.payload_files():
+        for data_path in payload_files:
             # path is relative to bag root dir
             filename = os.path.join(path, data_path)
 
@@ -219,8 +223,42 @@ class Command(BaseCommand):
         # - identify numeric jp2/jpf files in the bag and get total count
         # - identify numeric .xml files in the bag and get total count
         # - make sure counts match up
-        # Question: can we assume no blank pages for now?
+        # Question: can we assume no start/end blank pages for now?
         # - start looping through, create page-1.1 and associate with book,
         #   and ingest
         # - set first page as primary image on the volume
         # - report number of pages ingested
+
+        image_files = []
+
+        # identify page files (images and ocr xml)
+        for data_path in payload_files:
+            # get extension and name
+            basename = os.path.basename(data_path)
+            basefile, ext = os.path.splitext(basename)
+            if ext in ['.jp2', '.jpf']:
+                image_files.append(data_path)
+                # check that MD5 is present and bail if not
+                # - this is probably redundant since by this point validation
+                # has passed and previous content has checksums, but
+                # ingest will assume checksums are available so better to error
+                # *before* starting to ingest page-level content
+                if bag.entries[data_path].get('md5', None) is None:
+                    raise CommandError('No MD5 checksum for %s' % data_path)
+
+        # ensure pages are sorted into page-order
+        image_files.sort()
+
+        # NOTE: disabled for now; tunebook does not appear to include alto
+        # for pages with no text content
+        ## find matching page ocr files
+        # for imgfile in image_files:
+        #     basefile, ext = os.path.splitext(imgfile)
+        #     ocrfile = '%s.xml' % basefile
+        #     if ocrfile not in payload_files:
+        #         raise CommandError('No OCR xml page present for %s (expected %s)' % \
+        #             (imgfile, ocrfile))
+
+        # iterate through page images and put into fedora
+        for imgfile in image_files:
+

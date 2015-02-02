@@ -5,7 +5,7 @@ import os
 from eulfedora.views import datastream_etag
 from eulfedora.server import Repository, RequestFailed
 
-from readux.books.models import Volume, VolumeV1_0, Page
+from readux.books.models import Volume, VolumeV1_0, Page, PageV1_0
 from readux.utils import solr_interface, md5sum
 
 '''
@@ -49,7 +49,7 @@ def volume_pages_modified(request, pid):
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
     results = solr.query((solr.Q(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) & solr.Q(pid=pid)) | \
-                         (solr.Q(content_model=Page.PAGE_CONTENT_MODEL) & solr.Q(isConstituentOf=vol.uri))) \
+                         (solr.Q(content_model=PageV1_0.PAGE_CONTENT_MODEL) & solr.Q(isConstituentOf=vol.uri))) \
                   .sort_by('-timestamp').field_limit('timestamp')
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified,
@@ -60,7 +60,7 @@ def volume_pages_modified(request, pid):
 def page_modified(request, pid):
     'last modification time for a single page'
     solr = solr_interface()
-    results = solr.query(content_model=Page.PAGE_CONTENT_MODEL,
+    results = solr.query(content_model=PageV1_0.PAGE_CONTENT_MODEL,
                          pid=pid) \
                   .sort_by('-timestamp').field_limit('timestamp')
     if results.count():

@@ -25,7 +25,7 @@ from eulxml.xmlmap import load_xmlobject_from_file
 from eulxml.xmlmap.dc import DublinCore
 
 from readux.fedora import ManagementRepository
-from readux.books.models import Book, VolumeV1_1, MinMarcxml
+from readux.books.models import Book, VolumeV1_1, MinMarcxml, PageV1_1
 from readux.collection.models import Collection
 
 
@@ -126,8 +126,8 @@ class Command(BaseCommand):
 
         # check that required components are present
         err = False
-        for label, path in files.iteritems():
-            if path is None:
+        for label, filepath in files.iteritems():
+            if filepath is None:
                 self.stderr.write('%s not found' % label.upper())
                 err = True
 
@@ -260,5 +260,69 @@ class Command(BaseCommand):
         #             (imgfile, ocrfile))
 
         # iterate through page images and put into fedora
+        pageindex = 1
         for imgfile in image_files:
+            if verbosity > self.v_normal:
+                print 'Creating Page object for %s' % imgfile
+            # path is relative to bag root dir
+            img_filename = os.path.join(path, imgfile)
+
+            img_content = None
+            ocr_content = None
+
+            try:
+                img_content = open(img_filename)
+
+                page = repo.get_object(type=PageV1_1)
+                # set page label
+                page.label = '%s page %d' % (vol.label, pageindex)
+                # set the relation to the volume object
+                page.volume = vol
+                # set a dc:title based on volume title
+                page.dc.content.title = '%s page %d' % (vol.dc.content.title, pageindex)
+                # set page order
+                page.page_order = pageindex
+
+                # set image content
+                page.image.content = img_content
+                page.image.checksum = bag.entries[imgfile]['md5']
+                # assume jpeg2000 for now (only looking for jp2/jpf)
+                page.image.mimetype = 'image/jp2'
+
+                # check for ocr xml within the bag, same base name as image
+                basefile, ext = os.path.splitext(imgfile)
+                ocrfile = '%s.xml' % basefile
+
+                if ocrfile in payload_files:
+                    ocr_content = open(os.path.join(path, ocrfile))
+                    page.ocr.content = ocr_content
+                    # NOTE: can't use MD5 from bag because XML may be
+                    # serialized differently when sent to Fedora
+                    # (unless we treat as file instead of xml...)
+                    # page.ocr.checksum = bag.entries[ocrfile]['md5']
+
+                    if verbosity > self.v_normal:
+                        print 'Setting OCR for Page from %s' % ocrfile
+
+                if not dry_run:
+                    saved = page.save()
+
+                # TODO: catch & handle fedora error here
+
+            finally:
+                img_content.close()
+                if ocr_content is not None:
+                    ocr_content.close()
+
+            # set first page as primary image for the volume
+            if not dry_run and pageindex == 1:
+                vol.primary_image = page
+                vol.save('adding primary image relation')
+
+            # increase page index for next page
+            pageindex += 1
+            # TEMPORARY: stop here for testing purposes
+            break
+
+
 

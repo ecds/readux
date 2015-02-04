@@ -82,6 +82,14 @@ class Book(DigitalObject):
         if descriptions:
             return sorted(descriptions, key=len, reverse=True)[0]
 
+    @staticmethod
+    def pids_by_label(label):
+        '''Search Books by label and return a list of matching pids.'''
+        solr = solr_interface()
+        q = solr.query(content_model=Book.BOOK_CONTENT_MODEL,
+                       label=label).field_limit('pid')
+        return [result['pid'] for result in q]
+
 
 # NOTE: Image and Page defined before Volume to allow referencing in
 # Volume relation definitions

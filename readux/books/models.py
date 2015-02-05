@@ -672,19 +672,19 @@ class VolumeV1_1(Volume):
     NEW_OBJECT_VIEW = 'books:volume'
 
     # inherits dc, rels-ext, pdf
-
-    # ocr datastream?  possibly not any at volume level but only per-page
+    # no ocr datastream, because ocr is at the page level
 
     @property
     def fulltext_available(self):
-        # for now, no fulltext available until we determine how to access
-        # or assumple multipage ocr
-        # TODO: need a way to determine full text available for solr results...
-        return False
+        # volume v1.1 doesn't include the full-text anywhere at the volume level,
+        # so text content is only available if pages are loaded
+        return self.has_pages
 
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
-        pass
+        q =  self.find_solr_pages()
+        q = q.field_limit(['page_text'])
+        return '\n\n'.join(p['page_text'] for p in q if 'page_text' in p)
 
 class SolrVolume(UserDict, BaseVolume):
     '''Extension of :class:`~UserDict.UserDict` for use with Solr results

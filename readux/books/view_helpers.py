@@ -121,11 +121,18 @@ def pdf_lastmodified(request, pid):
 
 def ocr_etag(request, pid):
     'etag for Volume OCR datastream'
-    return datastream_etag(request, pid, Volume.ocr.id)
+    return datastream_etag(request, pid, VolumeV1_0.ocr.id)
 
 def ocr_lastmodified(request, pid):
     'last modified for Volume OCR datastream'
-    return datastream_lastmodified(request, pid, Volume.ocr.id, Volume)
+    return datastream_lastmodified(request, pid, VolumeV1_0.ocr.id, Volume)
+
+# TODO: consider full text etag/lastmodified methods that would work
+# for both volume v1.0 and v1.1; if v1.0, simple returns ocr methods
+# above; otherwise, no etag is available but last-modified could be pulled
+# from most recent solr indexed page.
+# (If this requires additional fedora api calls to determine type,
+# may be too costly.)
 
 def page_image_etag(request, pid, **kwargs):
     'etag for Page image datastream'

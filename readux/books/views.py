@@ -7,7 +7,7 @@ from django.views.decorators.http import condition, require_http_methods, \
 from urllib import urlencode
 import os
 
-from eulfedora.server import Repository, RequestFailed
+from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
 from readux.books.models import Volume, SolrVolume, Page, PageV1_0
@@ -265,10 +265,16 @@ def text(request, pid):
     '''View to allow access the plain text content of a
     :class:`~readux.books.models.Volume` object.
     '''
-    repo = Repository()
-    obj = repo.get_object(pid, type=Volume)
+    # NOTE: etag & last-modified will currently only work for Volume v1.0.
+    # However, solr-based text for Volume v1.1 should be sufficiently fast
+    # and low-impact that the lack of cache-supporting headers is ok
+
+    # NOTE:  type-inferring is required here because volume could be either
+    # v1.0 or v.1.1 and method to pull the text content is different
+    repo = TypeInferringRepository()
+    obj = repo.get_object(pid)
     # if object doesn't exist, isn't a volume, or doesn't have ocr text - 404
-    if not obj.exists or not obj.has_requisite_content_models or not obj.ocr.exists:
+    if not obj.exists or not obj.has_requisite_content_models or not obj.fulltext_available:
         raise Http404
 
     response = HttpResponse(obj.get_fulltext(), 'text/plain')

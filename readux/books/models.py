@@ -168,6 +168,8 @@ class Page(Image):
     '''Page object with common functionality for all versions of
     ScannedPage content.'''
     NEW_OBJECT_VIEW = 'books:page'
+    #: pattern for retrieving page variants 1.0 or 1.1 from solr
+    PAGE_CMODEL_PATTERN = 'info:fedora/emory-control:ScannedPage-1.?'
 
     page_order = Relation(REPOMGMT.pageOrder,
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
@@ -206,6 +208,19 @@ class Page(Image):
             data['page_text'] = self.get_fulltext()
 
         return data
+
+    @property
+    def has_requisite_content_models(self):
+        ''':type: bool
+
+        True when the current object has the expected content models
+        for one of the supported Page variants.'''
+        # extending default implementation because pade object should include
+        # image cmodel and either page 1.0 or page 1.1
+        return (self.has_model(Image.IMAGE_CONTENT_MODEL) & \
+               (self.has_model(PageV1_0.PAGE_CONTENT_MODEL) | \
+               self.has_model(PageV1_1.PAGE_CONTENT_MODEL)))
+
 
 class PageV1_0(Page):
     '''Page subclass for emory-control:ScannedPage-1.0.'''
@@ -354,6 +369,18 @@ class Volume(DigitalObject, BaseVolume):
     #: start page - 1-based index of the first non-blank page in the PDF
     start_page = Relation(REPOMGMT.startPage,
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
+
+    @property
+    def has_requisite_content_models(self):
+        ''':type: bool
+
+        True when the current object has the expected content models
+        for one of the supported Volume variants.'''
+        # extending default implementation because volume object should include
+        # either volume 1.0 or volume 1.1
+        return self.has_model(VolumeV1_0.VOLUME_CONTENT_MODEL) | \
+               self.has_model(VolumeV1_1.VOLUME_CONTENT_MODEL)
+
 
     @permalink
     def get_absolute_url(self):
@@ -564,7 +591,7 @@ class Volume(DigitalObject, BaseVolume):
         # find all pages that belong to the same volume and sort by page order
         # - filtering separately should allow solr to cache filtered result sets more efficiently
         solrquery = solr.query(isConstituentOf=self.uri) \
-                       .filter(content_model=PageV1_0.PAGE_CONTENT_MODEL) \
+                       .filter(content_model=Page.PAGE_CMODEL_PATTERN) \
                        .filter(state='A') \
                        .sort_by('page_order')
         # only return fields we actually need (pid, page_order)

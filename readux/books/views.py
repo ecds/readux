@@ -10,7 +10,7 @@ import os
 from eulfedora.server import Repository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, VolumeV1_0, SolrVolume, Page, PageV1_0
+from readux.books.models import Volume, SolrVolume, Page, PageV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -124,7 +124,7 @@ def volume(request, pid):
             # NOTE: should this be OR or AND?
             query |= solr.Q(page_text=t)
         # search for pages that belong to this book
-        q = solr.query().filter(content_model=PageV1_0.PAGE_CONTENT_MODEL,
+        q = solr.query().filter(content_model=Page.PAGE_CMODEL_PATTERN,
                                 isConstituentOf=vol.uri) \
                 .query(query) \
                 .field_limit(['page_order', 'pid'], score=True) \

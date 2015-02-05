@@ -281,8 +281,16 @@ class PageV1_1(Page):
 
     def get_fulltext(self):
         '''Sanitized OCR full-text, e.g., for indexing or text analysis'''
-        # TODO: get plain text content from the alto xml
-        pass
+        # for simplicity and speed, use beautifulsoup to pull text content from the
+        # alto ocr xml.
+        # explicitly request generic ds object to avoid attempting to parse as xml
+        ds = self.getDatastreamObject(self.ocr.id, dsobj_type=DatastreamObject)
+        xmlsoup = BeautifulSoup(ds.content)
+
+        # text content is grouped by line (TextLine element), and then contained
+        # in the "CONTENT" attribute of String elements.
+        return '\n'.join((' '.join(s['content'] for s in line.find_all('string')))
+                         for line in xmlsoup.find_all('textline'))
 
 
 class BaseVolume(object):
@@ -677,8 +685,6 @@ class VolumeV1_1(Volume):
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
         pass
-        # TODO
-
 
 class SolrVolume(UserDict, BaseVolume):
     '''Extension of :class:`~UserDict.UserDict` for use with Solr results

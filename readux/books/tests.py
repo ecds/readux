@@ -18,7 +18,7 @@ from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
 from readux.books import abbyyocr
-from readux.books.models import SolrVolume, Volume, Book, BIBO, DC, Page
+from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, DC, Page
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -86,12 +86,12 @@ class SolrVolumeTest(TestCase):
         self.assert_('#page=6' in pdf_url)
 
 
-class VolumeTest(TestCase):
+class VolumeV1_0Test(TestCase):
 
     def setUp(self):
         # use uningested objects for testing purposes
         repo = Repository()
-        self.vol = repo.get_object(type=Volume)
+        self.vol = repo.get_object(type=VolumeV1_0)
         self.vol.label = 'ocn460678076_V.1'
 
     def test_ark_uri(self):
@@ -454,7 +454,7 @@ class BookViewsTest(TestCase):
         mocksolr.query.query.assert_any_call(collection_label='"%s"' % 'Yellowbacks')
 
 
-    @patch('readux.books.views.Repository')
+    @patch('readux.books.views.TypeInferringRepository')
     def test_text(self, mockrepo):
         mockobj = Mock()
         mockobj.pid = 'vol:1'
@@ -475,10 +475,10 @@ class BookViewsTest(TestCase):
 
         # various 404 conditions
         # - no ocr
-        mockobj.ocr.exists = False
+        mockobj.fulltext_available = False
         response = self.client.get(text_url)
         self.assertEqual(404, response.status_code,
-            'text view should 404 if ocr datastream does not exist')
+            'text view should 404 if fultext is not available')
         # - not a volume
         mockobj.has_requisite_content_models = False
         mockobj.ocr.exists = True

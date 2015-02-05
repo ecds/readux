@@ -330,6 +330,9 @@ class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume object with common functionality for all versions.
     Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.'''
 
+    #: content model pattern for finding supported variant volumes
+    VOLUME_CMODEL_PATTERN = "info:fedora/emory-control:ScannedVolume-1.?"
+
     # inherits DC, RELS-EXT
     # related to parent Book object via isConstituentOf
 

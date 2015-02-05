@@ -35,7 +35,7 @@ def search(request, mode='list'):
             author_query |= solr.Q(creator=t)
             title_query |= solr.Q(title=t)
 
-        q = solr.query().filter(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) \
+        q = solr.query().filter(content_model=Volume.VOLUME_CMODEL_PATTERN) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(SolrVolume.necessary_fields, score=True)  \
                 .results_as(SolrVolume) \
@@ -349,7 +349,7 @@ def page_image(request, pid, mode=None):
     '''
     try:
         repo = Repository()
-        page = repo.get_object(pid, type=PageV1_0)
+        page = repo.get_object(pid, type=Page)
         if page.image.exists:
             # Explicitly support HEAD for efficiency (skip API call)
             if request.method == 'HEAD':

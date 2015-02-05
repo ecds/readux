@@ -403,7 +403,7 @@ class BookViewsTest(TestCase):
         # query with search terms
         response = self.client.get(search_url, {'keyword': 'yellowbacks'})
 
-        mocksolr.query.filter.assert_called_with(content_model=Volume.VOLUME_CONTENT_MODEL)
+        mocksolr.query.filter.assert_called_with(content_model=Volume.VOLUME_CMODEL_PATTERN)
         # because of creator/title search boosting, actual query is a little difficult to test
         mocksolr.Q.assert_any_call('yellowbacks')
         mocksolr.Q.assert_any_call(creator='yellowbacks')

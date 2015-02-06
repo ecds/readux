@@ -44,7 +44,6 @@ def collection_modified(request, pid, **kwargs):
                                 collection_id=pid)) \
                   .sort_by('-timestamp').field_limit('timestamp')
 
-    print '*** debug: col mod results are = ', results
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified
     if results.count():

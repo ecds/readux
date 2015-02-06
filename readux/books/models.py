@@ -696,7 +696,7 @@ class SolrVolume(UserDict, BaseVolume):
     necessary_fields = ['pid', 'title', 'label', 'language',
         'creator', 'date', 'hasPrimaryImage',
         'page_count', 'collection_id', 'collection_label',
-        'pdf_size', 'start_page'
+        'pdf_size', 'start_page', 'created'
     ]
 
     def __init__(self, **kwargs):

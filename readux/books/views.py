@@ -22,6 +22,9 @@ def search(request, mode='list'):
     form = BookSearch(request.GET)
     context = {'form': form}
 
+    # sort: currently supports relevance, title, or date added
+    sort = request.GET.get('sort', None)
+
     if form.is_valid():
         # get list of keywords and phrases
         terms = form.search_terms()
@@ -38,8 +41,22 @@ def search(request, mode='list'):
         q = solr.query().filter(content_model=Volume.VOLUME_CMODEL_PATTERN) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(SolrVolume.necessary_fields, score=True)  \
-                .results_as(SolrVolume) \
-                .sort_by('-score')
+                .results_as(SolrVolume)
+
+
+        sort_options = ['relevance', 'title', 'date added']
+        if sort not in sort_options:
+            # by default, sort by relevance score
+            sort = 'relevance'
+
+        if sort == 'relevance':
+            q = q.sort_by('-score')
+        elif sort == 'title':
+            # sort by title and then by label so multi-volume works should group
+            # together in the correct order
+            q = q.sort_by('title_exact').sort_by('label')
+        elif sort == 'date added':
+            q = q.sort_by('-created')
 
         # don't need to facet on collection if we are already filtered on collection
         if 'collection' not in request.GET:
@@ -64,7 +81,7 @@ def search(request, mode='list'):
                                     unfacet_urlopts.urlencode()))
 
         # paginate the solr result set
-        paginator = Paginator(q, 30)
+        paginator = Paginator(q, 10)
         try:
             page = int(request.GET.get('page', '1'))
         except ValueError:
@@ -76,6 +93,11 @@ def search(request, mode='list'):
 
         if 'page' in url_params:
             del url_params['page']
+
+        sort_url_params = request.GET.copy()
+        if 'sort' in sort_url_params:
+            del sort_url_params['sort']
+
 
         # adjust facets as returned from solr for diplay
         facet_fields = results.object_list.facet_counts.facet_fields
@@ -89,8 +111,10 @@ def search(request, mode='list'):
             'facets': facets,  # available facets
             'filters': display_filters,  # active filters
             'mode': mode,  # list / cover view
-            'current_url_params': urlencode(request.GET.copy())
-
+            'current_url_params': urlencode(request.GET.copy()),
+            'sort': sort,
+            'sort_options': sort_options,
+            'sort_url_params': urlencode(sort_url_params),
         })
 
     return render(request, 'books/search.html', context)

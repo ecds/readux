@@ -89,10 +89,14 @@
             {# if more than one item on this page, display range of results #}
         </p>
         <div class="row">
-            <div class="col-xs-5 col-xs-offset-3 col-sm-6 col-sm-offset-3 col-md-2 col-md-offset-5">
+            <div class="col-xs-5 col-xs-offset-2 col-sm-6 col-sm-offset-0 col-md-2 col-md-offset-4">
                 {% if items.has_other_pages %}
                    {% include 'eultheme/snippets/pagination_dropdown.html' with results=items %}
                 {% endif %}
+
+            </div>
+            <div class="col-xs-5 col-sm-6 col-md-2">
+                {% include 'collection/snippets/sort_dropdown.html' %}
             </div>
             <div id="view-toggle" class="pull-right padding">
                 {% include "collection/snippets/collection_coverlist_toggle.html" %}

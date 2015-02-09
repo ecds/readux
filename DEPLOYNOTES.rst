@@ -94,6 +94,13 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.1
+-------------
+
+* Update Fedora XACML policies to include new variant content models
+  (ScannedVolume-1.1 and ScannedPage-1.1) and reload policies so that newly
+  ingested content will be accessible.
+
 Release 1.0.2
 -------------
 

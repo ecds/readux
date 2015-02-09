@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load humanize %}
 <div class="media">
   <a class="pull-left" href="{% url 'books:volume' obj.pid %}">
     {% if obj.hasPrimaryImage %}
@@ -30,8 +30,9 @@
     {% if show_collection|default:'True' == 'True' and obj.collection_id and obj.collection_label %}
     <p><b>Collection:</b> <a href="{% url 'collection:view' obj.collection_id %}">{{ obj.collection_label }}</a></p>
     {% endif %}
-
+    <p class="small text-muted">Added {{ obj.created|naturalday }}</p>
     {% include 'books/snippets/volume_links.html' with vol=obj small_buttons=True %}
+
   </div>
 </div>
 

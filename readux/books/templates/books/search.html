@@ -44,16 +44,16 @@
          {% endfor %}
        </ul>
     {% endif %}
-
+</header>
+<div class="container">
+<section class="volume-list">
         {% if not form.errors %}
           {% if items.paginator.count %}
           <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} found</h2>
-
             {% if items.has_other_pages and items.object_list|length > 1 %}
             <p class="lead">
               displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}
             </p>
-
             {% endif %}
             {# if more than one item on this page, display range of results #}
 
@@ -61,9 +61,20 @@
           <h2 id="no-results-found">No results for your search terms.</h2>
           {% endif %} {# no results #}
         {% endif %} {# valid form #}
-    </header>
-    <section>
-      {% include "books/snippets/search_coverlist_toggle.html" %}
+
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-2 col-sm-6 col-sm-offset-0 col-md-2 col-md-offset-4">
+                {% if items.has_other_pages %}
+                   {% include 'eultheme/snippets/pagination_dropdown.html' with results=items %}
+                {% endif %}
+
+            </div>
+            <div class="col-xs-5 col-sm-6 col-md-2">
+                {% include 'collection/snippets/sort_dropdown.html' %}
+            </div>
+
+            {% include "books/snippets/search_coverlist_toggle.html" %}
+        </div>
 
       <div class="facets">
         {% if facets.collection %}

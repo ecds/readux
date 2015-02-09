@@ -28,8 +28,6 @@ def browse(request, mode='covers'):
 
     '''
     solr = solr_interface()
-    # FIXME: this filter should probably be commonly used across all LSDI
-    # search and browse
     results = solr.query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
                   .filter(owner='LSDI-project') \
                   .sort_by('title_exact') \
@@ -38,7 +36,9 @@ def browse(request, mode='covers'):
     # associated CollectionImage db model
 
     # Use a facet query to get a count of the number of volumes in each collection
-    q = solr.query(content_model=Volume.VOLUME_CONTENT_MODEL) \
+    # q = solr.query(solr.Q(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) | solr.Q(content_model=VolumeV1_1.VOLUME_CONTENT_MODEL)) \
+
+    q = solr.query(content_model=Volume.VOLUME_CMODEL_PATTERN) \
             .facet_by('collection_id', sort='count', mincount=1) \
             .paginate(rows=0)
     facets = q.execute().facet_counts.facet_fields
@@ -75,14 +75,27 @@ def view(request, pid, mode='list'):
     if not obj.exists or not obj.has_requisite_content_models:
         raise Http404
 
+    # sort: currently supports title or date added
+    sort = request.GET.get('sort', None)
+
     # search for all books that are in this collection
     solr = solr_interface()
-    q = solr.query(content_model=Volume.VOLUME_CONTENT_MODEL,
+    q = solr.query(content_model=Volume.VOLUME_CMODEL_PATTERN,
                    collection_id=obj.pid) \
-                .sort_by('title_exact').sort_by('label') \
-                .results_as(SolrVolume)
-    # sort by title and then by label so multi-volume works should group
-    # together in the correct order
+            .results_as(SolrVolume)
+
+    sort_options = ['title', 'date added']
+    if sort not in sort_options:
+        # by default, sort by title
+        sort = 'title'
+
+    if sort == 'title':
+        # sort by title and then by label so multi-volume works should group
+        # together in the correct order
+        q = q.sort_by('title_exact').sort_by('label')
+    elif sort == 'date added':
+        # sort by most recent creation date (newest additions first)
+        q = q.sort_by('-created')
 
     # paginate the solr result set
     paginator = Paginator(q, 30)
@@ -95,12 +108,17 @@ def view(request, pid, mode='list'):
     except (EmptyPage, InvalidPage):
         results = paginator.page(paginator.num_pages)
 
-    # url parameters for pagination links
+    # url parameters for pagination & sort links
     url_params = request.GET.copy()
     if 'page' in url_params:
         del url_params['page']
+    sort_url_params = request.GET.copy()
+    if 'sort' in sort_url_params:
+        del sort_url_params['sort']
 
     return render(request, 'collection/view.html',
         {'collection': obj, 'items': results, 'mode': mode,
          'url_params': urlencode(url_params),
-         'current_url_params': urlencode(request.GET.copy())})
+         'sort_url_params': urlencode(sort_url_params),
+         'current_url_params': urlencode(request.GET.copy()),
+         'sort': sort, 'sort_options': sort_options})

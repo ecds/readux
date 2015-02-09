@@ -57,7 +57,7 @@ class CollectionViewsTest(TestCase):
         mocksolr.query.assert_any_call(content_model=Collection.COLLECTION_CONTENT_MODEL)
         mocksolr.query.sort_by.assert_called_with('title_exact')
         # - volume facet to get count by collection
-        mocksolr.query.assert_any_call(content_model=Volume.VOLUME_CONTENT_MODEL)
+        mocksolr.query.assert_any_call(content_model=Volume.VOLUME_CMODEL_PATTERN)
         mocksolr.query.facet_by.assert_called_with('collection_id', sort='count', mincount=1)
         mocksolr.query.paginate.assert_called_with(rows=0)
 
@@ -150,7 +150,7 @@ class CollectionViewsTest(TestCase):
 
         response = self.client.get(view_url)
         # inspect solr query
-        mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CONTENT_MODEL,
+        mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CMODEL_PATTERN,
                                           collection_id=mockcoll.pid)
         mocksolr.query.sort_by.assert_any_call('title_exact')
         mocksolr.query.sort_by.assert_any_call('label')

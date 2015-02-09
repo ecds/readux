@@ -1,5 +1,5 @@
 from readux.utils import solr_interface
-from readux.books.models import Volume
+from readux.books.models import VolumeV1_0
 from readux.collection.models import Collection
 
 '''
@@ -24,7 +24,7 @@ def collections_modified(request, *args, **kwargs):
     solr = solr_interface()
     results = solr.query(solr.Q(solr.Q(content_model=Collection.COLLECTION_CONTENT_MODEL) &
                                 solr.Q(owner='LSDI-project')) | \
-                         solr.Q(content_model=Volume.VOLUME_CONTENT_MODEL)) \
+                         solr.Q(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL)) \
                   .sort_by('-timestamp').field_limit('timestamp')
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified
@@ -40,11 +40,10 @@ def collection_modified(request, pid, **kwargs):
      '''
     solr = solr_interface()
     results = solr.query(solr.Q(pid=pid) | \
-                         solr.Q(content_model=Volume.VOLUME_CONTENT_MODEL,
+                         solr.Q(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL,
                                 collection_id=pid)) \
                   .sort_by('-timestamp').field_limit('timestamp')
 
-    print '*** debug: col mod results are = ', results
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified
     if results.count():

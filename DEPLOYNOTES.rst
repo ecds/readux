@@ -100,6 +100,7 @@ Release 1.1
 * Update Fedora XACML policies to include new variant content models
   (ScannedVolume-1.1 and ScannedPage-1.1) and reload policies so that newly
   ingested content will be accessible.
+* Restart eulindexer so it will pick up the new content models to be indexed.
 
 Release 1.0.2
 -------------

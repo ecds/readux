@@ -43,6 +43,9 @@ class MinMarcxml(xmlmap.XmlObject):
 
     ocm_number = xmlmap.StringField('marc21:record/marc21:controlfield[@tag="001"]')
 
+    # NOTE: consider using pymarc for any marcxml handling instead
+    # xml can be loaded via pymarc.parse_xml_to_array(filename)
+
 
 class Book(DigitalObject):
     '''Fedora Book Object.  Extends :class:`~eulfedora.models.DigitalObject`.

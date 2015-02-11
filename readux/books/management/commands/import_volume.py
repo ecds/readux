@@ -369,7 +369,8 @@ class Command(BaseCommand):
             pageindex += 1
 
         if verbosity >= self.v_normal:
-            self.stdout.write('Created %d pages' % pageindex)
+            # total is pageindex - 1 since pageindex incremented at end of loop
+            self.stdout.write('Created %d pages' % pageindex - 1)
 
 
 

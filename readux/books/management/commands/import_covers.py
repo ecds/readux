@@ -54,7 +54,7 @@ from django.core.management.base import BaseCommand
 from progressbar import ProgressBar, Bar, Percentage, \
          ETA, Counter
 
-from readux.books.models import Volume
+from readux.books.models import VolumeV1_0
 from readux.books.management.page_import import BasePageImport
 
 
@@ -100,7 +100,7 @@ the configured fedora instance, or in a single collection specified by pid.'''
         # if pids are specified on command line, only process those objects
         # (takes precedence over collection)
         if pids:
-            objs = [self.repo.get_object(pid, type=Volume) for pid in pids]
+            objs = [self.repo.get_object(pid, type=VolumeV1_0) for pid in pids]
 
         # if collection is specified, find pids by collection
         elif options['collection']:
@@ -108,7 +108,7 @@ the configured fedora instance, or in a single collection specified by pid.'''
 
         # otherwise, look for all volume objects in fedora
         else:
-            objs = self.repo.get_objects_with_cmodel(Volume.VOLUME_CONTENT_MODEL,
+            objs = self.repo.get_objects_with_cmodel(VolumeV1_0.VOLUME_CONTENT_MODEL,
                                                 type=Volume)
 
         self.total = len(objs)

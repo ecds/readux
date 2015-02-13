@@ -14,7 +14,7 @@ from pdfminer.pdfdocument import PDFDocument, PDFNoOutlines
 from pdfminer.pdfpage import PDFPage
 
 from readux.books import digwf
-from readux.books.models import Page
+from readux.books.models import PageV1_0
 from readux.collection.models import Collection
 from readux.fedora import ManagementRepository
 from readux.utils import md5sum
@@ -283,7 +283,7 @@ class BasePageImport(BaseCommand):
         try:
             colors = img.getcolors()
         except Exception as err:
-            logger.error('Error loading image %s: %s' % (imgfile, err))
+            logger.error('Error loading image %s: %s', imgfile, err)
             # for now, going to return true/blank if the image can't be read
             # (but this is an assumption)
             return True
@@ -394,7 +394,7 @@ class BasePageImport(BaseCommand):
             self.stdout.write('  text: %s\n' % txtfile)
 
         if page is None:
-            page = self.repo.get_object(type=Page)
+            page = self.repo.get_object(type=PageV1_0)
         # object label based on volume label (ocm# + volume info)
         page.label = '%s page %d' % (vol.label, pageindex)
         # set the relation to the volume object

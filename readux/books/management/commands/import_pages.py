@@ -49,7 +49,7 @@ from django.core.management.base import BaseCommand, CommandError
 from progressbar import ProgressBar, Bar, Percentage, \
          ETA, Counter, Timer
 
-from readux.books.models import Volume
+from readux.books.models import VolumeV1_0
 from readux.books.management.page_import import BasePageImport
 
 
@@ -85,7 +85,7 @@ the configured fedora instance).'''
 
         # if pids are specified on command line, only process those objects
         if pids:
-            objs = [self.repo.get_object(pid, type=Volume) for pid in pids]
+            objs = [self.repo.get_object(pid, type=VolumeV1_0) for pid in pids]
 
         # if collection is specified, find pids by collection
         elif options['collection']:

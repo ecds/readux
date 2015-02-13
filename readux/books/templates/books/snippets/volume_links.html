@@ -14,7 +14,7 @@
 
 <a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}"
     href="{{ vol.pdf_url }}"
-    title="PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
+    title="view PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
     <span class="fa fa-file-pdf-o"></span>
     <span>View PDF</span>
     {% if vol.pdf_size %}
@@ -22,12 +22,29 @@
     {% endif %}
 </a>
 
+<a class="btn btn-default btn-pdf{% if small_buttons %} btn-xs{% endif %}"
+    href="{% url 'books:pdf' vol.pid %}?download"
+    title="download PDF for {{ vol.title|truncatechars:100 }} {{ vol.volume|default:'' }}">
+    <span class="fa fa-file-pdf-o"></span>
+    <span>Download PDF</span>
+    {% if vol.pdf_size %}
+        <span class="text-muted">({{ vol.pdf_size|filesizeformat }})</span>
+    {% endif %}
+</a>
+
+
 {# link to voyant with full document plain text as input; preset english stopwords for english texts #}
 <a href="{{ vol.voyant_url }}"
    title="send text to Voyant" target="_blank" class="btn btn-default{% if small_buttons %} btn-xs{% endif %}">
         <span class="glyphicon glyphicon-send"></span>
         <span>Send to Voyant</span>
 </a>
+
+{% if vol.large_pdf %}
+<p class="small text-warning">Some browsers will not be able to show large
+    PDF files; in any browser large files might take a few minutes to load.
+    Try downloading large files to view locally.</p>
+{% endif %}
 
 {# unapi id for zotero harvest #}
 <abbr class="unapi-id" title="{{ vol.pid }}"></abbr>

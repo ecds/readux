@@ -256,15 +256,21 @@ def pdf(request, pid):
     '''View to allow access to the PDF datastream of a
     :class:`~readux.books.models.Volume` object.  Sets a
     content-disposition header that will prompt the file to be saved
-    with a default title based on the object label.
+    with a default title based on the object label.  If **download** is specified
+    in the query string (i.e., url/to/pdf/?download), then content-disposition
+    will be set to attachment, prompting for download.
     '''
     repo = Repository()
+    # boolean flag indicating PDF should prompt for download instead of
+    # displaying in the browser or in a browser plugin
+    download = 'download' in request.GET
     try:
         # retrieve the object so we can use it to set the download filename
         obj = repo.get_object(pid, type=Volume)
         extra_headers = {
             # generate a default filename based on the object label
-            'Content-Disposition': 'filename="%s.pdf"' % obj.label.replace(' ', '-')
+            'Content-Disposition': '%sfilename="%s.pdf"' % \
+                ('attachment; ' if download else '', obj.label.replace(' ', '-'))
         }
         # use generic raw datastream view from eulfedora
         return raw_datastream(request, pid, Volume.pdf.id, type=Volume,

@@ -352,6 +352,13 @@ class BaseVolume(object):
             url = '%s#page=%d' % (url, self.start_page)
         return url
 
+    @property
+    def large_pdf(self):
+        '''boolean indicating if this PDF should be considered large, based on a
+        threshold configured in localsettings'''
+        return self.pdf_size and self.pdf_size > settings.LARGE_PDF_THRESHOLD
+
+
 class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume object with common functionality for all versions.
     Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.'''
@@ -736,6 +743,10 @@ class SolrVolume(UserDict, BaseVolume):
     @property
     def start_page(self):
         return self.data.get('start_page')
+
+    @property
+    def pdf_size(self):
+        return self.data.get('pdf_size')
 
 # hack: patch in volume as the related item type for pages
 # (can't be done in page declaration due to order / volume primary image rel)

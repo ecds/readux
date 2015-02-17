@@ -126,8 +126,8 @@ class BasePageImport(BaseCommand):
             return images, vol_info
 
         vol_info = info.items[0]
-        logger.debug("image path for %s : %s" % \
-           (vol.pid, vol_info.display_image_path))
+        logger.debug("image path for %s : %s",
+           vol.pid, vol_info.display_image_path)
 
         if not vol_info.display_image_path:
             self.stdout.write('Error: no display image path set for %s' % vol.pid)

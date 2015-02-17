@@ -51,7 +51,7 @@ from progressbar import ProgressBar, Bar, Percentage, \
 
 from readux.books.models import VolumeV1_0
 from readux.books.management.page_import import BasePageImport
-
+from readux.utils import md5sum
 
 logger = logging.getLogger(__name__)
 
@@ -71,11 +71,17 @@ the configured fedora instance).'''
         make_option('--collection', '-c',
             help='Find and process volumes that belong to the specified collection pid ' + \
             '(list of pids on the command line takes precedence over this option)'),
+        make_option('-f', '--fix-missing', action='store_true', default=False,
+            dest='fix_missing', help='Fix volumes with partial page content loaded')
         )
 
     v_normal = 1
 
     interrupted = False
+    current_volume = None
+    pageindex = None
+    images = None
+    total = 0
 
     def handle(self, *pids, **options):
         # bind a handler for interrupt signal
@@ -164,14 +170,25 @@ the configured fedora instance).'''
 
             # if the volume already has pages, check if they match
             expected_pagecount = len(self.images[coverindex:lastpage_index])
-            logger.debug('Expected page count for %s is %d' % (vol.pid, expected_pagecount))
+            logger.debug('Expected page count for %s is %d', vol.pid, expected_pagecount)
             if vol.page_count > 1:    # should have at least 1 for cover
+                skip = True
                 # if the number of pages doesn't match what we expect, error
                 if vol.page_count != expected_pagecount:
                     msg = 'Error! Volume %s already has pages, but ' + \
-                          'the count (%d) does not match expected value (%d)'
+                          'the count (%d) does not match expected value (%d); %s'
                     print >> self.stdout, \
-                          msg % (vol.pid, vol.page_count, expected_pagecount)
+                          msg % (vol.pid, vol.page_count, expected_pagecount,
+                                'repairing' if options['fix_missing'] else '; use --fix-missing to correct')
+                    if options['fix_missing']:
+                        startindex, startpage = self.find_next_page(vol,
+                            coverindex, self.images)
+                        if startindex is None:
+                            print >> self.stdout, \
+                                'Could not determine next page to import'
+                        else:
+                            self.pageindex = startpage
+                            skip = False
 
                 # otherwise, all is well
                 elif self.verbosity >= self.v_normal:
@@ -179,15 +196,20 @@ the configured fedora instance).'''
                               'Volume %s has expected number of pages (%d) - skipping' % \
                               (vol.pid, vol.page_count)
 
-                # either way, no further processing
-                self.stats['skipped'] += 1
-                continue
+                # skip unless repairing incomplete page load
+                if skip:
+                    self.stats['skipped'] += 1
+                    continue
 
-            # ingest pages as volume constituents, starting with the first image after the cover
-            self.pageindex = 1  # store repo page order starting with 1, no matter what the actual index
-            # page index 1 is the cover image
-
-            # progressbar todo?
+            else:
+                # normal page ingest behavior
+                # ingest pages as volume constituents, starting with the first image after the cover
+                # - index into array of image files
+                startindex = coverindex + 1
+                # page order for the page
+                self.pageindex = 2
+                # store repo page order starting with 1, no matter what the actual index
+                # page index 1 is the cover image
 
             # if we have received a SIGINT during this loop, stop *before* ingesting any pages;
             # break out of volume loop and report on what was done
@@ -203,13 +225,14 @@ the configured fedora instance).'''
                            ' (', Counter(), ')', Bar(), Timer()]
                 page_pbar = ProgressBar(widgets=widgets, maxval=total).start()
 
-            for index in range(coverindex + 1, lastpage_index):
-                self.pageindex += 1
+            for index in range(startindex, lastpage_index):
                 if page_pbar:
                     page_pbar.update(self.pageindex)
 
                 imgfile = self.images[index]
                 self.ingest_page(imgfile, vol, vol_info, pageindex=self.pageindex)
+                # increment for next page
+                self.pageindex += 1
 
 
         if vol_pbar and not self.interrupted:
@@ -220,6 +243,41 @@ the configured fedora instance).'''
                 self.stats)
             if self.stats['pages']:
                 self.stdout.write('%(pages)d page(s) ingested' % self.stats)
+
+    def find_next_page(self, vol, coverindex, images):
+        '''Determien the index and page order of the next page to be ingested
+        when a volume has incomplete pages, e.g. when page import was
+        previously interrupted.'''
+        next_index = vol.page_count + coverindex
+        logger.debug('cover index is %d, current page count is %d; expected next page index %d',
+            coverindex, vol.page_count, next_index)
+
+        # pages are currently not guaranteed to be returned in order,
+        # so generate a dictionary so we can find the last checksum
+        # NOTE: this is potentially slow for large volumes...
+        pages = sorted(vol.pages, key=lambda p: p.page_order)
+        last_page = pages[-1]
+
+        # check that checksum for last page matches
+        last_image = images[next_index - 1]
+        # generate a checksum for the image as it would be ingested
+        # (i.e., convert to jpeg2000 if necessary)
+        tmpname, delete = self.convert_to_jp2(last_image)
+        checksum = md5sum(tmpname)
+        # delete tmpfile if one was created
+        if delete:
+            os.remove(tmpname)
+
+        # if the checksums match, then expected next index is correct
+
+        logger.debug('Image checksum for last ingested page %s is %s; calculated checksum is %s',
+            last_page.pid, last_page.image.checksum, checksum)
+
+        if checksum == last_page.image.checksum:
+            # return image index and numerical page order for next page
+            return (next_index, pages[-1].page_order + 1)
+
+        # otherwise, return nothing (next page information not found)
 
 
     def interrupt_handler(self, signum, frame):

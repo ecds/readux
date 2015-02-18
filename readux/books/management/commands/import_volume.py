@@ -164,7 +164,8 @@ class Command(BaseCommand):
         elif len(book_pids) == 1:
             book = repo.get_object(book_pids[0], type=Book)
             if verbosity >= self.v_normal:
-                self.stdout.write('Using existing book %s' % book.pid)
+                self.stdout.write('Using existing book %s with ocm number %s' % \
+                    (book.pid, marcxml.ocm_number))
 
         # otherwise, ingest new book
         else:
@@ -370,7 +371,7 @@ class Command(BaseCommand):
 
         if verbosity >= self.v_normal:
             # total is pageindex - 1 since pageindex incremented at end of loop
-            self.stdout.write('Created %d pages' % pageindex - 1)
+            self.stdout.write('Created %d pages' % (pageindex - 1))
 
 
 

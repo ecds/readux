@@ -64,15 +64,16 @@ class Command(BaseCommand):
 
         repo = ManagementRepository()
 
-        # should collection be required or is optional ok?
+        # make collection required to avoid accidentally forgetting it
         coll = options.get('collection', None)
-        collection = None
-        if coll is not None:
-            collection = repo.get_object(coll, type=Collection)
-            if not collection.exists:
-                raise CommandError('Collection %s does not exist' % coll)
-            if not collection.has_requisite_content_models:
-                raise CommandError('%s is not a collection' % coll)
+        if coll is None:
+            raise CommandError('Please specify collection pid')
+
+        collection = repo.get_object(coll, type=Collection)
+        if not collection.exists:
+            raise CommandError('Collection %s does not exist' % coll)
+        if not collection.has_requisite_content_models:
+            raise CommandError('%s is not a collection' % coll)
 
         try:
             start = time.time()

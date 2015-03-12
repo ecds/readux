@@ -1,4 +1,5 @@
 {% extends 'site_base.html' %}
+{% load teifacsimile %}
 
 {% block page-subtitle %}{{ page.display_label }} | {% endblock %}
 
@@ -75,7 +76,19 @@
 
             <div class="text-center">
                 <div id="zoom-page"></div>
+                {% if page.tei.exists %}
+                <div id="ocr-page">
+                    <div class="ocr-content">
+                    {# TODO: consider grouping by line and setting font-size that way #}
+                    {# this might also make highlighting look more natural #}
+                    {% for zone in page.tei.content.word_zones %}
+                        <div class="ocr-zone" style="display:block;position:absolute;{{ zone|zone_style:scale }}">{{ zone.text }}</div>
+                    {% endfor %}
+                </div>
+                </div>
+                {% endif %}
                 <div id="page-image"><img src="{% url 'books:page-image' page.pid %}"/></div>
+
             </div>
         </div>
 

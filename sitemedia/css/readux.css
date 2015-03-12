@@ -821,3 +821,34 @@ header#page-bg .collection-image-info.collasped .info{
     color: white;
     opacity: 0.5;
 }
+
+/* styles for overlaying ocr text over page image */
+#ocr-page {
+    position: absolute;
+    width: 80%;
+    left: 10%;
+    z-index: 2;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    height: 1000px;  /* FIXME: needs to be dynamic to match the image ? */
+    border: 3px solid red; /* TESTING */
+}
+.fullpage+#ocr-page {
+    left: 0;
+}
+/* FIXME: needs to be positioned exactly the same way the page images is */
+.ocr-content {
+    position: relative;
+    margin-left: 5%; /* FIXME: this is dependent on browser width */;
+ }
+.ocr-zone {
+    display: block;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    /* make text transparent */
+    color: #000;   /* Fallback for older browsers*/
+    color: rgba(0, 0, 0, 0.0);
+}
+/* TODO: styles for highlighted text */

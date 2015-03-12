@@ -10,7 +10,7 @@ import os
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page, PageV1_0
+from readux.books.models import Volume, SolrVolume, Page, PageV1_1
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -213,11 +213,19 @@ def volume_pages(request, pid):
         {'vol': vol, 'pages': results, 'form': form})
 
 
+#: size used for scaling single page image
+SINGLE_PAGE_SIZE = 1000
+
+
 @last_modified(view_helpers.page_modified)
 def view_page(request, pid):
-    repo = Repository()
-    page = repo.get_object(pid, type=Page)
-    if not page.exists or not page.has_requisite_content_models:
+    # NOTE: type inferring repository needed to load pages as correct version
+    repo = TypeInferringRepository()
+    # page = repo.get_object(pid, type=Page)
+    # page = repo.get_object(pid, type=PageV1_1)
+    page = repo.get_object(pid)
+    # if not page.exists or not page.has_requisite_content_models:
+    if not page.exists or not isinstance(page, Page):
         raise Http404
 
     # use solr to find adjacent pages to this one
@@ -245,10 +253,21 @@ def view_page(request, pid):
     # form for searching in this book
     form = BookSearch()
 
+
+    # currently only pagev1_1 has tei
+    if hasattr(page, 'tei') and page.tei.exists:
+        # determine scale for positioing OCR text in TEI facsimile
+        # based on original image and image as displayed
+        # - find maximum of width/height
+        long_edge  = max(page.width, page.height)
+        # - determine scale to convert original size to display size
+        scale = float(SINGLE_PAGE_SIZE) / float(long_edge)
+    else:
+        scale = None
+
     return render(request, 'books/page.html',
         {'page': page, 'next': nxt, 'prev': prev, 'page_chunk':page_chunk,
-         'form': form})
-
+         'form': form, 'scale': scale})
 
 
 @condition(etag_func=view_helpers.pdf_etag, last_modified_func=view_helpers.pdf_lastmodified)
@@ -403,7 +422,7 @@ def page_image(request, pid, mode=None):
                     # to make it possible to catch the error and serve out
                     # an error image; page images at this size shouldn't
                     # be large enough to really need chunking
-                    content = page.get_region(scale=1000)
+                    content = page.get_region(scale=SINGLE_PAGE_SIZE)
                     # content = page.get_region_chunks(scale=1000)
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level

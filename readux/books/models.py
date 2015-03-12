@@ -18,6 +18,7 @@ from eulfedora.models import  Relation, ReverseRelation, \
     FileDatastream, XmlDatastream, DatastreamObject
 from eulfedora.rdfns import relsext
 from eulxml import xmlmap
+from eulxml.xmlmap import teimap
 
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
@@ -264,6 +265,34 @@ class PageV1_0(Page):
             else:
                 return self.text.content
 
+class TeiZone(teimap.Tei):
+    'XmlObject for a zone in a TEI facsimile document'
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    id = xmlmap.StringField('@xml:id')
+    type = xmlmap.StringField('@type')
+    ulx = xmlmap.IntegerField('@ulx')
+    uly = xmlmap.IntegerField('@uly')
+    lrx = xmlmap.IntegerField('@lrx')
+    lry = xmlmap.IntegerField('@lry')
+    text = xmlmap.StringField('tei:w')
+
+    @property
+    def width(self):
+        return self.lrx - self.ulx
+
+    @property
+    def height(self):
+        return self.lry - self.uly
+
+
+class TeiFacsimile(teimap.Tei):
+    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
+    word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
+
 
 class PageV1_1(Page):
     '''Page subclass for emory-control:ScannedPage-1.1.'''
@@ -277,6 +306,12 @@ class PageV1_1(Page):
     ocr = XmlDatastream('text', "OCR XML for page content", xmlmap.XmlObject, defaults={
         'control_group': 'M',
         'versionable': True,
+    })
+    #: xml datastream for a tei facsimile version of this page
+    #: unversioned because generated from the mets ocr
+    tei = XmlDatastream('tei', 'TEI Facsimile for page content', TeiFacsimile, defaults={
+        'control_group': 'M',
+        'versionable': False,
     })
 
     def has_fulltext(self):
@@ -294,6 +329,27 @@ class PageV1_1(Page):
         # in the "CONTENT" attribute of String elements.
         return '\n'.join((' '.join(s['content'] for s in line.find_all('string')))
                          for line in xmlsoup.find_all('textline'))
+
+    ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'ocr_to_teifacsimile.xsl')
+
+    def generate_tei(self):
+        '''Generate TEI facsimile for the current page'''
+        try:
+            with open(self.ocr_to_teifacsimile_xsl) as xslfile:
+                # print self.ocr.size
+                # print self.ocr.content.serialize(pretty=True)
+                transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # returns _XSLTResultTree, which is not JSON serializable;
+                return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
+
+        except XMLSyntaxError:
+            logger.warn('OCR xml for %s is invalid', self.pid)
+
+    def update_tei(self):
+        # TODO: check that it is valid tei?
+        # load as tei should maybe happen here instead of in generate
+        self.tei.content = self.generate_tei()
 
 
 class BaseVolume(object):
@@ -379,7 +435,8 @@ class Volume(DigitalObject, BaseVolume):
     #: :class:`Page` that is the primary image for this volume (e.g., cover image)
     primary_image = Relation(REPOMGMT.hasPrimaryImage, Page, repomgmt_ns)
     #: list of :class:`Page` for all the pages in this book, if available
-    pages = ReverseRelation(relsext.isConstituentOf, Page, multiple=True)
+    pages = ReverseRelation(relsext.isConstituentOf, Page, multiple=True,
+                            order_by=REPOMGMT.pageOrder)
 
     #: :class:`Book` this volume is associated with
     book = Relation(relsext.isConstituentOf, type=Book)

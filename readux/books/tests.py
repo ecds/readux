@@ -18,7 +18,8 @@ from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
 from readux.books import abbyyocr
-from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, DC, Page
+from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
+    DC, Page, TeiFacsimile, TeiZone
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -842,3 +843,22 @@ class AbbyyOCRTestCase(TestCase):
         self.assertEqual('fr6v1:par|fr8v2:par', abbyyocr.frns('par'))
         self.assertEqual('fr6v1:text/fr6v1:par|fr8v2:text/fr8v2:par',
                          abbyyocr.frns('text/par'))
+
+
+class TeiFacsimileTest(TestCase):
+    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
+
+    def setUp(self):
+        self.tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile.xml'),
+            TeiFacsimile)
+
+    def test_basic_properties(self):
+        self.assertEqual(isinstance(self.tei.page, TeiZone))
+        # quick check page size params coming through
+        self.assertEqual(0, self.tei.page.ulx)
+        self.assertEqual(0, self.tei.page.uly)
+        self.assertEqual(11874, self.tei.page.lrx)
+        self.assertEqual(9483, self.tei.page.lry)
+        self.assertEqual(isinstance(self.tei.word_zones, list),
+            'tei facsimile should have a list of word zones')
+        self.assertEqual(isinstance(self.tei.word_zones[0], TeiZone))

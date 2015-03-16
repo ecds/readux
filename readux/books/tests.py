@@ -853,12 +853,13 @@ class TeiFacsimileTest(TestCase):
             TeiFacsimile)
 
     def test_basic_properties(self):
-        self.assertEqual(isinstance(self.tei.page, TeiZone))
+        self.assert_(isinstance(self.tei.page, TeiZone))
         # quick check page size params coming through
         self.assertEqual(0, self.tei.page.ulx)
         self.assertEqual(0, self.tei.page.uly)
         self.assertEqual(11874, self.tei.page.lrx)
         self.assertEqual(9483, self.tei.page.lry)
-        self.assertEqual(isinstance(self.tei.word_zones, list),
+        # no easy way to check type (nodelist), so just check that it is non-false
+        self.assert_(self.tei.word_zones,
             'tei facsimile should have a list of word zones')
-        self.assertEqual(isinstance(self.tei.word_zones[0], TeiZone))
+        self.assert_(isinstance(self.tei.word_zones[0], TeiZone))

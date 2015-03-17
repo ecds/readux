@@ -13,13 +13,13 @@ import rdflib
 from rdflib import RDF
 from urllib import urlencode, unquote
 
-from eulxml.xmlmap import load_xmlobject_from_file
+from eulxml.xmlmap import load_xmlobject_from_file, XmlObject
 from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
-    DC, Page, TeiFacsimile, TeiZone
+    DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -863,3 +863,41 @@ class TeiFacsimileTest(TestCase):
         self.assert_(self.tei.word_zones,
             'tei facsimile should have a list of word zones')
         self.assert_(isinstance(self.tei.word_zones[0], TeiZone))
+
+
+
+class OCRtoTEIFacsimileXSLTestCase(TestCase):
+
+    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
+
+    fr6v1_doc = os.path.join(fixture_dir, 'abbyyocr_fr6v1.xml')
+    fr8v2_doc = os.path.join(fixture_dir, 'abbyyocr_fr8v2.xml')
+    metsalto_doc = os.path.join(fixture_dir, 'mets_alto.xml')
+
+    def setUp(self):
+        self.fr6v1 = load_xmlobject_from_file(self.fr6v1_doc, abbyyocr.Document)
+        self.fr8v2 = load_xmlobject_from_file(self.fr8v2_doc, abbyyocr.Document)
+        self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
+
+    def test_pageV1_0(self):
+        # page 1.0 - abbyy ocr content
+
+        page = PageV1_0(Mock()) # use mock for fedora api, since we won't make any calls
+        # use the first page with substantial text content as input
+        ocr_page = self.fr6v1.pages[5]
+        tei = page.generate_tei(ocr_page)
+        # print tei.serialize()
+        # inspect the tei and compare to the input
+        # abbyy ocr page has text blocks and paragraphs
+        # compare counts of items?
+        # compare coordinate attributes on a few elements
+        # compare word text
+
+    def test_pageV1_1(self):
+        # page 1.1 - mets/alto content
+        page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
+        # set mets fixture as page ocr
+        page.ocr.content = self.mets_alto
+        tei = page.generate_tei()
+        # print tei.serialize()
+

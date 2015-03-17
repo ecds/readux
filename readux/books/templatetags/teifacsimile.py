@@ -18,9 +18,29 @@ def zone_style(zone, scale):
 
     styles = {}
     if isinstance(zone, TeiZone):
-        styles['left'] = '%spx' % (zone.ulx * scale)
-        styles['top'] = '%spx' % (zone.uly * scale)
-        styles['width'] = '%spx' % (zone.width * scale)
-        styles['font-size'] = '%spx' % (zone.lry * scale - zone.uly * scale)
+        styles['width'] = '%.2fpx' % (zone.width * scale)
 
-    return ';'.join(['%s:%s' % (k, v) for k, v in styles.iteritems()])
+        if zone.type == 'textLine':
+            # text lines are absolutely positioned boxes
+            styles['left'] = '%.2fpx' % (zone.ulx * scale)
+            styles['top'] = '%.2fpx' % (zone.uly * scale)
+            # TODO: figure out how to determine this from ocr/teifacsimile
+            # rather than assuming
+            styles['text-align'] = 'left'
+            # TODO: would be better to set font-size by the line, but
+            # needs to be generated from word zones, not the line bounding box
+        elif zone.type == 'string':
+            # word strings are relatively positioned within a line
+            if zone.preceding:
+                # padding from end of previous word to beginning of the next
+                styles['padding-left'] = '%.2fpx' % ((zone.ulx - zone.preceding.lrx) * scale)
+            elif zone.parent:
+                # padding from beginning of the line to beginning of the first word
+                styles['padding-left'] = '%.2fpx' % (zone.ulx * scale - zone.parent.ulx * scale)
+
+            styles['font-size'] = '%.2fpx' % (zone.lry * scale - zone.uly * scale)
+
+    if styles:
+        return ';'.join(['%s:%s' % (k, v) for k, v in styles.iteritems()])
+    # no styles
+    return ''

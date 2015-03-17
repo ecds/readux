@@ -269,13 +269,26 @@ class TeiZone(teimap.Tei):
     'XmlObject for a zone in a TEI facsimile document'
     ROOT_NS = teimap.TEI_NAMESPACE
     ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    #: xml id
     id = xmlmap.StringField('@xml:id')
+    #: type attribute
     type = xmlmap.StringField('@type')
+    #: upper left x coord
     ulx = xmlmap.IntegerField('@ulx')
+    #: upper left y coord
     uly = xmlmap.IntegerField('@uly')
+    #: lower right x coord
     lrx = xmlmap.IntegerField('@lrx')
+    #: lower right y coord
     lry = xmlmap.IntegerField('@lry')
+    #: text content
     text = xmlmap.StringField('tei:w')
+    #: list of word zones contained in this zone (e.g., within a textLine zone)
+    word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
+    #: nearest preceding sibling word zone (e.g., previous word in this line), if any)
+    preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
+    #: nearest ancestor zone
+    parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
 
     @property
     def width(self):
@@ -291,6 +304,8 @@ class TeiFacsimile(teimap.Tei):
     ROOT_NS = teimap.TEI_NAMESPACE
     ROOT_NAMESPACES = {'tei' : ROOT_NS}
     page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
+    # NOTE: tei facsimile could include illustrations, but ignoring those for now
+    lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine"]', TeiZone)
     word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
 
 

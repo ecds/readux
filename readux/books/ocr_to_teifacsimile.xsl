@@ -3,6 +3,8 @@
   xmlns:alto="http://www.loc.gov/standards/alto/ns-v2#"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:fr8="http://www.abbyy.com/FineReader_xml/FineReader8-schema-v2.xml"
+  xmlns:fr6="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
   xmlns="http://www.tei-c.org/ns/1.0" version="2.0" exclude-result-prefixes="tei xs alto">
 
   <!--Identity transform written to create TEI files using Alto data.-->
@@ -36,6 +38,9 @@
       <xsl:apply-templates/>
     </TEI>
   </xsl:template>
+
+
+  <!-- template mathes for mets/alto elements -->
 
   <xsl:template match="alto:Description"/>
 
@@ -115,5 +120,51 @@
     <xsl:attribute name="lry"><xsl:value-of select="@VPOS + @HEIGHT"/></xsl:attribute>
   </xsl:element>
 </xsl:template>
+
+  <!-- template matches for abbyy finereader elements -->
+
+    <xsl:template match="fr8:page|fr6:page">
+    <xsl:element name="surface">
+      <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number(position(), '0000')"/></xsl:attribute>
+      <xsl:attribute name="type">page</xsl:attribute>
+      <xsl:attribute name="ulx">0</xsl:attribute>
+      <xsl:attribute name="uly">0</xsl:attribute>
+      <xsl:attribute name="lrx"><xsl:value-of select="@width"/></xsl:attribute>
+      <xsl:attribute name="lry"><xsl:value-of select="@height"/></xsl:attribute>
+      <xsl:element name="graphic">
+        <xsl:attribute name="url">
+          <!--add graphic filename-->
+        </xsl:attribute>
+      </xsl:element>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
+
+   <xsl:template match="fr8:block|fr6:block">
+    <xsl:element name="zone">
+      <xsl:attribute name="xml:id">bk.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="type"><xsl:value-of select="@blockType"/></xsl:attribute>
+      <xsl:attribute name="ulx"><xsl:value-of select="@l"/></xsl:attribute>
+      <xsl:attribute name="uly"><xsl:value-of select="@t"/></xsl:attribute>
+      <xsl:attribute name="lrx"><xsl:value-of select="@r"/></xsl:attribute>
+      <xsl:attribute name="lry"><xsl:value-of select="@b"/></xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="fr8:line|fr6:line">
+    <xsl:element name="zone">
+      <xsl:attribute name="xml:id">ln.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="type">line</xsl:attribute>
+      <xsl:attribute name="ulx"><xsl:value-of select="@l"/></xsl:attribute>
+      <xsl:attribute name="uly"><xsl:value-of select="@t"/></xsl:attribute>
+      <xsl:attribute name="lrx"><xsl:value-of select="@r"/></xsl:attribute>
+      <xsl:attribute name="lry"><xsl:value-of select="@b"/></xsl:attribute>
+      <xsl:element name="line">
+      <xsl:value-of select="normalize-space(.)"/>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+
 
 </xsl:stylesheet>

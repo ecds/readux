@@ -832,7 +832,6 @@ header#page-bg .collection-image-info.collasped .info{
     margin: 0;
     padding: 0;
     height: 1000px;  /* FIXME: needs to be dynamic to match the image ? */
-    border: 3px solid red; /* TESTING */
 }
 .fullpage+#ocr-page {
     left: 0;
@@ -848,7 +847,15 @@ header#page-bg .collection-image-info.collasped .info{
     padding: 0;
     margin: 0;
     /* make text transparent */
-    color: #000;   /* Fallback for older browsers*/
+    color: #000;   /* Fallback for older browsers */
     color: rgba(0, 0, 0, 0.0);
 }
-/* TODO: styles for highlighted text */
+/* highlighted text style, for browsers that support it (Webkit, Mozilla) */
+.ocr-content ::selection {
+    background: #fff2a8;
+    color: black;
+}
+.ocr-content ::-moz-selection {
+    background: #fff2a8;
+    color: black;
+}

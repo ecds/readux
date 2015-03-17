@@ -168,6 +168,50 @@ class Image(DigitalObject):
         return int(self.image_metadata['height'])
 
 
+class TeiZone(teimap.Tei):
+    'XmlObject for a zone in a TEI facsimile document'
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    #: type attribute
+    type = xmlmap.StringField('@type')
+    #: upper left x coord
+    ulx = xmlmap.IntegerField('@ulx')
+    #: upper left y coord
+    uly = xmlmap.IntegerField('@uly')
+    #: lower right x coord
+    lrx = xmlmap.IntegerField('@lrx')
+    #: lower right y coord
+    lry = xmlmap.IntegerField('@lry')
+    #: text content
+    text = xmlmap.StringField('tei:w')
+    #: list of word zones contained in this zone (e.g., within a textLine zone)
+    word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
+    #: nearest preceding sibling word zone (e.g., previous word in this line), if any)
+    preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
+    #: nearest ancestor zone
+    parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
+
+    @property
+    def width(self):
+        return self.lrx - self.ulx
+
+    @property
+    def height(self):
+        return self.lry - self.uly
+
+
+class TeiFacsimile(teimap.Tei):
+    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
+    # NOTE: tei facsimile could include illustrations, but ignoring those for now
+    lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)
+    word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
+
+
 class Page(Image):
     '''Page object with common functionality for all versions of
     ScannedPage content.'''
@@ -175,12 +219,24 @@ class Page(Image):
     #: pattern for retrieving page variants 1.0 or 1.1 from solr
     PAGE_CMODEL_PATTERN = 'info:fedora/emory-control:ScannedPage-1.?'
 
+    #: xml datastream for a tei facsimile version of this page
+    #: unversioned because generated from the mets or abbyy ocr
+    tei = XmlDatastream('tei', 'TEI Facsimile for page content', TeiFacsimile, defaults={
+        'control_group': 'M',
+        'versionable': False,
+    })
+
     page_order = Relation(REPOMGMT.pageOrder,
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
 
     volume = Relation(relsext.isConstituentOf, type=DigitalObject)
     'Volume this page is a part of, via `isConstituentOf` relation'
     # NOTE: can't set type as Volume here because it is not yet defined
+
+    #: path to xsl for generating TEI facsimile from mets/alto ocr or
+    #: abbyy ocr xml
+    ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux',
+        'books', 'ocr_to_teifacsimile.xsl')
 
     @permalink
     def get_absolute_url(self):
@@ -226,6 +282,7 @@ class Page(Image):
                self.has_model(PageV1_1.PAGE_CONTENT_MODEL)))
 
 
+
 class PageV1_0(Page):
     '''Page subclass for emory-control:ScannedPage-1.0.'''
     # NOTE: eulfedora syncrepo only knows how to create content models for
@@ -265,48 +322,23 @@ class PageV1_0(Page):
             else:
                 return self.text.content
 
-class TeiZone(teimap.Tei):
-    'XmlObject for a zone in a TEI facsimile document'
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS}
-    #: xml id
-    id = xmlmap.StringField('@xml:id')
-    #: type attribute
-    type = xmlmap.StringField('@type')
-    #: upper left x coord
-    ulx = xmlmap.IntegerField('@ulx')
-    #: upper left y coord
-    uly = xmlmap.IntegerField('@uly')
-    #: lower right x coord
-    lrx = xmlmap.IntegerField('@lrx')
-    #: lower right y coord
-    lry = xmlmap.IntegerField('@lry')
-    #: text content
-    text = xmlmap.StringField('tei:w')
-    #: list of word zones contained in this zone (e.g., within a textLine zone)
-    word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
-    #: nearest preceding sibling word zone (e.g., previous word in this line), if any)
-    preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
-    #: nearest ancestor zone
-    parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
+    def generate_tei(self, ocrpage):
+        '''Generate TEI facsimile for the current page'''
+        try:
+            with open(self.ocr_to_teifacsimile_xsl) as xslfile:
 
-    @property
-    def width(self):
-        return self.lrx - self.ulx
+                transform =  ocrpage.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # returns _XSLTResultTree, which is not JSON serializable;
+                return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
 
-    @property
-    def height(self):
-        return self.lry - self.uly
+        except XMLSyntaxError:
+            logger.warn('OCR xml for %s is invalid', self.pid)
 
-
-class TeiFacsimile(teimap.Tei):
-    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS}
-    page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
-    # NOTE: tei facsimile could include illustrations, but ignoring those for now
-    lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine"]', TeiZone)
-    word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
+    def update_tei(self, ocrpage):
+        # TODO: check that it is valid tei?
+        # load as tei should maybe happen here instead of in generate
+        self.tei.content = self.generate_tei(ocrpage)
 
 
 class PageV1_1(Page):
@@ -321,12 +353,6 @@ class PageV1_1(Page):
     ocr = XmlDatastream('text', "OCR XML for page content", xmlmap.XmlObject, defaults={
         'control_group': 'M',
         'versionable': True,
-    })
-    #: xml datastream for a tei facsimile version of this page
-    #: unversioned because generated from the mets ocr
-    tei = XmlDatastream('tei', 'TEI Facsimile for page content', TeiFacsimile, defaults={
-        'control_group': 'M',
-        'versionable': False,
     })
 
     def has_fulltext(self):
@@ -344,8 +370,6 @@ class PageV1_1(Page):
         # in the "CONTENT" attribute of String elements.
         return '\n'.join((' '.join(s['content'] for s in line.find_all('string')))
                          for line in xmlsoup.find_all('textline'))
-
-    ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'ocr_to_teifacsimile.xsl')
 
     def generate_tei(self):
         '''Generate TEI facsimile for the current page'''
@@ -461,16 +485,15 @@ class Volume(DigitalObject, BaseVolume):
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
 
     @property
-    def has_requisite_content_models(self):
+    def is_a_volume(self):
         ''':type: bool
 
         True when the current object has the expected content models
         for one of the supported Volume variants.'''
-        # extending default implementation because volume object should include
-        # either volume 1.0 or volume 1.1
+        # NOTE: *not* extending has_requisite_content_models because
+        # volume subclasses still need access to the default implementation
         return self.has_model(VolumeV1_0.VOLUME_CONTENT_MODEL) | \
                self.has_model(VolumeV1_1.VOLUME_CONTENT_MODEL)
-
 
     @permalink
     def get_absolute_url(self):
@@ -744,6 +767,7 @@ class VolumeV1_0(Volume):
                     xmlsoup = BeautifulSoup(ds.content)
                     # simple get text seems to generate reasonable text + whitespace
                     return xmlsoup.get_text()
+
 
 
 class VolumeV1_1(Volume):

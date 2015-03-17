@@ -10,7 +10,7 @@ import os
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page, PageV1_1
+from readux.books.models import Volume, SolrVolume, Page, PageV1_1, VolumeV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -188,7 +188,7 @@ def volume_pages(request, pid):
     # paginated thumbnails for all pages in a book
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
-    if not vol.exists or not vol.has_requisite_content_models:
+    if not vol.exists or not vol.is_a_volume:
         raise Http404
     # search for page images in solr so we can easily sort by order
     pagequery = vol.find_solr_pages()
@@ -305,7 +305,7 @@ def ocr(request, pid):
     '''
     repo = Repository()
     # use generic raw datastream view from eulfedora
-    return raw_datastream(request, pid, Volume.ocr.id, type=Volume,
+    return raw_datastream(request, pid, VolumeV1_0.ocr.id, type=VolumeV1_0,
         repo=repo)
 
 

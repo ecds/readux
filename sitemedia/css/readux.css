@@ -822,31 +822,28 @@ header#page-bg .collection-image-info.collasped .info{
     opacity: 0.5;
 }
 
-/* styles for overlaying ocr text over page image */
-#ocr-page {
-    position: absolute;
-    width: 858px;
-    left: 10%;
-    z-index: 2;
+/* styles page image with ocr text overlaid */
+.page {
+    /*position: absolute;*/
+    /*z-index: 2;*/
     text-align: center;
-    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0;
-    height: 1000px;  /* FIXME: needs to be dynamic to match the image ? */
-}
-.fullpage+#ocr-page {
     left: 0;
-}
-/* FIXME: needs to be positioned exactly the same way the page images is */
-.ocr-content {
+    right: 0;
+ }
+.page .content {
     position: relative;
     margin: auto;
-    /*margin-left: 10%;  FIXME: this is dependent on browser width ;*/
+    display: inline-block;
  }
 .ocr-line {
     display: block;
     position: absolute;
     padding: 0;
     margin: 0;
+    line-height: 0;
     /* make text transparent */
     color: #000;    /* Fallback for older browsers */
     color: rgba(0, 0, 0, 0.0);
@@ -854,15 +851,15 @@ header#page-bg .collection-image-info.collasped .info{
 .ocr-zone {
     position: relative;
     display: inline;
+    line-height: 0;
     padding: 0;
-    margin: 0;
 }
 /* highlighted text style, for browsers that support it (Webkit, Mozilla) */
-.ocr-content ::selection {
-    background: #fff2a8;
-    color: black;
+.ocr-line ::selection {
+    background: black;
+    color: white;
 }
-.ocr-content ::-moz-selection {
-    background: #fff2a8;
-    color: black;
+.ocr-line ::-moz-selection {
+    background: black;
+    color: white;
 }

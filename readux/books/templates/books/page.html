@@ -76,20 +76,21 @@
 
             <div class="text-center">
                 <div id="zoom-page"></div>
-                {% if page.tei.exists %}
-                <div id="ocr-page">
-                    <div class="ocr-content">
-                    {% for line in page.tei.content.lines %}
-                        <div class="ocr-line" style="{{ line|zone_style:scale }}">
-                            {% for zone in line.word_zones %}
+                </div>
+                <div class="page">
+                    <div class="content">
+                        <img src="{% url 'books:page-image' page.pid %}"/>
+                        {% if page.tei.exists %}
+                           {% for line in page.tei.content.lines %}
+                           <div class="ocr-line" style="{{ line|zone_style:scale }}">
+                                {% for zone in line.word_zones %}
                                 <div class="ocr-zone" style="{{ zone|zone_style:scale }}">{{ zone.text }}</div>
+                                {% endfor %}
+                            </div>
                             {% endfor %}
-                        </div>
-                    {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
-                </div>
-                {% endif %}
-                <div id="page-image"><img src="{% url 'books:page-image' page.pid %}"/></div>
             </div>
         </div>
 

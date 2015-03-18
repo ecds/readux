@@ -192,6 +192,9 @@ class TeiZone(teimap.Tei):
     preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
     #: nearest ancestor zone
     parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
+    #: containing page
+    page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
+    # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
 
     @property
     def width(self):

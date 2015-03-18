@@ -8,6 +8,11 @@ from readux.books.models import TeiZone
 
 register = template.Library()
 
+def percent(a, b):
+    # a as percentage of b
+    # ensure both are cast to float, divide, then multiply by 100
+    return (float(a) / float(b)) * 100
+
 @register.filter
 def zone_style(zone, scale):
     ''''Generate an HTMl attribute string for a
@@ -18,12 +23,12 @@ def zone_style(zone, scale):
 
     styles = {}
     if isinstance(zone, TeiZone):
-        styles['width'] = '%.2fpx' % (zone.width * scale)
+        styles['width'] = '%.2f%%' % percent(zone.width, zone.page.width)
 
         if zone.type == 'textLine':
             # text lines are absolutely positioned boxes
-            styles['left'] = '%.2fpx' % (zone.ulx * scale)
-            styles['top'] = '%.2fpx' % (zone.uly * scale)
+            styles['left'] = '%.2f%%' % percent(zone.ulx, zone.page.width)
+            styles['top'] = '%.2f%%' % percent(zone.uly, zone.page.height)
             # TODO: figure out how to determine this from ocr/teifacsimile
             # rather than assuming
             styles['text-align'] = 'left'
@@ -33,12 +38,19 @@ def zone_style(zone, scale):
             # word strings are relatively positioned within a line
             if zone.preceding:
                 # padding from end of previous word to beginning of the next
-                styles['padding-left'] = '%.2fpx' % ((zone.ulx - zone.preceding.lrx) * scale)
+                styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.preceding.lrx, zone.page.width)
             elif zone.parent:
                 # padding from beginning of the line to beginning of the first word
-                styles['padding-left'] = '%.2fpx' % (zone.ulx * scale - zone.parent.ulx * scale)
+                styles['padding-left'] = '%.2fpx' % percent(zone.ulx - zone.parent.ulx, zone.parent.width)
 
             styles['font-size'] = '%.2fpx' % (zone.lry * scale - zone.uly * scale)
+            # NOTE: could *possibly* use viewport percentage sizing for font size,
+            # but it would need javascript calculations to adjust when the page image is
+            # smaller than the viewport
+            # styles['font-size'] = '%.2fvw' % percent(zone.lry - zone.uly, zone.page.height)
+
+            # may also want to attempt some letter-spacing styles to
+            # get text to fill bounding boxes better
 
     if styles:
         return ';'.join(['%s:%s' % (k, v) for k, v in styles.iteritems()])

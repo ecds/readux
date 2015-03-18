@@ -36,9 +36,10 @@ def zone_style(zone, scale):
             # needs to be generated from word zones, not the line bounding box
         elif zone.type == 'string':
             # word strings are relatively positioned within a line
+
             if zone.preceding:
                 # padding from end of previous word to beginning of the next
-                styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.preceding.lrx, zone.page.width)
+                styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.preceding.lrx, zone.parent.width)
             elif zone.parent:
                 # padding from beginning of the line to beginning of the first word,
                 # if there is a difference

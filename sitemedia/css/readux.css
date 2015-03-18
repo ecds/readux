@@ -864,3 +864,10 @@ header#page-bg .collection-image-info.collasped .info{
     background: black;
     color: white;
 }
+/* make image not selectable to avoid interference when highlighting ocr text */
+.page .content img {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+ }

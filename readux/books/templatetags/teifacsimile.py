@@ -40,8 +40,10 @@ def zone_style(zone, scale):
                 # padding from end of previous word to beginning of the next
                 styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.preceding.lrx, zone.page.width)
             elif zone.parent:
-                # padding from beginning of the line to beginning of the first word
-                styles['padding-left'] = '%.2fpx' % percent(zone.ulx - zone.parent.ulx, zone.parent.width)
+                # padding from beginning of the line to beginning of the first word,
+                # if there is a difference
+                if zone.ulx != zone.parent.ulx:
+                    styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.parent.ulx, zone.parent.width)
 
             styles['font-size'] = '%.2fpx' % (zone.lry * scale - zone.uly * scale)
             # NOTE: could *possibly* use viewport percentage sizing for font size,

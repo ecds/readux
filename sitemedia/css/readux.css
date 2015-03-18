@@ -855,11 +855,12 @@ header#page-bg .collection-image-info.collasped .info{
     padding: 0;
 }
 /* highlighted text style, for browsers that support it (Webkit, Mozilla) */
-.ocr-line ::selection {
+
+::selection {
     background: black;
     color: white;
 }
-.ocr-line ::-moz-selection {
+::-moz-selection {
     background: black;
     color: white;
 }

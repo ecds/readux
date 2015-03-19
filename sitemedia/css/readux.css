@@ -843,7 +843,8 @@ header#page-bg .collection-image-info.collasped .info{
     position: absolute;
     padding: 0;
     margin: 0;
-    line-height: 0;
+    line-height: 1;
+
     /* make text transparent */
     color: #000;    /* Fallback for older browsers */
     color: rgba(0, 0, 0, 0.0);
@@ -851,8 +852,8 @@ header#page-bg .collection-image-info.collasped .info{
 .ocr-zone {
     position: relative;
     display: inline;
-    line-height: 0;
     padding: 0;
+    vertical-align: top;
 }
 /* highlighted text style, for browsers that support it (Webkit, Mozilla) */
 

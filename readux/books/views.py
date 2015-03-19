@@ -6,6 +6,7 @@ from django.views.decorators.http import condition, require_http_methods, \
    last_modified
 from urllib import urlencode
 import os
+import logging
 
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
@@ -14,6 +15,9 @@ from readux.books.models import Volume, SolrVolume, Page, PageV1_1, VolumeV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
+
+
+logger = logging.getLogger(__name__)
 
 
 @last_modified(view_helpers.volumes_modified)
@@ -256,12 +260,14 @@ def view_page(request, pid):
 
     # currently only pagev1_1 has tei
     if hasattr(page, 'tei') and page.tei.exists:
-        # determine scale for positioing OCR text in TEI facsimile
+        # determine scale for positioning OCR text in TEI facsimile
         # based on original image and image as displayed
         # - find maximum of width/height
         long_edge  = max(page.width, page.height)
         # - determine scale to convert original size to display size
         scale = float(SINGLE_PAGE_SIZE) / float(long_edge)
+        logger.debug('page size is %s, long edge is %s, scale is %f' % \
+            (SINGLE_PAGE_SIZE, long_edge, scale))
     else:
         scale = None
 

@@ -24,11 +24,12 @@ def zone_style(zone, scale):
     styles = {}
     if isinstance(zone, TeiZone):
         styles['width'] = '%.2f%%' % percent(zone.width, zone.page.width)
+        styles['height'] = '%.2f%%' % percent(zone.height, zone.page.height)
 
         if zone.type == 'textLine':
             # text lines are absolutely positioned boxes
-            styles['left'] = '%.2f%%' % percent(zone.ulx, zone.page.width)
-            styles['top'] = '%.2f%%' % percent(zone.uly, zone.page.height)
+            styles['left'] = '%f%%' % percent(zone.ulx, zone.page.width)
+            styles['top'] = '%f%%' % percent(zone.uly, zone.page.height)
             # TODO: figure out how to determine this from ocr/teifacsimile
             # rather than assuming
             styles['text-align'] = 'left'
@@ -36,21 +37,24 @@ def zone_style(zone, scale):
             # needs to be generated from word zones, not the line bounding box
         elif zone.type == 'string':
             # word strings are relatively positioned within a line
-
             if zone.preceding:
                 # padding from end of previous word to beginning of the next
-                styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.preceding.lrx, zone.parent.width)
+                styles['padding-left'] = '%f%%' % percent(zone.ulx - zone.preceding.lrx, zone.parent.width)
             elif zone.parent:
                 # padding from beginning of the line to beginning of the first word,
                 # if there is a difference
                 if zone.ulx != zone.parent.ulx:
-                    styles['padding-left'] = '%.2f%%' % percent(zone.ulx - zone.parent.ulx, zone.parent.width)
+                    styles['padding-left'] = '%f%%' % percent(zone.ulx - zone.parent.ulx, zone.parent.width)
 
-            styles['font-size'] = '%.2fpx' % (zone.lry * scale - zone.uly * scale)
+
+            # styles['font-size'] = '%.2fpx' % (((zone.lry - zone.uly) * scale) * 2/3)
+            # print 'zone height is %s, scale is %s, scaled height is %s' % (zone.lry - zone.uly,
+                    # scale, styles['font-size'])
             # NOTE: could *possibly* use viewport percentage sizing for font size,
             # but it would need javascript calculations to adjust when the page image is
             # smaller than the viewport
-            # styles['font-size'] = '%.2fvw' % percent(zone.lry - zone.uly, zone.page.height)
+            styles['font-size'] = '%fvw' % percent(zone.lry - zone.uly, zone.page.height)
+            # FIXME: needs a fallback size for older browsers...
 
             # may also want to attempt some letter-spacing styles to
             # get text to fill bounding boxes better

@@ -185,7 +185,7 @@ class TeiZone(teimap.Tei):
     #: lower right y coord
     lry = xmlmap.IntegerField('@lry')
     #: text content
-    text = xmlmap.StringField('tei:w')
+    text = xmlmap.StringField('tei:line|tei:w')
     #: list of word zones contained in this zone (e.g., within a textLine zone)
     word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
     #: nearest preceding sibling word zone (e.g., previous word in this line), if any)

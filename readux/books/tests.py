@@ -849,21 +849,40 @@ class TeiFacsimileTest(TestCase):
     fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
 
     def setUp(self):
-        self.tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile.xml'),
+        # tei generated from mets alto
+        self.alto_tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile.xml'),
+            TeiFacsimile)
+        # tei generated from abbyy ocr
+        self.abbyy_tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile_abbyy.xml'),
             TeiFacsimile)
 
-    def test_basic_properties(self):
-        self.assert_(isinstance(self.tei.page, TeiZone))
+    def test_basic_properties_alto(self):
+        self.assert_(isinstance(self.alto_tei.page, TeiZone))
         # quick check page size params coming through
-        self.assertEqual(0, self.tei.page.ulx)
-        self.assertEqual(0, self.tei.page.uly)
-        self.assertEqual(11874, self.tei.page.lrx)
-        self.assertEqual(9483, self.tei.page.lry)
+        self.assertEqual(0, self.alto_tei.page.ulx)
+        self.assertEqual(0, self.alto_tei.page.uly)
+        self.assertEqual(11874, self.alto_tei.page.lrx)
+        self.assertEqual(9483, self.alto_tei.page.lry)
         # no easy way to check type (nodelist), so just check that it is non-false
-        self.assert_(self.tei.word_zones,
+        self.assert_(self.alto_tei.lines,
+            'tei facsimile should have a list of lines')
+        self.assert_(self.alto_tei.word_zones,
             'tei facsimile should have a list of word zones')
-        self.assert_(isinstance(self.tei.word_zones[0], TeiZone))
+        self.assert_(isinstance(self.alto_tei.word_zones[0], TeiZone))
 
+    def test_basic_properties_abbyy(self):
+        self.assert_(isinstance(self.abbyy_tei.page, TeiZone))
+        # quick check page size params coming through
+        self.assertEqual(0, self.abbyy_tei.page.ulx)
+        self.assertEqual(0, self.abbyy_tei.page.uly)
+        self.assertEqual(2182, self.abbyy_tei.page.lrx)
+        self.assertEqual(3093, self.abbyy_tei.page.lry)
+        # no easy way to check type (nodelist), so just check that it is non-false
+        self.assert_(self.abbyy_tei.lines,
+            'tei facsimile should have a list of lines')
+        self.assert_(isinstance(self.abbyy_tei.lines[0], TeiZone))
+        # check line content
+        self.assertEqual('Presentation', self.abbyy_tei.lines[0].text)
 
 
 class OCRtoTEIFacsimileXSLTestCase(TestCase):

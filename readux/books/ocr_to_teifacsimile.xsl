@@ -5,7 +5,7 @@
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:fr8="http://www.abbyy.com/FineReader_xml/FineReader8-schema-v2.xml"
   xmlns:fr6="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
-  xmlns="http://www.tei-c.org/ns/1.0" version="2.0" exclude-result-prefixes="tei xs alto">
+  xmlns="http://www.tei-c.org/ns/1.0" version="2.0" exclude-result-prefixes="tei xs alto fr8 fr6">
 
   <!--Identity transform written to create TEI files using Alto data.-->
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
@@ -124,6 +124,9 @@
   <!-- template matches for abbyy finereader elements -->
 
     <xsl:template match="fr8:page|fr6:page">
+    <xsl:element name="facsimile">
+
+
     <xsl:element name="surface">
       <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number(position(), '0000')"/></xsl:attribute>
       <xsl:attribute name="type">page</xsl:attribute>
@@ -138,6 +141,9 @@
       </xsl:element>
       <xsl:apply-templates/>
     </xsl:element>
+
+      </xsl:element>
+
   </xsl:template>
 
    <xsl:template match="fr8:block|fr6:block">

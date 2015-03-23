@@ -85,6 +85,8 @@
                            <div class="ocr-line" style="{{ line|zone_style:scale }}">
                                 {% for zone in line.word_zones %}
                                 <div class="ocr-zone" style="{{ zone|zone_style:scale }}">{{ zone.text }}</div>
+                                {% empty %} {# if no word zones, assume single line of text #}
+                                  {{ line.text }}
                                 {% endfor %}
                             </div>
                             {% endfor %}

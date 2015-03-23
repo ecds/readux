@@ -70,8 +70,12 @@ class Command(BaseCommand):
                     self.stdout.write('No ocr content for %s (page %d); skipping' \
                         % (page.pid, page.page_order))
                 self.stats['skipped'] += 1
+                # empty pages are still represented in the ocr,
+                # so we need to increment
+                # TODO: is there possibly non-text content we still want
+                # in the tei? page size, presence of illustrations?
+                index += 1
                 continue
-
 
             # NOTE: could do some simple text content comparison to check that
             # the index is correct...

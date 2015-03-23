@@ -57,7 +57,9 @@
                 {# possibly bookFormat EBook (closest option? not paper or hardback) #}
                 {# FIXME: technically isPartOf belongs on the *webpage*, not the *book* #}
 
+                {% if vol.book.collection %} {# All Readux books should belong to a collection, but in case not don't error #}
                 <p><strong>Collection:</strong> <a property="schema:isPartOf" href="{% url 'collection:view' vol.book.collection.pid %}">{{ vol.book.collection.short_label }}</a></p>
+                {% endif %}
 
                 {% if vol.book.dc.content.publisher %}
                     <p><strong>Publisher:</strong>

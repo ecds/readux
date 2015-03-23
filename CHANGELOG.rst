@@ -3,6 +3,25 @@
 CHANGELOG
 =========
 
+Release 1.1 - Import
+--------------------
+
+* As an administrative user, I want to run a script to import a volume
+  and its associated metadata into the repository so that I can add new
+  content to readux.
+* As a user, I want to browse newly imported content and previously
+  digitized content together, so that I can access newly added content
+  in the same way as previously digitized materials.
+* As a user I can opt to sort items on a collection browse page by date
+  added, in order to see the newest material at the top of the list, so
+  that I can see what is new in a collection.
+* As a user, I want the option to view or download a PDF, with a warning
+  for large files, so that I can choose how best to view the content.
+* As an administrative user, I want to be able to run a script to load
+  missing pages for a volume so that I can load all pages when the
+  initial page load was interrupted.
+
+
 Release 1.0.2
 -------------
 

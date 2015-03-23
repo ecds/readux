@@ -94,6 +94,16 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.1
+-------------
+
+* Update Fedora XACML policies to include new variant content models
+  (ScannedVolume-1.1 and ScannedPage-1.1) and reload policies so that newly
+  ingested content will be accessible.
+* Restart eulindexer so it will pick up the new content models to be indexed.
+* Configure new setting **LARGE_PDF_THRESHOLD** in ``localsettings.py``.
+  See sample config and default value in ``localsettings.py.dist``.
+
 Release 1.0.2
 -------------
 

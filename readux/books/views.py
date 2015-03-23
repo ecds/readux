@@ -7,10 +7,10 @@ from django.views.decorators.http import condition, require_http_methods, \
 from urllib import urlencode
 import os
 
-from eulfedora.server import Repository, RequestFailed
+from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page
+from readux.books.models import Volume, SolrVolume, Page, PageV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -21,6 +21,9 @@ def search(request, mode='list'):
 
     form = BookSearch(request.GET)
     context = {'form': form}
+
+    # sort: currently supports relevance, title, or date added
+    sort = request.GET.get('sort', None)
 
     if form.is_valid():
         # get list of keywords and phrases
@@ -35,11 +38,25 @@ def search(request, mode='list'):
             author_query |= solr.Q(creator=t)
             title_query |= solr.Q(title=t)
 
-        q = solr.query().filter(content_model=Volume.VOLUME_CONTENT_MODEL) \
+        q = solr.query().filter(content_model=Volume.VOLUME_CMODEL_PATTERN) \
                 .query(text_query | author_query**3 | title_query**3) \
                 .field_limit(SolrVolume.necessary_fields, score=True)  \
-                .results_as(SolrVolume) \
-                .sort_by('-score')
+                .results_as(SolrVolume)
+
+
+        sort_options = ['relevance', 'title', 'date added']
+        if sort not in sort_options:
+            # by default, sort by relevance score
+            sort = 'relevance'
+
+        if sort == 'relevance':
+            q = q.sort_by('-score')
+        elif sort == 'title':
+            # sort by title and then by label so multi-volume works should group
+            # together in the correct order
+            q = q.sort_by('title_exact').sort_by('label')
+        elif sort == 'date added':
+            q = q.sort_by('-created')
 
         # don't need to facet on collection if we are already filtered on collection
         if 'collection' not in request.GET:
@@ -64,7 +81,7 @@ def search(request, mode='list'):
                                     unfacet_urlopts.urlencode()))
 
         # paginate the solr result set
-        paginator = Paginator(q, 30)
+        paginator = Paginator(q, 10)
         try:
             page = int(request.GET.get('page', '1'))
         except ValueError:
@@ -76,6 +93,11 @@ def search(request, mode='list'):
 
         if 'page' in url_params:
             del url_params['page']
+
+        sort_url_params = request.GET.copy()
+        if 'sort' in sort_url_params:
+            del sort_url_params['sort']
+
 
         # adjust facets as returned from solr for diplay
         facet_fields = results.object_list.facet_counts.facet_fields
@@ -89,8 +111,10 @@ def search(request, mode='list'):
             'facets': facets,  # available facets
             'filters': display_filters,  # active filters
             'mode': mode,  # list / cover view
-            'current_url_params': urlencode(request.GET.copy())
-
+            'current_url_params': urlencode(request.GET.copy()),
+            'sort': sort,
+            'sort_options': sort_options,
+            'sort_url_params': urlencode(sort_url_params),
         })
 
     return render(request, 'books/search.html', context)
@@ -124,7 +148,7 @@ def volume(request, pid):
             # NOTE: should this be OR or AND?
             query |= solr.Q(page_text=t)
         # search for pages that belong to this book
-        q = solr.query().filter(content_model=Page.PAGE_CONTENT_MODEL,
+        q = solr.query().filter(content_model=Page.PAGE_CMODEL_PATTERN,
                                 isConstituentOf=vol.uri) \
                 .query(query) \
                 .field_limit(['page_order', 'pid'], score=True) \
@@ -232,15 +256,21 @@ def pdf(request, pid):
     '''View to allow access to the PDF datastream of a
     :class:`~readux.books.models.Volume` object.  Sets a
     content-disposition header that will prompt the file to be saved
-    with a default title based on the object label.
+    with a default title based on the object label.  If **download** is specified
+    in the query string (i.e., url/to/pdf/?download), then content-disposition
+    will be set to attachment, prompting for download.
     '''
     repo = Repository()
+    # boolean flag indicating PDF should prompt for download instead of
+    # displaying in the browser or in a browser plugin
+    download = 'download' in request.GET
     try:
         # retrieve the object so we can use it to set the download filename
         obj = repo.get_object(pid, type=Volume)
         extra_headers = {
             # generate a default filename based on the object label
-            'Content-Disposition': 'filename="%s.pdf"' % obj.label.replace(' ', '-')
+            'Content-Disposition': '%sfilename="%s.pdf"' % \
+                ('attachment; ' if download else '', obj.label.replace(' ', '-'))
         }
         # use generic raw datastream view from eulfedora
         return raw_datastream(request, pid, Volume.pdf.id, type=Volume,
@@ -265,10 +295,16 @@ def text(request, pid):
     '''View to allow access the plain text content of a
     :class:`~readux.books.models.Volume` object.
     '''
-    repo = Repository()
-    obj = repo.get_object(pid, type=Volume)
+    # NOTE: etag & last-modified will currently only work for Volume v1.0.
+    # However, solr-based text for Volume v1.1 should be sufficiently fast
+    # and low-impact that the lack of cache-supporting headers is ok
+
+    # NOTE:  type-inferring is required here because volume could be either
+    # v1.0 or v.1.1 and method to pull the text content is different
+    repo = TypeInferringRepository()
+    obj = repo.get_object(pid)
     # if object doesn't exist, isn't a volume, or doesn't have ocr text - 404
-    if not obj.exists or not obj.has_requisite_content_models or not obj.ocr.exists:
+    if not obj.exists or not obj.has_requisite_content_models or not obj.fulltext_available:
         raise Http404
 
     response = HttpResponse(obj.get_fulltext(), 'text/plain')

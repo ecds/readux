@@ -7,22 +7,22 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{request.build_absolute_uri}}"/>
 
-  <meta name="twitter:domain" content="{{request.get_host}}">
+  <meta name="twitter:domain" content="{{request.get_host}}" />
 {% endblock %}
 
 {% block favicon %}
     {% if ENABLE_BETA_WARNING %}
-      <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-beta.ico' %}">
+      <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-beta.ico' %}" />
     {% elif debug %}
-        <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-dev.ico' %}">
+        <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon-dev.ico' %}" />
     {% else %}
-      <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+      <link id="siteFavIcon" rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
     {% endif %}
   {% endblock %}
 
 {% block css %}
   {{ block.super }}
-  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css' />
   <link rel="stylesheet" type="text/css" href="{% static 'css/readux.css' %}" />
 {% endblock %}
 

@@ -276,6 +276,17 @@ def view_page(request, pid):
          'form': form, 'scale': scale})
 
 
+def page_tei(request, pid):
+    '''Display the page-level TEI facsimile, if available.  404 if this page
+    object does not have TEI facsimile.'''
+    extra_headers = {
+        # generate a default filename based on the object pid
+        'Content-Disposition': 'filename="%s_tei.xml"' % pid.replace(':', '-')
+    }
+    return raw_datastream(request, pid, Page.tei.id, type=Page,
+            repo=Repository(), headers=extra_headers)
+
+
 @condition(etag_func=view_helpers.pdf_etag, last_modified_func=view_helpers.pdf_lastmodified)
 def pdf(request, pid):
     '''View to allow access to the PDF datastream of a

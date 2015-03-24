@@ -36,6 +36,10 @@
     <meta property="twitter:card" content="photo" />
     <meta property="twitter:title" content="{{ page.display_label }}" />
     <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+
+    {% if page.tei.exists %}
+    <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.pid %}" />
+    {% endif %}
 {% endblock %}
 
 {% block content %}

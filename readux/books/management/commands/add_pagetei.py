@@ -61,24 +61,13 @@ class Command(BaseCommand):
             page = self.repo.get_object(p.pid, type=PageV1_0)
             print '%s page no %s' % (page.pid, page.page_order)
 
-            # if page has no text, skip it
-            if not len(page.text.content.read()):
-                # NOTE: possibly could use page.text.content.size, but
-                # getting -1 for pages with text content length zero
-
-                if self.verbosity >= self.v_normal:
-                    self.stdout.write('No ocr content for %s (page %d); skipping' \
-                        % (page.pid, page.page_order))
-                self.stats['skipped'] += 1
-                # empty pages are still represented in the ocr,
-                # so we need to increment
-                # TODO: is there possibly non-text content we still want
-                # in the tei? page size, presence of illustrations?
-                index += 1
-                continue
+            # NOTE: some pages have no tei, but since the abbyy ocr
+            # includes page content for every page, we're going to
+            # generate TEI for those pages too
+            # includes page information, and may include illustration blocks
 
             # NOTE: could do some simple text content comparison to check that
-            # the index is correct...
+            # the ocr index is correct...
             # e.g. do a whitespace-insensitive check of starting n characters
             # page.text.content.read()
             # unicode(ocr_pages[index])

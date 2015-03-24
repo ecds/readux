@@ -27,7 +27,7 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
                 {% if vol.volume %}<span class="small">[{{ vol.volume }}]</span>{% endif %}
                 {# NOTE: including volume in title since there isn't another obvious schema.org field to use #}
         </span>
-        {% if url != request.get_full_path %}</a>{% endif %} {# end volume link #}
+        {% if url != request.get_full_path|urlencode %}</a>{% endif %} {# end volume link #}
     </h1>
     <p class="lead">
         {% for d in vol.date %} {# NOTE: assuming earliest date we have is publication date...  #}
@@ -38,23 +38,23 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
 
     {# search inside this volume; *only* available if volume has pages loaded #}
     {% if vol.has_pages and form %}
-      <div class="row">
+    <div class="row">
         <div class="col-xs-12 col-md-8 col-md-offset-2">
-          <form id="volume-search" class="search-bar" role="form" method="GET" action="{{ volume_url }}">
-            <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
-            <div class="input-group">
-              {% render_field form.keyword class+="form-control keyword" placeholder="Search in this volume" %}
-              <span class="input-group-btn">
-                <button class="btn" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-              </span>
-            </div><!-- /input-group -->
-            <span class="help-block">
-                {{ form.keyword.help_text }}
-                <p class="text-warning">Note: searching uncorrected OCR text content.</p>
-            </span>
-          </form>
+            <form id="volume-search" class="search-bar" role="form" method="GET" action="{{ volume_url }}">
+                <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
+                <div class="input-group">
+                  {% render_field form.keyword class+="form-control keyword" placeholder="Search in this volume" %}
+                  <span class="input-group-btn">
+                    <button class="btn" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                  </span>
+                </div><!-- /input-group -->
+                <span class="help-block">
+                    {{ form.keyword.help_text }}
+                    <p class="text-warning">Note: searching uncorrected OCR text content.</p>
+                </span>
+            </form>
         </div>
-      </div>
+    </div>
     {% endif %}
 
 </header>

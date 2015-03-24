@@ -223,12 +223,10 @@ SINGLE_PAGE_SIZE = 1000
 
 @last_modified(view_helpers.page_modified)
 def view_page(request, pid):
-    # NOTE: type inferring repository needed to load pages as correct version
+    # NOTE: type inferring repository needed to load pages as correct type
+    # of Page (v1.0 or v1.1)
     repo = TypeInferringRepository()
-    # page = repo.get_object(pid, type=Page)
-    # page = repo.get_object(pid, type=PageV1_1)
     page = repo.get_object(pid)
-    # if not page.exists or not page.has_requisite_content_models:
     if not page.exists or not isinstance(page, Page):
         raise Http404
 
@@ -256,7 +254,6 @@ def view_page(request, pid):
 
     # form for searching in this book
     form = BookSearch()
-
 
     # currently only pagev1_1 has tei
     if hasattr(page, 'tei') and page.tei.exists:

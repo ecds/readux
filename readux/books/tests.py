@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.template.defaultfilters import filesizeformat
 from django.test import TestCase
 from django.test.utils import override_settings
-from mock import patch, Mock, NonCallableMock, NonCallableMagicMock
+from mock import patch, Mock, MagicMock, NonCallableMock, NonCallableMagicMock
 import re
 import rdflib
 from rdflib import RDF
@@ -714,6 +714,113 @@ class BookViewsTest(TestCase):
         with open(os.path.join(settings.STATICFILES_DIRS[0], 'img', 'notfound_thumbnail.png')) as thumb:
             self.assertEqual(thumb.read(), response.content,
                 'fedora error should serve out static not found image')
+
+    @patch('readux.books.views.TypeInferringRepository')
+    def test_view_page(self, mockrepo):
+        mockobj = Mock()
+        mockobj.pid = 'page:1'
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        url = reverse('books:page', kwargs={'pid': mockobj.pid})
+
+        # doesn't exist
+        mockobj.exists = False
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code,
+            'page view should 404 when object doesn\'t exist')
+
+        # exists but not a page object
+        mockobj.exists = True
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code,
+            'page view should 404 when object isn\'t a Page object')
+
+        # page object
+        mockobj = NonCallableMagicMock(Page)
+        mockobj.pid = 'page:5'
+        mockobj.page_order = 5
+        mockobj.display_label = 'Page 5'
+        # first test without tei
+        mockobj.tei = Mock()  # non-magic mock, to simplify template logic
+        mockobj.tei.exists = False
+        # uses solr to find adjacent pages
+        solr_result = NonCallableMagicMock(spec_set=['__iter__'])
+        # *only* mock iter, to avoid weirdness with django templates & callables
+        nearby_pages = [
+            {'pid': 'page:4', 'page_order': '4'},
+            {'pid': 'page:5', 'page_order': '5'},
+            {'pid': 'page:5', 'page_order': '6'},
+        ]
+        solr_result.__iter__.return_value = nearby_pages
+        mocksolr_query = MagicMock()
+        mocksolr_query.__iter__.return_value = iter(solr_result)
+        mocksolr_query.__len__.return_value = 3
+        # cheating here, since we know what index should be requested...
+        mocksolr_query.__getitem__.return_value = nearby_pages[2]
+        mocksolr_query.query.return_value = mocksolr_query
+        mockobj.volume.find_solr_pages.return_value = mocksolr_query
+
+        mockrepo.return_value.get_object.return_value = mockobj
+        response = self.client.get(url)
+        # test expected context variables
+        self.assertEqual(mockobj, response.context['page'],
+            'page object should be set in context')
+        self.assertEqual(nearby_pages[0], response.context['prev'],
+            'previous page should be selected from solr result and set in context')
+        self.assertEqual(nearby_pages[2], response.context['next'],
+            'next page should be selected from solr result and set in context')
+        self.assertEqual(1, response.context['page_chunk'],
+            'chunk of paginated pages should be calculated and set in context')
+        self.assertNotContains(response,
+            reverse('books:page-tei', kwargs={'pid': mockobj.pid}),
+            msg_prefix='page without tei should NOT link to tei in header')
+
+        # TODO:
+        # - test metadata in header (twitter/og fields)
+        # - test page image, deep zoom content, title display, etc
+
+        # test with tei available
+        mockobj.tei.exists = True
+        mockobj.width = 2000
+        mockobj.height = 1500
+        # for now, simulate no ocr content
+        mockobj.tei.content.lines = []
+        response = self.client.get(url)
+        # scale from original page size (long edge) to display size (1000)
+        self.assertEqual(0.5, response.context['scale'],
+            'page scale should be calculated and set in context')
+
+        # TODO: test tei text content display?
+        self.assertContains(response,
+            '<link rel="alternate" type="text/xml" href="%s" />' % \
+                reverse('books:page-tei', kwargs={'pid': mockobj.pid}),
+            html=True,
+            msg_prefix='page with tei should link to tei in header')
+
+    @patch('readux.books.views.Repository')
+    @patch('readux.books.views.raw_datastream')
+    def test_page_tei(self, mock_rawds, mockrepo):
+        mockobj = Mock()
+        mockobj.pid = 'page:1'
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        url = reverse('books:page-tei', kwargs={'pid': mockobj.pid})
+        response = self.client.get(url)
+
+        # test raw datastream called as expected
+        call_args = mock_rawds.call_args
+        args, kwargs = call_args
+        self.assertEqual(mockobj.pid, args[1],
+            'raw_datastream should be called with requested pid')
+        self.assertEqual('tei', args[2],
+            'raw_datastream should be called with "tei" for datastream id')
+        self.assertEqual(Page, kwargs['type'],
+            'raw_datastream should be called with Page object type')
+        self.assertEqual(mockrepo.return_value, kwargs['repo'],
+            'raw_datastream should be called with local Repository instance')
+        self.assertEqual('filename="%s_tei.xml"' % mockobj.pid.replace(':', '-'),
+            kwargs['headers']['Content-Disposition'],
+            'raw_datastream should have a content-disposition header set')
 
 
 class AbbyyOCRTestCase(TestCase):

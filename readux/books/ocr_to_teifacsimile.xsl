@@ -12,10 +12,13 @@
     <desc>Identity stylesheet for generating TEI for Sacred Harp docs. </desc>
   </doc>
 
+  <xsl:param name="graphic_url"/>
+
   <xsl:strip-space elements="*"/>
   <xsl:output indent="yes" method="xml" encoding="utf-8" omit-xml-declaration="no"/>
 
   <xsl:template match="text()"><xsl:value-of select="normalize-space(.)"/></xsl:template>
+
 
   <xsl:template match="/">
     <TEI>
@@ -60,7 +63,7 @@
       <xsl:attribute name="lrx"><xsl:value-of select="@WIDTH"/></xsl:attribute>
       <xsl:attribute name="lry"><xsl:value-of select="@HEIGHT"/></xsl:attribute>
       <xsl:element name="graphic">
-        <xsl:attribute name="url"><xsl:value-of select="preceding::fileName"></xsl:value-of></xsl:attribute>
+        <xsl:attribute name="url"><xsl:value-of select="$graphic_url"></xsl:value-of></xsl:attribute>
       </xsl:element>
       <xsl:apply-templates/>
     </xsl:element>
@@ -135,9 +138,7 @@
       <xsl:attribute name="lrx"><xsl:value-of select="@width"/></xsl:attribute>
       <xsl:attribute name="lry"><xsl:value-of select="@height"/></xsl:attribute>
       <xsl:element name="graphic">
-        <xsl:attribute name="url">
-          <!--add graphic filename-->
-        </xsl:attribute>
+        <xsl:attribute name="url"><xsl:value-of select="$graphic_url"/></xsl:attribute>
       </xsl:element>
       <xsl:apply-templates/>
     </xsl:element>

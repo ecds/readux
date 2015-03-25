@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.db.models import permalink
 from django.template.defaultfilters import truncatechars
-from lxml.etree import XMLSyntaxError
+from lxml.etree import XMLSyntaxError, XSLT
 import json
 import logging
 import os
@@ -284,6 +284,11 @@ class Page(Image):
                (self.has_model(PageV1_0.PAGE_CONTENT_MODEL) | \
                self.has_model(PageV1_1.PAGE_CONTENT_MODEL)))
 
+    @property
+    def image_url(self):
+        # preliminary image url, for use in tei facsimile
+        # NOTE: eventually we may want to use some version of the ARK
+        return absolutize_url(reverse('books:page-image-fs', kwargs={'pid': self.pid}))
 
 
 class PageV1_0(Page):
@@ -331,7 +336,8 @@ class PageV1_0(Page):
             with open(self.ocr_to_teifacsimile_xsl) as xslfile:
 
                 transform =  ocrpage.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                    return_type=unicode,
+                    graphic_url=self.image_url)
                 # returns _XSLTResultTree, which is not JSON serializable;
                 return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
 
@@ -381,7 +387,8 @@ class PageV1_1(Page):
                 # print self.ocr.size
                 # print self.ocr.content.serialize(pretty=True)
                 transform =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                    return_type=unicode,
+                    params={'graphic_url': XSLT.strparam(self.image_url)})
                 # returns _XSLTResultTree, which is not JSON serializable;
                 return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
 

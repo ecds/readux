@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.1.1
+-------------
+
+* Fix volume sitemaps to include both Volume 1.0 and 1.1 content models.
+
+
 Release 1.1 - Import
 --------------------
 

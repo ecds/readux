@@ -38,8 +38,10 @@ urlpatterns = patterns('',
     url(r'^robots\.txt$',
         TemplateView.as_view(template_name='robots.txt',
         content_type='text/plain'), name='robots.txt'),
-    url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps}),
-    url(r'^sitemap-(?P<section>.+)\.xml$', sitemap_views.sitemap, {'sitemaps': sitemaps}),
+    url(r'^sitemap\.xml$', sitemap_views.index, {'sitemaps': sitemaps},
+        name='sitemap-index'),
+    url(r'^sitemap-(?P<section>.+)\.xml$', sitemap_views.sitemap, {'sitemaps': sitemaps},
+        name='sitemap'),
 
     # django admin
     url(r'^admin/', include(admin.site.urls)),

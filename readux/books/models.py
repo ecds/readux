@@ -388,7 +388,7 @@ class PageV1_1(Page):
                 # print self.ocr.content.serialize(pretty=True)
                 transform =  self.ocr.content.xsl_transform(filename=xslfile,
                     return_type=unicode,
-                    params={'graphic_url': XSLT.strparam(self.image_url)})
+                    graphic_url=self.image_url)
                 # returns _XSLTResultTree, which is not JSON serializable;
                 return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
 

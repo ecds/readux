@@ -20,6 +20,7 @@ from eulfedora.util import RequestFailed
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
+from readux.books import sitemaps
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -821,6 +822,27 @@ class BookViewsTest(TestCase):
         self.assertEqual('filename="%s_tei.xml"' % mockobj.pid.replace(':', '-'),
             kwargs['headers']['Content-Disposition'],
             'raw_datastream should have a content-disposition header set')
+
+    @patch('readux.books.sitemaps.solr_interface')
+    def test_sitemaps(self, mocksolr_interface):
+        # minimal test, just to check that sitemaps render without error
+        response = self.client.get(reverse('sitemap-index'))
+        self.assertContains(response, 'sitemapindex')
+
+        response = self.client.get(reverse('sitemap', kwargs={'section': 'volumes'}))
+        self.assertContains(response, '<urlset')
+
+class SitemapTestCase(TestCase):
+
+    @patch('readux.books.sitemaps.solr_interface')
+    def test_volume_sitemap(self, mocksolr_interface):
+        vol_sitemap = sitemaps.VolumeSitemap()
+        mocksolr = mocksolr_interface.return_value
+
+        # check for expected solr query
+        vol_sitemap.items()
+        mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CMODEL_PATTERN)
+        mocksolr.query.return_value.field_limit.assert_called_with(['pid', 'last_modified'])
 
 
 class AbbyyOCRTestCase(TestCase):

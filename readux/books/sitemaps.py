@@ -10,7 +10,7 @@ class _BaseVolumeSitemap(Sitemap):
 
     def items(self):
         solr = solr_interface()
-        return solr.query(content_model=Volume.VOLUME_CONTENT_MODEL) \
+        return solr.query(content_model=Volume.VOLUME_CMODEL_PATTERN) \
                    .field_limit(['pid', 'last_modified'])
 
     def lastmod(self, item):

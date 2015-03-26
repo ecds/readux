@@ -18,7 +18,10 @@ class Command(BaseCommand):
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
 
-        # TODO: how to handle volume v1.0 vs 1.1 ?
+        # if no pids are specified, exit with an error message
+        if not pids:
+            raise CommandError('Please specify a volume pid to have TEI generated')
+
         if pids:
             # single volume only for now
             pid = pids[0]

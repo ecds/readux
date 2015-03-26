@@ -9,7 +9,7 @@ function set_seadragon_opts(opts) {
 
 function startzoom() {
     // init seadragon viewer if this is first zoom
-    if (viewer == null) {
+    if (viewer === null) {
       viewer = OpenSeadragon(seadragon_opts);
     }
     $('#covers').removeClass('active');

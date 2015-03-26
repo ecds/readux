@@ -7,6 +7,7 @@
   {{ block.super }}
   <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/deepzoom.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/page.js"></script>
   <script type="text/javascript" charset="utf-8">
      $(document).ready(function () {
         // set up seadragon configuration (not loaded unless triggered by user)
@@ -23,6 +24,29 @@
             fullPageButton: 'dz-fs',
         });
      });
+     {% if page.tei.exists %}
+     // adjust ocr word & letter spacing on load & resize, with a timeout
+     // to avoid adjusting too frequently as the browser is resized
+
+        var resizeTimer; // Set resizeTimer to empty so it resets on page load
+        function resizeFunction() {
+            // adjust ocr text on window load or resize
+            $(".ocrtext").textwidth();
+            // possibly also adjust fonts here, if we go to viewport-width font size
+        };
+
+        // On resize, run the function and reset the timeout
+        // 250 is the delay in milliseconds. Change as you see fit.
+        $(window).resize(function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resizeFunction, 250);
+            // TODO: how to wait until after browser scales image for smaller viewport?
+        });
+
+       $(window).load(function() {  // wait until load completes, so widths will be calculated
+           resizeFunction();
+       });
+     {% endif %}
   </script>
 {% endblock %}
 
@@ -85,11 +109,14 @@
                         <img src="{% url 'books:page-image' page.pid %}"/>
                         {% if page.tei.exists %}
                            {% for line in page.tei.content.lines %}
-                           <div class="ocr-line" style="{{ line|zone_style:scale }}">
+                           <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" style="{{ line|zone_style:scale }}">
                                 {% for zone in line.word_zones %}
-                                <div class="ocr-zone" style="{{ zone|zone_style:scale }}">{{ zone.text }}</div>
+                                {# NOTE: may not want ocrtext adjustment when there are multiple words on a line #}
+                                <div class="ocr-zone ocrtext" style="{{ zone|zone_style:scale }}">
+                                    <span>{{ zone.text }}</span>
+                                </div>
                                 {% empty %} {# if no word zones, assume single line of text #}
-                                  {{ line.text }}
+                                  <span>{{ line.text }}</span>
                                 {% endfor %}
                             </div>
                             {% endfor %}

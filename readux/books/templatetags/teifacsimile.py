@@ -43,15 +43,19 @@ def zone_style(zone, scale):
             styles['width'] = '%.2f%%' % percent(zone.width, zone.parent.width)
             styles['height'] = '%.2f%%' % percent(zone.height, zone.parent.height)
 
+            # FIXME: the spacing is off; if we can't get a continuous highlight
+            # anyway (using inline-blocks), maybe switch to absolute positioning
+            # for words within the line
+
             # word strings are relatively positioned within a line
             if zone.preceding:
-                # padding from end of previous word to beginning of the next
-                styles['padding-left'] = '%f%%' % percent(zone.ulx - zone.preceding.lrx, zone.parent.width)
+                # add space from end of previous word to beginning of the next
+                styles['padding-left'] = '%f%%' % percent(zone.ulx - zone.preceding.lrx + 1, zone.parent.width)
             elif zone.parent:
-                # padding from beginning of the line to beginning of the first word,
+                # add space from beginning of the line to beginning of the first word
                 # if there is a difference
                 if zone.ulx != zone.parent.ulx:
-                    styles['padding-left'] = '%f%%' % percent(zone.ulx - zone.parent.ulx, zone.parent.width)
+                    styles['padding-left'] = '%f%%' % percent(zone.ulx - zone.parent.ulx + 1, zone.parent.width)
 
         # calculate font size if either:
         # - word zone (alto-based tei)
@@ -60,16 +64,11 @@ def zone_style(zone, scale):
            (zone.type in ['textLine', 'line'] and not zone.word_zones):
 
             styles['font-size'] = '%.2fpx' % ((zone.lry - zone.uly) * scale)
-            # print 'zone height is %s, scale is %s, scaled height is %s' % (zone.lry - zone.uly,
-                    # scale, styles['font-size'])
             # NOTE: could *possibly* use viewport percentage sizing for font size,
             # but it would need javascript calculations to adjust when the page image is
             # smaller than the viewport
             # styles['font-size'] = '%fvw' % percent(zone.lry - zone.uly, zone.page.height)
-            # FIXME: needs a fallback size for older browsers...
-
-            # may also want to attempt some letter-spacing styles to
-            # get text to fill bounding boxes better
+            # IF we use vw we still need a fallback size for older browsers...
 
     if styles:
         return ';'.join(['%s:%s' % (k, v) for k, v in styles.iteritems()])

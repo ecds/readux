@@ -844,6 +844,9 @@ header#page-bg .collection-image-info.collasped .info{
     padding: 0;
     margin: 0;
     line-height: 1;
+    z-index: 5;
+    white-space: nowrap;
+    cursor: text;
 
     /* make text transparent */
     color: #000;    /* Fallback for older browsers */
@@ -851,8 +854,9 @@ header#page-bg .collection-image-info.collasped .info{
 }
 .ocr-zone {
     position: relative;
-    display: inline;
+    display: inline-block;
     padding: 0;
+    margin: 0;
     vertical-align: top;
 }
 /* highlighted text style, for browsers that support it (Webkit, Mozilla) */

@@ -1,5 +1,7 @@
 Django==1.6.6
-eulxml>=0.21.2
+#eulxml>=0.22 (when released)
+# use dev eulxml for better xslt handling
+-e git://github.com/emory-libraries/eulxml.git@develop#egg=eulxml
 #eulfedora>=1.0
 #use eulfedora for sorted related objects, should be 1.1
 -e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora

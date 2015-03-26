@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.db.models import permalink
 from django.template.defaultfilters import truncatechars
-from lxml.etree import XMLSyntaxError, XSLT
+from lxml import etree
 import json
 import logging
 import os
@@ -241,6 +241,10 @@ class Page(Image):
     ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux',
         'books', 'ocr_to_teifacsimile.xsl')
 
+    # NOTE: it *should* be more efficient to load the xslt once, but it
+    # results in malloc errors when python exits, so skip it for now
+    # ocr_to_teifacsimile = xmlmap.load_xslt(filename=ocr_to_teifacsimile_xsl)
+
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
@@ -333,15 +337,13 @@ class PageV1_0(Page):
     def generate_tei(self, ocrpage):
         '''Generate TEI facsimile for the current page'''
         try:
-            with open(self.ocr_to_teifacsimile_xsl) as xslfile:
+            result =  ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
+                return_type=unicode,
+                graphic_url=self.image_url)
+            # returns _XSLTResultTree, which is not JSON serializable;
+            return xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
 
-                transform =  ocrpage.xsl_transform(filename=xslfile,
-                    return_type=unicode,
-                    graphic_url=self.image_url)
-                # returns _XSLTResultTree, which is not JSON serializable;
-                return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
-
-        except XMLSyntaxError:
+        except etree.XMLSyntaxError:
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self, ocrpage):
@@ -383,16 +385,14 @@ class PageV1_1(Page):
     def generate_tei(self):
         '''Generate TEI facsimile for the current page'''
         try:
-            with open(self.ocr_to_teifacsimile_xsl) as xslfile:
-                # print self.ocr.size
-                # print self.ocr.content.serialize(pretty=True)
-                transform =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode,
-                    graphic_url=self.image_url)
-                # returns _XSLTResultTree, which is not JSON serializable;
-                return xmlmap.load_xmlobject_from_string(transform, TeiFacsimile)
+            result =  self.ocr.content.xsl_transform(xsl=self.ocr_to_teifacsimile,
+                return_type=unicode,
+                graphic_url=self.image_url)
+            # returns _XSLTResultTree, which is not JSON serializable;
+            tei = xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
+            return tei
 
-        except XMLSyntaxError:
+        except etree.XMLSyntaxError:
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self):
@@ -769,7 +769,7 @@ class VolumeV1_0(Volume):
                     # returns _XSLTResultTree, which is not JSON serializable;
                     # convert to unicode
                     return unicode(transform)
-                except XMLSyntaxError:
+                except etree.XMLSyntaxError:
                     logger.warn('OCR xml for %s is invalid', self.pid)
                     # use beautifulsoup as fallback, since it can handle invalid xml
                     # explicitly request generic ds object to avoid attempting to parse as xml

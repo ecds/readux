@@ -23,19 +23,26 @@ def zone_style(zone, scale):
 
     styles = {}
     if isinstance(zone, TeiZone):
-        styles['width'] = '%.2f%%' % percent(zone.width, zone.page.width)
-        styles['height'] = '%.2f%%' % percent(zone.height, zone.page.height)
 
         if zone.type in ['textLine', 'line']:
             # text lines are absolutely positioned boxes
             styles['left'] = '%f%%' % percent(zone.ulx, zone.page.width)
             styles['top'] = '%f%%' % percent(zone.uly, zone.page.height)
+
+            # width relative to page size
+            styles['width'] = '%.2f%%' % percent(zone.width, zone.page.width)
+            styles['height'] = '%.2f%%' % percent(zone.height, zone.page.height)
+
             # TODO: figure out how to determine this from ocr/teifacsimile
             # rather than assuming
             styles['text-align'] = 'left'
             # TODO: would be better to set font-size by the line, but
             # needs to be generated from word zones, not the line bounding box
         elif zone.type == 'string':
+            # set width & height relative to *parent* line, not the whole page
+            styles['width'] = '%.2f%%' % percent(zone.width, zone.parent.width)
+            styles['height'] = '%.2f%%' % percent(zone.height, zone.parent.height)
+
             # word strings are relatively positioned within a line
             if zone.preceding:
                 # padding from end of previous word to beginning of the next

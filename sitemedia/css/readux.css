@@ -853,7 +853,7 @@ header#page-bg .collection-image-info.collasped .info{
     color: rgba(0, 0, 0, 0.0);
 }
 .ocr-zone {
-    position: relative;
+    position: absolute;
     display: inline-block;
     padding: 0;
     margin: 0;

@@ -7,8 +7,8 @@ letter-spacing to adjust the actual width to the desired width.
 (function($) {
     $.fn.textwidth = function() {
         // minimum allowed letterspacing
-        var min_letterspace = 0.5;
-        // actual vs desired size small enough to ignore
+        var min_letterspace = -0.5;
+        // actual vs desired size discrepancy small enough to ignore
         var allowable_discrepancy = 2;
 
         return this.each(function(){
@@ -45,9 +45,11 @@ letter-spacing to adjust the actual width to the desired width.
 
             } else {
                 // decrease letter spacing
-                ltrspc = (aw - dw) / (txt.text().length - 1);
+                // FIXME: this calculation seems way off, especially for short blocks
+                ltrspc = - ((aw - dw) / (txt.text().length - 1));
+                // don't go lower than the minimum letter-spacing threshold
                 if (ltrspc < min_letterspace) { ltrspc = min_letterspace; }
-                txt.css('letter-spacing', '-' + ltrspc + 'px');
+                txt.css('letter-spacing', ltrspc + 'px');
                 aw = txt.width(); // new actual
             }
             // console.log('text width: original=' + orig + ' desired= ' + dw + ' final=' + aw + ' (' + (dw-aw) + '), letter-spacing=' + ltrspc);

@@ -1,12 +1,12 @@
 from collections import defaultdict
-
 from optparse import make_option
 import os
+import signal
 import sys
 
 from django.core.management.base import BaseCommand, CommandError
 from progressbar import ProgressBar, Bar, Percentage, \
-         ETA, Counter, Timer
+         ETA, Counter
 
 from readux.books.models import Volume, VolumeV1_0, VolumeV1_1, PageV1_0, PageV1_1
 from readux.fedora import ManagementRepository
@@ -21,6 +21,7 @@ class Command(BaseCommand):
     verbosity = None
     stats = defaultdict(int)
     repo = None
+    interrupted = False
 
     option_list = BaseCommand.option_list + (
         make_option('--all', '-a',
@@ -30,6 +31,10 @@ class Command(BaseCommand):
     )
 
     def handle(self, *pids, **options):
+        # bind a handler for interrupt signal
+        signal.signal(signal.SIGINT, self.interrupt_handler)
+
+
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
 
@@ -54,14 +59,11 @@ class Command(BaseCommand):
             # try volume 1.0 first, since we have more 1.0 content
             vol = self.repo.get_object(pid, type=VolumeV1_0)
 
-
-
             # confirm it is 1.0, then process
             if vol.has_requisite_content_models:
                 if self.verbosity >= self.v_normal:
                     self.stdout.write('Processing volume %s (Volume-1.0)' % pid)
                 updated = self.process_volV1_0(vol)
-
 
             # if not a 1.0, try 1.1
             else:
@@ -80,9 +82,15 @@ class Command(BaseCommand):
             if updated:
                 self.stats['vol'] += 1
 
+            # if we have received a SIGINT during this loop, stop
+            # processing volumes report on what was done
+            if self.interrupted:
+                break
+
         if self.verbosity >= self.v_normal:
             if len(pids) > 1:
-                self.stdout.write('Updated %(vol)d volumes with TEI' % self.stats)
+                self.stdout.write('Updated %d volume%s with TEI' % \
+                    (self.stats['vol'], 's' if self.stats['vol'] != 1 else ''))
             self.stdout.write('Added TEI to %(added)d pages, updated %(updated)d, skipped %(skipped)d' \
                               % self.stats)
 
@@ -189,3 +197,31 @@ class Command(BaseCommand):
             pbar.finish()
 
         return updates
+
+    def interrupt_handler(self, signum, frame):
+        '''Gracefully handle a SIGINT, if possible.  Reports status if
+        main loop is currently part-way through pages for a volume,
+        sets a flag so main script loop can exit cleanly, and restores
+        the default SIGINT behavior, so that a second interrupt will
+        stop the script.
+        '''
+        if signum == signal.SIGINT:
+            # restore default signal handler so a second SIGINT can be used to quit
+            signal.signal(signal.SIGINT, signal.SIG_DFL)
+            # set interrupt flag so main loop knows to quit at a reasonable time
+            self.interrupted = True
+            # report if script is in the middle of ingesting pages for a volume
+            # if self.pageindex and self.images:
+            #     print >> self.stdout, \
+            #           '\nProcessing %d of %d pages for volume %s.' % \
+            #           (self.pageindex, len(self.images), self.current_volume)
+            print >> self.stdout, \
+                  '\n\nScript will exit after all pages for the current volume are processed.' + \
+                  '\n(Ctrl-C / Interrupt again to quit now)'
+            # print >> self.stdout, '(Ctrl-C / Interrupt again to quit now)'
+
+#             else:
+#                 msg = '''\nProcessing %d of %d volumes; script will exit before %s page ingest starts or after it is complete.
+# (Ctrl-C / Interrupt again to quit immediately)'''
+#                 print >> self.stdout, msg % (self.stats['vols'], self.total, self.current_volume)
+

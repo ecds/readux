@@ -1,6 +1,12 @@
 from collections import defaultdict
-from django.core.management.base import BaseCommand, CommandError
+
 from optparse import make_option
+import os
+import sys
+
+from django.core.management.base import BaseCommand, CommandError
+from progressbar import ProgressBar, Bar, Percentage, \
+         ETA, Counter, Timer
 
 from readux.books.models import Volume, VolumeV1_0, VolumeV1_1, PageV1_0, PageV1_1
 from readux.fedora import ManagementRepository
@@ -47,6 +53,9 @@ class Command(BaseCommand):
         for pid in pids:
             # try volume 1.0 first, since we have more 1.0 content
             vol = self.repo.get_object(pid, type=VolumeV1_0)
+
+
+
             # confirm it is 1.0, then process
             if vol.has_requisite_content_models:
                 if self.verbosity >= self.v_normal:
@@ -77,6 +86,15 @@ class Command(BaseCommand):
             self.stdout.write('Added TEI to %(added)d pages, updated %(updated)d, skipped %(skipped)d' \
                               % self.stats)
 
+    def get_progressbar(self, total):
+        # initialize & return a progressbar to track pages processed.
+        # only returns when running on a tty (i.e. not redirected to a file)
+        if os.isatty(sys.stderr.fileno()):
+            return ProgressBar(widgets=['Pages: ', Percentage(),
+                                        ' (', Counter(), ')',
+                                        Bar(), ETA()],
+                               maxval=total).start()
+
     def process_volV1_0(self, vol):
         # for page 1.0, get abbyyocr and iterate through pages in the xml
         # return number of pages updated
@@ -88,6 +106,7 @@ class Command(BaseCommand):
             return updates
 
         ocr_pages = vol.ocr.content.pages
+        pbar = self.get_progressbar(len(vol.pages))
 
         # NOTE: this *does* depend on pages loaded in order
         # (and no missing pages?)
@@ -122,7 +141,13 @@ class Command(BaseCommand):
             page.save('%s tei facsimile' % verb)
             updates += 1
 
+            if pbar:
+                pbar.update(updates)
+
             index += 1
+
+        if pbar:
+            pbar.finish()
 
         return updates
 
@@ -130,6 +155,7 @@ class Command(BaseCommand):
     def process_volV1_1(self, vol):
         # load tei for vol 1.1 / pages 1.1
         updates = 0
+        pbar = self.get_progressbar(len(vol.pages))
 
         for p in vol.pages:
 
@@ -156,5 +182,10 @@ class Command(BaseCommand):
             page.save('%s tei facsimile' % verb)
 
             updates += 1
+            if pbar:
+                pbar.update(updates)
+
+        if pbar:
+            pbar.finish()
 
         return updates

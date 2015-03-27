@@ -385,7 +385,7 @@ class PageV1_1(Page):
     def generate_tei(self):
         '''Generate TEI facsimile for the current page'''
         try:
-            result =  self.ocr.content.xsl_transform(xsl=self.ocr_to_teifacsimile,
+            result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode,
                 graphic_url=self.image_url)
             # returns _XSLTResultTree, which is not JSON serializable;

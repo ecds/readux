@@ -1,11 +1,13 @@
 from collections import defaultdict
 from django.core.management.base import BaseCommand, CommandError
+from optparse import make_option
 
-from readux.books.models import VolumeV1_0, VolumeV1_1, PageV1_0, PageV1_1
+from readux.books.models import Volume, VolumeV1_0, VolumeV1_1, PageV1_0, PageV1_1
 from readux.fedora import ManagementRepository
 
 class Command(BaseCommand):
-    '''Generate or update TEI facsimile XML for page-by-page OCR content.'''
+    '''Generate or update TEI facsimile XML for page-by-page OCR content,
+    for the pages associated with a Readux Volume.'''
     help = __doc__
     args = '<pid> [<pid> <pid>]'
 
@@ -14,13 +16,33 @@ class Command(BaseCommand):
     stats = defaultdict(int)
     repo = None
 
+    option_list = BaseCommand.option_list + (
+        make_option('--all', '-a',
+            action='store_true',
+            default=False,
+            help='Add or update TEI for all volumes with pages loaded'),
+    )
+
     def handle(self, *pids, **options):
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
 
-        # if no pids are specified, exit with an error message
+        # if no pids are specified
         if not pids:
-            raise CommandError('Please specify a volume pid to have TEI generated')
+            # check if 'all' was specified, and if so find all volumes
+            if options['all']:
+                pids = Volume.volumes_with_pages()
+                if self.verbosity >= self.v_normal:
+                    self.stdout.write('Found %d volumes with pages loaded' % len(pids))
+
+            # otherwise exit with an error message
+            else:
+                raise CommandError('Please specify a volume pid to have TEI generated')
+
+    # def volumes_with_pages():
+
+        # TODO: add progressbar for pages?
+        # interrupt handler when loading all volumes with pages loaded
 
         for pid in pids:
             # try volume 1.0 first, since we have more 1.0 content

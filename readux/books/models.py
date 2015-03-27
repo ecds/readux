@@ -722,6 +722,16 @@ class Volume(DigitalObject, BaseVolume):
         # return so it can be filtered, paginated as needed
         return solrquery
 
+    @staticmethod
+    def volumes_with_pages():
+        '''Search for Volumes with pages loaded and return a list of matching pids.'''
+        solr = solr_interface()
+        # searching on page count > 1 because volumes with cover only
+        # have page count of 1
+        q = solr.query(content_model=Volume.VOLUME_CMODEL_PATTERN,
+                       page_count__gt=1).field_limit('pid')
+        return [result['pid'] for result in q]
+
     @property
     def pdf_size(self):
         'size of the pdf, in bytes'

@@ -782,8 +782,8 @@ class BookViewsTest(TestCase):
 
         # test with tei available
         mockobj.tei.exists = True
-        mockobj.width = 2000
-        mockobj.height = 1500
+        mockobj.tei.content.page.width = 2000
+        mockobj.tei.content.page.height = 1500
         # for now, simulate no ocr content
         mockobj.tei.content.lines = []
         response = self.client.get(url)

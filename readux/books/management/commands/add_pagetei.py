@@ -50,11 +50,6 @@ class Command(BaseCommand):
             else:
                 raise CommandError('Please specify a volume pid to have TEI generated')
 
-    # def volumes_with_pages():
-
-        # TODO: add progressbar for pages?
-        # interrupt handler when loading all volumes with pages loaded
-
         for pid in pids:
             # try volume 1.0 first, since we have more 1.0 content
             vol = self.repo.get_object(pid, type=VolumeV1_0)
@@ -208,20 +203,9 @@ class Command(BaseCommand):
         if signum == signal.SIGINT:
             # restore default signal handler so a second SIGINT can be used to quit
             signal.signal(signal.SIGINT, signal.SIG_DFL)
-            # set interrupt flag so main loop knows to quit at a reasonable time
+            # set interrupt flag so main loop knows to quit
             self.interrupted = True
-            # report if script is in the middle of ingesting pages for a volume
-            # if self.pageindex and self.images:
-            #     print >> self.stdout, \
-            #           '\nProcessing %d of %d pages for volume %s.' % \
-            #           (self.pageindex, len(self.images), self.current_volume)
             print >> self.stdout, \
                   '\n\nScript will exit after all pages for the current volume are processed.' + \
                   '\n(Ctrl-C / Interrupt again to quit now)'
-            # print >> self.stdout, '(Ctrl-C / Interrupt again to quit now)'
-
-#             else:
-#                 msg = '''\nProcessing %d of %d volumes; script will exit before %s page ingest starts or after it is complete.
-# (Ctrl-C / Interrupt again to quit immediately)'''
-#                 print >> self.stdout, msg % (self.stats['vols'], self.total, self.current_volume)
 

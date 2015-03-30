@@ -215,6 +215,9 @@ class TeiFacsimile(teimap.Tei):
     'Extension of TEI XmlObject to provide access to TEI facsimile elements'
     ROOT_NS = teimap.TEI_NAMESPACE
     ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
+                                           'books', 'schema', 'TEIPageView.xsd')
+    xmlschema = xmlmap.loadSchema(XSD_SCHEMA)
     page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
     # NOTE: tei facsimile could include illustrations, but ignoring those for now
     lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)
@@ -300,6 +303,25 @@ class Page(Image):
         # NOTE: eventually we may want to use some version of the ARK
         return absolutize_url(reverse('books:page-image-fs', kwargs={'pid': self.pid}))
 
+    @property
+    def tei_options(self):
+        'Parameters for use in XSLT when generating page-levl TEI facsimile'
+
+        # construct brief bibliographic information for use in sourceDesc/bibl
+        src_info = ''
+        # creator is a list, if we have any author information
+        if self.volume.creator:
+            src_info = ', '.join(self.volume.creator) + '. '
+
+        src_info += '%s, %s.' % (self.volume.display_label, self.volume.date)
+        return {
+           'graphic_url': self.image_url,
+           'title': self.display_label,
+           'distributor': settings.TEI_DISTRIBUTOR,
+           'source_bibl': src_info
+        }
+
+
 
 class PageV1_0(Page):
     '''Page subclass for emory-control:ScannedPage-1.0.'''
@@ -344,8 +366,7 @@ class PageV1_0(Page):
         '''Generate TEI facsimile for the current page'''
         try:
             result =  ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
-                return_type=unicode,
-                graphic_url=self.image_url)
+                return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
             return xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
 
@@ -353,9 +374,11 @@ class PageV1_0(Page):
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self, ocrpage):
-        # TODO: check that it is valid tei?
-        # load as tei should maybe happen here instead of in generate
-        self.tei.content = self.generate_tei(ocrpage)
+        # check that TEI is valid
+        tei = self.generate_tei(ocrpage)
+        if not tei.valid:
+            raise Exception('TEI is not valid according to configured schema')
+        self.tei.content = tei
 
 
 class PageV1_1(Page):
@@ -392,8 +415,7 @@ class PageV1_1(Page):
         '''Generate TEI facsimile for the current page'''
         try:
             result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
-                return_type=unicode,
-                graphic_url=self.image_url)
+                return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
             tei = xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
             return tei
@@ -402,9 +424,12 @@ class PageV1_1(Page):
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self):
-        # TODO: check that it is valid tei?
+        # check to make sure generated TEI is valid
+        tei = self.generate_tei()
+        if not tei.valid:
+            raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
-        self.tei.content = self.generate_tei()
+        self.tei.content = tei
 
 
 class BaseVolume(object):

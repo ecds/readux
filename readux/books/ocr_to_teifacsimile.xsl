@@ -9,9 +9,17 @@
 
   <!--Identity transform written to create TEI files using Alto data.-->
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
-    <desc>Identity stylesheet for generating TEI for Sacred Harp docs. </desc>
+    <desc>Stylesheet for generating page-level TEI facsimile from Abbyy OCR xml or Mets/Alto.</desc>
   </doc>
 
+  <!-- parameters for fields not available in OCR xml -->
+  <!-- title for the TEI of the current page -->
+  <xsl:param name="title"/>
+  <!-- distributor for the publication statement -->
+  <xsl:param name="distributor"/>
+  <!-- bibliographic information for the source -->
+  <xsl:param name="source_bibl"/>
+  <!-- url to the page image -->
   <xsl:param name="graphic_url"/>
 
   <xsl:strip-space elements="*"/>
@@ -25,16 +33,19 @@
       <teiHeader>
         <fileDesc>
           <titleStmt>
-            <title>placeholder</title>
-            <respStmt>
-              <resp>-</resp>
-              <name>-</name>
-            </respStmt>
+            <title><xsl:value-of select="$title"/></title>
           </titleStmt>
           <publicationStmt>
-            <distributor>Emory University</distributor>
+            <distributor><xsl:value-of select="$distributor"/></distributor>
           </publicationStmt>
           <sourceDesc>
+            <xsl:variable name="source">
+              <xsl:choose>
+                <xsl:when test="alto:Description">Mets/Alto</xsl:when>
+                <xsl:when test="fr8:page|fr6:page">Abbyy</xsl:when>
+              </xsl:choose>
+            </xsl:variable>
+            <p><xsl:value-of select="$source"/> file derived from OCR of <bibl><xsl:value-of select="$source_bibl"/></bibl></p>
           </sourceDesc>
         </fileDesc>
       </teiHeader>

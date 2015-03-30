@@ -94,6 +94,12 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.2
+-------------
+
+* Configure new setting **TEI_DISTRIBUTOR** in ``localsettings.py``.
+  See example configuration in ``localsettings.py.dist``.
+
 Release 1.1
 -------------
 

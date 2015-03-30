@@ -1014,7 +1014,7 @@ class TeiFacsimileTest(TestCase):
         self.assertEqual('Presentation', self.abbyy_tei.lines[0].text)
 
 
-class OCRtoTEIFacsimileXSLTestCase(TestCase):
+class OCRtoTEIFacsimileXSLTest(TestCase):
 
     fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
 
@@ -1027,25 +1027,68 @@ class OCRtoTEIFacsimileXSLTestCase(TestCase):
         self.fr8v2 = load_xmlobject_from_file(self.fr8v2_doc, abbyyocr.Document)
         self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
 
+    @override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
     def test_pageV1_0(self):
         # page 1.0 - abbyy ocr content
 
         page = PageV1_0(Mock()) # use mock for fedora api, since we won't make any calls
-        # use the first page with substantial text content as input
-        ocr_page = self.fr6v1.pages[5]
-        tei = page.generate_tei(ocr_page)
-        # print tei.serialize()
-        # inspect the tei and compare to the input
-        # abbyy ocr page has text blocks and paragraphs
-        # compare counts of items?
-        # compare coordinate attributes on a few elements
-        # compare word text
+        page.page_order = 5
+        with patch('readux.books.models.PageV1_0.volume') as mockvolume:
+            mockvolume.uriref = rdflib.URIRef('vol:1')
+            mockvolume.display_label = 'Mabel Meredith'
+            mockvolume.volume = None
+            mockvolume.creator = ['Townley, Arthur']
+            mockvolume.date = '1863'
+            # use the first page with substantial text content as input
+            ocr_page = self.fr6v1.pages[5]
+            tei = page.generate_tei(ocr_page)
+            # print tei.serialize()
+
+            # should be generating valid tei
+            # if not tei.schema_valid():
+                # print tei.schema_validation_errors()
+            self.assertTrue(tei.schema_valid(),
+                'generated TEI facsimile should be schema-valid')
+            # inspect the tei and check for expected values
+            self.assertEqual(page.display_label, tei.title,
+                'tei title should be set from page diplay label')
+            # distributor not mapped in teimap, so just use xpath to check
+            self.assertEqual(settings.TEI_DISTRIBUTOR,
+                tei.node.xpath('string(//t:publicationStmt/t:distributor)',
+                    namespaces={'t': tei.ROOT_NS}),
+                'configured tei distributor should be set in publication statement')
+            # recognized as abbyy input
+            self.assert_('Abbyy file' in tei.header.source_description,
+                'input should be recognized as Abbyy ocr')
+            # brief bibliographic data
+            self.assert_(mockvolume.display_label in tei.header.source_description)
+            self.assert_(mockvolume.creator[0] in tei.header.source_description)
+            self.assert_(mockvolume.date in tei.header.source_description)
+
+            # TODO: check graphic url, spot check text content and coordinates
 
     def test_pageV1_1(self):
         # page 1.1 - mets/alto content
         page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
         # set mets fixture as page ocr
         page.ocr.content = self.mets_alto
-        tei = page.generate_tei()
-        # print tei.serialize()
+        page.page_order = '3'
+        with patch('readux.books.models.PageV1_1.volume') as mockvolume:
+            mockvolume.uriref = rdflib.URIRef('vol:1')
+            mockvolume.display_label = 'Mabel Meredith'
+            mockvolume.volume = None
+            mockvolume.creator = ['Townley, Arthur']
+            mockvolume.date = '1863'
+            tei = page.generate_tei()
+            # print tei.serialize()
 
+            # should be generating valid tei
+            # if not tei.schema_valid():
+               # print tei.schema_validation_errors()
+            self.assertTrue(tei.schema_valid())
+
+            # recognized as mets/alto
+            self.assert_('Mets/Alto file' in tei.header.source_description,
+                'input should be recognized as mets/alto ocr')
+
+        # TODO: spot check text content and coordinates

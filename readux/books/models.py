@@ -311,7 +311,7 @@ class Page(Image):
         src_info = ''
         # creator is a list, if we have any author information
         if self.volume.creator:
-            src_info = ', '.join(self.volume.creator) + '. '
+            src_info = ', '.join([c.rstrip('.') for c in self.volume.creator]) + '. '
 
         src_info += '%s, %s.' % (self.volume.display_label, self.volume.date)
         return {
@@ -376,7 +376,7 @@ class PageV1_0(Page):
     def update_tei(self, ocrpage):
         # check that TEI is valid
         tei = self.generate_tei(ocrpage)
-        if not tei.valid:
+        if not tei.schema_valid():
             raise Exception('TEI is not valid according to configured schema')
         self.tei.content = tei
 
@@ -426,7 +426,7 @@ class PageV1_1(Page):
     def update_tei(self):
         # check to make sure generated TEI is valid
         tei = self.generate_tei()
-        if not tei.valid:
+        if not tei.schema_valid():
             raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
         self.tei.content = tei

@@ -35,7 +35,7 @@ def test():
 
 def doc():
     '''Locally build documentation.'''
-    with lcd('doc'):
+    with lcd('docs'):
         local('make clean html')
 
 

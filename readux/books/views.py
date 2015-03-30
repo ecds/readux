@@ -258,9 +258,14 @@ def view_page(request, pid):
     # currently only pagev1_1 has tei
     if hasattr(page, 'tei') and page.tei.exists:
         # determine scale for positioning OCR text in TEI facsimile
-        # based on original image and image as displayed
+        # based on original image size in the OCR and image as displayed
         # - find maximum of width/height
-        long_edge  = max(page.width, page.height)
+        long_edge  = max(page.tei.content.page.width, page.tei.content.page.height)
+        # NOTE: using the size from image the OCR was run on, since that
+        # may or may not match the size of the master image loaded in
+        # fedora, but the aspect ration should be kept the same from
+        # original -> repository copy -> scaled copy used for display
+
         # - determine scale to convert original size to display size
         scale = float(SINGLE_PAGE_SIZE) / float(long_edge)
         logger.debug('page size is %s, long edge is %s, scale is %f' % \

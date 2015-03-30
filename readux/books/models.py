@@ -204,6 +204,12 @@ class TeiZone(teimap.Tei):
     def height(self):
         return self.lry - self.uly
 
+    @property
+    def avg_height(self):
+        'Average height of word zones in the current zone (i.e. in a text line)'
+        if self.word_zones:
+            word_heights = [w.height for w in self.word_zones]
+            return sum(word_heights) / float(len(word_heights))
 
 class TeiFacsimile(teimap.Tei):
     'Extension of TEI XmlObject to provide access to TEI facsimile elements'

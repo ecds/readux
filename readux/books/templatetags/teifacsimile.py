@@ -38,6 +38,10 @@ def zone_style(zone, scale):
             styles['text-align'] = 'left'
             # TODO: would be better to set font-size by the line, but
             # needs to be generated from word zones, not the line bounding box
+
+            # for mets-alto, use average height of words in the line to calculate font size
+            # for abbyy ocr, no word zones exist, so just use line height
+            styles['font-size'] = '%.2fpx' % ((zone.avg_height or zone.height) * scale)
         elif zone.type == 'string':
             # set width & height relative to *parent* line, not the whole page
             styles['width'] = '%.2f%%' % percent(zone.width, zone.parent.width)
@@ -64,10 +68,10 @@ def zone_style(zone, scale):
         # calculate font size if either:
         # - word zone (alto-based tei)
         # - line with no word zones (abbyy-based tei)
-        if zone.type == 'string' or  \
-           (zone.type in ['textLine', 'line'] and not zone.word_zones):
+        # if zone.type == 'string' or  \
+        #    (zone.type in ['textLine', 'line'] and not zone.word_zones):
 
-            styles['font-size'] = '%.2fpx' % ((zone.lry - zone.uly) * scale)
+        #     styles['font-size'] = '%.2fpx' % ((zone.lry - zone.uly) * scale)
             # NOTE: could *possibly* use viewport percentage sizing for font size,
             # but it would need javascript calculations to adjust when the page image is
             # smaller than the viewport

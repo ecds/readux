@@ -69,7 +69,7 @@
 
   <xsl:template match="alto:Page">
     <xsl:element name="surface">
-      <xsl:attribute name="xml:id">fn<xsl:value-of select="substring-before(preceding::fileName,'.jpg')"/>pg.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number($page_number, '0000')"/></xsl:attribute>
       <xsl:attribute name="type">page</xsl:attribute>
       <xsl:attribute name="ulx">0</xsl:attribute>
       <xsl:attribute name="uly">0</xsl:attribute>
@@ -144,7 +144,7 @@
 
 
     <xsl:element name="surface">
-      <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number(position(), '0000')"/></xsl:attribute>
+      <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number($page_number, '0000')"/></xsl:attribute>
       <xsl:attribute name="type">page</xsl:attribute>
       <xsl:attribute name="ulx">0</xsl:attribute>
       <xsl:attribute name="uly">0</xsl:attribute>

@@ -1013,7 +1013,7 @@ class TeiFacsimileTest(TestCase):
         # check line content
         self.assertEqual('Presentation', self.abbyy_tei.lines[0].text)
 
-
+@override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
 class OCRtoTEIFacsimileXSLTest(TestCase):
 
     fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
@@ -1027,7 +1027,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
         self.fr8v2 = load_xmlobject_from_file(self.fr8v2_doc, abbyyocr.Document)
         self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
 
-    @override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
+   
     def test_pageV1_0(self):
         # page 1.0 - abbyy ocr content
 

@@ -62,7 +62,7 @@
 
   <xsl:template match="alto:Layout">
     <xsl:element name="facsimile">
-      <xsl:attribute name="xml:id">fn<xsl:value-of select="substring-before(preceding::fileName,'.jpg')"/>fcs.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="xml:id">fcs.<xsl:value-of select="generate-id()"/></xsl:attribute>
       <xsl:apply-templates/>
     </xsl:element>
   </xsl:template>
@@ -84,7 +84,7 @@
 
   <xsl:template match="alto:TextBlock">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">fn<xsl:value-of select="substring-before(preceding::fileName,'.jpg')"/>tbk.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="xml:id">tbk.<xsl:value-of select="generate-id()"/></xsl:attribute>
       <xsl:attribute name="type">textBlock</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -96,7 +96,7 @@
 
   <xsl:template match="alto:TextLine">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">fn<xsl:value-of select="substring-before(preceding::fileName,'.jpg')"/>tln.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="xml:id">tln.<xsl:value-of select="generate-id()"/></xsl:attribute>
       <xsl:attribute name="type">textLine</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -114,7 +114,7 @@
 
   <xsl:template match="alto:String">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">fn<xsl:value-of select="substring-before(preceding::fileName,'.jpg')"/>str.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:attribute name="xml:id">str.<xsl:value-of select="generate-id()"/></xsl:attribute>
       <xsl:attribute name="type">string</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -128,7 +128,7 @@
 
   <xsl:template match="alto:Illustration">
   <xsl:element name="zone">
-    <xsl:attribute name="xml:id">fn<xsl:value-of select="substring-before(preceding::fileName,'.jpg')"/>ill.<xsl:value-of select="generate-id()"/></xsl:attribute>
+    <xsl:attribute name="xml:id">ill.<xsl:value-of select="generate-id()"/></xsl:attribute>
     <xsl:attribute name="type">illustration</xsl:attribute>
     <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
     <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>

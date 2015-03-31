@@ -57,6 +57,57 @@ letter-spacing to adjust the actual width to the desired width.
     };
 })(jQuery);
 
+/**
+jQuery plugin to allow for container relative font size, by scaling according
+to the difference in the container and the viewport.
+
+Main element is the container that font sizes should be relative to, and will
+be used to adjust to viewport height.  Elements to be adjusted should be specified
+in the plugin options (or use vhfont-resize class), and should have a
+data-vhfontsize with the desired font size relative to the specified element.
+
+Example use:
+
+ $(".page img").relativeFontHeight({elements: $('.ocr-line')});
+
+Set debug option to true to see output about what is being done.
+
+*/
+(function($) {
+    // should it take the elements and then
+    $.fn.relativeFontHeight = function(options) {
+        var container = $(this);
+        var settings = $.extend({
+            // defaults
+            elements: $(".vhfont-resize"),
+            debug: false
+        }, options);
+
+        var scale = container.height() / $(window).height();
+        // if window has resized but scale is unaffected, nothing to do
+        if (scale == container.data('vhscale')) {
+            if (settings.debug) {
+                console.log('relative font size scale (' + scale +') is unchanged.');
+            }
+            return;
+        }
+        // store current scale to check against on next resize
+        container.data('vhscale', scale);
+
+        // update relative font size for configured elements
+        settings.elements.each(function() {
+            var el = $(this);
+            // get % of container from data and scale based on parent / window
+            if (settings.debug) {
+                console.log('setting font size to ' + el.data('vhfontsize') * scale + 'vh');
+            }
+            el.css('font-size', el.data('vhFontSize') * scale + 'vh');
+        });
+
+    };
+})(jQuery);
+
+
 /* extend String with a few utility methods */
 String.prototype.wordcount = function() {
     // count the number of words in a string by splitting on plain whitespace

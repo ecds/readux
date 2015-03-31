@@ -1042,6 +1042,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             # use the first page with substantial text content as input
             ocr_page = self.fr6v1.pages[5]
             tei = page.generate_tei(ocr_page)
+            # NOTE: uncomment to see generated TEI
             # print tei.serialize()
 
             # should be generating valid tei
@@ -1050,6 +1051,8 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             self.assertTrue(tei.schema_valid(),
                 'generated TEI facsimile should be schema-valid')
             # inspect the tei and check for expected values
+            # - page identifier based on page_order value passed in
+            self.assertEqual('pg.%04d' % page.page_order, tei.page.id)
             self.assertEqual(page.display_label, tei.title,
                 'tei title should be set from page diplay label')
             # distributor not mapped in teimap, so just use xpath to check
@@ -1080,6 +1083,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             mockvolume.creator = ['Townley, Arthur']
             mockvolume.date = '1863'
             tei = page.generate_tei()
+            # NOTE: uncomment to see generated tei
             # print tei.serialize()
 
             # should be generating valid tei
@@ -1087,6 +1091,11 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
                # print tei.schema_validation_errors()
             self.assertTrue(tei.schema_valid())
 
+            # NOTE: not testing header details that are the same for both
+            # outputs and already checked in previous test
+
+            # - page identifier based on page_order value passed in
+            self.assertEqual('pg.%04d' % page.page_order, tei.page.id)
             # recognized as mets/alto
             self.assert_('Mets/Alto file' in tei.header.source_description,
                 'input should be recognized as mets/alto ocr')

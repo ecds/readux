@@ -41,7 +41,7 @@
           <sourceDesc>
             <xsl:variable name="source">
               <xsl:choose>
-                <xsl:when test="alto:Description">Mets/Alto</xsl:when>
+                <xsl:when test="//alto:Description">Mets/Alto</xsl:when>
                 <xsl:when test="fr8:page|fr6:page">Abbyy</xsl:when>
               </xsl:choose>
             </xsl:variable>
@@ -54,7 +54,7 @@
   </xsl:template>
 
 
-  <!-- template mathes for mets/alto elements -->
+  <!-- template matches for mets/alto elements -->
 
   <xsl:template match="alto:Description"/>
 

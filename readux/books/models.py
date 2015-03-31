@@ -217,7 +217,10 @@ class TeiFacsimile(teimap.Tei):
     ROOT_NAMESPACES = {'tei' : ROOT_NS}
     XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
                                            'books', 'schema', 'TEIPageView.xsd')
-    xmlschema = xmlmap.loadSchema(XSD_SCHEMA)
+
+    xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
+    # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
+    # referenced files in the same directory
     page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
     # NOTE: tei facsimile could include illustrations, but ignoring those for now
     lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)

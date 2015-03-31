@@ -1072,7 +1072,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
         page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
         # set mets fixture as page ocr
         page.ocr.content = self.mets_alto
-        page.page_order = '3'
+        page.page_order = 3
         with patch('readux.books.models.PageV1_1.volume') as mockvolume:
             mockvolume.uriref = rdflib.URIRef('vol:1')
             mockvolume.display_label = 'Mabel Meredith'

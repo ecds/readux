@@ -321,7 +321,8 @@ class Page(Image):
            'graphic_url': self.image_url,
            'title': self.display_label,
            'distributor': settings.TEI_DISTRIBUTOR,
-           'source_bibl': src_info
+           'source_bibl': src_info,
+           'page_number': str(self.page_order)
         }
 
 

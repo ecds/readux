@@ -21,6 +21,8 @@
   <xsl:param name="source_bibl"/>
   <!-- url to the page image -->
   <xsl:param name="graphic_url"/>
+  <!-- number (in sequence) for the current page -->
+  <xsl:param name="page_number"/>
 
   <xsl:strip-space elements="*"/>
   <xsl:output indent="yes" method="xml" encoding="utf-8" omit-xml-declaration="no"/>

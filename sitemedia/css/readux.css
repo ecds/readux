@@ -769,6 +769,15 @@ header#page-bg .collection-image-info.collasped .info{
     cursor: pointer;
 }
 
+.page-header h1 a {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  display: inline-block;
+  text-overflow: ellipsis;
+  font-size: 70%;
+}
+
 
 @media(max-width:500px){
     .book .media>.pull-left,

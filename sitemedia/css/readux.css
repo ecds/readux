@@ -885,3 +885,28 @@ header#page-bg .collection-image-info.collasped .info{
     -webkit-user-select: none;
     -o-user-select: none;
  }
+ 
+.page .content{
+  min-height:100px;
+}
+ 
+.page .content:after {
+  content: '';
+  background-image: url('../img/377.GIF');
+  display: block;
+  opacity:0.5;
+  position: absolute;
+  z-index: -1;
+  height:45px;
+  width:45px;
+  top: 0;
+  left: calc(50% - 22.5px);
+}
+
+#zoom-page.active+.page .content>img {
+  opacity: 0;
+}
+
+#zoom-page.active+.page .content:after{
+  display:none;
+}

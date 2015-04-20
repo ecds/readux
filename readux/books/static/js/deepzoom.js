@@ -15,7 +15,7 @@ function startzoom() {
     $('#covers').removeClass('active');
     $('#enable-zoom').addClass('active');
     // move deepzoom div in front of page image
-    $('#zoom-page').show().css('z-index', 3);
+    $('#zoom-page').addClass('active').show().css('z-index', 3);
     // show the deepzoom controls
     $("#deepzoom-controls").removeClass('hidden').addClass('visible');
     // use not-visible class to set image opacity, but leave it visible
@@ -29,7 +29,7 @@ function endzoom() {
     // reset deepzoom viewer to home
     viewer.viewport.goHome();
     // move deepzoom div behind page image
-    $('#zoom-page').css('z-index', -1).hide();
+    $('#zoom-page').removeClass('active').css('z-index', -1).hide();
     // hide the deepzoom controls
     $("#deepzoom-controls").addClass('hidden').removeClass('visible');
     // restore non-zoomable page image

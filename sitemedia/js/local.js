@@ -63,15 +63,18 @@ $(document).ready(function() {
     $(".page-header .expand").on('click',function(evt){
         evt.preventDefault();
         $(this).toggle().siblings('.continued').toggle();
-    })
+    });
+    
     $('.page-header .continued').on('click',function(evt){
         evt.preventDefault();
         $(this).toggle().siblings('.expand').toggle();
-    })
+    });
+    
+    $(".page-search .trigger").on('click',function(evt){
+      evt.preventDefault();
+      $(this).toggleClass('active');
+      $(".page-search .row").stop().slideToggle();
+    });
 
 
 });
-
-
-
-

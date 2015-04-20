@@ -2,9 +2,17 @@
 Expects volume object as vol; set rdfa to true to enable RDFa properties.
 {% endcomment %}
 {% load widget_tweaks %}
+
+{% url 'books:volume' vol.pid as volume_url %}
+
 <header class="page-header">
+    {% if page %}
+    <div class="page-search">
+      <a class="trigger" href="#">Search this volume</a>
+      {% include 'books/snippets/volume_search_form.html' %}
+    </div>
+    {% endif %}
     <h1>
-        {% url 'books:volume' vol.pid as volume_url %}
         {# only link to volume landing page if we are not currently *on* that page #}
         {% if volume_url != request.get_full_path|urlencode %}
           <a href="{{ volume_url }}">
@@ -35,26 +43,7 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
         {# FIXME: or should we use schema:copyrightYear? #}
         {% endfor %}
     </p>
-
-    {# search inside this volume; *only* available if volume has pages loaded #}
-    {% if vol.has_pages and form %}
-    <div class="row">
-        <div class="col-xs-12 col-md-8 col-md-offset-2">
-            <form id="volume-search" class="search-bar" role="form" method="GET" action="{{ volume_url }}">
-                <label class="sr-only" for="{{ form.keyword.name }}">{{ form.keyword.label }}</label>
-                <div class="input-group">
-                  {% render_field form.keyword class+="form-control keyword" placeholder="Search in this volume" %}
-                  <span class="input-group-btn">
-                    <button class="btn" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-                  </span>
-                </div><!-- /input-group -->
-                <span class="help-block">
-                    {{ form.keyword.help_text }}
-                    <p class="text-warning">Note: searching uncorrected OCR text content.</p>
-                </span>
-            </form>
-        </div>
-    </div>
+    {% if not page %}
+      {% include 'books/snippets/volume_search_form.html' %}
     {% endif %}
-
 </header>

@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django_image_tools',
-    'south',  # NOTE: disabled for now due to conflict with django_image_tools
     'eulfedora',
     'eullocal.django.emory_ldap',
     'eultheme',

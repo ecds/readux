@@ -31,3 +31,4 @@ progressbar<=2.3
 pdfminer<=20140328
 beautifulsoup4
 bagit
+django-auth-ldap

@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django_image_tools',
     'south',  # NOTE: disabled for now due to conflict with django_image_tools
+    'social.apps.django_app.default',
     'eulfedora',
     'eullocal.django.emory_ldap',
     'eultheme',
@@ -127,6 +128,12 @@ AUTHENTICATION_BACKENDS = (
 
 # use eullocal emory ldap model as user model
 AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
+SOCIAL_AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
+
+# NOTE: only until django 1.7 upgrade
+SOUTH_MIGRATION_MODULES = {
+    'default': 'social.apps.django_app.default.south_migrations'
+}
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')

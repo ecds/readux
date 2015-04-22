@@ -452,11 +452,12 @@ class BaseVolume(object):
     def volume(self):
         'volume label for this Book (e.g., v.1)'
         # LSDI Volume object label is ocm#_vol, e.g. ocn460678076_V.0
-        ocm, sep, vol = self.label.partition('_')
-        # if V.0, return no volume
-        if vol.lower() == 'v.0':
-            return ''
-        return vol
+        if self.label:
+            ocm, sep, vol = self.label.partition('_')
+            # if V.0, return no volume
+            if vol.lower() == 'v.0':
+                return ''
+            return vol
 
     @property
     def noid(self):

@@ -50,7 +50,7 @@ UPLOAD_TO = os.path.join(BASE_DIR, 'media/upload')
 
 # LDAP login settings.
 AUTH_LDAP_SERVER = 'ldaps://ldap.co'
-AUTH_LDAP_BASE_USER = ''           # DN of the  base LDAP user (e.g., 'uid=foo,ou=bar,o=emory.edu')
+AUTH_LDAP_BASE_USER = ''
 AUTH_LDAP_BASE_PASS = ''           # password for that user
 AUTH_LDAP_SEARCH_SUFFIX = ''
 AUTH_LDAP_SEARCH_FILTER = '(uid=%s)'
@@ -58,6 +58,26 @@ AUTH_LDAP_CHECK_SERVER_CERT = False  # set to False to skip server cert verifica
 AUTH_LDAP_CA_CERT_PATH = ''        # full path to CA cert bundle
 #AUTH_LDAP_CA_CERT_PATH = '/usr/share/ssl/certs/ca-bundle.crt'        # full path to CA cert bundle
 #AUTH_LDAP_CA_CERT_PATH = ''        # full path to CA cert bundle
+
+# django-auth-ldap settings
+import ldap
+from django_auth_ldap.config import LDAPSearch
+
+AUTH_LDAP_SERVER_URI = 'ldaps://ldap.co'
+AUTH_LDAP_BIND_DN = ''     # DN of the  base LDAP user (e.g., 'uid=foo,ou=bar,o=emory.edu')
+AUTH_LDAP_BIND_PASSWORD = ''           # password for that user
+AUTH_LDAP_USER_SEARCH = LDAPSearch("o=...",   ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+
+AUTH_LDAP_USER_ATTR_MAP = {
+    'first_name': 'givenName',
+    'last_name': 'sn',
+    'email': 'mail',
+    'phone': 'telephoneNumber',
+    'dept_num': 'departmentNumber',
+    'full_name': 'cn',
+    'title': 'title',
+}
+
 
 # configure which IP addresses are allowed to access the index data service
 EUL_INDEXER_ALLOWED_IPS = []

@@ -3,8 +3,16 @@
 
 {% block page-subtitle %}{{ page.display_label }} | {% endblock %}
 
-{% block javascript %}
+{% block css %}
   {{ block.super }}
+  <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css">
+{% endblock %}
+
+{% block javascript %}
+  {# FIXME: this should be redundant, but annotator requires at least jquery 1.6 and wasn't workining without #}
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+  {{ block.super }}
+  <script src="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/deepzoom.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/page.js"></script>
@@ -23,6 +31,20 @@
             homeButton: 'dz-home',
             fullPageButton: 'dz-fs',
         });
+
+        $('.content').annotator()
+                     .annotator('addPlugin', 'Store', {
+                        // TODO: use django config for annotator storage url
+                        // do *not* expose this to the world
+                        prefix: 'http://170.140.205.106:5000',
+                        // Attach the uri of the current page to all annotations to allow search.
+                        annotationData: {
+                            {# FIXME: url is not quite right; use a model method? #}
+                            'uri': '{{ site.domain|add:request.path }}'
+                            {% if page.ark_uri %}'ark': '{{ page.ark_uri }}'{% endif %}
+                        },
+                     });
+
      });
      {% if page.tei.exists %}
      // adjust ocr word & letter spacing on load & resize, with a timeout

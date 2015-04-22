@@ -122,7 +122,8 @@ MEDIA_URL = '/media/'
 # supported mechanisms for login
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
+    # 'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
+    'django_auth_ldap.backend.LDAPBackend',
 )
 
 # use eullocal emory ldap model as user model

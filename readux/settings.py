@@ -29,8 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django_image_tools',
-    'south',  # NOTE: disabled for now due to conflict with django_image_tools
     'eulfedora',
+    # emory_ldap included to migrate back to auth.User;
+    # should be removed in the next version
     'eullocal.django.emory_ldap',
     'eultheme',
     'widget_tweaks',
@@ -122,11 +123,9 @@ MEDIA_URL = '/media/'
 # supported mechanisms for login
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
+    # 'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
+    'django_auth_ldap.backend.LDAPBackend',
 )
-
-# use eullocal emory ldap model as user model
-AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')

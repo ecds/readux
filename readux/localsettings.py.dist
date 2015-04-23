@@ -69,15 +69,23 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 # Social Authentication configurations
 
+# Create a new Twitter application: https://apps.twitter.com/app/new
+# Configuration must include a callback url.
 SOCIAL_AUTH_TWITTER_KEY = ''
 SOCIAL_AUTH_TWITTER_SECRET = ''
 
-SOCIAL_AUTH_GITHUB_KEY = ''
-SOCIAL_AUTH_GITHUB_SECRET = ''
-
+# Get Google OAuth2 credentials as documented here:
+# https://developers.google.com/identity/protocols/OAuth2?csw=1#Registering
+# Authentication requires that you enable Google+ API
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
+# Register application at https://github.com/settings/applications/new
+# Callback url should be http://readux.library.emory.edu/complete/github/
+SOCIAL_AUTH_GITHUB_KEY = ''
+SOCIAL_AUTH_GITHUB_SECRET = ''
+
+# Register application at http://developers.facebook.com/setup/
 SOCIAL_AUTH_FACEBOOK_KEY = ''
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']   # request email address (not included by default)

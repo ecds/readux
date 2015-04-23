@@ -56,7 +56,7 @@ def image_dzi(request, img_id):
     '''
     img = get_image_object_or_404(request, img_id)
     return HttpResponse(DziImage(img).serialize(pretty=True),
-                        mimetype='application/xml')
+                        content_type='application/xml')
 
 @condition(etag_func=image_etag, last_modified_func=image_lastmodified)
 def dzi_tile(request, img_id, level, column, row, fmt):
@@ -109,7 +109,7 @@ def dzi_tile(request, img_id, level, column, row, fmt):
         # scale full image to needed level size and return
         logger.debug('Requesting scale=%d,%d', levelwidth, levelheight)
         return HttpResponse(img.get_region(scale='%d,%d' % (levelwidth, levelheight)),
-                            mimetype='image/jpeg')
+                            content_type='image/jpeg')
 
     # otherwise, we need to crop and scale
 
@@ -147,4 +147,4 @@ def dzi_tile(request, img_id, level, column, row, fmt):
                                        (scaledtilewidth, scaledtileheight),
                                        region='%d,%d,%d,%d' % \
                                        (y1, x1, cropheight, cropwidth)),
-                        mimetype='image/jpeg')
+                        content_type='image/jpeg')

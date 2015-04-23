@@ -3,6 +3,14 @@
 CHANGELOG
 =========
 
+Release 1.2
+-----------
+
+* Upgrade to Django 1.7
+* Now using `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`
+  for LDAP login instead of eullocal.
+
+
 Release 1.1.1
 -------------
 

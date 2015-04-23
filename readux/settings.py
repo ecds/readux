@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django_image_tools',
     'eulfedora',
+    # emory_ldap included to migrate back to auth.User;
+    # should be removed in the next version
     'eullocal.django.emory_ldap',
     'eultheme',
     'widget_tweaks',
@@ -124,9 +126,6 @@ AUTHENTICATION_BACKENDS = (
     # 'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
     'django_auth_ldap.backend.LDAPBackend',
 )
-
-# use eullocal emory ldap model as user model
-AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')

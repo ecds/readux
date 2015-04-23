@@ -128,18 +128,6 @@ AUTHENTICATION_BACKENDS = (
     'django_auth_ldap.backend.LDAPBackend',
 )
 
-<<<<<<< HEAD
-# use eullocal emory ldap model as user model
-AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
-SOCIAL_AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
-
-# NOTE: only until django 1.7 upgrade
-SOUTH_MIGRATION_MODULES = {
-    'default': 'social.apps.django_app.default.south_migrations'
-}
-
-=======
->>>>>>> develop
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')
 

@@ -67,6 +67,24 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'title': 'title',
 }
 
+# Social Authentication configurations
+
+SOCIAL_AUTH_TWITTER_KEY = ''
+SOCIAL_AUTH_TWITTER_SECRET = ''
+
+SOCIAL_AUTH_GITHUB_KEY = ''
+SOCIAL_AUTH_GITHUB_SECRET = ''
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
+SOCIAL_AUTH_FACEBOOK_KEY = ''
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']   # request email address (not included by default)
+
+# If a different set of authentication backends is needed
+# than what is configured in readux.settings,
+# override AUTHENTICATION_BACKENDS here
 
 # configure which IP addresses are allowed to access the index data service
 EUL_INDEXER_ALLOWED_IPS = []

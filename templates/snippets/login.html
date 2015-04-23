@@ -1,0 +1,28 @@
+{% load readux_utils %}
+<div class="navbar-right">
+<div class="social-login navbar-text">
+  {% if user and not user.is_anonymous %} {# should this be a dropdown too? #}
+  <span>Welcome, {{ user.get_full_name|default:user.username }} |
+       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+  {% else %}
+  <div class="dropdown dropdown-menu-right">
+    <button class="btn btn-default dropdown-toggle" type="button" id="login-menu"
+        data-toggle="dropdown" aria-expanded="true">Login <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="login-menu">
+      {# <li role="presentation" class="divider"></li> #}
+        {% for backend in backends.backends %}
+        {% with backend_name=backend_names|dict_item:backend|default:backend|title %}
+        <li role="presentation" class="login-{{ backend }}">
+            <a role="menuitem" tabindex="-1"
+            href="{% url 'social:begin' backend %}?next={{ request.path }}">
+            <i class="login-icon fa fa-lg fa-{{ backend_name|lower }}"></i>
+            {{ backend_name }}</a></li>
+        {% endwith %}
+        {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+</div>
+

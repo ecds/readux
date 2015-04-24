@@ -45,6 +45,10 @@ urlpatterns = patterns('',
 
     # django admin
     url(r'^admin/', include(admin.site.urls)),
+    # django auth (NOTE: may need need all of auth, but at least need logout)
+    url('^', include('django.contrib.auth.urls', namespace='auth')),
+    # social auth
+    url('', include('social.apps.django_app.urls', namespace='social'))
 )
 
 if settings.DEV_ENV:

@@ -72,5 +72,5 @@ TILE_SIZE = getattr(settings, 'DYNDZI_TILE_SIZE', 256)
 TILE_OVERLAP = getattr(settings, 'DYNDZI_TILE_OVERLAP', 1)
 IMAGE_FORMAT = getattr(settings, 'DYNDZI_IMAGE_FORMAT', 'jpg')
 
-logger.info('tile size=%d overlap=%d format=%s' \
-            % (TILE_SIZE, TILE_OVERLAP, IMAGE_FORMAT))
+# logger.info('tile size=%d overlap=%d format=%s' \
+#             % (TILE_SIZE, TILE_OVERLAP, IMAGE_FORMAT))

@@ -408,7 +408,7 @@ def _error_image_response(mode):
         else:
             base_path = settings.STATIC_ROOT
         with open(os.path.join(base_path, 'img', img)) as content:
-            return HttpResponseNotFound(content.read(), mimetype='image/png')
+            return HttpResponseNotFound(content.read(), content_type='image/png')
 
 @require_http_methods(['GET', 'HEAD'])
 @condition(etag_func=view_helpers.page_image_etag,
@@ -446,7 +446,7 @@ def page_image(request, pid, mode=None):
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level
 
-            return HttpResponse(content, mimetype='image/jpeg')
+            return HttpResponse(content, content_type='image/jpeg')
             # NOTE: last-modified and etag headers are set on the response
             # by the django condition decorator methods
 

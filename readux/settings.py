@@ -29,8 +29,10 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django_image_tools',
-    'south',  # NOTE: disabled for now due to conflict with django_image_tools
+    'social.apps.django_app.default',
     'eulfedora',
+    # emory_ldap included to migrate back to auth.User;
+    # should be removed in the next version
     'eullocal.django.emory_ldap',
     'eultheme',
     'widget_tweaks',
@@ -46,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -58,9 +61,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # additional context processors
     "django.core.context_processors.request",  # always include request in render context
     "django.core.context_processors.static",
+    # social auth support
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
     "eultheme.context_processors.template_settings",
     "eultheme.context_processors.site_path",
-    "readux.version_context",  # include app version
+    "readux.context_extras",  # include app version, backend names
     "readux.books.context_processors.book_search",  # book search form
 )
 
@@ -121,13 +127,21 @@ MEDIA_URL = '/media/'
 
 # supported mechanisms for login
 AUTHENTICATION_BACKENDS = (
+    # additional social-auth backends could be configured here;
+    # they will need keys in localsettings and possibly display names
+    # added to the dict in readux/__init__.py
+    'social.backends.twitter.TwitterOAuth',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.github.GithubOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
+    'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
-    # 'eullocal.django.emory_ldap.backends.EmoryLDAPBackend',
     'django_auth_ldap.backend.LDAPBackend',
 )
 
-# use eullocal emory ldap model as user model
-AUTH_USER_MODEL = 'emory_ldap.EmoryLDAPUser'
+SOCIAL_AUTH_USER_MODEL = 'auth.User'
+
+LOGIN_REDIRECT_URL = '/'
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')

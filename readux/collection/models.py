@@ -123,3 +123,4 @@ class CollectionImage(models.Model):
     def banner_thumbnail(self):
         if self.banner:
             return self.banner.thumbnail
+

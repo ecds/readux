@@ -97,8 +97,20 @@ directory.  From the top level of your virtualenv directory, run::
 Release 1.2
 -------------
 
+* This release includes an update to Django 1.7 and includes new database
+  migrations.  To update the database, run::
+      ``python manage.py migrate``
+* LDAP login is now handled by
+ `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`.  LDAP
+  configuration settings will need to be updated in ``localsettings.py``;
+  see example configuration in ``localsettings.py.dist``.
 * Configure new setting **TEI_DISTRIBUTOR** in ``localsettings.py``.
   See example configuration in ``localsettings.py.dist``.
+* Readux now supports social authentication via Twitter, Google, GitHub,
+  Facebook, etc.  OAuth keys for each of the configured backends should
+  be requested and configured in ``localsettings.py``.  The list of enabled
+  authentication backends can also be overridden in localsettings, if
+  needed.
 
 Release 1.1
 -------------

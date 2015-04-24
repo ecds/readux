@@ -48,17 +48,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Temporary folder for upload
 UPLOAD_TO = os.path.join(BASE_DIR, 'media/upload')
 
-# LDAP login settings.
-AUTH_LDAP_SERVER = 'ldaps://ldap.co'
-AUTH_LDAP_BASE_USER = ''
-AUTH_LDAP_BASE_PASS = ''           # password for that user
-AUTH_LDAP_SEARCH_SUFFIX = ''
-AUTH_LDAP_SEARCH_FILTER = '(uid=%s)'
-AUTH_LDAP_CHECK_SERVER_CERT = False  # set to False to skip server cert verification (TESTING ONLY)
-AUTH_LDAP_CA_CERT_PATH = ''        # full path to CA cert bundle
-#AUTH_LDAP_CA_CERT_PATH = '/usr/share/ssl/certs/ca-bundle.crt'        # full path to CA cert bundle
-#AUTH_LDAP_CA_CERT_PATH = ''        # full path to CA cert bundle
-
 # django-auth-ldap settings
 import ldap
 from django_auth_ldap.config import LDAPSearch
@@ -72,11 +61,38 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'first_name': 'givenName',
     'last_name': 'sn',
     'email': 'mail',
-    'phone': 'telephoneNumber',
-    'dept_num': 'departmentNumber',
-    'full_name': 'cn',
+    # 'phone': 'telephoneNumber',
+    # 'dept_num': 'departmentNumber',
+    # 'full_name': 'cn',
     'title': 'title',
 }
+
+# Social Authentication configurations
+
+# Create a new Twitter application: https://apps.twitter.com/app/new
+# Configuration must include a callback url.
+SOCIAL_AUTH_TWITTER_KEY = ''
+SOCIAL_AUTH_TWITTER_SECRET = ''
+
+# Get Google OAuth2 credentials as documented here:
+# https://developers.google.com/identity/protocols/OAuth2?csw=1#Registering
+# Authentication requires that you enable Google+ API
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
+# Register application at https://github.com/settings/applications/new
+# Callback url should be http://readux.library.emory.edu/complete/github/
+SOCIAL_AUTH_GITHUB_KEY = ''
+SOCIAL_AUTH_GITHUB_SECRET = ''
+
+# Register application at http://developers.facebook.com/setup/
+SOCIAL_AUTH_FACEBOOK_KEY = ''
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']   # request email address (not included by default)
+
+# If a different set of authentication backends is needed
+# than what is configured in readux.settings,
+# override AUTHENTICATION_BACKENDS here
 
 
 # configure which IP addresses are allowed to access the index data service

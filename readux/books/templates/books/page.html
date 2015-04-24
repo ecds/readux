@@ -34,9 +34,8 @@
 
         $('.content').annotator()
                      .annotator('addPlugin', 'Store', {
-                        // TODO: use django config for annotator storage url
-                        // do *not* expose this to the world
-                        prefix: 'http://170.140.205.106:5000',
+                        // configured annotator storage url
+                        prefix: '{{ ANNOTATOR_STORE_URI }}',
                         // Attach the uri of the current page to all annotations to allow search.
                         annotationData: {
                             {# FIXME: url is not quite right; use a model method? #}

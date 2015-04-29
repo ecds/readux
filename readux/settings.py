@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'readux.collection',
     'readux.books',
     'readux.dyndzi',
+    'readux.accounts',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -138,7 +139,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = 'accounts.User'
+SOCIAL_AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_REDIRECT_URL = '/'
 

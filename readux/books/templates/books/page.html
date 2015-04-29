@@ -1,11 +1,11 @@
 {% extends 'site_base.html' %}
-{% load teifacsimile %}
+{% load teifacsimile static %}
 
 {% block page-subtitle %}{{ page.display_label }} | {% endblock %}
 
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css">
+  <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css"/>
 {% endblock %}
 
 {% block javascript %}
@@ -13,15 +13,15 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
   {{ block.super }}
   <script src="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/deepzoom.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/page.js"></script>
+  <script type="text/javascript" src="{% static 'js/openseadragon/openseadragon.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/deepzoom.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/page.js' %}"></script>
   <script type="text/javascript" charset="utf-8">
      $(document).ready(function () {
         // set up seadragon configuration (not loaded unless triggered by user)
         set_seadragon_opts({
             id: "zoom-page",
-            prefixUrl: "{{ STATIC_URL }}js/openseadragon/images/",
+            prefixUrl: "{% static 'js/openseadragon/images/' %}",
             tileSources: "{% url 'deepzoom:dzi' page.pid %}",
             toolbar: 'deepzoom-controls',
             showNavigator: true,
@@ -32,17 +32,24 @@
             fullPageButton: 'dz-fs',
         });
 
-        $('.content').annotator()
-                     .annotator('addPlugin', 'Store', {
-                        // configured annotator storage url
-                        prefix: '{{ ANNOTATOR_STORE_URI }}',
-                        // Attach the uri of the current page to all annotations to allow search.
-                        annotationData: {
-                            {# FIXME: url is not quite right; use a model method? #}
-                            'uri': '{{ site.domain|add:request.path }}'
-                            {% if page.ark_uri %}'ark': '{{ page.ark_uri }}'{% endif %}
-                        },
-                     });
+        var content = $('.content').annotator();
+
+        var optionsStore = {
+            // configured annotator storage url
+            prefix: '{{ ANNOTATOR_STORE_URI }}',
+            // Attach the uri of the current page to all annotations to allow search.
+            annotationData: {
+                {# FIXME: url is not quite right; use a model method? #}
+                'uri': '{{ site.domain|add:request.path }}'
+               {% if page.ark_uri %},'ark': '{{ page.ark_uri }}'{% endif %}
+            },
+            loadFromSearch: {
+                'uri': '{{ site.domain|add:request.path }}'
+              }
+         };
+
+        content.annotator('addPlugin', 'Store', optionsStore);
+
 
      });
      {% if page.tei.exists %}

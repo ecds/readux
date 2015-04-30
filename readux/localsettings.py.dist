@@ -86,7 +86,12 @@ SOCIAL_AUTH_GITHUB_KEY = ''
 SOCIAL_AUTH_GITHUB_SECRET = ''
 
 # Register application at http://developers.facebook.com/setup/
-SOCIAL_AUTH_FACEBOOK_KEY = ''
+# For testing, add users to the Tester role at
+# https://developers.facebook.com/apps/{{SOCIAL_AUTH_FACEBOOK_KEY}}/roles/
+# You will need their Facebook name, but you don't need to be Facebook friends
+# to assign them as testers.
+
+SOCIAL_AUTH_FACEBOOK_KEY = '' # the numerical Facebook App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']   # request email address (not included by default)
 

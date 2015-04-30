@@ -40,11 +40,11 @@
             // Attach the uri of the current page to all annotations to allow search.
             annotationData: {
                 {# FIXME: url is not quite right; use a model method? #}
-                'uri': '{{ site.domain|add:request.path }}'
+                'uri': '{{ page.absolute_url }}',
                {% if page.ark_uri %},'ark': '{{ page.ark_uri }}'{% endif %}
             },
             loadFromSearch: {
-                'uri': '{{ site.domain|add:request.path }}'
+                'uri': '{{ page.absolute_url }}'
               }
          };
 

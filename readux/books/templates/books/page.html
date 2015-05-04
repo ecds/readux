@@ -6,75 +6,25 @@
 {% block css %}
   {{ block.super }}
   <link rel="stylesheet" href="http://assets.annotateit.org/annotator/v1.1.0/annotator.min.css"/>
+  <link rel="stylesheet" href="{% static 'plugins/meltdown/css/meltdown.css' %}"/>
+  <link rel="stylesheet" href="{% static 'plugins/annotator/marginviewer.css' %}"/>
 {% endblock %}
 
 {% block javascript %}
   {# FIXME: this should be redundant, but annotator requires at least jquery 1.6 and wasn't workining without #}
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   {{ block.super }}
   <script src="http://assets.annotateit.org/annotator/v1.1.0/annotator-full.min.js"></script>
   <script type="text/javascript" src="{% static 'js/openseadragon/openseadragon.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/deepzoom.js' %}"></script>
+  <script type="text/javascript" src="{% static 'plugins/annotator/marginviewer.js' %}"></script>
+  <script type="text/javascript" src="{% static 'plugins/meltdown/js/libs/js-markdown-extra.js' %}"></script>
+  <script type="text/javascript" src="{% static 'plugins/meltdown/js/libs/rangyinputs-jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'plugins/meltdown/js/libs/element_resize_detection.js' %}"></script>
+  <script type="text/javascript" src="{% static 'plugins/meltdown/js/jquery.meltdown.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/page.js' %}"></script>
-  <script type="text/javascript" charset="utf-8">
-     $(document).ready(function () {
-        // set up seadragon configuration (not loaded unless triggered by user)
-        set_seadragon_opts({
-            id: "zoom-page",
-            prefixUrl: "{% static 'js/openseadragon/images/' %}",
-            tileSources: "{% url 'deepzoom:dzi' page.pid %}",
-            toolbar: 'deepzoom-controls',
-            showNavigator: true,
-            navigatorPosition: 'TOP_LEFT',
-            zoomInButton: 'dz-zoom-in',
-            zoomOutButton: 'dz-zoom-out',
-            homeButton: 'dz-home',
-            fullPageButton: 'dz-fs',
-        });
 
-        var content = $('.content').annotator();
-
-        var optionsStore = {
-            // configured annotator storage url
-            prefix: '{{ ANNOTATOR_STORE_URI }}',
-            // Attach the uri of the current page to all annotations to allow search.
-            annotationData: {
-                {# FIXME: url is not quite right; use a model method? #}
-                'uri': '{{ page.absolute_url }}',
-               {% if page.ark_uri %},'ark': '{{ page.ark_uri }}'{% endif %}
-            },
-            loadFromSearch: {
-                'uri': '{{ page.absolute_url }}'
-              }
-         };
-
-        content.annotator('addPlugin', 'Store', optionsStore);
-
-
-     });
-     {% if page.tei.exists %}
-     // adjust ocr word & letter spacing on load & resize, with a timeout
-     // to avoid adjusting too frequently as the browser is resized
-
-        var resizeTimer; // Set resizeTimer to empty so it resets on page load
-        function resizeFunction() {
-            // adjust font sizes based on container to use viewport height
-            $(".page img").relativeFontHeight({elements: $('.ocr-line')});
-            // adjust ocr text on window load or resize
-            $(".ocrtext").textwidth();
-        };
-
-        // On resize, run the function and reset the timeout with a 250ms delay
-        $(window).resize(function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(resizeFunction, 250);
-        });
-
-       $(window).load(function() {  // wait until load completes, so widths will be calculated
-           resizeFunction();
-       });
-     {% endif %}
-  </script>
+  {% include 'books/snippets/book-page.js' %}
 {% endblock %}
 
 {% block metadata %}
@@ -133,21 +83,26 @@
                 <div id="zoom-page"></div>
                 <div class="page">
                     <div class="content">
-                        <img src="{% url 'books:page-image' page.pid %}"/>
-                        {% if page.tei.exists %}
-                           {% for line in page.tei.content.lines %}
-                           <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>
-                                {% for zone in line.word_zones %}
-                                {# NOTE: may not want ocrtext adjustment when there are multiple words on a line #}
-                                <div class="ocr-zone ocrtext" {{ zone|zone_style:scale }}>
-                                    <span>{{ zone.text }}</span>
-                                </div>
-                                {% empty %} {# if no word zones, assume single line of text #}
-                                  <span>{{ line.text }}</span>
-                                {% endfor %}
-                            </div>
-                            {% endfor %}
-                        {% endif %}
+                        <aside class="secondary">
+                        <a class="btn btn-danger" id="toggle-annotations">Close</a>
+                        </aside>
+                        <section class="inner">
+                          <img class="page-image" src="{% url 'books:page-image' page.pid %}"/>
+                          {% if page.tei.exists %}
+                             {% for line in page.tei.content.lines %}
+                             <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>
+                                  {% for zone in line.word_zones %}
+                                  {# NOTE: may not want ocrtext adjustment when there are multiple words on a line #}
+                                  <div class="ocr-zone ocrtext" {{ zone|zone_style:scale }}>
+                                      <span>{{ zone.text }}</span>
+                                  </div>
+                                  {% empty %} {# if no word zones, assume single line of text #}
+                                    <span>{{ line.text }}</span>
+                                  {% endfor %}
+                              </div>
+                              {% endfor %}
+                          {% endif %}
+                        </section>
                     </div>
                 </div>
             </div>

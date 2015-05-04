@@ -1068,7 +1068,38 @@ header#page-bg .collection-image-info.collasped .info{
     color: white;
 }
 
+.carousel-inner{
+  overflow: visible;
+}
+
 .social-login.navbar-text {
     margin: 11px 0;
     padding: 4px;
+}
+
+.meltdown_wrap{
+  width:100% !important;
+}
+
+.meltdown_bar{
+  z-index: 100;
+  position: relative;
+  display: inline-block;
+  height: auto!important;
+  min-height: 40px;
+}
+
+li.meltdown_controlbutton {
+    padding-right: 8px!important;
+    width: auto;
+    display:inline-block;
+    height:100%;
+}
+
+.meltdown_controls li.meltdown_control-preview {
+    padding-right: 15px!important;;
+}
+
+li.meltdown_controlbutton > span {
+    min-height: 30px;
 }

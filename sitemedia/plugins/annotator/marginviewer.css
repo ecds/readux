@@ -1,0 +1,75 @@
+
+.secondary{
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  overflow: scroll;
+  text-align: left;
+  padding-top: 100px;
+}
+
+#toggle-annotations {
+  position: relative;
+  z-index: 100;
+  float: right;
+  top: -75px;
+}
+
+.annotator-marginviewer-element {
+  border: 1px solid #DDDDDD;
+  margin: 0px;
+        margin-bottom: 15px;
+        width: 227px;
+        padding: 0px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 2px;
+  font-size: 12px;
+  -moz-box-shadow:    0px 4px 2px 0px rgba(0,0,0,0.25);
+  background-color: white;   border-radius: 2px;   box-shadow: 0 4px 6px 1px rgba(50, 50, 50, 0.14);
+}
+
+.annotator-marginviewer-header {
+  background-color: #F5F5F5;
+  height: 26px;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+.annotator-marginviewer-highlighted>.annotator-marginviewer-header {
+  background-color: #fbed20;
+}
+.annotator-marginviewer-selected>.annotator-marginviewer-header {
+  background-color: #fbed20;
+}
+
+.annotator-marginviewer-text {
+  background-color: #FFFFFF;
+  padding: 0.5em;
+}
+
+.annotator-marginviewer-highlighted>.annotator-marginviewer-text {
+}
+.annotator-marginviewer-selected>.annotator-marginviewer-text {
+    /* Mozilla: */
+    background: -moz-linear-gradient(top, #fef8cd, #f6edb5);
+    /* Chrome, Safari:*/
+    background: -webkit-gradient(linear,
+                left top, left bottom, from(#fef8cd), to(#f6edb5));
+    /* MSIE */
+    filter: progid:DXImageTransform.Microsoft.Gradient(
+                StartColorStr='#fef8cd', EndColorStr='#f6edb5', GradientType=0);
+}
+
+.annotator-hl{
+  transition:background 0.2s ease;
+}
+
+.annotator-hl-uber {
+  background: rgba(0, 255, 32, 0.28);
+  padding: 5px;
+}
+
+.annotator-hl-uber-temp{
+  background-color: rgba(181, 0, 255, 0.28);
+}

@@ -22,6 +22,5 @@ def context_extras(request):
             'github': 'GitHub',
             'google-oauth2': 'Google',
         },
-        'ANNOTATOR_STORE_URI': settings.ANNOTATOR_STORE_URI
     }
 

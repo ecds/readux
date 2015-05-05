@@ -1,6 +1,9 @@
 import json
 from mock import Mock
+from django.core.urlresolvers import reverse, resolve
 from django.test import TestCase
+
+from readux.annotations import views
 from readux.annotations.models import Annotation
 
 
@@ -80,3 +83,119 @@ class AnnotationTestCase(TestCase):
         self.assertEqual(info['created'], note.created.isoformat())
         self.assertEqual(info['updated'], note.updated.isoformat())
 
+
+class AnnotationViewsTest(TestCase):
+
+    def test_root(self):
+        resp = self.client.get(reverse('annotation-api:root'))
+        self.assertEqual('application/json', resp['Content-Type'])
+        # expected fields in the output
+        data = json.loads(resp.content)
+        for f in ['version', 'name']:
+            self.assert_(f in data)
+
+    def test_list_annotations(self):
+        # create a couple of notes to list
+        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
+        n1.save()
+        n2 = Annotation(text='some more notes', extra_data=json.dumps({}))
+        n2.save()
+
+        resp = self.client.get(reverse('annotation-api:annotations'))
+        self.assertEqual('application/json', resp['Content-Type'])
+        data = json.loads(resp.content)
+        # existing notes should be listed
+        self.assertEqual(2, len(data))
+        self.assertEqual(data[0]['id'], unicode(n1.id))
+        self.assertEqual(data[0]['text'], n1.text)
+        self.assertEqual(data[1]['id'], unicode(n2.id))
+        self.assertEqual(data[1]['text'], n2.text)
+
+    def test_create_annotation(self):
+        resp = self.client.post(reverse('annotation-api:annotations'),
+            data=json.dumps(AnnotationTestCase.annotation_data),
+            content_type='application/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(303, resp.status_code,
+            'should return 303 See Other on succesful annotation creation')
+        # get view information
+        view = resolve(resp['Location'][len('http://testserver'):])
+        self.assertEqual(view.func, views.annotation,
+            'successful create should redirect to annotation view')
+
+        # lookup the note and confirm values were set from request
+        note = Annotation.objects.get(id=view.kwargs['id'])
+        self.assertEqual(AnnotationTestCase.annotation_data['text'],
+            note.text, 'annotation content should be set from request data')
+
+    def test_get_annotation(self):
+        # create a test note to display
+        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
+        n1.save()
+        resp = self.client.get(reverse('annotation-api:view', kwargs={'id': n1.id}))
+        self.assertEqual('application/json', resp['Content-Type'])
+        # check a few fields in the data
+        data = json.loads(resp.content)
+        self.assertEqual(unicode(n1.id), data['id'])
+        self.assertEqual(n1.text, data['text'])
+        self.assertEqual(n1.created.isoformat(), data['created'])
+
+    def test_update_annotation(self):
+        # create a test note to update
+        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
+        n1.save()
+        url = reverse('annotation-api:view', kwargs={'id': n1.id})
+        resp = self.client.put(url,
+            data=json.dumps(AnnotationTestCase.annotation_data),
+            content_type='application/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(303, resp.status_code,
+            'should return 303 See Other on succesful annotation update')
+        # get view information
+        self.assertEqual('http://testserver%s' % url, resp['Location'])
+        # get a fresh copy from the db and check values
+        n1 = Annotation.objects.get(id=n1.id)
+        self.assertEqual(AnnotationTestCase.annotation_data['text'],
+            n1.text)
+        self.assertEqual(AnnotationTestCase.annotation_data['quote'],
+            n1.quote)
+        self.assertEqual(AnnotationTestCase.annotation_data['ranges'],
+            n1.extra_data['ranges'])
+
+    def test_delete_annotation(self):
+        # create a test note to delete
+        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
+        n1.save()
+        url = reverse('annotation-api:view', kwargs={'id': n1.id})
+        resp = self.client.delete(url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(204, resp.status_code,
+            'should return 204 No Content on succesful annotation deletion')
+        self.assertEqual('', resp.content,
+            'deletion response should have no content')
+
+    def test_search_annotations(self):
+        # create notes to search for
+        n1 = Annotation(text='some notes', extra_data=json.dumps({}),
+            uri='http://example.com')
+        n1.save()
+        n2 = Annotation(text='some more notes', extra_data=json.dumps({}))
+        n2.save()
+
+        search_url = reverse('annotation-api:search')
+        # search on partial text match
+        resp = self.client.get(search_url, {'text': 'some'})
+        self.assertEqual('application/json', resp['Content-Type'])
+        # check the data
+        data = json.loads(resp.content)
+        self.assertEqual(2, data['total'])
+        self.assertEqual(n1.text, data['rows'][0]['text'])
+        self.assertEqual(n2.text, data['rows'][1]['text'])
+
+        # search on uri
+        resp = self.client.get(search_url, {'uri': n1.uri})
+        data = json.loads(resp.content)
+        self.assertEqual(1, data['total'])
+        self.assertEqual(n1.uri, data['rows'][0]['uri'])

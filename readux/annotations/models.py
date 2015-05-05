@@ -11,6 +11,9 @@ class Annotation(models.Model):
     '''AnnotatorJS annotation model, based on the documentation at
     http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html.'''
 
+    #: regex for recognizing valid UUID, for use in urls
+    UUID_REGEX = r'[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
+
     #: schema version: default v1.0
     schema_version = "v1.0"
     # for now, hard-coding until or unless we need to support more than

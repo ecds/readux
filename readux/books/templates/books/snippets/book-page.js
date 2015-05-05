@@ -1,4 +1,4 @@
-{% load teifacsimile static %}
+{% load static %}
 
 <script type="text/javascript" charset="utf-8">
    $(document).ready(function () {
@@ -16,7 +16,8 @@
           fullPageButton: 'dz-fs',
       });
 
-      {% if user.is_authenticated %}
+      {# only enable annotation if tei is present for logged in users #}
+      {% if page.tei.exists and user.is_authenticated %}
       var content = $('.content .inner').annotator();
 
       // Convert Markdown to HTML in the preview when the annotation is shown.
@@ -53,7 +54,7 @@
 
       // Init markdown editor
       jQuery('textarea').meltdown(optionsMeltdown);
-      {% endif %}
+      {% endif %} {# end annotation config #}
 
    });
    {% if page.tei.exists %}

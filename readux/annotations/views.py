@@ -14,7 +14,6 @@ def root(request):
     })
 
 
-@csrf_exempt    # TEMPORARILY only
 def annotations(request):
     # on GET, list annotations
     if request.method == 'GET':
@@ -33,7 +32,6 @@ def annotations(request):
         return HttpResponseSeeOtherRedirect(note.get_absolute_url())
 
 
-@csrf_exempt    # TEMPORARILY only
 def annotation(request, id):
     # NOTE: if id is not  a valid uuid this results in a ValueError
     # instead of a 404; should be handled by uuid regex in url config

@@ -213,7 +213,6 @@ Annotator.Plugin.MarginViewerObjectStore = (function() {
 
 Annotator.Plugin.MarginViewer = (function(_super) {
   __extends(MarginViewer, _super);
-
   function MarginViewer(element, options) {
     MarginViewer.__super__.constructor.apply(this, arguments);
   }
@@ -231,6 +230,7 @@ Annotator.Plugin.MarginViewer = (function(_super) {
     if (!Annotator.supported()) {
       return;
     }
+
     this.annotator.viewer = {
       on: function() {},
       hide: (function(_this) {
@@ -263,10 +263,12 @@ Annotator.Plugin.MarginViewer = (function(_super) {
     this.funcObject = {
       sortDataMap: function(annotation) {
         var dbg;
-        dbg = {
-          top: $(annotation.highlights[0]).offset().top,
-          left: $(annotation.highlights[0]).offset().left
-        };
+        if (annotation.highlights){
+          dbg = {
+            top: $(annotation.highlights[0]).offset().top,
+            left: $(annotation.highlights[0]).offset().left
+          };
+        }
         return dbg;
       },
       sortComparison: function(left, right) {
@@ -280,31 +282,47 @@ Annotator.Plugin.MarginViewer = (function(_super) {
       }
     };
 
+
     var self = this;
     $("#toggle-annotations").on('click',function(evt){
       evt.preventDefault();
       var $secondary = $(".secondary");
+
       if($secondary.css('right')=="0px"){
-        self.showAnnotations();
+          self.showAnnotations();
       }
       else{
         self.hideAnnotations();
       }
     });
 
+
     return this.marginData = new Annotator.Plugin.MarginViewerObjectStore([], this.funcObject);
   };
 
   MarginViewer.prototype.showAnnotations = function(){
-    var width = $(".secondary").width();
-    $(".annotator-wrapper").animate({left:(-1*width)},500);
-    $(".secondary").animate({right:"-50px"});
+    var width = $(".secondary").width()/2,
+        offset = (-1*width) - 15;
+
+    $(".annotator-wrapper").animate({left: offset },500);
+    $(".secondary").animate({right: offset });
+    $(".carousel-control").fadeOut();
+
+    var $toggle = $("#toggle-annotations");
+    $toggle.animate({right:"135px"},500);
+    $toggle.find("span").attr("class","fa fa-arrow-left");
+
   };
 
   MarginViewer.prototype.hideAnnotations = function(){
-    var width = $(".secondary").width();
     $(".annotator-wrapper").animate({left:"0"},500);
     $(".secondary").animate({right:"0"});
+    $(".carousel-control").fadeIn();
+    $(".annotator-hl-uber").attr({class:"annotator-hl"});
+
+    var $toggle = $("#toggle-annotations");
+    $toggle.animate({right:"-15px"},500);
+    $toggle.find("span").attr("class","fa fa-file-text-o");
   };
 
   MarginViewer.prototype.onAnnotationsLoaded = function(annotations) {
@@ -388,8 +406,10 @@ Annotator.Plugin.MarginViewer = (function(_super) {
     datetime = annotation.created ? this.formattedDateTime(new Date(annotation.created)) : '';
     // user = this.annotator.plugins.AnnotateItPermissions.user.userId;
     // delel = annotation.user === user || annotation.permissions["delete"].indexOf(user) >= 0 ? '<span class="annotator-marginviewer-delete" style="float: left; direction: ltr;">X</span>' : '';
+    controls = '<span class="annotator-controls"><button class="annotator-edit">Edit</button><button class="annotator-delete">Delete</button></span>';
+    id = annotation.id;
     text = Markdown(annotation.text);
-    return '<div class="annotator-marginviewer-element"><div class="annotator-marginviewer-header"><span class="annotator-marginviewer-user">' + annotation.user + '</span>' + delel + '<span class="annotator-marginviewer-date" style="float: left; direction: ltr;">' + datetime + '</span></div><div class="annotator-marginviewer-text">' + text + '</div></div>';
+    return '<div class="annotator-marginviewer-element"><div class="annotator-marginviewer-header"><span class="annotator-marginviewer-user">' + annotation.user + '</span><span class="annotator-marginviewer-date" style="float: left; direction: ltr;">' + datetime + '</span></div>'+ controls +'<div class="annotator-marginviewer-text" id="'+id+'">' + text + '</div></div>';
   };
 
   MarginViewer.prototype.createMarginObject = function(annotation, location, hide) {
@@ -414,7 +434,12 @@ Annotator.Plugin.MarginViewer = (function(_super) {
         return _this.onMarginMouseOut(event.target);
       };
     })(this));
-    marginObjects.children(".annotator-marginviewer-header").children(".annotator-marginviewer-delete").click((function(_this) {
+    marginObjects.children(".annotator-controls").children(".annotator-edit").click((function(_this) {
+      return function(event) {
+        return _this.onMarginEdit(event.target);
+      };
+    })(this));
+    marginObjects.children(".annotator-controls").children(".annotator-delete").click((function(_this) {
       return function(event) {
         return _this.onMarginDeleted(event.target);
       };
@@ -429,11 +454,19 @@ Annotator.Plugin.MarginViewer = (function(_super) {
     }
     marginObject = marginObjects[0];
     annotation._marginObject = marginObject;
-    marginObject.annotation = annotation;
+    marginObject.annotation = jQuery.extend(true, {},annotation);
     return marginObject;
   };
 
-  MarginViewer.prototype.onAnnotationUpdated = function(annotation) {};
+  MarginViewer.prototype.onAnnotationUpdated = function(annotation) {
+    var id = "#"+ annotation.id,
+        text = Markdown(annotation.text);
+
+    $(id).html(text);
+    this.onMarginSelected(annotation._marginObject);
+
+    return annotation;
+  };
 
   MarginViewer.prototype.onMarginMouseIn = function(obj) {
     return $($(obj).closest(".annotator-marginviewer-element")[0].annotation.highlights).addClass("annotator-hl-uber-temp").removeClass("annotator-hl");
@@ -482,6 +515,16 @@ Annotator.Plugin.MarginViewer = (function(_super) {
     return this.currentSelectedAnnotation = annotation;
   };
 
+  MarginViewer.prototype.onMarginEdit = function(obj) {
+    var annotation, marginObject;
+    marginObject = $(obj).closest(".annotator-marginviewer-element")[0];
+    annotation = marginObject.annotation;
+    position=$(annotation.highlights[0]).offset();
+    position.top = position.top - 280;
+    position.left = position.left - 200;
+    return this.annotator.showEditor(annotation,position);
+  };
+
   MarginViewer.prototype.onMarginDeleted = function(obj) {
     var annotation, marginObject;
     marginObject = $(obj).closest(".annotator-marginviewer-element")[0];
@@ -512,8 +555,7 @@ Annotator.Plugin.MarginViewer = (function(_super) {
       newMarginRight = horizontalSlide[1];
       currentObject = horizontalSlide[2];
       $(currentObject).animate({
-        top: "+=" + (newTop - $(currentObject).offset().top),
-        'margin-right': newMarginRight
+        top: "+=" + (newTop - $(currentObject).offset().top)
       }, 'fast', 'swing');
       _results.push(this.marginData.updateObjectLocation(currentObject.annotation));
     }

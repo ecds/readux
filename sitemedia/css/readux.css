@@ -1103,3 +1103,21 @@ li.meltdown_controlbutton {
 li.meltdown_controlbutton > span {
     min-height: 30px;
 }
+
+
+.btn-green {
+  color: #FFF;
+  background-color: #1D9C73;
+  border-color: #1D9C73;
+}
+
+.btn-green.active,
+.btn-green.focus,
+.btn-green:active,
+.btn-green:focus,
+.btn-green:hover,
+.open>.dropdown-toggle.btn-green {
+  color: #fff;
+  background-color: #2B775F;
+  border-color: #2B775F;
+}

@@ -42,14 +42,13 @@
 
       content.annotator('addPlugin', 'Store', optionsStore);
 
+      content.annotator('addPlugin','MarginViewer');
+
       var optionsMeltdown = {
-        fullscreen: true,
+        fullscreen: false,
         openPreview: false,
         sidebyside: false
       };
-
-      content.annotator('addPlugin','MarginViewer');
-
 
       // Init markdown editor
       jQuery('textarea').meltdown(optionsMeltdown);

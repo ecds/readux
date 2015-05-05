@@ -1,5 +1,6 @@
 import json
 from mock import Mock
+import uuid
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse, resolve
 from django.test import TestCase
@@ -136,7 +137,7 @@ class AnnotationViewsTest(TestCase):
             'should return 303 See Other on succesful annotation creation')
         # get view information
         view = resolve(resp['Location'][len('http://testserver'):])
-        self.assertEqual(view.func, views.annotation,
+        self.assertEqual('annotation-api:view', '%s:%s' % (view.namespaces[0], view.url_name),
             'successful create should redirect to annotation view')
 
         # lookup the note and confirm values were set from request
@@ -155,6 +156,10 @@ class AnnotationViewsTest(TestCase):
         self.assertEqual(unicode(n1.id), data['id'])
         self.assertEqual(n1.text, data['text'])
         self.assertEqual(n1.created.isoformat(), data['created'])
+
+        # test 404
+        resp = self.client.get(reverse('annotation-api:view', kwargs={'id': uuid.uuid4()}))
+        self.assertEqual(404, resp.status_code)
 
     def test_update_annotation(self):
         # create a test note to update

@@ -88,6 +88,8 @@ class Annotation(models.Model):
         :class:`django.http.HttpRequest`.'''
         # still TODO: set annotation user based on request.user
         data = json.loads(request.body)
+
+
         model_data = {}
         extra_data = {}
         for k, v in data.iteritems():
@@ -95,6 +97,9 @@ class Annotation(models.Model):
                 model_data[k] = v
             else:
                 extra_data[k] = v
+
+        if not request.user.is_anonymous():
+            model_data['user'] = request.user
 
         # convert extra data back to json for storage in a single json field
         return cls(extra_data=json.dumps(extra_data), **model_data)
@@ -108,14 +113,14 @@ class Annotation(models.Model):
         for field in self.common_fields:
             # ignore backend-generated fields, but don't include in
             # the extra data
-            if field in ['updated', 'created', 'id']:
+            # NOTE: assuming for now that user should NOT be changed
+            # after annotation is created
+            if field in ['updated', 'created', 'id', 'user'] \
+              and field in data:
+
                 del data[field]
                 continue
-            # TODO: lookup user ?
-            # (can user ever change after creation?)
-            if field == 'user':
-                # skip user for now
-                continue
+
             if field in data:
                 setattr(self, field, data[field])
                 del data[field]

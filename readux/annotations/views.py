@@ -24,6 +24,7 @@ def annotations(request):
         return JsonResponse([n.info() for n in notes], safe=False)
 
     # on POST, create new annotation
+    # TODO: check permission
     if request.is_ajax() and request.method == 'POST':
         note = Annotation.create_from_request(request)
         note.save()
@@ -63,11 +64,14 @@ def search(request):
     # also TODO: limit/offset options for pagination
     uri = request.GET.get('uri', None)
     text = request.GET.get('text', None)
+    user = request.GET.get('user', None)
     notes = Annotation.objects.all()
     if uri is not None:
         notes = notes.filter(uri=uri)
     if text is not None:
         notes = notes.filter(text__icontains=text)
+    if user is not None:
+        notes = notes.filter(user__username=user)
     return JsonResponse({
         'total': notes.count(),
         'rows': [n.info() for n in notes]

@@ -1,5 +1,6 @@
 import json
 from mock import Mock
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse, resolve
 from django.test import TestCase
 
@@ -54,6 +55,13 @@ class AnnotationTestCase(TestCase):
             note.extra_data['ranges'][0]['start'])
         self.assert_('permissions' in note.extra_data)
 
+        # create from request with user specified
+        user = get_user_model()(username='testuser')
+        user.save()
+        self.mockrequest.user = user
+        note = Annotation.create_from_request(self.mockrequest)
+        self.assertEqual(user, note.user)
+
     def test_update_from_request(self):
         # create test note to update
         note = Annotation(text="Here's the thing", quote="really",
@@ -82,6 +90,13 @@ class AnnotationTestCase(TestCase):
         # test that dates are in isoformat
         self.assertEqual(info['created'], note.created.isoformat())
         self.assertEqual(info['updated'], note.updated.isoformat())
+
+        # associate note with a user
+        user = get_user_model()(username='testuser')
+        user.save()
+        note.user = user
+        info = note.info()
+        self.assertEqual(user.username, info['user'])
 
 
 class AnnotationViewsTest(TestCase):
@@ -178,10 +193,13 @@ class AnnotationViewsTest(TestCase):
 
     def test_search_annotations(self):
         # create notes to search for
+        user = get_user_model()(username='testuser')
+        user.save()
         n1 = Annotation(text='some notes', extra_data=json.dumps({}),
             uri='http://example.com')
         n1.save()
-        n2 = Annotation(text='some more notes', extra_data=json.dumps({}))
+        n2 = Annotation(text='some more notes', extra_data=json.dumps({}),
+            user=user)
         n2.save()
 
         search_url = reverse('annotation-api:search')
@@ -199,3 +217,9 @@ class AnnotationViewsTest(TestCase):
         data = json.loads(resp.content)
         self.assertEqual(1, data['total'])
         self.assertEqual(n1.uri, data['rows'][0]['uri'])
+
+        # search by username
+        resp = self.client.get(search_url, {'user': user.username})
+        data = json.loads(resp.content)
+        self.assertEqual(1, data['total'])
+        self.assertEqual(unicode(n2.id), data['rows'][0]['id'])

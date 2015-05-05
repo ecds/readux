@@ -16,6 +16,7 @@
           fullPageButton: 'dz-fs',
       });
 
+      {% if user.is_authenticated %}
       var content = $('.content .inner').annotator();
 
       // Convert Markdown to HTML in the preview when the annotation is shown.
@@ -52,7 +53,7 @@
 
       // Init markdown editor
       jQuery('textarea').meltdown(optionsMeltdown);
-
+      {% endif %}
 
    });
    {% if page.tei.exists %}

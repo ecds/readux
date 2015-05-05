@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     'eullocal.django.emory_ldap',
     'eultheme',
     'widget_tweaks',
-    'readux.collection',
+    'readux.annotations',
     'readux.books',
+    'readux.collection',
     'readux.dyndzi',
 ]
 

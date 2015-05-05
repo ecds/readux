@@ -1,4 +1,4 @@
-Django>=1.7,<1.8
+Django>=1.8
 #eulxml>=0.22 (when released)
 # use dev eulxml for better xslt handling
 -e git://github.com/emory-libraries/eulxml.git@develop#egg=eulxml
@@ -33,3 +33,4 @@ beautifulsoup4
 bagit
 python-social-auth
 django-auth-ldap
+jsonfield

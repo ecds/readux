@@ -27,16 +27,15 @@
       // });
 
       var optionsStore = {
-          // configured annotator storage url
-          prefix: '{{ ANNOTATOR_STORE_URI }}',
-          // Attach the uri of the current page to all annotations to allow search.
-          annotationData: {
-              {# FIXME: url is not quite right; use a model method? #}
-              'uri': '{{ page.absolute_url }}'
-             {% if page.ark_uri %},'ark': '{{ page.ark_uri }}'{% endif %}
-          },
-          loadFromSearch: {
-              'uri': '{{ page.absolute_url }}'
+            // use local annotator storage
+            prefix: '{% url "annotation-api-prefix" %}',
+            annotationData: {
+                // Attach the uri of the current page to all annotations to allow search.
+                'uri': '{{ page.absolute_url }}',
+               {% if page.ark_uri %},'ark': '{{ page.ark_uri }}'{% endif %}
+            },
+            loadFromSearch: {
+                'uri': '{{ page.absolute_url }}'
             }
        };
 

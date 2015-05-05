@@ -140,8 +140,6 @@ LARGE_PDF_THRESHOLD = 1024 * 1024 * 750
 # Name to appear in the publicationStmt/distributor of generated TEI
 TEI_DISTRIBUTOR = ''  # e.g., Emory University
 
-# URL for annotatorjs store
-ANNOTATOR_STORE_URI = ''
 
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/

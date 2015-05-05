@@ -33,6 +33,8 @@ urlpatterns = patterns('',
 
     # annotations
     url(r'^annotations/api/', include('readux.annotations.urls', namespace='annotation-api')),
+    # annotatorjs doesn't handle trailing slash in api prefix url
+    url(r'^annotations/api', 'readux.annotations.views.root', name='annotation-api-prefix'),
 
      # add redirect for favicon at root of site
     (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),

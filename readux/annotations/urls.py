@@ -8,7 +8,8 @@ urlpatterns = patterns('',
     url(r'^$', views.root, name='root'),
     # urls are without trailing slashes per annotatorjs api documentation
     url(r'^search$', views.search, name='search'),
-    url(r'^annotations$', views.annotations, name='annotations'),
-    url(r'^annotations/(?P<id>%s)$' % Annotation.UUID_REGEX, views.annotation, name='view'),
+    url(r'^annotations$', views.Annotations.as_view(), name='annotations'),
+    url(r'^annotations/(?P<id>%s)$' % Annotation.UUID_REGEX,
+        views.AnnotationView.as_view(), name='view'),
 
 )

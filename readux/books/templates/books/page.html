@@ -82,9 +82,11 @@
                 <div id="zoom-page"></div>
                 <div class="page">
                     <div class="content">
+                      {% if page.tei.exists and user.is_authenticated %}
                         <a class="btn btn-green" id="toggle-annotations" alt="Toggle Annotations"><span class="fa fa-file-text-o"></span></a>
                         <aside class="secondary">
                         </aside>
+                      {% endif %}
                         <section class="inner">
                           <img class="page-image" src="{% url 'books:page-image' page.pid %}"/>
                           {% if page.tei.exists %}

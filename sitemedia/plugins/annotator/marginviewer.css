@@ -9,6 +9,7 @@
   text-align: left;
   padding-top: 100px;
   margin-top: 10px;
+  opacity:0;
 }
 
 #toggle-annotations {
@@ -20,11 +21,10 @@
 
 .annotator-marginviewer-element {
   margin: 0px;
-
+  position: absolute;
   margin-bottom: 30px;
-
   width: 100%;
-        padding: 0px;
+  padding: 0px;
   font-size: 12px;
   background-color: white;
   border-bottom: 1px solid rgb(216, 216, 216);

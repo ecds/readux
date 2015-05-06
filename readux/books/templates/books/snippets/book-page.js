@@ -33,8 +33,9 @@
             prefix: '{% url "annotation-api-prefix" %}',
             annotationData: {
                 // Attach the uri of the current page to all annotations to allow search.
-                'uri': '{{ page.absolute_url }}',
-               {% if page.ark_uri %},'ark': '{{ page.ark_uri }}'{% endif %}
+                'uri': '{{ page.absolute_url }}'{% if page.ark_uri %},
+                'ark': '{{ page.ark_uri }}'
+               {% endif %}
             },
             loadFromSearch: {
                 'uri': '{{ page.absolute_url }}'

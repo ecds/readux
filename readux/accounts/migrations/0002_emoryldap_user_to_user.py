@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from django.conf import settings
 
 # fields common to emory ldap user and auth user
 common_fields = ['username', 'password', 'first_name', 'last_name',
@@ -22,10 +21,14 @@ def copy_user_to_user(a, b):
         b.user_permissions.add(perm)
 
 
+emoryldap_extra_fields = ['phone', 'dept_num', 'full_name', 'title',
+    'employee_num', 'subdept_code', 'hr_id']
+
 def migrate_ldap_users(apps, schema_editor):
     # get ldap user and standard auth user models
     ldap_user = apps.get_model('emory_ldap', 'EmoryLDAPUser')
-    auth_user = apps.get_model('auth', 'user')
+    auth_user = apps.get_model('accounts', 'user')
+
     # for each ldap user, make sure there is an equivalent auth user
     for ldapuser in ldap_user.objects.all():
         user, created = auth_user.objects.get_or_create(username=ldapuser.username)
@@ -34,8 +37,11 @@ def migrate_ldap_users(apps, schema_editor):
         ldapuser.delete()
 
 def unmigrate_ldap_users(apps, schema_editor):
+    # depending on how the database was created, auth_user may not exist
     ldap_user = apps.get_model('emory_ldap', 'EmoryLDAPUser')
-    auth_user = apps.get_model('auth', 'user')
+    auth_user = apps.get_model('accounts', 'user')
+
+    # if both tables exist, just duplicate user objects
     for user in auth_user.objects.all():
         ldapuser, created = ldap_user.objects.get_or_create(username=user.username)
         copy_user_to_user(user, ldapuser)
@@ -45,9 +51,7 @@ def unmigrate_ldap_users(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('collection', '0002_load_image_defaults'),
-        ('auth', '0001_initial'),
-        ('contenttypes', '0001_initial'),
+        ('accounts', '0001_initial'),
         ('emory_ldap', '0001_initial')
     ]
 

@@ -18,7 +18,31 @@
 
       {# only enable annotation if tei is present for logged in users #}
       {% if page.tei.exists and user.is_authenticated %}
-      var content = $('.content .inner').annotator();
+
+      /* function to include current page url in the annotation data */
+      var pageUri = function () {
+        return {
+          beforeAnnotationCreated: function (ann) {
+            ann.uri = '{{ page.absolute_url }}';
+            {% if page.ark_uri %}
+            ann.ark = '{{ page.ark_uri }}';
+            {% endif %}
+          }
+        };
+      };
+
+      var app = new annotator.App()
+          .include(annotator.ui.main, {element: document.querySelector('.content .inner')})
+          .include(annotator.storage.http, {
+              prefix: '{% url "annotation-api-prefix" %}',
+              headers: {"X-CSRFToken": csrftoken}
+          })
+          .include(pageUri)
+      app.start()
+          .then(function () {
+               app.annotations.load({uri: '{{ page.absolute_url }}'});
+          });
+
 
       // Convert Markdown to HTML in the preview when the annotation is shown.
       // content.on("annotationViewerShown",function(){
@@ -28,21 +52,7 @@
       //   $this.html(html);
       // });
 
-      var optionsStore = {
-            // use local annotator storage
-            prefix: '{% url "annotation-api-prefix" %}',
-            annotationData: {
-                // Attach the uri of the current page to all annotations to allow search.
-                'uri': '{{ page.absolute_url }}'{% if page.ark_uri %},
-                'ark': '{{ page.ark_uri }}'
-               {% endif %}
-            },
-            loadFromSearch: {
-                'uri': '{{ page.absolute_url }}'
-            }
-       };
-
-      content.annotator('addPlugin', 'Store', optionsStore);
+      /* margin viewer disabled until updated to annotator 2.0
 
       content.annotator('addPlugin','MarginViewer');
 
@@ -53,7 +63,7 @@
       };
 
       // Init markdown editor
-      jQuery('textarea').meltdown(optionsMeltdown);
+      jQuery('textarea').meltdown(optionsMeltdown);  */
       {% endif %} {# end annotation config #}
 
    });

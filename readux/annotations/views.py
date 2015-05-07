@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -7,16 +8,49 @@ from eulcommon.djangoextras.auth import login_required_with_ajax
 from eulcommon.djangoextras.http.responses import HttpResponseSeeOtherRedirect
 
 from readux.annotations.models import Annotation
+from readux.utils import absolutize_url
 
 
 class AnnotationIndex(View):
-    'API index view.'
+    'API index view, with information and links for API urls.'
 
     def get(self, request):
-        # TODO: include API links as per annotator 2.0 documentation
+        # Include absolute API links as per annotator 2.0 documentation
+        # http://docs.annotatorjs.org/en/latest/modules/storage.html#storage-api
+        base_url = absolutize_url(reverse('annotation-api:index'))
+
         return JsonResponse({
             "name": "Annotator Store API",
-            "version": "2.0.0"
+            "version": "2.0.0",
+            "links": {
+                "annotation": {
+                    "create": {
+                        "desc": "Create a new annotation",
+                        "method": "POST",
+                        "url": "%sannotations" % base_url
+                    },
+                    "delete": {
+                        "desc": "Delete an annotation",
+                        "method": "DELETE",
+                        "url": "%sannotations/:id" % base_url
+                    },
+                    "read": {
+                        "desc": "Get an existing annotation",
+                        "method": "GET",
+                        "url": "%sannotations/:id" % base_url
+                    },
+                    "update": {
+                        "desc": "Update an existing annotation",
+                        "method": "PUT",
+                        "url": "%sannotations/:id" % base_url
+                    }
+                },
+                "search": {
+                    "desc": "Basic search API",
+                    "method": "GET",
+                    "url": "%ssearch" % base_url
+                }
+            }
         })
 
 

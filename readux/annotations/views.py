@@ -1,6 +1,9 @@
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import View
+from eulcommon.djangoextras.auth import login_required_with_ajax
 from eulcommon.djangoextras.http.responses import HttpResponseSeeOtherRedirect
 
 from readux.annotations.models import Annotation
@@ -26,11 +29,22 @@ class Annotations(View):
     annotation.'''
 
     def get(self, request):
-        # TODO: pagination; look at reference implementation
+        # NOTE: this method doesn't *technically* require annotations,
+        # but under current permission model, no annotations should
+        # be visible to anonymous users
+
         notes = Annotation.objects.all()
-        # TODO: filter by permissions
+        # sort order?
+
+        # superusers can view all annotations
+        # other users can only see their own
+        if not request.user.is_superuser:
+            notes = notes.filter(user__username=request.user.username)
+
+        # TODO: pagination; look at reference implementation
         return JsonResponse([n.info() for n in notes], safe=False)
 
+    @method_decorator(login_required_with_ajax())
     def post(self, request):
         # for now, only support creation via ajax
         if request.is_ajax():
@@ -48,8 +62,20 @@ class AnnotationView(View):
     '''Views for displaying, updating, and removing a single Annotation.'''
     # TODO: check permissions for get/put/delete
 
+    # all single-annotation views currently require user to be logged in
+    @method_decorator(login_required_with_ajax())
+    def dispatch(self, *args, **kwargs):
+        return super(AnnotationView, self).dispatch(*args, **kwargs)
+
     def get_object(self):
-        return get_object_or_404(Annotation, id=self.kwargs.get('id', None))
+        note = get_object_or_404(Annotation, id=self.kwargs.get('id', None))
+        # check permissions: notes can only be viewed by superuser or not owner
+        if not self.request.user.is_superuser and not self.request.user == note.user:
+            raise PermissionDenied()
+            # tpl = get_template('403.html')
+            # return HttpResponseForbidden(tpl.render(RequestContext(request)))
+            # return HttpResponseForbidden()
+        return note
 
     def get(self, request, id):
         '''Display the JSON information for the requested annotation.'''
@@ -82,16 +108,23 @@ class AnnotationSearch(View):
     def get(self, request):
         # TODO: what other search fields should be supported?
         # also TODO: limit/offset options for pagination
-        uri = request.GET.get('uri', None)
-        text = request.GET.get('text', None)
-        user = request.GET.get('user', None)
+
         notes = Annotation.objects.all()
+        # For any user who is not a superuser, only provide
+        # access to notes they own
+        if not request.user.is_superuser:
+            notes = notes.filter(user__username=request.user.username)
+
+        uri = request.GET.get('uri', None)
         if uri is not None:
             notes = notes.filter(uri=uri)
+        text = request.GET.get('text', None)
         if text is not None:
             notes = notes.filter(text__icontains=text)
+        user = request.GET.get('user', None)
         if user is not None:
             notes = notes.filter(user__username=user)
+
         return JsonResponse({
             'total': notes.count(),
             'rows': [n.info() for n in notes]

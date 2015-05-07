@@ -4,8 +4,8 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse, resolve
 from django.test import TestCase
+from django.test.utils import override_settings
 
-from readux.annotations import views
 from readux.annotations.models import Annotation
 
 
@@ -100,7 +100,24 @@ class AnnotationTestCase(TestCase):
         self.assertEqual(user.username, info['user'])
 
 
+@override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',))
 class AnnotationViewsTest(TestCase):
+    fixtures = ['test_data.json']
+
+    user_credentials = {
+        'user': {'username': 'testuser', 'password': 'testing'},
+        'superuser': {'username': 'testsuper', 'password': 'superme'}
+    }
+
+    def setUp(self):
+        # annotation that belongs to testuser
+        self.user_note = Annotation.objects \
+            .get(user__username=self.user_credentials['user']['username'])
+        # annotation that belongs to superuser
+        self.superuser_note = Annotation.objects \
+            .get(user__username=self.user_credentials['superuser']['username'])
+        # NOTE: currently fixture only has one note for each user.
+        # If that changes, use filter(...).first()
 
     def test_root(self):
         resp = self.client.get(reverse('annotation-api:root'))
@@ -111,30 +128,54 @@ class AnnotationViewsTest(TestCase):
             self.assert_(f in data)
 
     def test_list_annotations(self):
-        # create a couple of notes to list
-        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
-        n1.save()
-        n2 = Annotation(text='some more notes', extra_data=json.dumps({}))
-        n2.save()
+        notes = Annotation.objects.all()
 
+        # anonymous user should see no notes
         resp = self.client.get(reverse('annotation-api:annotations'))
         self.assertEqual('application/json', resp['Content-Type'])
         data = json.loads(resp.content)
-        # existing notes should be listed
-        self.assertEqual(2, len(data))
-        self.assertEqual(data[0]['id'], unicode(n1.id))
-        self.assertEqual(data[0]['text'], n1.text)
-        self.assertEqual(data[1]['id'], unicode(n2.id))
-        self.assertEqual(data[1]['text'], n2.text)
+        self.assertEqual(0, len(data))
+
+        # log in as a regular user
+        self.client.login(**self.user_credentials['user'])
+        resp = self.client.get(reverse('annotation-api:annotations'))
+        data = json.loads(resp.content)
+        # notes by this user should be listed
+        user_notes = notes.filter(user__username='testuser')
+        self.assertEqual(user_notes.count(), len(data))
+        self.assertEqual(data[0]['id'], unicode(user_notes[0].id))
+
+        # log in as superuser
+        self.client.login(**self.user_credentials['superuser'])
+        resp = self.client.get(reverse('annotation-api:annotations'))
+        data = json.loads(resp.content)
+        # all notes user should be listed
+        self.assertEqual(notes.count(), len(data))
+        self.assertEqual(data[0]['id'], unicode(notes[0].id))
+        self.assertEqual(data[1]['id'], unicode(notes[1].id))
 
     def test_create_annotation(self):
-        resp = self.client.post(reverse('annotation-api:annotations'),
+        url = reverse('annotation-api:annotations')
+        resp = self.client.post(url,
+            data=json.dumps(AnnotationTestCase.annotation_data),
+            content_type='application/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        # not logged in - should not be allowed
+        self.assertEqual(401, resp.status_code,
+            'should return 401 Unauthorized on anonymous attempt to create annotation, got %s' \
+            % resp.status_code)
+
+        # log in as a regular user
+        self.client.login(**self.user_credentials['user'])
+        resp = self.client.post(url,
             data=json.dumps(AnnotationTestCase.annotation_data),
             content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(303, resp.status_code,
-            'should return 303 See Other on succesful annotation creation')
+            'should return 303 See Other on succesful annotation creation, got %s' \
+            % resp.status_code)
         # get view information
         view = resolve(resp['Location'][len('http://testserver'):])
         self.assertEqual('annotation-api:view', '%s:%s' % (view.namespaces[0], view.url_name),
@@ -146,37 +187,70 @@ class AnnotationViewsTest(TestCase):
             note.text, 'annotation content should be set from request data')
 
     def test_get_annotation(self):
-        # create a test note to display
-        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
-        n1.save()
-        resp = self.client.get(reverse('annotation-api:view', kwargs={'id': n1.id}))
+        # not logged in - should be denied
+        resp = self.client.get(reverse('annotation-api:view',
+            kwargs={'id': self.user_note.id}),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # simulate ajax request to get 401, otherwise returns 302
+        # with redirect to login page
+        self.assertEqual(401, resp.status_code,
+            'should return 401 Unauthorized on anonymous attempt to view annotation, got %s' \
+            % resp.status_code)
+
+        # log in as a regular user
+        self.client.login(**self.user_credentials['user'])
+        resp = self.client.get(reverse('annotation-api:view',
+            kwargs={'id': self.user_note.id}))
         self.assertEqual('application/json', resp['Content-Type'])
         # check a few fields in the data
         data = json.loads(resp.content)
-        self.assertEqual(unicode(n1.id), data['id'])
-        self.assertEqual(n1.text, data['text'])
-        self.assertEqual(n1.created.isoformat(), data['created'])
+        self.assertEqual(unicode(self.user_note.id), data['id'])
+        self.assertEqual(self.user_note.text, data['text'])
+        self.assertEqual(self.user_note.created.isoformat(), data['created'])
+
+        # logged in but trying to view someone else's note
+        resp = self.client.get(reverse('annotation-api:view',
+            kwargs={'id': self.superuser_note.id}),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(403, resp.status_code,
+            'should return 403 Forbidden on attempt to view other user\'s annotation, got %s' \
+            % resp.status_code)
+
+        # log in as a superuser - can view other user's notes
+        self.client.login(**self.user_credentials['superuser'])
+        resp = self.client.get(reverse('annotation-api:view',
+            kwargs={'id': self.user_note.id}))
+        data = json.loads(resp.content)
+        self.assertEqual(unicode(self.user_note.id), data['id'])
 
         # test 404
         resp = self.client.get(reverse('annotation-api:view', kwargs={'id': uuid.uuid4()}))
         self.assertEqual(404, resp.status_code)
 
     def test_update_annotation(self):
-        # create a test note to update
-        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
-        n1.save()
-        url = reverse('annotation-api:view', kwargs={'id': n1.id})
+        # login/permission checking is common to get/update/delete views, but
+        # just to be sure nothing breaks, duplicate those
+        url = reverse('annotation-api:view', kwargs={'id': self.user_note.id})
         resp = self.client.put(url,
             data=json.dumps(AnnotationTestCase.annotation_data),
             content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(401, resp.status_code,
+            'should return 401 Unauthorized on anonymous attempt to update annotation, got %s' \
+            % resp.status_code)
 
+        # log in as a regular user
+        self.client.login(**self.user_credentials['user'])
+        resp = self.client.put(url,
+            data=json.dumps(AnnotationTestCase.annotation_data),
+            content_type='application/json',
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(303, resp.status_code,
             'should return 303 See Other on succesful annotation update')
         # get view information
         self.assertEqual('http://testserver%s' % url, resp['Location'])
         # get a fresh copy from the db and check values
-        n1 = Annotation.objects.get(id=n1.id)
+        n1 = Annotation.objects.get(id=self.user_note.id)
         self.assertEqual(AnnotationTestCase.annotation_data['text'],
             n1.text)
         self.assertEqual(AnnotationTestCase.annotation_data['quote'],
@@ -184,11 +258,46 @@ class AnnotationViewsTest(TestCase):
         self.assertEqual(AnnotationTestCase.annotation_data['ranges'],
             n1.extra_data['ranges'])
 
+        # logged in but trying to edit someone else's note
+        resp = self.client.put(reverse('annotation-api:view',
+            kwargs={'id': self.superuser_note.id}),
+            data=json.dumps(AnnotationTestCase.annotation_data),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(403, resp.status_code,
+            'should return 403 Forbidden on attempt to view update user\'s annotation, got %s' \
+            % resp.status_code)
+
+        # log in as a superuser - can edit other user's notes
+        self.client.login(**self.user_credentials['superuser'])
+        data = {'text': 'this is a super annotation!'}
+        resp = self.client.put(reverse('annotation-api:view',
+            kwargs={'id': self.user_note.id}),
+            data=json.dumps(data),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        # note should be updated
+        n1 = Annotation.objects.get(id=self.user_note.id)
+        self.assertEqual(data['text'], n1.text)
+
+        # test 404
+        resp = self.client.put(reverse('annotation-api:view',
+            kwargs={'id': str(uuid.uuid4())}),
+            data=json.dumps(AnnotationTestCase.annotation_data),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(404, resp.status_code)
+
+
     def test_delete_annotation(self):
-        # create a test note to delete
-        n1 = Annotation(text='some notes', extra_data=json.dumps({}))
-        n1.save()
-        url = reverse('annotation-api:view', kwargs={'id': n1.id})
+        # login/permission checking is common to get/update/delete views, but
+        # just to be sure nothing breaks, duplicate those
+        url = reverse('annotation-api:view', kwargs={'id': self.user_note.id})
+        resp = self.client.delete(url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(401, resp.status_code,
+            'should return 401 Unauthorized on anonymous attempt to delete annotation, got %s' \
+            % resp.status_code)
+
+        # log in as a regular user
+        self.client.login(**self.user_credentials['user'])
         resp = self.client.delete(url,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(204, resp.status_code,
@@ -196,35 +305,53 @@ class AnnotationViewsTest(TestCase):
         self.assertEqual('', resp.content,
             'deletion response should have no content')
 
-    def test_search_annotations(self):
-        # create notes to search for
-        user = get_user_model()(username='testuser')
-        user.save()
-        n1 = Annotation(text='some notes', extra_data=json.dumps({}),
-            uri='http://example.com')
-        n1.save()
-        n2 = Annotation(text='some more notes', extra_data=json.dumps({}),
-            user=user)
-        n2.save()
+        # attempt to delete other user's note
+        url = reverse('annotation-api:view', kwargs={'id': self.superuser_note.id})
+        resp = self.client.delete(url,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(403, resp.status_code,
+            'should return 403 Forbidden on attempt to delete another user\'s annotation, got %s' \
+            % resp.status_code)
 
+        # not explicitly tested: superuser can delete other user's note
+
+    def test_search_annotations(self):
         search_url = reverse('annotation-api:search')
+        notes = Annotation.objects.all()
         # search on partial text match
-        resp = self.client.get(search_url, {'text': 'some'})
+        resp = self.client.get(search_url, {'text': 'what a'})
         self.assertEqual('application/json', resp['Content-Type'])
         # check the data
         data = json.loads(resp.content)
-        self.assertEqual(2, data['total'])
-        self.assertEqual(n1.text, data['rows'][0]['text'])
-        self.assertEqual(n2.text, data['rows'][1]['text'])
+        self.assertEqual(0, data['total'],
+            'anonymous user should not see any search results')
+
+        # login as regular user
+        self.client.login(**self.user_credentials['user'])
+        resp = self.client.get(search_url, {'text': 'what a'})
+        # returned notes should automatically be filtered by user
+        user_notes = notes.filter(user__username=self.user_credentials['user']['username'])
+        data = json.loads(resp.content)
+        self.assertEqual(user_notes.count(), data['total'])
+        self.assertEqual(str(user_notes[0].id), data['rows'][0]['id'])
+
+        # login as superuser - should see all notes
+        self.client.login(**self.user_credentials['superuser'])
+        # matches both fixture notes
+        resp = self.client.get(search_url, {'text': 'what a'})
+        data = json.loads(resp.content)
+        self.assertEqual(notes.count(), data['total'])
+        self.assertEqual(str(notes[0].id), data['rows'][0]['id'])
+        self.assertEqual(str(notes[1].id), data['rows'][1]['id'])
 
         # search on uri
-        resp = self.client.get(search_url, {'uri': n1.uri})
+        resp = self.client.get(search_url, {'uri': notes[0].uri})
         data = json.loads(resp.content)
         self.assertEqual(1, data['total'])
-        self.assertEqual(n1.uri, data['rows'][0]['uri'])
+        self.assertEqual(notes[0].uri, data['rows'][0]['uri'])
 
         # search by username
-        resp = self.client.get(search_url, {'user': user.username})
+        resp = self.client.get(search_url, {'user': self.user_credentials['user']['username']})
         data = json.loads(resp.content)
         self.assertEqual(1, data['total'])
-        self.assertEqual(unicode(n2.id), data['rows'][0]['id'])
+        self.assertEqual(unicode(user_notes[0].id), data['rows'][0]['id'])

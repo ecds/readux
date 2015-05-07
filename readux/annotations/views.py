@@ -10,6 +10,7 @@ from readux.annotations.models import Annotation
 
 
 class AnnotationIndex(View):
+    'API index view.'
 
     def get(self, request):
         # TODO: include API links as per annotator 2.0 documentation
@@ -22,30 +23,36 @@ class AnnotationIndex(View):
 non_ajax_error_msg = 'Currently Annotations can only be updated or created via AJAX.'
 
 class Annotations(View):
-    '''api/annotations
+    '''API annotations view.
 
     On GET, lists annotations.
     On AJAX POST with json data in request body, creates a new
-    annotation.'''
+    annotation.
+
+    Users must be logged in to create new annotations, and can only
+    view their own annotations.
+    '''
 
     def get(self, request):
-        # NOTE: this method doesn't *technically* require annotations,
-        # but under current permission model, no annotations should
-        # be visible to anonymous users
+        'List viewable annotations as JSON.'
+        # NOTE: this method doesn't *technically* require that the user
+        # be logged in, but under current permission model, no
+        # annotations should be visible to anonymous users.
 
         notes = Annotation.objects.all()
-        # sort order?
+        # TODO: sort order?
 
-        # superusers can view all annotations
+        # superusers can view all annotations;
         # other users can only see their own
         if not request.user.is_superuser:
             notes = notes.filter(user__username=request.user.username)
 
-        # TODO: pagination; look at reference implementation
+        # TODO: pagination? look at reference implementation
         return JsonResponse([n.info() for n in notes], safe=False)
 
     @method_decorator(login_required_with_ajax())
     def post(self, request):
+        'Create a new annotation via AJAX.'
         # for now, only support creation via ajax
         if request.is_ajax():
             note = Annotation.create_from_request(request)
@@ -59,8 +66,10 @@ class Annotations(View):
 
 
 class AnnotationView(View):
-    '''Views for displaying, updating, and removing a single Annotation.'''
-    # TODO: check permissions for get/put/delete
+    '''Views for displaying, updating, and removing a single
+    :class:`~readux.annotations.models.Annotation`.  All views require
+    that the user be logged in and own the annotation being viewed,
+    updated, or deleted.'''
 
     # all single-annotation views currently require user to be logged in
     @method_decorator(login_required_with_ajax())
@@ -92,10 +101,8 @@ class AnnotationView(View):
         else:
             return HttpResponseBadRequest(non_ajax_error_msg)
 
-    # on DELETE, remove
     def delete(self, request, id):
-        '''Remove the annotation.
-        Returns a 204 No Content as per Annotator store API documentation.'''
+        '''Remove the annotation.'''
         self.get_object().delete()
         response = HttpResponse('')
         # return 204 no content, according to annotator store api docs
@@ -104,9 +111,20 @@ class AnnotationView(View):
 
 
 class AnnotationSearch(View):
+    '''Search annotations and display as JSON.
+
+    The following search fields are currently supported:
+       - uri (exact match)
+       - text (case-insensitive partial match)
+       - user (exact match on username)
+
+    Search results can be limited by specifing ``limit`` or ``offset``
+    parameters.
+    '''
 
     def get(self, request):
-        # TODO: what other search fields should be supported?
+        # TODO: look at reference implementation to see what
+        # other search fields should be supported
 
         notes = Annotation.objects.all()
         # For any user who is not a superuser, only provide
@@ -128,11 +146,14 @@ class AnnotationSearch(View):
         limit = request.GET.get('limit', None)
         offset = request.GET.get('offset', None)
         # slice queryset by offset first, so limit will be relative to that
-        if offset is not None:
-            notes = notes[int(offset):]
-        if limit is not None:
-            notes = notes[:int(limit)]
-
+        try:
+            if offset is not None:
+                notes = notes[int(offset):]
+            if limit is not None:
+                notes = notes[:int(limit)]
+        except ValueError:
+            # if non-numeric values are passed, just ignore them
+            pass
 
         return JsonResponse({
             'total': notes.count(),

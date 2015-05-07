@@ -99,13 +99,16 @@ Release 1.2
 
 * This release includes an update to Django 1.7 and includes new database
   migrations.  To update the database, run::
-      ``python manage.py migrate``
-* LDAP login is now handled by
- `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`.  LDAP
+
+      python manage.py migrate
+
+* LDAP login is now handled by `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`_.  LDAP
   configuration settings will need to be updated in ``localsettings.py``;
   see example configuration in ``localsettings.py.dist``.
+
 * Configure new setting **TEI_DISTRIBUTOR** in ``localsettings.py``.
   See example configuration in ``localsettings.py.dist``.
+
 * Readux now supports social authentication via Twitter, Google, GitHub,
   Facebook, etc.  OAuth keys for each of the configured backends should
   be requested and configured in ``localsettings.py``.  The list of enabled
@@ -118,7 +121,9 @@ Release 1.1
 * Update Fedora XACML policies to include new variant content models
   (ScannedVolume-1.1 and ScannedPage-1.1) and reload policies so that newly
   ingested content will be accessible.
+
 * Restart eulindexer so it will pick up the new content models to be indexed.
+
 * Configure new setting **LARGE_PDF_THRESHOLD** in ``localsettings.py``.
   See sample config and default value in ``localsettings.py.dist``.
 

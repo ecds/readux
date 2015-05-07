@@ -19,20 +19,20 @@ class Annotation(models.Model):
     # for now, hard-coding until or unless we need to support more than
     # one version of annotation
 
-    #: unique id (added by backend)
+    #: unique id for the annotation; uses :meth:`uuid.uuid4`
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # data model includes version, do we need to set that in the db?
     # "annotator_schema_version": "v1.0",        # schema version: default v1.0
 
-    #: created datetime; serialize in iso8601 format (added by backend)
+    #: datetime annotation was created; automatically set
     created = models.DateTimeField(auto_now_add=True)
-    #: updated datetime in iso8601 format (added by backend)
+    #: datetime annotation was last updated; automatically set
     updated = models.DateTimeField(auto_now=True)
     #: content of the annotation
     text = models.TextField()
-    #: the annotated text (added by frontend)
+    #: the annotated text
     quote = models.TextField()
-    #: URI of annotated document (added by frontend)
+    #: URI of the annotated document
     uri = models.URLField()
     #: user who owns the annotation
     #: when serialized, id of annotation owner OR an object with an 'id' property
@@ -41,7 +41,6 @@ class Annotation(models.Model):
 
     # tags still todo
     # "tags": [ "review", "error" ],             # list of tags (from Tags plugin)
-
 
     #: any additional data included in the annotation not parsed into
     #: specific model fields; this includes ranges, permissions,
@@ -69,9 +68,9 @@ class Annotation(models.Model):
     # frontend should be preserved by the backend.  Store any of that
     # additional information in the extra_data field.
 
-    #: db model fields provided by annotation json
+    #: fields in the db model that are provided by annotation json
+    #: when creating or updating an annotation
     common_fields = ['text', 'quote', 'uri', 'user']
-
 
     def __unicode__(self):
         return self.text
@@ -80,15 +79,19 @@ class Annotation(models.Model):
         return '<Annotation: %s>' % self.text
 
     def get_absolute_url(self):
+        'URL to view this annotation within the annotation API.'
         return reverse('annotation-api:view', kwargs={'id': self.id})
 
     @classmethod
     def create_from_request(cls, request):
         '''Initialize a new :class:`Annotation` based on data from a
-        :class:`django.http.HttpRequest`.'''
-        # still TODO: set annotation user based on request.user
-        data = json.loads(request.body)
+        :class:`django.http.HttpRequest`.
 
+        Expects request body content to be JSON; sets annotation user
+        based on the request user.
+        '''
+
+        data = json.loads(request.body)
 
         model_data = {}
         extra_data = {}
@@ -106,7 +109,9 @@ class Annotation(models.Model):
 
 
     def update_from_request(self, request):
-        '''Update attributes from data in a :class:`django.http.HttpRequest`.'''
+        '''Update attributes from data in a
+        :class:`django.http.HttpRequest`. Expects request body content to be
+        JSON.   Currently does *not* modify user.'''
         data = json.loads(request.body)
         # NOTE: could keep a list of modified fields and
         # and allow Django to do a more efficient db update

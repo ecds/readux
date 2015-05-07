@@ -366,3 +366,8 @@ class AnnotationViewsTest(TestCase):
         self.assertEqual(notes.count() - 1, data['total'])
         # should return the *second* note first
         self.assertEqual(str(notes[1].id), data['rows'][0]['id'])
+
+        # non-numeric pagination should be ignored
+        resp = self.client.get(search_url, {'limit': 'three'})
+        data = json.loads(resp.content)
+        self.assertEqual(notes.count(), data['total']

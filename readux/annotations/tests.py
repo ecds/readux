@@ -355,3 +355,14 @@ class AnnotationViewsTest(TestCase):
         data = json.loads(resp.content)
         self.assertEqual(1, data['total'])
         self.assertEqual(unicode(user_notes[0].id), data['rows'][0]['id'])
+
+        # limit/offset
+        resp = self.client.get(search_url, {'limit': '1'})
+        data = json.loads(resp.content)
+        self.assertEqual(1, data['total'])
+
+        resp = self.client.get(search_url, {'offset': '1'})
+        data = json.loads(resp.content)
+        self.assertEqual(notes.count() - 1, data['total'])
+        # should return the *second* note first
+        self.assertEqual(str(notes[1].id), data['rows'][0]['id'])

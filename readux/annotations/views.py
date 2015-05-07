@@ -107,7 +107,6 @@ class AnnotationSearch(View):
 
     def get(self, request):
         # TODO: what other search fields should be supported?
-        # also TODO: limit/offset options for pagination
 
         notes = Annotation.objects.all()
         # For any user who is not a superuser, only provide
@@ -124,6 +123,16 @@ class AnnotationSearch(View):
         user = request.GET.get('user', None)
         if user is not None:
             notes = notes.filter(user__username=user)
+
+        # minimal pagination: limit/offset
+        limit = request.GET.get('limit', None)
+        offset = request.GET.get('offset', None)
+        # slice queryset by offset first, so limit will be relative to that
+        if offset is not None:
+            notes = notes[int(offset):]
+        if limit is not None:
+            notes = notes[:int(limit)]
+
 
         return JsonResponse({
             'total': notes.count(),

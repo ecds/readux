@@ -102,7 +102,7 @@ class AnnotationTestCase(TestCase):
 
 @override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',))
 class AnnotationViewsTest(TestCase):
-    fixtures = ['test_data.json']
+    fixtures = ['test_annotation_data.json']
 
     user_credentials = {
         'user': {'username': 'testuser', 'password': 'testing'},
@@ -119,8 +119,8 @@ class AnnotationViewsTest(TestCase):
         # NOTE: currently fixture only has one note for each user.
         # If that changes, use filter(...).first()
 
-    def test_root(self):
-        resp = self.client.get(reverse('annotation-api:root'))
+    def test_api_index(self):
+        resp = self.client.get(reverse('annotation-api:index'))
         self.assertEqual('application/json', resp['Content-Type'])
         # expected fields in the output
         data = json.loads(resp.content)
@@ -370,4 +370,4 @@ class AnnotationViewsTest(TestCase):
         # non-numeric pagination should be ignored
         resp = self.client.get(search_url, {'limit': 'three'})
         data = json.loads(resp.content)
-        self.assertEqual(notes.count(), data['total']
+        self.assertEqual(notes.count(), data['total'])

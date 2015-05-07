@@ -34,3 +34,4 @@ bagit
 python-social-auth
 django-auth-ldap
 jsonfield
+pytz

@@ -82,6 +82,11 @@ class Annotation(models.Model):
         'URL to view this annotation within the annotation API.'
         return reverse('annotation-api:view', kwargs={'id': self.id})
 
+    def text_preview(self):
+        'Short preview of annotation text content'
+        return self.text[:100] + ('...' if len(self.text) > 100 else '')
+    text_preview.short_description = 'Text'
+
     @classmethod
     def create_from_request(cls, request):
         '''Initialize a new :class:`Annotation` based on data from a

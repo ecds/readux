@@ -19,6 +19,15 @@ sitemaps = {
     'volumes': VolumeSitemap,
 }
 
+# choose favicon based on config, to indicate which site is running
+if hasattr(settings, 'ENABLE_BETA_WARNING') and settings.ENABLE_BETA_WARNING:
+    favicon = 'favicon-beta'
+elif settings.DEBUG:
+    favicon = 'favicon-dev'
+else:
+    favicon = 'favicon'
+
+
 urlpatterns = patterns('',
     # for now, using collection browse as site index
     # url(r'^$', 'readux.collection.views.site_index', name="site-index"),
@@ -39,7 +48,7 @@ urlpatterns = patterns('',
     url(r'^annotations/api', annotation_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
 
      # add redirect for favicon at root of site
-    (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
+    (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/%s.ico' % favicon, permanent=True)),
 
     # robots.txt and sitemaps
     url(r'^robots\.txt$',

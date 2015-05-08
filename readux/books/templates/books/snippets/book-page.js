@@ -32,7 +32,13 @@
       };
 
       var app = new annotator.App()
-          .include(annotator.ui.main, {element: document.querySelector('.content .inner')})
+          .include(annotator.ui.main, {
+              element: document.querySelector('.content .inner'),
+              viewerExtensions: [
+                  annotator.ui.markdown.viewerExtension,
+                  // annotator.ui.tags.viewerExtension
+              ]
+          })
           .include(annotator.storage.http, {
               prefix: '{% url "annotation-api-prefix" %}',
               headers: {"X-CSRFToken": csrftoken}
@@ -42,6 +48,8 @@
           .then(function () {
                app.annotations.load({uri: '{{ page.absolute_url }}'});
           });
+      {# set user identity to allow for basic permission checking #}
+      app.ident.identity = "{{ user.username }}";
 
 
       // Convert Markdown to HTML in the preview when the annotation is shown.

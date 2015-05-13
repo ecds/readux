@@ -21,13 +21,15 @@
   <script type="text/javascript" src="{% static 'js/openseadragon/openseadragon.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/deepzoom.js' %}"></script>
   {# NOTE: annotator plugins disabled until they can be updated to 2.0 #}
-<!--  <script type="text/javascript" src="{% static 'plugins/annotator/marginviewer.js' %}"></script>
+<!--  <script type="text/javascript" src="{% static 'plugins/annotator/marginviewer.js' %}"></script> -->
   <script type="text/javascript" src="{% static 'plugins/meltdown/js/libs/js-markdown-extra.js' %}"></script>
   <script type="text/javascript" src="{% static 'plugins/meltdown/js/libs/rangyinputs-jquery.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'plugins/meltdown/js/libs/element_resize_detection.js' %}"></script>
-  <script type="text/javascript" src="{% static 'plugins/meltdown/js/jquery.meltdown.js' %}"></script> #} -->
+  <script type="text/javascript" src="{% static 'plugins/meltdown/js/jquery.meltdown.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/page.js' %}"></script>
 
+<!--  <script type="text/javascript" src="{% static 'js/annotator.marginviewer.js' %}"></script> -->
+  <script type="text/javascript" src="{% static 'js/annotator.meltdown.js' %}"></script>
   {% include 'books/snippets/book-page.js' %}
 {% endblock %}
 

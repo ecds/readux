@@ -18,7 +18,8 @@ function annotatorMarginalia(options) {
 
   // Marginalia variables
   var marginalia_item_class = "marginalia-item",
-      toggle_id = "toggle-annotations";
+      toggle_id = "toggle-annotations",
+      annotations_list_class = "annotation-list";
 
   // Object for Marginalia
   // Defined as a object for namespacing references (i.e. marginalia.render)
@@ -40,28 +41,35 @@ function annotatorMarginalia(options) {
         return annotator.ui.markdown.render(annotation);
       },
 
+      // Returns the annotion in the marginalia list format
+      renderAnnotation: function(annotation){
+        var text = marginalia.render(annotation),
+        $marginalia_item = $("<li/>").attr({
+          class:marginalia_item_class,
+          "data-annotation-id": annotation.id
+        }).append(text);
+
+        return $marginalia_item;
+      },
+
       // Add annotations to the sidebar when loaded
       annotationsLoaded: function(annotations){
 
         var $annotaton_list = $("<ul/>").attr({
-              class:"annotation-list"
+              class:annotations_list_class
             });
 
         // Display annotations in the marginalia container
         $.each(annotations,function(i){
           var annotation = annotations[i],
-              text = marginalia.render(annotation),
-              $annotation = $("<li/>").attr({
-                class:marginalia_item_class,
-                "data-annotation-id": annotation.id
-              }).append(text);
+          $marginalia_item = marginalia.renderAnnotation(annotation);
 
-            $annotaton_list.append($annotation);
+          $annotaton_list.append($marginalia_item);
         });
 
         $margin_container.html($annotaton_list);
 
-        // Add class to container to hide marignalia aside
+        // Add class to container to hide marginalia aside
         $container.addClass("margin-container-hide");
 
         // Initalize on click event for annotation highlights
@@ -87,6 +95,31 @@ function annotatorMarginalia(options) {
           }
         });
 
+      },
+
+      // Add marginalia when annotations are created
+      annotationCreated: function(annotation){
+        var $marginalia_item = marginalia.renderAnnotation(annotation);
+        // Append to annotations list...
+        $("."+annotations_list_class).append($marginalia_item);
+        // highlight created...
+        marginalia.onSelected(annotation.id);
+        // and show marginalia container.
+        marginalia.toggle.show();
+      },
+
+      // Remove marginalia when annotations are removed
+      beforeAnnotationDeleted: function(annotation){
+        var $marginalia_item = $("."+marginalia_item_class+"[data-annotation-id="+annotation.id+"]");
+        $marginalia_item.remove();
+      },
+
+      // Update marginalia when annotations are updated
+      annotationUpdated: function(annotation){
+        var $marginalia_item = $("."+marginalia_item_class+"[data-annotation-id="+annotation.id+"]"),
+            updated_text = marginalia.render(annotation);
+
+        $marginalia_item.html(updated_text);
       },
 
       // Toggle functions for the margin container
@@ -115,15 +148,7 @@ function annotatorMarginalia(options) {
         }
       },
 
-      // Update marginalia when annotations are updated
-      annotationUpdated: function(annotation){
-        var $marginalia_item = $("."+marginalia_item_class+"[data-annotation-id="+annotation.id+"]"),
-            updated_text = marginalia.render(annotation);
-
-        $marginalia_item.html(updated_text);
-      },
-
-      // On Annotation selected event
+      // Custom event for when an annotation is selected
       // Highlight the marginalia item associated with the annotation
       annotationSelected: function(event) {
         event.stopPropagation();
@@ -163,6 +188,10 @@ function annotatorMarginalia(options) {
 
         // Highlight selected parts
         marginalia.applyHighlights($annotation, $item);
+
+        // Scroll to the position of the item
+        // (not working perfectly yet)
+        $margin_container.animate({'scrollTop':$item.offset().top},500);
 
         // Show marginalia container
         marginalia.toggle.show();

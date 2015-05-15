@@ -13,6 +13,7 @@
   height: 100%;
   overflow: scroll;
   text-align: left;
+  z-index: 1;
 }
 
 ul.annotation-list {
@@ -46,16 +47,26 @@ ul.annotation-list {
 */
 
 .margin-container-hide .margin-container{
-  display:none;
+  right: 0;
 }
 
 .margin-container-show .margin-container{
   display:block;
-  right: -100px;
+  right: -150px;
+}
+
+.margin-container, .inner{
+  transition-property: right, left;
+  transition-duration: 0.6s;
+  transition-timing-function: ease;
+}
+
+.inner {
+  position: relative;
+  z-index: 3;
+  left: 0;
 }
 
 .margin-container-show .inner {
-    left: -160px;
-    position: relative;
-    top: -2px;
+  left: -150px;
 }

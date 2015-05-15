@@ -50,7 +50,16 @@
               headers: {"X-CSRFToken": csrftoken}
           })
           .include(pageUri)
-          // .include(marginviewer)
+          .include(annotatorMarginalia, {
+            toggle:{
+              show: function(){
+                $(".carousel-control").fadeOut();
+              },
+              hide: function(){
+                $(".carousel-control").fadeIn();
+              }
+            }
+          })
       app.start()
           .then(function () {
                app.annotations.load({uri: '{{ page.absolute_url }}'});

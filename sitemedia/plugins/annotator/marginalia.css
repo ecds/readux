@@ -1,0 +1,61 @@
+#toggle-annotations {
+  position: absolute;
+  z-index: 1000;
+}
+
+.margin-container {
+  position: absolute;
+  display:block;
+  width: 300px;
+  background: white;
+  right: 0;
+  z-index: 100;
+  height: 100%;
+  overflow: scroll;
+  text-align: left;
+}
+
+ul.annotation-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.annotation-list .marginalia-item {
+    padding: 10px;
+    float: left;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.annotator-hl.marginalia-annotation-selected{
+  background: rgba(0, 128, 11, 0.46);
+  padding:5px;
+}
+
+.marginalia-item-selected{
+  background: rgba(11, 0, 128, 0.46);
+}
+
+/*
+******************
+* Show/Hide Styles
+******************
+*/
+
+.margin-container-hide .margin-container{
+  display:none;
+}
+
+.margin-container-show .margin-container{
+  display:block;
+  right: -100px;
+}
+
+.margin-container-show .inner {
+    left: -160px;
+    position: relative;
+    top: -2px;
+}

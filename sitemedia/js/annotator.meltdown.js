@@ -1,15 +1,16 @@
-/* annotatormeltdown  - meltdown integration for annotator */
-/* based on annotator.ui.markdown */
+/* Meltdown viewer and editor integration for annotatorjs.
+   Based in part on annotator.ui.markdown.
+*/
 
 var _t = annotator.util.gettext;
 
 var annotatormeltdown = {
 
+    // replacement viewer render method; display content as Markdown
     render: function (annotation) {
         if (annotation.text) {
             return Markdown(annotation.text);
         } else {
-            // return "<i>No comment)</i>";
             return "<i>" + _t('No comment') + "</i>";
         }
     },
@@ -28,15 +29,13 @@ var annotatormeltdown = {
      * **Usage**::
      *
      *     app.include(annotator.ui.main, {
-     *         viewerExtensions: [readuxannotator.meltdown.viewerExtension]
+     *         viewerExtensions: [annotatormeltdown.viewerExtension]
      *     });
      */
     viewerExtension: function viewerExtension(viewer) {
         if (!window.Markdown || typeof window.Markdown !== 'function') {
-            console.warn(_t("To use the Meltdown plugin, you must " +
-                "include markdown into the page first."));
-            // console.warn("To use the Meltdown plugin, you must " +
-                // "include js-markdown-extra in the page first.");
+            console.warn(_t("To use the Meltdown viewer extension, you must " +
+                "include markdown in the page."));
             return;
         }
         // only set the renderer when Markdown is available
@@ -44,7 +43,11 @@ var annotatormeltdown = {
     },
 
 
-    // map shift+enter to save instead of just enter
+// still TODO: tech preview issue; fullscreen style issue
+
+    // Editor textarea keyboard shortcuts.
+    // Revise default annotator shortcut to map shift+enter to save
+    // instead of just enter.
     textarea_keydown: function (event) {
         if (event.which === 27) {
             // "Escape" key => abort.
@@ -55,53 +58,89 @@ var annotatormeltdown = {
         }
     },
 
-    editorExtension: function editorExtension(editor) {
-        console.log('editor extension');
-        console.log(editor);
-        // this doesn't seem to work (template used already at this point?)
-        //annotator.ui.editor.Editor.template = readuxannotator.meltdown.editor_template;
-
-        editor._onTextareaKeydown = annotatormeltdown.textarea_keydown;
-    }
-};
-
-/*
-TESTING
-... extend Editor and create a module instead of using an Editor extension?
-(not yet functional)
-
-var MeltdownEditor = annotator.ui.editor.Editor.extend({
-    options: {
-        defaultFields: true,
-    }
-});
-
-// HTML template for this.element.
-MeltdownEditor.template = [
-    '<div class="annotator-outer annotator-editor annotator-hide">',
-    '  <form class="annotator-widget">',
-    '  <p>Meltdown TEST</p>',
-    '    <ul class="annotator-listing"></ul>',
-    '    <div class="annotator-controls">',
-    '     <a href="#cancel" class="annotator-cancel">' + _t('Cancel') + '</a>',
-    '      <a href="#save"',
-    '         class="annotator-save annotator-focus">' + _t('Save') + '</a>',
-    '    </div>',
-    '  </form>',
-    '</div>'
-].join('\n');
-
-
-var meltdown_editor = function (options) {
-    var widget = new MeltdownEditor(options);
-
-    return {
-        destroy: function () { widget.destroy(); },
-        beforeAnnotationCreated: function (annotation) {
-            return widget.load(annotation);
-        },
-        beforeAnnotationUpdated: function (annotation) {
-            return widget.load(annotation);
+    // Extend Editor show method to initialize meltdown and set minimum
+    // width the first time the editor window is shown.
+    show: function(position) {
+        // let Editor handle normal show functionality
+        annotator.ui.editor.Editor.prototype.show.call(this, position);
+        // enable meltdown on the textarea and set a min-width
+        if (! this.meltdown_initialized) {
+            $(this.element).find("textarea").meltdown({
+                previewCollapses: false,
+                openPreview: true
+            });
+            if (this.meltdown_options.min_width) {
+                this.element.find('.annotator-widget')
+                    .css('min-width', this.meltdown_options.min_width);
+            }
+            this.meltdown_initialized = true;
         }
-    };
-}; */
+    },
+
+    // NOTE: extending checkOrientation here to work around a bug
+    // where control buttons (save/cancel) are added after every ul
+    // in the widget and show up multiple times.
+    // Pull request for this fix: https://github.com/openannotation/annotator/pull/533
+    // Remove this workaround once the fix is in a released version
+    // of annotator.
+    checkOrientation: function () {
+        annotator.ui.widget.Widget.prototype.checkOrientation.call(this);
+
+        var list = this.element.find('ul').first(),
+            controls = this.element.find('.annotator-controls');
+
+        if (this.element.hasClass(this.classes.invert.y)) {
+            controls.insertBefore(list);
+        } else if (controls.is(':first-child')) {
+            controls.insertAfter(list);
+        }
+
+        return this;
+    },
+
+
+    /**
+     * function:: getEditorExtension(options)
+     *
+     * Build and return an extension for :class:`~annotator.ui.editor.Editor`.
+     * Converts the editor textarea to a `Meltdown`_ input, with preview
+     * panel and toolbar
+     *
+     * .. _Meltdown: https://github.com/iphands/Meltdown
+     *
+     * **Usage**::
+     *
+     *     app.include(annotator.ui.main, {
+     *         editorExtensions: [annotatormeltdown.getEditorExtension()]
+     *     });
+     *
+     * You can optionally specify a minimum editor window width (by default,
+     * minimum width will be set to 375px):
+     *
+     *     app.include(annotator.ui.main, {
+     *         editorExtensions: [annotatormeltdown.getEditorExtension({min_width: '500px'})]
+     *     });
+     */
+    getEditorExtension: function getEditorExtension(options) {
+
+        var meltdown_opts = {
+            min_width: '375px'  // default minimum width
+        };
+        $.extend(meltdown_opts, options);
+        return function editorExtension(editor) {
+            // Make sure meltdown is available before configuring anything
+            if (!jQuery.meltdown || typeof jQuery.meltdown !== 'object') {
+                console.warn(_t("To use the Meltdown editor extension, you must " +
+                    "include meltdown in the page."));
+                return;
+            }
+            // override editor methods and add options
+            editor._onTextareaKeydown = annotatormeltdown.textarea_keydown;
+            editor.show = annotatormeltdown.show;
+            editor.checkOrientation = annotatormeltdown.checkOrientation;
+            // track meltdown initialization since it only needs to be done once
+            editor.meltdown_initialized = false;
+            editor.meltdown_options = meltdown_opts;
+        };
+    },
+};

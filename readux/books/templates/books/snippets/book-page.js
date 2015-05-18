@@ -40,8 +40,9 @@
                   // annotator.ui.tags.viewerExtension
               ],
               editorExtensions: [
-                  // annotator.ui.markdown.viewerExtension,
-                  annotatormeltdown.editorExtension,
+                  // NOTE: can override default min width of
+                  annotatormeltdown.getEditorExtension({min_width: '500px'}),
+
               ]
           })
           // .incude(meltdown_editor)   // TESTING, not yet working

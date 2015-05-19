@@ -1,12 +1,18 @@
 /* Meltdown viewer and editor integration for annotatorjs.
    Based in part on annotator.ui.markdown.
+
+   Include annotator.meltdown.css to adjust for annotator/meltdown
+   style interactions.
 */
 
 var _t = annotator.util.gettext;
 
 var annotatormeltdown = {
 
-    // replacement viewer render method; display content as Markdown
+    /**
+     * Replacement viewer render method.
+     * Returns annotation text content parsed as Markdown.
+     */
     render: function (annotation) {
         if (annotation.text) {
             return Markdown(annotation.text);
@@ -42,8 +48,6 @@ var annotatormeltdown = {
         viewer.setRenderer(annotatormeltdown.render);
     },
 
-
-// still TODO: tech preview issue; fullscreen style issue
 
     // Editor textarea keyboard shortcuts.
     // Revise default annotator shortcut to map shift+enter to save

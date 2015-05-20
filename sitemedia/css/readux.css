@@ -1104,6 +1104,13 @@ li.meltdown_controlbutton > span {
     min-height: 30px;
 }
 
+.meltdown_wrap.fullscreen{
+  background-color: #CACACA;
+}
+
+.meltdown_preview-wrap .meltdown_preview-header{
+  display:none;
+}
 
 .btn-green {
   color: #FFF;

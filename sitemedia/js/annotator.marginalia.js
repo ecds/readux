@@ -3,8 +3,24 @@
 function annotatorMarginalia(options) {
 
   var _t = annotator.util.gettext;
+  var _app;
 
   options = options || {};
+  // Sets the renderer function for the annotations.
+  // Defaults to statard formatting.
+  if(options.viewer && typeof options.viewer === 'function'){
+    options.viewer = options.viewer;
+  }
+  else{
+    options.viewer = function(annotation){
+      if (annotation.text) {
+        return annotator.util.escapeHtml(annotation.text);
+      } else {
+        return "<i>" + _t('No comment') + "</i>";
+      }
+    };
+  }
+
   options.element = options.element || '.content';
   options.margin_class = options.margin_class || 'margin-container';
 
@@ -12,42 +28,76 @@ function annotatorMarginalia(options) {
   var $container = $(options.element);
 
   // Define marginalia annotation container
-  var $margin_container = $("<aside/>").attr({
+  var $margin_container = $('<aside/>').attr({
         class:options.margin_class
       });
 
   // Marginalia variables
-  var marginalia_item_class = "marginalia-item",
-      toggle_id = "toggle-annotations",
-      annotations_list_class = "annotation-list";
+  var marginalia_item_class = 'marginalia-item',
+      toggle_id = 'toggle-annotations',
+      annotations_list_class = 'annotation-list';
+
+// Easing Function for scroll
+// from jQuery Easing Plugin (version 1.3)
+// http://gsgd.co.uk/sandbox/jquery/easing/
+  jQuery.extend( jQuery.easing,{
+    easeInOutExpo: function (x, t, b, c, d) {
+      if (t==0) return b;
+      if (t==d) return b+c;
+      if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+      return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+    }
+  });
+
 
   // Object for Marginalia
   // Defined as a object for namespacing references (i.e. marginalia.render)
   var marginalia = {
       start: function (app) {
+        _app = app;
         var toggle_html ='<span class="fa fa-file-text-o"></span>',
             toggle_attrs = {
-              class:"btn btn-green",
+              class:'btn btn-green',
               id: toggle_id,
-              alt: "Toggle Annotations"
+              alt: 'Toggle Annotations'
             },
-            $toggle = $("<a/>").attr(toggle_attrs).html(toggle_html);
+            $toggle = $('<a/>').attr(toggle_attrs).html(toggle_html);
 
         $container.prepend($toggle, $margin_container);
-        $margin_container = $("."+options.margin_class);
+
+        // get the rendered margin container
+        $margin_container = $('.'+options.margin_class);
       },
 
       render: function(annotation){
-        return annotator.ui.markdown.render(annotation);
+        return options.viewer(annotation);
       },
 
       // Returns the annotion in the marginalia list format
       renderAnnotation: function(annotation){
-        var text = marginalia.render(annotation),
-        $marginalia_item = $("<li/>").attr({
-          class:marginalia_item_class,
-          "data-annotation-id": annotation.id
-        }).append(text);
+        var text = $('<div/>').attr({
+            class:'text'
+            }).html(marginalia.render(annotation)),
+            controls = '<nav class="controls"><a class="btn btn-default btn-edit">Edit</a><a class="btn btn-danger btn-delete">Delete</a></nav>',
+            $marginalia_item = $('<li/>').attr({
+              class:marginalia_item_class,
+              'data-annotation-id': annotation.id
+            }).append(controls).append(text);
+
+        $marginalia_item.on('click.marginalia','.btn-edit',function(event){
+          event.preventDefault();
+          var offset = $(this).parent().siblings(".text").offset();
+
+          _app.annotations.update(annotation);
+          $(".annotator-editor").css({
+            top: offset.top,
+            left: offset.left
+          });
+        })
+        .on('click.marginalia','.btn-delete',function(event){
+          event.preventDefault();
+          _app.annotations['delete'](annotation);
+        });
 
         return $marginalia_item;
       },
@@ -55,7 +105,7 @@ function annotatorMarginalia(options) {
       // Add annotations to the sidebar when loaded
       annotationsLoaded: function(annotations){
 
-        var $annotaton_list = $("<ul/>").attr({
+        var $annotaton_list = $('<ul/>').attr({
               class:annotations_list_class
             });
 
@@ -70,20 +120,20 @@ function annotatorMarginalia(options) {
         $margin_container.html($annotaton_list);
 
         // Add class to container to hide marginalia aside
-        $container.addClass("margin-container-hide");
+        $container.addClass('margin-container-hide');
 
-        // Initalize on click event for annotation highlights
-        $(".annotator-hl").on("click",function(event){
+        // Initalize on click.marginalia event for annotation highlights
+        $('.annotator-hl').on('click.marginalia',function(event){
           marginalia.annotationSelected(event);
         });
 
-        // Initalize on click event for Marginalia items
-        $("."+marginalia_item_class).on("click",function(event){
+        // Initalize on click.marginalia event for Marginalia items
+        $('.'+marginalia_item_class).find('.text').on('click.marginalia',function(event){
           marginalia.itemSelected(event);
         });
 
         // Initalize toggle control for marginalia container
-        $("#"+toggle_id).on('click',function(event){
+        $('#'+toggle_id).on('click.marginalia',function(event){
           event.preventDefault();
           var $this = $(this);
 
@@ -101,7 +151,7 @@ function annotatorMarginalia(options) {
       annotationCreated: function(annotation){
         var $marginalia_item = marginalia.renderAnnotation(annotation);
         // Append to annotations list...
-        $("."+annotations_list_class).append($marginalia_item);
+        $('.'+annotations_list_class).append($marginalia_item);
         // highlight created...
         marginalia.onSelected(annotation.id);
         // and show marginalia container.
@@ -110,16 +160,16 @@ function annotatorMarginalia(options) {
 
       // Remove marginalia when annotations are removed
       beforeAnnotationDeleted: function(annotation){
-        var $marginalia_item = $("."+marginalia_item_class+"[data-annotation-id="+annotation.id+"]");
+        var $marginalia_item = $('.'+marginalia_item_class+'[data-annotation-id='+annotation.id+']');
         $marginalia_item.remove();
       },
 
       // Update marginalia when annotations are updated
       annotationUpdated: function(annotation){
-        var $marginalia_item = $("."+marginalia_item_class+"[data-annotation-id="+annotation.id+"]"),
+        var $marginalia_item = $('.'+marginalia_item_class+'[data-annotation-id='+annotation.id+']'),
             updated_text = marginalia.render(annotation);
 
-        $marginalia_item.html(updated_text);
+        $marginalia_item.find(".text").html(updated_text);
       },
 
       // Toggle functions for the margin container
@@ -129,7 +179,7 @@ function annotatorMarginalia(options) {
           $container.addClass('margin-container-show');
           $container.removeClass('margin-container-hide');
 
-          $("#"+toggle_id).addClass('active');
+          $('#'+toggle_id).addClass('active');
 
           if(options.toggle.show){
             options.toggle.show();
@@ -140,7 +190,7 @@ function annotatorMarginalia(options) {
           $container.addClass('margin-container-hide');
           $container.removeClass('margin-container-show');
 
-          $("#"+toggle_id).removeClass('active');
+          $('#'+toggle_id).removeClass('active');
 
           if(options.toggle.hide){
             options.toggle.hide();
@@ -154,7 +204,7 @@ function annotatorMarginalia(options) {
         event.stopPropagation();
 
         var $annotation_highlight = $(event.target),
-            annotation_id = $annotation_highlight.data("annotation-id");
+            annotation_id = $annotation_highlight.data('annotation-id');
 
         marginalia.onSelected(annotation_id);
       },
@@ -164,34 +214,45 @@ function annotatorMarginalia(options) {
       itemSelected: function(event){
         event.stopPropagation();
 
-        var $marginalia_item = $(event.target).parents("." + marginalia_item_class),
-            annotation_id = $marginalia_item.data("annotation-id");
+        var $marginalia_item = $(event.target).parents('.' + marginalia_item_class),
+            annotation_id = $marginalia_item.data('annotation-id');
         marginalia.onSelected(annotation_id);
       },
 
       clearHighlights: function(){
-        $(".marginalia-item-selected").removeClass("marginalia-item-selected");
-        $(".marginalia-annotation-selected").removeClass("marginalia-annotation-selected");
+        $('.marginalia-item-selected').removeClass('marginalia-item-selected');
+        $('.marginalia-annotation-selected').removeClass('marginalia-annotation-selected');
       },
 
       applyHighlights: function($annotation, $item){
         marginalia.clearHighlights();
 
-        $annotation.addClass("marginalia-annotation-selected");
-        $item.addClass("marginalia-item-selected");
+        $annotation.addClass('marginalia-annotation-selected');
+        $item.addClass('marginalia-item-selected');
       },
 
       onSelected: function(annotation_id){
         var id = annotation_id,
-            $annotation = $(".annotator-hl"+"[data-annotation-id="+id+"]"),
-            $item = $("." + marginalia_item_class + "[data-annotation-id=" + id + "]" );
+            $annotation = $('.annotator-hl'+'[data-annotation-id='+id+']'),
+            $item = $('.' + marginalia_item_class + '[data-annotation-id=' + id + ']' );
+
+        if(id === undefined){
+          return false;
+        }
+
+        $margin_container = $('.'+options.margin_class);
+
+        // Scroll to the position of the item
+          var cTop = $('.margin-container').offset().top,
+              cScrollTop = $('.margin-container').scrollTop(),
+              top = $item.position().top,
+              top2 = $annotation.parents('.ocr-line').position().top;
+
+          $margin_container.animate({'scrollTop':top-top2+30},500,'easeInOutExpo');
+
 
         // Highlight selected parts
         marginalia.applyHighlights($annotation, $item);
-
-        // Scroll to the position of the item
-        // (not working perfectly yet)
-        $margin_container.animate({'scrollTop':$item.offset().top},500);
 
         // Show marginalia container
         marginalia.toggle.show();

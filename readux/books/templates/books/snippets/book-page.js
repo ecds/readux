@@ -52,6 +52,7 @@
           })
           .include(pageUri)
           .include(annotatorMarginalia, {
+            viewer: annotatormeltdown.render,
             toggle:{
               show: function(){
                 $(".carousel-control").fadeOut();

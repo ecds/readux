@@ -17,29 +17,39 @@
 }
 
 ul.annotation-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    position: relative;
-    padding-bottom: 80vh;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 80vh;
+  padding-top:20vh;
+  padding-left: 10px;
 }
 
 .annotation-list .marginalia-item {
-    padding: 10px;
-    float: left;
-    width: 100%;
-    margin-bottom: 20px;
-    border-bottom: 1px solid lightgrey;
+  font-size: 90%;
+  padding: 10px;
+  float: left;
+  width: 100%;
+  margin-bottom: 20px;
+  border:1px solid transparent;
+  border-bottom: 1px solid lightgrey;
+  cursor: pointer;
+}
+
+.annotator-hl{
+  cursor: pointer;
 }
 
 .annotator-hl.marginalia-annotation-selected{
-  background: rgba(0, 128, 11, 0.46);
+  background: rgba(49, 197, 40, 0.46);
   padding:5px;
 }
 
-.marginalia-item-selected{
-  background: rgba(11, 0, 128, 0.46);
+.annotation-list .marginalia-item-selected{
+  border-color: rgb(49, 197, 40);
+  cursor:initial;
 }
 
 /*
@@ -71,4 +81,10 @@ ul.annotation-list {
 
 .margin-container-show .inner {
   left: -150px;
+}
+
+
+.annotator-editor .annotator-item.annotator-checkbox,
+.annotator-viewer{
+  display:none !important;
 }

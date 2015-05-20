@@ -65,8 +65,8 @@ var annotatormeltdown = {
     // Extend Editor show method to initialize meltdown and set minimum
     // width the first time the editor window is shown.
     show: function(position) {
-        // let Editor handle normal show functionality
-        annotator.ui.editor.Editor.prototype.show.call(this, position);
+        // use unextended method to handle normal show functionality
+        this._pre_meltdown_show(position);
         // enable meltdown on the textarea and set a min-width
         if (! this.meltdown_initialized) {
             $(this.element).find("textarea").meltdown({
@@ -140,6 +140,7 @@ var annotatormeltdown = {
             }
             // override editor methods and add options
             editor._onTextareaKeydown = annotatormeltdown.textarea_keydown;
+            editor._pre_meltdown_show = editor.show; // preserve unextended show method
             editor.show = annotatormeltdown.show;
             editor.checkOrientation = annotatormeltdown.checkOrientation;
             // track meltdown initialization since it only needs to be done once

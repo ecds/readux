@@ -61,7 +61,10 @@ function annotatorMarginalia(options) {
               id: toggle_id,
               alt: 'Toggle Annotations'
             },
-            $toggle = $('<a/>').attr(toggle_attrs).html(toggle_html);
+            $toggle = $('<a/>')
+              .attr(toggle_attrs) // add attributes to the toggle object
+              .hide() // hide the toggle object for now, will show when annotations are loaded
+              .html(toggle_html); //add the html to the toggle object
 
         $container.prepend($toggle, $margin_container);
 
@@ -104,6 +107,8 @@ function annotatorMarginalia(options) {
 
       // Add annotations to the sidebar when loaded
       annotationsLoaded: function(annotations){
+        //show toggle object once annotations are loaded
+        $("#"+toggle_id).show();
 
         var $annotaton_list = $('<ul/>').attr({
               class:annotations_list_class
@@ -236,8 +241,15 @@ function annotatorMarginalia(options) {
             $annotation = $('.annotator-hl'+'[data-annotation-id='+id+']'),
             $item = $('.' + marginalia_item_class + '[data-annotation-id=' + id + ']' );
 
+        // Return false if the id is undefined
         if(id === undefined){
           return false;
+        }
+
+        // Return false if the item is already selected to prevent
+        // jumping to the top when highlighting text.
+        if ($item.hasClass("marginalia-item-selected")){
+            return false;
         }
 
         $margin_container = $('.'+options.margin_class);
@@ -248,7 +260,7 @@ function annotatorMarginalia(options) {
               top = $item.position().top,
               top2 = $annotation.parents('.ocr-line').position().top;
 
-          $margin_container.animate({'scrollTop':top-top2+30},500,'easeInOutExpo');
+          $margin_container.stop().animate({'scrollTop':top-top2+30},500,'easeInOutExpo');
 
 
         // Highlight selected parts

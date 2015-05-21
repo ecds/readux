@@ -63,5 +63,11 @@ coverage.xml
 *.log
 *.pot
 
+# Sass Cache
+.sass-cache/
+
+# Node Modules
+node_modules/
+
 # Sphinx documentation
 docs/_build/

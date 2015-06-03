@@ -1,11 +1,11 @@
 import logging
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.utils.encoding import iri_to_uri
 import httplib
 import urllib
 
 from eulfedora import models, server
+from eulxml.xmlmap.dc import DublinCore
 from pidservices.clients import parse_ark
 from pidservices.djangowrapper.shortcuts import DjangoPidmanRestClient
 
@@ -57,6 +57,27 @@ class ManagementRepository(server.Repository):
 class DigitalObject(models.DigitalObject):
     """Extend the default fedora DigitalObject class with logic for setting
     pids based on PID manager ids."""
+
+
+    #: :class:`~eulfedora.models.XmlDatastream` for the required Fedora
+    #: **DC** datastream; datastream content loaded as an instance
+    #: of :class:`eulxml.xmlmap.dc.DublinCore`; overriding default
+    #: declaration in eulfedora to configure as Managed instead of Inline XML
+    dc = models.XmlDatastream("DC", "Dublin Core", DublinCore, defaults={
+        'control_group': 'M',
+        'format': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+        'versionable': True
+    })
+    # NOTE: we don't really need DC versioned, but there is a Fedora bug
+    # that requires Managed DC be versioned
+
+    #: :class:`~eulfedora.models.RdfDatastream` for the standard Fedora
+    #: **RELS-EXT** datastream; overriding to configure as Managed instead
+    #: of Inline XML
+    rels_ext = models.RdfDatastream("RELS-EXT", "External Relations", defaults={
+            'control_group': 'M',
+            'format': 'info:fedora/fedora-system:FedoraRELSExt-1.0',
+        })
 
     def __init__(self, *args, **kwargs):
         default_pidspace = getattr(settings, 'FEDORA_PIDSPACE', None)

@@ -81,7 +81,19 @@ function annotatorMarginalia(options) {
         var text = $('<div/>').attr({
             class:'text'
             }).html(marginalia.render(annotation)),
-            controls = '<nav class="controls"><a class="btn btn-default btn-edit">Edit</a><a class="btn btn-danger btn-delete">Delete</a></nav>',
+            controls = [
+              '<nav class="controls dropdown">',
+                '<a id="drop'+ annotation.id +'" class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">',
+                  '<span class="fa fa-ellipsis-v"></span></a>',
+                '<ul id="menu'+ annotation.id +'" class="dropdown-menu" role="menu" aria-labelledby="drop4'+ annotation.id +'">',
+                  '<li role="presentation"><a role="menuitem" tabindex="-1" class="btn btn-default btn-edit"><span class="fa fa-pencil"></span> Edit</a></li>',
+                  '<li role="presentation"><a role="menuitem" tabindex="-1" class="btn btn-default btn-delete"><span class="fa fa-trash-o"></span> Delete</a></li>',
+                '</ul>',
+              '</nav>'
+            ];
+
+            controls = controls.join('\n');
+
             $marginalia_item = $('<li/>').attr({
               class:marginalia_item_class,
               'data-annotation-id': annotation.id
@@ -89,7 +101,7 @@ function annotatorMarginalia(options) {
 
         $marginalia_item.on('click.marginalia','.btn-edit',function(event){
           event.preventDefault();
-          var offset = $(this).parent().siblings(".text").offset();
+          var offset = $(this).parents(".controls").siblings(".text").offset();
 
           _app.annotations.update(annotation);
           $(".annotator-editor").css({
@@ -99,7 +111,11 @@ function annotatorMarginalia(options) {
         })
         .on('click.marginalia','.btn-delete',function(event){
           event.preventDefault();
-          _app.annotations['delete'](annotation);
+          var del = confirm("Are you sure you want to permanently delete this annoation?");
+
+          if( del === true){
+            _app.annotations['delete'](annotation);
+          }
         });
 
         return $marginalia_item;

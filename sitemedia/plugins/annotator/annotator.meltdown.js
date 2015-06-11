@@ -78,7 +78,12 @@ var annotatormeltdown = {
                     .css('min-width', this.meltdown_options.min_width);
             }
             this.meltdown_initialized = true;
+        } else {
+            // make sure preview area is updated for current text
+            $(this.element).find("textarea").meltdown("update");
         }
+        // always ensure textarea has focus for immediate input
+        $(this.element).find("textarea").focus();
     },
 
     // NOTE: extending checkOrientation here to work around a bug

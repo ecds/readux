@@ -130,6 +130,23 @@ function annotatorMarginalia(options) {
               class:annotations_list_class
             });
 
+        // sort annotations based on display order in the document
+        // (default order is by date created)
+        annotations.sort(function(a, b) {
+          var a_hl = $('.annotator-hl[data-annotation-id='+ a.id +']'),
+              b_hl = $('.annotator-hl[data-annotation-id='+ b.id +']');
+          // sort based on document position
+          var a_offset = a_hl.offset(),
+              b_offset = b_hl.offset();
+          // if two annotations have the exact same top offset,
+          // sort them left to right
+          if (a_offset.top == b_offset.top) {
+            return a_offset.left > b_offset.left;
+          }
+          return a_offset.top > b_offset.top;
+        });
+
+
         // Display annotations in the marginalia container
         $.each(annotations,function(i){
           var annotation = annotations[i],
@@ -171,12 +188,25 @@ function annotatorMarginalia(options) {
       // Add marginalia when annotations are created
       annotationCreated: function(annotation){
         var $marginalia_item = marginalia.renderAnnotation(annotation);
+        // TODO: new annotation should be inserted based on the position
+        // of its corresponding annotation
+
         // Append to annotations list...
         $('.'+annotations_list_class).append($marginalia_item);
         // highlight created...
         marginalia.onSelected(annotation.id);
         // and show marginalia container.
         marginalia.toggle.show();
+
+        // re-bind annotation/note click to select to apply to the
+        // new highlight and margin note
+        $('.annotator-hl').on('click.marginalia',function(event){
+          marginalia.annotationSelected(event);
+        });
+        $('.'+marginalia_item_class).find('.text').on('click.marginalia',function(event){
+          marginalia.itemSelected(event);
+        });
+
       },
 
       // Remove marginalia when annotations are removed

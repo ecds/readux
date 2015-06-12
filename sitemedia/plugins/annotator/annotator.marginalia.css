@@ -22,7 +22,8 @@ ul.annotation-list {
   margin: 0;
   display: inline-block;
   position: relative;
-  padding:20vh 10px 80vh 10px;
+  padding:80vh 10px 80vh 10px;
+  width: 100%;
 }
 
 .annotation-list .marginalia-item {
@@ -80,6 +81,7 @@ ul.annotation-list {
 .annotation-list .marginalia-item .dropdown-menu {
   left: inherit;
   right: 0;
+  top: 33px;
   border-radius: 1px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.13);
   border-color: transparent;

@@ -76,6 +76,25 @@ function annotatorMarginalia(options) {
         return options.viewer(annotation);
       },
 
+      // returns an array of the rendered annotation ids
+      get_annotiations_array: function(){
+        var $highlights = $('.annotator-hl'),
+            highlight_group_annotation = '',
+            annotations_array = [];
+
+        $highlights.each(function(){
+          var $this = $(this),
+              this_annotation = $this.data('annotation-id');
+
+          if( highlight_group_annotation !== this_annotation ){
+            highlight_group_annotation = this_annotation;
+            annotations_array.push(highlight_group_annotation);
+          }
+        });
+
+        return annotations_array;
+      },
+
       // Returns the annotion in the marginalia list format
       renderAnnotation: function(annotation){
         var text = $('<div/>').attr({
@@ -130,32 +149,19 @@ function annotatorMarginalia(options) {
               class:annotations_list_class
             });
 
-        // sort annotations based on display order in the document
-        // (default order is by date created)
-        annotations.sort(function(a, b) {
-          var a_hl = $('.annotator-hl[data-annotation-id='+ a.id +']'),
-              b_hl = $('.annotator-hl[data-annotation-id='+ b.id +']');
-          // sort based on document position
-          var a_offset = a_hl.offset(),
-              b_offset = b_hl.offset();
-          // if two annotations have the exact same top offset,
-          // sort them left to right
-          if (a_offset.top == b_offset.top) {
-            return a_offset.left > b_offset.left;
-          }
-          return a_offset.top > b_offset.top;
-        });
-
-
+        var annotations_array = marginalia.get_annotiations_array();
         // Display annotations in the marginalia container
-        $.each(annotations,function(i){
-          var annotation = annotations[i],
-          $marginalia_item = marginalia.renderAnnotation(annotation);
+        $.each(annotations_array,function(i){
+          var id = annotations_array[i],
+              annotation = $.grep(annotations, function(e){ return e.id == id; })[0],
+              $marginalia_item = marginalia.renderAnnotation(annotation);
 
           $annotaton_list.append($marginalia_item);
         });
 
         $margin_container.html($annotaton_list);
+
+        $('.margin-container').stop().animate({'scrollTop': parseInt($(".margin-container>.annotation-list").css("padding-top")) - 30 },0);
 
         // Add class to container to hide marginalia aside
         $container.addClass('margin-container-hide');
@@ -191,8 +197,18 @@ function annotatorMarginalia(options) {
         // TODO: new annotation should be inserted based on the position
         // of its corresponding annotation
 
+
+        // Get the index of the annotation in context to its siblings
+        var annotations_array = marginalia.get_annotiations_array(),
+        index = annotations_array.indexOf(annotation.id);
+
         // Append to annotations list...
-        $('.'+annotations_list_class).append($marginalia_item);
+        if(index){
+          $($('.'+annotations_list_class +' .'+ marginalia_item_class)[index]).before($marginalia_item);
+        }
+        else{
+          $('.'+annotations_list_class).append($marginalia_item);
+        }
         // highlight created...
         marginalia.onSelected(annotation.id);
         // and show marginalia container.
@@ -206,7 +222,6 @@ function annotatorMarginalia(options) {
         $('.'+marginalia_item_class).find('.text').on('click.marginalia',function(event){
           marginalia.itemSelected(event);
         });
-
       },
 
       // Remove marginalia when annotations are removed

@@ -395,7 +395,9 @@ header.page-header#collection-header+.container {
         box-shadow: -1px 1px 5px rgba(75, 75, 75, 0.36);
         margin-top: -4px;
         display: block;
-    }
+
+        margin-left: 0;
+}
     .logo-container+div.container .nav>li>a.site-title:hover,
     .logo-container+div.container .nav>li>a.site-title:focus{
         background-color: #E7F9FF;

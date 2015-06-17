@@ -66,7 +66,9 @@ function annotatorMarginalia(options) {
               .hide() // hide the toggle object for now, will show when annotations are loaded
               .html(toggle_html); //add the html to the toggle object
 
-        $container.prepend($toggle, $margin_container);
+        $container.prepend($margin_container);
+
+        $(".carousel-inner").append($toggle);
 
         // get the rendered margin container
         $margin_container = $('.'+options.margin_class);

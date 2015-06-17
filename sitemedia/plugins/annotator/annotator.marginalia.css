@@ -1,8 +1,15 @@
 #toggle-annotations {
   position: absolute;
   z-index: 1000;
-  top: 0;
-  right: 0;
+  top: 40px;
+  right: 8%;
+  left: auto;
+  -webkit-transition: margin-right 0.5s ease;
+  transition: margin-right 0.5s ease;
+}
+
+#toggle-annotations.active {
+  margin-right: 150px;
 }
 
 .margin-container {

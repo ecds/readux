@@ -1138,3 +1138,7 @@ li.meltdown_controlbutton > span {
     border: 1px solid #CACACA;
     padding: 10px;
 }
+
+.carousel-control{
+  width:10%;
+}

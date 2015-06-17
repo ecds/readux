@@ -68,7 +68,7 @@ function annotatorMarginalia(options) {
 
         $container.prepend($margin_container);
 
-        $(".carousel-inner").append($toggle);
+        $(".in-page-controls").append($toggle);
 
         // get the rendered margin container
         $margin_container = $('.'+options.margin_class);

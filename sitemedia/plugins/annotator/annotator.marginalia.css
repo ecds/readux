@@ -2,7 +2,7 @@
   position: absolute;
   z-index: 1000;
   top: 40px;
-  right: 8%;
+  right: 2em;
   left: auto;
   -webkit-transition: margin-right 0.5s ease;
   transition: margin-right 0.5s ease;

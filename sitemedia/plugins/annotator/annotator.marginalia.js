@@ -199,16 +199,13 @@ function annotatorMarginalia(options) {
       // Add marginalia when annotations are created
       annotationCreated: function(annotation){
         var $marginalia_item = marginalia.renderAnnotation(annotation);
-        // TODO: new annotation should be inserted based on the position
-        // of its corresponding annotation
-
 
         // Get the index of the annotation in context to its siblings
         var annotations_array = marginalia.get_annotiations_array(),
         index = annotations_array.indexOf(annotation.id);
 
         // Append to annotations list...
-        if(index){
+        if(index < $('.'+ marginalia_item_class).length){
           $($('.'+annotations_list_class +' .'+ marginalia_item_class)[index]).before($marginalia_item);
         }
         else{

@@ -59,7 +59,8 @@ function annotatorMarginalia(options) {
             toggle_attrs = {
               class:'btn btn-green',
               id: toggle_id,
-              alt: 'Toggle Annotations'
+              alt: 'Toggle Annotations',
+              title: 'Show Annotations'
             },
             $toggle = $('<a/>')
               .attr(toggle_attrs) // add attributes to the toggle object
@@ -185,9 +186,11 @@ function annotatorMarginalia(options) {
 
           if($this.hasClass('active')){
             marginalia.toggle.hide();
+            $this.attr({'title':'Show Annotations'});
           }
           else{
             marginalia.toggle.show();
+            $this.attr({'title':'Hide Annotations'});
           }
         });
 

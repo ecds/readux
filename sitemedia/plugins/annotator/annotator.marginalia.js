@@ -150,7 +150,10 @@ function annotatorMarginalia(options) {
 
         var $annotaton_list = $('<ul/>').attr({
               class:annotations_list_class
-            });
+            }),
+            $empty = $('<li/>').attr({class:'empty-item'});
+
+          $annotaton_list.append($empty);
 
         var annotations_array = marginalia.get_annotiations_array();
         // Display annotations in the marginalia container

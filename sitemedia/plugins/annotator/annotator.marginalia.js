@@ -70,6 +70,8 @@ function annotatorMarginalia(options) {
 
         // get the rendered margin container
         $margin_container = $('.'+options.margin_class);
+
+        return true;
       },
 
       render: function(annotation){
@@ -135,6 +137,11 @@ function annotatorMarginalia(options) {
         annotations.sort(function(a, b) {
           var a_hl = $('.annotator-hl[data-annotation-id='+ a.id +']'),
               b_hl = $('.annotator-hl[data-annotation-id='+ b.id +']');
+
+          // if for some reason we couldn't find a highlight, skip
+          if (b_hl.length === 0 || a_hl.length === 0) {
+            return 0;
+          }
           // sort based on document position
           var a_offset = a_hl.offset(),
               b_offset = b_hl.offset();
@@ -145,7 +152,6 @@ function annotatorMarginalia(options) {
           }
           return a_offset.top > b_offset.top;
         });
-
 
         // Display annotations in the marginalia container
         $.each(annotations,function(i){
@@ -183,6 +189,7 @@ function annotatorMarginalia(options) {
           }
         });
 
+        return true;
       },
 
       // Add marginalia when annotations are created
@@ -207,12 +214,15 @@ function annotatorMarginalia(options) {
           marginalia.itemSelected(event);
         });
 
+        return true;
       },
 
       // Remove marginalia when annotations are removed
       beforeAnnotationDeleted: function(annotation){
         var $marginalia_item = $('.'+marginalia_item_class+'[data-annotation-id='+annotation.id+']');
         $marginalia_item.remove();
+
+        return true;
       },
 
       // Update marginalia when annotations are updated
@@ -221,6 +231,8 @@ function annotatorMarginalia(options) {
             updated_text = marginalia.render(annotation);
 
         $marginalia_item.find(".text").html(updated_text);
+
+        return true;
       },
 
       // Toggle functions for the margin container
@@ -304,7 +316,10 @@ function annotatorMarginalia(options) {
           var cTop = $('.margin-container').offset().top,
               cScrollTop = $('.margin-container').scrollTop(),
               top = $item.position().top,
-              top2 = $annotation.parents('.ocr-line').position().top;
+              // NOTE: ocr-line doesn't work for image selection
+              // leaving this here for now in case it was added for a reason
+              // top2 = $annotation.parents('.ocr-line').position().top;
+              top2 = $annotation.parent().position().top;
 
           $margin_container.stop().animate({'scrollTop':top-top2+30},500,'easeInOutExpo');
 

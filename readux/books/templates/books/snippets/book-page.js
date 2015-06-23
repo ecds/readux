@@ -50,6 +50,9 @@
               headers: {"X-CSRFToken": csrftoken}
           })
           .include(pageUri)
+          .include(annotatorImageSelect, {
+            element: $('.content .inner img'),
+          })
           .include(annotatorMarginalia, {
             viewer: annotatormeltdown.render,
             toggle:{
@@ -61,6 +64,7 @@
               }
             }
           })
+
       app.start()
           .then(function () {
                app.annotations.load({uri: '{{ page.absolute_url }}'});

@@ -3,6 +3,11 @@
 CHANGELOG
 =========
 
+Release 1.1.2
+-------------
+
+* Fix last-modified method for search results to work in cover mode.
+
 Release 1.1.1
 -------------
 

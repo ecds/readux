@@ -20,7 +20,7 @@ for view methods in :mod:`readux.books.views`.
 '''
 
 
-def volumes_modified(request):
+def volumes_modified(request, *args, **kwargs):
     'last modification time for all volumes'
     solr = solr_interface()
     results = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) \

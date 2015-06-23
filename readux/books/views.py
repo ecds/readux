@@ -10,7 +10,7 @@ import os
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page, PageV1_0
+from readux.books.models import Volume, SolrVolume, Page
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface

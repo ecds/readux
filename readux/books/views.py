@@ -11,7 +11,7 @@ import logging
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page, PageV1_1, VolumeV1_0
+from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface

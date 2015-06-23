@@ -3,6 +3,7 @@
 CHANGELOG
 =========
 
+
 Release 1.2
 -----------
 
@@ -10,6 +11,10 @@ Release 1.2
 * Now using `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`
   for LDAP login instead of eullocal.
 
+Release 1.1.2
+-------------
+
+* Fix last-modified method for search results to work in cover mode.
 
 Release 1.1.1
 -------------

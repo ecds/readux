@@ -65,3 +65,8 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Annotator Build Files
+sitemedia/plugins/annotator/scss/.sass-cache
+sitemedia/plugins/annotator/scss/node_modules
+static/plugins/annotator/scss/node_modules

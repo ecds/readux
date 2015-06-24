@@ -333,10 +333,18 @@ function annotatorMarginalia(options) {
           var cTop = $('.margin-container').offset().top,
               cScrollTop = $('.margin-container').scrollTop(),
               top = $item.position().top,
-              // NOTE: ocr-line doesn't work for image selection
-              // leaving this here for now in case it was added for a reason
-              // top2 = $annotation.parents('.ocr-line').position().top;
-              top2 = $annotation.parent().position().top;
+              top2;
+
+              // Check if the annotation's parent element is the .inner container,
+              // so we can get the correct top position.
+              // If the annotation is a direct child of .inner,
+              // then get the top postion of the element.
+              if($annotation.parent().is('.inner')){
+                top2 = $annotation.position().top;
+              }
+              else{
+                top2 = $annotation.parent().position().top;
+              }
 
           $margin_container.stop().animate({'scrollTop':top-top2+30},500,'easeInOutExpo');
 

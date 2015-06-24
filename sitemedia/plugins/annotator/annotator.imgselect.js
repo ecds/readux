@@ -24,8 +24,22 @@ function annotatorImageSelect(options) {
 
   // utility methods to support image annotation
   var imgselect_utils = {
+    // image area inital setup
+    selectionSetup:function(){
+      $(document).on('click','.imgareaselect-outer',function(evt){
+        var $active = $(".active-img-selection");
+        $active.removeClass('active-img-selection');
+      });
+      return true;
+    },
+
     // image area selection start event
     selectionStart: function(img, selection) {
+      // hide editor if visible
+      var $visible_editor = $(".annotator-editor:not(.annotator-hide)");
+      if ($visible_editor.length>0){
+        $visible_editor.addClass('annotator-hide');
+      }
       // hide the adder whenever a new selection is started
       s.adder.hide();
       // unselect any selected text to avoid confusion
@@ -37,9 +51,13 @@ function annotatorImageSelect(options) {
     selectionChange: function(img, selection) {
       // hide the adder whenever a new selection is started
       s.adder.hide();
-      // NOTE: this only hides the local adder instance;
-      // it does NOT hide the text selection adder.
+      // hide the text selection adder.
+      var $visible_editor = $(".annotator-editor:not(.annotator-hide)");
+      if ($visible_editor.length>0){
+        $visible_editor.addClass('annotator-hide');
+      }
       // TODO: hide text selection adder if possible
+
     },
 
     // image area selection end event
@@ -61,6 +79,7 @@ function annotatorImageSelect(options) {
         // image selection details
         image_selection: imgselect_utils.imageSelection(img, selection)
       };
+      $(".annotator-adder+div").addClass('active-img-selection');
       // calculate "interaction point" - using top right of selection box
       s.interactionPoint = imgselect_utils.selectionPosition(img, selection);
       // show the annotation adder button
@@ -186,6 +205,7 @@ function annotatorImageSelect(options) {
           s.ias = options.element.imgAreaSelect({
               instance: true,  // return an instance for later interaction
               handles: true,
+              onInit: imgselect_utils.selectionSetup,
               onSelectStart: imgselect_utils.selectionStart,
               onSelectChange: imgselect_utils.selectionChange,
               onSelectEnd: imgselect_utils.selectionEnd,
@@ -220,6 +240,8 @@ function annotatorImageSelect(options) {
       },
 
       annotationCreated: function(annotation) {
+        // hide highlight
+        $(".active-img-selection").removeClass('active-img-selection');
         // show image highlight div for new image annotation
         imgselect_utils.drawImageHighlight(annotation);
         return true;

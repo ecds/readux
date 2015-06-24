@@ -61,13 +61,19 @@ function annotatorImageSelect(options) {
         // image selection details
         image_selection: imgselect_utils.imageSelection(img, selection)
       };
-
       // calculate "interaction point" - using top right of selection box
       s.interactionPoint = imgselect_utils.selectionPosition(img, selection);
       // show the annotation adder button
       s.adder.load(annotation, s.interactionPoint);
 
-      // TODO: editor window is not positioned correctly
+      // set editor window is not positioned relative to the adder element
+      var offset = $(s.adder.element[0]).offset();
+      if(offset){
+        $(".annotator-editor").css({
+          top: offset.top + 50,
+          left: offset.left - (selection.width/2)
+        });
+      }
     },
 
     // draw a highlight element for an image annotation

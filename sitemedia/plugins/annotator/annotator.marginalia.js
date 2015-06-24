@@ -333,17 +333,16 @@ function annotatorMarginalia(options) {
           var cTop = $('.margin-container').offset().top,
               cScrollTop = $('.margin-container').scrollTop(),
               top = $item.position().top,
-              top2;
+              top2 = $annotation.parents('.inner>div');
 
-              // Check if the annotation's parent element is the .inner container,
-              // so we can get the correct top position.
-              // If the annotation is a direct child of .inner,
-              // then get the top postion of the element.
-              if($annotation.parent().is('.inner')){
-                top2 = $annotation.position().top;
+              // If the annotation is wrapped in a child div,
+              // we want to get the postion of that parent element.
+              if( top2.length>0 ){
+                top2 = top2.position().top;
               }
+              // Otherwise, get the top position of the element.
               else{
-                top2 = $annotation.parent().position().top;
+                top2 = $annotation.position().top;
               }
 
           $margin_container.stop().animate({'scrollTop':top-top2+30},500,'easeInOutExpo');

@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional argument for input file (required)
-        parser.add_argument('input_file', nargs=1,
+        parser.add_argument('input_file',
             help='Input file with a list of volume pids')
         # optional arguments
         parser.add_argument('--calculate-size',
@@ -49,10 +49,11 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        print options
         # expects a plain text file with a list of pids,
         # one per line
         start = time.time()
-        with open(options['input_file'][0]) as infile:
+        with open(options['input_file']) as infile:
             pids = [line.rstrip('\n') for line in infile]
 
         # if size calculation is requested, we need credentials to access

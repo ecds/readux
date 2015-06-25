@@ -26,10 +26,11 @@ function annotatorImageSelect(options) {
   var imgselect_utils = {
     // image area inital setup
     selectionSetup:function(){
-      $(document).on('click','.imgareaselect-outer',function(evt){
-        var $active = $(".active-img-selection");
-        $active.removeClass('active-img-selection');
-      });
+      $(document)
+        .on('click.imgselection','.imgareaselect-outer, .annotator-cancel',function(evt){
+          var $active = $(".active-img-selection");
+          $active.removeClass('active-img-selection');
+        });
       return true;
     },
 

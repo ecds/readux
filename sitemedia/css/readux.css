@@ -395,7 +395,9 @@ header.page-header#collection-header+.container {
         box-shadow: -1px 1px 5px rgba(75, 75, 75, 0.36);
         margin-top: -4px;
         display: block;
-    }
+
+        margin-left: 0;
+}
     .logo-container+div.container .nav>li>a.site-title:hover,
     .logo-container+div.container .nav>li>a.site-title:focus{
         background-color: #E7F9FF;
@@ -833,8 +835,8 @@ header#page-bg .collection-image-info.collasped .info{
 
 /* styles page image with ocr text overlaid */
 .page {
-    /*position: absolute;*/
-    /*z-index: 2;*/
+    position: relative;
+    z-index: 0;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -941,7 +943,7 @@ header#page-bg .collection-image-info.collasped .info{
     transition:all 0.5s ease;
 }
 
-.page-search .trigger:hover, .page-search .trigger:focus {
+.page-search .trigger:hover, .page-search .trigger:focus {
     box-shadow: 0px 3px 7px rgb(208, 208, 208);
     color: rgb(106, 126, 145);
 }
@@ -984,4 +986,3 @@ login-twitter a {
     background-color: #f5f5f5 !important;
 }
 */
-

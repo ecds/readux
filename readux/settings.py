@@ -62,6 +62,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
     # additional context processors
+    'eultheme.context_processors.template_settings',
     "django.core.context_processors.request",  # always include request in render context
     "django.core.context_processors.static",
     # social auth support
@@ -176,4 +177,3 @@ if django_nose is not None:
         # ...
     ]
     NOSE_ARGS = ['--with-eulfedorasetup']
-

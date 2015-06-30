@@ -22,6 +22,10 @@ from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
 from readux.books import sitemaps
 
+
+fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
+
+
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
 
@@ -235,8 +239,8 @@ class VolumeV1_0Test(TestCase):
             # test full-text
             with patch.object(self.vol, 'ocr') as mockocr:
                 mockocr.exists = True
-                ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
-                    'books', 'fixtures', 'abbyyocr_fr8v2.xml'))
+                ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                    'abbyyocr_fr8v2.xml'))
                 mockocr.content = ocr_xml
                 data = self.vol.index_data()
                 self.assert_('fulltext' in data,
@@ -274,8 +278,8 @@ class VolumeV1_0Test(TestCase):
         with patch.object(self.vol, 'ocr') as mockocr:
             mockocr.exists = True
             # abbyy finereader v8
-            ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
-                'books', 'fixtures', 'abbyyocr_fr8v2.xml'))
+            ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                'abbyyocr_fr8v2.xml'))
             mockocr.content = ocr_xml
 
             text = self.vol.get_fulltext()
@@ -285,11 +289,11 @@ class VolumeV1_0Test(TestCase):
             self.assert_('Now, kind reader, we ask that you do not crit' in text,
                 'ocr text content should be present in plain text')
             self.assert_(re.search(r'Baldwin\s+Dellinger\s+Brice', text),
-                'table row content shoudl be displayed on a single line')
+                'table row content should be displayed on a single line')
 
             # abbyy finereader v6
-            ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
-                'books', 'fixtures', 'abbyyocr_fr6v1.xml'))
+            ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                'abbyyocr_fr6v1.xml'))
             mockocr.content = ocr_xml
 
             text = self.vol.get_fulltext()
@@ -299,8 +303,35 @@ class VolumeV1_0Test(TestCase):
             self.assert_('walked up the steps. The lady had not moved, and made' in text,
                 'ocr text content should be present in plain text')
             self.assert_(re.search(r'Modern\.\s+New Standard\.\s+Popular\.', text),
-                'table row content shoudl be displayed on a single line')
+                'table row content should be displayed on a single line')
 
+    def test_ocr_ids(self):
+        # pach in fixture ocr content
+        with patch.object(self.vol, 'ocr') as mockocr:
+            mockocr.exists = True
+            ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                'abbyyocr_fr8v2.xml'))
+            mockocr.content = ocr_xml
+
+            self.assertFalse(self.vol.ocr_has_ids)
+            self.vol.add_ocr_ids()
+            self.assertTrue(self.vol.ocr_has_ids)
+
+class PageV1_1Test(TestCase):
+    metsalto_doc = os.path.join(fixture_dir, 'mets_alto.xml')
+
+    def setUp(self):
+        self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
+
+    def test_ocr_ids(self):
+        page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
+
+        with patch.object(page, 'ocr') as mockocr:
+            mockocr.exists = True
+            mockocr.content = self.mets_alto
+            self.assertFalse(page.ocr_has_ids)
+            page.add_ocr_ids()
+            self.assertTrue(page.ocr_has_ids)
 
 class BookViewsTest(TestCase):
 
@@ -847,8 +878,6 @@ class SitemapTestCase(TestCase):
 
 class AbbyyOCRTestCase(TestCase):
 
-    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
-
     fr6v1_doc = os.path.join(fixture_dir, 'abbyyocr_fr6v1.xml')
     fr8v2_doc = os.path.join(fixture_dir, 'abbyyocr_fr8v2.xml')
     # language code
@@ -975,14 +1004,13 @@ class AbbyyOCRTestCase(TestCase):
 
 
 class TeiFacsimileTest(TestCase):
-    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
 
     def setUp(self):
         # tei generated from mets alto
-        self.alto_tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile.xml'),
+        self.alto_tei = load_xmlobject_from_file(os.path.join(fixture_dir, 'teifacsimile.xml'),
             TeiFacsimile)
         # tei generated from abbyy ocr
-        self.abbyy_tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile_abbyy.xml'),
+        self.abbyy_tei = load_xmlobject_from_file(os.path.join(fixture_dir, 'teifacsimile_abbyy.xml'),
             TeiFacsimile)
 
     def test_basic_properties_alto(self):
@@ -1016,8 +1044,6 @@ class TeiFacsimileTest(TestCase):
 @override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
 class OCRtoTEIFacsimileXSLTest(TestCase):
 
-    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
-
     fr6v1_doc = os.path.join(fixture_dir, 'abbyyocr_fr6v1.xml')
     fr8v2_doc = os.path.join(fixture_dir, 'abbyyocr_fr8v2.xml')
     metsalto_doc = os.path.join(fixture_dir, 'mets_alto.xml')
@@ -1027,7 +1053,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
         self.fr8v2 = load_xmlobject_from_file(self.fr8v2_doc, abbyyocr.Document)
         self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
 
-   
+
     def test_pageV1_0(self):
         # page 1.0 - abbyy ocr content
 

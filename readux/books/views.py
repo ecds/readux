@@ -11,7 +11,8 @@ import logging
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0
+from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
+    PageV1_1
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -277,6 +278,16 @@ def view_page(request, pid):
         {'page': page, 'next': nxt, 'prev': prev, 'page_chunk':page_chunk,
          'form': form, 'scale': scale})
 
+def page_ocr(request, pid):
+    '''Display the page-level OCR content, if available (for
+    :class:`~readux.books.models.PageV1_1` objects this is xml,
+    for :class:`~readux.books.models.PageV1_0` this is text).  Returns a
+    404 if this page object does not have page-level OCR.'''
+    # for now, not worrying about filename based on the object pid
+    # since it could be .xml or .txt and this view is primarily
+    # for internal use and testing.
+    return raw_datastream(request, pid, PageV1_1.ocr.id, type=Page,
+            repo=Repository())
 
 def page_tei(request, pid):
     '''Display the page-level TEI facsimile, if available.  404 if this page

@@ -7,7 +7,7 @@
   xmlns:fr6="http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml"
   xmlns="http://www.tei-c.org/ns/1.0" version="2.0" exclude-result-prefixes="tei xs alto fr8 fr6">
 
-  <!--Identity transform written to create TEI files using Alto data.-->
+  <!-- transform to create TEI files using Alto or abbyy ocr-->
   <doc xmlns="http://www.oxygenxml.com/ns/doc/xsl">
     <desc>Stylesheet for generating page-level TEI facsimile from Abbyy OCR xml or Mets/Alto.</desc>
   </doc>

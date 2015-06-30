@@ -186,5 +186,9 @@
     </xsl:element>
   </xsl:template>
 
+  <!-- skip barcodes when generating TEI; this content is unlikely to be
+       useful, and in many cases may actually be bad OCR recognition -->
+   <xsl:template match="fr8:block[@blockType='Barcode']|fr6:block[@blockType='Barcode']"/>
+
 
 </xsl:stylesheet>

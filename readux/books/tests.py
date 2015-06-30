@@ -13,7 +13,8 @@ import rdflib
 from rdflib import RDF
 from urllib import urlencode, unquote
 
-from eulxml.xmlmap import load_xmlobject_from_file, XmlObject
+from eulxml.xmlmap import load_xmlobject_from_file, XmlObject,\
+    load_xmlobject_from_string
 from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
@@ -1059,14 +1060,23 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
 
         page = PageV1_0(Mock()) # use mock for fedora api, since we won't make any calls
         page.page_order = 5
+        vol = VolumeV1_0(Mock())
         with patch('readux.books.models.PageV1_0.volume') as mockvolume:
             mockvolume.uriref = rdflib.URIRef('vol:1')
             mockvolume.display_label = 'Mabel Meredith'
             mockvolume.volume = None
             mockvolume.creator = ['Townley, Arthur']
             mockvolume.date = '1863'
+
+            # update fixture xml with ids
+            with open(VolumeV1_0.ocr_add_ids_xsl) as xslfile:
+                result =  self.fr6v1.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                fr6v1_with_ids = load_xmlobject_from_string(result,
+                    abbyyocr.Document)
+
             # use the first page with substantial text content as input
-            ocr_page = self.fr6v1.pages[5]
+            ocr_page = fr6v1_with_ids.pages[5]
             tei = page.generate_tei(ocr_page)
             # NOTE: uncomment to see generated TEI
             # print tei.serialize()
@@ -1078,7 +1088,8 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
                 'generated TEI facsimile should be schema-valid')
             # inspect the tei and check for expected values
             # - page identifier based on page_order value passed in
-            self.assertEqual('pg.%04d' % page.page_order, tei.page.id)
+            self.assertEqual(ocr_page.id, tei.page.id,
+                'tei id should be carried through from ocr xml')
             self.assertEqual(page.display_label, tei.title,
                 'tei title should be set from page diplay label')
             # distributor not mapped in teimap, so just use xpath to check
@@ -1108,6 +1119,10 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             mockvolume.volume = None
             mockvolume.creator = ['Townley, Arthur']
             mockvolume.date = '1863'
+
+            # update ocr xml with ids
+            page.add_ocr_ids()
+
             tei = page.generate_tei()
             # NOTE: uncomment to see generated tei
             # print tei.serialize()
@@ -1120,8 +1135,11 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             # NOTE: not testing header details that are the same for both
             # outputs and already checked in previous test
 
-            # - page identifier based on page_order value passed in
-            self.assertEqual('pg.%04d' % page.page_order, tei.page.id)
+            # - page identifier carried through from the ocr
+            page_id = page.ocr.content.node.xpath('//alto:Page/@xml:id',
+                namespaces={'alto': 'http://www.loc.gov/standards/alto/ns-v2#'})[0]
+            self.assertEqual(page_id, tei.page.id,
+                'xml:id should be copied from mets/alto to tei')
             # recognized as mets/alto
             self.assert_('Mets/Alto file' in tei.header.source_description,
                 'input should be recognized as mets/alto ocr')

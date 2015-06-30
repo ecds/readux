@@ -862,7 +862,8 @@ class VolumeV1_0(Volume):
                 result =  self.ocr.content.xsl_transform(filename=xslfile,
                     return_type=unicode)
                 # set the result as ocr datastream content
-                self.ocr.content = xmlmap.load_xmlobject_from_string(result)
+                self.ocr.content = xmlmap.load_xmlobject_from_string(result,
+                    abbyyocr.Document)
             except etree.XMLSyntaxError:
                 logger.warn('OCR xml for %s is invalid', self.pid)
 

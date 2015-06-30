@@ -62,14 +62,14 @@
 
   <xsl:template match="alto:Layout">
     <xsl:element name="facsimile">
-      <xsl:attribute name="xml:id">fcs.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:apply-templates/>
     </xsl:element>
   </xsl:template>
 
   <xsl:template match="alto:Page">
     <xsl:element name="surface">
-      <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number($page_number, '0000')"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type">page</xsl:attribute>
       <xsl:attribute name="ulx">0</xsl:attribute>
       <xsl:attribute name="uly">0</xsl:attribute>
@@ -84,7 +84,7 @@
 
   <xsl:template match="alto:TextBlock">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">tbk.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type">textBlock</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -96,7 +96,7 @@
 
   <xsl:template match="alto:TextLine">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">tln.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type">textLine</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -114,7 +114,7 @@
 
   <xsl:template match="alto:String">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">str.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type">string</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -128,7 +128,7 @@
 
   <xsl:template match="alto:Illustration">
   <xsl:element name="zone">
-    <xsl:attribute name="xml:id">ill.<xsl:value-of select="generate-id()"/></xsl:attribute>
+    <xsl:copy-of select="@xml:id"/>
     <xsl:attribute name="type">illustration</xsl:attribute>
     <xsl:attribute name="ulx"><xsl:value-of select="@HPOS"/></xsl:attribute>
     <xsl:attribute name="uly"><xsl:value-of select="@VPOS"/></xsl:attribute>
@@ -140,29 +140,25 @@
   <!-- template matches for abbyy finereader elements -->
 
     <xsl:template match="fr8:page|fr6:page">
-    <xsl:element name="facsimile">
-
-
-    <xsl:element name="surface">
-      <xsl:attribute name="xml:id">pg.<xsl:value-of select="format-number($page_number, '0000')"/></xsl:attribute>
-      <xsl:attribute name="type">page</xsl:attribute>
-      <xsl:attribute name="ulx">0</xsl:attribute>
-      <xsl:attribute name="uly">0</xsl:attribute>
-      <xsl:attribute name="lrx"><xsl:value-of select="@width"/></xsl:attribute>
-      <xsl:attribute name="lry"><xsl:value-of select="@height"/></xsl:attribute>
-      <xsl:element name="graphic">
-        <xsl:attribute name="url"><xsl:value-of select="$graphic_url"/></xsl:attribute>
+      <xsl:element name="facsimile">
+        <xsl:element name="surface">
+          <xsl:copy-of select="@xml:id"/>
+          <xsl:attribute name="type">page</xsl:attribute>
+          <xsl:attribute name="ulx">0</xsl:attribute>
+          <xsl:attribute name="uly">0</xsl:attribute>
+          <xsl:attribute name="lrx"><xsl:value-of select="@width"/></xsl:attribute>
+          <xsl:attribute name="lry"><xsl:value-of select="@height"/></xsl:attribute>
+          <xsl:element name="graphic">
+            <xsl:attribute name="url"><xsl:value-of select="$graphic_url"/></xsl:attribute>
+          </xsl:element>
+          <xsl:apply-templates/>
+        </xsl:element>
       </xsl:element>
-      <xsl:apply-templates/>
-    </xsl:element>
-
-      </xsl:element>
-
   </xsl:template>
 
    <xsl:template match="fr8:block|fr6:block">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">bk.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type"><xsl:value-of select="@blockType"/></xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@l"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@t"/></xsl:attribute>
@@ -174,7 +170,7 @@
 
   <xsl:template match="fr8:line|fr6:line">
     <xsl:element name="zone">
-      <xsl:attribute name="xml:id">ln.<xsl:value-of select="generate-id()"/></xsl:attribute>
+      <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type">line</xsl:attribute>
       <xsl:attribute name="ulx"><xsl:value-of select="@l"/></xsl:attribute>
       <xsl:attribute name="uly"><xsl:value-of select="@t"/></xsl:attribute>

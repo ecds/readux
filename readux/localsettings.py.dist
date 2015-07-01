@@ -92,13 +92,19 @@ SOCIAL_AUTH_GITHUB_KEY = ''
 SOCIAL_AUTH_GITHUB_SECRET = ''
 
 # Register application at http://developers.facebook.com/setup/
-SOCIAL_AUTH_FACEBOOK_KEY = ''
+# For testing, add users to the Tester role at
+# https://developers.facebook.com/apps/{{SOCIAL_AUTH_FACEBOOK_KEY}}/roles/
+# You will need their Facebook name, but you don't need to be Facebook friends
+# to assign them as testers.
+
+SOCIAL_AUTH_FACEBOOK_KEY = '' # the numerical Facebook App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']   # request email address (not included by default)
 
 # If a different set of authentication backends is needed
 # than what is configured in readux.settings,
 # override AUTHENTICATION_BACKENDS here
+
 
 # configure which IP addresses are allowed to access the index data service
 EUL_INDEXER_ALLOWED_IPS = []
@@ -139,6 +145,7 @@ LARGE_PDF_THRESHOLD = 1024 * 1024 * 750
 
 # Name to appear in the publicationStmt/distributor of generated TEI
 TEI_DISTRIBUTOR = ''  # e.g., Emory University
+
 
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/

@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     'eullocal.django.emory_ldap',
     'eultheme',
     'widget_tweaks',
-    'readux.collection',
+    'readux.annotations',
     'readux.books',
+    'readux.collection',
     'readux.dyndzi',
     'readux.accounts',
 ]
@@ -102,6 +103,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+LARGE_PDF_THRESHOLD=''
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -131,10 +133,11 @@ AUTHENTICATION_BACKENDS = (
     # additional social-auth backends could be configured here;
     # they will need keys in localsettings and possibly display names
     # added to the dict in readux/__init__.py
-    'social.backends.twitter.TwitterOAuth',
-    'social.backends.google.GoogleOAuth2',
-    'social.backends.github.GithubOAuth2',
+    # The app will use the following backends prioritized by list order.
     'social.backends.facebook.FacebookOAuth2',
+    'social.backends.github.GithubOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.twitter.TwitterOAuth',
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -173,4 +176,3 @@ if django_nose is not None:
         # ...
     ]
     NOSE_ARGS = ['--with-eulfedorasetup']
-

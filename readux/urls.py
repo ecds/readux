@@ -6,8 +6,10 @@ from django.contrib.sitemaps import views as sitemap_views
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
-from readux.collection.sitemaps import CollectionSitemap
+from readux.annotations import views as annotation_views
 from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap
+from readux.collection.sitemaps import CollectionSitemap
+
 
 admin.autodiscover()
 
@@ -16,6 +18,15 @@ sitemaps = {
     'volume-pdfs': VolumePdfSitemap,
     'volumes': VolumeSitemap,
 }
+
+# choose favicon based on config, to indicate which site is running
+if hasattr(settings, 'ENABLE_BETA_WARNING') and settings.ENABLE_BETA_WARNING:
+    favicon = 'favicon-beta'
+elif settings.DEBUG:
+    favicon = 'favicon-dev'
+else:
+    favicon = 'favicon'
+
 
 urlpatterns = patterns('',
     # for now, using collection browse as site index
@@ -31,8 +42,13 @@ urlpatterns = patterns('',
     # deep-zoom for images
     url(r'^dzi/', include('readux.dyndzi.urls', namespace='deepzoom')),
 
+    # annotations
+    url(r'^annotations/api/', include('readux.annotations.urls', namespace='annotation-api')),
+    # annotatorjs doesn't handle trailing slash in api prefix url
+    url(r'^annotations/api', annotation_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
+
      # add redirect for favicon at root of site
-    (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)),
+    (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/%s.ico' % favicon, permanent=True)),
 
     # robots.txt and sitemaps
     url(r'^robots\.txt$',
@@ -53,3 +69,4 @@ urlpatterns = patterns('',
 
 if settings.DEV_ENV:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

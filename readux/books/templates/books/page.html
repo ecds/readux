@@ -52,7 +52,7 @@
     <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
 
     {% if page.tei.exists %}
-    <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.pid %}" />
+    <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.volume.pid page.pid %}" />
     {% endif %}
 {% endblock %}
 
@@ -97,7 +97,7 @@
                 <div class="page">
                     <div class="content">
                         <section class="inner">
-                          <img class="page-image" src="{% url 'books:page-image' page.pid %}"/>
+                          <img class="page-image" src="{% url 'books:page-image' page.volume.pid page.pid %}"/>
                           {% if page.tei.exists %}
                              {% for line in page.tei.content.lines %}
                              <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>
@@ -119,12 +119,12 @@
         </div>
 
         {% if prev %}
-        <a class="left carousel-control" href="{% url 'books:page' prev.pid %}" role="button" data-slide="prev" title="Prev: Page {{ prev.page_order }}">
+        <a class="left carousel-control" href="{% url 'books:page' page.volume.pid prev.pid %}" role="button" data-slide="prev" title="Prev: Page {{ prev.page_order }}">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </a>
         {% endif %}
         {% if next %}
-        <a class="right carousel-control" href="{% url 'books:page' next.pid %}" role="button" data-slide="next" title="Next: Page {{ next.page_order }}">
+        <a class="right carousel-control" href="{% url 'books:page' page.volume.pid next.pid %}" role="button" data-slide="next" title="Next: Page {{ next.page_order }}">
             <span class="glyphicon glyphicon-chevron-right"></span>
         </a>
         {% endif %}

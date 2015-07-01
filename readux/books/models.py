@@ -266,8 +266,8 @@ class Page(Image):
     def absolute_url(self):
         '''Generate an absolute url to the page view, for external services
         or for referencing in annotations.'''
-        return absolutize_url(reverse(self.NEW_OBJECT_VIEW, kwargs={'pid': self.pid}))
-
+        return absolutize_url(reverse(self.NEW_OBJECT_VIEW,
+            kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
 
     @property
     def display_label(self):
@@ -311,7 +311,8 @@ class Page(Image):
     def image_url(self):
         # preliminary image url, for use in tei facsimile
         # NOTE: eventually we may want to use some version of the ARK
-        return absolutize_url(reverse('books:page-image-fs', kwargs={'pid': self.pid}))
+        return absolutize_url(reverse('books:page-image-fs',
+            kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
 
     @property
     def tei_options(self):
@@ -756,14 +757,15 @@ class Volume(DigitalObject, BaseVolume):
         solr = solr_interface()
         # find all pages that belong to the same volume and sort by page order
         # - filtering separately should allow solr to cache filtered result sets more efficiently
-        solrquery = solr.query(isConstituentOf=self.uri) \
+        return solr.query(isConstituentOf=self.uri) \
                        .filter(content_model=Page.PAGE_CMODEL_PATTERN) \
                        .filter(state='A') \
-                       .sort_by('page_order')
+                       .sort_by('page_order') \
+                       .field_limit(['pid', 'page_order'])
         # only return fields we actually need (pid, page_order)
-        solrquery = solrquery.field_limit(['pid', 'page_order'])  # ??
+        # TODO: add volume id for generating urls ?
+        # solrquery = solrquery.field_limit(['pid', 'page_order', 'isConstituentOf'])  # ??
         # return so it can be filtered, paginated as needed
-        return solrquery
 
     @staticmethod
     def volumes_with_pages():

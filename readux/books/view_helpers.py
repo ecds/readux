@@ -57,9 +57,10 @@ def volume_pages_modified(request, pid):
     if results.count():
         return results[0]['timestamp']
 
-def page_modified(request, pid):
+def page_modified(request, vol_pid, pid):
     'last modification time for a single page'
     solr = solr_interface()
+    # TODO: use volume pid in query
     results = solr.query(content_model=PageV1_0.PAGE_CONTENT_MODEL,
                          pid=pid) \
                   .sort_by('-timestamp').field_limit('timestamp')

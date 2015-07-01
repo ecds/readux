@@ -16,17 +16,17 @@ urlpatterns = patterns('',
     # NOTE: would be nice to put individual pages under volume pid, but makes it hard to generate
     # target url when minting ark for ingest..
     # url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
-    url(r'^pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
-    url(r'^pages/(?P<pid>[^/]+)/tei/$', views.page_tei, name='page-tei'),
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/tei/$', views.page_tei, name='page-tei'),
     # redirect from TEI to tei so etiher one can be used
-    url(r'^pages/(?P<pid>[^/]+)/TEI/$', RedirectView.as_view(pattern_name='books:page-tei')),
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/TEI/$', RedirectView.as_view(pattern_name='books:page-tei')),
 
-    url(r'^pages/(?P<pid>[^/]+)/thumbnail/$', views.page_image, {'mode': 'thumbnail'},
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/thumbnail/$', views.page_image, {'mode': 'thumbnail'},
         name='page-thumbnail'),
-    url(r'^pages/(?P<pid>[^/]+)/thumbnail/mini/$', views.page_image, {'mode': 'mini-thumbnail'},
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/thumbnail/mini/$', views.page_image, {'mode': 'mini-thumbnail'},
         name='page-mini-thumb'),
-    url(r'^pages/(?P<pid>[^/]+)/image/$', views.page_image, {'mode': 'single-page'},
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/image/$', views.page_image, {'mode': 'single-page'},
         name='page-image'),
-    url(r'^pages/(?P<pid>[^/]+)/image/fs/$', views.page_image, {'mode': 'fullsize'},
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/image/fs/$', views.page_image, {'mode': 'fullsize'},
         name='page-image-fs'),
 )

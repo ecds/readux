@@ -222,11 +222,13 @@ SINGLE_PAGE_SIZE = 1000
 
 
 @last_modified(view_helpers.page_modified)
-def view_page(request, pid):
+def view_page(request, vol_pid, pid):
     # NOTE: type inferring repository needed to load pages as correct type
     # of Page (v1.0 or v1.1)
     repo = TypeInferringRepository()
     page = repo.get_object(pid)
+    print 'view page = ', page
+    print isinstance(page, Page)
     if not page.exists or not isinstance(page, Page):
         raise Http404
 
@@ -278,7 +280,7 @@ def view_page(request, pid):
          'form': form, 'scale': scale})
 
 
-def page_tei(request, pid):
+def page_tei(request, vol_pid, pid):
     '''Display the page-level TEI facsimile, if available.  404 if this page
     object does not have TEI facsimile.'''
     extra_headers = {
@@ -413,7 +415,7 @@ def _error_image_response(mode):
 @require_http_methods(['GET', 'HEAD'])
 @condition(etag_func=view_helpers.page_image_etag,
            last_modified_func=view_helpers.page_image_lastmodified)
-def page_image(request, pid, mode=None):
+def page_image(request, vol_pid, pid, mode=None):
     '''Return a page image, resized according to mode.
 
     :param pid: the pid of the :class:`~readux.books.models.Page`

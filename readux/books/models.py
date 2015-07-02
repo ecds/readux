@@ -260,7 +260,7 @@ class Page(Image):
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [str(self.pid)])
+        return (self.NEW_OBJECT_VIEW, [self.volume.pid, str(self.pid)])
 
     @property
     def absolute_url(self):

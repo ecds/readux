@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import Http404, HttpResponse, HttpResponseNotFound
+from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponse, HttpResponseNotFound, \
+    HttpResponsePermanentRedirect
 from django.shortcuts import render
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
@@ -227,8 +229,6 @@ def view_page(request, vol_pid, pid):
     # of Page (v1.0 or v1.1)
     repo = TypeInferringRepository()
     page = repo.get_object(pid)
-    print 'view page = ', page
-    print isinstance(page, Page)
     if not page.exists or not isinstance(page, Page):
         raise Http404
 
@@ -479,3 +479,18 @@ def page_image(request, vol_pid, pid, mode=None):
         if rf.code in [404, 401]:
             raise Http404
         raise
+
+def page_redirect(request, pid, path):
+    # redirect view for old page urls without volume pids
+
+    # NOTE: type inferring repository needed to load pages as correct type
+    # of Page (v1.0 or v1.1)
+    repo = TypeInferringRepository()
+    page = repo.get_object(pid)
+    if not page.exists or not isinstance(page, Page):
+        raise Http404
+
+    page_url = reverse('books:page',
+            kwargs={'vol_pid': page.volume.pid, 'pid': page.pid})
+    return HttpResponsePermanentRedirect(''.join([page_url, path]))
+

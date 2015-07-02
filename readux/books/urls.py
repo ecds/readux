@@ -29,4 +29,8 @@ urlpatterns = patterns('',
         name='page-image'),
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/image/fs/$', views.page_image, {'mode': 'fullsize'},
         name='page-image-fs'),
+
+    # redirect view for old page urls without volume pids
+    url(r'pages/(?P<pid>[^/]+)/(?P<path>.*)$', views.page_redirect,
+        name='old-pageurl-redirect')
 )

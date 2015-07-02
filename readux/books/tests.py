@@ -729,7 +729,7 @@ class BookViewsTest(TestCase):
         mockrepo.return_value.get_object.return_value = mockobj
 
         url = reverse('books:page',
-            kwargs={'vol_pid': mockobj.voume.pid, 'pid': mockobj.pid})
+            kwargs={'vol_pid': mockobj.volume.pid, 'pid': mockobj.pid})
 
         # doesn't exist
         mockobj.exists = False
@@ -840,6 +840,66 @@ class BookViewsTest(TestCase):
         self.assertEqual('filename="%s_tei.xml"' % mockobj.pid.replace(':', '-'),
             kwargs['headers']['Content-Disposition'],
             'raw_datastream should have a content-disposition header set')
+
+    @patch('readux.books.views.TypeInferringRepository')
+    def test_page_redirect(self, mockrepo):
+        mockobj = Mock()
+        mockobj.pid = 'page:1'
+        mockobj.volume.pid = 'vol:1'
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        url = reverse('books:old-pageurl-redirect',
+            kwargs={'pid': mockobj.pid, 'path': ''})
+
+        # doesn't exist
+        mockobj.exists = False
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code,
+            'page redirect view should 404 when object doesn\'t exist')
+
+        # exists but not a page object
+        mockobj.exists = True
+        response = self.client.get(url)
+        self.assertEqual(404, response.status_code,
+            'page redirect view should 404 when object isn\'t a Page object')
+
+        # page object
+        mockobj = Mock(spec=Page)
+        mockobj.pid = 'page:5'
+        mockobj.volume.pid = 'vol:1'
+        mockobj.exists = True
+        mockrepo.return_value.get_object.return_value = mockobj
+        response = self.client.get(url, follow=False)
+        url_args = {
+            'kwargs': {
+                'vol_pid': mockobj.volume.pid,
+                'pid': mockobj.pid
+            }
+        }
+        self.assertEqual(301, response.status_code,
+            'page redirect view should return a permanent redirect')
+        self.assertEqual('http://testserver%s' % \
+            reverse('books:page', **url_args),
+            response['location'])
+
+        # test a couple of sub page urls
+        url = reverse('books:old-pageurl-redirect',
+            kwargs={'pid': mockobj.pid, 'path': 'tei/'})
+        response = self.client.get(url, follow=False)
+        self.assertEqual(301, response.status_code,
+            'page redirect view should return a permanent redirect')
+        self.assertEqual('http://testserver%s' % \
+            reverse('books:page-tei', **url_args),
+            response['location'])
+
+        url = reverse('books:old-pageurl-redirect',
+            kwargs={'pid': mockobj.pid, 'path': 'thumbnail/mini/'})
+        response = self.client.get(url, follow=False)
+        self.assertEqual(301, response.status_code,
+            'page redirect view should return a permanent redirect')
+        self.assertEqual('http://testserver%s' % \
+            reverse('books:page-mini-thumb', **url_args),
+            response['location'])
 
     @patch('readux.books.sitemaps.solr_interface')
     def test_sitemaps(self, mocksolr_interface):

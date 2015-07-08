@@ -51,8 +51,10 @@ def volume_pages_modified(request, pid):
     solr = solr_interface()
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
-    results = solr.query((solr.Q(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) & solr.Q(pid=pid)) | \
-                         (solr.Q(content_model=PageV1_0.PAGE_CONTENT_MODEL) & solr.Q(isConstituentOf=vol.uri))) \
+
+    # NOTE: some overlap with Volume find_solr_pages method...
+    results = solr.query((solr.Q(content_model=Volume.VOLUME_CMODEL_PATTERN) & solr.Q(pid=pid)) | \
+                         (solr.Q(content_model=Page.PAGE_CMODEL_PATTERN) & solr.Q(isConstituentOf=vol.uri))) \
                   .sort_by('-timestamp').field_limit('timestamp')
 
     # NOTE: using solr indexing timestamp instead of object last modified, since
@@ -63,9 +65,9 @@ def volume_pages_modified(request, pid):
     # We only show total counts per page, so might not be modified if the
     # total number has not changed, but simplest just to get last modification
     # date in case of changes.
-    # NOTE that this does not account for annotation deletions.
+    # Note that this does NOT account for annotation deletions.
 
-    # if a user is logged in, page should also show as modified
+    # if a user is logged in, page should show as modified
     # based on annotations
     latest_note = None
     if request.user.is_authenticated():

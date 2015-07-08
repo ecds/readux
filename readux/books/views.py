@@ -206,6 +206,7 @@ def volume_pages(request, pid):
 
     # if user is authenticated, check for annotations on this volume
     if request.user.is_authenticated():
+        # TODO: move this to a method on volume, share with last modified method
         notes = Annotation.objects.filter(uri__contains=vol.get_absolute_url())
         # get annotations for pages in this volume, with totals by page
 

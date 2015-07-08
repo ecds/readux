@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
@@ -23,7 +23,7 @@ from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
-from readux.books import sitemaps
+from readux.books import sitemaps, view_helpers
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -1249,3 +1249,44 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
                 'input should be recognized as mets/alto ocr')
 
         # TODO: spot check text content and coordinates
+
+
+## tests for view helpers
+
+class ViewHelpersTest(TestCase):
+
+    @patch('readux.books.view_helpers.Repository')
+    @patch('readux.books.view_helpers.solr_interface')
+    def test_volume_pages_modified(self, mocksolr_interface, mockrepo):
+        mockvol = Mock(pid='vol:1')
+        mockrepo.return_value.get_object.return_value = mockvol
+
+        mockrequest = Mock()
+        mockrequest.user.is_authenticated.return_value = False
+
+        # no solr results
+        mockresult = MagicMock()
+        mocksolr_interface.return_value.query.return_value.sort_by.return_value.field_limit.return_value = mockresult
+        mockresult.count.return_value = 0
+        lastmod = view_helpers.volume_pages_modified(mockrequest, 'vol:1')
+        self.assertEqual(None, lastmod)
+
+        # only solr result
+        mockresult.count.return_value = 1
+        yesterday = datetime.now() - timedelta(days=1)
+        mockresult.__getitem__.return_value = {'timestamp': yesterday}
+        lastmod = view_helpers.volume_pages_modified(mockrequest, 'vol:1')
+        self.assertEqual(yesterday, lastmod)
+
+        # test with both solr and annotations for logged in user
+        mockvol.get_absolute_url.return_value = reverse('books:volume', kwargs={'pid': mockvol.pid})
+        mockrequest.user.is_authenticated.return_value = True
+        mockrequest.user.username = 'tester'
+        testuser = get_user_model()(username='tester')
+        testuser.save()
+        anno = Annotation(user=testuser,
+            uri=reverse('books:page', kwargs={'vol_pid': mockvol.pid,
+                'pid': 'page:3'}), extra_data=json.dumps({}))
+        anno.save()
+        lastmod = view_helpers.volume_pages_modified(mockrequest, 'vol:1')
+        self.assertEqual(anno.updated, lastmod)

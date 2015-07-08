@@ -7,6 +7,25 @@ from django.core.urlresolvers import reverse
 from jsonfield import JSONField
 
 
+class AnnotationQuerySet(models.QuerySet):
+
+    def visible_to(self, user):
+        '''Restrict to anntotations the current user is allowed to access.
+        Currently, superusers can view all annotations; all other users
+        can access only their own annotations.'''
+        # currently, superusers can view all annotations;
+        # other users can only see their own
+        if not user.is_superuser:
+            return self.filter(user__username=user.username)
+        return self.all()
+
+class AnnotationManager(models.Manager):
+    def get_queryset(self):
+        return AnnotationQuerySet(self.model, using=self._db)
+
+    def visible_to(self, user):
+        return self.get_queryset().visible_to(user)
+
 class Annotation(models.Model):
     '''AnnotatorJS annotation model, based on the documentation at
     http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html.'''
@@ -71,6 +90,8 @@ class Annotation(models.Model):
     #: fields in the db model that are provided by annotation json
     #: when creating or updating an annotation
     common_fields = ['text', 'quote', 'uri', 'user']
+
+    objects = AnnotationManager()
 
     def __unicode__(self):
         return self.text

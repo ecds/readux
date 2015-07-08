@@ -71,9 +71,9 @@ class Annotations(View):
         'List viewable annotations as JSON.'
         # NOTE: this method doesn't *technically* require that the user
         # be logged in, but under current permission model, no
-        # annotations should be visible to anonymous users.
+        # annotations will be visible to anonymous users.
 
-        notes = Annotation.objects.all()
+        notes = Annotation.objects.visible_to(request.user)
         # TODO: sort order?
 
         # superusers can view all annotations;
@@ -160,11 +160,9 @@ class AnnotationSearch(View):
         # TODO: look at reference implementation to see what
         # other search fields should be supported
 
-        notes = Annotation.objects.all()
-        # For any user who is not a superuser, only provide
-        # access to notes they own
-        if not request.user.is_superuser:
-            notes = notes.filter(user__username=request.user.username)
+        # Only provide access to notes a user can view
+        # (For non-superusers, this is only notes they own)
+        notes = Annotation.objects.visible_to(request.user)
 
         uri = request.GET.get('uri', None)
         if uri is not None:

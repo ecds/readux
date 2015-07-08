@@ -795,12 +795,10 @@ class Volume(DigitalObject, BaseVolume):
         filtered by user.'''
         notes = Annotation.objects.filter(uri__contains=self.get_absolute_url())
 
-        # if user is specified and not a superuser,
-        # restrict to annotations by that user
-        if user is not None and not user.is_superuser:
-            # superusers can view all annotations;
-            # other users can only see their own
-            notes = notes.filter(user__username=user.username)
+        # if user is specified, show only notes that user can view
+        if user is not None:
+            return notes.visible_to(user)
+
         return notes
 
     def annotation_count(self, user=None):

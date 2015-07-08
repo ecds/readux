@@ -1,4 +1,5 @@
 {% extends 'site_base.html' %}
+{% load readux_utils %}
 
 {% block page-subtitle %}{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }} | {% endblock %}
 
@@ -50,10 +51,19 @@
         <div id="cover-list" class="item-covers">
             <ul class="media-list cover-view">
                 {% for page in pages.object_list %}
+
                 {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}
                 <li class="">
-                    <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' vol.pid page.pid %}')" href="{% url 'books:page' vol.pid page.pid %}" title="Page {{ page.page_order }}">
+                    {% url 'books:page' vol.pid page.pid as page_url %}
+                    <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' vol.pid page.pid %}')" href="{{ page_url }}" title="Page {{ page.page_order }}">
                         <p class="page-number">p. {{page.page_order}}</p>
+                        {% if page_url in annotated_pages %}
+                        {% with note_count=annotated_pages|dict_item:page_url %}
+                        <p class="comment-count" title="{{ note_count }} annotation{{ note_count|pluralize }}">
+                            {{ note_count }}
+                        </p>
+                        {% endwith %}
+                        {% endif %}
                     </a>
                 </li>
                 {% endfor %}

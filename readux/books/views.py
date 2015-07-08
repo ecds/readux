@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
+from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
     HttpResponsePermanentRedirect
 from django.shortcuts import render
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
+from django.views.decorators.vary import vary_on_cookie
 from urllib import urlencode
 import os
 import logging
@@ -13,6 +16,7 @@ import logging
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
+from readux.annotations.models import Annotation
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
@@ -189,6 +193,7 @@ def volume(request, pid):
     return render(request, template, context)
 
 
+@vary_on_cookie
 @last_modified(view_helpers.volume_pages_modified)
 def volume_pages(request, pid):
     # paginated thumbnails for all pages in a book
@@ -198,6 +203,30 @@ def volume_pages(request, pid):
         raise Http404
     # search for page images in solr so we can easily sort by order
     pagequery = vol.find_solr_pages()
+
+    # if user is authenticated, check for annotations on this volume
+    if request.user.is_authenticated():
+        notes = Annotation.objects.filter(uri__contains=vol.get_absolute_url())
+        # get annotations for pages in this volume, with totals by page
+
+        # superusers can view all annotations;
+        # other users can only see their own
+        if not request.user.is_superuser:
+            notes = notes.filter(user__username=request.user.username)
+
+        notes = notes.values('uri').distinct() \
+                    .annotate(count=Count('uri')).values('uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict
+        # and strip out base site url for easy lookup
+        domain = get_current_site(request).domain
+        if not domain.startswith('http'):
+            domain = 'http://' + domain
+            domain_len = len(domain)
+        annotated_pages = dict([(a['uri'][domain_len:], a['count'])
+                               for a in notes])
+    else:
+        annotated_pages = {}
 
     # paginate pages, 30 per page
     per_page = 30
@@ -216,7 +245,7 @@ def volume_pages(request, pid):
     form = BookSearch()
 
     return render(request, 'books/pages.html',
-        {'vol': vol, 'pages': results, 'form': form})
+        {'vol': vol, 'pages': results, 'form': form, 'annotated_pages': annotated_pages})
 
 
 #: size used for scaling single page image

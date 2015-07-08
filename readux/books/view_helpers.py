@@ -1,10 +1,12 @@
 import datetime
 from django.conf import settings
+from django.utils import timezone
 import os
 
 from eulfedora.views import datastream_etag
 from eulfedora.server import Repository, RequestFailed
 
+from readux.annotations.models import Annotation
 from readux.books.models import Volume, VolumeV1_0, Page, PageV1_0
 from readux.utils import solr_interface, md5sum
 
@@ -44,18 +46,56 @@ def volume_modified(request, pid):
 
 
 def volume_pages_modified(request, pid):
-    'last modification time for a single volume or its pages'
+    '''Last modification time for a single volume or its pages, or for
+    any annotations of those pages.'''
     solr = solr_interface()
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
     results = solr.query((solr.Q(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL) & solr.Q(pid=pid)) | \
                          (solr.Q(content_model=PageV1_0.PAGE_CONTENT_MODEL) & solr.Q(isConstituentOf=vol.uri))) \
                   .sort_by('-timestamp').field_limit('timestamp')
+
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified,
     # and index timestamp for a volume will be updated when pages are added
+
+    # Page could also be modified based on annotations of the pages.
+    # We only show total counts per page, so might not be modified if the
+    # total number has not changed, but simplest just to get last modification
+    # date in case of changes.
+    # NOTE that this does not account for annotation deletions.
+
+    # if a user is logged in, page should also show as modified
+    # based on annotations
+    latest_note = None
+    if request.user.is_authenticated():
+        # get annotations for pages in this volume
+        notes = Annotation.objects.filter(uri__contains=vol.get_absolute_url())
+        # superusers can view all annotations;
+        # other users can only see their own
+        if not request.user.is_superuser:
+            notes = notes.filter(user__username=request.user.username)
+
+        try:
+            latest_note = notes.values_list('updated', flat=True).latest('updated')
+        except Annotation.DoesNotExist:
+            # no notes for this volume
+            pass
+
+    # if we have both solr timestamps and notes, convert solr timestamp
+    # to be timezone-aware for comparison; return the latest datetime
+    # FIXME:  assuming solr stores as UTC, confirm this
+    if results.count() and latest_note is not None:
+        solr_latest = timezone.make_aware(results[0]['timestamp'], timezone.utc)
+        return max(solr_latest, latest_note)
+
+    # if both are not set, return solr time if present
     if results.count():
         return results[0]['timestamp']
+
+    # if nothing has been returned, return latest note, (could be None)
+    return latest_note
+
 
 def page_modified(request, vol_pid, pid):
     'last modification time for a single page'

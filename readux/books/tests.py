@@ -24,6 +24,8 @@ from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
 from readux.books import sitemaps, view_helpers
+from readux.utils import absolutize_url
+
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -89,6 +91,60 @@ class SolrVolumeTest(TestCase):
         pdf_url = vol.pdf_url()
         self.assert_(pdf_url.startswith(unquote(reverse('books:pdf', kwargs={'pid': vol.pid}))))
         self.assert_('#page=6' in pdf_url)
+
+class VolumeTest(TestCase):
+    # borrowing fixture & test accounts from readux.annotations.tests
+    fixtures = ['test_annotation_data.json']
+    user_credentials = {
+        'user': {'username': 'testuser', 'password': 'testing'},
+        'superuser': {'username': 'testsuper', 'password': 'superme'}
+    }
+
+    def test_annotations(self):
+        # find annotations associated with a volume, optionally filtered
+        # by user
+
+        User = get_user_model()
+        testuser = User.objects.create(username='tester')
+        testadmin = User.objects.create(username='super', is_superuser=True)
+
+        mockapi = Mock()
+        vol = Volume(mockapi, 'vol:1')
+
+        # create annotations to test finding
+        p1 = Annotation.objects.create(user=testuser, text='testuser p1',
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:1'}))
+        p2 = Annotation.objects.create(user=testuser, text='testuser p2',
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:2'}))
+        p3 = Annotation.objects.create(user=testuser, text='testuser p3',
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:3'}))
+        v2p1 = Annotation.objects.create(user=testuser, text='testuser vol2 p1',
+            uri=reverse('books:page', kwargs={'vol_pid': 'vol:2', 'pid': 'p:1'}))
+        sup2 = Annotation.objects.create(user=testadmin, text='testsuper p2',
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:2'}))
+        annotations = vol.annotations()
+        self.assertEqual(4, annotations.count())
+        self.assert_(v2p1 not in annotations)
+
+        # filter by user
+        annotations = vol.annotations(testuser)
+        self.assertEqual(3, annotations.count())
+        self.assert_(sup2 not in annotations)
+
+        annotations = vol.annotations(testadmin)
+        self.assertEqual(4, annotations.count())
+        self.assert_(sup2 in annotations)
+
+        # annotation counts per page
+        annotation_count = vol.annotation_count()
+        self.assertEqual(1, annotation_count[p1.uri])
+        self.assertEqual(2, annotation_count[p2.uri])
+        self.assertEqual(1, annotation_count[p3.uri])
+        # by user
+        annotation_count = vol.annotation_count(testuser)
+        self.assertEqual(1, annotation_count[p2.uri])
+        annotation_count = vol.annotation_count(testadmin)
+        self.assertEqual(2, annotation_count[p2.uri])
 
 
 class VolumeV1_0Test(TestCase):
@@ -698,7 +754,7 @@ class BookViewsTest(TestCase):
         mockrepo.return_value.get_object.return_value = mockvol
 
         vol_page_url = reverse('books:pages', kwargs={'pid': mockvol.pid})
-        response = self.client.get(vol_page_url, {'keyword': 'determine'})
+        response = self.client.get(vol_page_url)
         # volume method should be used to find pages
         mockvol.find_solr_pages.assert_called()
         # volume should be set in context
@@ -709,41 +765,23 @@ class BookViewsTest(TestCase):
         # log in as a regular user
         self.client.login(**self.user_credentials['user'])
         testuser = get_user_model().objects.get(username=self.user_credentials['user']['username'])
-        testadmin = get_user_model().objects.get(username=self.user_credentials['superuser']['username'])
-        # add annotations for pages in this volume
-        page1_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:1'})
-        note_opts = {
-            'user': testuser,
-            'extra_data': json.dumps({})
-        }
-        # testuser notes
-        ap1a = Annotation(uri=page1_url, text='test', **note_opts)
-        ap1b = Annotation(uri=page1_url, text='second note on the same page',
-            **note_opts)
-        page2_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:2'})
-        ap2a = Annotation(uri=page2_url, text='testing more', **note_opts)
-        ap1a.save(), ap1b.save(), ap2a.save()
-        # admin user notes
-        ap1a_su = Annotation(uri=page1_url, text='test', user=testadmin,
-            extra_data=json.dumps({}))
-        page3_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:3'})
-        ap3a_su = Annotation(uri=page3_url, text='third page', user=testadmin,
-            extra_data=json.dumps({}))
-        ap1a_su.save(), ap3a_su.save()
-        response = self.client.get(vol_page_url)
-        # collated count for testuser's notes only
-        annotated_pages = response.context['annotated_pages']
-        self.assertEqual(2, annotated_pages[page1_url])
-        self.assertEqual(1, annotated_pages[page2_url])
 
-        # login as superuser
-        self.client.login(**self.user_credentials['superuser'])
+        page1_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:1'})
+        page2_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:2'})
+        page3_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:3'})
+        mockvol.annotation_count.return_value = {
+          absolutize_url(page1_url): 5,
+          absolutize_url(page2_url): 2,
+          page3_url: 13
+        }
         response = self.client.get(vol_page_url)
-        # collated count for all user notes
+        mockvol.annotation_count.assert_called_with(testuser)
         annotated_pages = response.context['annotated_pages']
-        self.assertEqual(3, annotated_pages[page1_url])
-        self.assertEqual(1, annotated_pages[page2_url])
-        self.assertEqual(1, annotated_pages[page3_url])
+        # counts should be preserved; urls should be non-absolute
+        # whether they started that way or not
+        self.assertEqual(5, annotated_pages[page1_url])
+        self.assertEqual(2, annotated_pages[page2_url])
+        self.assertEqual(13, annotated_pages[page3_url])
 
     @patch('readux.books.views.Repository')
     @override_settings(DEBUG=True)  # required so local copy of not-found image will be used
@@ -1284,9 +1322,9 @@ class ViewHelpersTest(TestCase):
         mockrequest.user.username = 'tester'
         testuser = get_user_model()(username='tester')
         testuser.save()
-        anno = Annotation(user=testuser,
+        anno = Annotation.objects.create(user=testuser,
             uri=reverse('books:page', kwargs={'vol_pid': mockvol.pid,
                 'pid': 'page:3'}), extra_data=json.dumps({}))
-        anno.save()
+        mockvol.annotations.return_value = Annotation.objects.filter(uri__contains=mockvol.get_absolute_url())
         lastmod = view_helpers.volume_pages_modified(mockrequest, 'vol:1')
         self.assertEqual(anno.updated, lastmod)

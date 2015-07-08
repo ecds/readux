@@ -206,25 +206,14 @@ def volume_pages(request, pid):
 
     # if user is authenticated, check for annotations on this volume
     if request.user.is_authenticated():
-        # TODO: move this to a method on volume, share with last modified method
-        notes = Annotation.objects.filter(uri__contains=vol.get_absolute_url())
-        # get annotations for pages in this volume, with totals by page
-
-        # superusers can view all annotations;
-        # other users can only see their own
-        if not request.user.is_superuser:
-            notes = notes.filter(user__username=request.user.username)
-
-        notes = notes.values('uri').distinct() \
-                    .annotate(count=Count('uri')).values('uri', 'count')
-
-        # queryset returns a list of dict; convert to a dict
-        # and strip out base site url for easy lookup
+        notes = vol.annotation_count(request.user)
+        # method returns a dict for easy lookup;
+        # strip out base site url for easy lookup in the template
         domain = get_current_site(request).domain
         if not domain.startswith('http'):
             domain = 'http://' + domain
-        annotated_pages = dict([(a['uri'].replace(domain, ''), a['count'])
-                               for a in notes])
+        annotated_pages = dict([(k.replace(domain, ''), v)
+                               for k, v in notes.iteritems()])
     else:
         annotated_pages = {}
 

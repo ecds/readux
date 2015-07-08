@@ -1,7 +1,7 @@
 from UserDict import UserDict
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.db.models import permalink
+from django.db.models import permalink, Count
 from django.template.defaultfilters import truncatechars
 from lxml import etree
 import json
@@ -20,6 +20,7 @@ from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
 
+from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
@@ -789,6 +790,31 @@ class Volume(DigitalObject, BaseVolume):
         # exposing as a property here for consistency with SolrVolume result
         return self.dc.content.language
 
+    def annotations(self, user=None):
+        '''Find annotations for any page in this volume, optionally
+        filtered by user.'''
+        notes = Annotation.objects.filter(uri__contains=self.get_absolute_url())
+
+        # if user is specified and not a superuser,
+        # restrict to annotations by that user
+        if user is not None and not user.is_superuser:
+            # superusers can view all annotations;
+            # other users can only see their own
+            notes = notes.filter(user__username=user.username)
+        return notes
+
+    def annotation_count(self, user=None):
+        '''Generate a dictionary with a count of annotations for each
+        unique uri.'''
+        # aggregate anotations by unique uri and return a count
+        # of the number of annotations for each uri
+        notes = self.annotations(user=user) \
+                   .values('uri').distinct() \
+                   .annotate(count=Count('uri')) \
+                   .values('uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict for easy lookup
+        return dict([(n['uri'], n['count']) for n in notes])
 
 class VolumeV1_0(Volume):
     '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''

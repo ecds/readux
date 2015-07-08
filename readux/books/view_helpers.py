@@ -72,12 +72,7 @@ def volume_pages_modified(request, pid):
     latest_note = None
     if request.user.is_authenticated():
         # get annotations for pages in this volume
-        notes = Annotation.objects.filter(uri__contains=vol.get_absolute_url())
-        # superusers can view all annotations;
-        # other users can only see their own
-        if not request.user.is_superuser:
-            notes = notes.filter(user__username=request.user.username)
-
+        notes = vol.annotations(request.user)
         try:
             latest_note = notes.values_list('updated', flat=True).latest('updated')
         except Annotation.DoesNotExist:

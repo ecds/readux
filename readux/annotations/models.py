@@ -45,7 +45,7 @@ class Annotation(models.Model):
     #: any additional data included in the annotation not parsed into
     #: specific model fields; this includes ranges, permissions,
     #: annotation data, etc
-    extra_data = JSONField()
+    extra_data = JSONField(default=json.dumps({}))
     # example range from the documentation
     # "ranges": [
     #     {

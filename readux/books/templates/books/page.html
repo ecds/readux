@@ -42,7 +42,7 @@
 
 {% block metadata %}
     {{ block.super }}
-    {% url 'books:page-image' page.pid as image_url %}
+    {% url 'books:page-image' page.volume.pid page.pid as image_url %}
     <meta property="og:title" content="{{ page.display_label }}"/>
     <meta itemprop="og:headline" content="{{ page.display_label }}" />
     <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>

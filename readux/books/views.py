@@ -222,8 +222,7 @@ def volume_pages(request, pid):
         domain = get_current_site(request).domain
         if not domain.startswith('http'):
             domain = 'http://' + domain
-            domain_len = len(domain)
-        annotated_pages = dict([(a['uri'][domain_len:], a['count'])
+        annotated_pages = dict([(a['uri'].replace(domain, ''), a['count'])
                                for a in notes])
     else:
         annotated_pages = {}

@@ -1,12 +1,14 @@
 import os
 from datetime import datetime
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import filesizeformat
 from django.test import TestCase
 from django.test.utils import override_settings
+import json
 from mock import patch, Mock, MagicMock, NonCallableMock, NonCallableMagicMock
 import re
 import rdflib
@@ -17,6 +19,7 @@ from eulxml.xmlmap import load_xmlobject_from_file, XmlObject
 from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
+from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
@@ -303,6 +306,12 @@ class VolumeV1_0Test(TestCase):
 
 
 class BookViewsTest(TestCase):
+    # borrowing fixture & test accounts from readux.annotations.tests
+    fixtures = ['test_annotation_data.json']
+    user_credentials = {
+        'user': {'username': 'testuser', 'password': 'testing'},
+        'superuser': {'username': 'testsuper', 'password': 'superme'}
+    }
 
     @patch('readux.books.views.Repository')
     @patch('readux.books.views.raw_datastream')
@@ -674,6 +683,67 @@ class BookViewsTest(TestCase):
                 msg_prefix='search results should link to full page view')
             self.assertContains(response, '... %s ...' % page['solr_highlights']['page_text'][0],
                 msg_prefix='solr snippets should display when available')
+
+    @patch('readux.books.views.Repository')
+    @patch('readux.books.views.Paginator', spec=Paginator)
+    # @patch('readux.books.views.solr_interface')
+    # def test_volume_pages(self, mocksolr_interface, mockpaginator, mockrepo):
+    def test_volume_pages(self, mockpaginator, mockrepo):
+        mockvol = NonCallableMock(spec=Volume)
+        mockvol.pid = 'vol:1'
+        mockvol.title = 'Lecoq, the detective'
+        mockvol.date = ['1801']
+        # volume url needed to identify annotations for pages in this volume
+        mockvol.get_absolute_url.return_value = reverse('books:volume', kwargs={'pid': mockvol.pid})
+        mockrepo.return_value.get_object.return_value = mockvol
+
+        vol_page_url = reverse('books:pages', kwargs={'pid': mockvol.pid})
+        response = self.client.get(vol_page_url, {'keyword': 'determine'})
+        # volume method should be used to find pages
+        mockvol.find_solr_pages.assert_called()
+        # volume should be set in context
+        self.assert_(mockvol, response.context['vol'])
+        # annotated pages should be empty for anonymous user
+        self.assertEqual({}, response.context['annotated_pages'])
+
+        # log in as a regular user
+        self.client.login(**self.user_credentials['user'])
+        testuser = get_user_model().objects.get(username=self.user_credentials['user']['username'])
+        testadmin = get_user_model().objects.get(username=self.user_credentials['superuser']['username'])
+        # add annotations for pages in this volume
+        page1_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:1'})
+        note_opts = {
+            'user': testuser,
+            'extra_data': json.dumps({})
+        }
+        # testuser notes
+        ap1a = Annotation(uri=page1_url, text='test', **note_opts)
+        ap1b = Annotation(uri=page1_url, text='second note on the same page',
+            **note_opts)
+        page2_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:2'})
+        ap2a = Annotation(uri=page2_url, text='testing more', **note_opts)
+        ap1a.save(), ap1b.save(), ap2a.save()
+        # admin user notes
+        ap1a_su = Annotation(uri=page1_url, text='test', user=testadmin,
+            extra_data=json.dumps({}))
+        page3_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:3'})
+        ap3a_su = Annotation(uri=page3_url, text='third page', user=testadmin,
+            extra_data=json.dumps({}))
+        ap1a_su.save(), ap3a_su.save()
+        response = self.client.get(vol_page_url)
+        # collated count for testuser's notes only
+        annotated_pages = response.context['annotated_pages']
+        self.assertEqual(2, annotated_pages[page1_url])
+        self.assertEqual(1, annotated_pages[page2_url])
+
+        # login as superuser
+        self.client.login(**self.user_credentials['superuser'])
+        response = self.client.get(vol_page_url)
+        # collated count for all user notes
+        annotated_pages = response.context['annotated_pages']
+        self.assertEqual(3, annotated_pages[page1_url])
+        self.assertEqual(1, annotated_pages[page2_url])
+        self.assertEqual(1, annotated_pages[page3_url])
 
     @patch('readux.books.views.Repository')
     @override_settings(DEBUG=True)  # required so local copy of not-found image will be used

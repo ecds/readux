@@ -2,7 +2,6 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.contrib.sites.shortcuts import get_current_site
-from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
     HttpResponsePermanentRedirect
 from django.shortcuts import render
@@ -16,7 +15,6 @@ import logging
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.annotations.models import Annotation
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
@@ -115,6 +113,17 @@ def search(request, mode='list'):
             'collection': facet_fields.get('collection_label_facet', []),
         }
 
+
+        annotated_volumes = {}
+        if paginator.count and request.user.is_authenticated:
+            notes = Volume.volume_annotation_count()
+            domain = get_current_site(request).domain
+            if not domain.startswith('http'):
+                domain = 'http://' + domain
+            annotated_volumes = dict([(k.replace(domain, ''), v)
+                               for k, v in notes.iteritems()])
+
+
         context.update({
             'items': results,
             'url_params': urlencode(url_params),
@@ -125,6 +134,7 @@ def search(request, mode='list'):
             'sort': sort,
             'sort_options': sort_options,
             'sort_url_params': urlencode(sort_url_params),
+            'annotated_volumes': annotated_volumes
         })
 
     return render(request, 'books/search.html', context)
@@ -144,7 +154,9 @@ def volume(request, pid):
         raise Http404
 
     form = BookSearch(request.GET)
-    context = {'vol': vol, 'form': form}
+    context = {'vol': vol, 'form': form,
+
+    }
     template = 'books/volume.html'
 
     # if form is valid, then search within the book and display matching pages
@@ -190,6 +202,13 @@ def volume(request, pid):
             'url_params': urlencode(url_params),
         })
 
+    else:
+        # if not searching the volume, get annotation count for display
+        # using same dictionary lookup form as for browse/search volume
+        context['annotated_volumes'] = {
+           vol.get_absolute_url(): vol.annotation_count(request.user)
+        }
+
     return render(request, template, context)
 
 
@@ -206,7 +225,7 @@ def volume_pages(request, pid):
 
     # if user is authenticated, check for annotations on this volume
     if request.user.is_authenticated():
-        notes = vol.annotation_count(request.user)
+        notes = vol.page_annotation_count(request.user)
         # method returns a dict for easy lookup;
         # strip out base site url for easy lookup in the template
         domain = get_current_site(request).domain

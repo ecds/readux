@@ -57,13 +57,8 @@
                     {% url 'books:page' vol.pid page.pid as page_url %}
                     <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' vol.pid page.pid %}')" href="{{ page_url }}" title="Page {{ page.page_order }}">
                         <p class="page-number">p. {{page.page_order}}</p>
-                        {% if page_url in annotated_pages %}
-                        {% with note_count=annotated_pages|dict_item:page_url %}
-                        <p class="comment-count" title="{{ note_count }} annotation{{ note_count|pluralize }}">
-                            {{ note_count }}
-                        </p>
-                        {% endwith %}
-                        {% endif %}
+                        {# page annotation count #}
+                        {% include 'books/snippets/comment_count.html' with item_url=page_url annotation_count=annotated_pages %}
                     </a>
                 </li>
                 {% endfor %}

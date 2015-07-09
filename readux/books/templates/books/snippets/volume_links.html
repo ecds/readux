@@ -1,10 +1,12 @@
 {# buttons for view pdf and send to voyant #}
 
+<div class="volume-links">
 {% if vol.has_pages %}
-<!--<a class="btn btn-primary{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:page' vol.pid vol.primary_image.pid %}">
+{% comment %}
+<a class="btn btn-primary{% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:page' vol.pid vol.primary_image.pid %}">
     <span class="glyphicon glyphicon-book"></span>
     <span>Read online</span>
-</a>-->
+</a>{% endcomment %}
 
 <a class="btn btn-success {% if small_buttons %} btn-xs{% endif %}" href="{% url 'books:pages' vol.pid %}">
     <span class="glyphicon glyphicon-book"></span>
@@ -40,6 +42,9 @@
         <span>Send to Voyant</span>
 </a>
 
+{% url 'books:volume' vol.pid as volume_url %}{# annotation count for each volume #}
+{% include 'books/snippets/comment_count.html' with item_url=volume_url annotation_count=annotated_volumes %}
+
 {% if vol.large_pdf %}
 <p class="small text-warning">Some browsers will not be able to show large
     PDF files; in any browser large files might take a few minutes to load.
@@ -48,3 +53,4 @@
 
 {# unapi id for zotero harvest #}
 <abbr class="unapi-id" title="{{ vol.pid }}"></abbr>
+</div>

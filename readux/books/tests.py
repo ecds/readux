@@ -113,15 +113,20 @@ class VolumeTest(TestCase):
 
         # create annotations to test finding
         p1 = Annotation.objects.create(user=testuser, text='testuser p1',
-            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:1'}))
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:1'}),
+            volume_uri=vol.absolute_url)
         p2 = Annotation.objects.create(user=testuser, text='testuser p2',
-            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:2'}))
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:2'}),
+            volume_uri=vol.absolute_url)
         p3 = Annotation.objects.create(user=testuser, text='testuser p3',
-            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:3'}))
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:3'}),
+            volume_uri=vol.absolute_url)
         v2p1 = Annotation.objects.create(user=testuser, text='testuser vol2 p1',
-            uri=reverse('books:page', kwargs={'vol_pid': 'vol:2', 'pid': 'p:1'}))
+            uri=reverse('books:page', kwargs={'vol_pid': 'vol:2', 'pid': 'p:1'}),
+            volume_uri='http://example.com/books/vol:2/')
         sup2 = Annotation.objects.create(user=testadmin, text='testsuper p2',
-            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:2'}))
+            uri=reverse('books:page', kwargs={'vol_pid': vol.pid, 'pid': 'p:2'}),
+            volume_uri=vol.absolute_url)
         annotations = vol.annotations()
         self.assertEqual(4, annotations.count())
         self.assert_(v2p1 not in annotations)
@@ -136,15 +141,28 @@ class VolumeTest(TestCase):
         self.assert_(sup2 in annotations)
 
         # annotation counts per page
-        annotation_count = vol.annotation_count()
+        annotation_count = vol.page_annotation_count()
         self.assertEqual(1, annotation_count[p1.uri])
         self.assertEqual(2, annotation_count[p2.uri])
         self.assertEqual(1, annotation_count[p3.uri])
         # by user
-        annotation_count = vol.annotation_count(testuser)
+        annotation_count = vol.page_annotation_count(testuser)
         self.assertEqual(1, annotation_count[p2.uri])
-        annotation_count = vol.annotation_count(testadmin)
+        annotation_count = vol.page_annotation_count(testadmin)
         self.assertEqual(2, annotation_count[p2.uri])
+
+        # total for a volume
+        self.assertEqual(4, vol.annotation_count())
+        self.assertEqual(3, vol.annotation_count(testuser))
+        self.assertEqual(4, vol.annotation_count(testadmin))
+
+        # total for all volumes
+        totals = Volume.volume_annotation_count()
+        print totals
+        self.assertEqual(1, totals['http://example.com/books/vol:2/'])
+        self.assertEqual(4, totals[vol.absolute_url])
+        totals = Volume.volume_annotation_count(testuser)
+        self.assertEqual(3, totals[vol.absolute_url])
 
 
 class VolumeV1_0Test(TestCase):
@@ -769,13 +787,13 @@ class BookViewsTest(TestCase):
         page1_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:1'})
         page2_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:2'})
         page3_url = reverse('books:page', kwargs={'vol_pid': mockvol.pid, 'pid': 'page:3'})
-        mockvol.annotation_count.return_value = {
+        mockvol.page_annotation_count.return_value = {
           absolutize_url(page1_url): 5,
           absolutize_url(page2_url): 2,
           page3_url: 13
         }
         response = self.client.get(vol_page_url)
-        mockvol.annotation_count.assert_called_with(testuser)
+        mockvol.page_annotation_count.assert_called_with(testuser)
         annotated_pages = response.context['annotated_pages']
         # counts should be preserved; urls should be non-absolute
         # whether they started that way or not

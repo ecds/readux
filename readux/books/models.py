@@ -267,8 +267,7 @@ class Page(Image):
     def absolute_url(self):
         '''Generate an absolute url to the page view, for external services
         or for referencing in annotations.'''
-        return absolutize_url(reverse(self.NEW_OBJECT_VIEW,
-            kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
+        return absolutize_url(self.get_absolute_url())
 
     @property
     def display_label(self):
@@ -555,6 +554,12 @@ class Volume(DigitalObject, BaseVolume):
         'Absolute url to view this object within the site'
         return ('books:volume', [str(self.pid)])
 
+    @property
+    def absolute_url(self):
+        '''Generate an absolute url to the page view, for external services
+        or for referencing in annotations.'''
+        return absolutize_url(self.get_absolute_url())
+
     # def get_pdf_url(self):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
@@ -793,7 +798,8 @@ class Volume(DigitalObject, BaseVolume):
     def annotations(self, user=None):
         '''Find annotations for any page in this volume, optionally
         filtered by user.'''
-        notes = Annotation.objects.filter(uri__contains=self.get_absolute_url())
+        # NOTE: should match on full url *with* domain name
+        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
 
         # if user is specified, show only notes that user can view
         if user is not None:
@@ -801,9 +807,9 @@ class Volume(DigitalObject, BaseVolume):
 
         return notes
 
-    def annotation_count(self, user=None):
+    def page_annotation_count(self, user=None):
         '''Generate a dictionary with a count of annotations for each
-        unique uri.'''
+        unique page uri within the current volume.'''
         # aggregate anotations by unique uri and return a count
         # of the number of annotations for each uri
         notes = self.annotations(user=user) \
@@ -813,6 +819,28 @@ class Volume(DigitalObject, BaseVolume):
 
         # queryset returns a list of dict; convert to a dict for easy lookup
         return dict([(n['uri'], n['count']) for n in notes])
+
+    def annotation_count(self, user=None):
+        '''Total number of annotations for this volume, filtered by user
+        if specified.'''
+        return self.annotations(user=user).count()
+
+    @classmethod
+    def volume_annotation_count(cls, user=None):
+        '''Generate a dictionary with a count of annotations for each
+        unique volume uri.'''
+        # aggregate anotations by unique uri and return a count
+        # of the number of annotations for each uri
+        notes = Annotation.objects.all()
+        if user is not None:
+            notes = notes.visible_to(user)
+
+        notes = notes.values('volume_uri').distinct() \
+                     .annotate(count=Count('volume_uri')) \
+                     .values('volume_uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict for easy lookup
+        return dict([(n['volume_uri'], n['count']) for n in notes])
 
 class VolumeV1_0(Volume):
     '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''

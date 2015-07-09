@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404
 from django.views.decorators.http import last_modified
 from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
 from eulfedora.server import Repository
 
 from readux.utils import solr_interface
@@ -49,6 +50,7 @@ def browse(request, mode='covers'):
     collections = [(r, collection_counts.get(r['pid'])) for r in results
                   if r['pid'] in collection_counts]
 
+
     # generate a random list of 4 covers for use in twitter gallery card
     # - restrict to collections with cover images
     covers = [coll.cover for coll, count in collections if coll.cover]
@@ -77,6 +79,13 @@ def view(request, pid, mode='list'):
 
     # sort: currently supports title or date added
     sort = request.GET.get('sort', None)
+
+    notes = Volume.volume_annotation_count()
+    domain = get_current_site(request).domain
+    if not domain.startswith('http'):
+        domain = 'http://' + domain
+    annotated_volumes = dict([(k.replace(domain, ''), v)
+                               for k, v in notes.iteritems()])
 
     # search for all books that are in this collection
     solr = solr_interface()
@@ -121,4 +130,5 @@ def view(request, pid, mode='list'):
          'url_params': urlencode(url_params),
          'sort_url_params': urlencode(sort_url_params),
          'current_url_params': urlencode(request.GET.copy()),
-         'sort': sort, 'sort_options': sort_options})
+         'sort': sort, 'sort_options': sort_options,
+         'annotated_volumes': annotated_volumes})

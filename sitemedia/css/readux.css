@@ -582,11 +582,10 @@ p.page-number {
     border-bottom: 1px solid #B1B1B1;
 }
 
+
 .comment-count {
-    display: block;
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    display: inline-block;
+    position: relative;
     min-width:25px;
     height:20px;
     margin:5px 5px 20px;
@@ -599,6 +598,7 @@ p.page-number {
     border-radius: 3px;
 }
 
+
 /* CSS triangle to indicate comment */
 .comment-count:before {
   content:"";
@@ -607,6 +607,18 @@ p.page-number {
   right:2px;
   border:8px solid transparent;
   border-top-color: rgb(49, 197, 40);
+}
+
+/* comment placement on cover/page images */
+.cover .comment-count {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.volume-links .comment-count {
+    vertical-align: middle;
 }
 
 .collection-list .media-info p{

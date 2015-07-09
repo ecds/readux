@@ -58,6 +58,10 @@ class Annotation(models.Model):
     # Make user optional for now
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
+    #: Readux-specific field: URI for the volume that an annotation
+    #: is associated (i.e., volume a page is part of)
+    volume_uri = models.URLField(blank=True)
+
     # tags still todo
     # "tags": [ "review", "error" ],             # list of tags (from Tags plugin)
 
@@ -89,7 +93,10 @@ class Annotation(models.Model):
 
     #: fields in the db model that are provided by annotation json
     #: when creating or updating an annotation
-    common_fields = ['text', 'quote', 'uri', 'user']
+    common_fields = ['text', 'quote', 'uri', 'user', 'volume_uri']
+    # NOTE: volume_uri is not strictly a 'common' field, since it would
+    # just be extra data to any other annotator backend, but we
+    # need it stored for searching and querying.
 
     objects = AnnotationManager()
 

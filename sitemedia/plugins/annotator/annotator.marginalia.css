@@ -159,6 +159,10 @@ li.empty-item:first-child:last-child:after {
   cursor:initial;
 }
 
+.annotator-tags {
+  padding: 5px;
+}
+
 /*
 ******************
 * Show/Hide Styles

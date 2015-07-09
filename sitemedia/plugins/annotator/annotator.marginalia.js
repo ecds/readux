@@ -10,8 +10,7 @@ function annotatorMarginalia(options) {
   // Defaults to statard formatting.
   if(options.viewer && typeof options.viewer === 'function'){
     options.viewer = options.viewer;
-  }
-  else{
+  } else {
     options.viewer = function(annotation){
       if (annotation.text) {
         return annotator.util.escapeHtml(annotation.text);
@@ -120,6 +119,18 @@ function annotatorMarginalia(options) {
               class:marginalia_item_class,
               'data-annotation-id': annotation.id
             }).append(controls).append(text);
+
+            // display tags if set; based on annotator.ui.tags.viewerExtension
+            if (annotation.tags && $.isArray(annotation.tags) &&
+                                      annotation.tags.length) {
+                var tags = $('<div/>').addClass('annotator-tags').html(function () {
+                  return $.map(annotation.tags, function (tag) {
+                    return '<span class="annotator-tag">' +
+                           annotator.util.escapeHtml(tag) + '</span>';
+                    }).join(' ');
+                });
+              $marginalia_item.append(tags);
+            }
 
         $marginalia_item.on('click.marginalia','.btn-edit',function(event){
           event.preventDefault();

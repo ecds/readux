@@ -34,11 +34,12 @@
       var app = new annotator.App()
           .include(annotator.ui.main, {
               element: document.querySelector('.content .inner'),
+              {% comment %}/*  {# not using default viewer, so these don't matter #}
               viewerExtensions: [
-                  // annotator.ui.markdown.viewerExtension,
                   annotatormeltdown.viewerExtension,
-                  // annotator.ui.tags.viewerExtension
+                  annotator.ui.tags.viewerExtension
               ],
+              */{% endcomment %}
               editorExtensions: [
                   annotatormeltdown.getEditorExtension({min_width: '500px'}),
                   suppress_permissions.editorExtension,

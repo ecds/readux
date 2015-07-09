@@ -24,6 +24,7 @@ from readux.utils import solr_interface
 logger = logging.getLogger(__name__)
 
 
+@vary_on_cookie
 @last_modified(view_helpers.volumes_modified)
 def search(request, mode='list'):
 
@@ -113,16 +114,14 @@ def search(request, mode='list'):
             'collection': facet_fields.get('collection_label_facet', []),
         }
 
-
         annotated_volumes = {}
-        if paginator.count and request.user.is_authenticated:
-            notes = Volume.volume_annotation_count()
+        if paginator.count and request.user.is_authenticated():
+            notes = Volume.volume_annotation_count(request.user)
             domain = get_current_site(request).domain
             if not domain.startswith('http'):
                 domain = 'http://' + domain
             annotated_volumes = dict([(k.replace(domain, ''), v)
                                for k, v in notes.iteritems()])
-
 
         context.update({
             'items': results,
@@ -140,6 +139,7 @@ def search(request, mode='list'):
     return render(request, 'books/search.html', context)
 
 
+@vary_on_cookie
 @last_modified(view_helpers.volume_modified)
 def volume(request, pid):
     ''' Landing page for a single :class:`~readux.books.models.Volume`.
@@ -147,16 +147,13 @@ def volume(request, pid):
     If keyword search terms are specified, searches within the book and
     finds matching pages.
     '''
-
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
-    if not vol.exists or not vol.has_requisite_content_models:
+    if not vol.exists or not vol.is_a_volume:
         raise Http404
 
     form = BookSearch(request.GET)
-    context = {'vol': vol, 'form': form,
-
-    }
+    context = {'vol': vol, 'form': form}
     template = 'books/volume.html'
 
     # if form is valid, then search within the book and display matching pages

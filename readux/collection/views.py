@@ -2,10 +2,12 @@ from random import shuffle
 from urllib import urlencode
 
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import Http404
-from django.views.decorators.http import last_modified
-from django.shortcuts import render
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import Http404
+from django.shortcuts import render
+from django.views.decorators.http import last_modified
+from django.views.decorators.vary import vary_on_cookie
+
 from eulfedora.server import Repository
 
 from readux.utils import solr_interface
@@ -61,7 +63,7 @@ def browse(request, mode='covers'):
         {'collections': collections, 'mode': mode,
          'meta_covers': covers[:4]})
 
-
+@vary_on_cookie
 @last_modified(view_helpers.collection_modified)
 def view(request, pid, mode='list'):
     '''View a single collection, with a paginated list of the volumes
@@ -80,12 +82,15 @@ def view(request, pid, mode='list'):
     # sort: currently supports title or date added
     sort = request.GET.get('sort', None)
 
-    notes = Volume.volume_annotation_count()
-    domain = get_current_site(request).domain
-    if not domain.startswith('http'):
-        domain = 'http://' + domain
-    annotated_volumes = dict([(k.replace(domain, ''), v)
-                               for k, v in notes.iteritems()])
+    if request.user.is_authenticated():
+        notes = Volume.volume_annotation_count(request.user)
+        domain = get_current_site(request).domain
+        if not domain.startswith('http'):
+            domain = 'http://' + domain
+        annotated_volumes = dict([(k.replace(domain, ''), v)
+             for k, v in notes.iteritems()])
+    else:
+        annotated_volumes = {}
 
     # search for all books that are in this collection
     solr = solr_interface()

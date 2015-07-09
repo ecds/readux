@@ -112,6 +112,13 @@ class AnnotationTestCase(TestCase):
         self.assertEqual(3, Annotation.objects.visible_to(testuser).count())
         self.assertEqual(4, Annotation.objects.visible_to(testadmin).count())
 
+    def test_last_created_time(self):
+
+        self.assertEqual(None, Annotation.objects.all().last_created_time())
+
+    def last_updated_time(self):
+        self.assertEqual(None, Annotation.objects.all().last_updated_time())
+
 
 @override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',))
 class AnnotationViewsTest(TestCase):

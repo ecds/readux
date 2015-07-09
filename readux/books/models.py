@@ -333,6 +333,14 @@ class Page(Image):
            'page_number': str(self.page_order)
         }
 
+    def annotations(self, user=None):
+        '''Find annotations for this page , optionally
+        filtered by user.'''
+        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
+        # if user is specified, show only notes that user can view
+        if user is not None:
+            return notes.visible_to(user)
+        return notes
 
 
 class PageV1_0(Page):

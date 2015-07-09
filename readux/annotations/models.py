@@ -10,7 +10,7 @@ from jsonfield import JSONField
 class AnnotationQuerySet(models.QuerySet):
 
     def visible_to(self, user):
-        '''Restrict to anntotations the current user is allowed to access.
+        '''Restrict to annotations the current user is allowed to access.
         Currently, superusers can view all annotations; all other users
         can access only their own annotations.'''
         # currently, superusers can view all annotations;
@@ -18,6 +18,22 @@ class AnnotationQuerySet(models.QuerySet):
         if not user.is_superuser:
             return self.filter(user__username=user.username)
         return self.all()
+
+    def last_created_time(self):
+        '''Creation time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except Annotation.DoesNotExist:
+            pass
+
+    def last_updated_time(self):
+        '''Update time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except Annotation.DoesNotExist:
+            pass
 
 class AnnotationManager(models.Manager):
     def get_queryset(self):

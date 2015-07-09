@@ -158,7 +158,6 @@ class VolumeTest(TestCase):
 
         # total for all volumes
         totals = Volume.volume_annotation_count()
-        print totals
         self.assertEqual(1, totals['http://example.com/books/vol:2/'])
         self.assertEqual(4, totals[vol.absolute_url])
         totals = Volume.volume_annotation_count(testuser)
@@ -538,6 +537,19 @@ class BookViewsTest(TestCase):
         response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
         mocksolr.query.query.assert_any_call(collection_label='"%s"' % 'Yellowbacks')
 
+        ## annotation totals
+        # empty annotation total in context for anonymous user
+        self.assertEqual({}, response.context['annotated_volumes'])
+        # check that annotation total is retrieved for ONLY logged in users
+        with patch('readux.books.views.Volume') as mockvolclass:
+            response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
+            mockvolclass.volume_annotation_count.assert_not_called_with()
+
+            User = get_user_model()
+            testuser = User.objects.get(username=self.user_credentials['user']['username'])
+            self.client.login(**self.user_credentials['user'])
+            response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
+            mockvolclass.volume_annotation_count.assert_called_with(testuser)
 
     @patch('readux.books.views.TypeInferringRepository')
     def test_text(self, mockrepo):
@@ -623,6 +635,7 @@ class BookViewsTest(TestCase):
 
     @patch('readux.books.views.Repository')
     def test_volume(self, mockrepo):
+        print 'mockrepo = ', mockrepo
         mockobj = NonCallableMock()
         mockobj.pid = 'vol:1'
         mockobj.title = 'Lecoq, the detective'
@@ -637,9 +650,14 @@ class BookViewsTest(TestCase):
         mockobj.book.volume_set = [mockobj, NonCallableMock(pid='vol:2')]
         mockobj.pdf_size = 1024
         mockobj.has_pages = False
+        mockobj.is_a_volume = True
         mockrepo.return_value.get_object.return_value = mockobj
         # to support for last modified conditional
         mockobj.ocr.created = datetime.now()
+        # to test annotation count
+        mockobj.get_absolute_url.return_value = '/books/vol:1/'
+        mockobj.annotation_count.return_value = 5
+
         vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
         response = self.client.get(vol_url)
         self.assertContains(response, mockobj.title,
@@ -675,6 +693,10 @@ class BookViewsTest(TestCase):
         self.assertNotContains(response, '<form id="volume-search" ',
             msg_prefix='volume without pages loaded should not have volume search')
 
+        # annotation total passed to context
+        self.assertEqual({mockobj.get_absolute_url(): 5},
+            response.context['annotated_volumes'])
+
         # simulate volume with pages loaded
         mockobj.has_pages = True
         response = self.client.get(vol_url)
@@ -695,12 +717,13 @@ class BookViewsTest(TestCase):
             (expected, vol_url, got))
         # exists but isn't a volume - should also 404
         mockobj.exists = True
-        mockobj.has_requisite_content_models = False
+        mockobj.is_a_volume = False
         response = self.client.get(vol_url)
         expected, got = 404, response.status_code
         self.assertEqual(expected, got,
             'expected %s for %s when object is not a volume, got %s' % \
             (expected, vol_url, got))
+
 
     @patch('readux.books.views.Repository')
     @patch('readux.books.views.Paginator', spec=Paginator)
@@ -1345,4 +1368,4 @@ class ViewHelpersTest(TestCase):
                 'pid': 'page:3'}), extra_data=json.dumps({}))
         mockvol.annotations.return_value = Annotation.objects.filter(uri__contains=mockvol.get_absolute_url())
         lastmod = view_helpers.volume_pages_modified(mockrequest, 'vol:1')
-        self.assertEqual(anno.updated, lastmod)
+        self.assertEqual(anno.created, lastmod)

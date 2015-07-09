@@ -1,7 +1,7 @@
 from UserDict import UserDict
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.db.models import permalink
+from django.db.models import permalink, Count
 from django.template.defaultfilters import truncatechars
 from lxml import etree
 import json
@@ -20,6 +20,7 @@ from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
 
+from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
@@ -260,14 +261,13 @@ class Page(Image):
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [str(self.pid)])
+        return (self.NEW_OBJECT_VIEW, [self.volume.pid, str(self.pid)])
 
     @property
     def absolute_url(self):
         '''Generate an absolute url to the page view, for external services
         or for referencing in annotations.'''
-        return absolutize_url(reverse(self.NEW_OBJECT_VIEW, kwargs={'pid': self.pid}))
-
+        return absolutize_url(self.get_absolute_url())
 
     @property
     def display_label(self):
@@ -311,7 +311,8 @@ class Page(Image):
     def image_url(self):
         # preliminary image url, for use in tei facsimile
         # NOTE: eventually we may want to use some version of the ARK
-        return absolutize_url(reverse('books:page-image-fs', kwargs={'pid': self.pid}))
+        return absolutize_url(reverse('books:page-image-fs',
+            kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
 
     @property
     def tei_options(self):
@@ -332,6 +333,14 @@ class Page(Image):
            'page_number': str(self.page_order)
         }
 
+    def annotations(self, user=None):
+        '''Find annotations for this page , optionally
+        filtered by user.'''
+        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
+        # if user is specified, show only notes that user can view
+        if user is not None:
+            return notes.visible_to(user)
+        return notes
 
 
 class PageV1_0(Page):
@@ -553,6 +562,12 @@ class Volume(DigitalObject, BaseVolume):
         'Absolute url to view this object within the site'
         return ('books:volume', [str(self.pid)])
 
+    @property
+    def absolute_url(self):
+        '''Generate an absolute url to the page view, for external services
+        or for referencing in annotations.'''
+        return absolutize_url(self.get_absolute_url())
+
     # def get_pdf_url(self):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
@@ -756,14 +771,15 @@ class Volume(DigitalObject, BaseVolume):
         solr = solr_interface()
         # find all pages that belong to the same volume and sort by page order
         # - filtering separately should allow solr to cache filtered result sets more efficiently
-        solrquery = solr.query(isConstituentOf=self.uri) \
+        return solr.query(isConstituentOf=self.uri) \
                        .filter(content_model=Page.PAGE_CMODEL_PATTERN) \
                        .filter(state='A') \
-                       .sort_by('page_order')
+                       .sort_by('page_order') \
+                       .field_limit(['pid', 'page_order'])
         # only return fields we actually need (pid, page_order)
-        solrquery = solrquery.field_limit(['pid', 'page_order'])  # ??
+        # TODO: add volume id for generating urls ?
+        # solrquery = solrquery.field_limit(['pid', 'page_order', 'isConstituentOf'])  # ??
         # return so it can be filtered, paginated as needed
-        return solrquery
 
     @staticmethod
     def volumes_with_pages():
@@ -787,6 +803,52 @@ class Volume(DigitalObject, BaseVolume):
         # exposing as a property here for consistency with SolrVolume result
         return self.dc.content.language
 
+    def annotations(self, user=None):
+        '''Find annotations for any page in this volume, optionally
+        filtered by user.'''
+        # NOTE: should match on full url *with* domain name
+        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
+
+        # if user is specified, show only notes that user can view
+        if user is not None:
+            return notes.visible_to(user)
+
+        return notes
+
+    def page_annotation_count(self, user=None):
+        '''Generate a dictionary with a count of annotations for each
+        unique page uri within the current volume.'''
+        # aggregate anotations by unique uri and return a count
+        # of the number of annotations for each uri
+        notes = self.annotations(user=user) \
+                   .values('uri').distinct() \
+                   .annotate(count=Count('uri')) \
+                   .values('uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict for easy lookup
+        return dict([(n['uri'], n['count']) for n in notes])
+
+    def annotation_count(self, user=None):
+        '''Total number of annotations for this volume, filtered by user
+        if specified.'''
+        return self.annotations(user=user).count()
+
+    @classmethod
+    def volume_annotation_count(cls, user=None):
+        '''Generate a dictionary with a count of annotations for each
+        unique volume uri.'''
+        # aggregate anotations by unique uri and return a count
+        # of the number of annotations for each uri
+        notes = Annotation.objects.all()
+        if user is not None:
+            notes = notes.visible_to(user)
+
+        notes = notes.values('volume_uri').distinct() \
+                     .annotate(count=Count('volume_uri')) \
+                     .values('volume_uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict for easy lookup
+        return dict([(n['volume_uri'], n['count']) for n in notes])
 
 class VolumeV1_0(Volume):
     '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''

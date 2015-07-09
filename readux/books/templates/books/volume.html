@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 
 {% block metadata %}{{ block.super }}
-    {% url 'books:page-thumbnail' vol.primary_image as image_url %}
+    {% url 'books:page-thumbnail' vol.pid vol.primary_image as image_url %}
     <meta property="og:title" content="{{ vol.display_label }}"/>
     <meta itemprop="og:headline" content="{{ vol.display_label }}" />
     <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
@@ -29,8 +29,8 @@
         <div class="media">
             {% if vol.primary_image %}
                 <div class="pull-left">
-                    {% url 'books:page-thumbnail' vol.primary_image as cover_url %}
-                    {% if vol.has_pages %}<a href="{% url 'books:page' vol.primary_image.pid %}">{% endif %}
+                    {% url 'books:page-thumbnail' vol.pid vol.primary_image as cover_url %}
+                    {% if vol.has_pages %}<a href="{% url 'books:page' vol.pid vol.primary_image.pid %}">{% endif %}
                     <img class="thumbnail media-object" property="schema:image" src="{{ cover_url }}"/>
                     {% if vol.has_pages %}</a>{% endif %}
                     <a property="schema:thumbnailUrl" href="{{ cover_url }}" class="hidden"></a>

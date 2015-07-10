@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.db.models import permalink
 from django.template.defaultfilters import truncatechars
-from lxml.etree import XMLSyntaxError
+from lxml import etree
 import json
 import logging
 import os
@@ -18,6 +18,7 @@ from eulfedora.models import  Relation, ReverseRelation, \
     FileDatastream, XmlDatastream, DatastreamObject
 from eulfedora.rdfns import relsext
 from eulxml import xmlmap
+from eulxml.xmlmap import teimap
 
 from readux.books import abbyyocr
 from readux.fedora import DigitalObject
@@ -167,6 +168,65 @@ class Image(DigitalObject):
         return int(self.image_metadata['height'])
 
 
+class TeiZone(teimap.Tei):
+    'XmlObject for a zone in a TEI facsimile document'
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    #: type attribute
+    type = xmlmap.StringField('@type')
+    #: upper left x coord
+    ulx = xmlmap.IntegerField('@ulx')
+    #: upper left y coord
+    uly = xmlmap.IntegerField('@uly')
+    #: lower right x coord
+    lrx = xmlmap.IntegerField('@lrx')
+    #: lower right y coord
+    lry = xmlmap.IntegerField('@lry')
+    #: text content
+    text = xmlmap.StringField('tei:line|tei:w')
+    #: list of word zones contained in this zone (e.g., within a textLine zone)
+    word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
+    #: nearest preceding sibling word zone (e.g., previous word in this line), if any)
+    preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
+    #: nearest ancestor zone
+    parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
+    #: containing page
+    page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
+    # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
+
+    @property
+    def width(self):
+        return self.lrx - self.ulx
+
+    @property
+    def height(self):
+        return self.lry - self.uly
+
+    @property
+    def avg_height(self):
+        'Average height of word zones in the current zone (i.e. in a text line)'
+        if self.word_zones:
+            word_heights = [w.height for w in self.word_zones]
+            return sum(word_heights) / float(len(word_heights))
+
+class TeiFacsimile(teimap.Tei):
+    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
+                                           'books', 'schema', 'TEIPageView.xsd')
+
+    xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
+    # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
+    # referenced files in the same directory
+    page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
+    # NOTE: tei facsimile could include illustrations, but ignoring those for now
+    lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)
+    word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
+
+
 class Page(Image):
     '''Page object with common functionality for all versions of
     ScannedPage content.'''
@@ -174,12 +234,28 @@ class Page(Image):
     #: pattern for retrieving page variants 1.0 or 1.1 from solr
     PAGE_CMODEL_PATTERN = 'info:fedora/emory-control:ScannedPage-1.?'
 
+    #: xml datastream for a tei facsimile version of this page
+    #: unversioned because generated from the mets or abbyy ocr
+    tei = XmlDatastream('tei', 'TEI Facsimile for page content', TeiFacsimile, defaults={
+        'control_group': 'M',
+        'versionable': False,
+    })
+
     page_order = Relation(REPOMGMT.pageOrder,
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
 
     volume = Relation(relsext.isConstituentOf, type=DigitalObject)
     'Volume this page is a part of, via `isConstituentOf` relation'
     # NOTE: can't set type as Volume here because it is not yet defined
+
+    #: path to xsl for generating TEI facsimile from mets/alto ocr or
+    #: abbyy ocr xml
+    ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux',
+        'books', 'ocr_to_teifacsimile.xsl')
+
+    # NOTE: it *should* be more efficient to load the xslt once, but it
+    # results in malloc errors when python exits, so skip it for now
+    # ocr_to_teifacsimile = xmlmap.load_xslt(filename=ocr_to_teifacsimile_xsl)
 
     @permalink
     def get_absolute_url(self):
@@ -224,6 +300,32 @@ class Page(Image):
                (self.has_model(PageV1_0.PAGE_CONTENT_MODEL) | \
                self.has_model(PageV1_1.PAGE_CONTENT_MODEL)))
 
+    @property
+    def image_url(self):
+        # preliminary image url, for use in tei facsimile
+        # NOTE: eventually we may want to use some version of the ARK
+        return absolutize_url(reverse('books:page-image-fs', kwargs={'pid': self.pid}))
+
+    @property
+    def tei_options(self):
+        'Parameters for use in XSLT when generating page-levl TEI facsimile'
+
+        # construct brief bibliographic information for use in sourceDesc/bibl
+        src_info = ''
+        # creator is a list, if we have any author information
+        if self.volume.creator:
+            src_info = ', '.join([c.rstrip('.') for c in self.volume.creator]) + '. '
+
+        src_info += '%s, %s.' % (self.volume.display_label, self.volume.date)
+        return {
+           'graphic_url': self.image_url,
+           'title': self.display_label,
+           'distributor': settings.TEI_DISTRIBUTOR,
+           'source_bibl': src_info,
+           'page_number': str(self.page_order)
+        }
+
+
 
 class PageV1_0(Page):
     '''Page subclass for emory-control:ScannedPage-1.0.'''
@@ -264,6 +366,24 @@ class PageV1_0(Page):
             else:
                 return self.text.content
 
+    def generate_tei(self, ocrpage):
+        '''Generate TEI facsimile for the current page'''
+        try:
+            result =  ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
+                return_type=unicode, **self.tei_options)
+            # returns _XSLTResultTree, which is not JSON serializable;
+            return xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
+
+        except etree.XMLSyntaxError:
+            logger.warn('OCR xml for %s is invalid', self.pid)
+
+    def update_tei(self, ocrpage):
+        # check that TEI is valid
+        tei = self.generate_tei(ocrpage)
+        if not tei.schema_valid():
+            raise Exception('TEI is not valid according to configured schema')
+        self.tei.content = tei
+
 
 class PageV1_1(Page):
     '''Page subclass for emory-control:ScannedPage-1.1.'''
@@ -295,6 +415,26 @@ class PageV1_1(Page):
         return '\n'.join((' '.join(s['content'] for s in line.find_all('string')))
                          for line in xmlsoup.find_all('textline'))
 
+    def generate_tei(self):
+        '''Generate TEI facsimile for the current page'''
+        try:
+            result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
+                return_type=unicode, **self.tei_options)
+            # returns _XSLTResultTree, which is not JSON serializable;
+            tei = xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
+            return tei
+
+        except etree.XMLSyntaxError:
+            logger.warn('OCR xml for %s is invalid', self.pid)
+
+    def update_tei(self):
+        # check to make sure generated TEI is valid
+        tei = self.generate_tei()
+        if not tei.schema_valid():
+            raise Exception('TEI is not valid according to configured schema')
+        # load as tei should maybe happen here instead of in generate
+        self.tei.content = tei
+
 
 class BaseVolume(object):
     '''Common functionality for :class:`Volume` and :class:`SolrVolume`'''
@@ -312,11 +452,12 @@ class BaseVolume(object):
     def volume(self):
         'volume label for this Book (e.g., v.1)'
         # LSDI Volume object label is ocm#_vol, e.g. ocn460678076_V.0
-        ocm, sep, vol = self.label.partition('_')
-        # if V.0, return no volume
-        if vol.lower() == 'v.0':
-            return ''
-        return vol
+        if self.label:
+            ocm, sep, vol = self.label.partition('_')
+            # if V.0, return no volume
+            if vol.lower() == 'v.0':
+                return ''
+            return vol
 
     @property
     def noid(self):
@@ -379,7 +520,8 @@ class Volume(DigitalObject, BaseVolume):
     #: :class:`Page` that is the primary image for this volume (e.g., cover image)
     primary_image = Relation(REPOMGMT.hasPrimaryImage, Page, repomgmt_ns)
     #: list of :class:`Page` for all the pages in this book, if available
-    pages = ReverseRelation(relsext.isConstituentOf, Page, multiple=True)
+    pages = ReverseRelation(relsext.isConstituentOf, Page, multiple=True,
+                            order_by=REPOMGMT.pageOrder)
 
     #: :class:`Book` this volume is associated with
     book = Relation(relsext.isConstituentOf, type=Book)
@@ -389,16 +531,15 @@ class Volume(DigitalObject, BaseVolume):
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
 
     @property
-    def has_requisite_content_models(self):
+    def is_a_volume(self):
         ''':type: bool
 
         True when the current object has the expected content models
         for one of the supported Volume variants.'''
-        # extending default implementation because volume object should include
-        # either volume 1.0 or volume 1.1
+        # NOTE: *not* extending has_requisite_content_models because
+        # volume subclasses still need access to the default implementation
         return self.has_model(VolumeV1_0.VOLUME_CONTENT_MODEL) | \
                self.has_model(VolumeV1_1.VOLUME_CONTENT_MODEL)
-
 
     @permalink
     def get_absolute_url(self):
@@ -617,6 +758,16 @@ class Volume(DigitalObject, BaseVolume):
         # return so it can be filtered, paginated as needed
         return solrquery
 
+    @staticmethod
+    def volumes_with_pages():
+        '''Search for Volumes with pages loaded and return a list of matching pids.'''
+        solr = solr_interface()
+        # searching on page count > 1 because volumes with cover only
+        # have page count of 1
+        q = solr.query(content_model=Volume.VOLUME_CMODEL_PATTERN,
+                       page_count__gt=1).field_limit('pid')
+        return [result['pid'] for result in q]
+
     @property
     def pdf_size(self):
         'size of the pdf, in bytes'
@@ -664,7 +815,7 @@ class VolumeV1_0(Volume):
                     # returns _XSLTResultTree, which is not JSON serializable;
                     # convert to unicode
                     return unicode(transform)
-                except XMLSyntaxError:
+                except etree.XMLSyntaxError:
                     logger.warn('OCR xml for %s is invalid', self.pid)
                     # use beautifulsoup as fallback, since it can handle invalid xml
                     # explicitly request generic ds object to avoid attempting to parse as xml
@@ -672,6 +823,7 @@ class VolumeV1_0(Volume):
                     xmlsoup = BeautifulSoup(ds.content)
                     # simple get text seems to generate reasonable text + whitespace
                     return xmlsoup.get_text()
+
 
 
 class VolumeV1_1(Volume):

@@ -1,4 +1,4 @@
-__version_info__ = (1, 1, 2, None)
+__version_info__ = (1, 2, 0, 'pre')
 
 
 # Dot-connect all but the last. Last is dash-connected if not None.
@@ -8,5 +8,17 @@ if __version_info__[-1] is not None:
 
 
 # context processor to add version to the template environment
-def version_context(request):
-    return {'SW_VERSION': __version__}
+def context_extras(request):
+    return {
+        # software version
+        'SW_VERSION': __version__,
+        # Alternate names for social-auth backends,
+        # to be used for display and font-awesome icon (lowercased)
+        # If not entered here, backend name will be used as-is for
+        # icon and title-cased for display (i.e., twitter / Twitter).
+        'backend_names': {
+            'github': 'GitHub',
+            'google-oauth2': 'Google',
+        }
+    }
+

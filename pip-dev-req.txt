@@ -1,6 +1,5 @@
 Sphinx
 coverage
-unittest2
 mock
 django-nose
 fabric

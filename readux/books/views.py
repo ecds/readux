@@ -6,14 +6,18 @@ from django.views.decorators.http import condition, require_http_methods, \
    last_modified
 from urllib import urlencode
 import os
+import logging
 
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream
 
-from readux.books.models import Volume, SolrVolume, Page
+from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
+
+
+logger = logging.getLogger(__name__)
 
 
 @last_modified(view_helpers.volumes_modified)
@@ -188,7 +192,7 @@ def volume_pages(request, pid):
     # paginated thumbnails for all pages in a book
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
-    if not vol.exists or not vol.has_requisite_content_models:
+    if not vol.exists or not vol.is_a_volume:
         raise Http404
     # search for page images in solr so we can easily sort by order
     pagequery = vol.find_solr_pages()
@@ -213,11 +217,17 @@ def volume_pages(request, pid):
         {'vol': vol, 'pages': results, 'form': form})
 
 
+#: size used for scaling single page image
+SINGLE_PAGE_SIZE = 1000
+
+
 @last_modified(view_helpers.page_modified)
 def view_page(request, pid):
-    repo = Repository()
-    page = repo.get_object(pid, type=Page)
-    if not page.exists or not page.has_requisite_content_models:
+    # NOTE: type inferring repository needed to load pages as correct type
+    # of Page (v1.0 or v1.1)
+    repo = TypeInferringRepository()
+    page = repo.get_object(pid)
+    if not page.exists or not isinstance(page, Page):
         raise Http404
 
     # use solr to find adjacent pages to this one
@@ -245,10 +255,38 @@ def view_page(request, pid):
     # form for searching in this book
     form = BookSearch()
 
+    # currently only pagev1_1 has tei
+    if hasattr(page, 'tei') and page.tei.exists:
+        # determine scale for positioning OCR text in TEI facsimile
+        # based on original image size in the OCR and image as displayed
+        # - find maximum of width/height
+        long_edge  = max(page.tei.content.page.width, page.tei.content.page.height)
+        # NOTE: using the size from image the OCR was run on, since that
+        # may or may not match the size of the master image loaded in
+        # fedora, but the aspect ration should be kept the same from
+        # original -> repository copy -> scaled copy used for display
+
+        # - determine scale to convert original size to display size
+        scale = float(SINGLE_PAGE_SIZE) / float(long_edge)
+        logger.debug('page size is %s, long edge is %s, scale is %f' % \
+            (SINGLE_PAGE_SIZE, long_edge, scale))
+    else:
+        scale = None
+
     return render(request, 'books/page.html',
         {'page': page, 'next': nxt, 'prev': prev, 'page_chunk':page_chunk,
-         'form': form})
+         'form': form, 'scale': scale})
 
+
+def page_tei(request, pid):
+    '''Display the page-level TEI facsimile, if available.  404 if this page
+    object does not have TEI facsimile.'''
+    extra_headers = {
+        # generate a default filename based on the object pid
+        'Content-Disposition': 'filename="%s_tei.xml"' % pid.replace(':', '-')
+    }
+    return raw_datastream(request, pid, Page.tei.id, type=Page,
+            repo=Repository(), headers=extra_headers)
 
 
 @condition(etag_func=view_helpers.pdf_etag, last_modified_func=view_helpers.pdf_lastmodified)
@@ -286,7 +324,7 @@ def ocr(request, pid):
     '''
     repo = Repository()
     # use generic raw datastream view from eulfedora
-    return raw_datastream(request, pid, Volume.ocr.id, type=Volume,
+    return raw_datastream(request, pid, VolumeV1_0.ocr.id, type=VolumeV1_0,
         repo=repo)
 
 
@@ -370,7 +408,7 @@ def _error_image_response(mode):
         else:
             base_path = settings.STATIC_ROOT
         with open(os.path.join(base_path, 'img', img)) as content:
-            return HttpResponseNotFound(content.read(), mimetype='image/png')
+            return HttpResponseNotFound(content.read(), content_type='image/png')
 
 @require_http_methods(['GET', 'HEAD'])
 @condition(etag_func=view_helpers.page_image_etag,
@@ -403,12 +441,12 @@ def page_image(request, pid, mode=None):
                     # to make it possible to catch the error and serve out
                     # an error image; page images at this size shouldn't
                     # be large enough to really need chunking
-                    content = page.get_region(scale=1000)
+                    content = page.get_region(scale=SINGLE_PAGE_SIZE)
                     # content = page.get_region_chunks(scale=1000)
                 elif mode == 'fullsize':
                     content = page.get_region_chunks(level='') # default (max) level
 
-            return HttpResponse(content, mimetype='image/jpeg')
+            return HttpResponse(content, content_type='image/jpeg')
             # NOTE: last-modified and etag headers are set on the response
             # by the django condition decorator methods
 

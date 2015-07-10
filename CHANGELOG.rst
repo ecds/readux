@@ -3,6 +3,26 @@
 CHANGELOG
 =========
 
+
+Release 1.2 - Fedora 3.8 migration support
+------------------------------------------
+
+* As a site user I will see a Site Down page when maintenance is being
+  performed on the site or or other circumstances that will cause the
+  site to be temporarily unavailable  so that I will have an general
+  idea of when I can use the site again.
+* As a site user I will see a banner that displays an informative
+  message on every page of the site so that I can be informed about
+  future site maintenance or other events and know an approximate amount
+  of any scheduled downtime.
+* As an application administrator, I want to generate a list of pids for
+  testing so that I can verify the application works with real data.
+* Any new Fedora objects will be created with Managed datastreams instead
+  of Inline for RELS-EXT and Dublin Core.
+* Upgraded to Django 1.7
+* Now using `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`
+  for LDAP login instead of eullocal.
+
 Release 1.1.2
 -------------
 

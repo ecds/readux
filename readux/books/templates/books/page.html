@@ -1,4 +1,5 @@
 {% extends 'site_base.html' %}
+{% load teifacsimile %}
 
 {% block page-subtitle %}{{ page.display_label }} | {% endblock %}
 
@@ -6,6 +7,7 @@
   {{ block.super }}
   <script type="text/javascript" src="{{ STATIC_URL }}js/openseadragon/openseadragon.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/deepzoom.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/page.js"></script>
   <script type="text/javascript" charset="utf-8">
      $(document).ready(function () {
         // set up seadragon configuration (not loaded unless triggered by user)
@@ -22,6 +24,28 @@
             fullPageButton: 'dz-fs',
         });
      });
+     {% if page.tei.exists %}
+     // adjust ocr word & letter spacing on load & resize, with a timeout
+     // to avoid adjusting too frequently as the browser is resized
+
+        var resizeTimer; // Set resizeTimer to empty so it resets on page load
+        function resizeFunction() {
+            // adjust font sizes based on container to use viewport height
+            $(".page img").relativeFontHeight({elements: $('.ocr-line')});
+            // adjust ocr text on window load or resize
+            $(".ocrtext").textwidth();
+        };
+
+        // On resize, run the function and reset the timeout with a 250ms delay
+        $(window).resize(function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resizeFunction, 250);
+        });
+
+       $(window).load(function() {  // wait until load completes, so widths will be calculated
+           resizeFunction();
+       });
+     {% endif %}
   </script>
 {% endblock %}
 
@@ -35,6 +59,10 @@
     <meta property="twitter:card" content="photo" />
     <meta property="twitter:title" content="{{ page.display_label }}" />
     <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+
+    {% if page.tei.exists %}
+    <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.pid %}" />
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -75,7 +103,25 @@
 
             <div class="text-center">
                 <div id="zoom-page"></div>
-                <div id="page-image"><img src="{% url 'books:page-image' page.pid %}"/></div>
+                <div class="page">
+                    <div class="content">
+                        <img src="{% url 'books:page-image' page.pid %}"/>
+                        {% if page.tei.exists %}
+                           {% for line in page.tei.content.lines %}
+                           <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>
+                                {% for zone in line.word_zones %}
+                                {# NOTE: may not want ocrtext adjustment when there are multiple words on a line #}
+                                <div class="ocr-zone ocrtext" {{ zone|zone_style:scale }}>
+                                    <span>{{ zone.text }}</span>
+                                </div>
+                                {% empty %} {# if no word zones, assume single line of text #}
+                                  <span>{{ line.text }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -90,5 +136,4 @@
         </a>
         {% endif %}
     </article>
-</div>
 {% endblock %}

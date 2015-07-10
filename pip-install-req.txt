@@ -8,7 +8,7 @@ Django>=1.7,<1.8
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
--e git://github.com/emory-libraries/django-eultheme.git@1.0#egg=eultheme
+-e git://github.com/emory-libraries/django-eultheme.git@1.1#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as

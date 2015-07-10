@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     # should be removed in the next version
     'eullocal.django.emory_ldap',
     'eultheme',
+    'downtime',
     'widget_tweaks',
     'readux.collection',
     'readux.books',
@@ -47,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'eultheme.middleware.DownpageMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware'
@@ -60,6 +62,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
     # additional context processors
+    'eultheme.context_processors.template_settings',
     "django.core.context_processors.request",  # always include request in render context
     "django.core.context_processors.static",
     # social auth support
@@ -67,6 +70,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social.apps.django_app.context_processors.login_redirect',
     "eultheme.context_processors.template_settings",
     "eultheme.context_processors.site_path",
+    "eultheme.context_processors.downtime_context",
     "readux.context_extras",  # include app version, backend names
     "readux.books.context_processors.book_search",  # book search form
 )
@@ -173,4 +177,3 @@ if django_nose is not None:
         # ...
     ]
     NOSE_ARGS = ['--with-eulfedorasetup']
-

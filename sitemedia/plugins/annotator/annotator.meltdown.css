@@ -1,0 +1,24 @@
+/** additional styles for annotator meltdown extension **/
+
+/* suppress tech preview warning */
+ .meltdown_preview-header {
+    display: none !important;
+}
+
+/* counteract overly general annotator styles affecting preview links */
+.annotator-editor .meltdown_preview-wrap a {
+    all: unset;
+}
+.annotator-editor .meltdown_preview-wrap a:after {
+    display: none;
+}
+
+/* counteract overly general annotator background styles for fullscreen view */
+.annotator-widget .meltdown_wrap.fullscreen {
+    background: #c8c8c8;
+}
+.meltdown_wrap.fullscreen .meltdown_bar,
+.meltdown_wrap.fullscreen .meltdown_editor-wrap,
+.meltdown_wrap.fullscreen .meltdown_preview-wrap {
+    background: white;
+}

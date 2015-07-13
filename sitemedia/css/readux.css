@@ -969,7 +969,18 @@ header#page-bg .collection-image-info.collasped .info{
 }
 .social-login button {
     border-radius: 0;
+    color: silver;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin-top: -5px;
+    margin-bottom: -5px;
 }
+.social-login button:hover,
+.social-login button:focus{
+  background-color: #42A5F5;
+  color: white;
+  text-decoration:none;
+}
+
 .social-login .fa {
     border-right: 1px solid black;
     padding: 5px;
@@ -977,12 +988,159 @@ header#page-bg .collection-image-info.collasped .info{
     width: 30px;  /* make all the icons consistent width */
     text-align: center;
 }
-/*  Do we want branding colors for identification?
-login-twitter a {
-    background-color: #55acee !important;
-    color: white !important;
+.modal-backdrop{
+  z-index: 300;
 }
-.login-github a {
-    background-color: #f5f5f5 !important;
+.modal-dialog {
+  margin-top: 7em;
 }
-*/
+
+@media (min-width: 768px){
+  .modal-dialog {
+    width: 400px;
+    margin: 10em auto;
+  }
+}
+
+.modal-header h4 {
+  text-align: center;
+  font-size: 2em;
+  color: #8B8B8B;
+  font-weight: 300;
+}
+
+.login-list li.list-group-item{
+    padding:0;
+}
+
+.login-list li.list-group-item{
+    border-radius:0;
+}
+
+.login-list li.list-group-item , .login-list li.list-group-item a {
+    display: table;
+    width: 100%;
+    border-color: white;
+}
+
+.login-list li.list-group-item a{
+  transition:opacity 0.2s;
+}
+
+.login-list li.list-group-item a:hover,
+.login-list li.list-group-item a:focus{
+  text-decoration:none;
+  opacity:0.7;
+}
+
+.login-list li.list-group-item a span{
+    display:table-cell;
+    padding:15px 10px;
+}
+
+.login-list li.list-group-item a span:first-child{
+    width:45px;
+    padding:0;
+    text-align:center;
+    border-right: 1px solid rgba(255, 255, 255, 0.47);
+}
+
+.login-list .login-twitter a {
+    background-color: #55acee;
+    color: white;
+}
+
+.login-list .login-github a {
+    background-color: #333333;
+    color: white;
+}
+
+.login-list .login-facebook a {
+    background-color: #4c66a4;
+    color: white;
+}
+
+.login-list .login-google-oauth2 a {
+    background-color: #D50F25;
+    color: white;
+}
+
+.login-list .login-ldap a {
+    background-color: #002878;
+    color: white;
+}
+
+.carousel-inner{
+  overflow: visible;
+}
+
+.social-login.navbar-text {
+    margin: 11px 0;
+    padding: 4px;
+}
+
+.meltdown_wrap{
+  width:100% !important;
+}
+
+.meltdown_bar{
+  z-index: 100;
+  position: relative;
+  display: inline-block;
+  height: auto!important;
+  min-height: 40px;
+}
+
+li.meltdown_controlbutton {
+    padding-right: 8px!important;
+    width: auto;
+    display:inline-block;
+    height:100%;
+}
+
+.meltdown_controls li.meltdown_control-preview {
+    padding-right: 15px!important;;
+}
+
+li.meltdown_controlbutton > span {
+    min-height: 30px;
+}
+
+.meltdown_wrap.fullscreen{
+  background-color: #CACACA;
+}
+
+.meltdown_preview-wrap .meltdown_preview-header{
+  display:none;
+}
+
+.btn-green {
+  color: #FFF;
+  background-color: #1D9C73;
+  border-color: #1D9C73;
+}
+
+.btn-green.active,
+.btn-green.focus,
+.btn-green:active,
+.btn-green:focus,
+.btn-green:hover,
+.open>.dropdown-toggle.btn-green {
+  color: #fff;
+  background-color: #2B775F;
+  border-color: #2B775F;
+}
+
+.marginalia-item .text table th{
+     padding: 3px 10px;
+     border-bottom: 3px solid #C8C3C3;
+}
+
+.marginalia-item .text table td {
+    border: 1px solid #CACACA;
+    padding: 10px;
+}
+
+.carousel-control{
+  width:10%;
+}

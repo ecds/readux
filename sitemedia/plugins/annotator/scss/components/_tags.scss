@@ -1,0 +1,17 @@
+// Tags
+
+.annotator-tags {
+  margin-bottom: -2px;
+  .annotator-tag {
+    display: inline-block;
+    padding: 0 8px;
+    margin-bottom: 2px;
+    line-height: 1.6;
+    font-weight: bold;
+    background-color: rgb(230, 230, 230);
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -o-border-radius: 8px;
+    border-radius: 8px;
+  }
+}

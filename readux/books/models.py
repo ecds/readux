@@ -267,6 +267,13 @@ class Page(Image):
         return (self.NEW_OBJECT_VIEW, [str(self.pid)])
 
     @property
+    def absolute_url(self):
+        '''Generate an absolute url to the page view, for external services
+        or for referencing in annotations.'''
+        return absolutize_url(reverse(self.NEW_OBJECT_VIEW, kwargs={'pid': self.pid}))
+
+
+    @property
     def display_label(self):
         '''Display label, for use in html titles, twitter/facebook metadata, etc.'''
         return '%s, p. %d' % (self.volume.display_label, self.page_order)

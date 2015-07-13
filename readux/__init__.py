@@ -1,4 +1,6 @@
-__version_info__ = (1, 2, 0, 'pre')
+from django.conf import settings
+
+__version_info__ = (1, 2, 0, 'dev')
 
 
 # Dot-connect all but the last. Last is dash-connected if not None.
@@ -19,6 +21,6 @@ def context_extras(request):
         'backend_names': {
             'github': 'GitHub',
             'google-oauth2': 'Google',
-        }
+        },
     }
 

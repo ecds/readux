@@ -1,0 +1,90 @@
+
+.secondary{
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 280px;
+  height: 100%;
+  overflow: scroll;
+  text-align: left;
+  padding-top: 100px;
+  margin-top: 10px;
+  opacity:0;
+}
+
+#toggle-annotations {
+  position: absolute;
+  z-index: 100;
+  top: 20px;
+  right: -15px;
+}
+
+.annotator-marginviewer-element {
+  margin: 0px;
+  position: absolute;
+  margin-bottom: 30px;
+  width: 100%;
+  padding: 0px;
+  font-size: 12px;
+  background-color: white;
+  border-bottom: 1px solid rgb(216, 216, 216);
+  padding-bottom: 15px;
+}
+
+.annotator-marginviewer-header {
+  background-color: #F5F5F5;
+  height: 26px;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+.annotator-marginviewer-header {
+  background-color: #FFFFFF;
+  color: #999;
+}
+.annotator-marginviewer-selected>.annotator-marginviewer-header {
+  color: #2EBE0E;
+  font-weight: bold;
+}
+
+.annotator-marginviewer-text {
+  background-color: #FFFFFF;
+  padding: 0.5em 2em 1em;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.annotator-marginviewer-highlighted>.annotator-marginviewer-text {
+
+}
+.annotator-marginviewer-selected>.annotator-marginviewer-text {
+    border: 1px solid #9BDF8C;
+    /* Chrome, Safari:*/
+    /* MSIE */
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
+.annotator-hl{
+  transition:background 0.2s ease;
+}
+
+.annotator-hl-uber {
+  background: rgba(0, 255, 32, 0.28);
+  padding: 5px;
+}
+
+.annotator-hl-uber-temp{
+  background-color: rgba(181, 0, 255, 0.28);
+}
+span.annotator-controls {
+    width: 100%;
+    background: rgb(234, 234, 234);
+    display: block;
+}
+
+span.annotator-controls button {
+}
+
+.annotator-marginviewer-element.annotator-marginviewer-selected {
+    border-bottom: none;
+}

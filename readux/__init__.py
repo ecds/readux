@@ -1,6 +1,4 @@
-from django.conf import settings
-
-__version_info__ = (1, 2, 0, 'dev')
+__version_info__ = (1, 3, 0, 'dev')
 
 
 # Dot-connect all but the last. Last is dash-connected if not None.

@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from mock import patch, NonCallableMock
@@ -205,3 +206,18 @@ class CollectionViewsTest(TestCase):
         self.assertTrue(response.has_header('last-modified'),
             'last modified header should be set')
 
+        ## annotation totals
+        # empty annotation total in context for anonymous user
+        self.assertEqual({}, response.context['annotated_volumes'])
+        # check that annotation total is retrieved for ONLY logged in users
+        with patch('readux.collection.views.Volume') as mockvolclass:
+
+             self.client.get(view_url)
+             mockvolclass.volume_annotation_count.assert_not_called_with()
+
+             User = get_user_model()
+             credentials = {'username': 'tester', 'password': 'foo'}
+             testuser = User.objects.create_user(**credentials)
+             self.client.login(**credentials)
+             self.client.get(view_url)
+             mockvolclass.volume_annotation_count.assert_called_with(testuser)

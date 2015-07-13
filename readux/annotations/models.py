@@ -7,6 +7,41 @@ from django.core.urlresolvers import reverse
 from jsonfield import JSONField
 
 
+class AnnotationQuerySet(models.QuerySet):
+
+    def visible_to(self, user):
+        '''Restrict to annotations the current user is allowed to access.
+        Currently, superusers can view all annotations; all other users
+        can access only their own annotations.'''
+        # currently, superusers can view all annotations;
+        # other users can only see their own
+        if not user.is_superuser:
+            return self.filter(user__username=user.username)
+        return self.all()
+
+    def last_created_time(self):
+        '''Creation time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except Annotation.DoesNotExist:
+            pass
+
+    def last_updated_time(self):
+        '''Update time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except Annotation.DoesNotExist:
+            pass
+
+class AnnotationManager(models.Manager):
+    def get_queryset(self):
+        return AnnotationQuerySet(self.model, using=self._db)
+
+    def visible_to(self, user):
+        return self.get_queryset().visible_to(user)
+
 class Annotation(models.Model):
     '''AnnotatorJS annotation model, based on the documentation at
     http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html.'''
@@ -39,13 +74,17 @@ class Annotation(models.Model):
     # Make user optional for now
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
+    #: Readux-specific field: URI for the volume that an annotation
+    #: is associated (i.e., volume a page is part of)
+    volume_uri = models.URLField(blank=True)
+
     # tags still todo
     # "tags": [ "review", "error" ],             # list of tags (from Tags plugin)
 
     #: any additional data included in the annotation not parsed into
     #: specific model fields; this includes ranges, permissions,
     #: annotation data, etc
-    extra_data = JSONField()
+    extra_data = JSONField(default=json.dumps({}))
     # example range from the documentation
     # "ranges": [
     #     {
@@ -70,7 +109,12 @@ class Annotation(models.Model):
 
     #: fields in the db model that are provided by annotation json
     #: when creating or updating an annotation
-    common_fields = ['text', 'quote', 'uri', 'user']
+    common_fields = ['text', 'quote', 'uri', 'user', 'volume_uri']
+    # NOTE: volume_uri is not strictly a 'common' field, since it would
+    # just be extra data to any other annotator backend, but we
+    # need it stored for searching and querying.
+
+    objects = AnnotationManager()
 
     def __unicode__(self):
         return self.text

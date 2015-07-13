@@ -2,7 +2,7 @@
 <div class="media">
   <a class="pull-left" href="{% url 'books:volume' obj.pid %}">
     {% if obj.hasPrimaryImage %}
-      <img class="media-object" src="{% url 'books:page-mini-thumb' obj.hasPrimaryImage %}"/>
+      <img class="media-object" src="{% url 'books:page-mini-thumb' obj.pid obj.hasPrimaryImage %}"/>
 
     {% else %}
         <img class="media-object" src="{% static 'img/notfound_mini_thumbnail.png' %}"/>

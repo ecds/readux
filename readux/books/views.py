@@ -1,9 +1,13 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import Http404, HttpResponse, HttpResponseNotFound
+from django.core.urlresolvers import reverse
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import Http404, HttpResponse, HttpResponseNotFound, \
+    HttpResponsePermanentRedirect
 from django.shortcuts import render
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
+from django.views.decorators.vary import vary_on_cookie
 from urllib import urlencode
 import os
 import logging
@@ -21,6 +25,7 @@ from readux.utils import solr_interface
 logger = logging.getLogger(__name__)
 
 
+@vary_on_cookie
 @last_modified(view_helpers.volumes_modified)
 def search(request, mode='list'):
 
@@ -110,6 +115,15 @@ def search(request, mode='list'):
             'collection': facet_fields.get('collection_label_facet', []),
         }
 
+        annotated_volumes = {}
+        if paginator.count and request.user.is_authenticated():
+            notes = Volume.volume_annotation_count(request.user)
+            domain = get_current_site(request).domain
+            if not domain.startswith('http'):
+                domain = 'http://' + domain
+            annotated_volumes = dict([(k.replace(domain, ''), v)
+                               for k, v in notes.iteritems()])
+
         context.update({
             'items': results,
             'url_params': urlencode(url_params),
@@ -120,11 +134,13 @@ def search(request, mode='list'):
             'sort': sort,
             'sort_options': sort_options,
             'sort_url_params': urlencode(sort_url_params),
+            'annotated_volumes': annotated_volumes
         })
 
     return render(request, 'books/search.html', context)
 
 
+@vary_on_cookie
 @last_modified(view_helpers.volume_modified)
 def volume(request, pid):
     ''' Landing page for a single :class:`~readux.books.models.Volume`.
@@ -132,10 +148,9 @@ def volume(request, pid):
     If keyword search terms are specified, searches within the book and
     finds matching pages.
     '''
-
     repo = Repository()
     vol = repo.get_object(pid, type=Volume)
-    if not vol.exists or not vol.has_requisite_content_models:
+    if not vol.exists or not vol.is_a_volume:
         raise Http404
 
     form = BookSearch(request.GET)
@@ -185,9 +200,17 @@ def volume(request, pid):
             'url_params': urlencode(url_params),
         })
 
+    else:
+        # if not searching the volume, get annotation count for display
+        # using same dictionary lookup form as for browse/search volume
+        context['annotated_volumes'] = {
+           vol.get_absolute_url(): vol.annotation_count(request.user)
+        }
+
     return render(request, template, context)
 
 
+@vary_on_cookie
 @last_modified(view_helpers.volume_pages_modified)
 def volume_pages(request, pid):
     # paginated thumbnails for all pages in a book
@@ -197,6 +220,19 @@ def volume_pages(request, pid):
         raise Http404
     # search for page images in solr so we can easily sort by order
     pagequery = vol.find_solr_pages()
+
+    # if user is authenticated, check for annotations on this volume
+    if request.user.is_authenticated():
+        notes = vol.page_annotation_count(request.user)
+        # method returns a dict for easy lookup;
+        # strip out base site url for easy lookup in the template
+        domain = get_current_site(request).domain
+        if not domain.startswith('http'):
+            domain = 'http://' + domain
+        annotated_pages = dict([(k.replace(domain, ''), v)
+                               for k, v in notes.iteritems()])
+    else:
+        annotated_pages = {}
 
     # paginate pages, 30 per page
     per_page = 30
@@ -215,7 +251,7 @@ def volume_pages(request, pid):
     form = BookSearch()
 
     return render(request, 'books/pages.html',
-        {'vol': vol, 'pages': results, 'form': form})
+        {'vol': vol, 'pages': results, 'form': form, 'annotated_pages': annotated_pages})
 
 
 #: size used for scaling single page image
@@ -223,7 +259,7 @@ SINGLE_PAGE_SIZE = 1000
 
 
 @last_modified(view_helpers.page_modified)
-def view_page(request, pid):
+def view_page(request, vol_pid, pid):
     # NOTE: type inferring repository needed to load pages as correct type
     # of Page (v1.0 or v1.1)
     repo = TypeInferringRepository()
@@ -289,7 +325,7 @@ def page_ocr(request, pid):
     return raw_datastream(request, pid, PageV1_1.ocr.id, type=Page,
             repo=Repository())
 
-def page_tei(request, pid):
+def page_tei(request, vol_pid, pid):
     '''Display the page-level TEI facsimile, if available.  404 if this page
     object does not have TEI facsimile.'''
     extra_headers = {
@@ -424,7 +460,7 @@ def _error_image_response(mode):
 @require_http_methods(['GET', 'HEAD'])
 @condition(etag_func=view_helpers.page_image_etag,
            last_modified_func=view_helpers.page_image_lastmodified)
-def page_image(request, pid, mode=None):
+def page_image(request, vol_pid, pid, mode=None):
     '''Return a page image, resized according to mode.
 
     :param pid: the pid of the :class:`~readux.books.models.Page`
@@ -488,3 +524,18 @@ def page_image(request, pid, mode=None):
         if rf.code in [404, 401]:
             raise Http404
         raise
+
+def page_redirect(request, pid, path):
+    # redirect view for old page urls without volume pids
+
+    # NOTE: type inferring repository needed to load pages as correct type
+    # of Page (v1.0 or v1.1)
+    repo = TypeInferringRepository()
+    page = repo.get_object(pid)
+    if not page.exists or not isinstance(page, Page):
+        raise Http404
+
+    page_url = reverse('books:page',
+            kwargs={'vol_pid': page.volume.pid, 'pid': page.pid})
+    return HttpResponsePermanentRedirect(''.join([page_url, path]))
+

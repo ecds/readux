@@ -94,6 +94,16 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.3 (preliminary)
+-------------------------
+
+* The URL format for pages has changed; update page ARK records by
+  running a script::
+
+      python manage.py update_page_arks
+
+
+
 Release 1.2
 -------------
 

@@ -99,6 +99,26 @@ class AnnotationTestCase(TestCase):
         info = note.info()
         self.assertEqual(user.username, info['user'])
 
+    def test_visible_to(self):
+        User = get_user_model()
+        testuser = User.objects.create(username='tester')
+        testadmin = User.objects.create(username='testsuper', is_superuser=True)
+
+        Annotation.objects.create(user=testuser, text='foo')
+        Annotation.objects.create(user=testuser, text='bar')
+        Annotation.objects.create(user=testuser, text='baz')
+        Annotation.objects.create(user=testadmin, text='qux')
+
+        self.assertEqual(3, Annotation.objects.visible_to(testuser).count())
+        self.assertEqual(4, Annotation.objects.visible_to(testadmin).count())
+
+    def test_last_created_time(self):
+
+        self.assertEqual(None, Annotation.objects.all().last_created_time())
+
+    def last_updated_time(self):
+        self.assertEqual(None, Annotation.objects.all().last_updated_time())
+
 
 @override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',))
 class AnnotationViewsTest(TestCase):

@@ -19,11 +19,12 @@
       {# only enable annotation if tei is present for logged in users #}
       {% if page.tei.exists and user.is_authenticated %}
 
-      /* function to include current page url in the annotation data */
-      var pageUri = function () {
+      /* function to include page & volume urls in the annotation data */
+      var readuxUris = function () {
         return {
           beforeAnnotationCreated: function (ann) {
             ann.uri = '{{ page.absolute_url }}';
+            ann.volume_uri = '{{ page.volume.absolute_url }}';
             {% if page.ark_uri %}
             ann.ark = '{{ page.ark_uri }}';
             {% endif %}
@@ -50,7 +51,7 @@
               prefix: '{% url "annotation-api-prefix" %}',
               headers: {"X-CSRFToken": csrftoken}
           })
-          .include(pageUri)
+          .include(readuxUris)
           .include(annotatorImageSelect, {
             element: $('.content .inner img'),
           })

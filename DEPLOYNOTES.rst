@@ -102,6 +102,8 @@ Release 1.3 (preliminary)
 
       python manage.py update_page_arks
 
+* The dependency on :mod:`eullocal` has been removed, so eullocal can
+  be uninstalled after upgrading.
 
 
 Release 1.2

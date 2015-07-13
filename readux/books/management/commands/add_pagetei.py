@@ -108,6 +108,13 @@ class Command(BaseCommand):
             self.stdout.write('No OCR datastream for Volume-1.0 %s' % vol.pid)
             return updates
 
+        # if volume does not yet have ids in the ocr, add them
+        if not vol.ocr_has_ids:
+            if self.verbosity >= self.v_normal:
+                self.stdout.write('Adding ids to %s OCR' % vol.pid)
+            vol.add_ocr_ids()
+            vol.save('Adding ids to OCR')
+
         ocr_pages = vol.ocr.content.pages
         pbar = self.get_progressbar(len(vol.pages))
 
@@ -174,6 +181,14 @@ class Command(BaseCommand):
                         % (page.pid, page.page_order))
                 self.stats['skipped'] += 1
                 continue
+
+            # if page does not yet have ids in the ocr, add them
+            if not page.ocr_has_ids:
+                if self.verbosity > self.v_normal:
+                    self.stdout.write('Adding ids to %s OCR' % page.pid)
+                page.add_ocr_ids()
+                page.save('Adding ids to OCR')
+
             if page.tei.exists:
                 verb = 'updated'
                 self.stats['updated'] += 1

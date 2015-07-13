@@ -13,7 +13,8 @@ import rdflib
 from rdflib import RDF
 from urllib import urlencode, unquote
 
-from eulxml.xmlmap import load_xmlobject_from_file, XmlObject
+from eulxml.xmlmap import load_xmlobject_from_file, XmlObject,\
+    load_xmlobject_from_string
 from eulfedora.server import Repository
 from eulfedora.util import RequestFailed
 
@@ -21,6 +22,10 @@ from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
 from readux.books import sitemaps
+
+
+fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
+
 
 class SolrVolumeTest(TestCase):
     # primarily testing BaseVolume logic here
@@ -235,8 +240,8 @@ class VolumeV1_0Test(TestCase):
             # test full-text
             with patch.object(self.vol, 'ocr') as mockocr:
                 mockocr.exists = True
-                ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
-                    'books', 'fixtures', 'abbyyocr_fr8v2.xml'))
+                ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                    'abbyyocr_fr8v2.xml'))
                 mockocr.content = ocr_xml
                 data = self.vol.index_data()
                 self.assert_('fulltext' in data,
@@ -274,8 +279,8 @@ class VolumeV1_0Test(TestCase):
         with patch.object(self.vol, 'ocr') as mockocr:
             mockocr.exists = True
             # abbyy finereader v8
-            ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
-                'books', 'fixtures', 'abbyyocr_fr8v2.xml'))
+            ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                'abbyyocr_fr8v2.xml'))
             mockocr.content = ocr_xml
 
             text = self.vol.get_fulltext()
@@ -285,11 +290,11 @@ class VolumeV1_0Test(TestCase):
             self.assert_('Now, kind reader, we ask that you do not crit' in text,
                 'ocr text content should be present in plain text')
             self.assert_(re.search(r'Baldwin\s+Dellinger\s+Brice', text),
-                'table row content shoudl be displayed on a single line')
+                'table row content should be displayed on a single line')
 
             # abbyy finereader v6
-            ocr_xml = load_xmlobject_from_file(os.path.join(settings.BASE_DIR, 'readux',
-                'books', 'fixtures', 'abbyyocr_fr6v1.xml'))
+            ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                'abbyyocr_fr6v1.xml'))
             mockocr.content = ocr_xml
 
             text = self.vol.get_fulltext()
@@ -299,8 +304,35 @@ class VolumeV1_0Test(TestCase):
             self.assert_('walked up the steps. The lady had not moved, and made' in text,
                 'ocr text content should be present in plain text')
             self.assert_(re.search(r'Modern\.\s+New Standard\.\s+Popular\.', text),
-                'table row content shoudl be displayed on a single line')
+                'table row content should be displayed on a single line')
 
+    def test_ocr_ids(self):
+        # pach in fixture ocr content
+        with patch.object(self.vol, 'ocr') as mockocr:
+            mockocr.exists = True
+            ocr_xml = load_xmlobject_from_file(os.path.join(fixture_dir,
+                'abbyyocr_fr8v2.xml'))
+            mockocr.content = ocr_xml
+
+            self.assertFalse(self.vol.ocr_has_ids)
+            self.vol.add_ocr_ids()
+            self.assertTrue(self.vol.ocr_has_ids)
+
+class PageV1_1Test(TestCase):
+    metsalto_doc = os.path.join(fixture_dir, 'mets_alto.xml')
+
+    def setUp(self):
+        self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
+
+    def test_ocr_ids(self):
+        page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
+
+        with patch.object(page, 'ocr') as mockocr:
+            mockocr.exists = True
+            mockocr.content = self.mets_alto
+            self.assertFalse(page.ocr_has_ids)
+            page.add_ocr_ids()
+            self.assertTrue(page.ocr_has_ids)
 
 class BookViewsTest(TestCase):
 
@@ -847,8 +879,6 @@ class SitemapTestCase(TestCase):
 
 class AbbyyOCRTestCase(TestCase):
 
-    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
-
     fr6v1_doc = os.path.join(fixture_dir, 'abbyyocr_fr6v1.xml')
     fr8v2_doc = os.path.join(fixture_dir, 'abbyyocr_fr8v2.xml')
     # language code
@@ -975,14 +1005,13 @@ class AbbyyOCRTestCase(TestCase):
 
 
 class TeiFacsimileTest(TestCase):
-    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
 
     def setUp(self):
         # tei generated from mets alto
-        self.alto_tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile.xml'),
+        self.alto_tei = load_xmlobject_from_file(os.path.join(fixture_dir, 'teifacsimile.xml'),
             TeiFacsimile)
         # tei generated from abbyy ocr
-        self.abbyy_tei = load_xmlobject_from_file(os.path.join(self.fixture_dir, 'teifacsimile_abbyy.xml'),
+        self.abbyy_tei = load_xmlobject_from_file(os.path.join(fixture_dir, 'teifacsimile_abbyy.xml'),
             TeiFacsimile)
 
     def test_basic_properties_alto(self):
@@ -1016,8 +1045,6 @@ class TeiFacsimileTest(TestCase):
 @override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
 class OCRtoTEIFacsimileXSLTest(TestCase):
 
-    fixture_dir = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
-
     fr6v1_doc = os.path.join(fixture_dir, 'abbyyocr_fr6v1.xml')
     fr8v2_doc = os.path.join(fixture_dir, 'abbyyocr_fr8v2.xml')
     metsalto_doc = os.path.join(fixture_dir, 'mets_alto.xml')
@@ -1027,20 +1054,29 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
         self.fr8v2 = load_xmlobject_from_file(self.fr8v2_doc, abbyyocr.Document)
         self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
 
-   
+
     def test_pageV1_0(self):
         # page 1.0 - abbyy ocr content
 
         page = PageV1_0(Mock()) # use mock for fedora api, since we won't make any calls
         page.page_order = 5
+        vol = VolumeV1_0(Mock())
         with patch('readux.books.models.PageV1_0.volume') as mockvolume:
             mockvolume.uriref = rdflib.URIRef('vol:1')
             mockvolume.display_label = 'Mabel Meredith'
             mockvolume.volume = None
             mockvolume.creator = ['Townley, Arthur']
             mockvolume.date = '1863'
+
+            # update fixture xml with ids
+            with open(VolumeV1_0.ocr_add_ids_xsl) as xslfile:
+                result =  self.fr6v1.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                fr6v1_with_ids = load_xmlobject_from_string(result,
+                    abbyyocr.Document)
+
             # use the first page with substantial text content as input
-            ocr_page = self.fr6v1.pages[5]
+            ocr_page = fr6v1_with_ids.pages[5]
             tei = page.generate_tei(ocr_page)
             # NOTE: uncomment to see generated TEI
             # print tei.serialize()
@@ -1052,7 +1088,8 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
                 'generated TEI facsimile should be schema-valid')
             # inspect the tei and check for expected values
             # - page identifier based on page_order value passed in
-            self.assertEqual('pg.%04d' % page.page_order, tei.page.id)
+            self.assertEqual(ocr_page.id, tei.page.id,
+                'tei id should be carried through from ocr xml')
             self.assertEqual(page.display_label, tei.title,
                 'tei title should be set from page diplay label')
             # distributor not mapped in teimap, so just use xpath to check
@@ -1082,6 +1119,10 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             mockvolume.volume = None
             mockvolume.creator = ['Townley, Arthur']
             mockvolume.date = '1863'
+
+            # update ocr xml with ids
+            page.add_ocr_ids()
+
             tei = page.generate_tei()
             # NOTE: uncomment to see generated tei
             # print tei.serialize()
@@ -1094,8 +1135,11 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
             # NOTE: not testing header details that are the same for both
             # outputs and already checked in previous test
 
-            # - page identifier based on page_order value passed in
-            self.assertEqual('pg.%04d' % page.page_order, tei.page.id)
+            # - page identifier carried through from the ocr
+            page_id = page.ocr.content.node.xpath('//alto:Page/@xml:id',
+                namespaces={'alto': 'http://www.loc.gov/standards/alto/ns-v2#'})[0]
+            self.assertEqual(page_id, tei.page.id,
+                'xml:id should be copied from mets/alto to tei')
             # recognized as mets/alto
             self.assert_('Mets/Alto file' in tei.header.source_description,
                 'input should be recognized as mets/alto ocr')

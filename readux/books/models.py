@@ -253,6 +253,10 @@ class Page(Image):
     ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux',
         'books', 'ocr_to_teifacsimile.xsl')
 
+    #: path to xsl for generating ids for mets/alto or abbyy ocr xml
+    ocr_add_ids_xsl = os.path.join(settings.BASE_DIR, 'readux',
+        'books', 'ocr_add_ids.xsl')
+
     # NOTE: it *should* be more efficient to load the xslt once, but it
     # results in malloc errors when python exits, so skip it for now
     # ocr_to_teifacsimile = xmlmap.load_xslt(filename=ocr_to_teifacsimile_xsl)
@@ -434,6 +438,23 @@ class PageV1_1(Page):
             raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
         self.tei.content = tei
+
+    @property
+    def ocr_has_ids(self):
+        'Check if OCR currently includes xml:ids'
+        if self.ocr.exists:
+            return self.ocr.content.node.xpath('count(//@xml:id)') > 0.0
+
+    def add_ocr_ids(self):
+        'Update OCR xml with ids for pages, blocks, lines, etc'
+        with open(self.ocr_add_ids_xsl) as xslfile:
+            try:
+                result =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # set the result as ocr datastream content
+                self.ocr.content = xmlmap.load_xmlobject_from_string(result)
+            except etree.XMLSyntaxError:
+                logger.warn('OCR xml for %s is invalid', self.pid)
 
 
 class BaseVolume(object):
@@ -797,10 +818,14 @@ class VolumeV1_0(Volume):
         'versionable': True,
     })
 
-    # shortcuts for consistency with SolrVolume
     #: path to xslt for transforming abbyoccr to plain text with some structure
     ocr_to_text_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'abbyocr-to-text.xsl')
 
+    #: path to xsl for generating ids for mets/alto or abbyy ocr xml
+    ocr_add_ids_xsl = os.path.join(settings.BASE_DIR, 'readux',
+        'books', 'ocr_add_ids.xsl')
+
+    # shortcuts for consistency with SolrVolume
     @property
     def fulltext_available(self):
         return self.ocr.exists
@@ -824,6 +849,23 @@ class VolumeV1_0(Volume):
                     # simple get text seems to generate reasonable text + whitespace
                     return xmlsoup.get_text()
 
+    @property
+    def ocr_has_ids(self):
+        'Check if OCR currently includes xml:ids'
+        if self.ocr.exists:
+            return self.ocr.content.node.xpath('count(//@xml:id)') > 0.0
+
+    def add_ocr_ids(self):
+        'Update OCR xml with ids for pages, blocks, lines, etc'
+        with open(self.ocr_add_ids_xsl) as xslfile:
+            try:
+                result =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # set the result as ocr datastream content
+                self.ocr.content = xmlmap.load_xmlobject_from_string(result,
+                    abbyyocr.Document)
+            except etree.XMLSyntaxError:
+                logger.warn('OCR xml for %s is invalid', self.pid)
 
 
 class VolumeV1_1(Volume):

@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     # url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
     url(r'^pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
     url(r'^pages/(?P<pid>[^/]+)/tei/$', views.page_tei, name='page-tei'),
+    url(r'^pages/(?P<pid>[^/]+)/ocr/$', views.page_ocr, name='page-ocr'),
     # redirect from TEI to tei so etiher one can be used
     url(r'^pages/(?P<pid>[^/]+)/TEI/$', RedirectView.as_view(pattern_name='books:page-tei')),
 

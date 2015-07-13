@@ -44,9 +44,9 @@
               editorExtensions: [
                   annotatormeltdown.getEditorExtension({min_width: '500px'}),
                   suppress_permissions.editorExtension,
+                  annotator.ui.tags.editorExtension
               ]
           })
-          // .incude(meltdown_editor)   // TESTING, not yet working
           .include(annotator.storage.http, {
               prefix: '{% url "annotation-api-prefix" %}',
               headers: {"X-CSRFToken": csrftoken}

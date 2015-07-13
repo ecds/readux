@@ -318,7 +318,7 @@ def view_page(request, vol_pid, pid):
         {'page': page, 'next': nxt, 'prev': prev, 'page_chunk':page_chunk,
          'form': form, 'scale': scale})
 
-def page_ocr(request, pid):
+def page_ocr(request, vol_pid, pid):
     '''Display the page-level OCR content, if available (for
     :class:`~readux.books.models.PageV1_1` objects this is xml,
     for :class:`~readux.books.models.PageV1_0` this is text).  Returns a

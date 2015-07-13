@@ -20,6 +20,10 @@ urlpatterns = patterns('',
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/tei/$', views.page_tei, name='page-tei'),
     # redirect from TEI to tei so either one can be used
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/TEI/$', RedirectView.as_view(pattern_name='books:page-tei')),
+    # page-1.1 ocr view
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/ocr/$', views.page_ocr, name='page-ocr'),
+    # redirect from OCR to ocr so either one can be used
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/OCR/$', RedirectView.as_view(pattern_name='books:page-ocr')),
 
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/thumbnail/$', views.page_image, {'mode': 'thumbnail'},
         name='page-thumbnail'),
@@ -31,6 +35,6 @@ urlpatterns = patterns('',
         name='page-image-fs'),
 
     # redirect view for old page urls without volume pids
-    url(r'pages/(?P<pid>[^/]+)/(?P<path>.*)$', views.page_redirect,
+    url(r'^pages/(?P<pid>[^/]+)/(?P<path>.*)$', views.page_redirect,
         name='old-pageurl-redirect')
 )

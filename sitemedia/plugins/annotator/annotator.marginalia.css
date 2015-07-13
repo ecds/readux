@@ -50,7 +50,7 @@ li.empty-item:first-child:last-child{
 }
 
 li.empty-item:first-child:last-child:after {
-  content: 'No annotaitons to show.';
+  content: 'No annotations to show.';
   display: block;
   position: absolute;
   text-align:center;

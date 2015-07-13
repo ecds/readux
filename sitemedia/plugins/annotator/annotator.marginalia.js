@@ -72,6 +72,8 @@ function annotatorMarginalia(options) {
 
         // get the rendered margin container
         $margin_container = $('.'+options.margin_class);
+
+        return true;
       },
 
       render: function(annotation){
@@ -208,6 +210,7 @@ function annotatorMarginalia(options) {
           }
         });
 
+        return true;
       },
 
       // Add marginalia when annotations are created
@@ -238,12 +241,16 @@ function annotatorMarginalia(options) {
         $('.'+marginalia_item_class).find('.text').on('click.marginalia',function(event){
           marginalia.itemSelected(event);
         });
+
+        return true;
       },
 
       // Remove marginalia when annotations are removed
       beforeAnnotationDeleted: function(annotation){
         var $marginalia_item = $('.'+marginalia_item_class+'[data-annotation-id='+annotation.id+']');
         $marginalia_item.remove();
+
+        return true;
       },
 
       // Update marginalia when annotations are updated
@@ -252,6 +259,8 @@ function annotatorMarginalia(options) {
             updated_text = marginalia.render(annotation);
 
         $marginalia_item.find(".text").html(updated_text);
+
+        return true;
       },
 
       // Toggle functions for the margin container
@@ -335,7 +344,17 @@ function annotatorMarginalia(options) {
           var cTop = $('.margin-container').offset().top,
               cScrollTop = $('.margin-container').scrollTop(),
               top = $item.position().top,
-              top2 = $annotation.parents('.ocr-line').position().top;
+              top2 = $annotation.parents('.inner>div');
+
+              // If the annotation is wrapped in a child div,
+              // we want to get the postion of that parent element.
+              if( top2.length>0 ){
+                top2 = top2.position().top;
+              }
+              // Otherwise, get the top position of the element.
+              else{
+                top2 = $annotation.position().top;
+              }
 
           $margin_container.stop().animate({'scrollTop':top-top2+30},500,'easeInOutExpo');
 

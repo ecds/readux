@@ -31,16 +31,12 @@ INSTALLED_APPS = [
     'django_image_tools',
     'social.apps.django_app.default',
     'eulfedora',
-    # emory_ldap included to migrate back to auth.User;
-    # should be removed in the next version
-    'eullocal.django.emory_ldap',
     'eultheme',
     'downtime',
     'widget_tweaks',
     'readux.collection',
     'readux.books',
     'readux.dyndzi',
-    'readux.accounts',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -142,9 +138,6 @@ AUTHENTICATION_BACKENDS = (
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
-
-AUTH_USER_MODEL = 'accounts.User'
-SOCIAL_AUTH_USER_MODEL = 'accounts.User'
 
 LOGIN_REDIRECT_URL = '/'
 

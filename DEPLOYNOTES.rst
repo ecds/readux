@@ -94,6 +94,13 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.2.1
+-------------------------
+
+* The dependency on :mod:`eullocal` has been removed, so eullocal can
+  be uninstalled after upgrading if re-using a pre-existing virtualenv.
+
+
 Release 1.2
 -------------
 

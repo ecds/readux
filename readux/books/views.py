@@ -202,10 +202,14 @@ def volume(request, pid):
 
     else:
         # if not searching the volume, get annotation count for display
-        # using same dictionary lookup form as for browse/search volume
-        context['annotated_volumes'] = {
-           vol.get_absolute_url(): vol.annotation_count(request.user)
-        }
+        # - annotation is only possibly on books with pages loaded
+        if vol.has_pages:
+            # uses same dictionary lookup form as for browse/search volume
+            annotation_count = vol.annotation_count(request.user)
+            if annotation_count != 0:
+                context['annotated_volumes'] = {
+                    vol.get_absolute_url(): annotation_count
+                }
 
     return render(request, template, context)
 

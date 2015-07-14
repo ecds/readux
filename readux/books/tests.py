@@ -686,9 +686,6 @@ class BookViewsTest(TestCase):
         mockrepo.return_value.get_object.return_value = mockobj
         # to support for last modified conditional
         mockobj.ocr.created = datetime.now()
-        # to test annotation count
-        mockobj.get_absolute_url.return_value = '/books/vol:1/'
-        mockobj.annotation_count.return_value = 5
 
         vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
         response = self.client.get(vol_url)
@@ -726,11 +723,15 @@ class BookViewsTest(TestCase):
             msg_prefix='volume without pages loaded should not have volume search')
 
         # annotation total passed to context
-        self.assertEqual({mockobj.get_absolute_url(): 5},
-            response.context['annotated_volumes'])
+        self.assert_('annotated_volumes' not in response.context,
+            'annotation count should not be set for volumes without pages')
 
         # simulate volume with pages loaded
         mockobj.has_pages = True
+        # to test annotation count
+        mockobj.get_absolute_url.return_value = '/books/vol:1/'
+        mockobj.annotation_count.return_value = 5
+
         response = self.client.get(vol_url)
         # *should* include volume search and read online
         self.assertContains(response, 'Read online',
@@ -739,6 +740,15 @@ class BookViewsTest(TestCase):
             msg_prefix='volume with pages loaded should have link to read online')
         self.assertContains(response, '<form id="volume-search" ',
             msg_prefix='volume without pages loaded should have volume search')
+        # annotation total passed to context
+        self.assertEqual({mockobj.get_absolute_url(): 5},
+            response.context['annotated_volumes'],
+            'annotation count should be set for volumes with pages')
+
+        mockobj.annotation_count.return_value = 0
+        response = self.client.get(vol_url)
+        self.assert_('annotated_volumes' not in response.context,
+            'annotation count should not be set in context when it is zero')
 
         # non-existent should 404
         mockobj.exists = False

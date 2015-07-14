@@ -97,13 +97,21 @@ directory.  From the top level of your virtualenv directory, run::
 Release 1.3 (preliminary)
 -------------------------
 
+* Run migrations for database updates::
+
+      python manage.py migrate
+
 * The URL format for pages has changed; update page ARK records by
   running a script::
 
       python manage.py update_page_arks
 
+* Generate TEI for all volumes with pages loaded:
+
+      python manage.py add_pagetei --all
+
 * The dependency on :mod:`eullocal` has been removed, so eullocal can
-  be uninstalled after upgrading.
+  be uninstalled from existing virtualenvs after this upgrade.
 
 
 Release 1.2

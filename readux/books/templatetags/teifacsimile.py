@@ -64,6 +64,6 @@ def zone_style(zone, scale):
     if data:
         attrs.append(' '.join(['data-%s="%s"' % (k, v) for k, v in data.iteritems()]))
     if zone.id:
-        attrs.append('id=%s' % zone.id)
+        attrs.append('id="%s"' % zone.id)
 
     return mark_safe(' '.join(attrs))

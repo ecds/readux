@@ -1155,8 +1155,8 @@ li.meltdown_controlbutton > span {
 
 .btn-green {
   color: #FFF;
-  background-color: #1D9C73;
-  border-color: #1D9C73;
+  background-color: rgb(49, 197, 40);
+  border-color: rgb(49, 197, 40);
 }
 
 .btn-green.active,
@@ -1166,8 +1166,8 @@ li.meltdown_controlbutton > span {
 .btn-green:hover,
 .open>.dropdown-toggle.btn-green {
   color: #fff;
-  background-color: #2B775F;
-  border-color: #2B775F;
+  background-color: rgb(70, 178, 104);
+  border-color: rgb(70, 178, 104);
 }
 
 .marginalia-item .text table th{

@@ -31,11 +31,11 @@
           }
         };
       };
-
+      var _marginalia = annotatorMarginalia();
       var app = new annotator.App()
           .include(annotator.ui.main, {
               element: document.querySelector('.content .inner'),
-              {% comment %}/*  {# not using default viewer, so these don't matter #}
+              {% comment %}/*  {# not using default viewer, so these don't matter, see marginalia #}
               viewerExtensions: [
                   annotatormeltdown.viewerExtension,
                   annotator.ui.tags.viewerExtension
@@ -44,7 +44,7 @@
               editorExtensions: [
                   annotatormeltdown.getEditorExtension({min_width: '500px'}),
                   suppress_permissions.editorExtension,
-                  annotator.ui.tags.editorExtension
+                  _marginalia.editorExtension
               ]
           })
           .include(annotator.storage.http, {
@@ -74,28 +74,6 @@
       {# set user identity to allow for basic permission checking #}
       app.ident.identity = "{{ user.username }}";
 
-
-
-      // Convert Markdown to HTML in the preview when the annotation is shown.
-      // content.on("annotationViewerShown",function(){
-      //   var $this = $(this).find('.annotator-viewer:not(.annotator-hide) .annotator-item>.annotator-controls+div'),
-      //       markdown = $this.html(),
-      //       html = Markdown(markdown);
-      //   $this.html(html);
-      // });
-
-      /* margin viewer disabled until updated to annotator 2.0
-
-      content.annotator('addPlugin','MarginViewer');
-
-      var optionsMeltdown = {
-        fullscreen: false,
-        openPreview: false,
-        sidebyside: false
-      };
-
-      // Init markdown editor
-      jQuery('textarea').meltdown(optionsMeltdown);  */
       {% endif %} {# end annotation config #}
 
    });

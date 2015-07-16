@@ -80,6 +80,49 @@ function annotatorMarginalia(options) {
         return options.viewer(annotation);
       },
 
+      // Based on: annotator.ui.tags.editorExtension
+      editorExtension: function(e) {
+          // The input element added to the Annotator.Editor wrapped in jQuery.
+          // Cached to save having to recreate it everytime the editor is displayed.
+          var field = null;
+          var input = null;
+
+          function stringifyTags(array) {
+              return array.join(",");
+          }
+
+          function updateField(field, annotation) {
+              var value = '';
+              if (annotation.tags) {
+                  value = stringifyTags(annotation.tags);
+              }
+              input.val(value);
+          }
+
+          function parseTags(string) {
+              string = $.trim(string);
+              var tags = [];
+
+              if (string) {
+                  tags = string.split(',');
+              }
+
+              return tags;
+          }
+
+          function setAnnotationTags(field, annotation) {
+              annotation.tags = parseTags(input.val());
+          }
+
+          field = e.addField({
+              label: _t('Add some tags here') + '\u2026',
+              load: updateField,
+              submit: setAnnotationTags
+          });
+
+          input = $(field).find(':input');
+      },
+
       // returns an array of the rendered annotation ids
       get_annotiations_array: function(){
         var $highlights = $('.annotator-hl'),
@@ -123,16 +166,8 @@ function annotatorMarginalia(options) {
             }).append(controls).append(text);
 
             // display tags if set; based on annotator.ui.tags.viewerExtension
-            if (annotation.tags && $.isArray(annotation.tags) &&
-                                      annotation.tags.length) {
-                var tags = $('<div/>').addClass('annotator-tags').html(function () {
-                  return $.map(annotation.tags, function (tag) {
-                    return '<span class="annotator-tag">' +
-                           annotator.util.escapeHtml(tag) + '</span>';
-                    }).join(' ');
-                });
-              $marginalia_item.append(tags);
-            }
+            var tags = marginalia.renderTags(annotation);
+            $marginalia_item.append(tags);
 
         $marginalia_item.on('click.marginalia','.btn-edit',function(event){
           event.preventDefault();
@@ -146,7 +181,7 @@ function annotatorMarginalia(options) {
         })
         .on('click.marginalia','.btn-delete',function(event){
           event.preventDefault();
-          var del = confirm("Are you sure you want to permanently delete this annoation?");
+          var del = confirm("Are you sure you want to permanently delete this annotation?");
 
           if( del === true){
             _app.annotations['delete'](annotation);
@@ -154,6 +189,20 @@ function annotatorMarginalia(options) {
         });
 
         return $marginalia_item;
+      },
+
+      renderTags: function(annotation){
+        var tags = '';
+        if (annotation.tags && $.isArray(annotation.tags) &&
+                                  annotation.tags.length) {
+          tags = $('<div/>').addClass('annotator-tags').html(function () {
+            return $.map(annotation.tags, function (tag) {
+              return '<span class="annotator-tag">' +
+                     annotator.util.escapeHtml(tag) + '</span>';
+              }).join(', ');
+          });
+        }
+        return tags;
       },
 
       // Add annotations to the sidebar when loaded
@@ -256,9 +305,11 @@ function annotatorMarginalia(options) {
       // Update marginalia when annotations are updated
       annotationUpdated: function(annotation){
         var $marginalia_item = $('.'+marginalia_item_class+'[data-annotation-id='+annotation.id+']'),
-            updated_text = marginalia.render(annotation);
+            updated_text = marginalia.render(annotation),
+            updated_tags = marginalia.renderTags(annotation);
 
-        $marginalia_item.find(".text").html(updated_text);
+        $marginalia_item.find(".annotator-tags").remove();
+        $marginalia_item.find(".text").html(updated_text).after(updated_tags);
 
         return true;
       },

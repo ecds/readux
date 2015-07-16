@@ -27,3 +27,10 @@
   background-image: url(img/annotator-glyph-sprite.png?embed);
   background-repeat: no-repeat;
 }
+
+@mixin border-radius($radius){
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -o-border-radius: $radius;
+  border-radius: $radius;
+}

@@ -115,7 +115,7 @@ function annotatorMarginalia(options) {
           }
 
           field = e.addField({
-              label: _t('Add tags here sepearted by commas') + '\u2026',
+              label: _t('Add tags here separated by commas') + '\u2026',
               load: updateField,
               submit: setAnnotationTags
           });

@@ -4,7 +4,7 @@ Django>=1.7,<1.8
 -e git://github.com/emory-libraries/eulxml.git@develop#egg=eulxml
 #eulfedora>=1.0
 #use eulfedora for sorted related objects, should be 1.1
--e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora
+-e git://github.com/emory-libraries/eulfedora.git@feature/fedora3.8-compatibility#egg=eulfedora
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm

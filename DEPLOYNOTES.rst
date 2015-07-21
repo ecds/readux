@@ -99,7 +99,9 @@ Release 1.2.1
 
 * The dependency on :mod:`eullocal` has been removed, so eullocal can
   be uninstalled after upgrading if re-using a pre-existing virtualenv.
-
+* Update ``localsettings.py`` to set **DOWNTIME_ALLOWED_IPS** to any IP
+  addresses that should be allowed to access the site during configured
+  downtime periods.
 
 Release 1.2
 -------------

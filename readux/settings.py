@@ -147,6 +147,18 @@ LOGIN_REDIRECT_URL = '/'
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')
 
+
+# exempted paths for downtime; exempts any urls starting with these strings
+DOWNTIME_EXEMPT_PATHS = (
+    '/admin',
+    '/indexdata',
+    '/sitemap'
+)
+DOWNTIME_EXEMPT_EXACT_URLS = (
+    '/',
+)
+
+
 try:
     from localsettings import *
 except ImportError:

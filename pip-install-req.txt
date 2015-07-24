@@ -1,14 +1,12 @@
 Django>=1.7,<1.8
-#eulxml>=0.22 (when released)
-# use dev eulxml for better xslt handling
--e git://github.com/emory-libraries/eulxml.git@develop#egg=eulxml
-#eulfedora>=1.0
-#use eulfedora for sorted related objects, should be 1.1
--e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora
+eulxml>=0.22
+eulfedora>=1.1
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
--e git://github.com/emory-libraries/django-eultheme.git@1.1#egg=eultheme
+# require at least downtime 1.0.4 for exempting exact urls
+django-downtime>=1.0.4
+-e git://github.com/emory-libraries/django-eultheme.git@1.1.1#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as
@@ -22,8 +20,6 @@ eulcommon
 # local pid manager client
 https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.2.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.2.0.tar.gz
 django-image-tools>=0.8.b3
-# dev eullocal to migrate away from local python library for emory ldap
-https://wilson.library.emory.edu/jenkins/job/eullocal/lastSuccessfulBuild/artifact/eullocal/dist/eullocal-0.22.0-dev.tar.gz
 python-magic
 # NOTE: Counter widget missing in progessbar 2.2, but 2.3 package is unverified (?)
 progressbar<=2.3

@@ -13,7 +13,9 @@ Specify the image(s) to be selected when including the module, e.g.
 */
 
 function annotatorImageSelect(options) {
-  var _t = annotator.util.gettext;
+  var _t = annotator.util.gettext,
+    global = this;  // equivalent to previously used annotator.util.getGlobal()
+
   options = options || {};
 
   // Object to hold local state
@@ -45,7 +47,7 @@ function annotatorImageSelect(options) {
       s.adder.hide();
       // unselect any selected text to avoid confusion
       // between text/image selection & annotation
-      annotator.util.getGlobal().getSelection().removeAllRanges();
+      global.getSelection().removeAllRanges();
     },
 
     // image area selection change event
@@ -139,7 +141,8 @@ function annotatorImageSelect(options) {
     selectionPosition: function(img, selection) {
       // based on annotator.util.mousePosition
       // body offset logic borrowed from annotator.util
-      var body = annotator.util.getGlobal().document.body;
+      var body = global.document.body;
+
       var offset = {top: 0, left: 0};
       if ($(body).css('position') !== "static") {
         offset = $(body).offset();

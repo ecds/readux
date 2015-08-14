@@ -1,6 +1,6 @@
 Django>=1.7,<1.8
 eulxml>=0.22
-eulfedora>=1.1
+eulfedora>=1.2
 pyPdf
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm

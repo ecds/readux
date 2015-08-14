@@ -3,6 +3,15 @@
 CHANGELOG
 =========
 
+Release 1.2.2
+-------------
+
+* Require eulfedora 1.2 for auto-checksum on ingest against Fedora 3.8
+
+Release 1.2.1
+-------------
+
+* Update required version of django-downtime and eultheme.
 
 Release 1.2 - Fedora 3.8 migration support
 ------------------------------------------

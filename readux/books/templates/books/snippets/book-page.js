@@ -55,6 +55,9 @@
           .include(annotatorImageSelect, {
             element: $('.content .inner img'),
           })
+          .include(annotatorSelectionId, {
+            element: $('.content .inner'),
+          })
           .include(annotatorMarginalia, {
             viewer: annotatormeltdown.render,
             toggle:{

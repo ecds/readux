@@ -1,3 +1,4 @@
+
 #toggle-annotations {
   position: absolute;
   z-index: 1000;
@@ -157,6 +158,12 @@ li.empty-item:first-child:last-child:after {
 .annotation-list .marginalia-item-selected{
   border-color: rgb(49, 197, 40);
   cursor:initial;
+}
+
+.annotation-updated {
+  padding: 5px;
+  font-style: italic;
+  font-size: 90%;
 }
 
 /*

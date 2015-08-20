@@ -1,11 +1,16 @@
 /* Marginalia  - margin annotation viewer for annotator */
 
-function annotatorMarginalia(options) {
+// TODO: document initialization options
+
+function annotatorMarginalia(user_opts) {
 
   var _t = annotator.util.gettext;
   var _app;
+  var options = {
+    show_update_date: true
+  };
+  $.extend(options, user_opts || {});
 
-  options = options || {};
   // Sets the renderer function for the annotations.
   // Defaults to statard formatting.
   if(options.viewer && typeof options.viewer === 'function'){
@@ -54,6 +59,15 @@ function annotatorMarginalia(options) {
   var marginalia = {
       start: function (app) {
         _app = app;
+
+        // check for moment.js, used for displaying updated date
+        if (typeof(moment) == 'undefined' || typeof moment !== 'function') {
+            console.warn(_t("To display annotation updated dates, please " +
+               "include moment.js in the page."));
+            // disable showing updated dates if moment.js is not available
+            options.show_update_date = false;
+        }
+
         var toggle_html ='<span class="fa fa-file-text-o"></span>',
             toggle_attrs = {
               class:'btn btn-green',
@@ -124,7 +138,7 @@ function annotatorMarginalia(options) {
       },
 
       // returns an array of the rendered annotation ids
-      get_annotiations_array: function(){
+      get_annotations_array: function(){
         var $highlights = $('.annotator-hl'),
             highlight_group_annotation = '',
             annotations_array = [];
@@ -168,6 +182,7 @@ function annotatorMarginalia(options) {
             // display tags if set; based on annotator.ui.tags.viewerExtension
             var tags = marginalia.renderTags(annotation);
             $marginalia_item.append(tags);
+            $marginalia_item.append(marginalia.renderUpdated(annotation));
 
         $marginalia_item.on('click.marginalia','.btn-edit',function(event){
           event.preventDefault();
@@ -205,6 +220,14 @@ function annotatorMarginalia(options) {
         return tags;
       },
 
+      renderUpdated: function(annotation) {
+        if (!options.show_update_date) { return; }
+        // annotations have created and updated, but updated
+        // is always set, so just stick with that
+        var txt = 'Updated ' + moment(annotation.updated).fromNow();
+        return $('<div/>').addClass('annotation-updated').html(txt);
+      },
+
       // Add annotations to the sidebar when loaded
       annotationsLoaded: function(annotations){
         //show toggle object once annotations are loaded
@@ -217,7 +240,7 @@ function annotatorMarginalia(options) {
 
           $annotaton_list.append($empty);
 
-        var annotations_array = marginalia.get_annotiations_array();
+        var annotations_array = marginalia.get_annotations_array();
         // Display annotations in the marginalia container
         $.each(annotations_array,function(i){
           var id = annotations_array[i],
@@ -267,7 +290,7 @@ function annotatorMarginalia(options) {
         var $marginalia_item = marginalia.renderAnnotation(annotation);
 
         // Get the index of the annotation in context to its siblings
-        var annotations_array = marginalia.get_annotiations_array(),
+        var annotations_array = marginalia.get_annotations_array(),
         index = annotations_array.indexOf(annotation.id);
 
         // Append to annotations list...
@@ -310,6 +333,9 @@ function annotatorMarginalia(options) {
 
         $marginalia_item.find(".annotator-tags").remove();
         $marginalia_item.find(".text").html(updated_text).after(updated_tags);
+
+        $marginalia_item.find(".annotation-date").remove();
+        $marginalia_item.find(".text").after(marginalia.renderUpdated(annotation));
 
         return true;
       },

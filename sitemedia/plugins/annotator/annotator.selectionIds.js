@@ -10,7 +10,7 @@ function annotatorSelectionId(options) {
         // utility method to simplify evaluating xpaths
         // For our purposes, all xpaths will be executed relative to the
         // configured annotator element
-        var context = element.get()[0];
+        var context = element[0];
         var result = document.evaluate('.' + path, context, null,
             XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         return result.singleNodeValue;

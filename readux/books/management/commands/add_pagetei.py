@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from progressbar import ProgressBar, Bar, Percentage, \
          ETA, Counter
 
+from readux.collection.models import Collection
 from readux.books.models import Volume, VolumeV1_0, VolumeV1_1, PageV1_0, PageV1_1
 from readux.fedora import ManagementRepository
 
@@ -31,8 +32,10 @@ class Command(BaseCommand):
         make_option('--update', '-u',
             action='store_true',
             default=False,
-            help='Regenerated TEI even if already present'),
-
+            help='Regenerate TEI even if already present'),
+        make_option('--collection', '-c',
+            help='Find and process volumes that belong to the specified collection pid ' + \
+            '(list of pids on the command line takes precedence over this option)'),
     )
     update_existing = True
 
@@ -47,8 +50,13 @@ class Command(BaseCommand):
 
         # if no pids are specified
         if not pids:
+
+            # if collection is specified, find pids by collection
+            if options['collection']:
+                pids = self.pids_by_collection(options['collection'])
+
             # check if 'all' was specified, and if so find all volumes
-            if options['all']:
+            elif options['all']:
                 pids = Volume.volumes_with_pages()
                 if self.verbosity >= self.v_normal:
                     self.stdout.write('Found %d volumes with pages loaded' % len(pids))
@@ -58,6 +66,7 @@ class Command(BaseCommand):
                 raise CommandError('Please specify a volume pid to have TEI generated')
 
         for pid in pids:
+            print pid
             # try volume 1.0 first, since we have more 1.0 content
             vol = self.repo.get_object(pid, type=VolumeV1_0)
 
@@ -242,6 +251,34 @@ class Command(BaseCommand):
             pbar.finish()
 
         return updates
+
+    def pids_by_collection(self, pid):
+        # NOTE: this method is based on the one in BasePageImport,
+        # but returns a list of pids instead of a list of Volumes
+        coll = self.repo.get_object(pid, type=Collection)
+        if not coll.exists:
+            self.stdout.write('Collection %s does not exist or is not accessible' % \
+                              pid)
+
+        if not coll.has_requisite_content_models:
+            self.stdout.write('Object %s does not seem to be a collection' % \
+                              pid)
+
+        # NOTE: this approach may not scale for large collections
+        # if necessary, use a sparql query to count and possibly return the objects
+        # or else sparql query query to count and generator for the objects
+        # this sparql query does what we need:
+        # select ?vol
+        # WHERE {
+        #    ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/emory-control:LSDI-Yellowbacks> .
+        #   ?vol <fedora-rels-ext:isConstituentOf> ?book
+        #}
+        pids = []
+        for book in coll.book_set:
+            pids.extend([v.pid for v in book.volume_set])
+
+        return pids
+
 
     def interrupt_handler(self, signum, frame):
         '''Gracefully handle a SIGINT, if possible.  Reports status if

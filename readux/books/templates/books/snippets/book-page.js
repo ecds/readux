@@ -59,6 +59,9 @@
             element: $('.content .inner'),
           })
           .include(annotatorMarginalia, {
+            {% if user.is_superuser %}
+            show_author: true,
+            {% endif %}
             viewer: annotatormeltdown.render,
             toggle:{
               show: function(){

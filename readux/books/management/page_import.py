@@ -450,7 +450,7 @@ class BasePageImport(BaseCommand):
                                      page.text.isModified(), page.position.isModified()]):
 
                     ingested = page.save('ingesting page image %d for %s' \
-                                         % (pageindex, vol.pid))
+                                         % (pageindex, page.volume.pid))
                     verb = 'updated' if update else 'ingested'
                     logger.debug('page %s %s', page.pid, verb)
                     self.stats['pages'] += 1

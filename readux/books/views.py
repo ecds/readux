@@ -230,7 +230,8 @@ def volume_pages(request, pid):
         notes = vol.page_annotation_count(request.user)
         # method returns a dict for easy lookup;
         # strip out base site url for easy lookup in the template
-        domain = get_current_site(request).domain
+        # (need leading / left to match item urls)
+        domain = get_current_site(request).domain.rstrip('/')
         if not domain.startswith('http'):
             domain = 'http://' + domain
         annotated_pages = dict([(k.replace(domain, ''), v)

@@ -7,7 +7,8 @@ function annotatorMarginalia(user_opts) {
   var _t = annotator.util.gettext;
   var _app;
   var options = {
-    show_update_date: true
+    show_update_date: true,
+    show_author: false
   };
   $.extend(options, user_opts || {});
 
@@ -182,7 +183,7 @@ function annotatorMarginalia(user_opts) {
             // display tags if set; based on annotator.ui.tags.viewerExtension
             var tags = marginalia.renderTags(annotation);
             $marginalia_item.append(tags);
-            $marginalia_item.append(marginalia.renderUpdated(annotation));
+            $marginalia_item.append(marginalia.renderFooter(annotation));
 
         $marginalia_item.on('click.marginalia','.btn-edit',function(event){
           event.preventDefault();
@@ -220,13 +221,36 @@ function annotatorMarginalia(user_opts) {
         return tags;
       },
 
-      renderUpdated: function(annotation) {
-        if (!options.show_update_date) { return; }
+      /**
+       * Annotation footer, with update date and author.
+       * Date is configurable via show_update_date option, requires
+       * moment.js, defaults to true.
+       * Author is configruable via show_author, defaults to false.
+       */
+      renderFooter: function(annotation) {
+        if (!options.show_update_date && !options.show_author) { return; }
+        var footer = $('<div/>').addClass('annotation-footer').html(txt);
+        var txt;
         // annotations have created and updated, but updated
         // is always set, so just stick with that
-        var txt = 'Updated ' + moment(annotation.updated).fromNow();
-        return $('<div/>').addClass('annotation-updated').html(txt);
+        if (options.show_update_date) {
+          footer.append($('<span/>').addClass('annotation-updated')
+            .html('Updated ' + moment(annotation.updated).fromNow()));
+        }
+        // when showing both date and author, add connecting text
+        if (options.show_update_date && options.show_author) {
+          footer.append('<span> | </span>');
+        }
+        // NOTE: this is designed to look fine with either one or both
+        // visible; but we might want additional context when user
+        // is displayed without the date
+        if (options.show_author) {
+          footer.append($('<span/>').addClass('annotation-author')
+              .html(annotation.user));
+        }
+        return footer;
       },
+
 
       // Add annotations to the sidebar when loaded
       annotationsLoaded: function(annotations){
@@ -334,8 +358,8 @@ function annotatorMarginalia(user_opts) {
         $marginalia_item.find(".annotator-tags").remove();
         $marginalia_item.find(".text").html(updated_text).after(updated_tags);
 
-        $marginalia_item.find(".annotation-date").remove();
-        $marginalia_item.find(".text").after(marginalia.renderUpdated(annotation));
+        $marginalia_item.find(".annotation-footer").remove();
+        $marginalia_item.find(".text").after(marginalia.renderFooter(annotation));
 
         return true;
       },

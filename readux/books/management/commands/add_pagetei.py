@@ -27,8 +27,14 @@ class Command(BaseCommand):
         make_option('--all', '-a',
             action='store_true',
             default=False,
-            help='Add or update TEI for all volumes with pages loaded'),
+            help='Add TEI for all volumes with pages loaded'),
+        make_option('--update', '-u',
+            action='store_true',
+            default=False,
+            help='Regenerated TEI even if already present'),
+
     )
+    update_existing = True
 
     def handle(self, *pids, **options):
         # bind a handler for interrupt signal
@@ -37,6 +43,7 @@ class Command(BaseCommand):
 
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
+        self.update_existing = options.get('update')
 
         # if no pids are specified
         if not pids:
@@ -108,6 +115,20 @@ class Command(BaseCommand):
             self.stdout.write('No OCR datastream for Volume-1.0 %s' % vol.pid)
             return updates
 
+        # check if tei has already been generated for this volume
+        # FIXME: this check is duplicated from method process_volV1_1
+        if vol.has_tei:
+            # update not specified - skip
+            if not self.update_existing:
+                if self.verbosity > self.v_normal:
+                    self.stdout.write('Volume %s already has TEI and no update requested; skipping.' \
+                      % vol.pid)
+                return
+            # update requested; report and continue
+            elif self.verbosity > self.v_normal:
+                self.stdout.write('Updating existing TEI for Volume %s' \
+                      % vol.pid)
+
         # if volume does not yet have ids in the ocr, add them
         if not vol.ocr_has_ids:
             if self.verbosity >= self.v_normal:
@@ -164,6 +185,20 @@ class Command(BaseCommand):
 
     def process_volV1_1(self, vol):
         # load tei for vol 1.1 / pages 1.1
+
+        # check if tei has already been generated for this volume
+        if vol.has_tei:
+            # update not specified - skip
+            if not self.update_existing:
+                if self.verbosity > self.v_normal:
+                    self.stdout.write('Volume %s already has TEI and no update requested; skipping.' \
+                      % vol.pid)
+                return
+            # update requested; report and continue
+            elif self.verbosity > self.v_normal:
+                self.stdout.write('Updating existing TEI for Volume %s' \
+                      % vol.pid)
+
         updates = 0
         pbar = self.get_progressbar(len(vol.pages))
 

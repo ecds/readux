@@ -168,6 +168,30 @@ class VolumeTest(TestCase):
         totals = Volume.volume_annotation_count(testuser)
         self.assertEqual(3, totals[vol.absolute_url])
 
+    def test_has_pages(self):
+        mockapi = Mock()
+        vol = Volume(mockapi, 'vol:1')
+        vol.pages = []
+        self.assertFalse(vol.has_pages)
+        # one page (i.e. cover image) is not enough to count as having pages
+        vol.pages = [Mock(spec=Page)]
+        self.assertFalse(vol.has_pages)
+        vol.pages = [Mock(spec=Page), Mock(spec=Page)]
+        self.assertTrue(vol.has_pages)
+
+    def test_has_tei(self):
+        mockapi = Mock()
+        vol = Volume(mockapi, 'vol:1')
+        p1 = Mock(spec=Page)
+        p1.tei.exists = False
+        p2 = Mock(spec=Page)
+        p2.tei.exists = False
+        vol.pages = [p1, p2]
+        self.assertFalse(vol.has_tei)
+        p2.tei.exists = True
+        self.assertTrue(vol.has_tei)
+
+
 
 class VolumeV1_0Test(TestCase):
 

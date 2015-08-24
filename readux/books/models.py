@@ -611,6 +611,18 @@ class Volume(DigitalObject, BaseVolume):
             return False
 
     @property
+    def has_tei(self):
+        'boolean flag indicating if TEI has been generated for volume pages'
+        if self.pages:
+            # NOTE: this is only checking tei in the first few pages;
+            # If TEI is incompletely loaded, this could report incorrectly.
+            # Checks multiple pages because blank pages might have no TEI.
+            for p in self.pages[:10]:
+                if p.tei.exists:
+                    return True
+        return False
+
+    @property
     def title(self):
         return self.dc.content.title.rstrip().rstrip('/')
 

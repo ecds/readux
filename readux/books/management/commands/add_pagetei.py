@@ -4,6 +4,7 @@ import os
 import signal
 import sys
 
+from fuzzywuzzy import fuzz
 from django.core.management.base import BaseCommand, CommandError
 from progressbar import ProgressBar, Bar, Percentage, \
          ETA, Counter
@@ -161,14 +162,25 @@ class Command(BaseCommand):
 
             # NOTE: some pages have no tei, but since the abbyy ocr
             # includes page content for every page, we're going to
-            # generate TEI for those pages too
-            # includes page information, and may include illustration blocks
+            # generate TEI for those pages too;
+            # includes page information, and may include illustration blocks.
 
-            # NOTE: could do some simple text content comparison to check that
-            # the ocr index is correct...
-            # e.g. do a whitespace-insensitive check of starting n characters
-            # page.text.content.read()
-            # unicode(ocr_pages[index])
+            # For the first few pages, do some checking that text content
+            # matches, to ensure we don't load TEI for the wrong page.
+            # Using fuzzy matching here because sometimes one version
+            # contains control characters not present in the other.
+            # For now, if we get a mismatch, bail out.  Eventually we may
+            # want to add logic to detect the correct ocr page index.
+            if index < 10:
+                page_text = normalize_ws(unicode(page.text.content.read(),
+                    'utf-8', 'replace'))
+                ocr_text = normalize_ws(unicode(ocr_pages[index]))
+
+                # if text is present, check for at least 95% match
+                if (page_text and ocr_text) and \
+                  fuzz.ratio(page_text, ocr_text) < 95:
+                    self.stderr.write('Error: page text for %d does not seem to match OCR' % index)
+                    break
 
             if page.tei.exists:
                 verb = 'updated'
@@ -296,3 +308,8 @@ class Command(BaseCommand):
                   '\n\nScript will exit after all pages for the current volume are processed.' + \
                   '\n(Ctrl-C / Interrupt again to quit now)'
 
+
+def normalize_ws(val):
+    # normalize whitespace and remove control characters
+    val = ' '.join(val.split())  # split on whitespace and rejoin
+    return ''.join([c for c in val if ord(c) > 31 or ord(c) == 9])

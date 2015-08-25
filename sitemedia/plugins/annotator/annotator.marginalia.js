@@ -229,13 +229,16 @@ function annotatorMarginalia(user_opts) {
        */
       renderFooter: function(annotation) {
         if (!options.show_update_date && !options.show_author) { return; }
-        var footer = $('<div/>').addClass('annotation-footer').html(txt);
-        var txt;
+        var footer = $('<div/>').addClass('annotation-footer');
         // annotations have created and updated, but updated
         // is always set, so just stick with that
         if (options.show_update_date) {
           footer.append($('<span/>').addClass('annotation-updated')
-            .html('Updated ' + moment(annotation.updated).fromNow()));
+            .html('Updated ' +
+              moment(annotation.updated).calendar(null,
+                {sameElse : 'L'})));
+                // display date relative to now; use month day year format
+                // for dates more than a week old
         }
         // when showing both date and author, add connecting text
         if (options.show_update_date && options.show_author) {

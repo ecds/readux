@@ -4,6 +4,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.html import format_html
 from jsonfield import JSONField
 
 
@@ -130,6 +131,11 @@ class Annotation(models.Model):
         'Short preview of annotation text content'
         return self.text[:100] + ('...' if len(self.text) > 100 else '')
     text_preview.short_description = 'Text'
+
+    def uri_link(self):
+        'URI as a clickable link'
+        return format_html('<a href="{}">{}</a>', self.uri, self.uri)
+    uri_link.short_description = 'URI'
 
     @classmethod
     def create_from_request(cls, request):

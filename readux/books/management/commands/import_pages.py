@@ -245,7 +245,7 @@ the configured fedora instance).'''
                 self.stdout.write('%(pages)d page(s) ingested' % self.stats)
 
     def find_next_page(self, vol, coverindex, images):
-        '''Determien the index and page order of the next page to be ingested
+        '''Determine the index and page order of the next page to be ingested
         when a volume has incomplete pages, e.g. when page import was
         previously interrupted.'''
         next_index = vol.page_count + coverindex

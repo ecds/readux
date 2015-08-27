@@ -49,7 +49,7 @@
             p. {{ pages.start_index }} - {{ pages.end_index }}
         </div>
         <div id="cover-list" class="item-covers">
-            <ul class="media-list cover-view">
+            <ul class="media-list cover-view {{layout}}">
                 {% for page in pages.object_list %}
 
                 {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}

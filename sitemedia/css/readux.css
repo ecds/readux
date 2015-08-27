@@ -270,6 +270,11 @@ header#page-bg .container{
     border-radius: 3px;
 }
 
+.cover-view.landscape .cover{
+  width: 350px;
+  height:220px;
+  background-position: top center;
+}
 
 
 .cover-view .cover > a:hover,

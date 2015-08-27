@@ -242,6 +242,7 @@ def volume_pages(request, pid):
     # paginate pages, 30 per page
     per_page = 30
     paginator = Paginator(pagequery, per_page, orphans=5)
+    layout = 'default'
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -249,6 +250,14 @@ def volume_pages(request, pid):
         page = 1
     try:
         results = paginator.page(page)
+
+        # Check if the first page of the volume is wider than it is tall
+        # to set the layout of the pages
+        first_page_pid = results[0]["pid"]
+        first_page = repo.get_object(first_page_pid, type=Page)
+        if (first_page.width > first_page.height):
+            layout = 'landscape'
+
     except (EmptyPage, InvalidPage):
         results = paginator.page(paginator.num_pages)
 
@@ -256,7 +265,7 @@ def volume_pages(request, pid):
     form = BookSearch()
 
     return render(request, 'books/pages.html',
-        {'vol': vol, 'pages': results, 'form': form, 'annotated_pages': annotated_pages})
+        {'vol': vol, 'pages': results, 'form': form, 'annotated_pages': annotated_pages,'layout': layout})
 
 
 #: size used for scaling single page image
@@ -543,4 +552,3 @@ def page_redirect(request, pid, path):
     page_url = reverse('books:page',
             kwargs={'vol_pid': page.volume.pid, 'pid': page.pid})
     return HttpResponsePermanentRedirect(''.join([page_url, path]))
-

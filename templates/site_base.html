@@ -1,6 +1,5 @@
 {% extends "eultheme/site_base.html" %}
-{% load static %}
-{% load widget_tweaks %}
+{% load static widget_tweaks feincms_page_tags %}
 
 {% block metadata %}
   <meta property="og:site_name" content="Readux"/>
@@ -54,6 +53,11 @@
 {% block navlinks %}
 {# NOTE: suppressed for now because collection browse is site home page #}
 {# <li><a href="{% url 'collection:browse' %}">Collections</a></li> #}
+  {% feincms_nav feincms_page level=1 as nav %}
+  {% for page in nav %}
+       <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
+  {% endfor %}
+
 {% endblock %}
 
 {% block navbar-extra %}

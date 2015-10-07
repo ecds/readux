@@ -34,10 +34,15 @@ INSTALLED_APPS = [
     'eultheme',
     'downtime',
     'widget_tweaks',
+    'feincms',
+    'mptt',
+    'feincms.module.page',
+    'feincms.module.medialibrary',
     'readux.annotations',
     'readux.books',
     'readux.collection',
     'readux.dyndzi',
+    'readux.pages',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -70,6 +75,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "eultheme.context_processors.downtime_context",
     "readux.context_extras",  # include app version, backend names
     "readux.books.context_processors.book_search",  # book search form
+    "readux.pages.context_processors.default_page",
 )
 
 # List of callables that know how to import templates from various sources.
@@ -157,6 +163,10 @@ DOWNTIME_EXEMPT_PATHS = (
 DOWNTIME_EXEMPT_EXACT_URLS = (
     '/',
 )
+
+FEINCMS_RICHTEXT_INIT_CONTEXT = {
+    'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js'
+}
 
 
 try:

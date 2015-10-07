@@ -32,3 +32,4 @@ django-auth-ldap
 jsonfield
 pytz
 fuzzywuzzy
+feincms

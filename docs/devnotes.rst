@@ -31,21 +31,14 @@ Remove post-1922 yearbooks from the Solr index
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Start up a django python shell (``python manage.py shell``) and do
-the following:
+the following::
 
 ```
->>> from readux.utils import solr_interface
->>> from readux.books.models import VolumeV1_0
->>> solr = solr_interface()
->>> vols = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks', date__gte=1923)
->>> vols.count()
-112
->>> solr.delete([{'pid': vol['pid']} for vol in vols])
+from readux.utils import solr_interface
+from readux.books.models import VolumeV1_0, SolrVolume
+solr = solr_interface()
+vols = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks').results_as(SolrVolume)
+solr.delete([{'pid': vol['pid']} for vol in vols if int(vol.volume) >= 1923])
+solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks').count()
 ```
-
-
-
-
-
-
 

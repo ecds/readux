@@ -43,11 +43,15 @@ $(document).ready(function() {
     // collection browse cover view
     var $container = $('#cover-list');
     // init
+    var item_width = 220;
+    if($('.cover-view.landscape').length>0){
+      item_width = 370;
+    }
     $container.isotope({
       // options
       itemSelector: 'li',
       masonry: {
-        columnWidth: 220,
+        columnWidth: item_width,
         isFitWidth: true
       },
       transitionDuration:'0.4s'
@@ -64,12 +68,12 @@ $(document).ready(function() {
         evt.preventDefault();
         $(this).toggle().siblings('.continued').toggle();
     });
-    
+
     $('.page-header .continued').on('click',function(evt){
         evt.preventDefault();
         $(this).toggle().siblings('.expand').toggle();
     });
-    
+
     $(".page-search .trigger").on('click',function(evt){
       evt.preventDefault();
       $(this).toggleClass('active');

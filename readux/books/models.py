@@ -6,6 +6,7 @@ from django.template.defaultfilters import truncatechars
 from lxml import etree
 import json
 import logging
+import requests
 import os
 from urllib import urlencode, unquote
 
@@ -121,9 +122,22 @@ class Image(DigitalObject):
 
     def get_preview_image(self):
         'Return a version of the image suitable for preview or thumbnail'
-        content, uri = self.getDissemination(self.IMAGE_SERVICE, 'getRegion',
-                                             params={'level': 1})
-        return content
+        # content, uri = self.getDissemination(self.IMAGE_SERVICE, 'getRegion',
+        #                                      params={'level': 1})
+
+        response = requests.get(self.preview_image_url())
+        return response.content
+
+    def preview_image_url(self):
+        return '%s%s%s/full/!300,300/0/default.png' % (
+            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
+            self.pid)
+
+    def page_image_url(self):
+        #SINGLE_PAGE_SIZE = 1000
+        return '%s%s%s/full/!1000,1000/0/default.png' % (
+            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
+            self.pid)
 
     def get_region(self, **params):
         '''Call the getRegion method on the image service disseminator
@@ -142,17 +156,27 @@ class Image(DigitalObject):
                 return
             yield chunk
 
+
+    def image_info_url(self):
+        return '%s%s%s/info.json' %  \
+                (settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
+                self.pid)
+
     _image_metadata = None
     @property
     def image_metadata(self):
         '''Image metadata as returned by Djatoka getMetadata method
         (width, height, etc.).'''
         if self._image_metadata is None:
-            imgmeta = self.getDissemination(self.IMAGE_SERVICE, 'getMetadata')
-            # getDissemination returns a tuple of result, url
-            # load the image metadata returned by djatoka via json and return
-            # NOTE: this is eulfedora + requests syntax; old syntax was imgmeta[0]
-            self._image_metadata = json.loads(imgmeta.content)
+            response = requests.get(self.image_info_url)
+            self._image_metadata = response.json()
+
+            # imgmeta = self.getDissemination(self.IMAGE_SERVICE, 'getMetadata')
+            # # getDissemination returns a tuple of result, url
+            # # load the image metadata returned by djatoka via json and return
+            # # NOTE: this is eulfedora + requests syntax; old syntax was imgmeta[0]
+            # self._image_metadata = json.loads(imgmeta.content)
+
         return self._image_metadata
 
     # expose width & height from image metadata as properties
@@ -808,7 +832,8 @@ class Volume(DigitalObject, BaseVolume):
                        .filter(content_model=Page.PAGE_CMODEL_PATTERN) \
                        .filter(state='A') \
                        .sort_by('page_order') \
-                       .field_limit(['pid', 'page_order'])
+                       .field_limit(['pid', 'page_order']) \
+                       .results_as(SolrPage)
         # only return fields we actually need (pid, page_order)
         # TODO: add volume id for generating urls ?
         # solrquery = solrquery.field_limit(['pid', 'page_order', 'isConstituentOf'])  # ??
@@ -1022,6 +1047,26 @@ class SolrVolume(UserDict, BaseVolume):
     @property
     def pdf_size(self):
         return self.data.get('pdf_size')
+
+class SolrPage(UserDict):
+
+    def __init__(self, **kwargs):
+        # sunburnt passes fields as kwargs; userdict wants them as a dict
+        UserDict.__init__(self, kwargs)
+
+    @property
+    def pid(self):
+        'object pid'
+        return self.data.get('pid')
+
+
+    def thumbnail_url(self):
+        return '%s%s%s/full/!300,300/0/default.png' % (
+            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
+            self.pid)
+
+
+
 
 # hack: patch in volume as the related item type for pages
 # (can't be done in page declaration due to order / volume primary image rel)

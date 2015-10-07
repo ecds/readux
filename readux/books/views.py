@@ -491,7 +491,8 @@ def page_image(request, vol_pid, pid, mode=None):
                 content = ''
             else:
                 if mode == 'thumbnail':
-                    content = page.get_region(scale=300)
+                    content = page.get_preview_image()
+                    # content = page.get_region(scale=300)
                 elif mode == 'mini-thumbnail':
                     # mini thumbnail for list view - try 100x100 or 120x120
                     content = page.get_region(level=1, scale=100)

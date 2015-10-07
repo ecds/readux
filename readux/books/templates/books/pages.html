@@ -55,7 +55,9 @@
                 {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}
                 <li class="">
                     {% url 'books:page' vol.pid page.pid as page_url %}
-                    <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' vol.pid page.pid %}')" href="{{ page_url }}" title="Page {{ page.page_order }}">
+                    {# <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' vol.pid page.pid %}')" href="{{ page_url }}" title="Page {{ page.page_order }}"> #}
+                    <a class="cover thumbnail" style="background-image:url('{{ page.thumbnail_url }}')" href="{{ page_url }}" title="Page {{ page.page_order }}">
+
                         <p class="page-number">p. {{page.page_order}}</p>
                         {# page annotation count #}
                         {% include 'books/snippets/comment_count.html' with item_url=page_url annotation_count=annotated_pages %}

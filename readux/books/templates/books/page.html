@@ -99,7 +99,8 @@
                 <div class="page">
                     <div class="content">
                         <section class="inner">
-                          <img class="page-image" src="{% url 'books:page-image' page.volume.pid page.pid %}"/>
+                          {# <img class="page-image" src="{% url 'books:page-image' page.volume.pid page.pid %}"/> #}
+                          <img class="page-image" src="{{ page.page_image_url }}"/>
                           {% if page.tei.exists %}
                              {% for line in page.tei.content.lines %}
                              <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>

@@ -235,8 +235,12 @@ function annotatorMarginalia(user_opts) {
         if (options.show_update_date) {
           footer.append($('<span/>').addClass('annotation-updated')
             .html('Updated ' +
-              moment(annotation.updated).calendar(null,
-                {sameElse : 'L'})));
+              moment(annotation.updated).calendar(null, {
+                 sameDay: "[today at] LT",
+                 lastDay: '[yesterday at ] LT',
+                 lastWeek: '[last] dddd',
+                 sameElse: 'L'
+                })));
                 // display date relative to now; use month day year format
                 // for dates more than a week old
         }

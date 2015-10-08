@@ -34,13 +34,13 @@
         </div>
       </div>
 
-    {% if filters %}
+    {% if filters %} {# display filters that are currently in effect, with a link to remove #}
 
       <div class="facets active-filters">
         <ul class="nav nav-pills">
          {% for field, val, rm_link in filters %}
-           <li><a href="#" class="disabled pill-text">with {{field}}:</a></li>
-           <li><a href="?{{ rm_link }}">{{ val }} <span class="glyphicon glyphicon-remove"></span></a></li>
+         {# if field has a value, display that (e.g. collection name); otherwise show field (e.g., read online) #}
+           <li><a href="?{{ rm_link }}">{% firstof val field %} <span class="glyphicon glyphicon-remove"></span></a></li>
          {% endfor %}
        </ul>
     {% endif %}
@@ -77,14 +77,27 @@
         </div>
 
       <div class="facets">
-        {% if facets.collection %}
-        <p>Filter results by collection:</p>
-        <ul class="nav nav-pills">
-          {% for label, count in facets.collection %}
-          <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label|urlencode }}">{{ label }}
+        {% if facets %}
+        <h3>Filter results</h3>
+
+          {% if facets.collection %}
+            <ul class="nav nav-pills">
+              <li><a href="#" class="disabled pill-text">with collection</a></li>
+              {% for label, count in facets.collection %}
+              <li><a class="text-center" href="?{{ url_params }}&amp;collection={{ label|urlencode }}">{{ label }}
               <small>({{ count|intcomma }})</small></a> </li>
-          {% endfor %}
-        </ul>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          {% if facets.pages_loaded %}
+            <ul class="nav nav-pills">
+                <li><a class="text-center" href="?{{ url_params }}&amp;read_online=1">Read online
+                    <small>({{ facets.pages_loaded|intcomma }})</small></a> </li>
+            </ul>
+          {% endif %}
+
         {% endif %}
       </div>
 

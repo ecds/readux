@@ -72,6 +72,7 @@ def search(request, mode='list'):
         if 'collection' not in request.GET:
             q = q.facet_by('collection_label_facet', sort='index', mincount=1)
 
+
         # TODO: how can we determine via solr query if a volume has pages loaded?
         # join query on pages? index page_count in solr?
 
@@ -89,6 +90,18 @@ def search(request, mode='list'):
             del unfacet_urlopts['collection']
             display_filters.append(('collection', filter_val,
                                     unfacet_urlopts.urlencode()))
+
+        # acitve filter - only show volumes with pages loaded
+        if 'read_online' in request.GET and request.GET['read_online']:
+            q = q.query(page_count__gt=1)
+            unfacet_urlopts = url_params.copy()
+            del unfacet_urlopts['read_online']
+            display_filters.append(('read_online', '',
+                                    unfacet_urlopts.urlencode()))
+
+        else:
+            # generate a facet count for books with pages loaded
+            q = q.facet_query(page_count__gt=1)
 
         # paginate the solr result set
         paginator = Paginator(q, 10)
@@ -110,10 +123,16 @@ def search(request, mode='list'):
 
 
         # adjust facets as returned from solr for diplay
-        facet_fields = results.object_list.facet_counts.facet_fields
+        facet_counts = results.object_list.facet_counts
         facets = {
-            'collection': facet_fields.get('collection_label_facet', []),
+            'collection': facet_counts.facet_fields.get('collection_label_facet', []),
         }
+        if facet_counts.facet_queries:
+            # number of volumes with pages loaded;
+            # facet query is a list of tuple; second value is the count
+            pages_loaded = facet_counts.facet_queries[0][1]
+            if pages_loaded < q.count():
+                facets['pages_loaded'] = facet_counts.facet_queries[0][1]
 
         annotated_volumes = {}
         if paginator.count and request.user.is_authenticated():

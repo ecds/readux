@@ -4,7 +4,7 @@ and url_params to generate filtered links.{% endcomment %}
 {% load humanize %}
 {% if facets %}
 <div class="facets">
-  <h3>Filter results</h3>
+  {% if show_heading %}<h3>Filter results</h3>{% endif %}
 
   {% if facets.collection %}
     <ul class="nav nav-pills">

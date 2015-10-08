@@ -98,6 +98,24 @@ def view(request, pid, mode='list'):
                    collection_id=obj.pid) \
             .results_as(SolrVolume)
 
+    # url parameters for pagination and facet links
+    url_params = request.GET.copy()
+
+    # generate list for display and removal of active filters
+    # NOTE: borrowed from books.view.search
+    display_filters = []
+    # active filter - only show volumes with pages loaded
+    if 'read_online' in request.GET and request.GET['read_online']:
+        q = q.query(page_count__gt=1)
+        unfacet_urlopts = url_params.copy()
+        del unfacet_urlopts['read_online']
+        display_filters.append(('Read online', '',
+                                unfacet_urlopts.urlencode()))
+    else:
+        # generate a facet count for books with pages loaded
+        q = q.facet_query(page_count__gt=1)
+
+
     sort_options = ['title', 'date added']
     if sort not in sort_options:
         # by default, sort by title
@@ -112,7 +130,8 @@ def view(request, pid, mode='list'):
         q = q.sort_by('-created')
 
     # paginate the solr result set
-    paginator = Paginator(q, 30)
+    # paginator = Paginator(q, 30)
+    paginator = Paginator(q, 3)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -121,6 +140,17 @@ def view(request, pid, mode='list'):
         results = paginator.page(page)
     except (EmptyPage, InvalidPage):
         results = paginator.page(paginator.num_pages)
+
+    # facets for diplay
+    facet_counts = results.object_list.facet_counts
+    facets = {}
+    if facet_counts.facet_queries:
+        # number of volumes with pages loaded;
+        # facet query is a list of tuple; second value is the count
+        pages_loaded = facet_counts.facet_queries[0][1]
+        if pages_loaded < q.count():
+            facets['pages_loaded'] = facet_counts.facet_queries[0][1]
+
 
     # url parameters for pagination & sort links
     url_params = request.GET.copy()
@@ -136,4 +166,7 @@ def view(request, pid, mode='list'):
          'sort_url_params': urlencode(sort_url_params),
          'current_url_params': urlencode(request.GET.copy()),
          'sort': sort, 'sort_options': sort_options,
-         'annotated_volumes': annotated_volumes})
+         'annotated_volumes': annotated_volumes,
+         'facets': facets,  # available facets
+         'filters': display_filters,  # active filters
+         })

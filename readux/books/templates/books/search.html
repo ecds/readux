@@ -66,7 +66,7 @@
             {% include "books/snippets/search_coverlist_toggle.html" %}
         </div>
 
-        {% include "books/snippets/facets.html" %}
+        {% include "books/snippets/facets.html" with show_heading=1 %}
 
       {% if items %} {# results to display #}
         {% include 'books/snippets/show_volumes.html' %}

@@ -91,12 +91,12 @@ def search(request, mode='list'):
             display_filters.append(('collection', filter_val,
                                     unfacet_urlopts.urlencode()))
 
-        # acitve filter - only show volumes with pages loaded
+        # active filter - only show volumes with pages loaded
         if 'read_online' in request.GET and request.GET['read_online']:
             q = q.query(page_count__gt=1)
             unfacet_urlopts = url_params.copy()
             del unfacet_urlopts['read_online']
-            display_filters.append(('read_online', '',
+            display_filters.append(('Read online', '',
                                     unfacet_urlopts.urlencode()))
 
         else:

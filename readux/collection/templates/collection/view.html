@@ -78,30 +78,40 @@
       {% endif %}
   </div>
 
+
 </header>
 <div class="container">
     <section class="volume-list">
       {% if items.paginator.count %}
-        <h2 class="section-heading">{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} in this collection</h2>
+        <h2 class="section-heading">
+      {% if filters %}Displaying {{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }}
+      {% else %}{{ items.paginator.count|intcomma }} volume{{ items.paginator.count|pluralize }} in this collection</h2>{% endif %}
+      </h2>
         <p class="lead">
             {% if items.has_other_pages and items.object_list|length > 1 %}
             displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
             {# if more than one item on this page, display range of results #}
         </p>
-        <div class="row">
-            <div class="col-xs-5 col-xs-offset-2 col-sm-6 col-sm-offset-0 col-md-2 col-md-offset-4">
+        <div id="view-toggle" class="pull-right padding">
+          {% include "collection/snippets/collection_coverlist_toggle.html" %}
+        </div>
+        <div class="row clear">
+            <div class="col-xs-3 col-sm-3 col-md-2">
+                {% include "books/snippets/active_filters.html" %}
+                {% include "books/snippets/facets.html" with show_heading=0 %}
+            </div>
+
+            <div class="col-xs-3 col-xs-offset-0 col-sm-3 col-sm-offset-0 col-md-2 col-md-offset-2">
                 {% if items.has_other_pages %}
                    {% include 'eultheme/snippets/pagination_dropdown.html' with results=items %}
                 {% endif %}
 
             </div>
-            <div class="col-xs-5 col-sm-6 col-md-2">
+            <div class="col-xs-3 col-sm-3 col-md-2">
                 {% include 'collection/snippets/sort_dropdown.html' %}
             </div>
-            <div id="view-toggle" class="pull-right padding">
-                {% include "collection/snippets/collection_coverlist_toggle.html" %}
-            </div>
         </div>
+
 
         {% include 'books/snippets/show_volumes.html' with show_collection='False' %}
 

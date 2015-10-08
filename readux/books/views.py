@@ -124,9 +124,11 @@ def search(request, mode='list'):
 
         # adjust facets as returned from solr for diplay
         facet_counts = results.object_list.facet_counts
-        facets = {
-            'collection': facet_counts.facet_fields.get('collection_label_facet', []),
-        }
+        facets = {}
+        collections = facet_counts.facet_fields.get('collection_label_facet', [])
+        # only include collections in facet if there are any
+        if collections:
+            facets['collection'] = collections
         if facet_counts.facet_queries:
             # number of volumes with pages loaded;
             # facet query is a list of tuple; second value is the count

@@ -9,6 +9,7 @@ from django.views.generic.base import RedirectView
 from readux.annotations import views as annotation_views
 from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap
 from readux.collection.sitemaps import CollectionSitemap
+from readux.collection.views import CollectionCoverList
 
 
 admin.autodiscover()
@@ -31,7 +32,8 @@ else:
 urlpatterns = patterns('',
     # for now, using collection browse as site index
     # url(r'^$', 'readux.collection.views.site_index', name="site-index"),
-    url(r'^$', 'readux.collection.views.browse', name="site-index"),
+    # url(r'^$', 'readux.collection.views.browse', name="site-index"),
+    url(r'^$', CollectionCoverList.as_view(), name="site-index"),
 
     url(r'^collections/', include('readux.collection.urls', namespace='collection')),
     url(r'^books/', include('readux.books.urls', namespace='books')),

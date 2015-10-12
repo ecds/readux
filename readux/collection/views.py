@@ -130,8 +130,7 @@ def view(request, pid, mode='list'):
         q = q.sort_by('-created')
 
     # paginate the solr result set
-    # paginator = Paginator(q, 30)
-    paginator = Paginator(q, 3)
+    paginator = Paginator(q, 30)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:

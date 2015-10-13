@@ -5,11 +5,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.template.defaultfilters import filesizeformat
 from django.test import TestCase
 from django.test.utils import override_settings
 import json
-from mock import patch, Mock, MagicMock, NonCallableMock, NonCallableMagicMock
+from mock import patch, Mock, MagicMock, NonCallableMock, \
+   NonCallableMagicMock, call
 import re
 import rdflib
 from rdflib import RDF
@@ -442,8 +444,8 @@ class BookViewsTest(TestCase):
         'superuser': {'username': 'testsuper', 'password': 'superme'}
     }
 
-    @patch('readux.books.views.Repository')
-    @patch('readux.books.views.raw_datastream')
+    @patch('readux.books.views.VolumePdf.repository_class')
+    @patch('eulfedora.views.raw_datastream')
     def test_pdf(self, mockraw_ds, mockrepo):
         mockobj = Mock()
         mockobj.pid = 'vol:1'
@@ -451,13 +453,17 @@ class BookViewsTest(TestCase):
         mockrepo.return_value.get_object.return_value = mockobj
         # to support for last modified conditional
         mockobj.pdf.created = datetime.now()
+        mockobj.getDatastreamObject.return_value.created = mockobj.pdf.created
+
+        # class-based view handling requires an actual response
+        mockraw_ds.return_value = HttpResponse()
 
         pdf_url = reverse('books:pdf', kwargs={'pid': mockobj.pid})
         response = self.client.get(pdf_url)
 
         # only check custom logic implemented here, via mocks
         # (not testing eulfedora.views.raw_datastream logic)
-        self.assertEqual(mockraw_ds.return_value.render(), response,
+        self.assertEqual(mockraw_ds.return_value, response,
             'result of fedora raw_datastream should be returned')
 
         # can't check full call args because we can't match request
@@ -482,12 +488,8 @@ class BookViewsTest(TestCase):
             content_disposition,
             'content disposition filename should not include spaces even if label does')
 
-        # fedora error should 404
-        mockresponse = Mock()
-        mockresponse.status_code = 500
-        mockresponse.content = 'server error'
-        mockresponse.headers = {'content-type': 'text/plain'}
-        mockraw_ds.side_effect = RequestFailed(mockresponse, '')
+        # if object doesn't exist, 404 (don't error on generating headers)
+        mockobj.exists = False
         response = self.client.get(pdf_url)
         expected, got = 404, response.status_code
         self.assertEqual(expected, got,
@@ -607,11 +609,14 @@ class BookViewsTest(TestCase):
             response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
             mockvolclass.volume_annotation_count.assert_called_with(testuser)
 
-    @patch('readux.books.views.TypeInferringRepository')
+    @patch('readux.books.views.VolumeText.repository_class') #TypeInferringRepository')
     def test_text(self, mockrepo):
         mockobj = Mock()
         mockobj.pid = 'vol:1'
         mockobj.label = 'ocm30452349_1908'
+        # has to return a datetime (and not a mock) for last-modified conditional
+        mockobj.getDatastreamObject.return_value.created = datetime.now()
+
         mockrepo.return_value.get_object.return_value = mockobj
         mockobj.get_fulltext.return_value = 'sample text content'
         # to support for last modified conditional
@@ -856,14 +861,21 @@ class BookViewsTest(TestCase):
         mockvol.pid = 'vol:1'
         mockvol.title = 'Lecoq, the detective'
         mockvol.date = ['1801']
+        # second object retrieved from fedora is page, for layout
+        mockvol.width = 150
+        mockvol.height = 200
         # volume url needed to identify annotations for pages in this volume
-        mockvol.get_absolute_url.return_value = reverse('books:volume', kwargs={'pid': mockvol.pid})
+        mockvol.get_absolute_url.return_value = reverse('books:volume',
+            kwargs={'pid': mockvol.pid})
         mockrepo.return_value.get_object.return_value = mockvol
+        mockvol.find_solr_pages = MagicMock()
+        mockvol.find_solr_pages.return_value.count = 3
+        mockvol.find_solr_pages.__len__.return_value = 3
 
         vol_page_url = reverse('books:pages', kwargs={'pid': mockvol.pid})
         response = self.client.get(vol_page_url)
         # volume method should be used to find pages
-        mockvol.find_solr_pages.assert_called()
+        self.assert_(call() in mockvol.find_solr_pages.call_args_list)
         # volume should be set in context
         self.assert_(mockvol, response.context['vol'])
         # annotated pages should be empty for anonymous user

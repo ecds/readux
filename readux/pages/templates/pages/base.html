@@ -3,6 +3,11 @@
 
 {% block page-subtitle %}| {{ feincms_page.title }}{% endblock %}
 
+{% block head_extras %}
+  {{ block.super }}
+  {{ feincms_page.content.media }} {# include any needed css/js media content #}
+{% endblock %}
+
 {% block content %}
 <div class="container" style="margin-top:20px">
 
@@ -28,4 +33,7 @@
      {% endblock %}
  </div>{% endcomment %}
  </div>
- {% endblock %}
+
+{% block fw-content %}
+{% endblock %}
+{% endblock %} }

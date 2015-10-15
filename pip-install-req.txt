@@ -36,4 +36,4 @@ jsonfield
 pytz
 fuzzywuzzy
 # restrict to pre-2.0 alpha of feincms for now
-feincms<2.0
+feincms<2.0a

@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 class VolumeSearch(ListView):
+    '''Search across all volumes.'''
 
     model = Volume
     template_name = 'books/volume_search.html'
@@ -37,6 +38,7 @@ class VolumeSearch(ListView):
     context_object_name = 'items'
 
     display_mode = 'list'
+    sort_options = ['relevance', 'title', 'date added']
 
     @method_decorator(last_modified(view_helpers.volumes_modified))
     def dispatch(self, *args, **kwargs):
@@ -66,7 +68,6 @@ class VolumeSearch(ListView):
                     .field_limit(SolrVolume.necessary_fields, score=True)  \
                     .results_as(SolrVolume)
 
-            self.sort_options = ['relevance', 'title', 'date added']
             if self.sort not in self.sort_options:
                 # by default, sort by relevance score
                 self.sort = 'relevance'
@@ -103,62 +104,65 @@ class VolumeSearch(ListView):
                 del unfacet_urlopts['read_online']
                 self.display_filters.append(('Read online', '',
                                         unfacet_urlopts.urlencode()))
-
             else:
                 # generate a facet count for books with pages loaded
                 q = q.facet_query(page_count__gt=1)
+        else:
+            # empty 'queryset' result required by view methods
+            return []
 
-
-            return q
 
     def get_context_data(self):
         context_data = super(VolumeSearch, self).get_context_data()
-        print context_data
 
         url_params = self.request.GET.copy()
-
         sort_url_params = self.request.GET.copy()
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
 
-        # adjust facets as returned from solr for diplay
-        facet_counts = context_data['object_list'].facet_counts
-        facets = {}
-        collections = facet_counts.facet_fields.get('collection_label_facet', [])
-        # only include collections in facet if there are any
-        if collections:
-            facets['collection'] = collections
-        if facet_counts.facet_queries:
-            # number of volumes with pages loaded;
-            # facet query is a list of tuple; second value is the count
-            pages_loaded = facet_counts.facet_queries[0][1]
-            if pages_loaded < self.object_list.count():
-                facets['pages_loaded'] = facet_counts.facet_queries[0][1]
-
-
-        # generate list for display and removal of active filters
-        q = self.get_queryset()
-        annotated_volumes = {}
-        if context_data['paginator'].count and self.request.user.is_authenticated():
-            notes = Volume.volume_annotation_count(self.request.user)
-            domain = get_current_site(self.request).domain
-            if not domain.startswith('http'):
-                domain = 'http://' + domain
-            annotated_volumes = dict([(k.replace(domain, ''), v)
-                               for k, v in notes.iteritems()])
-
         context_data.update({
             'form': self.form,
             'url_params': urlencode(url_params),
-            'facets': facets,  # available facets
-            'filters': self.display_filters,  # active filters
             'mode': self.display_mode,  # list / cover view
             'current_url_params': urlencode(self.request.GET.copy()),
             'sort': self.sort,
             'sort_options': self.sort_options,
             'sort_url_params': urlencode(sort_url_params),
-            'annotated_volumes': annotated_volumes
         })
+
+        # get facets and annotations IF there are are any search results
+        if context_data['object_list']:
+            # adjust facets as returned from solr for display
+            facet_counts = context_data['object_list'].facet_counts
+            facets = {}
+            collections = facet_counts.facet_fields.get('collection_label_facet', [])
+            # only include collections in facet if there are any
+            if collections:
+                facets['collection'] = collections
+            if facet_counts.facet_queries:
+                # number of volumes with pages loaded;
+                # facet query is a list of tuple; second value is the count
+                pages_loaded = facet_counts.facet_queries[0][1]
+                if pages_loaded < context_data['object_list'].count():
+                    facets['pages_loaded'] = facet_counts.facet_queries[0][1]
+
+            # generate list for display and removal of active filters
+            q = self.get_queryset()
+            annotated_volumes = {}
+            if context_data['paginator'].count and self.request.user.is_authenticated():
+                notes = Volume.volume_annotation_count(self.request.user)
+                domain = get_current_site(self.request).domain
+                if not domain.startswith('http'):
+                    domain = 'http://' + domain
+                annotated_volumes = dict([(k.replace(domain, ''), v)
+                                   for k, v in notes.iteritems()])
+
+            context_data.update({
+                'facets': facets,  # available facets
+                'filters': self.display_filters,  # active filters
+                'annotated_volumes': annotated_volumes
+            })
+
         return context_data
 
 
@@ -242,6 +246,9 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
             context_data.update({
                 'pages': results,
                 'url_params': urlencode(url_params),
+                # provided for consistency with class-based view pagination
+                'paginator': paginator,
+                'page_obj': results,
             })
 
         else:

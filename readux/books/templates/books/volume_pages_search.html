@@ -9,6 +9,7 @@
     {% include 'books/snippets/volume_header.html' %}
     <article>
         <div class="container">
+        paginator count = {{ paginator.count }}
             {% if paginator.count %}
                 <h2 class="section-heading">{{ paginator.count|intcomma }} matching page{{ paginator.count|pluralize }} found</h2>
 

@@ -173,7 +173,7 @@ class CollectionDetail(DetailView, VaryOnCookieMixin):
             del sort_url_params['sort']
 
         context_data.update({
-             'items': results,
+             'items': results.object_list,
              'mode': self.display_mode,
              'url_params': urlencode(url_params),
              'sort_url_params': urlencode(sort_url_params),
@@ -182,6 +182,10 @@ class CollectionDetail(DetailView, VaryOnCookieMixin):
              'annotated_volumes': annotated_volumes,
              'facets': facets,  # available facets
              'filters': display_filters,  # active filters
+             # for compatibility with class-based view pagination
+             'paginator': paginator,
+             'page_obj': results,
+
              })
         return context_data
 

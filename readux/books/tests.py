@@ -26,7 +26,7 @@ from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
-from readux.books import sitemaps, view_helpers
+from readux.books import sitemaps, view_helpers, views
 from readux.utils import absolutize_url
 
 
@@ -498,10 +498,17 @@ class BookViewsTest(TestCase):
 
     @patch('readux.books.views.Paginator', spec=Paginator)
     @patch('readux.books.views.solr_interface')
-    def test_search(self, mocksolr_interface, mockpaginator):
+    @patch('readux.books.views.VolumeSearch.paginate_queryset')
+    def test_search(self, mockqs_paginate, mocksolr_interface, mockpaginator):
+        mockpage = NonCallableMock()
+        search_url = reverse('books:search')
+
+        # NOTE: pagination now happens in django's class-based view,
+        # so must be mocked there
+        mockqs_paginate.return_value = (mockpaginator.return_value,
+            mockpage, [], False)
 
         # no search terms - invalid form
-        search_url = reverse('books:search')
         response = self.client.get(search_url)
         self.assertContains(response, 'Please enter one or more search terms')
 
@@ -509,7 +516,8 @@ class BookViewsTest(TestCase):
         # simulate sunburnt's fluid interface
         mocksolr.query.return_value = mocksolr.query
         for method in ['query', 'facet_by', 'sort_by', 'field_limit',
-                       'exclude', 'filter', 'join', 'paginate', 'results_as']:
+                       'exclude', 'filter', 'join', 'paginate', 'results_as',
+                       'facet_query']:
             getattr(mocksolr.query, method).return_value = mocksolr.query
 
         # set up mock results for collection query and facet counts
@@ -528,9 +536,9 @@ class BookViewsTest(TestCase):
 
         # use a noncallable for the pagination result that is used in the template
         # because passing callables into django templates does weird things
-        mockpage = NonCallableMock()
+
         mockpaginator.return_value.page.return_value = mockpage
-        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts', 'count'])
 
         results.__iter__.return_value = iter(solr_result)
         results.facet_counts.facet_fields = {
@@ -541,6 +549,9 @@ class BookViewsTest(TestCase):
         mockpage.has_other_pages = False
         mockpage.paginator.count = 2
         mockpage.paginator.page_range = [1]
+        mockpaginator.return_value.count = 2
+        mockpaginator.return_value.page_range = [1]
+        mockqs_paginate.return_value = (mockpaginator.return_value, mockpage, results, True)
 
         # query with search terms
         response = self.client.get(search_url, {'keyword': 'yellowbacks'})
@@ -601,7 +612,7 @@ class BookViewsTest(TestCase):
         # check that annotation total is retrieved for ONLY logged in users
         with patch('readux.books.views.Volume') as mockvolclass:
             response = self.client.get(search_url, {'keyword': 'lecoq', 'collection': 'Yellowbacks'})
-            mockvolclass.volume_annotation_count.assert_not_called_with()
+            mockvolclass.volume_annotation_count.assert_not_called()
 
             User = get_user_model()
             testuser = User.objects.get(username=self.user_credentials['user']['username'])
@@ -696,7 +707,6 @@ class BookViewsTest(TestCase):
 
     @patch('readux.books.views.Repository')
     def test_volume(self, mockrepo):
-        print 'mockrepo = ', mockrepo
         mockobj = NonCallableMock()
         mockobj.pid = 'vol:1'
         mockobj.title = 'Lecoq, the detective'
@@ -799,7 +809,7 @@ class BookViewsTest(TestCase):
     @patch('readux.books.views.Repository')
     @patch('readux.books.views.Paginator', spec=Paginator)
     @patch('readux.books.views.solr_interface')
-    def test_volume_search(self, mocksolr_interface, mockpaginator, mockrepo):
+    def test_volume_page_search(self, mocksolr_interface, mockpaginator, mockrepo):
         mockobj = NonCallableMock()
         mockobj.pid = 'vol:1'
         mockobj.title = 'Lecoq, the detective'
@@ -837,6 +847,9 @@ class BookViewsTest(TestCase):
 
         vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
         response = self.client.get(vol_url, {'keyword': 'determine'})
+        self.assertEqual(response.templates[0].name,
+            views.VolumeDetail.search_template_name,
+            'volume search template should be used for valid search submission')
         for page in iter(solr_result):
             self.assertContains(response,
                 reverse('books:page-mini-thumb',
@@ -1041,32 +1054,30 @@ class BookViewsTest(TestCase):
         #     html=True,
         #     msg_prefix='page with tei should link to tei in header')
 
-    @patch('readux.books.views.Repository')
-    @patch('readux.books.views.raw_datastream')
-    def test_page_tei(self, mock_rawds, mockrepo):
+    @patch('readux.books.views.PageTei.repository_class')
+    def test_page_tei(self, mockrepo):
         mockobj = Mock()
+        mockobj.exists = True
         mockobj.pid = 'page:1'
         mockobj.volume.pid = 'vol:1'
+        mockds = mockobj.getDatastreamObject.return_value
+        mockds.exists = True
+        mockds.created = datetime.now()
+        mockds.info.size = 100
         mockrepo.return_value.get_object.return_value = mockobj
 
         url = reverse('books:page-tei',
             kwargs={'vol_pid': mockobj.volume.pid, 'pid': mockobj.pid})
         response = self.client.get(url)
 
-        # test raw datastream called as expected
-        call_args = mock_rawds.call_args
-        args, kwargs = call_args
-        self.assertEqual(mockobj.pid, args[1],
-            'raw_datastream should be called with requested pid')
-        self.assertEqual('tei', args[2],
-            'raw_datastream should be called with "tei" for datastream id')
-        self.assertEqual(Page, kwargs['type'],
-            'raw_datastream should be called with Page object type')
-        self.assertEqual(mockrepo.return_value, kwargs['repo'],
-            'raw_datastream should be called with local Repository instance')
+        # class-based view, can no longer test parameters to raw_datastream
+        # only custom logic is the header, and configuration
         self.assertEqual('filename="%s_tei.xml"' % mockobj.pid.replace(':', '-'),
-            kwargs['headers']['Content-Disposition'],
-            'raw_datastream should have a content-disposition header set')
+            response['content-disposition'],
+            'tei response should have a content-disposition header set')
+
+        mockobj.getDatastreamObject.assert_called_with(Page.tei.id)
+
 
     @patch('readux.books.views.TypeInferringRepository')
     def test_page_redirect(self, mockrepo):

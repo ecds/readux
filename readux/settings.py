@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'readux.annotations',
     'readux.books',
     'readux.collection',
-    'readux.dyndzi',
     'readux.pages',
 ]
 

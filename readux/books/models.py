@@ -22,7 +22,7 @@ from eulxml import xmlmap
 from eulxml.xmlmap import teimap
 
 from readux.annotations.models import Annotation
-from readux.books import abbyyocr
+from readux.books import abbyyocr, iiif
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
 from readux.utils import solr_interface, absolutize_url
@@ -100,6 +100,44 @@ class Book(DigitalObject):
 # NOTE: Image and Page defined before Volume to allow referencing in
 # Volume relation definitions
 
+class IIIFImage(iiif.IIIFImageClient):
+    api_endpoint = settings.IIIF_API_ENDPOINT
+    image_id_prefix = getattr(settings, 'IIIF_ID_PREFIX', '')
+    pid = None
+
+    def __init__(self, *args, **kwargs):
+        pid = None
+        if 'pid' in kwargs:
+            pid = kwargs['pid']
+            del kwargs['pid']
+        super(IIIFImage, self).__init__(**kwargs)
+
+        if pid is not None:
+            self.pid = pid
+
+    def get_copy(self):
+        copy = super(IIIFImage, self).get_copy()
+        copy.pid = self.pid
+        return copy
+
+    def get_image_id(self):
+        return '%s%s' % (self.image_id_prefix, self.pid)
+
+    def thumbnail(self):
+        return self.size(width=300, height=300, exact=True).format('png')
+
+    def mini_thumbnail(self):
+        return self.thumbnail().size(width=100, height=100, exact=True)
+
+    SINGLE_PAGE_SIZE = 1000
+
+    def page_size(self):
+        return self.size(width=self.SINGLE_PAGE_SIZE, height=self.SINGLE_PAGE_SIZE,
+            exact=True)
+
+
+
+
 
 class Image(DigitalObject):
     ''':class:`~eulfedora.models.DigitalObject` for image content,
@@ -120,47 +158,9 @@ class Image(DigitalObject):
         })
     ':class:`~eulfedora.models.FileDatastream` with image content'
 
-    def get_preview_image(self):
-        'Return a version of the image suitable for preview or thumbnail'
-        # content, uri = self.getDissemination(self.IMAGE_SERVICE, 'getRegion',
-        #                                      params={'level': 1})
-
-        response = requests.get(self.preview_image_url())
-        return response.content
-
-    def preview_image_url(self):
-        return '%s%s%s/full/!300,300/0/default.png' % (
-            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
-            self.pid)
-
-    def page_image_url(self):
-        #SINGLE_PAGE_SIZE = 1000
-        return '%s%s%s/full/!1000,1000/0/default.png' % (
-            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
-            self.pid)
-
-    def get_region(self, **params):
-        '''Call the getRegion method on the image service disseminator
-        with any parameters the service supports, and return the
-        results.'''
-        return self.getDissemination(self.IMAGE_SERVICE, 'getRegion', params=params)
-
-    def get_region_chunks(self, **params):
-        # return getRegion chunks as a generator for use with http response
-        response = self.getDissemination(self.IMAGE_SERVICE, 'getRegion', params=params,
-                                         return_http_response=True)
-        # FIXME: check response code first?
-        while True:
-            chunk = response.read(4096)
-            if not chunk:
-                return
-            yield chunk
-
-
-    def image_info_url(self):
-        return '%s%s%s/info.json' %  \
-                (settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
-                self.pid)
+    def __init__(self, *args, **kwargs):
+        super(Image, self).__init__(*args, **kwargs)
+        self.iiif = IIIFImage(pid=self.pid)
 
     _image_metadata = None
     @property
@@ -168,14 +168,9 @@ class Image(DigitalObject):
         '''Image metadata as returned by Djatoka getMetadata method
         (width, height, etc.).'''
         if self._image_metadata is None:
-            response = requests.get(self.image_info_url)
-            self._image_metadata = response.json()
-
-            # imgmeta = self.getDissemination(self.IMAGE_SERVICE, 'getMetadata')
-            # # getDissemination returns a tuple of result, url
-            # # load the image metadata returned by djatoka via json and return
-            # # NOTE: this is eulfedora + requests syntax; old syntax was imgmeta[0]
-            # self._image_metadata = json.loads(imgmeta.content)
+            response = requests.get(self.iiif.info())
+            if response.status_code == requests.codes.ok:
+                self._image_metadata = response.json()
 
         return self._image_metadata
 
@@ -338,9 +333,10 @@ class Page(Image):
     @property
     def image_url(self):
         # preliminary image url, for use in tei facsimile
-        # NOTE: eventually we may want to use some version of the ARK
-        return absolutize_url(reverse('books:page-image-fs',
-            kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
+        # TODO: we probably want to use some version of the ARK here
+        return unicode(self.iiif)
+        # return absolutize_url(reverse('books:page-image-fs',
+            # kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
 
     @property
     def tei_options(self):
@@ -1033,12 +1029,18 @@ class SolrVolume(UserDict, BaseVolume):
         # exposing as a property here for generating voyant url
         return self.get('language')
 
+    _primary_image = None
     @property
     def primary_image(self):
         # allow template access to cover image pid to work the same way as
         # it does with Volume - vol.primary_image.pid
-        if 'hasPrimaryImage' in self.data:
-            return {'pid': self.data.get('hasPrimaryImage')}
+        if self._primary_image is None:
+            if 'hasPrimaryImage' in self.data:
+                pid = self.data.get('hasPrimaryImage')
+                self._primary_image = {'pid': pid, 'iiif': IIIFImage(pid=pid)}
+            else:
+                self._primary_image = {}
+        return self._primary_image
 
     @property
     def start_page(self):
@@ -1053,14 +1055,16 @@ class SolrPage(UserDict):
     def __init__(self, **kwargs):
         # sunburnt passes fields as kwargs; userdict wants them as a dict
         UserDict.__init__(self, kwargs)
+        self.iiif = IIIFImage(pid=self.pid)
 
     @property
     def pid(self):
         'object pid'
         return self.data.get('pid')
 
-
     def thumbnail_url(self):
+        print self.iiif.thumbnail()
+        return self.iiif.thumbnail()
         return '%s%s%s/full/!300,300/0/default.png' % (
             settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
             self.pid)

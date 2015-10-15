@@ -19,7 +19,7 @@ from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream, RawDatastreamView
 
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
-    PageV1_1
+    PageV1_1, SolrPage
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
 from readux.utils import solr_interface
@@ -107,6 +107,9 @@ class VolumeSearch(ListView):
             else:
                 # generate a facet count for books with pages loaded
                 q = q.facet_query(page_count__gt=1)
+
+            return q
+
         else:
             # empty 'queryset' result required by view methods
             return []
@@ -143,7 +146,7 @@ class VolumeSearch(ListView):
                 # number of volumes with pages loaded;
                 # facet query is a list of tuple; second value is the count
                 pages_loaded = facet_counts.facet_queries[0][1]
-                if pages_loaded < context_data['object_list'].count():
+                if pages_loaded < len(context_data['object_list']):
                     facets['pages_loaded'] = facet_counts.facet_queries[0][1]
 
             # generate list for display and removal of active filters
@@ -222,7 +225,8 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                     .query(query) \
                     .field_limit(['page_order', 'pid'], score=True) \
                     .highlight('page_text', snippets=3) \
-                    .sort_by('-score').sort_by('page_order')
+                    .sort_by('-score').sort_by('page_order') \
+                    .results_as(SolrPage)
 
             # return highlighted snippets from page text
             # sort by relevance and then by page order
@@ -552,74 +556,6 @@ def _error_image_response(mode):
         with open(os.path.join(base_path, 'img', img)) as content:
             return HttpResponseNotFound(content.read(), content_type='image/png')
 
-@require_http_methods(['GET', 'HEAD'])
-@condition(etag_func=view_helpers.page_image_etag,
-           last_modified_func=view_helpers.page_image_lastmodified)
-def page_image(request, vol_pid, pid, mode=None):
-    '''Return a page image, resized according to mode.
-
-    :param pid: the pid of the :class:`~readux.books.models.Page`
-        object
-    :param mode: image mode (used to determine image size to return);
-        currently one of thumbnail, singe-page, or fullsize
-    '''
-    try:
-        repo = Repository()
-        page = repo.get_object(pid, type=Page)
-        if page.image.exists:
-            # Explicitly support HEAD for efficiency (skip API call)
-            if request.method == 'HEAD':
-                content = ''
-            else:
-                if mode == 'thumbnail':
-                    content = page.get_preview_image()
-                    # content = page.get_region(scale=300)
-                elif mode == 'mini-thumbnail':
-                    # mini thumbnail for list view - try 100x100 or 120x120
-                    content = page.get_region(level=1, scale=100)
-                    # NOTE: this works, but doesn't consistently get centered content
-                    # content = page.get_region(level='1', region='0,0,100,100')
-                elif mode == 'single-page':
-                    # NOTE: using get_region instead of get_region_chunks here
-                    # to make it possible to catch the error and serve out
-                    # an error image; page images at this size shouldn't
-                    # be large enough to really need chunking
-                    content = page.get_region(scale=SINGLE_PAGE_SIZE)
-                    # content = page.get_region_chunks(scale=1000)
-                elif mode == 'fullsize':
-                    content = page.get_region_chunks(level='') # default (max) level
-
-            return HttpResponse(content, content_type='image/jpeg')
-            # NOTE: last-modified and etag headers are set on the response
-            # by the django condition decorator methods
-
-            # NOTE: some overlap in headers/error checking with
-            # eulfedora.views.raw_datastream
-            # Consider pulling out common functionality, or writing
-            # another generic eulfedora view for serving out
-            # datastream-based dissemination content
-
-        else:
-            # 404 if the page image doesn't exist
-            # - 404 with error image if in a supported mode
-            response = _error_image_response(mode)
-            if response:
-                return response
-            else:
-                raise Http404
-
-    except RequestFailed as rf:
-        # generate error image response, if in a supported mode
-        response = _error_image_response(mode)
-        if response:
-            # update response status code to match fedora error
-            # (401, 404, or 500)
-            response.status_code = rf.code
-            return response
-
-        if rf.code in [404, 401]:
-            raise Http404
-        raise
 
 class PageRedirect(RedirectView):
     # redirect view for old page urls without volume pids

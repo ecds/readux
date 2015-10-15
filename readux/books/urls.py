@@ -28,15 +28,6 @@ urlpatterns = patterns('',
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/OCR/$',
         RedirectView.as_view(pattern_name='books:page-ocr')),
 
-    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/thumbnail/$', views.page_image, {'mode': 'thumbnail'},
-        name='page-thumbnail'),
-    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/thumbnail/mini/$', views.page_image, {'mode': 'mini-thumbnail'},
-        name='page-mini-thumb'),
-    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/image/$', views.page_image, {'mode': 'single-page'},
-        name='page-image'),
-    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/image/fs/$', views.page_image, {'mode': 'fullsize'},
-        name='page-image-fs'),
-
     # redirect view for old page urls without volume pids
     url(r'^pages/(?P<pid>[^/]+)/(?P<path>.*)$', views.PageRedirect.as_view(),
         name='old-pageurl-redirect')

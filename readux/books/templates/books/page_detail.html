@@ -44,14 +44,15 @@
 
 {% block metadata %}
     {{ block.super }}
-    {% url 'books:page-image' page.volume.pid page.pid as image_url %}
+    {% with page.iiif.page_size as image_url %}
     <meta property="og:title" content="{{ page.display_label }}"/>
     <meta itemprop="og:headline" content="{{ page.display_label }}" />
-    <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
+    <meta property="og:image" content="{{ image_url }}"/>
 
     <meta property="twitter:card" content="photo" />
     <meta property="twitter:title" content="{{ page.display_label }}" />
-    <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+    <meta property="twitter:image" content="{{ image_url }}" />
+    {% endwith %}
 
     {% if page.tei.exists %}
     <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.volume.pid page.pid %}" />
@@ -99,8 +100,7 @@
                 <div class="page">
                     <div class="content">
                         <section class="inner">
-                          {# <img class="page-image" src="{% url 'books:page-image' page.volume.pid page.pid %}"/> #}
-                          <img class="page-image" src="{{ page.page_image_url }}"/>
+                          <img class="page-image" src="{{ page.iiif.page_size }}"/>
                           {% if page.tei.exists %}
                              {% for line in page.tei.content.lines %}
                              <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>

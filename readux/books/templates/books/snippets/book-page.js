@@ -6,8 +6,7 @@
       set_seadragon_opts({
           id: "zoom-page",
           prefixUrl: "{% static 'js/openseadragon/images/' %}",
-          tileSources: "{{ page.image_info_url }}",
-          // tileSources: "{% url 'deepzoom:dzi' page.pid %}",
+          tileSources: "{{ page.iiif.info }}",
           toolbar: 'deepzoom-controls',
           showNavigator: true,
           navigatorPosition: 'TOP_LEFT',

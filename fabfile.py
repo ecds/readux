@@ -248,6 +248,7 @@ def deploy(path=None, user=None, url_prefix='', remote_proxy=None,
     configure_site()
     update_links()
     compare_localsettings()
+    rm_old_builds(noinput=True)
 
 
 @task
@@ -303,9 +304,9 @@ def rm_old_builds(path=None, user=None, noinput=False):
                 rm_dirs.remove(link)
 
         if rm_dirs:
-            for dir in rm_dirs:
-                if noinput or confirm('Remove %s/%s ?' % (env.remote_path, dir)):
-                    sudo('rm -rf %s' % dir, user=env.remote_acct)
+            for build_dir in rm_dirs:
+                if noinput or confirm('Remove %s/%s ?' % (env.remote_path, build_dir)):
+                    sudo('rm -rf %s' % build_dir, user=env.remote_acct)
         else:
             puts('No old build directories to remove')
 

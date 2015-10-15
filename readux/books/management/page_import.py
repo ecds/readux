@@ -158,8 +158,8 @@ class BasePageImport(BaseCommand):
         images.sort()
 
         if not len(images):
-            self.stdout.write('Error: no files matching *.jp2, *.tif, *.TIF, or *.jpg found for %s' % \
-                              vol_info.display_image_path)
+            self.stdout.write('Error on %s: no files matching *.jp2, *.tif, *.TIF, or *.jpg found for %s' % \
+                              (vol.pid, vol_info.display_image_path))
 
         # images could be empty list if no matches were found
         return images, vol_info

@@ -5,10 +5,12 @@ from django.contrib import admin
 from django.contrib.sitemaps import views as sitemap_views
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
+from feincms.module.page.sitemap import PageSitemap
 
 from readux.annotations import views as annotation_views
 from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap
 from readux.collection.sitemaps import CollectionSitemap
+from readux.collection.views import CollectionCoverList
 
 
 admin.autodiscover()
@@ -17,6 +19,7 @@ sitemaps = {
     'collections': CollectionSitemap,
     'volume-pdfs': VolumePdfSitemap,
     'volumes': VolumeSitemap,
+    'pages': PageSitemap
 }
 
 # choose favicon based on config, to indicate which site is running
@@ -31,7 +34,8 @@ else:
 urlpatterns = patterns('',
     # for now, using collection browse as site index
     # url(r'^$', 'readux.collection.views.site_index', name="site-index"),
-    url(r'^$', 'readux.collection.views.browse', name="site-index"),
+    # url(r'^$', 'readux.collection.views.browse', name="site-index"),
+    url(r'^$', CollectionCoverList.as_view(), name="site-index"),
 
     url(r'^collections/', include('readux.collection.urls', namespace='collection')),
     url(r'^books/', include('readux.books.urls', namespace='books')),
@@ -64,7 +68,9 @@ urlpatterns = patterns('',
     # django auth (NOTE: may need need all of auth, but at least need logout)
     url('^', include('django.contrib.auth.urls', namespace='auth')),
     # social auth
-    url('', include('social.apps.django_app.urls', namespace='social'))
+    url('', include('social.apps.django_app.urls', namespace='social')),
+    # feincms
+    url(r'', include('feincms.urls')),
 )
 
 if settings.DEV_ENV:

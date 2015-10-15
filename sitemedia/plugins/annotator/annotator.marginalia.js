@@ -239,7 +239,7 @@ function annotatorMarginalia(user_opts) {
                  sameDay: "[today at] LT",
                  lastDay: '[yesterday at ] LT',
                  lastWeek: '[last] dddd',
-                 sameElse: 'L'
+                 sameElse: 'MMMM Do, YYYY'
                 })));
                 // display date relative to now; use month day year format
                 // for dates more than a week old

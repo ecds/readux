@@ -89,6 +89,14 @@
 {% endblock %}
 
 {% block footer-content %}
+<script>
+var error_images = {
+    thumbnail: "{% static 'img/notfound_thumbnail.png' %}",
+    single_page: "{% static 'img/notfound_page.png' %}",
+    mini_thumbnail: "{% static 'notfound_mini_thumbnail_page.png' %}",
+    cover_mini_thumb: "{% static 'img/notfound_mini_thumbnail.png' %}",
+};
+</script>
   {% if not debug %} {# google analytics tracking code #}
     {% include 'snippets/google_analytics.html' %}
   {% endif %}

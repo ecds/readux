@@ -80,5 +80,12 @@ $(document).ready(function() {
       $(".page-search .row").stop().slideToggle();
     });
 
+    $('img.page-image').on('error', function(evt) {
+        $(this).attr('src', error_images.single_page);
+    });
+    $('img.cover-mini-thumb').on('error', function(evt) {
+        console.log('setting error image for ' + this);
+        $(this).attr('src', error_images.cover_mini_thumb);
+    });
 
 });

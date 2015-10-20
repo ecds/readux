@@ -107,6 +107,8 @@ class VolumeSearch(ListView):
             else:
                 # generate a facet count for books with pages loaded
                 q = q.facet_query(page_count__gt=1)
+
+            return q
         else:
             # empty 'queryset' result required by view methods
             return []
@@ -143,7 +145,7 @@ class VolumeSearch(ListView):
                 # number of volumes with pages loaded;
                 # facet query is a list of tuple; second value is the count
                 pages_loaded = facet_counts.facet_queries[0][1]
-                if pages_loaded < context_data['object_list'].count():
+                if pages_loaded < len(context_data['object_list']):
                     facets['pages_loaded'] = facet_counts.facet_queries[0][1]
 
             # generate list for display and removal of active filters

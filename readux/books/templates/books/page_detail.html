@@ -8,7 +8,9 @@
   {# local copy of annotator v2.0-alpha css #}
   <link rel="stylesheet" href="{% static 'plugins/annotator/annotator.min.css' %}"/>
   <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-meltdown/build/0.1.0/annotator.meltdown.min.css" />
-  <link rel="stylesheet" href="{% static 'plugins/annotator/annotator.marginalia.css' %}"/>
+  <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-marginalia/build/0.1.0/annotator.marginalia.min.css" />
+  {# FIXME: local marginalia css used to have a different style for toggle button #}
+  {# <link rel="stylesheet" href="{% static 'plugins/annotator/annotator.marginalia.css' %}"/> #}
 {% endblock %}
 
 {% block javascript %}
@@ -20,10 +22,10 @@
   <script type="text/javascript" src="{% static 'js/showdown.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/openseadragon/openseadragon.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/deepzoom.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/page.js' %}"></script>
 
-  <script type="text/javascript" src="{% static 'plugins/annotator/annotator.marginalia.js' %}"></script>
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-marginalia/build/0.1.0/annotator.marginalia.min.js"></script>
+
   <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-meltdown/build/0.1.0/annotator.meltdown.min.js"></script>
 
   <script type="text/javascript" src="{% static 'plugins/annotator/suppress_permissions.js' %}"></script>

@@ -312,8 +312,8 @@ class VolumePageList(ListView, VaryOnCookieMixin):
 
         # Check if the first page of the volume is wider than it is tall
         # to set the layout of the pages
-        first_page = self.repo.get_object(self.object_list[0]['pid'], type=Page)
-        if (first_page.width > first_page.height):
+        first_page = self.vol.pages[0]
+        if first_page.width > first_page.height:
             layout = 'landscape'
         else:
             layout = 'default'

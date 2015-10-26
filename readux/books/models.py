@@ -171,6 +171,8 @@ class Image(DigitalObject):
             response = requests.get(self.iiif.info())
             if response.status_code == requests.codes.ok:
                 self._image_metadata = response.json()
+            else:
+                logger.warn('Error retrieving image metadata: %s', response)
 
         return self._image_metadata
 
@@ -179,13 +181,15 @@ class Image(DigitalObject):
     def width(self):
         '''Width of :attr:`image` datastream, according to
         :attr:`image_metadata`.'''
-        return int(self.image_metadata['width'])
+        if self.image_metadata:
+            return int(self.image_metadata['width'])
 
     @property
     def height(self):
         '''Height of :attr:`image` datastream, according to
         :attr:`image_metadata`.'''
-        return int(self.image_metadata['height'])
+        if self.image_metadata:
+            return int(self.image_metadata['height'])
 
 
 class TeiZone(teimap.Tei):

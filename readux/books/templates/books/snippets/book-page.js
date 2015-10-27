@@ -64,6 +64,7 @@
             {% endif %}
             viewer: annotatormeltdown.render,
             toggle:{
+              class: 'btn btn-green',
               show: function(){
                 $(".carousel-control").fadeOut();
               },

@@ -1031,7 +1031,7 @@ class BookViewsTest(TestCase):
             response['content-disposition'],
             'tei response should have a content-disposition header set')
 
-        mockobj.getDatastreamObject.assert_called_with(Page.tei.id)
+        mockobj.getDatastreamObject.assert_called_with(Page.tei.id, as_of_date=None)
 
 
     @patch('readux.books.views.TypeInferringRepository')

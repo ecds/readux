@@ -39,6 +39,11 @@ class BasePageImport(BaseCommand):
     #: defaultdict to track stats about what has been done, errors, etc
     stats = defaultdict(int)
 
+    # optional override paths for image and ocr input (single volume only)
+    image_path = None
+    ocr_path = None
+    pdf_path = None
+
     def setup(self, **options):
         '''common setup: initialze :attr:`digwf_client` and :attr:`repo` and
         set verbosity level based on user options.'''
@@ -111,47 +116,53 @@ class BasePageImport(BaseCommand):
         images = []
         vol_info = None
 
-        # lookup in digwf by pid (noid)
-        info = self.digwf_client.get_items(pid=vol.noid)
-        if info.count != 1:
-            if self.verbosity >= self.v_normal:
-                if info.count > 1:
-                    self.stdout.write("Error: Found more than one (%d) DigWF record for %s. This shouldn't happen!" \
-                                       % (info.count, vol.pid))
-                else:
-                    if self.verbosity >= self.v_normal:
-                        self.stdout.write("Error: No information found in DigWF for %s" % vol.pid)
+        # if an image path override is set, use that instead of looking up in digwf
+        if self.image_path is not None:
+            vol_info = digwf.Item(display_image_path=self.image_path)
+            vol_info.ocr_file_path = self.ocr_path
+            vol_info.pdf = self.pdf_path
 
-            # nothing to do
-            return images, vol_info
+        else:
+            # lookup in digwf by pid (noid)
+            info = self.digwf_client.get_items(pid=vol.noid)
+            if info.count != 1:
+                if self.verbosity >= self.v_normal:
+                    if info.count > 1:
+                        self.stdout.write("Error: Found more than one (%d) DigWF record for %s. This shouldn't happen!" \
+                                           % (info.count, vol.pid))
+                    else:
+                        if self.verbosity >= self.v_normal:
+                            self.stdout.write("Error: No information found in DigWF for %s" % vol.pid)
 
-        vol_info = info.items[0]
-        logger.debug("image path for %s : %s",
-           vol.pid, vol_info.display_image_path)
+                # nothing to do
+                return images, vol_info
 
-        if not vol_info.display_image_path:
-            self.stdout.write('Error: no display image path set for %s' % vol.pid)
-            # no images can possibly be found
-            return [], vol_info
+            vol_info = info.items[0]
+            logger.debug("image path for %s : %s",
+               vol.pid, vol_info.display_image_path)
 
+            if not vol_info.display_image_path:
+                self.stdout.write('Error: no display image path set for %s' % vol.pid)
+                # no images can possibly be found
+                return [], vol_info
+
+        image_path = vol_info.display_image_path
         # look for JPEG2000 images first (preferred format)
-        images = glob.glob(os.path.join(vol_info.display_image_path,
-                                             '*.jp2'))
+        images = glob.glob(os.path.join(image_path, '*.jp2'))
         # if not found in base display path, check for a JP2 subdir
         if not len(images):
-            images = glob.glob(os.path.join(vol_info.display_image_path,
-                                                 'JP2', '*.jp2'))
+            images = glob.glob(os.path.join(image_path, 'JP2', '*.jp2'))
         # if jp2s were not found in either location, look for tiffs
         if not len(images):
-            images = glob.glob('%s/*.tif' % vol_info.display_image_path)
+            images = glob.glob('%s/*.tif' % image_path)
 
         # tif variant - in some cases, extension is upper case
         if not len(images):
-            images = glob.glob('%s/*.TIF' % vol_info.display_image_path)
+            images = glob.glob('%s/*.TIF' % image_path)
 
         # if neither jp2s nor tiffs were found, look for jpgs
         if not len(images):
-            images = glob.glob('%s/*.jpg' % vol_info.display_image_path)
+            images = glob.glob('%s/*.jpg' % image_path)
 
         # make sure the files are sorted; images are expected to be named
         # so that they are ordered in page-sequence when sorted
@@ -159,7 +170,7 @@ class BasePageImport(BaseCommand):
 
         if not len(images):
             self.stdout.write('Error on %s: no files matching *.jp2, *.tif, *.TIF, or *.jpg found for %s' % \
-                              (vol.pid, vol_info.display_image_path))
+                              (vol.pid, image_path))
 
         # images could be empty list if no matches were found
         return images, vol_info

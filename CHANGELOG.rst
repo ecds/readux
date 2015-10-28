@@ -35,20 +35,20 @@ Annotation
   annotate.
 * As a researcher I can log in to readux using social media credentials,
   so that I do not need a separate account to create annotations.
+* As a researcher I want to annotate part of the text on a page in order
+  to provide additional information about the text.
 * As a researcher I want to annotate an image or part of an image in
   order to provide additional information about the image.
-* As a researcher I want to edit and delete my annotations, in order to
-  make changes or remove notes I no longer want.
-* As a user I can see my annotations in the margin of the page, so that
-  I can read all of the annotations conveniently.
 * As a researcher I want to include simple formatting in my notes to
   make them more readable.
 * As a researcher I want to include images in my annotations so that
   users can see important visual materials.
-* As a researcher I want to annotate part of the text on a page in order
-  to provide additional information about the text.
 * As a researcher I want to tag annotations so that I can indicate
   connections among related content.
+* As a researcher I want to edit and delete my annotations, in order to
+  make changes or remove notes I no longer want.
+* As a user I can see my annotations in the margin of the page, so that
+  I can read all of the annotations conveniently.
 * As a researcher I want to see which volumes I have annotated when I am
   browsing or searching so that I can easily resume annotating.
 * As a researcher I want to see which pages I have annotated so that I

@@ -13,6 +13,7 @@ function startzoom() {
       viewer = OpenSeadragon(seadragon_opts);
     }
     $('#covers').removeClass('active');
+    // set enable-zoom button active
     $('#enable-zoom').addClass('active');
     // move deepzoom div in front of page image
     $('#zoom-page').addClass('active').show().css('z-index', 3);
@@ -20,9 +21,12 @@ function startzoom() {
     $("#deepzoom-controls").removeClass('hidden').addClass('visible');
     // use not-visible class to set image opacity, but leave it visible
     // to the browser because we need it for the page size/layout
-    $('#page-image').addClass('not-visible');
-    // set enable-zoom button active
-    // $('#enable-zoom').aaddClass('active');
+    $('.page-image').addClass('not-visible');
+
+    // for now, hide annotations/marginalia in deep zoom mode
+    $('#toggle-annotations').addClass('not-visible');
+    $('.margin-container').addClass('not-visible');
+
 }
 
 function endzoom() {
@@ -33,7 +37,10 @@ function endzoom() {
     // hide the deepzoom controls
     $("#deepzoom-controls").addClass('hidden').removeClass('visible');
     // restore non-zoomable page image
-    $('#page-image').removeClass('not-visible');
+    $('.page-image').removeClass('not-visible');
+    // restore annotations and marginalia
+    $('#toggle-annotations').removeClass('not-visible');
+    $('.margin-container').removeClass('not-visible');
 
     $('#covers').addClass('active');
     $('#enable-zoom').removeClass('active');

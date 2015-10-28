@@ -883,6 +883,8 @@ class BookViewsTest(TestCase):
         mockvol.find_solr_pages = MagicMock()
         mockvol.find_solr_pages.return_value.count = 3
         mockvol.find_solr_pages.__len__.return_value = 3
+        mockpage = Mock(width=640, height=400)
+        mockvol.pages = [mockpage]
 
         vol_page_url = reverse('books:pages', kwargs={'pid': mockvol.pid})
         response = self.client.get(vol_page_url)

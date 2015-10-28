@@ -81,10 +81,10 @@ $(document).ready(function() {
     });
 
     $('img.page-image').on('error', function(evt) {
+        $('.page').addClass('image-error');
         $(this).attr('src', error_images.single_page);
     });
     $('img.cover-mini-thumb').on('error', function(evt) {
-        console.log('setting error image for ' + this);
         $(this).attr('src', error_images.cover_mini_thumb);
     });
 

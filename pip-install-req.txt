@@ -1,8 +1,7 @@
 Django>=1.8
 eulxml>=0.22
 # eulfedora>=1.3 # dev eulfedora for class-based views, should be 1.3
--e git://github.com/emory-libraries/eulfedora.git@develop#egg=develop
-pyPdf
+-e git://github.com/emory-libraries/eulfedora.git@1.3#egg=eulfedora
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
 # require at least downtime 1.0.4 for exempting exact urls

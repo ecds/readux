@@ -144,11 +144,12 @@ class VolumeSearch(ListView):
             if collections:
                 facets['collection'] = collections
             if facet_counts.facet_queries:
-                logger.debug(facet_counts.facet_queries)
                 # number of volumes with pages loaded;
                 # facet query is a list of tuple; second value is the count
                 pages_loaded = facet_counts.facet_queries[0][1]
-                if pages_loaded < len(context_data['object_list']):
+                # only display if it is a facet, i.e. not all volumes
+                # in the result set have pages loaded
+                if pages_loaded < context_data['paginator'].count:
                     facets['pages_loaded'] = facet_counts.facet_queries[0][1]
 
             # generate list for display and removal of active filters

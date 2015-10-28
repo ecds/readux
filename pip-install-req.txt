@@ -6,9 +6,7 @@ eulxml>=0.22
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
 # require at least downtime 1.0.4 for exempting exact urls
 django-downtime>=1.0.4
-# dev eultheme for pagination snippet updates, should be 1.2
-# -e git://github.com/emory-libraries/django-eultheme.git@1.2#egg=eultheme
--e git://github.com/emory-libraries/django-eultheme.git@develop#egg=eultheme
+-e git://github.com/emory-libraries/django-eultheme.git@1.2#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as

@@ -38,7 +38,7 @@ from readux.utils import solr_interface
 from readux.books.models import VolumeV1_0, SolrVolume
 solr = solr_interface()
 vols = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks').results_as(SolrVolume)
-solr.delete([{'pid': vol['pid']} for vol in vols if int(vol.volume) >= 1923])
+solr.delete([{'pid': vol['pid']} for vol in vols if int(vol.volume[:4]) >= 1923])
 solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks').count()
 ```
 

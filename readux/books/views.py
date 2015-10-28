@@ -38,6 +38,7 @@ class VolumeSearch(ListView):
     context_object_name = 'items'
 
     display_mode = 'list'
+    display_filters = []
     sort_options = ['relevance', 'title', 'date added']
 
     @method_decorator(last_modified(view_helpers.volumes_modified))

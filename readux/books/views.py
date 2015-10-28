@@ -100,14 +100,14 @@ class VolumeSearch(ListView):
 
             # active filter - only show volumes with pages loaded
             if 'read_online' in self.request.GET and self.request.GET['read_online']:
-                q = q.query(page_count__gt=1)
+                q = q.query(page_count__gte=2)
                 unfacet_urlopts = url_params.copy()
                 del unfacet_urlopts['read_online']
                 self.display_filters.append(('Read online', '',
                                         unfacet_urlopts.urlencode()))
             else:
                 # generate a facet count for books with pages loaded
-                q = q.facet_query(page_count__gt=1)
+                q = q.facet_query(page_count__gte=2)
 
             return q
 
@@ -144,6 +144,7 @@ class VolumeSearch(ListView):
             if collections:
                 facets['collection'] = collections
             if facet_counts.facet_queries:
+                logger.debug(facet_counts.facet_queries)
                 # number of volumes with pages loaded;
                 # facet query is a list of tuple; second value is the count
                 pages_loaded = facet_counts.facet_queries[0][1]

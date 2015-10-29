@@ -116,11 +116,9 @@ class BasePageImport(BaseCommand):
         images = []
         vol_info = None
 
-        # if an image path override is set, use that instead of looking up in digwf
-        if self.image_path is not None:
-            vol_info = digwf.Item(display_image_path=self.image_path)
-            vol_info.ocr_file_path = self.ocr_path
-            vol_info.pdf = self.pdf_path
+        # if all path overrides are set, don't bother querying digwf
+        if self.image_path and self.ocr_path and self.pdf_path:
+            vol_info = digwf.Item()
 
         else:
             # lookup in digwf by pid (noid)
@@ -145,6 +143,14 @@ class BasePageImport(BaseCommand):
                 self.stdout.write('Error: no display image path set for %s' % vol.pid)
                 # no images can possibly be found
                 return [], vol_info
+
+        # override/populate volume info based on any override paths
+        if self.image_path:
+            vol_info.display_image_path = self.image_path
+        if self.ocr_path:
+            vol.ocr_file_path = self.ocr_path
+        if self.pdf_path:
+            vol_info.pdf = self.pdf_path
 
         image_path = vol_info.display_image_path
         # look for JPEG2000 images first (preferred format)

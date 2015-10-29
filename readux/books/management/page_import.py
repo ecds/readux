@@ -148,7 +148,7 @@ class BasePageImport(BaseCommand):
         if self.image_path:
             vol_info.display_image_path = self.image_path
         if self.ocr_path:
-            vol.ocr_file_path = self.ocr_path
+            vol_info.ocr_file_path = self.ocr_path
         if self.pdf_path:
             vol_info.pdf = self.pdf_path
 
@@ -447,10 +447,13 @@ class BasePageImport(BaseCommand):
                 ds.checksum_type = 'MD5'
 
                 # make sure image mimetype gets set correctly (should be image/jp2)
-                # most reliable, general way to do this is to set mimetype based on mime magic
+                # most reliable, general way to do this *should* be to
+                # set mimetype based on mime magic
                 mimetype = m.from_file(filepath)
                 mimetype, separator, options = mimetype.partition(';')
-                ds.mimetype = mimetype
+                # If JPEG2000 is recognized as generic mimetype, override it
+                if mimetype == 'application/octet-stream' and ds.id == PageV1_0.image.id:
+                    mimetype = 'image/jp2'
 
                 # set datastream content
                 openfile = open(filepath)

@@ -103,12 +103,12 @@ the configured fedora instance, or in a single collection specified by pid.'''
         # is update logic requested?
         update = options.get('update', False)
 
-        if options['image_path'] or options['ocr_path'] or options['pdf_path'] \
+        # check that override paths are only set for a single volume
+        if (options['image_path'] or options['ocr_path'] or options['pdf_path']) \
           and not len(pids) == 1:
             self.stdout.write('Image path, ocr path, and pdf path can only be specified for a single volume')
             return
 
-        # assuming for now that all three are set; perhaps check?
         self.image_path = options.get('image_path', None)
         self.ocr_path = options.get('ocr_path', None)
         self.pdf_path = options.get('pdf_path', None)

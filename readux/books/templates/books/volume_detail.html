@@ -94,11 +94,16 @@
                         <ul class="nav nav-pills nav-stacked">
                             {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
                                 {% if rel_vol.pid != vol.pid %}
+                                {# hacky workaround for non-public domain yearbooks that are in the repository (hopefully temporary!) #}
+                                {% if vol.book.collection.pid == 'emory-control:LSDI-EmoryYearbooks' and rel_vol.volume > '1923' %}
+                                {# suppress non public domain yearbooks until we get clearance #}
+                                {% else %}
                                 <li>
                                     {# FIXME: technically, relatedLink belongs to *webPage*, not *book* entity #}
                                     <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title|truncatechars:150 }}
                                     {% if rel_vol.volume %}<span class="text-muted">[{{ rel_vol.volume }}]</span>{% endif %}</a>
                                 </li>
+                                {% endif %}
                                 {% endif %}
                             {% endfor %}
                         </ul>

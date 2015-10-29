@@ -98,7 +98,7 @@ class CollectionDetail(DetailView, VaryOnCookieMixin):
 
         if self.request.user.is_authenticated():
             notes = Volume.volume_annotation_count(self.request.user)
-            domain = get_current_site(self.request).domain
+            domain = get_current_site(self.request).domain.rstrip('/')
             if not domain.startswith('http'):
                 domain = 'http://' + domain
             annotated_volumes = dict([(k.replace(domain, ''), v)

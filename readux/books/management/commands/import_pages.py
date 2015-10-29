@@ -72,7 +72,13 @@ the configured fedora instance).'''
             help='Find and process volumes that belong to the specified collection pid ' + \
             '(list of pids on the command line takes precedence over this option)'),
         make_option('-f', '--fix-missing', action='store_true', default=False,
-            dest='fix_missing', help='Fix volumes with partial page content loaded')
+            dest='fix_missing', help='Fix volumes with partial page content loaded'),
+        make_option('--image-path',
+            help='Provide an override image file path (one volume only)'),
+        make_option('--ocr-path',
+            help='Provide an override ocr file path (one volume only)'),
+        make_option('--pdf-path',
+            help='Provide an override PDF file path (one volume only)'),
         )
 
     v_normal = 1
@@ -88,6 +94,17 @@ the configured fedora instance).'''
         signal.signal(signal.SIGINT, self.interrupt_handler)
 
         self.setup(**options)
+
+        # check that override paths are only set for a single volume
+        if (options['image_path'] or options['ocr_path'] or options['pdf_path']) \
+          and not len(pids) == 1:
+            self.stdout.write('Image path, ocr path, and pdf path can only be specified for a single volume')
+            return
+
+        # store any override paths that are passed in
+        self.image_path = options.get('image_path', None)
+        self.ocr_path = options.get('ocr_path', None)
+        self.pdf_path = options.get('pdf_path', None)
 
         # if pids are specified on command line, only process those objects
         if pids:

@@ -852,8 +852,10 @@ class BookViewsTest(TestCase):
             views.VolumeDetail.search_template_name,
             'volume search template should be used for valid search submission')
         for page in iter(solr_result):
-            self.assertContains(response, page.iiif.mini_thumbnail(),
-                msg_prefix='search results should mini page thumbnail')
+            self.assertContains(response,
+                reverse('books:page-image', kwargs={'vol_pid': mockobj.pid,
+                    'pid': page.pid, 'mode': 'mini-thumbnail'}),
+                msg_prefix='search results should include mini page thumbnail url')
             self.assertContains(response, "Page %(page_order)s" % page,
                 msg_prefix='search results should include page number')
             self.assertContains(response, page['score'],

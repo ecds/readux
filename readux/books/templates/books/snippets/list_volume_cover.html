@@ -1,9 +1,9 @@
 {% load readux_utils %}
-<li class="cover" {% if obj.hasPrimaryImage %}style="background-image:url('{% url 'books:page-thumbnail' obj.pid obj.hasPrimaryImage %}');background-color:#EEE;"{% endif %}>
+<li class="cover" {% if obj.primary_image %}style="background-image:url('{{ obj.primary_image.iiif.thumbnail }}');background-color:#EEE;"{% endif %}>
     {% url 'books:volume' obj.pid as volume_url %}
     <a href="{{ volume_url }}" title="{{ obj.title|truncatechars:100 }}">
         {# show the title if there is no image #}
-        {% if not obj.hasPrimaryImage %}
+        {% if not obj.primary_image %}
             <span>{{ obj.title|truncatechars:100 }}</span>
         {% endif %}
         {# annotation count #}

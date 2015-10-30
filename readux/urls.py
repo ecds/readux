@@ -43,9 +43,6 @@ urlpatterns = patterns('',
     # index data for solr
     url(r'^indexdata/', include('eulfedora.indexdata.urls', namespace='indexdata')),
 
-    # deep-zoom for images
-    url(r'^dzi/', include('readux.dyndzi.urls', namespace='deepzoom')),
-
     # annotations
     url(r'^annotations/api/', include('readux.annotations.urls', namespace='annotation-api')),
     # annotatorjs doesn't handle trailing slash in api prefix url

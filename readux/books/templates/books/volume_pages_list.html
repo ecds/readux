@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load readux_utils %}
+{% load readux_utils static %}
 
 {% block page-subtitle %}{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }} | {% endblock %}
 
@@ -11,11 +11,11 @@
     <meta property="twitter:card" content="gallery" />
     <meta property="twitter:title" content="{{ vol.display_label }}, p.{{ pages.start_index }}-{{ pages.end_index }}" />
     {# use first four page images for twitter gallery card #}
-    {% for page in pages.object_list|slice:":4" %}
+    {% for page in pages|slice:":4" %}
     {% if forloop.first %}   {# use first page image for facebook/g+ image #}
-    <meta property="og:image" content="{{ site_root }}{% url 'books:page-thumbnail' vol.pid page.pid %}"/>
+    <meta property="og:image" content="{{ page.iiif.thumbnail }}"/>
     {% endif %}
-    <meta property="twitter:image{{ forloop.counter0 }}:src" content="{{ site_root }}{% url 'books:page-thumbnail' vol.pid page.pid %}">
+    <meta property="twitter:image{{ forloop.counter0 }}:src" content="{{ page.iiif.thumbnail }}">
     {% endfor %}
 {% endblock %}
 
@@ -55,7 +55,7 @@
                 {# NOTE: would be nice to have some kind of fallback display when the image doesn't load... #}
                 <li class="">
                     {% url 'books:page' vol.pid page.pid as page_url %}
-                    <a class="cover thumbnail" style="background-image:url('{% url 'books:page-thumbnail' vol.pid page.pid %}')" href="{{ page_url }}" title="Page {{ page.page_order }}">
+                    <a class="cover thumbnail" style="background-image:url('{{ page.iiif.thumbnail }}'),url('{% static 'img/notfound_page.png' %}')" href="{{ page_url }}" title="Page {{ page.page_order }}">
                         <p class="page-number">p. {{page.page_order}}</p>
                         {# page annotation count #}
                         {% include 'books/snippets/comment_count.html' with item_url=page_url annotation_count=annotated_pages %}

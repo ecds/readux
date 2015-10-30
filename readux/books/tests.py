@@ -25,8 +25,8 @@ from eulfedora.util import RequestFailed
 from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
-    DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone
-from readux.books import sitemaps, view_helpers, views
+    DC, Page, PageV1_0, PageV1_1, TeiFacsimile, TeiZone, SolrPage
+from readux.books import sitemaps, view_helpers, views, iiif
 from readux.utils import absolutize_url
 
 
@@ -538,12 +538,13 @@ class BookViewsTest(TestCase):
         # because passing callables into django templates does weird things
 
         mockpaginator.return_value.page.return_value = mockpage
-        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts', 'count'])
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts', '__len__'])
 
         results.__iter__.return_value = iter(solr_result)
         results.facet_counts.facet_fields = {
             'collection_label_facet': [('Emory Yearbooks', 1), ('Yellowbacks', 4)]
         }
+        results.__len__.return_value = 2
 
         mockpage.object_list = results
         mockpage.has_other_pages = False
@@ -827,10 +828,10 @@ class BookViewsTest(TestCase):
         solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
         # *only* mock iter, to avoid weirdness with django templates & callables
         solr_result.__iter__.return_value = [
-            {'pid': 'page:1', 'page_order': '1', 'score': 0.5,
-             'solr_highlights': {'page_text': ['snippet with search term']}},
-            {'pid': 'page:233', 'page_order': '123', 'score': 0.02,
-             'solr_highlights': {'page_text': ['sample text result from content']}},
+            SolrPage(**{'pid': 'page:1', 'page_order': '1', 'score': 0.5,
+             'solr_highlights': {'page_text': ['snippet with search term']}}),
+            SolrPage(**{'pid': 'page:233', 'page_order': '123', 'score': 0.02,
+             'solr_highlights': {'page_text': ['sample text result from content']}}),
         ]
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
@@ -851,9 +852,7 @@ class BookViewsTest(TestCase):
             views.VolumeDetail.search_template_name,
             'volume search template should be used for valid search submission')
         for page in iter(solr_result):
-            self.assertContains(response,
-                reverse('books:page-mini-thumb',
-                    kwargs={'vol_pid': mockobj.pid, 'pid': page['pid']}),
+            self.assertContains(response, page.iiif.mini_thumbnail(),
                 msg_prefix='search results should mini page thumbnail')
             self.assertContains(response, "Page %(page_order)s" % page,
                 msg_prefix='search results should include page number')
@@ -884,6 +883,8 @@ class BookViewsTest(TestCase):
         mockvol.find_solr_pages = MagicMock()
         mockvol.find_solr_pages.return_value.count = 3
         mockvol.find_solr_pages.__len__.return_value = 3
+        mockpage = Mock(width=640, height=400)
+        mockvol.pages = [mockpage]
 
         vol_page_url = reverse('books:pages', kwargs={'pid': mockvol.pid})
         response = self.client.get(vol_page_url)
@@ -914,52 +915,6 @@ class BookViewsTest(TestCase):
         self.assertEqual(5, annotated_pages[page1_url])
         self.assertEqual(2, annotated_pages[page2_url])
         self.assertEqual(13, annotated_pages[page3_url])
-
-    @patch('readux.books.views.Repository')
-    @override_settings(DEBUG=True)  # required so local copy of not-found image will be used
-    def test_page_image(self, mockrepo):
-        mockobj = Mock()
-        mockobj.pid = 'page:1'
-        mockobj.volume.pid = 'vol:1'
-        mockrepo.return_value.get_object.return_value = mockobj
-
-        url = reverse('books:page-thumbnail',
-            kwargs={'vol_pid': mockobj.volume.pid, 'pid': mockobj.pid})
-
-        # no image datastream
-        mockobj.image.exists = False
-        response = self.client.get(url)
-        self.assertEqual(404, response.status_code,
-            'page-image should 404 when image datastream doesn\'t exist')
-        with open(os.path.join(settings.STATICFILES_DIRS[0], 'img', 'notfound_thumbnail.png')) as thumb:
-            self.assertEqual(thumb.read(), response.content,
-                '404 should serve out static not found image')
-        self.assertEqual('image/png', response['Content-Type'],
-            '404 should be served as image/png')
-
-        # image exists
-        mockobj.image.exists = True
-        mockobj.image.checksum_type = 'MD5'
-        mockobj.image.checksum = 'not-a-real-checksum'
-        mockobj.get_region.return_value = 'test thumbnail content'
-        response = self.client.get(url)
-        mockobj.get_region.assert_called_with(scale=300)
-        self.assertEqual(mockobj.get_region.return_value, response.content)
-        self.assertEqual('image/jpeg', response['Content-Type'],
-            '404 should be served as image/jpeg')
-        # etag & last-modified set by condition decorator, not testable here
-        # NOTE: or possibly just not testable without mocking readux.books.view_helpers
-
-        # error generating image
-        mockobj.get_region.side_effect = RequestFailed(Mock(status_code=500,
-            content='unknown error', headers={'content-type': 'text/plain'}),
-            content='stack trace here...')
-        response = self.client.get(url)
-        self.assertEqual(500, response.status_code,
-            'page-image should return 500 when Fedora error is a 500')
-        with open(os.path.join(settings.STATICFILES_DIRS[0], 'img', 'notfound_thumbnail.png')) as thumb:
-            self.assertEqual(thumb.read(), response.content,
-                'fedora error should serve out static not found image')
 
     @patch('readux.books.views.TypeInferringRepository')
     def test_view_page(self, mockrepo):
@@ -1076,7 +1031,7 @@ class BookViewsTest(TestCase):
             response['content-disposition'],
             'tei response should have a content-disposition header set')
 
-        mockobj.getDatastreamObject.assert_called_with(Page.tei.id)
+        mockobj.getDatastreamObject.assert_called_with(Page.tei.id, as_of_date=None)
 
 
     @patch('readux.books.views.TypeInferringRepository')
@@ -1131,12 +1086,12 @@ class BookViewsTest(TestCase):
             response['location'])
 
         url = reverse('books:old-pageurl-redirect',
-            kwargs={'pid': mockobj.pid, 'path': 'thumbnail/mini/'})
+            kwargs={'pid': mockobj.pid, 'path': 'ocr/'})
         response = self.client.get(url, follow=False)
         self.assertEqual(301, response.status_code,
             'page redirect view should return a permanent redirect')
         self.assertEqual('http://testserver%s' % \
-            reverse('books:page-mini-thumb', **url_args),
+            reverse('books:page-ocr', **url_args),
             response['location'])
 
     @patch('readux.books.sitemaps.solr_interface')
@@ -1470,3 +1425,54 @@ class ViewHelpersTest(TestCase):
         mockvol.annotations.return_value = Annotation.objects.filter(uri__contains=mockvol.get_absolute_url())
         lastmod = view_helpers.volume_pages_modified(mockrequest, 'vol:1')
         self.assertEqual(anno.created, lastmod)
+
+
+class IIIFImageClientTest(TestCase):
+
+    api_endpoint = 'http://imgserver.co/'
+    image_id = 'img1'
+
+    def setUp(self):
+        self.img = iiif.IIIFImageClient(api_endpoint=self.api_endpoint,
+            image_id=self.image_id)
+
+    def test_defaults(self):
+        # default image url
+        self.assertEqual('%s%s/full/full/0/default.jpg' % \
+            (self.api_endpoint, self.image_id), unicode(self.img))
+        # info url
+        self.assertEqual('%s%s/info.json' % \
+            (self.api_endpoint, self.image_id), self.img.info())
+
+    def test_size(self):
+        width, height, percent = 100, 150, 50
+        # width only
+        self.assertEqual('%s%s/full/%s,/0/default.jpg' % \
+            (self.api_endpoint, self.image_id, width),
+            unicode(self.img.size(width=width)))
+        # height only
+        self.assertEqual('%s%s/full/,%s/0/default.jpg' % \
+            (self.api_endpoint, self.image_id, height),
+            unicode(self.img.size(height=height)))
+        # width and height
+        self.assertEqual('%s%s/full/%s,%s/0/default.jpg' % \
+            (self.api_endpoint, self.image_id, width, height),
+            unicode(self.img.size(width=width, height=height)))
+        # exact width and height
+        self.assertEqual('%s%s/full/!%s,%s/0/default.jpg' % \
+            (self.api_endpoint, self.image_id, width, height),
+            unicode(self.img.size(width=width, height=height, exact=True)))
+        # percent
+        self.assertEqual('%s%s/full/pct:%s/0/default.jpg' % \
+            (self.api_endpoint, self.image_id, percent),
+            unicode(self.img.size(percent=percent)))
+
+    def test_format(self):
+        png = self.img.format('png')
+        jpg = self.img.format('jpg')
+        gif = self.img.format('gif')
+        self.assert_(unicode(png).endswith('.png'))
+        self.assert_(unicode(jpg).endswith('.jpg'))
+        self.assert_(unicode(gif).endswith('.gif'))
+
+        self.assertRaises(Exception, self.img.format, 'bogus')

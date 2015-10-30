@@ -53,7 +53,9 @@
 {% block navlinks %}
 {# NOTE: suppressed for now because collection browse is site home page #}
 {# <li><a href="{% url 'collection:browse' %}">Collections</a></li> #}
+  {% if feincms_page %} {# feincms nav only works if a page is laoded (should be set via context processor) #}
   {% feincms_nav feincms_page level=1 as nav %}
+  {% endif %}
   {% for page in nav %}
        <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
   {% endfor %}
@@ -87,6 +89,14 @@
 {% endblock %}
 
 {% block footer-content %}
+<script>
+var error_images = {
+    thumbnail: "{% static 'img/notfound_thumbnail.png' %}",
+    single_page: "{% static 'img/notfound_page.png' %}",
+    mini_thumbnail: "{% static 'notfound_mini_thumbnail_page.png' %}",
+    cover_mini_thumb: "{% static 'img/notfound_mini_thumbnail.png' %}",
+};
+</script>
   {% if not debug %} {# google analytics tracking code #}
     {% include 'snippets/google_analytics.html' %}
   {% endif %}

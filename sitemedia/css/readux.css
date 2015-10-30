@@ -957,6 +957,10 @@ header#page-bg .collection-image-info.collasped .info{
   left: calc(50% - 22.5px);
 }
 
+.page.image-error .content:after {
+    display:none;
+}
+
 #zoom-page.active+.page .content>img {
   opacity: 0;
 }

@@ -3,6 +3,82 @@
 CHANGELOG
 =========
 
+Release 1.3 - Simple Annotation
+-------------------------------
+
+TEI Facsimile
+^^^^^^^^^^^^^
+* As a system administrator, I want to run a script to generate TEI
+  facsimile for volumes that have pages loaded, so that I can work with
+  OCR content in a standardized format.
+* As a user I would like to view the TEI underlying the page view and
+  annotation, so that I can understand more about how it works, and to
+  understand how to use facsimile data.
+* As a researcher I want to see a view of the TEI underlying the page
+  view and annotation that excludes OCR for barcodes so that I can
+  focus on facsimile data of scholarly importance.
+
+Display improvements
+^^^^^^^^^^^^^^^^^^^^
+* As a user, I want to navigate from page view to page view without
+  having to scroll down to each page view, so that I have a better
+  reading experience.
+* As a user, I can see the thumbnail for landscape pages when browsing
+  volumes, so I can better select appropriate pages.
+
+Annotation
+^^^^^^^^^^
+* As a researcher, I want to select the OCR text on a page in order to
+  copy or annotate content.
+* As a site user I want to filter volumes by whether or not they have
+  page-level access so that I know which volumes I can read online and
+  annotate.
+* As a researcher I can log in to readux using social media credentials,
+  so that I do not need a separate account to create annotations.
+* As a researcher I want to annotate part of the text on a page in order
+  to provide additional information about the text.
+* As a researcher I want to annotate an image or part of an image in
+  order to provide additional information about the image.
+* As a researcher I want to include simple formatting in my notes to
+  make them more readable.
+* As a researcher I want to include images in my annotations so that
+  users can see important visual materials.
+* As a researcher I want to tag annotations so that I can indicate
+  connections among related content.
+* As a researcher I want to edit and delete my annotations, in order to
+  make changes or remove notes I no longer want.
+* As a user I can see my annotations in the margin of the page, so that
+  I can read all of the annotations conveniently.
+* As a researcher I want to see which volumes I have annotated when I am
+  browsing or searching so that I can easily resume annotating.
+* As a researcher I want to see which pages I have annotated so that I
+  can assess the status of my digital edition.
+* As a researcher I want to make annotations anchored to stable
+  identifiers so that I can maintain consistency in digital editions.
+* As a user I want to see a created or last modified timestamp on
+  annotations so that I know when they were last updated.
+* As a user I want to see only the date created or last modified on
+  annotations that are more than a week old so that I know a rough
+  estimate of when they were last updated.
+
+Annotation Administration
+^^^^^^^^^^^^^^^^^^^^^^^^^
+* As a site administrator I want to see which user authored an
+  annotation so that I can respond to the correct user in reference to
+  an annotation.
+* As a site administrator, I want to view, edit, and delete annotations
+  in the Django admin site so that I can manage annotations to remove
+  spam or update the annotation owner.
+* As a site administrator I want to click on the URI link for an
+  annotation in the admin and see the annotated page in a separate
+  window so that I can verify its display.
+
+Additional Administration functionality
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* As a site administrator I want to create and edit html pages so that
+  I can add content explaining the site to users.
+
 Release 1.2.2
 -------------
 

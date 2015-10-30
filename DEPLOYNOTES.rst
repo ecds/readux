@@ -97,6 +97,27 @@ directory.  From the top level of your virtualenv directory, run::
 Release 1.3 (preliminary)
 -------------------------
 
+* Some page images in Fedora have a generic mimetype, which Loris can't
+  handle for recognizing and generating images.  Before switching to the
+  new version, these should be cleaned up in the python console::
+
+    from readux.fedora import ManagementRepository
+    from readux.books.models import PageV1_0
+    repo = ManagementRepository()
+    query = '''select ?pid
+    where {
+      ?pid <fedora-model:hasModel> <info:fedora/emory-control:ScannedPage-1.0> .
+      ?pid <fedora-view:disseminates> ?ds .
+      ?ds <fedora-view:mimeType> 'application/octet-stream'
+    }'''
+    results = repo.risearch.find_statements(query, language='sparql', type='tuples')
+    for n in results:
+      page = repo.get_object(n['pid'], type=PageV1_0)
+      if page.image.mimetype == 'application/octet-stream':
+         page.image.mimetype = 'image/jp2'
+         page.save('Updating image mimetype')
+         print 'Updated %s' % n['pid']
+
 * Run migrations for database updates::
 
       python manage.py migrate
@@ -110,8 +131,8 @@ Release 1.3 (preliminary)
 
       python manage.py add_pagetei --all
 
-* The dependency on :mod:`eullocal` has been removed, so eullocal can
-  be uninstalled from existing virtualenvs after this upgrade.
+* The dependency on :mod:`eullocal` has been removed, so if you are using
+  an existing virtualenv, eullocal can be uninstalled after this upgrade.
 
 
 Release 1.2.1

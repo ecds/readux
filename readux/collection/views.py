@@ -98,7 +98,7 @@ class CollectionDetail(DetailView, VaryOnCookieMixin):
 
         if self.request.user.is_authenticated():
             notes = Volume.volume_annotation_count(self.request.user)
-            domain = get_current_site(self.request).domain
+            domain = get_current_site(self.request).domain.rstrip('/')
             if not domain.startswith('http'):
                 domain = 'http://' + domain
             annotated_volumes = dict([(k.replace(domain, ''), v)
@@ -120,14 +120,15 @@ class CollectionDetail(DetailView, VaryOnCookieMixin):
         display_filters = []
         # active filter - only show volumes with pages loaded
         if 'read_online' in self.request.GET and self.request.GET['read_online']:
-            q = q.query(page_count__gt=1)
+            q = q.query(page_count__gte=2)
+
             unfacet_urlopts = url_params.copy()
             del unfacet_urlopts['read_online']
             display_filters.append(('Read online', '',
                                     unfacet_urlopts.urlencode()))
         else:
             # generate a facet count for books with pages loaded
-            q = q.facet_query(page_count__gt=1)
+            q = q.facet_query(page_count__gte=2)
 
 
         sort_options = ['title', 'date added']

@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load feincms_tags %}
 
-{% block page-subtitle %}| {{ feincms_page.title }}{% endblock %}
+{% block page-subtitle %}{{ feincms_page.title }} | {% endblock %}
 
 {% block head_extras %}
   {{ block.super }}

@@ -30,5 +30,8 @@ urlpatterns = patterns('',
 
     # redirect view for old page urls without volume pids
     url(r'^pages/(?P<pid>[^/]+)/(?P<path>.*)$', views.PageRedirect.as_view(),
-        name='old-pageurl-redirect')
+        name='old-pageurl-redirect'),
+
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/(?P<mode>(thumbnail|mini-thumbnail|single-page|fullsize|info))/$',
+        views.PageImage.as_view(),  name='page-image'),
 )

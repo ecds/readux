@@ -29,21 +29,19 @@
   <script type="text/javascript" src="{% static 'plugins/annotator/suppress_permissions.js' %}"></script>
   <script type="text/javascript" src="{% static 'plugins/annotator/annotator.selectionIds.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-imgselect/src/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" />
-  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-imgselect/build/0.2.0/annotator.imgselect.min.js"></script>
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-imgselect/build/0.2.1/annotator.imgselect.min.js"></script>
   {% include 'books/snippets/book-page.js' %}
 {% endblock %}
 
 {% block metadata %}
     {{ block.super }}
-    {% with page.iiif.page_size as image_url %}
     <meta property="og:title" content="{{ page.display_label }}"/>
     <meta itemprop="og:headline" content="{{ page.display_label }}" />
-    <meta property="og:image" content="{{ image_url }}"/>
+    <meta property="og:image" content="{% url 'books:page-image' page.volume.pid page.pid 'single-page' %}"/>
 
     <meta property="twitter:card" content="photo" />
     <meta property="twitter:title" content="{{ page.display_label }}" />
-    <meta property="twitter:image" content="{{ image_url }}" />
-    {% endwith %}
+    <meta property="twitter:image" content="{% url 'books:page-image' page.volume.pid page.pid 'single-page' %}" />
 
     {% if page.tei.exists %}
     <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.volume.pid page.pid %}" />
@@ -91,7 +89,7 @@
                 <div class="page">
                     <div class="content">
                         <section class="inner">
-                          <img class="page-image" src="{{ page.iiif.page_size }}"/>
+                          <img class="page-image" src="{% url 'books:page-image' page.volume.pid page.pid 'single-page' %}"/>
                           {% if page.tei.exists %}
                              {% for line in page.tei.content.lines %}
                              <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>

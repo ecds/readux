@@ -2,7 +2,7 @@
 <div class="media">
     {% url 'books:page' vol.pid page.pid as page_url %}
     <a class="pull-left" href="{{ page_url }}" title="Page {{ page.page_order }}">
-        <img class="thumbnail" src="{{ page.iiif.mini_thumbnail }}"/>
+        <img class="thumbnail" src="{% url 'books:page-image' vol.pid page.pid 'mini-thumbnail' %}"/>
     </a>
     {% if page.score %}
     <div class="col-xs-1 pull-right">

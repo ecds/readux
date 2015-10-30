@@ -575,3 +575,24 @@ class PageRedirect(RedirectView):
         page_url = reverse(self.pattern_name,
             kwargs={'vol_pid': page.volume.pid, 'pid': page.pid})
         return ''.join([page_url, kwargs['path']])
+
+
+class PageImage(RedirectView):
+    '''Local view for page images.  These all return redirects to the
+    configured IIIF image viewer, but allow for a local, semantic
+    image url independent of image handling implementations
+    to be referenced in annotations and exports.'''
+
+    def get_redirect_url(self, *args, **kwargs):
+        repo = TypeInferringRepository()
+        page = repo.get_object(kwargs['pid'], type=Page)
+        if kwargs['mode'] == 'thumbnail':
+            return page.iiif.thumbnail()
+        elif kwargs['mode'] == 'mini-thumbnail':
+            return page.iiif.mini_thumbnail()
+        elif kwargs['mode'] == 'single-page':
+            return page.iiif.page_size()
+        elif kwargs['mode'] == 'fullsize':
+            return page.iiif
+        elif kwargs['mode'] == 'info':
+            return page.iiif.info()

@@ -195,7 +195,7 @@ class Image(DigitalObject):
 class TeiZone(teimap.Tei):
     'XmlObject for a zone in a TEI facsimile document'
     ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS}
+    ROOT_NAMESPACES = {'tei' : ROOT_NS, 'xml': 'http://www.w3.org/XML/1998/namespace'}
     #: xml id
     id = xmlmap.StringField('@xml:id')
     #: type attribute
@@ -924,10 +924,17 @@ class Volume(DigitalObject, BaseVolume):
         vol_tei.header.title = self.title
         vol_tei.distributor = settings.TEI_DISTRIBUTOR
         # loop through pages and add tei content
-        for page in self.pages:
+        for page in self.pages[:10]:   # FIXME: temporary, for testing/speed
             if page.tei.exists and page.tei.content.page:
                 # include facsimile page *only* from the tei for each page
-                vol_tei.page_list.append(page.tei.content.page)
+                # tei facsimile already includes a graphic url
+                # TODO: should page ARK be inserted into the tei?
+                teipage = page.tei.content.page
+                # FIXME: where should this really be? not exactly right
+                # how to reference source page uri
+                teipage.id = page.ark_uri
+                print page.ark_uri
+                vol_tei.page_list.append(teipage)
 
         return vol_tei
 

@@ -21,7 +21,7 @@ from eulfedora.views import raw_datastream, RawDatastreamView
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
 from readux.books.forms import BookSearch
-from readux.books import view_helpers
+from readux.books import view_helpers, annotate
 from readux.utils import solr_interface
 from readux.views import VaryOnCookieMixin
 
@@ -503,7 +503,11 @@ class VolumeTei(View):
         if not vol.exists or not vol.has_requisite_content_models or not vol.has_tei:
             raise Http404
 
-        response = HttpResponse(vol.generate_volume_tei().serialize(pretty=True),
+        tei = vol.generate_volume_tei()
+        if kwargs.get('mode', None) == 'annotated':
+            tei = annotate.annotated_tei(tei, vol.annotations(user=request.user))
+
+        response = HttpResponse(tei.serialize(pretty=True),
             content_type='application/xml')
         # generate a default filename based on the object label
         response['Content-Disposition'] = 'filename="%s.txt"' % \

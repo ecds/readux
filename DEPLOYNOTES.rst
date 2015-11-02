@@ -94,8 +94,8 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
-Release 1.3 (preliminary)
--------------------------
+Release 1.3
+-----------
 
 * Some page images in Fedora have a generic mimetype, which Loris can't
   handle for recognizing and generating images.  Before switching to the

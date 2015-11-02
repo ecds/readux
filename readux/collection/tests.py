@@ -1,8 +1,9 @@
 from datetime import datetime
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
-from mock import patch, NonCallableMock
+from mock import patch, NonCallableMock, NonCallableMagicMock
 
 from eulfedora.server import Repository
 from readux.collection.models import Collection, SolrCollection
@@ -100,7 +101,8 @@ class CollectionViewsTest(TestCase):
         view_url = reverse('collection:view', kwargs={'pid': 'coll'})
 
         mocksolr.query.return_value = mocksolr.query
-        for method in ['query', 'sort_by', 'results_as', 'field_limit']:
+        for method in ['query', 'sort_by', 'results_as', 'field_limit',
+                       'facet_query']:
             getattr(mocksolr.query, method).return_value = mocksolr.query
 
         # set no solr results for last-modified query
@@ -138,15 +140,21 @@ class CollectionViewsTest(TestCase):
             SolrVolume(**{'pid': 'vol:2', 'title': 'Sugar Crop of Lousiana', 'label': 'ocm123_V.2',
                          'date': ['1831']}),
         ]
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+        results.__iter__.return_value = iter(solr_result)
+        results.facet_counts.facet_queries = []
+
 
         # - using a noncallable for the pagination result that is used in the template
         # because passing callables into django templates does weird things
         mockpage = NonCallableMock()
         mockpaginator.return_value.page.return_value = mockpage
-        mockpage.object_list = solr_result
+        mockpage.object_list = results
         mockpage.has_other_pages = False
         mockpage.paginator.count = 2
         mockpage.paginator.page_range = [1]
+        mockpaginator.return_value.count = 2
+        mockpaginator.return_value.page_range = [1]
 
         response = self.client.get(view_url)
         # inspect solr query
@@ -155,7 +163,6 @@ class CollectionViewsTest(TestCase):
         mocksolr.query.sort_by.assert_any_call('title_exact')
         mocksolr.query.sort_by.assert_any_call('label')
         mocksolr.query.results_as.assert_called_with(SolrVolume)
-
         # inspect html result
         self.assertContains(response, mockcoll.short_label,
             msg_prefix='collection short label should be displayed')
@@ -205,3 +212,18 @@ class CollectionViewsTest(TestCase):
         self.assertTrue(response.has_header('last-modified'),
             'last modified header should be set')
 
+        ## annotation totals
+        # empty annotation total in context for anonymous user
+        self.assertEqual({}, response.context['annotated_volumes'])
+        # check that annotation total is retrieved for ONLY logged in users
+        with patch('readux.collection.views.Volume') as mockvolclass:
+
+             self.client.get(view_url)
+             mockvolclass.volume_annotation_count.assert_not_called()
+
+             User = get_user_model()
+             credentials = {'username': 'tester', 'password': 'foo'}
+             testuser = User.objects.create_user(**credentials)
+             self.client.login(**credentials)
+             self.client.get(view_url)
+             mockvolclass.volume_annotation_count.assert_called_with(testuser)

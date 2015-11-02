@@ -1,8 +1,8 @@
 {# display a single page in volume search results #}
 <div class="media">
-    {% url 'books:page' page.pid as page_url %}
+    {% url 'books:page' vol.pid page.pid as page_url %}
     <a class="pull-left" href="{{ page_url }}" title="Page {{ page.page_order }}">
-        <img class="thumbnail" src="{% url 'books:page-mini-thumb' page.pid %}"/>
+        <img class="thumbnail" src="{% url 'books:page-image' vol.pid page.pid 'mini-thumbnail' %}"/>
     </a>
     {% if page.score %}
     <div class="col-xs-1 pull-right">

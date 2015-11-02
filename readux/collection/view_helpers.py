@@ -1,5 +1,7 @@
+from readux.annotations.models import Annotation
 from readux.utils import solr_interface
 from readux.books.models import VolumeV1_0
+from readux.books.view_helpers import solrtimestamp_or_datetime
 from readux.collection.models import Collection
 
 '''
@@ -46,5 +48,13 @@ def collection_modified(request, pid, **kwargs):
 
     # NOTE: using solr indexing timestamp instead of object last modified, since
     # if an object's index has changed it may have been modified
-    if results.count():
-        return results[0]['timestamp']
+
+    # if user is logged in, annotations modifications can result in
+    # changes to the collection page display (annotation count)
+    latest_note = None
+    if request.user.is_authenticated():
+        latest_note = Annotation.objects.visible_to(request.user) \
+                                .last_created_time()
+
+    solrtime = results[0]['timestamp'] if results.count() else None
+    return solrtimestamp_or_datetime(solrtime, latest_note)

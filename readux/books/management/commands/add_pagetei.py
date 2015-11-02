@@ -4,10 +4,12 @@ import os
 import signal
 import sys
 
+from fuzzywuzzy import fuzz
 from django.core.management.base import BaseCommand, CommandError
 from progressbar import ProgressBar, Bar, Percentage, \
          ETA, Counter
 
+from readux.collection.models import Collection
 from readux.books.models import Volume, VolumeV1_0, VolumeV1_1, PageV1_0, PageV1_1
 from readux.fedora import ManagementRepository
 
@@ -27,8 +29,16 @@ class Command(BaseCommand):
         make_option('--all', '-a',
             action='store_true',
             default=False,
-            help='Add or update TEI for all volumes with pages loaded'),
+            help='Add TEI for all volumes with pages loaded'),
+        make_option('--update', '-u',
+            action='store_true',
+            default=False,
+            help='Regenerate TEI even if already present'),
+        make_option('--collection', '-c',
+            help='Find and process volumes that belong to the specified collection pid ' + \
+            '(list of pids on the command line takes precedence over this option)'),
     )
+    update_existing = True
 
     def handle(self, *pids, **options):
         # bind a handler for interrupt signal
@@ -37,11 +47,17 @@ class Command(BaseCommand):
 
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
+        self.update_existing = options.get('update')
 
         # if no pids are specified
         if not pids:
+
+            # if collection is specified, find pids by collection
+            if options['collection']:
+                pids = self.pids_by_collection(options['collection'])
+
             # check if 'all' was specified, and if so find all volumes
-            if options['all']:
+            elif options['all']:
                 pids = Volume.volumes_with_pages()
                 if self.verbosity >= self.v_normal:
                     self.stdout.write('Found %d volumes with pages loaded' % len(pids))
@@ -51,6 +67,7 @@ class Command(BaseCommand):
                 raise CommandError('Please specify a volume pid to have TEI generated')
 
         for pid in pids:
+            print pid
             # try volume 1.0 first, since we have more 1.0 content
             vol = self.repo.get_object(pid, type=VolumeV1_0)
 
@@ -108,6 +125,27 @@ class Command(BaseCommand):
             self.stdout.write('No OCR datastream for Volume-1.0 %s' % vol.pid)
             return updates
 
+        # check if tei has already been generated for this volume
+        # FIXME: this check is duplicated from method process_volV1_1
+        if vol.has_tei:
+            # update not specified - skip
+            if not self.update_existing:
+                if self.verbosity > self.v_normal:
+                    self.stdout.write('Volume %s already has TEI and no update requested; skipping.' \
+                      % vol.pid)
+                return
+            # update requested; report and continue
+            elif self.verbosity > self.v_normal:
+                self.stdout.write('Updating existing TEI for Volume %s' \
+                      % vol.pid)
+
+        # if volume does not yet have ids in the ocr, add them
+        if not vol.ocr_has_ids:
+            if self.verbosity >= self.v_normal:
+                self.stdout.write('Adding ids to %s OCR' % vol.pid)
+            vol.add_ocr_ids()
+            vol.save('Adding ids to OCR')
+
         ocr_pages = vol.ocr.content.pages
         pbar = self.get_progressbar(len(vol.pages))
 
@@ -124,14 +162,25 @@ class Command(BaseCommand):
 
             # NOTE: some pages have no tei, but since the abbyy ocr
             # includes page content for every page, we're going to
-            # generate TEI for those pages too
-            # includes page information, and may include illustration blocks
+            # generate TEI for those pages too;
+            # includes page information, and may include illustration blocks.
 
-            # NOTE: could do some simple text content comparison to check that
-            # the ocr index is correct...
-            # e.g. do a whitespace-insensitive check of starting n characters
-            # page.text.content.read()
-            # unicode(ocr_pages[index])
+            # For the first few pages, do some checking that text content
+            # matches, to ensure we don't load TEI for the wrong page.
+            # Using fuzzy matching here because sometimes one version
+            # contains control characters not present in the other.
+            # For now, if we get a mismatch, bail out.  Eventually we may
+            # want to add logic to detect the correct ocr page index.
+            if index < 10:
+                page_text = normalize_ws(unicode(page.text.content.read(),
+                    'utf-8', 'replace'))
+                ocr_text = normalize_ws(unicode(ocr_pages[index]))
+
+                # if text is present, check for at least 95% match
+                if (page_text and ocr_text) and \
+                  fuzz.ratio(page_text, ocr_text) < 95:
+                    self.stderr.write('Error: page text for %d does not seem to match OCR' % index)
+                    break
 
             if page.tei.exists:
                 verb = 'updated'
@@ -157,6 +206,20 @@ class Command(BaseCommand):
 
     def process_volV1_1(self, vol):
         # load tei for vol 1.1 / pages 1.1
+
+        # check if tei has already been generated for this volume
+        if vol.has_tei:
+            # update not specified - skip
+            if not self.update_existing:
+                if self.verbosity > self.v_normal:
+                    self.stdout.write('Volume %s already has TEI and no update requested; skipping.' \
+                      % vol.pid)
+                return
+            # update requested; report and continue
+            elif self.verbosity > self.v_normal:
+                self.stdout.write('Updating existing TEI for Volume %s' \
+                      % vol.pid)
+
         updates = 0
         pbar = self.get_progressbar(len(vol.pages))
 
@@ -174,6 +237,14 @@ class Command(BaseCommand):
                         % (page.pid, page.page_order))
                 self.stats['skipped'] += 1
                 continue
+
+            # if page does not yet have ids in the ocr, add them
+            if not page.ocr_has_ids:
+                if self.verbosity > self.v_normal:
+                    self.stdout.write('Adding ids to %s OCR' % page.pid)
+                page.add_ocr_ids()
+                page.save('Adding ids to OCR')
+
             if page.tei.exists:
                 verb = 'updated'
                 self.stats['updated'] += 1
@@ -193,6 +264,34 @@ class Command(BaseCommand):
 
         return updates
 
+    def pids_by_collection(self, pid):
+        # NOTE: this method is based on the one in BasePageImport,
+        # but returns a list of pids instead of a list of Volumes
+        coll = self.repo.get_object(pid, type=Collection)
+        if not coll.exists:
+            self.stdout.write('Collection %s does not exist or is not accessible' % \
+                              pid)
+
+        if not coll.has_requisite_content_models:
+            self.stdout.write('Object %s does not seem to be a collection' % \
+                              pid)
+
+        # NOTE: this approach may not scale for large collections
+        # if necessary, use a sparql query to count and possibly return the objects
+        # or else sparql query query to count and generator for the objects
+        # this sparql query does what we need:
+        # select ?vol
+        # WHERE {
+        #    ?book <fedora-rels-ext:isMemberOfCollection> <info:fedora/emory-control:LSDI-Yellowbacks> .
+        #   ?vol <fedora-rels-ext:isConstituentOf> ?book
+        #}
+        pids = []
+        for book in coll.book_set:
+            pids.extend([v.pid for v in book.volume_set])
+
+        return pids
+
+
     def interrupt_handler(self, signum, frame):
         '''Gracefully handle a SIGINT, if possible.  Reports status if
         main loop is currently part-way through pages for a volume,
@@ -209,3 +308,8 @@ class Command(BaseCommand):
                   '\n\nScript will exit after all pages for the current volume are processed.' + \
                   '\n(Ctrl-C / Interrupt again to quit now)'
 
+
+def normalize_ws(val):
+    # normalize whitespace and remove control characters
+    val = ' '.join(val.split())  # split on whitespace and rejoin
+    return ''.join([c for c in val if ord(c) > 31 or ord(c) == 9])

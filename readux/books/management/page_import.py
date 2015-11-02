@@ -39,6 +39,11 @@ class BasePageImport(BaseCommand):
     #: defaultdict to track stats about what has been done, errors, etc
     stats = defaultdict(int)
 
+    # optional override paths for image and ocr input (single volume only)
+    image_path = None
+    ocr_path = None
+    pdf_path = None
+
     def setup(self, **options):
         '''common setup: initialze :attr:`digwf_client` and :attr:`repo` and
         set verbosity level based on user options.'''
@@ -111,55 +116,67 @@ class BasePageImport(BaseCommand):
         images = []
         vol_info = None
 
-        # lookup in digwf by pid (noid)
-        info = self.digwf_client.get_items(pid=vol.noid)
-        if info.count != 1:
-            if self.verbosity >= self.v_normal:
-                if info.count > 1:
-                    self.stdout.write("Error: Found more than one (%d) DigWF record for %s. This shouldn't happen!" \
-                                       % (info.count, vol.pid))
-                else:
-                    if self.verbosity >= self.v_normal:
-                        self.stdout.write("Error: No information found in DigWF for %s" % vol.pid)
+        # if all path overrides are set, don't bother querying digwf
+        if self.image_path and self.ocr_path and self.pdf_path:
+            vol_info = digwf.Item()
 
-            # nothing to do
-            return images, vol_info
+        else:
+            # lookup in digwf by pid (noid)
+            info = self.digwf_client.get_items(pid=vol.noid)
+            if info.count != 1:
+                if self.verbosity >= self.v_normal:
+                    if info.count > 1:
+                        self.stdout.write("Error: Found more than one (%d) DigWF record for %s. This shouldn't happen!" \
+                                           % (info.count, vol.pid))
+                    else:
+                        if self.verbosity >= self.v_normal:
+                            self.stdout.write("Error: No information found in DigWF for %s" % vol.pid)
 
-        vol_info = info.items[0]
-        logger.debug("image path for %s : %s",
-           vol.pid, vol_info.display_image_path)
+                # nothing to do
+                return images, vol_info
 
-        if not vol_info.display_image_path:
-            self.stdout.write('Error: no display image path set for %s' % vol.pid)
-            # no images can possibly be found
-            return [], vol_info
+            vol_info = info.items[0]
+            logger.debug("image path for %s : %s",
+               vol.pid, vol_info.display_image_path)
 
+            if not vol_info.display_image_path:
+                self.stdout.write('Error: no display image path set for %s' % vol.pid)
+                # no images can possibly be found
+                return [], vol_info
+
+        # override/populate volume info based on any override paths
+        if self.image_path:
+            vol_info.display_image_path = self.image_path
+        if self.ocr_path:
+            vol_info.ocr_file_path = self.ocr_path
+        if self.pdf_path:
+            vol_info.pdf = self.pdf_path
+
+        image_path = vol_info.display_image_path
         # look for JPEG2000 images first (preferred format)
-        images = glob.glob(os.path.join(vol_info.display_image_path,
-                                             '*.jp2'))
+        images = glob.glob(os.path.join(image_path, '*.jp2'))
         # if not found in base display path, check for a JP2 subdir
         if not len(images):
-            images = glob.glob(os.path.join(vol_info.display_image_path,
-                                                 'JP2', '*.jp2'))
+            images = glob.glob(os.path.join(image_path, 'JP2', '*.jp2'))
         # if jp2s were not found in either location, look for tiffs
         if not len(images):
-            images = glob.glob('%s/*.tif' % vol_info.display_image_path)
+            images = glob.glob('%s/*.tif' % image_path)
 
         # tif variant - in some cases, extension is upper case
         if not len(images):
-            images = glob.glob('%s/*.TIF' % vol_info.display_image_path)
+            images = glob.glob('%s/*.TIF' % image_path)
 
         # if neither jp2s nor tiffs were found, look for jpgs
         if not len(images):
-            images = glob.glob('%s/*.jpg' % vol_info.display_image_path)
+            images = glob.glob('%s/*.jpg' % image_path)
 
         # make sure the files are sorted; images are expected to be named
         # so that they are ordered in page-sequence when sorted
         images.sort()
 
         if not len(images):
-            self.stdout.write('Error: no files matching *.jp2, *.tif, *.TIF, or *.jpg found for %s' % \
-                              vol_info.display_image_path)
+            self.stdout.write('Error on %s: no files matching *.jp2, *.tif, *.TIF, or *.jpg found for %s' % \
+                              (vol.pid, image_path))
 
         # images could be empty list if no matches were found
         return images, vol_info
@@ -430,10 +447,13 @@ class BasePageImport(BaseCommand):
                 ds.checksum_type = 'MD5'
 
                 # make sure image mimetype gets set correctly (should be image/jp2)
-                # most reliable, general way to do this is to set mimetype based on mime magic
+                # most reliable, general way to do this *should* be to
+                # set mimetype based on mime magic
                 mimetype = m.from_file(filepath)
                 mimetype, separator, options = mimetype.partition(';')
-                ds.mimetype = mimetype
+                # If JPEG2000 is recognized as generic mimetype, override it
+                if mimetype == 'application/octet-stream' and ds.id == PageV1_0.image.id:
+                    mimetype = 'image/jp2'
 
                 # set datastream content
                 openfile = open(filepath)
@@ -450,7 +470,7 @@ class BasePageImport(BaseCommand):
                                      page.text.isModified(), page.position.isModified()]):
 
                     ingested = page.save('ingesting page image %d for %s' \
-                                         % (pageindex, vol.pid))
+                                         % (pageindex, page.volume.pid))
                     verb = 'updated' if update else 'ingested'
                     logger.debug('page %s %s', page.pid, verb)
                     self.stats['pages'] += 1

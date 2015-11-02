@@ -4,25 +4,44 @@
   {% if user and not user.is_anonymous %} {# should this be a dropdown too? #}
   <span>Welcome, {{ user.get_full_name|default:user.username }} |
        <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+   </div>
+ </div>
   {% else %}
-  <div class="dropdown dropdown-menu-right">
-    <button class="btn btn-default dropdown-toggle" type="button" id="login-menu"
-        data-toggle="dropdown" aria-expanded="true">Login <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="login-menu">
-      {# <li role="presentation" class="divider"></li> #}
-        {% for backend in backends.backends %}
-        {% with backend_name=backend_names|dict_item:backend|default:backend|title %}
-        <li role="presentation" class="login-{{ backend }}">
-            <a role="menuitem" tabindex="-1"
-            href="{% url 'social:begin' backend %}?next={{ request.path }}">
-            <i class="login-icon fa fa-lg fa-{{ backend_name|lower }}"></i>
-            {{ backend_name }}</a></li>
-        {% endwith %}
-        {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-</div>
-</div>
 
+  <div class="dropdown dropdown-menu-right">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary btn-link" data-toggle="modal" data-target="#loginMenu">
+      Login
+    </button>
+  </div>
+</div>
+</div>
+</div>
+<div id="modal-container">
+<!-- Modal -->
+<div class="modal fade" id="loginMenu" tabindex="-1" role="dialog" aria-labelledby="socialLoginMenu" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="socialLoginMenu">Sign In</h4>
+      </div>
+      <div class="modal-body">
+        <ul class="login-list list-group">
+          {% for backend in backends.backends %}
+          {% with backend_name=backend_names|dict_item:backend|default:backend|title %}
+          <li role="presentation" class="list-group-item login-{{ backend }}">
+              <a role="menuitem" tabindex="-1"
+              href="{% url 'social:begin' backend %}?next={{ request.path }}">
+                <span class="login-icon fa fa-lg fa-{{ backend_name|lower }}"></span>
+                <span class="login-label">Login with {{ backend_name }}</span>
+              </a>
+          </li>
+          {% endwith %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

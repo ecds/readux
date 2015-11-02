@@ -94,6 +94,47 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.3 (preliminary)
+-------------------------
+
+* Some page images in Fedora have a generic mimetype, which Loris can't
+  handle for recognizing and generating images.  Before switching to the
+  new version, these should be cleaned up in the python console::
+
+    from readux.fedora import ManagementRepository
+    from readux.books.models import PageV1_0
+    repo = ManagementRepository()
+    query = '''select ?pid
+    where {
+      ?pid <fedora-model:hasModel> <info:fedora/emory-control:ScannedPage-1.0> .
+      ?pid <fedora-view:disseminates> ?ds .
+      ?ds <fedora-view:mimeType> 'application/octet-stream'
+    }'''
+    results = repo.risearch.find_statements(query, language='sparql', type='tuples')
+    for n in results:
+      page = repo.get_object(n['pid'], type=PageV1_0)
+      if page.image.mimetype == 'application/octet-stream':
+         page.image.mimetype = 'image/jp2'
+         page.save('Updating image mimetype')
+         print 'Updated %s' % n['pid']
+
+* Run migrations for database updates::
+
+      python manage.py migrate
+
+* The URL format for pages has changed; update page ARK records by
+  running a script::
+
+      python manage.py update_page_arks
+
+* Generate TEI for all volumes with pages loaded:
+
+      python manage.py add_pagetei --all
+
+* The dependency on :mod:`eullocal` has been removed, so if you are using
+  an existing virtualenv, eullocal can be uninstalled after this upgrade.
+
+
 Release 1.2.1
 -------------------------
 
@@ -108,13 +149,16 @@ Release 1.2
 
 * This release includes an update to Django 1.7 and includes new database
   migrations.  To update the database, run::
-      ``python manage.py migrate``
-* LDAP login is now handled by
- `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`.  LDAP
+
+      python manage.py migrate
+
+* LDAP login is now handled by `django-auth-ldap <https://pythonhosted.org/django-auth-ldap/>`_.  LDAP
   configuration settings will need to be updated in ``localsettings.py``;
   see example configuration in ``localsettings.py.dist``.
+
 * Configure new setting **TEI_DISTRIBUTOR** in ``localsettings.py``.
   See example configuration in ``localsettings.py.dist``.
+
 * Readux now supports social authentication via Twitter, Google, GitHub,
   Facebook, etc.  OAuth keys for each of the configured backends should
   be requested and configured in ``localsettings.py``.  The list of enabled
@@ -127,7 +171,9 @@ Release 1.1
 * Update Fedora XACML policies to include new variant content models
   (ScannedVolume-1.1 and ScannedPage-1.1) and reload policies so that newly
   ingested content will be accessible.
+
 * Restart eulindexer so it will pick up the new content models to be indexed.
+
 * Configure new setting **LARGE_PDF_THRESHOLD** in ``localsettings.py``.
   See sample config and default value in ``localsettings.py.dist``.
 

@@ -34,9 +34,14 @@ INSTALLED_APPS = [
     'eultheme',
     'downtime',
     'widget_tweaks',
-    'readux.collection',
+    'feincms',
+    'mptt',
+    'feincms.module.page',
+    'feincms.module.medialibrary',
+    'readux.annotations',
     'readux.books',
-    'readux.dyndzi',
+    'readux.collection',
+    'readux.pages',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -69,6 +74,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "eultheme.context_processors.downtime_context",
     "readux.context_extras",  # include app version, backend names
     "readux.books.context_processors.book_search",  # book search form
+    "readux.pages.context_processors.default_page",
 )
 
 # List of callables that know how to import templates from various sources.
@@ -102,6 +108,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+LARGE_PDF_THRESHOLD=''
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -131,10 +138,11 @@ AUTHENTICATION_BACKENDS = (
     # additional social-auth backends could be configured here;
     # they will need keys in localsettings and possibly display names
     # added to the dict in readux/__init__.py
-    'social.backends.twitter.TwitterOAuth',
-    'social.backends.google.GoogleOAuth2',
-    'social.backends.github.GithubOAuth2',
+    # The app will use the following backends prioritized by list order.
     'social.backends.facebook.FacebookOAuth2',
+    'social.backends.github.GithubOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.twitter.TwitterOAuth',
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -154,6 +162,10 @@ DOWNTIME_EXEMPT_PATHS = (
 DOWNTIME_EXEMPT_EXACT_URLS = (
     '/',
 )
+
+FEINCMS_RICHTEXT_INIT_CONTEXT = {
+    'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js'
+}
 
 
 try:

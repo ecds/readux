@@ -23,7 +23,7 @@ def all_deps():
     if os.path.exists('pip-local-req.txt'):
         local('pip install -r pip-local-req.txt')
 
-
+@task
 def test():
     '''Locally run all tests.'''
     if os.path.exists('test-results'):
@@ -31,8 +31,10 @@ def test():
 
     local('python manage.py test --with-coverage --cover-package=%(project)s --cover-xml --with-xunit' \
         % env)
+    # convert .coverage file to coverage.xml
+    local('coverage xml')
 
-
+@task
 def doc():
     '''Locally build documentation.'''
     with lcd('docs'):
@@ -246,6 +248,7 @@ def deploy(path=None, user=None, url_prefix='', remote_proxy=None,
     configure_site()
     update_links()
     compare_localsettings()
+    rm_old_builds(noinput=True)
 
 
 @task
@@ -301,9 +304,9 @@ def rm_old_builds(path=None, user=None, noinput=False):
                 rm_dirs.remove(link)
 
         if rm_dirs:
-            for dir in rm_dirs:
-                if noinput or confirm('Remove %s/%s ?' % (env.remote_path, dir)):
-                    sudo('rm -rf %s' % dir, user=env.remote_acct)
+            for build_dir in rm_dirs:
+                if noinput or confirm('Remove %s/%s ?' % (env.remote_path, build_dir)):
+                    sudo('rm -rf %s' % build_dir, user=env.remote_acct)
         else:
             puts('No old build directories to remove')
 

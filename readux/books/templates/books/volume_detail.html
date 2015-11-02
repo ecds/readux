@@ -1,15 +1,15 @@
 {% extends 'site_base.html' %}
 
 {% block metadata %}{{ block.super }}
-    {% url 'books:page-thumbnail' vol.primary_image as image_url %}
+    {% url 'books:page-image' vol.pid vol.primary_image.pid 'thumbnail' as image_url %}
     <meta property="og:title" content="{{ vol.display_label }}"/>
     <meta itemprop="og:headline" content="{{ vol.display_label }}" />
-    <meta property="og:image" content="{{ site_root }}{{ image_url }}"/>
+    <meta property="og:image" content="{{ image_url }}"/>
     <meta property="og:description" content="{{ vol.book.best_description }}" />
 
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:title" content="{{ vol.display_label }}" />
-    <meta property="twitter:image" content="{{ site_root }}{{ image_url }}" />
+    <meta property="twitter:image" content="{{ image_url }}" />
     <meta property="twitter:description" content="{{ vol.book.best_description }}" />
 {% endblock %}
 
@@ -29,8 +29,8 @@
         <div class="media">
             {% if vol.primary_image %}
                 <div class="pull-left">
-                    {% url 'books:page-thumbnail' vol.primary_image as cover_url %}
-                    {% if vol.has_pages %}<a href="{% url 'books:page' vol.primary_image.pid %}">{% endif %}
+                    {% url 'books:page-image' vol.pid vol.primary_image.pid 'thumbnail' as cover_url %}
+                    {% if vol.has_pages %}<a href="{% url 'books:page' vol.pid vol.primary_image.pid %}">{% endif %}
                     <img class="thumbnail media-object" property="schema:image" src="{{ cover_url }}"/>
                     {% if vol.has_pages %}</a>{% endif %}
                     <a property="schema:thumbnailUrl" href="{{ cover_url }}" class="hidden"></a>
@@ -92,11 +92,16 @@
                         <ul class="nav nav-pills nav-stacked">
                             {% for rel_vol in vol.book.volume_set %}  {# NOTE: currently not sorted #}
                                 {% if rel_vol.pid != vol.pid %}
+                                {# hacky workaround for non-public domain yearbooks that are in the repository (hopefully temporary!) #}
+                                {% if vol.book.collection.pid == 'emory-control:LSDI-EmoryYearbooks' and rel_vol.volume > '1923' %}
+                                {# suppress non public domain yearbooks until we get clearance #}
+                                {% else %}
                                 <li>
                                     {# FIXME: technically, relatedLink belongs to *webPage*, not *book* entity #}
                                     <a property="schema:relatedLink" href="{% url 'books:volume' rel_vol.pid %}">{{ rel_vol.title|truncatechars:150 }}
                                     {% if rel_vol.volume %}<span class="text-muted">[{{ rel_vol.volume }}]</span>{% endif %}</a>
                                 </li>
+                                {% endif %}
                                 {% endif %}
                             {% endfor %}
                         </ul>

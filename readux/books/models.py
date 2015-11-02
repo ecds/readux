@@ -1,11 +1,12 @@
 from UserDict import UserDict
 from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.db.models import permalink
+from django.db.models import permalink, Count
 from django.template.defaultfilters import truncatechars
 from lxml import etree
 import json
 import logging
+import requests
 import os
 from urllib import urlencode, unquote
 
@@ -20,7 +21,8 @@ from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
 
-from readux.books import abbyyocr
+from readux.annotations.models import Annotation
+from readux.books import abbyyocr, iiif
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
 from readux.utils import solr_interface, absolutize_url
@@ -98,6 +100,44 @@ class Book(DigitalObject):
 # NOTE: Image and Page defined before Volume to allow referencing in
 # Volume relation definitions
 
+class IIIFImage(iiif.IIIFImageClient):
+    api_endpoint = settings.IIIF_API_ENDPOINT
+    image_id_prefix = getattr(settings, 'IIIF_ID_PREFIX', '')
+    pid = None
+
+    def __init__(self, *args, **kwargs):
+        pid = None
+        if 'pid' in kwargs:
+            pid = kwargs['pid']
+            del kwargs['pid']
+        super(IIIFImage, self).__init__(**kwargs)
+
+        if pid is not None:
+            self.pid = pid
+
+    def get_copy(self):
+        copy = super(IIIFImage, self).get_copy()
+        copy.pid = self.pid
+        return copy
+
+    def get_image_id(self):
+        return '%s%s' % (self.image_id_prefix, self.pid)
+
+    def thumbnail(self):
+        return self.size(width=300, height=300, exact=True).format('png')
+
+    def mini_thumbnail(self):
+        return self.thumbnail().size(width=100, height=100, exact=True)
+
+    SINGLE_PAGE_SIZE = 1000
+
+    def page_size(self):
+        return self.size(width=self.SINGLE_PAGE_SIZE, height=self.SINGLE_PAGE_SIZE,
+            exact=True)
+
+
+
+
 
 class Image(DigitalObject):
     ''':class:`~eulfedora.models.DigitalObject` for image content,
@@ -118,28 +158,9 @@ class Image(DigitalObject):
         })
     ':class:`~eulfedora.models.FileDatastream` with image content'
 
-    def get_preview_image(self):
-        'Return a version of the image suitable for preview or thumbnail'
-        content, uri = self.getDissemination(self.IMAGE_SERVICE, 'getRegion',
-                                             params={'level': 1})
-        return content
-
-    def get_region(self, **params):
-        '''Call the getRegion method on the image service disseminator
-        with any parameters the service supports, and return the
-        results.'''
-        return self.getDissemination(self.IMAGE_SERVICE, 'getRegion', params=params)
-
-    def get_region_chunks(self, **params):
-        # return getRegion chunks as a generator for use with http response
-        response = self.getDissemination(self.IMAGE_SERVICE, 'getRegion', params=params,
-                                         return_http_response=True)
-        # FIXME: check response code first?
-        while True:
-            chunk = response.read(4096)
-            if not chunk:
-                return
-            yield chunk
+    def __init__(self, *args, **kwargs):
+        super(Image, self).__init__(*args, **kwargs)
+        self.iiif = IIIFImage(pid=self.pid)
 
     _image_metadata = None
     @property
@@ -147,11 +168,12 @@ class Image(DigitalObject):
         '''Image metadata as returned by Djatoka getMetadata method
         (width, height, etc.).'''
         if self._image_metadata is None:
-            imgmeta = self.getDissemination(self.IMAGE_SERVICE, 'getMetadata')
-            # getDissemination returns a tuple of result, url
-            # load the image metadata returned by djatoka via json and return
-            # NOTE: this is eulfedora + requests syntax; old syntax was imgmeta[0]
-            self._image_metadata = json.loads(imgmeta.content)
+            response = requests.get(self.iiif.info())
+            if response.status_code == requests.codes.ok:
+                self._image_metadata = response.json()
+            else:
+                logger.warn('Error retrieving image metadata: %s', response)
+
         return self._image_metadata
 
     # expose width & height from image metadata as properties
@@ -159,13 +181,15 @@ class Image(DigitalObject):
     def width(self):
         '''Width of :attr:`image` datastream, according to
         :attr:`image_metadata`.'''
-        return int(self.image_metadata['width'])
+        if self.image_metadata:
+            return int(self.image_metadata['width'])
 
     @property
     def height(self):
         '''Height of :attr:`image` datastream, according to
         :attr:`image_metadata`.'''
-        return int(self.image_metadata['height'])
+        if self.image_metadata:
+            return int(self.image_metadata['height'])
 
 
 class TeiZone(teimap.Tei):
@@ -253,6 +277,10 @@ class Page(Image):
     ocr_to_teifacsimile_xsl = os.path.join(settings.BASE_DIR, 'readux',
         'books', 'ocr_to_teifacsimile.xsl')
 
+    #: path to xsl for generating ids for mets/alto or abbyy ocr xml
+    ocr_add_ids_xsl = os.path.join(settings.BASE_DIR, 'readux',
+        'books', 'ocr_add_ids.xsl')
+
     # NOTE: it *should* be more efficient to load the xslt once, but it
     # results in malloc errors when python exits, so skip it for now
     # ocr_to_teifacsimile = xmlmap.load_xslt(filename=ocr_to_teifacsimile_xsl)
@@ -260,7 +288,13 @@ class Page(Image):
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [str(self.pid)])
+        return (self.NEW_OBJECT_VIEW, [self.volume.pid, str(self.pid)])
+
+    @property
+    def absolute_url(self):
+        '''Generate an absolute url to the page view, for external services
+        or for referencing in annotations.'''
+        return absolutize_url(self.get_absolute_url())
 
     @property
     def display_label(self):
@@ -303,8 +337,10 @@ class Page(Image):
     @property
     def image_url(self):
         # preliminary image url, for use in tei facsimile
-        # NOTE: eventually we may want to use some version of the ARK
-        return absolutize_url(reverse('books:page-image-fs', kwargs={'pid': self.pid}))
+        # TODO: we probably want to use some version of the ARK here
+        return unicode(self.iiif)
+        # return absolutize_url(reverse('books:page-image-fs',
+            # kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
 
     @property
     def tei_options(self):
@@ -325,6 +361,14 @@ class Page(Image):
            'page_number': str(self.page_order)
         }
 
+    def annotations(self, user=None):
+        '''Find annotations for this page , optionally
+        filtered by user.'''
+        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
+        # if user is specified, show only notes that user can view
+        if user is not None:
+            return notes.visible_to(user)
+        return notes
 
 
 class PageV1_0(Page):
@@ -434,6 +478,23 @@ class PageV1_1(Page):
             raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
         self.tei.content = tei
+
+    @property
+    def ocr_has_ids(self):
+        'Check if OCR currently includes xml:ids'
+        if self.ocr.exists:
+            return self.ocr.content.node.xpath('count(//@xml:id)') > 0.0
+
+    def add_ocr_ids(self):
+        'Update OCR xml with ids for pages, blocks, lines, etc'
+        with open(self.ocr_add_ids_xsl) as xslfile:
+            try:
+                result =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # set the result as ocr datastream content
+                self.ocr.content = xmlmap.load_xmlobject_from_string(result)
+            except etree.XMLSyntaxError:
+                logger.warn('OCR xml for %s is invalid', self.pid)
 
 
 class BaseVolume(object):
@@ -546,6 +607,12 @@ class Volume(DigitalObject, BaseVolume):
         'Absolute url to view this object within the site'
         return ('books:volume', [str(self.pid)])
 
+    @property
+    def absolute_url(self):
+        '''Generate an absolute url to the page view, for external services
+        or for referencing in annotations.'''
+        return absolutize_url(self.get_absolute_url())
+
     # def get_pdf_url(self):
     #     return reverse('books:pdf', kwargs={'pid': self.pid})
 
@@ -566,6 +633,18 @@ class Volume(DigitalObject, BaseVolume):
             return len(self.pages) > 1
         else:
             return False
+
+    @property
+    def has_tei(self):
+        'boolean flag indicating if TEI has been generated for volume pages'
+        if self.pages:
+            # NOTE: this is only checking tei in the first few pages;
+            # If TEI is incompletely loaded, this could report incorrectly.
+            # Checks multiple pages because blank pages might have no TEI.
+            for p in self.pages[:10]:
+                if p.tei.exists:
+                    return True
+        return False
 
     @property
     def title(self):
@@ -749,14 +828,16 @@ class Volume(DigitalObject, BaseVolume):
         solr = solr_interface()
         # find all pages that belong to the same volume and sort by page order
         # - filtering separately should allow solr to cache filtered result sets more efficiently
-        solrquery = solr.query(isConstituentOf=self.uri) \
+        return solr.query(isConstituentOf=self.uri) \
                        .filter(content_model=Page.PAGE_CMODEL_PATTERN) \
                        .filter(state='A') \
-                       .sort_by('page_order')
+                       .sort_by('page_order') \
+                       .field_limit(['pid', 'page_order']) \
+                       .results_as(SolrPage)
         # only return fields we actually need (pid, page_order)
-        solrquery = solrquery.field_limit(['pid', 'page_order'])  # ??
+        # TODO: add volume id for generating urls ?
+        # solrquery = solrquery.field_limit(['pid', 'page_order', 'isConstituentOf'])  # ??
         # return so it can be filtered, paginated as needed
-        return solrquery
 
     @staticmethod
     def volumes_with_pages():
@@ -780,6 +861,52 @@ class Volume(DigitalObject, BaseVolume):
         # exposing as a property here for consistency with SolrVolume result
         return self.dc.content.language
 
+    def annotations(self, user=None):
+        '''Find annotations for any page in this volume, optionally
+        filtered by user.'''
+        # NOTE: should match on full url *with* domain name
+        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
+
+        # if user is specified, show only notes that user can view
+        if user is not None:
+            return notes.visible_to(user)
+
+        return notes
+
+    def page_annotation_count(self, user=None):
+        '''Generate a dictionary with a count of annotations for each
+        unique page uri within the current volume.'''
+        # aggregate anotations by unique uri and return a count
+        # of the number of annotations for each uri
+        notes = self.annotations(user=user) \
+                   .values('uri').distinct() \
+                   .annotate(count=Count('uri')) \
+                   .values('uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict for easy lookup
+        return dict([(n['uri'], n['count']) for n in notes])
+
+    def annotation_count(self, user=None):
+        '''Total number of annotations for this volume, filtered by user
+        if specified.'''
+        return self.annotations(user=user).count()
+
+    @classmethod
+    def volume_annotation_count(cls, user=None):
+        '''Generate a dictionary with a count of annotations for each
+        unique volume uri.'''
+        # aggregate anotations by unique uri and return a count
+        # of the number of annotations for each uri
+        notes = Annotation.objects.all()
+        if user is not None:
+            notes = notes.visible_to(user)
+
+        notes = notes.values('volume_uri').distinct() \
+                     .annotate(count=Count('volume_uri')) \
+                     .values('volume_uri', 'count')
+
+        # queryset returns a list of dict; convert to a dict for easy lookup
+        return dict([(n['volume_uri'], n['count']) for n in notes])
 
 class VolumeV1_0(Volume):
     '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''
@@ -797,10 +924,14 @@ class VolumeV1_0(Volume):
         'versionable': True,
     })
 
-    # shortcuts for consistency with SolrVolume
     #: path to xslt for transforming abbyoccr to plain text with some structure
     ocr_to_text_xsl = os.path.join(settings.BASE_DIR, 'readux', 'books', 'abbyocr-to-text.xsl')
 
+    #: path to xsl for generating ids for mets/alto or abbyy ocr xml
+    ocr_add_ids_xsl = os.path.join(settings.BASE_DIR, 'readux',
+        'books', 'ocr_add_ids.xsl')
+
+    # shortcuts for consistency with SolrVolume
     @property
     def fulltext_available(self):
         return self.ocr.exists
@@ -824,6 +955,23 @@ class VolumeV1_0(Volume):
                     # simple get text seems to generate reasonable text + whitespace
                     return xmlsoup.get_text()
 
+    @property
+    def ocr_has_ids(self):
+        'Check if OCR currently includes xml:ids'
+        if self.ocr.exists:
+            return self.ocr.content.node.xpath('count(//@xml:id)') > 0.0
+
+    def add_ocr_ids(self):
+        'Update OCR xml with ids for pages, blocks, lines, etc'
+        with open(self.ocr_add_ids_xsl) as xslfile:
+            try:
+                result =  self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode)
+                # set the result as ocr datastream content
+                self.ocr.content = xmlmap.load_xmlobject_from_string(result,
+                    abbyyocr.Document)
+            except etree.XMLSyntaxError:
+                logger.warn('OCR xml for %s is invalid', self.pid)
 
 
 class VolumeV1_1(Volume):
@@ -885,12 +1033,18 @@ class SolrVolume(UserDict, BaseVolume):
         # exposing as a property here for generating voyant url
         return self.get('language')
 
+    _primary_image = None
     @property
     def primary_image(self):
         # allow template access to cover image pid to work the same way as
         # it does with Volume - vol.primary_image.pid
-        if 'hasPrimaryImage' in self.data:
-            return {'pid': self.data.get('hasPrimaryImage')}
+        if self._primary_image is None:
+            if 'hasPrimaryImage' in self.data:
+                pid = self.data.get('hasPrimaryImage')
+                self._primary_image = {'pid': pid, 'iiif': IIIFImage(pid=pid)}
+            else:
+                self._primary_image = {}
+        return self._primary_image
 
     @property
     def start_page(self):
@@ -899,6 +1053,28 @@ class SolrVolume(UserDict, BaseVolume):
     @property
     def pdf_size(self):
         return self.data.get('pdf_size')
+
+class SolrPage(UserDict):
+
+    def __init__(self, **kwargs):
+        # sunburnt passes fields as kwargs; userdict wants them as a dict
+        UserDict.__init__(self, kwargs)
+        self.iiif = IIIFImage(pid=self.pid)
+
+    @property
+    def pid(self):
+        'object pid'
+        return self.data.get('pid')
+
+    def thumbnail_url(self):
+        print self.iiif.thumbnail()
+        return self.iiif.thumbnail()
+        return '%s%s%s/full/!300,300/0/default.png' % (
+            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
+            self.pid)
+
+
+
 
 # hack: patch in volume as the related item type for pages
 # (can't be done in page declaration due to order / volume primary image rel)

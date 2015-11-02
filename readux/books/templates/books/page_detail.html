@@ -1,0 +1,124 @@
+{% extends 'site_base.html' %}
+{% load teifacsimile static %}
+
+{% block page-subtitle %}{{ page.display_label }} | {% endblock %}
+
+{% block css %}
+  {{ block.super }}
+  {# local copy of annotator v2.0-alpha css #}
+  <link rel="stylesheet" href="{% static 'plugins/annotator/annotator.min.css' %}"/>
+  <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-meltdown/build/0.1.0/annotator.meltdown.min.css" />
+  <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-marginalia/build/0.1.1/annotator.marginalia.min.css" />
+{% endblock %}
+
+{% block javascript %}
+  {# FIXME: this should be redundant, but annotator requires at least jquery 1.6 and wasn't workining without #}
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  {{ block.super }}
+  {# local copy of annotator; currently v2.0.0-alpha.2 #}
+  <script type="text/javascript" src="{% static 'js/annotator.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/openseadragon/openseadragon.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/deepzoom.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/page.js' %}"></script>
+
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-marginalia/src/scripts/bootstrap.dropdown.js"></script>
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-marginalia/build/0.1.1/annotator.marginalia.min.js"></script>
+
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-meltdown/build/0.1.0/annotator.meltdown.min.js"></script>
+
+  <script type="text/javascript" src="{% static 'plugins/annotator/suppress_permissions.js' %}"></script>
+  <script type="text/javascript" src="{% static 'plugins/annotator/annotator.selectionIds.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-imgselect/src/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" />
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-imgselect/build/0.2.2/annotator.imgselect.min.js"></script>
+  {% include 'books/snippets/book-page.js' %}
+{% endblock %}
+
+{% block metadata %}
+    {{ block.super }}
+    <meta property="og:title" content="{{ page.display_label }}"/>
+    <meta itemprop="og:headline" content="{{ page.display_label }}" />
+    <meta property="og:image" content="{% url 'books:page-image' page.volume.pid page.pid 'single-page' %}"/>
+
+    <meta property="twitter:card" content="photo" />
+    <meta property="twitter:title" content="{{ page.display_label }}" />
+    <meta property="twitter:image" content="{% url 'books:page-image' page.volume.pid page.pid 'single-page' %}" />
+
+    {% if page.tei.exists %}
+    <link rel="alternate" type="text/xml" href="{% url 'books:page-tei' page.volume.pid page.pid %}" />
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% include 'books/snippets/volume_header.html' with vol=page.volume %}
+    </div>
+    <article class="carousel page">
+        <div class="carousel-inner">
+
+            <div class="container in-page-controls">
+                <div id="view-toggle" class="col-sm-4 pull-right">
+                    <div class="btn-group pull-right">
+                        <a id="enable-zoom" href="#" class="btn" alt="Deep Zoom Mode" title="Deep Zoom Mode"><span class="glyphicon glyphicon-fullscreen"></span></a>
+
+                        <a id="covers" href="#" class="btn active" alt="Single Page" title="Single Page"><span class="glyphicon glyphicon-file"></span></a>
+
+                        <a id="list" alt="Gallery" title="Gallery" href="{% url 'books:pages' page.volume.pid %}?page={{page_chunk}}" class="btn"><span class="glyphicon glyphicon-th"></span></a>
+                    </div>
+
+                    <div id="deepzoom-controls" class="hidden">
+                        <div class="btn-group">
+                            <a id="dz-zoom-in" alt="Zoom In" title="Zoom In" href="#" class="btn"><span class="glyphicon glyphicon-plus"></span></a>
+
+                            <a id="dz-zoom-out" alt="Zoom Out" title="Zoom Out" href="#" class="btn"><span class="glyphicon glyphicon-minus"></span></a>
+
+                            <a id="dz-home" alt="Back to Start Position" title="Back to Start Position" href="#" class="btn"><span class="glyphicon glyphicon-home"></span></a>
+
+                            <a id="dz-fs" alt="Fullscreen Mode" title="Fullscreen Mode" href="#" class="btn"><span class="glyphicon glyphicon-fullscreen"></span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-3 col-sm-4 col-sm-offset-4 text-center">
+                    <p class="text-muted">p. {{ page.page_order }}</p>
+                </div>
+
+            </div>
+
+            <div class="text-center">
+                <div id="zoom-page"></div>
+                <div class="page">
+                    <div class="content">
+                        <section class="inner">
+                          <img class="page-image" src="{% url 'books:page-image' page.volume.pid page.pid 'single-page' %}"/>
+                          {% if page.tei.exists %}
+                             {% for line in page.tei.content.lines %}
+                             <div class="ocr-line {% if not line.word_zones %}ocrtext{% endif %}" {{ line|zone_style:scale }}>
+                                  {% for zone in line.word_zones %}
+                                  {# NOTE: may not want ocrtext adjustment when there are multiple words on a line #}
+                                  <div class="ocr-zone ocrtext" {{ zone|zone_style:scale }}>
+                                      <span>{{ zone.text }}</span>
+                                  </div>
+                                  {% empty %} {# if no word zones, assume single line of text #}
+                                    <span>{{ line.text }}</span>
+                                  {% endfor %}
+                              </div>
+                              {% endfor %}
+                          {% endif %}
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if prev %}
+        <a class="left carousel-control" href="{% url 'books:page' page.volume.pid prev.pid %}" role="button" data-slide="prev" title="Prev: Page {{ prev.page_order }}">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        {% endif %}
+        {% if next %}
+        <a class="right carousel-control" href="{% url 'books:page' page.volume.pid next.pid %}" role="button" data-slide="next" title="Next: Page {{ next.page_order }}">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        {% endif %}
+    </article>
+{% endblock %}

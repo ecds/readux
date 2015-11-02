@@ -12,13 +12,14 @@ from eulxml import xmlmap
 class Base(xmlmap.XmlObject):
     '''Base :class:`eulxml.xmlmap.XmlObject` for ABBYY OCR XML with
     common namespace declarations.
-    
+
     '''
     ROOT_NAMESPACES = {
         'fr6v1': 'http://www.abbyy.com/FineReader_xml/FineReader6-schema-v1.xml',
         'fr8v2': 'http://www.abbyy.com/FineReader_xml/FineReader8-schema-v2.xml'
     }
     'namespaces for supported versions of FineReader xml'
+    id = xmlmap.StringField('@xml:id')
 
 def frns(xpath):
     '''Utility function to convert a simple xpath to match any of the
@@ -33,7 +34,7 @@ def frns(xpath):
     namespaces = Base.ROOT_NAMESPACES.keys()
     return '|'.join('/'.join('%s:%s' % (ns, el) for el in xpath.split('/'))
                     for ns in namespaces)
-    
+
 class Formatting(Base):
     '''A group of characters in a single :class:`Line` with uniform
     formatting.'''
@@ -79,7 +80,7 @@ class Paragraph(Base):
     # dropChars stuff ?
     lines = xmlmap.NodeListField(frns('line'), Line)
     'list of :class:`Line` elements'
-    
+
 class Block(Base):
     ROOT_NAME = 'page'
     '''A single block of content on a :class:`Page`.'''

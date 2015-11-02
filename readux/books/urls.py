@@ -4,29 +4,34 @@ from django.views.generic.base import RedirectView
 from readux.books import views
 
 urlpatterns = patterns('',
-    url(r'^$', views.search, name='search'),
-    url(r'^covers/$', views.search, {'mode': 'covers'}, name='search-covers'),
-    url(r'^unapi/$', views.unapi, name='unapi'),
-    url(r'^(?P<pid>[^/]+)/$', views.volume, name='volume'),
-    url(r'^(?P<pid>[^/]+)/pdf/$', views.pdf, name='pdf'),
-    url(r'^(?P<pid>[^/]+)/ocr/$', views.ocr, name='ocr'),
-    url(r'^(?P<pid>[^/]+)/text/$', views.text, name='text'),
-    url(r'^(?P<pid>[^/]+)/pages/$', views.volume_pages, name='pages'),
+    url(r'^$', views.VolumeSearch.as_view(), name='search'),
+    url(r'^covers/$', views.VolumeCoverSearch.as_view(), name='search-covers'),
+    url(r'^unapi/$', views.Unapi.as_view(), name='unapi'),
+    url(r'^(?P<pid>[^/]+)/$', views.VolumeDetail.as_view(), name='volume'),
+    url(r'^(?P<pid>[^/]+)/pdf/$', views.VolumePdf.as_view(), name='pdf'),
+    url(r'^(?P<pid>[^/]+)/ocr/$', views.VolumeOcr.as_view(), name='ocr'),
+    url(r'^(?P<pid>[^/]+)/text/$', views.VolumeText.as_view(), name='text'),
+    url(r'^(?P<pid>[^/]+)/pages/$', views.VolumePageList.as_view(), name='pages'),
 
-    # NOTE: would be nice to put individual pages under volume pid, but makes it hard to generate
-    # target url when minting ark for ingest..
-    # url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
-    url(r'^pages/(?P<pid>[^/]+)/$', views.view_page, name='page'),
-    url(r'^pages/(?P<pid>[^/]+)/tei/$', views.page_tei, name='page-tei'),
-    # redirect from TEI to tei so etiher one can be used
-    url(r'^pages/(?P<pid>[^/]+)/TEI/$', RedirectView.as_view(pattern_name='books:page-tei')),
+    # page views
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/$',
+        views.PageDetail.as_view(), name='page'),
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/tei/$',
+        views.PageTei.as_view(), name='page-tei'),
+    # redirect from TEI to tei so either one can be used
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/TEI/$',
+        RedirectView.as_view(pattern_name='books:page-tei')),
+    # page-1.1 ocr view
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/ocr/$',
+        views.PageOcr.as_view(), name='page-ocr'),
+    # redirect from OCR to ocr so either one can be used
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/OCR/$',
+        RedirectView.as_view(pattern_name='books:page-ocr')),
 
-    url(r'^pages/(?P<pid>[^/]+)/thumbnail/$', views.page_image, {'mode': 'thumbnail'},
-        name='page-thumbnail'),
-    url(r'^pages/(?P<pid>[^/]+)/thumbnail/mini/$', views.page_image, {'mode': 'mini-thumbnail'},
-        name='page-mini-thumb'),
-    url(r'^pages/(?P<pid>[^/]+)/image/$', views.page_image, {'mode': 'single-page'},
-        name='page-image'),
-    url(r'^pages/(?P<pid>[^/]+)/image/fs/$', views.page_image, {'mode': 'fullsize'},
-        name='page-image-fs'),
+    # redirect view for old page urls without volume pids
+    url(r'^pages/(?P<pid>[^/]+)/(?P<path>.*)$', views.PageRedirect.as_view(),
+        name='old-pageurl-redirect'),
+
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/(?P<mode>(thumbnail|mini-thumbnail|single-page|fullsize|info))/$',
+        views.PageImage.as_view(),  name='page-image'),
 )

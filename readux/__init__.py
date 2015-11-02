@@ -1,4 +1,4 @@
-__version_info__ = (1, 2, 2, None)
+__version_info__ = (1, 3, 0, None)
 
 
 # Dot-connect all but the last. Last is dash-connected if not None.
@@ -19,6 +19,6 @@ def context_extras(request):
         'backend_names': {
             'github': 'GitHub',
             'google-oauth2': 'Google',
-        }
+        },
     }
 

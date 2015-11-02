@@ -113,9 +113,11 @@ class DigitalObject(models.DigitalObject):
             # pidman wants a target for the new pid
             # generate a pidman-ready target for a named view
 
-            # first just reverse the view name.
-            pid = '%s:%s' % (self.default_pidspace, self.PID_TOKEN)
-            target = reverse(self.NEW_OBJECT_VIEW, kwargs={'pid': pid})
+            # Use the object absolute url method
+            # NOTE: this requires that all values used in a url be set
+            # (i.e., page objects must have volume pid configured)
+            self.pid = '%s:%s' % (self.default_pidspace, self.PID_TOKEN)
+            target = self.get_absolute_url()
 
             # reverse() encodes the PID_TOKEN and the :, so just unquote the url
             # (shouldn't contain anything else that needs escaping)

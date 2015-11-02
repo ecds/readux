@@ -430,3 +430,4 @@ Solr Schema for projects using eulfedora and indexdata.
  <!-- <similarity class="org.apache.lucene.search.DefaultSimilarity"/> -->
 
 </schema>
+

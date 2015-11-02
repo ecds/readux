@@ -246,9 +246,12 @@ class TeiFacsimile(teimap.Tei):
     # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
     # referenced files in the same directory
     page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
+    page_list = xmlmap.NodeListField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
     # NOTE: tei facsimile could include illustrations, but ignoring those for now
     lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)
     word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
+
+    distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
 
 
 class Page(Image):
@@ -907,6 +910,28 @@ class Volume(DigitalObject, BaseVolume):
 
         # queryset returns a list of dict; convert to a dict for easy lookup
         return dict([(n['volume_uri'], n['count']) for n in notes])
+
+    def generate_volume_tei(self):
+        '''Generate TEI for a volume by combining the TEI for
+        all pages.'''
+        if not self.has_tei:
+            return
+        vol_tei = TeiFacsimile()
+        # populate header information
+        # TODO: what needs to be included here?
+        # volume, date? source description?
+        vol_tei.create_header()
+        vol_tei.header.title = self.title
+        vol_tei.distributor = settings.TEI_DISTRIBUTOR
+        # loop through pages and add tei content
+        for page in self.pages:
+            if page.tei.exists and page.tei.content.page:
+                # include facsimile page *only* from the tei for each page
+                vol_tei.page_list.append(page.tei.content.page)
+
+        return vol_tei
+
+
 
 class VolumeV1_0(Volume):
     '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''

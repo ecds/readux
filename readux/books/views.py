@@ -494,6 +494,22 @@ class VolumeText(VolumeOcr):
         # for volume v1.0 objects with an ocr datastream
         return response
 
+class VolumeTei(View):
+
+    def get(self, request, *args, **kwargs):
+        repo = TypeInferringRepository()
+        vol = repo.get_object(self.kwargs['pid'])
+        # if object doesn't exist, isn't a volume, or doesn't have tei text - 404
+        if not vol.exists or not vol.has_requisite_content_models or not vol.has_tei:
+            raise Http404
+
+        response = HttpResponse(vol.generate_volume_tei().serialize(pretty=True),
+            content_type='application/xml')
+        # generate a default filename based on the object label
+        response['Content-Disposition'] = 'filename="%s.txt"' % \
+            vol.label.replace(' ', '-')
+        return response
+
 
 class Unapi(View):
     '''unAPI service point for :class:`~readux.books.models.Volume` objects,
@@ -592,7 +608,7 @@ class PageImage(RedirectView):
             return page.iiif.mini_thumbnail()
         elif kwargs['mode'] == 'single-page':
             return page.iiif.page_size()
-        elif kwargs['mode'] == 'fullsize':
+        elif kwargs['mode'] == 'fs':  # full size
             return page.iiif
         elif kwargs['mode'] == 'info':
             return page.iiif.info()

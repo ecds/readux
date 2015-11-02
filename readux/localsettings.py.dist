@@ -149,6 +149,12 @@ TEI_DISTRIBUTOR = ''  # e.g., Emory University
 # list of IPs that can access the site during downtime periods
 DOWNTIME_ALLOWED_IPS = ['127.0.0.1']
 
+# IIIF image server (i.e. Loris) integration
+IIIF_API_ENDPOINT = 'http://loris.server/'
+# optional prefix, for use with Loris templating http resolver; include
+IIIF_ID_PREFIX = 'prefix:'
+
+
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/
 LOGGING = {

@@ -118,6 +118,11 @@ Release 1.3 (preliminary)
          page.save('Updating image mimetype')
          print 'Updated %s' % n['pid']
 
+* The new IIIF-based image handling requires new configurations be added
+  to ``localsettings.py``: **IIIF_API_ENDPOINT** and **IIIF_ID_PREFIX**
+  (prefix is optional, depending on configuration).  See
+  ``localsettings.py.dist`` for an example.
+
 * Run migrations for database updates::
 
       python manage.py migrate

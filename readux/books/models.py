@@ -253,6 +253,15 @@ class TeiFacsimile(teimap.Tei):
 
     distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
 
+class TeiNote(teimap.Tei):
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS, 'xml': 'http://www.w3.org/XML/1998/namespace'}
+    ROOT_NAME = 'note'
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    resp = xmlmap.StringField('@resp')
+    paragraphs = xmlmap.StringListField('tei:p')
+
 
 class Page(Image):
     '''Page object with common functionality for all versions of

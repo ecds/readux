@@ -489,8 +489,8 @@ class PageV1_1(Page):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
-                result =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                result = self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode, id_prefix=self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result)
             except etree.XMLSyntaxError:
@@ -965,8 +965,8 @@ class VolumeV1_0(Volume):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
-                result =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                result = self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode, id_prefix=self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result,
                     abbyyocr.Document)

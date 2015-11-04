@@ -257,16 +257,15 @@ class TeiMarkdownRenderer(mistune.Renderer):
         """
         # TODO
         return (
-            '<table>\n<thead>%s</thead>\n'
-            '<tbody>\n%s</tbody>\n</table>\n'
+            '<table><head>%s</head>'
+            '%s</table>'
         ) % (header, body)
 
     def table_row(self, content):
-        """Rendering a table row. Like ``<tr>``.
+        """Rendering a table row.
         :param content: content of current table row.
         """
-        # TODO
-        return '<tr>\n%s</tr>\n' % content
+        return '<row>%s</tr>' % content
 
     def table_cell(self, content, **flags):
         """Rendering a table cell. Like ``<th>`` ``<td>``.
@@ -274,17 +273,13 @@ class TeiMarkdownRenderer(mistune.Renderer):
         :param header: whether this is header or not.
         :param align: align of current table cell.
         """
-        # TODO
         if flags['header']:
-            tag = 'th'
+            role = "label"
         else:
-            tag = 'td'
+            role = "data"
+        # TODO: possibly pass through via rend attribute?
         align = flags['align']
-        if not align:
-            return '<%s>%s</%s>\n' % (tag, content, tag)
-        return '<%s style="text-align:%s">%s</%s>\n' % (
-            tag, align, content, tag
-        )
+        return '<cell role="%s">%s</cell>' % (role, content)
 
     def double_emphasis(self, text):
         """Rendering **strong** text.

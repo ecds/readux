@@ -1,8 +1,12 @@
 # methods for generating annotated tei
 from eulxml.xmlmap import load_xmlobject_from_string, teimap
+import logging
 from lxml import etree
 import mistune
-from readux.books.models import TeiZone, TeiNote
+from readux.books.models import TeiZone, TeiNote, TeiAnchor
+
+
+logger = logging.getLogger(__name__)
 
 
 def annotated_tei(tei, annotations):
@@ -10,21 +14,18 @@ def annotated_tei(tei, annotations):
     # and insert them into the tei based on the content they reference
 
     # perhaps some sanity-checking: compare annotation total vs
-    # number actually added as we go page-by-page
-    for note in annotations.all():
-        ark = note.info()['ark']
-        print note
+    # number actually added as we go page-by-page?
+
+    # create an annotation div for annotation content
+    tei.create_body()
+    annotation_div = teimap.TeiDiv(type='annotations')
+    tei.body.div.append(annotation_div)
 
     for page in tei.page_list:
-        print 'tei page %s' % page.id
         page_annotations = annotations.filter(extra_data__contains=page.id)
-        print page_annotations
         if page_annotations.exists():
-            print 'page annotations'
             for note in page_annotations:
-                print note.id
-                insert_note(page, note)
-
+                insert_note(annotation_div, page, note)
 
     return tei
 
@@ -48,9 +49,9 @@ def annotation_to_tei(annotation):
         (teimap.TEI_NAMESPACE, note_content),
         TeiNote)
 
-    # should we include full readux uri?
-    # or is annotation uuid enough?
-    teinote.id = annotation.get_absolute_url()
+    # what id do we want? annotation uuid? url?
+    teinote.id = 'annotation-%s' % annotation.id  # can't start with numeric
+    teinote.type = 'annotation'
 
     # if the annotation has an associated user, mark the author
     # as responsible for the note
@@ -66,38 +67,97 @@ def html_xpath_to_tei(xpath):
                 .replace('span', 'tei:w') \
                 .replace('@id', '@xml:id')
 
-def insert_note(teipage, annotation):
+def insert_note(annotation_div, teipage, annotation):
 
     info = annotation.info()
     # convert html xpaths to tei
     if info['ranges']:
-        # NOTE: assuming single range selection for now
-        # annotator model supports multiple, but UI does not currently
-        # support it
-        start_xpath = html_xpath_to_tei(info['ranges'][0]['start'])
-        end_xpath = html_xpath_to_tei(info['ranges'][0]['end'])
-        print 'xpaths - ', start_xpath, end_xpath
+        # NOTE: assuming a single range selection for now
+        # the annotator model supports multiple, but UI does not currently
+        # support it.
+        selection_range = info['ranges'][0]
+        # convert html xpaths from readux website to equivalent tei xpaths
+        # for selection within the facsimile document
+        start_xpath = html_xpath_to_tei(selection_range['start'])
+        end_xpath = html_xpath_to_tei(selection_range['end'])
+        # insert references using start and end xpaths & offsets
         start = teipage.node.xpath(start_xpath, namespaces=TeiZone.ROOT_NAMESPACES)
         end = teipage.node.xpath(end_xpath, namespaces=TeiZone.ROOT_NAMESPACES)
-        print 'start node = ', start, ' end node = ', end
-        # insert reference using start/end xpaths & offsets
+        if not start or not end:
+            logger.warn('Could not find start or end xpath for annotation %s' % annotation.id)
+            return
+        else:
+            # xpath returns a list of matches; we only want the first one
+            start = start[0]
+            end = end[0]
 
-    # if no ranges, then image annotation;
-    # create a new surface/zone referencing the coordinates (?)
+        start_anchor = TeiAnchor(type='text-annotation-highlight-start',
+            id='highlight-start-%s' % annotation.id)
+        end_anchor = TeiAnchor(type='text-annotation-highlight-end',
+            id='highlight-end-%s' % annotation.id)
+
+        # insert the end *first* in case start and end are in the
+        # same element; otherwise, the offsets get mixed up
+        insert_anchor(end, end_anchor.node, selection_range['endOffset'])
+        insert_anchor(start, start_anchor.node, selection_range['startOffset'])
+
+        # generate range target for the note element
+        target = '#range(#%s, #%s)' % (start_anchor.id, end_anchor.id)
+
+    elif 'image_selection' in info:
+        # for readux, image annotation can *only* be the page image
+        # so not checking image uri
+        page_width = teipage.lrx - teipage.ulx
+        page_height = teipage.lry - teipage.uly
+
+        # create a new zone for the image highlight
+        image_highlight = TeiZone(type="image-annotation-highlight")
+        # image selection in annotation stored as percentages
+        # convert ##% into a float that can be multiplied by page dimensions
+        selection = {
+            'x': float(info['image_selection']['x'].rstrip('%')) / 100,
+            'y': float(info['image_selection']['y'].rstrip('%')) / 100,
+            'w': float(info['image_selection']['w'].rstrip('%')) / 100,
+            'h': float(info['image_selection']['h'].rstrip('%')) / 100
+        }
+
+        # convert percentages into upper left and lower right coordinates
+        # relative to the page
+        image_highlight.ulx = selection['x'] * float(page_width)
+        image_highlight.uly = selection['y'] * float(page_height)
+        image_highlight.lrx = image_highlight.ulx + (selection['w'] * page_width)
+        image_highlight.lry = image_highlight.uly + (selection['h'] * page_height)
+
+        image_highlight.id = 'highlight-%s' % annotation.id
+        target = '#%s' % image_highlight.id
+
+        teipage.node.append(image_highlight.node)
+
+    # call annotation_to_tei and insert the resulting note into
+    # the appropriate part of the document
+    teinote = annotation_to_tei(annotation)
+    teinote.target = target
+    # actual annotation should be added to the text, outside facsimile
+    annotation_div.node.append(teinote.node)
 
 
-    # then call annotation_to_tei
-    # and insert the resulting note in the appropriate part of the
-    # document
-
-
-    # {u'ranges': [
-    #     {u'start': u'//div[@id="fnstr.idm291623100992"]/span[1]',
-    #     u'end': u'//div[@id="fnstr.idm291623092160"]/span[1]',
-    #     u'startOffset': 0,
-    #     u'endOffset': 5}], u'permissions': {},
-    #     u'ark': u'http://testpid.library.emory.edu/ark:/25593/ntdfb', u'tags': [u'test', u' text-annotation']}
-
+def insert_anchor(el, anchor, offset):
+    # insert an anchor into an element at a given offset
+    if offset == 0:
+        # offset zero - insert directly before this element
+        el.addprevious(anchor)
+    elif offset >= len(el.text):
+        # offset at end of this element - insert directly after
+        el.addnext(anchor)
+    else:
+        # offset somewhere inside the text of this element
+        # insert the element after the text and then break up
+        # the lxml text and "tail" so that text after the offset
+        # comes after the inserted anchor
+        el_text = el.text
+        el.insert(0, anchor)
+        el.text = el_text[:offset]
+        anchor.tail = el_text[offset:]
 
 
 def markdown_to_tei(text):

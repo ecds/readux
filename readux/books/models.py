@@ -201,13 +201,13 @@ class TeiZone(teimap.Tei):
     #: type attribute
     type = xmlmap.StringField('@type')
     #: upper left x coord
-    ulx = xmlmap.IntegerField('@ulx')
+    ulx = xmlmap.FloatField('@ulx')
     #: upper left y coord
-    uly = xmlmap.IntegerField('@uly')
+    uly = xmlmap.FloatField('@uly')
     #: lower right x coord
-    lrx = xmlmap.IntegerField('@lrx')
+    lrx = xmlmap.FloatField('@lrx')
     #: lower right y coord
-    lry = xmlmap.IntegerField('@lry')
+    lry = xmlmap.FloatField('@lry')
     #: text content
     text = xmlmap.StringField('tei:line|tei:w')
     #: list of word zones contained in this zone (e.g., within a textLine zone)
@@ -259,8 +259,24 @@ class TeiNote(teimap.Tei):
     ROOT_NAME = 'note'
     #: xml id
     id = xmlmap.StringField('@xml:id')
+    #: responsibility
     resp = xmlmap.StringField('@resp')
+    #: target
+    target = xmlmap.StringField('@target')
+    #: type
+    type = xmlmap.StringField('@type')
+    resp = xmlmap.StringField('@resp')
+
     paragraphs = xmlmap.StringListField('tei:p')
+
+class TeiAnchor(teimap.Tei):
+    ROOT_NS = teimap.TEI_NAMESPACE
+    ROOT_NAMESPACES = {'tei' : ROOT_NS, 'xml': 'http://www.w3.org/XML/1998/namespace'}
+    ROOT_NAME = 'anchor'
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    #: type
+    type = xmlmap.StringField('@type')
 
 
 class Page(Image):
@@ -942,7 +958,6 @@ class Volume(DigitalObject, BaseVolume):
                 # FIXME: where should this really be? not exactly right
                 # how to reference source page uri
                 teipage.id = page.ark_uri
-                print page.ark_uri
                 vol_tei.page_list.append(teipage)
 
         return vol_tei

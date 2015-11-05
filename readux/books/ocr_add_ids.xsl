@@ -26,7 +26,7 @@
   <!-- ids for page elements -->
   <xsl:template match="alto:Page|fr8:page|fr6:page">
     <xsl:copy>
-       <xsl:attribute name="xml:id"><xsl:value-of select="concat($id_prefix, '.p.',
+       <xsl:attribute name="xml:id"><xsl:value-of select="concat($id_prefix, 'p.',
           generate-id())"/></xsl:attribute>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
@@ -72,7 +72,7 @@
     <xsl:copy>
       <!-- generate an id if there is not already one present -->
       <xsl:if test="not(@xml:id)">
-        <xsl:attribute name="xml:id"><xsl:value-of select="concat($id_prefix, '.',
+        <xsl:attribute name="xml:id"><xsl:value-of select="concat($id_prefix,
           $prefix, '.', generate-id())"/></xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="@*|node()"/>

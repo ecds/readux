@@ -192,12 +192,29 @@ class Image(DigitalObject):
             return int(self.image_metadata['height'])
 
 
-class TeiZone(teimap.Tei):
-    'XmlObject for a zone in a TEI facsimile document'
+class TeiBase(teimap.Tei):
+    'Base class for all TEI objects, with all namespaces'
     ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS, 'xml': 'http://www.w3.org/XML/1998/namespace'}
+    ROOT_NAMESPACES = {
+        'tei' : ROOT_NS,
+        'xml': 'http://www.w3.org/XML/1998/namespace',
+        'xlink': 'http://www.w3.org/TR/xlink/',
+    }
+
+class TeiGraphic(TeiBase):
+    ROOT_NAME = 'graphic'
+    #: url
+    url = xmlmap.StringField('@url')
+    #: type
+    type = xmlmap.StringField('@type')
+
+class TeiZone(TeiBase):
+    'XmlObject for a zone in a TEI facsimile document'
+    ROOT_NAME = 'zone'
     #: xml id
     id = xmlmap.StringField('@xml:id')
+    #: n attribute
+    n = xmlmap.StringField('@n')
     #: type attribute
     type = xmlmap.StringField('@type')
     #: upper left x coord
@@ -208,6 +225,8 @@ class TeiZone(teimap.Tei):
     lrx = xmlmap.FloatField('@lrx')
     #: lower right y coord
     lry = xmlmap.FloatField('@lry')
+    #: xlink href
+    href = xmlmap.StringField('@xlink:href')
     #: text content
     text = xmlmap.StringField('tei:line|tei:w')
     #: list of word zones contained in this zone (e.g., within a textLine zone)
@@ -219,6 +238,16 @@ class TeiZone(teimap.Tei):
     #: containing page
     page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
     # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
+
+    graphics = xmlmap.NodeListField('tei:graphic', TeiGraphic)
+
+    # convenience mappings to specific sizes of page image
+    full_image = xmlmap.NodeField('tei:graphic[@type="full"]', TeiGraphic)
+    page_image = xmlmap.NodeField('tei:graphic[@type="page"]', TeiGraphic)
+    thumbnail = xmlmap.NodeField('tei:graphic[@type="thumbnail"]', TeiGraphic)
+    small_thumbnail = xmlmap.NodeField('tei:graphic[@type="small-thumbnail"]', TeiGraphic)
+    image_info = xmlmap.NodeField('tei:graphic[@type="info"]', TeiGraphic)
+
 
     @property
     def width(self):
@@ -235,10 +264,8 @@ class TeiZone(teimap.Tei):
             word_heights = [w.height for w in self.word_zones]
             return sum(word_heights) / float(len(word_heights))
 
-class TeiFacsimile(teimap.Tei):
+class TeiFacsimile(TeiBase):
     'Extension of TEI XmlObject to provide access to TEI facsimile elements'
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS}
     XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
                                            'books', 'schema', 'TEIPageView.xsd')
 
@@ -253,9 +280,7 @@ class TeiFacsimile(teimap.Tei):
 
     distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
 
-class TeiNote(teimap.Tei):
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS, 'xml': 'http://www.w3.org/XML/1998/namespace'}
+class TeiNote(TeiBase):
     ROOT_NAME = 'note'
     #: xml id
     id = xmlmap.StringField('@xml:id')
@@ -265,13 +290,12 @@ class TeiNote(teimap.Tei):
     target = xmlmap.StringField('@target')
     #: type
     type = xmlmap.StringField('@type')
-    resp = xmlmap.StringField('@resp')
-
+    #: xlink href
+    href = xmlmap.StringField('@xlink:href')
+    # list of paragraphs as strings
     paragraphs = xmlmap.StringListField('tei:p')
 
-class TeiAnchor(teimap.Tei):
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS, 'xml': 'http://www.w3.org/XML/1998/namespace'}
+class TeiAnchor(TeiBase):
     ROOT_NAME = 'anchor'
     #: xml id
     id = xmlmap.StringField('@xml:id')
@@ -372,7 +396,7 @@ class Page(Image):
 
     @property
     def tei_options(self):
-        'Parameters for use in XSLT when generating page-levl TEI facsimile'
+        'Parameters for use in XSLT when generating page-level TEI facsimile'
 
         # construct brief bibliographic information for use in sourceDesc/bibl
         src_info = ''
@@ -382,7 +406,9 @@ class Page(Image):
 
         src_info += '%s, %s.' % (self.volume.display_label, self.volume.date)
         return {
-           'graphic_url': self.image_url,
+           # 'graphic_url': self.image_url,
+           'graphic_url': reverse('books:page-image',
+                kwargs={'vol_pid': self.volume.pid, 'pid': self.pid, 'mode': 'fs'}),
            'title': self.display_label,
            'distributor': settings.TEI_DISTRIBUTOR,
            'source_bibl': src_info,
@@ -949,7 +975,8 @@ class Volume(DigitalObject, BaseVolume):
         vol_tei.header.title = self.title
         vol_tei.distributor = settings.TEI_DISTRIBUTOR
         # loop through pages and add tei content
-        for page in self.pages[:10]:   # FIXME: temporary, for testing/speed
+        # for page in self.pages[:10]:   # FIXME: temporary, for testing/speed
+        for page in self.pages:
             if page.tei.exists and page.tei.content.page:
                 # include facsimile page *only* from the tei for each page
                 # tei facsimile already includes a graphic url
@@ -957,7 +984,29 @@ class Volume(DigitalObject, BaseVolume):
                 teipage = page.tei.content.page
                 # FIXME: where should this really be? not exactly right
                 # how to reference source page uri
-                teipage.id = page.ark_uri
+                teipage.href = page.ark_uri
+                teipage.n = page.page_order
+
+                # ensure graphic elements are present for image variants
+                # full size, page size, thumbnail, and deep zoom variants
+                if teipage.graphics:
+                    del teipage.graphics[0]
+
+                # mapping of types we want in the tei and
+                # corresponding mode to pass to the url
+                image_types = {
+                    'full': 'fs',
+                    'page': 'single-page',
+                    'thumbnail': 'thumbnail',
+                    'small-thumbnail': 'mini-thumbnail',
+                    'info': 'info',
+                }
+                for image_type, mode in image_types.iteritems():
+                    teipage.graphics.append(TeiGraphic(type=image_type,
+                        url=absolutize_url(reverse('books:page-image',
+                            kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
+)
+
                 vol_tei.page_list.append(teipage)
 
         return vol_tei

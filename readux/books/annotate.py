@@ -3,7 +3,9 @@ from eulxml.xmlmap import load_xmlobject_from_string, teimap
 import logging
 from lxml import etree
 import mistune
+
 from readux.books.models import TeiZone, TeiNote, TeiAnchor
+from readux.utils import absolutize_url
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +24,7 @@ def annotated_tei(tei, annotations):
     tei.body.div.append(annotation_div)
 
     for page in tei.page_list:
-        page_annotations = annotations.filter(extra_data__contains=page.id)
+        page_annotations = annotations.filter(extra_data__contains=page.href)
         if page_annotations.exists():
             for note in page_annotations:
                 insert_note(annotation_div, page, note)
@@ -50,8 +52,8 @@ def annotation_to_tei(annotation):
         TeiNote)
 
     # what id do we want? annotation uuid? url?
-    teinote.id = annotation.get_absolute_url()
-    # teinote.id = 'annotation-%s' % annotation.id  # can't start with numeric
+    teinote.id = 'annotation-%s' % annotation.id  # can't start with numeric
+    teinote.href = absolutize_url(annotation.get_absolute_url())
     teinote.type = 'annotation'
 
     # if the annotation has an associated user, mark the author

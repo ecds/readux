@@ -510,7 +510,7 @@ class VolumeTei(View):
         response = HttpResponse(tei.serialize(pretty=True),
             content_type='application/xml')
         # generate a default filename based on the object label
-        response['Content-Disposition'] = 'filename="%s.txt"' % \
+        response['Content-Disposition'] = 'filename="%s.xml"' % \
             vol.label.replace(' ', '-')
         return response
 

@@ -17,11 +17,9 @@ class AnnotatedTei(TestCase):
         self.assertEqual('<p>%s</p>' % ptext,
             markdown_to_tei(ptext))
         # two paragraphs
-        # ptext2 = 'Second paragraph'
-        # print '%s\n\n%s\n' % (ptext, ptext2)
-        # print markdown_to_tei('%s\n\n%s' % (ptext, ptext2))
-        # self.assertEqual('<p>%s</p><p>%s</p>' % (ptext, ptext2),
-        #     markdown_to_tei('%s\n%s' % (ptext, ptext2)))
+        ptext2 = 'Second paragraph'
+        self.assertEqual('<p>%s</p><p>%s</p>' % (ptext, ptext2),
+            markdown_to_tei('%s\n\n%s' % (ptext, ptext2)))
 
         # emphasis - bold
         self.assertEqual('<p>a <emph rend="bold">bold</emph> statement</p>',
@@ -30,6 +28,10 @@ class AnnotatedTei(TestCase):
         self.assertEqual('<p>an <emph rend="italic">emphatic</emph> statement</p>',
             markdown_to_tei('an *emphatic* statement'))
 
+        # list - unordered
+        unordered_list = '* Red\n' + \
+            '* Green\n' + \
+            '* Blue'
         self.assertEqual('<list><item>Red</item><item>Green</item><item>Blue</item></list>',
             markdown_to_tei(unordered_list))
         # list - ordered
@@ -84,6 +86,19 @@ class AnnotatedTei(TestCase):
         self.assert_('<p>Footnotes<ref target="#fn1" type="noteAnchor">1</ref> have' in tei_footnote)
         self.assert_('<note xml:id="fn1" type="footnote"><p>This is some footnote content.</p></note>'
             in tei_footnote)
+
+        # table
+        table = '''
+Firstly  | Secondly
+-------  | --------
+A.1  | A.2
+B.1  | B.2
+'''
+        tei_table = markdown_to_tei(table)
+        self.assert_('<table><head><row><cell role="label">Firstly</cell>' in
+            tei_table)
+        self.assert_('<row><cell role="data">B.1</cell><cell role="data">B.2</cell></row>'
+            in tei_table)
 
 
 

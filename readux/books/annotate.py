@@ -50,7 +50,8 @@ def annotation_to_tei(annotation):
         TeiNote)
 
     # what id do we want? annotation uuid? url?
-    teinote.id = 'annotation-%s' % annotation.id  # can't start with numeric
+    teinote.id = annotation.get_absolute_url()
+    # teinote.id = 'annotation-%s' % annotation.id  # can't start with numeric
     teinote.type = 'annotation'
 
     # if the annotation has an associated user, mark the author
@@ -265,7 +266,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
         """Rendering a table row.
         :param content: content of current table row.
         """
-        return '<row>%s</tr>' % content
+        return '<row>%s</row>' % content
 
     def table_cell(self, content, **flags):
         """Rendering a table cell. Like ``<th>`` ``<td>``.

@@ -188,18 +188,15 @@ class TeiMarkdownRenderer(mistune.Renderer):
     #     return "<?xml:namespace ns='%s' ?>" % TeiNote.ROOT_NS
 
     def block_code(self, code, lang=None):
-        """Rendering block level code. ``pre > code``.
+        """Rendering block level code.
         :param code: text content of the code block.
         :param lang: language of the given code.
         """
-        # TODO
-        # - is there any equivalent in tei?
         code = code.rstrip('\n')
-        if not lang:
-            code = mistune.escape(code, smart_amp=False)
-            return '<pre><code>%s\n</code></pre>\n' % code
-        code = mistune.escape(code, quote=True, smart_amp=False)
-        return '<pre><code class="lang-%s">%s\n</code></pre>\n' % (lang, code)
+        attr = ''
+        if lang:
+            attr = ' lang="%s"' % lang
+        return '<code%s>%s</code>' % (attr, code)
 
     def block_quote(self, text):
         """Rendering <quote> with the given text.
@@ -220,20 +217,16 @@ class TeiMarkdownRenderer(mistune.Renderer):
         return html
 
     def header(self, text, level, raw=None):
-        """Rendering header/heading tags like ``<h1>`` ``<h2>``.
+        """Rendering header/heading.
         :param text: rendered text content for the header.
         :param level: a number for the header level, for example: 1.
         :param raw: raw text content of the header.
         """
-        # TODO
-        return '<h%d>%s</h%d>\n' % (level, text, level)
+        return '<head type="level-%d">%s</head>\n' % (level, text)
 
     def hrule(self):
-        """Rendering method for ``<hr>`` tag."""
-        # TODO
-        if self.options.get('use_xhtml'):
-            return '<hr />\n'
-        return '<hr>\n'
+        """Rendering method for horizontal rule."""
+        return '<milestone @rend="horizontal-rule"/>'
 
     def list(self, body, ordered=True):
         """Rendering list tags.
@@ -258,7 +251,6 @@ class TeiMarkdownRenderer(mistune.Renderer):
         :param header: header part of the table.
         :param body: body part of the table.
         """
-        # TODO
         return (
             '<table><head>%s</head>'
             '%s</table>'
@@ -280,9 +272,10 @@ class TeiMarkdownRenderer(mistune.Renderer):
             role = "label"
         else:
             role = "data"
-        # TODO: possibly pass through via rend attribute?
-        align = flags['align']
-        return '<cell role="%s">%s</cell>' % (role, content)
+        additional_attrs = ''
+        if 'align' in flags:
+            additional_attrs = ' rend="%s"' % flags['align']
+        return '<cell role="%s"%s>%s</cell>' % (role, additional_attrs, content)
 
     def double_emphasis(self, text):
         """Rendering **strong** text.
@@ -300,16 +293,12 @@ class TeiMarkdownRenderer(mistune.Renderer):
         """Rendering inline `code` text.
         :param text: text content for inline code.
         """
-        # TODO
         text = mistune.escape(text.rstrip(), smart_amp=False)
         return '<code>%s</code>' % text
 
     def linebreak(self):
-        """Rendering line break like ``<br>``."""
-        # TODO
-        if self.options.get('use_xhtml'):
-            return '<br />\n'
-        return '<br>\n'
+        """Rendering line break."""
+        return '<lb/>'
 
     def strikethrough(self, text):
         """Rendering ~~strikethrough~~ text.
@@ -321,7 +310,6 @@ class TeiMarkdownRenderer(mistune.Renderer):
         """Rendering unformatted text.
         :param text: text content.
         """
-        # TODO
         return mistune.escape(text)
 
     def autolink(self, link, is_email=False):
@@ -348,10 +336,11 @@ class TeiMarkdownRenderer(mistune.Renderer):
         # TODO
         if link.startswith('javascript:'):
             link = ''
-        if not title:
-            return '<a href="%s">%s</a>' % (link, text)
-        title = mistune.escape(title, quote=True)
-        return '<a href="%s" title="%s">%s</a>' % (link, title, text)
+        attr = ''
+        if title:
+            attr = 'n="%s"' % mistune.escape(title, quote=True)
+
+        return '<ref target="%s"%s>%s</ref>' % (link, attr, text)
 
     def image(self, src, title, text):
         """Rendering a image with title and text.

@@ -74,8 +74,15 @@ class Book(DigitalObject):
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
     #: default view for new object
-    #: FIXME: needs at least preliminary book view to point to (?)
     NEW_OBJECT_VIEW = 'books:volume'
+    # FIXME: needs at least preliminary book view to point to (?)
+    # NOTE: this is semi-bogus, since book-level records are currently
+    # not displayed in readux
+
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return (self.NEW_OBJECT_VIEW, [self.pid])
 
     @permalink
     def get_absolute_url(self):

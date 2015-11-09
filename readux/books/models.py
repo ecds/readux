@@ -77,6 +77,11 @@ class Book(DigitalObject):
     #: FIXME: needs at least preliminary book view to point to (?)
     NEW_OBJECT_VIEW = 'books:volume'
 
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return (self.NEW_OBJECT_VIEW, [str(self.pid)])
+
     @property
     def best_description(self):
         '''Single best description to use when only one can be displayed (e.g.,
@@ -288,7 +293,7 @@ class Page(Image):
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [self.volume.pid, str(self.pid)])
+        return (self.NEW_OBJECT_VIEW, {'vol_pid': self.volume.pid, 'pid': str(self.pid)})
 
     @property
     def absolute_url(self):
@@ -1067,12 +1072,7 @@ class SolrPage(UserDict):
         return self.data.get('pid')
 
     def thumbnail_url(self):
-        print self.iiif.thumbnail()
         return self.iiif.thumbnail()
-        return '%s%s%s/full/!300,300/0/default.png' % (
-            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
-            self.pid)
-
 
 
 

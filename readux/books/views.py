@@ -245,6 +245,10 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
             except (EmptyPage, InvalidPage):
                 results = paginator.page(paginator.num_pages)
 
+            # FIXME: fix this so highlights are displayed in the view
+            # highlight snippets available at results.object_list.highlighting
+            # but are *NOT* getting propagated to solrpage objects
+
             # url parameters for pagination
             url_params = self.request.GET.copy()
             if 'page' in url_params:

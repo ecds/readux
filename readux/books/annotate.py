@@ -46,7 +46,6 @@ def annotated_tei(tei, annotations):
                        .values_list('user', flat=True).distinct()
     users = get_user_model().objects.filter(id__in=user_ids)
     for user in users:
-        print user
         tei.responsible_names.append(TeiName(id=user.username,
                                              value=user.get_full_name()))
 
@@ -58,7 +57,7 @@ def annotated_tei(tei, annotations):
     tei.pubstmt.date_normal = export_date
 
     for page in tei.page_list:
-        page_annotations = annotations.filter(extra_data__contains=page.href)
+        page_annotations = annotations.filter(uri=page.href)
         if page_annotations.exists():
             for note in page_annotations:
                 insert_note(tei, page, note)
@@ -118,8 +117,9 @@ def annotation_to_tei(annotation):
 def html_xpath_to_tei(xpath):
     # convert xpaths generated on the readux site to the
     # equivalent xpaths for the corresponding tei content
+    # NOTE: span could match either line in abbyy ocr or word in mets/alto
     return xpath.replace('div', 'tei:zone') \
-                .replace('span', 'tei:w') \
+                .replace('span', 'node()[local-name()="line" or local-name()="w"]') \
                 .replace('@id', '@xml:id')
 
 def insert_note(tei, teipage, annotation):
@@ -133,8 +133,11 @@ def insert_note(tei, teipage, annotation):
         selection_range = info['ranges'][0]
         # convert html xpaths from readux website to equivalent tei xpaths
         # for selection within the facsimile document
-        start_xpath = html_xpath_to_tei(selection_range['start'])
-        end_xpath = html_xpath_to_tei(selection_range['end'])
+        # either of start or end xpaths could be empty; if so, assume
+        # starting at the beginning of the page or end at the end
+        start_xpath = html_xpath_to_tei(selection_range['start']) or '//tei:zone[1]'
+        end_xpath = html_xpath_to_tei(selection_range['end']) or '//tei:zone[last()]'
+        print 'start xpath %s end xpath %s' % (start_xpath, end_xpath)
         # insert references using start and end xpaths & offsets
         start = teipage.node.xpath(start_xpath, namespaces=TeiZone.ROOT_NAMESPACES)
         end = teipage.node.xpath(end_xpath, namespaces=TeiZone.ROOT_NAMESPACES)

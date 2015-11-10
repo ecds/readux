@@ -1,4 +1,5 @@
 {# display a single page in volume search results #}
+{% load readux_utils %}
 <div class="media">
     {% url 'books:page' vol.pid page.pid as page_url %}
     <a class="pull-left" href="{{ page_url }}" title="Page {{ page.page_order }}">
@@ -18,8 +19,11 @@
     <h4 class="media-heading">
         <a href="{{ page_url }}">Page {{ page.page_order }}</a>
     </h4>
-    {% with snippets=page.solr_highlights.page_text %}
-        {% for snip in snippets %}
+
+{# NOTE: previously highlights were available on individual result; not available for now, so pulling from full solr result object #}
+    {# {% with snippets=page.solr_highlights.page_text %} #}
+    {% with snippets=pages.object_list.highlighting|dict_item:page.pid %}
+        {% for snip in snippets.page_text %}
             <p>... {{ snip|safe }} ...</p>
         {% endfor %}
     {% endwith %}

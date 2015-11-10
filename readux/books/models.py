@@ -74,8 +74,20 @@ class Book(DigitalObject):
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
     #: default view for new object
-    #: FIXME: needs at least preliminary book view to point to (?)
     NEW_OBJECT_VIEW = 'books:volume'
+    # FIXME: needs at least preliminary book view to point to (?)
+    # NOTE: this is semi-bogus, since book-level records are currently
+    # not displayed in readux
+
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return (self.NEW_OBJECT_VIEW, [self.pid])
+
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return (self.NEW_OBJECT_VIEW, [str(self.pid)])
 
     @property
     def best_description(self):
@@ -288,7 +300,7 @@ class Page(Image):
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [self.volume.pid, str(self.pid)])
+        return (self.NEW_OBJECT_VIEW, {'vol_pid': self.volume.pid, 'pid': str(self.pid)})
 
     @property
     def absolute_url(self):
@@ -489,8 +501,8 @@ class PageV1_1(Page):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
-                result =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                result = self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode, id_prefix='%s.' % self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result)
             except etree.XMLSyntaxError:
@@ -965,8 +977,8 @@ class VolumeV1_0(Volume):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
-                result =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                result = self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode, id_prefix='%s.' % self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result,
                     abbyyocr.Document)
@@ -1067,12 +1079,7 @@ class SolrPage(UserDict):
         return self.data.get('pid')
 
     def thumbnail_url(self):
-        print self.iiif.thumbnail()
         return self.iiif.thumbnail()
-        return '%s%s%s/full/!300,300/0/default.png' % (
-            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
-            self.pid)
-
 
 
 

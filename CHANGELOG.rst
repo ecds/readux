@@ -54,7 +54,8 @@ Annotation
 * As a researcher I want to see which pages I have annotated so that I
   can assess the status of my digital edition.
 * As a researcher I want to make annotations anchored to stable
-  identifiers so that I can maintain consistency in digital editions.
+  identifiers that are unique across an entire volume so that I can
+  maintain consistency and generate valid exports in my digital editions.
 * As a user I want to see a created or last modified timestamp on
   annotations so that I know when they were last updated.
 * As a user I want to see only the date created or last modified on

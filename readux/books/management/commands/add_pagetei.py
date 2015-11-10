@@ -34,6 +34,10 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help='Regenerate TEI even if already present'),
+        make_option('--regenerate-ids',
+            action='store_true',
+            default=False,
+            help='Regenerate OCR IDs even if already present (NOT RECOMMENDED)'),
         make_option('--collection', '-c',
             help='Find and process volumes that belong to the specified collection pid ' + \
             '(list of pids on the command line takes precedence over this option)'),
@@ -48,6 +52,7 @@ class Command(BaseCommand):
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
         self.update_existing = options.get('update')
+        self.regenerate_ids = options.get('regenerate_ids')
 
         # if no pids are specified
         if not pids:
@@ -140,7 +145,8 @@ class Command(BaseCommand):
                       % vol.pid)
 
         # if volume does not yet have ids in the ocr, add them
-        if not vol.ocr_has_ids:
+        # OR if id-regeneration is requested
+        if self.regenerate_ids or not vol.ocr_has_ids:
             if self.verbosity >= self.v_normal:
                 self.stdout.write('Adding ids to %s OCR' % vol.pid)
             vol.add_ocr_ids()
@@ -239,7 +245,8 @@ class Command(BaseCommand):
                 continue
 
             # if page does not yet have ids in the ocr, add them
-            if not page.ocr_has_ids:
+            # OR if id-regeneration is requested
+            if self.regenerate_ids or not page.ocr_has_ids:
                 if self.verbosity > self.v_normal:
                     self.stdout.write('Adding ids to %s OCR' % page.pid)
                 page.add_ocr_ids()

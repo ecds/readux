@@ -1,4 +1,4 @@
-from UserDict import UserDict
+from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.db.models import permalink, Count
@@ -9,6 +9,7 @@ import logging
 import requests
 import os
 from urllib import urlencode, unquote
+from UserDict import UserDict
 
 from bs4 import BeautifulSoup
 import rdflib
@@ -21,6 +22,7 @@ from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
 
+from readux import __version__
 from readux.annotations.models import Annotation
 from readux.books import abbyyocr, iiif
 from readux.fedora import DigitalObject
@@ -264,6 +266,49 @@ class TeiZone(TeiBase):
             word_heights = [w.height for w in self.word_zones]
             return sum(word_heights) / float(len(word_heights))
 
+
+class TeiNote(TeiBase):
+    ROOT_NAME = 'note'
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    #: responsibility
+    resp = xmlmap.StringField('@resp')
+    #: target
+    target = xmlmap.StringField('@target')
+    #: type
+    type = xmlmap.StringField('@type')
+    #: ana attribute, e.g. for tag identifiers
+    ana = xmlmap.StringField('@ana')
+    #: xlink href
+    href = xmlmap.StringField('@xlink:href')
+    # list of paragraphs as strings
+    paragraphs = xmlmap.StringListField('tei:p')
+
+
+class TeiBibl(TeiBase):
+    #: type
+    type = xmlmap.StringField('@type')
+    #: title
+    title = xmlmap.StringField('tei:title')
+    #: author
+    authors = xmlmap.StringListField('tei:author')
+    #: date
+    date = xmlmap.StringField('tei:date')
+    #: url to digital edition
+    url = xmlmap.StringField('tei:ref[@type="digital edition"]/@target')
+    #: url to pdf of digital edition
+    pdf_url = xmlmap.StringField('tei:ref[@type="pdf"]/@target')
+
+
+class TeiPublicationStatement(TeiBase):
+    desc = xmlmap.StringField('tei:p')
+    date = xmlmap.DateTimeField('tei:date',
+        '%B %d, %Y')
+    date_normal = xmlmap.DateTimeField('tei:date/@when',
+        '%Y-%d-%m')
+    distributor_readux = xmlmap.StringField('tei:distributor[@type="software"]/tei:ref[@target="http://readux.library.emory.edu"]')
+
+
 class TeiFacsimile(TeiBase):
     'Extension of TEI XmlObject to provide access to TEI facsimile elements'
     XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
@@ -279,21 +324,37 @@ class TeiFacsimile(TeiBase):
     word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
 
     distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
+    pubstmt = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:publicationStmt',
+        TeiPublicationStatement)
 
-class TeiNote(TeiBase):
-    ROOT_NAME = 'note'
+    original_source = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:bibl[@type="original"]',
+        TeiBibl)
+    digital_source = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:bibl[@type="digital"]',
+        TeiBibl)
+
+
+class TeiName(TeiBase):
+    ROOT_NAME = 'name'
     #: xml id
     id = xmlmap.StringField('@xml:id')
-    #: responsibility
-    resp = xmlmap.StringField('@resp')
-    #: target
-    target = xmlmap.StringField('@target')
-    #: type
-    type = xmlmap.StringField('@type')
-    #: xlink href
-    href = xmlmap.StringField('@xlink:href')
-    # list of paragraphs as strings
-    paragraphs = xmlmap.StringListField('tei:p')
+    #: full name
+    value = xmlmap.StringField('.')
+
+
+class AnnotatedTeiFacsimile(TeiFacsimile):
+    main_title = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type="full"]/tei:title[@type="main"]')
+    subtitle = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type="full"]/tei:title[@type="sub"]')
+
+    responsibility = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:respStmt/resp')
+    responsible_names = xmlmap.NodeListField('tei:teiHeader/tei:fileDesc/tei:respStmt/name',
+        TeiName)
+
+
+    # additional mappings for annotation data
+    annotations = xmlmap.NodeListField('tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
+        TeiNote)
+    tags = xmlmap.NodeField('tei:back/tei:interpGrp[@type="tags"]',
+        teimap.TeiInterpGroup)
 
 class TeiAnchor(TeiBase):
     ROOT_NAME = 'anchor'
@@ -301,6 +362,12 @@ class TeiAnchor(TeiBase):
     id = xmlmap.StringField('@xml:id')
     #: type
     type = xmlmap.StringField('@type')
+
+class TeiInterp(TeiBase, teimap.TeiInterp):
+    # extend eulxml.xmlmap.teimap version because it does not include
+    # the xml namespace for setting xml:id
+    pass
+
 
 
 class Page(Image):
@@ -746,6 +813,27 @@ class Volume(DigitalObject, BaseVolume):
             # convert eulxml list to normal list so it can be serialized via json
             return list(dates)
 
+    @property
+    def digital_ed_date(self):
+        'Date of the digital edition'
+        # some books (at least) include the digitization date (date of the
+        # electronic ediction). If there are multiple dates, return the newest
+        # it is after 2000
+
+        # if dates are present in current volume dc, use those
+        if self.dc.content.date_list:
+            dates = self.dc.content.date_list
+        # otherwise, use dates from book dc
+        else:
+            dates = self.book.dc.content.date_list
+
+        if dates:
+            sorted_dates = sorted([d.strip('[]') for d in dates])
+            sorted_dates = [d for d in sorted_dates if d > '2000']
+            if sorted_dates:
+                return sorted_dates[-1]
+
+
     def index_data(self):
         '''Extend the default
         :meth:`eulfedora.models.DigitalObject.index_data`
@@ -969,22 +1057,48 @@ class Volume(DigitalObject, BaseVolume):
             return
         vol_tei = TeiFacsimile()
         # populate header information
-        # TODO: what needs to be included here?
-        # volume, date? source description?
         vol_tei.create_header()
         vol_tei.header.title = self.title
+        # publication statement
         vol_tei.distributor = settings.TEI_DISTRIBUTOR
+        vol_tei.pubstmt.distributor_readux = 'Readux'
+        # store current date (tei generation) in publication statement
+        export_date = datetime.now()
+        vol_tei.pubstmt.date = export_date
+        vol_tei.pubstmt.date_normal = export_date
+        vol_tei.pubstmt.desc = 'TEI facsimile generated by Readux version %s' % __version__
+        # source description - original publication
+        vol_tei.create_original_source()
+        vol_tei.original_source.title = self.title
+        # original publication date
+        if self.date:
+            vol_tei.original_source.date = self.date[0]
+        # if authors are set, it should be a list
+        if self.creator:
+            vol_tei.original_source.authors = self.creator
+        # source description - digital edition
+        vol_tei.create_digital_source()
+        vol_tei.digital_source.title = '%s, digital edition' % self.title
+        vol_tei.digital_source.date = self.digital_ed_date
+        # FIXME: ideally, these would be ARKs, but ARKs for readux volume
+        # content does not yet resolve to Readux urls
+        vol_tei.digital_source.url = absolutize_url(self.get_absolute_url())
+        vol_tei.digital_source.pdf_url = absolutize_url(self.pdf_url())
+
         # loop through pages and add tei content
         # for page in self.pages[:10]:   # FIXME: temporary, for testing/speed
         for page in self.pages:
             if page.tei.exists and page.tei.content.page:
                 # include facsimile page *only* from the tei for each page
                 # tei facsimile already includes a graphic url
-                # TODO: should page ARK be inserted into the tei?
                 teipage = page.tei.content.page
-                # FIXME: where should this really be? not exactly right
-                # how to reference source page uri
-                teipage.href = page.ark_uri
+                # FIXME: is there a more elegant/accurate way to
+                # reference source page uri?
+
+                # add a reference from tei page to readux page
+                # pages should have ARKS; fall back to readux url if
+                # ark is not present (only expected to happen in dev)
+                teipage.href = page.ark_uri or absolutize_url(page.get_absolute_url())
                 teipage.n = page.page_order
 
                 # ensure graphic elements are present for image variants
@@ -1005,12 +1119,10 @@ class Volume(DigitalObject, BaseVolume):
                     teipage.graphics.append(TeiGraphic(type=image_type,
                         url=absolutize_url(reverse('books:page-image',
                             kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
-)
-
+                )
                 vol_tei.page_list.append(teipage)
 
         return vol_tei
-
 
 
 class VolumeV1_0(Volume):
@@ -1172,7 +1284,6 @@ class SolrPage(UserDict):
         return self.data.get('pid')
 
     def thumbnail_url(self):
-        print self.iiif.thumbnail()
         return self.iiif.thumbnail()
         return '%s%s%s/full/!300,300/0/default.png' % (
             settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,

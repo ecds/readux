@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pid>[^/]+)/pages/$', views.VolumePageList.as_view(), name='pages'),
     url(r'^(?P<pid>[^/]+)/tei/$', views.VolumeTei.as_view(), name='tei'),
     url(r'^(?P<pid>[^/]+)/annotated-tei/$', views.VolumeTei.as_view(),
-        {'mode': 'annotated'}, name='tei'),
+        {'mode': 'annotated'}, name='annotated-tei'),
 
     # page views
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/$',

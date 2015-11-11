@@ -1,4 +1,10 @@
-import os
-from django.conf import settings
+# import tests so django will discover and run them
 
-FIXTURE_DIR = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
+from readux.books.tests.models import *
+from readux.books.tests.views import *
+from readux.books.tests.tei import *
+from readux.books.tests.annotate import *
+from readux.books.tests.markdown_tei import *
+
+
+

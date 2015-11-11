@@ -1,4 +1,5 @@
 import os
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
@@ -18,7 +19,8 @@ from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_1
 from readux.books import iiif
 
-from readux.books.tests import FIXTURE_DIR
+
+FIXTURE_DIR = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
 
 
 class SolrVolumeTest(TestCase):

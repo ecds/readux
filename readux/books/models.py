@@ -412,8 +412,8 @@ class PageV1_1(Page):
             result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
-            tei = xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
-            return tei
+            teidoc = xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
+            return teidoc
 
         except etree.XMLSyntaxError:
             logger.warn('OCR xml for %s is invalid', self.pid)

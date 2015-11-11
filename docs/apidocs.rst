@@ -45,6 +45,16 @@ TEI
 .. automodule:: readux.books.tei
     :members:
 
+annotate
+^^^^^^^^
+.. automodule:: readux.books.annotate
+    :members:
+
+markdown_tei
+^^^^^^^^^^^^
+.. automodule:: readux.books.markdown_tei
+    :members:
+
 
 Manage Commands
 ^^^^^^^^^^^^^^^

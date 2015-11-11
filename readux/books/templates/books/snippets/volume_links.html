@@ -46,10 +46,9 @@
 {% include 'books/snippets/comment_count.html' with item_url=volume_url annotation_count=annotated_volumes %}
 
 {% if volume_url in annotated_volumes %}
-<p>{# if volume has annotations, give user option to download annotated TEI #}
+{# if volume has annotations, give user option to download annotated TEI #}
     <a href="{% url 'books:annotated-tei' vol.pid %}"
-    title="Annotated TEI facsimile" class="btn btn-info">Export Annotated TEI</a>
-</p>
+    title="Annotated TEI facsimile" class="btn btn-info{% if small_buttons %} btn-xs{% endif %}">Export Annotated TEI</a>
 {% endif %}
 
 {% if vol.large_pdf %}

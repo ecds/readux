@@ -24,7 +24,7 @@ from eulxml.xmlmap import teimap
 
 from readux import __version__
 from readux.annotations.models import Annotation
-from readux.books import abbyyocr, iiif
+from readux.books import abbyyocr, iiif, tei
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
 from readux.utils import solr_interface, absolutize_url
@@ -194,180 +194,6 @@ class Image(DigitalObject):
             return int(self.image_metadata['height'])
 
 
-class TeiBase(teimap.Tei):
-    'Base class for all TEI objects, with all namespaces'
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {
-        'tei' : ROOT_NS,
-        'xml': 'http://www.w3.org/XML/1998/namespace',
-        'xlink': 'http://www.w3.org/TR/xlink/',
-    }
-
-class TeiGraphic(TeiBase):
-    ROOT_NAME = 'graphic'
-    #: url
-    url = xmlmap.StringField('@url')
-    #: type
-    type = xmlmap.StringField('@type')
-
-class TeiZone(TeiBase):
-    'XmlObject for a zone in a TEI facsimile document'
-    ROOT_NAME = 'zone'
-    #: xml id
-    id = xmlmap.StringField('@xml:id')
-    #: n attribute
-    n = xmlmap.StringField('@n')
-    #: type attribute
-    type = xmlmap.StringField('@type')
-    #: upper left x coord
-    ulx = xmlmap.FloatField('@ulx')
-    #: upper left y coord
-    uly = xmlmap.FloatField('@uly')
-    #: lower right x coord
-    lrx = xmlmap.FloatField('@lrx')
-    #: lower right y coord
-    lry = xmlmap.FloatField('@lry')
-    #: xlink href
-    href = xmlmap.StringField('@xlink:href')
-    #: text content
-    text = xmlmap.StringField('tei:line|tei:w')
-    #: list of word zones contained in this zone (e.g., within a textLine zone)
-    word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
-    #: nearest preceding sibling word zone (e.g., previous word in this line), if any)
-    preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
-    #: nearest ancestor zone
-    parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
-    #: containing page
-    page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
-    # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
-
-    graphics = xmlmap.NodeListField('tei:graphic', TeiGraphic)
-
-    # convenience mappings to specific sizes of page image
-    full_image = xmlmap.NodeField('tei:graphic[@type="full"]', TeiGraphic)
-    page_image = xmlmap.NodeField('tei:graphic[@type="page"]', TeiGraphic)
-    thumbnail = xmlmap.NodeField('tei:graphic[@type="thumbnail"]', TeiGraphic)
-    small_thumbnail = xmlmap.NodeField('tei:graphic[@type="small-thumbnail"]', TeiGraphic)
-    image_info = xmlmap.NodeField('tei:graphic[@type="info"]', TeiGraphic)
-
-
-    @property
-    def width(self):
-        return self.lrx - self.ulx
-
-    @property
-    def height(self):
-        return self.lry - self.uly
-
-    @property
-    def avg_height(self):
-        'Average height of word zones in the current zone (i.e. in a text line)'
-        if self.word_zones:
-            word_heights = [w.height for w in self.word_zones]
-            return sum(word_heights) / float(len(word_heights))
-
-
-class TeiNote(TeiBase):
-    ROOT_NAME = 'note'
-    #: xml id
-    id = xmlmap.StringField('@xml:id')
-    #: responsibility
-    resp = xmlmap.StringField('@resp')
-    #: target
-    target = xmlmap.StringField('@target')
-    #: type
-    type = xmlmap.StringField('@type')
-    #: ana attribute, e.g. for tag identifiers
-    ana = xmlmap.StringField('@ana')
-    #: xlink href
-    href = xmlmap.StringField('@xlink:href')
-    # list of paragraphs as strings
-    paragraphs = xmlmap.StringListField('tei:p')
-
-
-class TeiBibl(TeiBase):
-    #: type
-    type = xmlmap.StringField('@type')
-    #: title
-    title = xmlmap.StringField('tei:title')
-    #: author
-    authors = xmlmap.StringListField('tei:author')
-    #: date
-    date = xmlmap.StringField('tei:date')
-    #: url to digital edition
-    url = xmlmap.StringField('tei:ref[@type="digital edition"]/@target')
-    #: url to pdf of digital edition
-    pdf_url = xmlmap.StringField('tei:ref[@type="pdf"]/@target')
-
-
-class TeiPublicationStatement(TeiBase):
-    desc = xmlmap.StringField('tei:p')
-    date = xmlmap.DateTimeField('tei:date',
-        '%B %d, %Y')
-    date_normal = xmlmap.DateTimeField('tei:date/@when',
-        '%Y-%d-%m')
-    distributor_readux = xmlmap.StringField('tei:distributor[@type="software"]/tei:ref[@target="http://readux.library.emory.edu"]')
-
-
-class TeiFacsimile(TeiBase):
-    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
-    XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
-                                           'books', 'schema', 'TEIPageView.xsd')
-
-    xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
-    # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
-    # referenced files in the same directory
-    page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
-    page_list = xmlmap.NodeListField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
-    # NOTE: tei facsimile could include illustrations, but ignoring those for now
-    lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)
-    word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
-
-    distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
-    pubstmt = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:publicationStmt',
-        TeiPublicationStatement)
-
-    original_source = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:bibl[@type="original"]',
-        TeiBibl)
-    digital_source = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:bibl[@type="digital"]',
-        TeiBibl)
-
-
-class TeiName(TeiBase):
-    ROOT_NAME = 'name'
-    #: xml id
-    id = xmlmap.StringField('@xml:id')
-    #: full name
-    value = xmlmap.StringField('.')
-
-
-class AnnotatedTeiFacsimile(TeiFacsimile):
-    main_title = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type="full"]/tei:title[@type="main"]')
-    subtitle = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type="full"]/tei:title[@type="sub"]')
-
-    responsibility = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:respStmt/resp')
-    responsible_names = xmlmap.NodeListField('tei:teiHeader/tei:fileDesc/tei:respStmt/name',
-        TeiName)
-
-
-    # additional mappings for annotation data
-    annotations = xmlmap.NodeListField('tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
-        TeiNote)
-    tags = xmlmap.NodeField('tei:back/tei:interpGrp[@type="tags"]',
-        teimap.TeiInterpGroup)
-
-class TeiAnchor(TeiBase):
-    ROOT_NAME = 'anchor'
-    #: xml id
-    id = xmlmap.StringField('@xml:id')
-    #: type
-    type = xmlmap.StringField('@type')
-
-class TeiInterp(TeiBase, teimap.TeiInterp):
-    # extend eulxml.xmlmap.teimap version because it does not include
-    # the xml namespace for setting xml:id
-    pass
-
 
 
 class Page(Image):
@@ -379,7 +205,7 @@ class Page(Image):
 
     #: xml datastream for a tei facsimile version of this page
     #: unversioned because generated from the mets or abbyy ocr
-    tei = XmlDatastream('tei', 'TEI Facsimile for page content', TeiFacsimile, defaults={
+    tei = XmlDatastream('tei', 'TEI Facsimile for page content', tei.Facsimile, defaults={
         'control_group': 'M',
         'versionable': False,
     })
@@ -537,7 +363,7 @@ class PageV1_0(Page):
             result =  ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
-            return xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
+            return xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
 
         except etree.XMLSyntaxError:
             logger.warn('OCR xml for %s is invalid', self.pid)
@@ -586,7 +412,7 @@ class PageV1_1(Page):
             result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
-            tei = xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
+            tei = xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
             return tei
 
         except etree.XMLSyntaxError:
@@ -1055,7 +881,7 @@ class Volume(DigitalObject, BaseVolume):
         all pages.'''
         if not self.has_tei:
             return
-        vol_tei = TeiFacsimile()
+        vol_tei = tei.Facsimile()
         # populate header information
         vol_tei.create_header()
         vol_tei.header.title = self.title
@@ -1116,7 +942,7 @@ class Volume(DigitalObject, BaseVolume):
                     'info': 'info',
                 }
                 for image_type, mode in image_types.iteritems():
-                    teipage.graphics.append(TeiGraphic(type=image_type,
+                    teipage.graphics.append(tei.Graphic(type=image_type,
                         url=absolutize_url(reverse('books:page-image',
                             kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
                 )

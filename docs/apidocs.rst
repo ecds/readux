@@ -40,6 +40,12 @@ DigWF
 .. automodule:: readux.books.digwf
     :members:
 
+TEI
+^^^
+.. automodule:: readux.books.tei
+    :members:
+
+
 Manage Commands
 ^^^^^^^^^^^^^^^
 

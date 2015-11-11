@@ -80,20 +80,6 @@ built-in django verbosity options.
     .. autoclass:: readux.books.management.commands.update_arks.Command
        :members:
 
-DynDZI
-------
-.. automodule:: readux.dyndzi
-    :members:
-
-Models
-^^^^^^
-.. automodule:: readux.dyndzi.models
-    :members:
-
-Views
-^^^^^^
-.. automodule:: readux.dyndzi.views
-    :members:
 
 Fedora
 ^^^^^^

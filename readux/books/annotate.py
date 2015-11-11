@@ -17,10 +17,26 @@ logger = logging.getLogger(__name__)
 
 
 def annotated_tei(teivol, annotations):
+    '''Take a TEI Facsimile document and an annotation queryset,
+    and generate an annotated TEI Facsimile document.  Tei header is
+    updated to reflect annotated edition, with a responsibility based
+    on the users associated with the annotations passed in.  Annotation
+    references are added to the facsimile data, in the form of start and
+    end anchors for text annotations and new zones for image annotations.
+    Annotation content is added to the body of the TEI, and annotation
+    tags, if any, are added as an interpGrp.
+
+    :param teivol: tei document to be annotated; expects
+        :class:`~readux.books.tei.Facsimile`
+    :param annotations: :class:`~readux.annotations.models.Annotation`
+        queryset to be added into the TEI for export
+    :returns: :class:`~readux.books.tei.AnnotatedFacsimile` with annotation
+        information
+    '''
     # iterate throuth the annotations associated with this volume
     # and insert them into the tei based on the content they reference
 
-    # perhaps some sanity-checking: compare annotation total vs
+    # could do some sanity-checking: compare annotation total vs
     # number actually added as we go page-by-page?
 
     tags = set()
@@ -37,6 +53,8 @@ def annotated_tei(teivol, annotations):
     # update responsibility statement
     teivol.responsibility = 'annotated by'
     # get a distinct list of all annotation authors
+    # NOTE: this will add users even if the annotations don't get
+    # successfully added to the output
     user_ids = annotations.only('user').order_by('user')\
                        .values_list('user', flat=True).distinct()
     users = get_user_model().objects.filter(id__in=user_ids)
@@ -76,7 +94,13 @@ def annotated_tei(teivol, annotations):
 
 
 def annotation_to_tei(annotation):
-    'Generate a tei note from an annotation'
+    '''Generate a tei note from an annotation.  Sets annotation id,
+    slugified tags as ana attribute, username as resp attribute, and
+    annotation content is converted from markdown to TEI.
+
+    :param annotation: :class:`~readux.annotations.models.Annotation`
+    :returns: :class:`readux.books.tei.Note`
+    '''
     # NOTE: annotation created/edited dates are not included here
     # because they were determined not to be relevant for our purposes
 
@@ -111,14 +135,26 @@ def annotation_to_tei(annotation):
     return teinote
 
 def html_xpath_to_tei(xpath):
-    # convert xpaths generated on the readux site to the
-    # equivalent xpaths for the corresponding tei content
+    '''Convert xpaths generated on the readux site to the
+    equivalent xpaths for the corresponding TEI content,
+    so that annotations created against the HTML can be matched to
+    the corresponding TEI.'''
     # NOTE: span could match either line in abbyy ocr or word in mets/alto
     return xpath.replace('div', 'tei:zone') \
                 .replace('span', 'node()[local-name()="line" or local-name()="w"]') \
                 .replace('@id', '@xml:id')
 
 def insert_note(teivol, teipage, annotation):
+    '''Insert an annotation and highlight reference into a tei document
+    and tei facsimile page.
+
+    :param teivol: :class:`~readux.books.tei.AnnotatedFacsimile` tei
+        document where the tei note should be added
+    :param teipage: :class:`~readux.books.tei.Zone` page zone where
+        annotation highlight references should be added
+    :param annotation: :class:`~readux.annotations.models.Annotation`
+        to add the document
+    '''
 
     info = annotation.info()
     # convert html xpaths to tei
@@ -194,22 +230,22 @@ def insert_note(teivol, teipage, annotation):
     teivol.annotations.append(teinote)
 
 
-def insert_anchor(el, anchor, offset):
-    # insert an anchor into an element at a given offset
+def insert_anchor(element, anchor, offset):
+    'Insert a TEI anchor into an element at a given offset.'
     if offset == 0:
         # offset zero - insert directly before this element
-        el.addprevious(anchor)
-    elif offset >= len(el.text):
+        element.addprevious(anchor)
+    elif offset >= len(element.text):
         # offset at end of this element - insert directly after
-        el.addnext(anchor)
+        element.addnext(anchor)
     else:
         # offset somewhere inside the text of this element
         # insert the element after the text and then break up
         # the lxml text and "tail" so that text after the offset
         # comes after the inserted anchor
-        el_text = el.text
-        el.insert(0, anchor)
-        el.text = el_text[:offset]
+        el_text = element.text
+        element.insert(0, anchor)
+        element.text = el_text[:offset]
         anchor.tail = el_text[offset:]
 
 

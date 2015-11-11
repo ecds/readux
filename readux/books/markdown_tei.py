@@ -33,6 +33,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def block_code(self, code, lang=None):
         """Rendering block level code.
+
         :param code: text content of the code block.
         :param lang: language of the given code.
         """
@@ -44,12 +45,14 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def block_quote(self, text):
         """Rendering <quote> with the given text.
+
         :param text: text content of the blockquote.
         """
         return '<quote>%s</quote>' % text.rstrip('\n')
 
     def block_html(self, html):
         """Rendering block level pure html content.
+
         :param html: text content of the html snippet.
         """
         # TODO - do we need to support this?
@@ -62,6 +65,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def header(self, text, level, raw=None):
         """Rendering header/heading.
+
         :param text: rendered text content for the header.
         :param level: a number for the header level, for example: 1.
         :param raw: raw text content of the header.
@@ -74,6 +78,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def list(self, body, ordered=True):
         """Rendering list tags.
+
         :param body: body contents of the list.
         :param ordered: whether this list is ordered or not.
         """
@@ -92,6 +97,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def table(self, header, body):
         """Rendering table element. Wrap header and body in it.
+
         :param header: header part of the table.
         :param body: body part of the table.
         """
@@ -102,12 +108,14 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def table_row(self, content):
         """Rendering a table row.
+
         :param content: content of current table row.
         """
         return '<row>%s</row>' % content
 
     def table_cell(self, content, **flags):
-        """Rendering a table cell. Like ``<th>`` ``<td>``.
+        """Rendering a table cell.
+
         :param content: content of current table cell.
         :param header: whether this is header or not.
         :param align: align of current table cell.
@@ -123,18 +131,21 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def double_emphasis(self, text):
         """Rendering **strong** text.
+
         :param text: text content for emphasis.
         """
         return '<emph rend="bold">%s</emph>' % text
 
     def emphasis(self, text):
         """Rendering *emphasis* text.
+
         :param text: text content for emphasis.
         """
         return '<emph rend="italic">%s</emph>' % text
 
     def codespan(self, text):
         """Rendering inline `code` text.
+
         :param text: text content for inline code.
         """
         text = mistune.escape(text.rstrip(), smart_amp=False)
@@ -146,18 +157,21 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def strikethrough(self, text):
         """Rendering ~~strikethrough~~ text.
+
         :param text: text content for strikethrough.
         """
         return '<del>%s</del>' % text
 
     def text(self, text):
         """Rendering unformatted text.
+
         :param text: text content.
         """
         return mistune.escape(text)
 
     def autolink(self, link, is_email=False):
         """Rendering a given link or email address.
+
         :param link: link content or email address.
         :param is_email: whether this is an email or not.
         """
@@ -173,6 +187,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def link(self, link, title, text):
         """Rendering a given link with content and title.
+
         :param link: href link for ``<a>`` tag.
         :param title: title content for `title` attribute.
         :param text: text content for description.
@@ -187,6 +202,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def image(self, src, title, text):
         """Rendering a image with title and text.
+
         :param src: source link of the image.
         :param title: title text of the image.
         :param text: alt text of the image.
@@ -216,6 +232,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def inline_html(self, html):
         """Rendering span level pure html content.
+
         :param html: text content of the html snippet.
         """
         # TODO
@@ -230,6 +247,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def footnote_ref(self, key, index):
         """Rendering the ref anchor of a footnote.
+
         :param key: identity key for the footnote.
         :param index: the index count of current footnote.
         """
@@ -238,6 +256,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def footnote_item(self, key, text):
         """Rendering a footnote item.
+
         :param key: identity key for the footnote.
         :param text: text content of the footnote.
         """
@@ -245,6 +264,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def footnotes(self, text):
         """Wrapper for all footnotes.
+
         :param text: contents of all footnotes.
         """
         return '<div type="footnotes">%s</div>' % text

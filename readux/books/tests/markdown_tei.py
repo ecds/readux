@@ -36,10 +36,18 @@ class MarkdownTei(TestCase):
         self.assertEqual('<list rend="numbered"><item>Red</item><item>Green</item><item>Blue</item></list>',
             markdown_tei.convert(ordered_list))
 
-        # TODO: headers
-        # This is an H1
-        ## This is an H2
-        ###### This is an H6
+        # headers
+        self.assertEqual('<head type="level1">This is an H1</head>',
+            markdown_tei.convert('# This is an H1'))
+        self.assertEqual('<head type="level2">This is an H2</head>',
+            markdown_tei.convert('## This is an H2'))
+        self.assertEqual('<head type="level6">This is an H6</head>',
+            markdown_tei.convert('###### This is an H6'))
+
+        # horizontal rule
+        self.assertEqual('<milestone @rend="horizontal-rule"/>',
+            markdown_tei.convert('* * *'))
+
 
         blockquote = '\n'.join([
             '> This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet',
@@ -54,11 +62,12 @@ class MarkdownTei(TestCase):
         self.assert_(tei_blockquote.endswith('adipiscing.</p></quote>'))
 
         # link
-        # still TODO in tei renderer
-        # linktext = 'This is [an example](http://example.com/ "Title") inline link.'
-        # print markdown_to_tei(linktext)
-        # linktext = '[This link](http://example.net/) has no title attribute.'
-        # print markdown_to_tei(linktext)
+        linktext = 'This is [an example](http://example.com/ "Title") inline link.'
+        self.assertEqual('<p>This is <ref target="http://example.com/" n="Title">an example</ref> inline link.</p>',
+            markdown_tei.convert(linktext))
+        linktext = '[This link](http://example.net/) has no title attribute.'
+        self.assertEqual('<p><ref target="http://example.net/">This link</ref> has no title attribute.</p>',
+            markdown_tei.convert(linktext))
 
         # image
         imglink = '![Alt text](/path/to/img.png)'
@@ -95,4 +104,11 @@ B.1  | B.2
         self.assert_('<row><cell role="data">B.1</cell><cell role="data">B.2</cell></row>'
             in tei_table)
 
-
+        # code, inline and block
+        self.assertEqual('<p>Here is some <code>code</code> inline.</p>',
+            markdown_tei.convert('Here is some `code` inline.'))
+        code_snippet = '''require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html'''
+        self.assertEqual('<code lang="ruby">%s</code>' % code_snippet,
+            markdown_tei.convert('```ruby\n%s\n```' % code_snippet))

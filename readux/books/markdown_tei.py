@@ -70,7 +70,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
         :param level: a number for the header level, for example: 1.
         :param raw: raw text content of the header.
         """
-        return '<head type="level-%d">%s</head>\n' % (level, text)
+        return '<head type="level%d">%s</head>' % (level, text)
 
     def hrule(self):
         """Rendering method for horizontal rule."""
@@ -196,7 +196,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
             link = ''
         attr = ''
         if title:
-            attr = 'n="%s"' % mistune.escape(title, quote=True)
+            attr = ' n="%s"' % mistune.escape(title, quote=True)
 
         return '<ref target="%s"%s>%s</ref>' % (link, attr, text)
 

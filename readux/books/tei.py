@@ -120,11 +120,9 @@ class PublicationStatement(TeiBase):
     #: descriptive statement (paragraph)
     desc = xmlmap.StringField('tei:p')
     #: date in human-readable display format
-    date = xmlmap.DateTimeField('tei:date',
-        '%B %d, %Y')
+    date = xmlmap.DateField('tei:date', '%B %d, %Y')
     #: normalized date
-    date_normal = xmlmap.DateTimeField('tei:date/@when',
-        '%Y-%d-%m')
+    date_normal = xmlmap.DateField('tei:date/@when', '%Y-%d-%m')
     #: readux distributor reference (includes ref with target of readux.library.emory.edu)
     distributor_readux = xmlmap.StringField('tei:distributor[@type="software"]/tei:ref[@target="http://readux.library.emory.edu"]')
 
@@ -182,9 +180,9 @@ class AnnotatedFacsimile(Facsimile):
     subtitle = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type="full"]/tei:title[@type="sub"]')
 
     #: responsibility statement text
-    responsibility = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:respStmt/resp')
+    responsibility = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:respStmt/tei:resp')
     #: responsibility statement names
-    responsible_names = xmlmap.NodeListField('tei:teiHeader/tei:fileDesc/tei:respStmt/name',
+    responsible_names = xmlmap.NodeListField('tei:teiHeader/tei:fileDesc/tei:respStmt/tei:name',
         Name)
 
     # additional mappings for annotation data
@@ -203,8 +201,9 @@ class Anchor(TeiBase):
     #: type
     type = xmlmap.StringField('@type')
 
+
 class Interp(TeiBase, teimap.TeiInterp):
     # extend eulxml.xmlmap.teimap version because it does not include
     # the xml namespace for setting xml:id
-    pass
+    ROOT_NAME = 'interp'
 

@@ -48,7 +48,7 @@
 {% if volume_url in annotated_volumes %}
 {# if volume has annotations, give user option to download annotated TEI #}
     <a href="{% url 'books:annotated-tei' vol.pid %}"
-    title="Annotated TEI facsimile" class="btn btn-info{% if small_buttons %} btn-xs{% endif %}">Export Annotated TEI</a>
+    title="Annotated TEI facsimile" class="btn btn-info{% if small_buttons %} btn-xs{% endif %}">Generate Annotated TEI</a>
 {% endif %}
 
 {% if vol.large_pdf %}

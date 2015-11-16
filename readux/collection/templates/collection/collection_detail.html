@@ -84,12 +84,13 @@
     <section class="volume-list">
       {% if paginator.count %}
         <h2 class="section-heading">
+
       {% if filters %}Displaying {{ paginator.count|intcomma }} volume{{ paginator.count|pluralize }}
       {% else %}{{ paginator.count|intcomma }} volume{{ paginator.count|pluralize }} in this collection{% endif %}
       </h2>
         <p class="lead">
             {% if page_obj.has_other_pages and items|length > 1 %}
-            displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
+            displaying {{ page_obj.start_index|intcomma }} - {{ page_obj.end_index|intcomma }}{% endif %}
             {# if more than one item on this page, display range of results #}
         </p>
         <div id="view-toggle" class="pull-right padding">

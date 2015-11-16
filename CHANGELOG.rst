@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.3.3
+-------------
+
+* bugfix: collection detail pagination display
+* bugfix: correct page absolute url, esp. for use in annotation uris
+
 Release 1.3 - Simple Annotation
 -------------------------------
 

@@ -110,7 +110,7 @@ class Bibl(TeiBase):
     #: date
     date = xmlmap.StringField('tei:date')
     #: url to digital edition
-    url = xmlmap.StringField('tei:ref[@type="digital edition"]/@target')
+    url = xmlmap.StringField('tei:ref[@type="digital-edition"]/@target')
     #: url to pdf of digital edition
     pdf_url = xmlmap.StringField('tei:ref[@type="pdf"]/@target')
 
@@ -122,9 +122,9 @@ class PublicationStatement(TeiBase):
     #: date in human-readable display format
     date = xmlmap.DateField('tei:date', '%B %d, %Y')
     #: normalized date
-    date_normal = xmlmap.DateField('tei:date/@when', '%Y-%d-%m')
+    date_normal = xmlmap.DateField('tei:date/@when', '%Y-%m-%d')
     #: readux distributor reference (includes ref with target of readux.library.emory.edu)
-    distributor_readux = xmlmap.StringField('tei:distributor[@type="software"]/tei:ref[@target="http://readux.library.emory.edu"]')
+    distributor_readux = xmlmap.StringField('tei:distributor[@xml:id="readux"]/tei:ref[@target="http://readux.library.emory.edu"]')
 
 
 class Facsimile(TeiBase):
@@ -132,6 +132,7 @@ class Facsimile(TeiBase):
     XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
                                            'books', 'schema', 'TEIPageView.xsd')
 
+    ROOT_NAME = 'TEI'
     xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
     # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
     # referenced files in the same directory
@@ -180,9 +181,9 @@ class AnnotatedFacsimile(Facsimile):
     subtitle = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type="full"]/tei:title[@type="sub"]')
 
     #: responsibility statement text
-    responsibility = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:respStmt/tei:resp')
+    responsibility = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:respStmt/tei:resp')
     #: responsibility statement names
-    responsible_names = xmlmap.NodeListField('tei:teiHeader/tei:fileDesc/tei:respStmt/tei:name',
+    responsible_names = xmlmap.NodeListField('tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:respStmt/tei:name',
         Name)
 
     # additional mappings for annotation data

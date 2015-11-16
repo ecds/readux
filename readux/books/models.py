@@ -889,6 +889,7 @@ class Volume(DigitalObject, BaseVolume):
         cache_key = '%s-tei' % self.pid
         vol_tei_xml = cache.get(cache_key, None)
         if vol_tei_xml:
+            logger.debug('Loading volume TEI for %s from cache' % vol.pid)
             vol_tei = xmlmap.load_xmlobject_from_string(vol_tei_xml,
                 tei.Facsimile)
 

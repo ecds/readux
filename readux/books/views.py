@@ -504,14 +504,16 @@ class VolumeTei(View):
             raise Http404
 
         tei = vol.generate_volume_tei()
+        base_filename = '%s-tei' % vol.noid
         if kwargs.get('mode', None) == 'annotated':
             tei = annotate.annotated_tei(tei, vol.annotations(user=request.user))
+            base_filename += '-annotated'
 
         response = HttpResponse(tei.serialize(pretty=True),
             content_type='application/xml')
         # generate a default filename based on the object label
-        response['Content-Disposition'] = 'filename="%s.xml"' % \
-            vol.label.replace(' ', '-')
+        response['Content-Disposition'] = 'attachment;filename="%s.xml"' % \
+            base_filename
         return response
 
 

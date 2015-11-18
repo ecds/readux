@@ -103,7 +103,7 @@
             </div>
 
             <div class="col-xs-3 col-xs-offset-0 col-sm-3 col-sm-offset-0 col-md-2 col-md-offset-2">
-                {% if items.has_other_pages %}
+                {% if page_obj.has_other_pages %}
                    {% include 'eultheme/snippets/pagination_dropdown.html' with results=items %}
                 {% endif %}
 
@@ -119,7 +119,7 @@
         <h2 id="no-results-found">No volumes in this collection.</h2>
       {% endif %}
 
-    {% if items.has_other_pages %}
+    {% if page_obj.has_other_pages %}
       {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}
     {% endif %}
 

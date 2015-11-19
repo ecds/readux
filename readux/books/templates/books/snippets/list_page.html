@@ -22,10 +22,12 @@
 
 {# NOTE: previously highlights were available on individual result; not available for now, so pulling from full solr result object #}
     {# {% with snippets=page.solr_highlights.page_text %} #}
+    {% if pages.object_list.highlighting %}
     {% with snippets=pages.object_list.highlighting|dict_item:page.pid %}
         {% for snip in snippets.page_text %}
             <p>... {{ snip|safe }} ...</p>
         {% endfor %}
     {% endwith %}
+    {% endif %}
   </div>
 </div>

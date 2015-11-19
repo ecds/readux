@@ -4,6 +4,7 @@
     <a href="{{ volume_url }}" title="{{ obj.title|truncatechars:100 }}">
         {# show the title if there is no image #}
         {% if not obj.primary_image %}
+            {# NOTE: would be nice to show if image fails to load, but can't detect background image errors #}
             <span>{{ obj.title|truncatechars:100 }}</span>
         {% endif %}
         {# annotation count #}

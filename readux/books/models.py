@@ -502,11 +502,13 @@ class PageV1_1(Page):
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
                 result = self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode, id_prefix='%s.' % self.noid)
+                    return_type=unicode, id_prefix='rdx_%s.' % self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result)
+                return True
             except etree.XMLSyntaxError:
                 logger.warn('OCR xml for %s is invalid', self.pid)
+                return False
 
 
 class BaseVolume(object):
@@ -978,12 +980,15 @@ class VolumeV1_0(Volume):
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
                 result = self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode, id_prefix='%s.' % self.noid)
+                    return_type=unicode, id_prefix='rdx_%s.' % self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result,
                     abbyyocr.Document)
-            except etree.XMLSyntaxError:
+                return True
+            except etree.XMLSyntaxError as err:
+                print err
                 logger.warn('OCR xml for %s is invalid', self.pid)
+                return False
 
 
 class VolumeV1_1(Volume):

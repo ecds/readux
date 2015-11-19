@@ -29,6 +29,7 @@ class AnnotatedTei(TestCase):
 
         # annotation user should be set as note response
         user = get_user_model()(username='an_annotator')
+        user.save()
         note.user = user
         teinote = annotation_to_tei(note)
         self.assertEqual(user.username, teinote.resp)
@@ -114,9 +115,10 @@ class AnnotatedTei(TestCase):
         # use page tei fixture as starting point
         title = 'Lecoq'
         teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR, 'teifacsimile.xml'),
-            tei.Facsimile)
+            tei.AnnotatedFacsimile)
         teidoc.title = title
         teidoc.page.href = page_uri
+        del teidoc.responsible_names[0]  # remove empty resp name from fixture
 
         annotei = annotated_tei(teidoc, Annotation.objects.all())
         self.assert_(isinstance(annotei, tei.AnnotatedFacsimile),

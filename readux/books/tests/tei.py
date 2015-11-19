@@ -63,13 +63,13 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
         self.fr8v2 = load_xmlobject_from_file(self.fr8v2_doc, abbyyocr.Document)
         self.mets_alto = load_xmlobject_from_file(self.metsalto_doc, XmlObject)
 
-
     def test_pageV1_0(self):
         # page 1.0 - abbyy ocr content
 
         page = PageV1_0(Mock()) # use mock for fedora api, since we won't make any calls
+        page.pid = 'rdxtest:4607'
         page.page_order = 5
-        vol = VolumeV1_0(Mock())
+        # vol = VolumeV1_0(Mock())
         with patch('readux.books.models.PageV1_0.volume') as mockvolume:
             mockvolume.uriref = rdflib.URIRef('vol:1')
             mockvolume.display_label = 'Mabel Meredith'
@@ -79,7 +79,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
 
             # update fixture xml with ids
             with open(VolumeV1_0.ocr_add_ids_xsl) as xslfile:
-                result =  self.fr6v1.xsl_transform(filename=xslfile,
+                result = self.fr6v1.xsl_transform(filename=xslfile,
                     return_type=unicode)
                 fr6v1_with_ids = load_xmlobject_from_string(result,
                     abbyyocr.Document)
@@ -121,7 +121,9 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
         page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
         # set mets fixture as page ocr
         page.ocr.content = self.mets_alto
+        page.pid = 'rdxtest:4608'
         page.page_order = 3
+
         with patch('readux.books.models.PageV1_1.volume') as mockvolume:
             mockvolume.uriref = rdflib.URIRef('vol:1')
             mockvolume.display_label = 'Mabel Meredith'

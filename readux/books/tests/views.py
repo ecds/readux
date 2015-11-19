@@ -406,6 +406,7 @@ class BookViewsTest(TestCase):
 
         # set up mock results for collection query and facet counts
         solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
+
         # *only* mock iter, to avoid weirdness with django templates & callables
         solr_result.__iter__.return_value = [
             SolrPage(**{'pid': 'page:1', 'page_order': '1', 'score': 0.5,
@@ -418,13 +419,18 @@ class BookViewsTest(TestCase):
 
         mockpage = NonCallableMock()
         mockpaginator.return_value.page.return_value = mockpage
-        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts', 'highlighting'])
         results.__iter__.return_value = iter(solr_result)
 
         mockpage.object_list = results
         mockpage.has_other_pages = False
         mockpage.paginator.count = 2
         mockpage.paginator.page_range = [1]
+         # patch in highlighting - apparent change in sunburnt behavior
+        results.highlighting = {
+            'page:1': {'page_text': ['snippet with search term']},
+            'page:233':  {'page_text': ['sample text result from content']}
+        }
 
         vol_url = reverse('books:volume', kwargs={'pid': mockobj.pid})
         response = self.client.get(vol_url, {'keyword': 'determine'})

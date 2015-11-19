@@ -423,7 +423,7 @@ class PageV1_1(Page):
     def generate_tei(self):
         '''Generate TEI facsimile for the current page'''
         try:
-            result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
+            result = self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
             teidoc = xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
@@ -434,11 +434,11 @@ class PageV1_1(Page):
 
     def update_tei(self):
         # check to make sure generated TEI is valid
-        tei = self.generate_tei()
-        if not tei.schema_valid():
+        pagetei = self.generate_tei()
+        if not pageteidoc.schema_valid():
             raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
-        self.tei.content = tei
+        self.tei.content = pagetei
 
     @property
     def ocr_has_ids(self):
@@ -1068,8 +1068,7 @@ class VolumeV1_0(Volume):
                     abbyyocr.Document)
                 return True
             except etree.XMLSyntaxError as err:
-                print err
-                logger.warn('OCR xml for %s is invalid', self.pid)
+                logger.warn('OCR xml for %s is invalid: %s', self.pid, err)
                 return False
 
 

@@ -191,6 +191,7 @@ class VolumeV1_0Test(TestCase):
         repo = Repository()
         self.vol = repo.get_object(type=VolumeV1_0)
         self.vol.label = 'ocn460678076_V.1'
+        self.vol.pid = 'rdxtest:4606'
 
     def test_ark_uri(self):
         ark_uri = 'http://pid.co/ark:/12345/ba45'
@@ -417,6 +418,7 @@ class PageV1_1Test(TestCase):
 
     def test_ocr_ids(self):
         page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
+        page.pid = 'rdxtest:4607'
 
         with patch.object(page, 'ocr') as mockocr:
             mockocr.exists = True

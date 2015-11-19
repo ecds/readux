@@ -202,6 +202,7 @@ class VolumeV1_0Test(TestCase):
         repo = Repository()
         self.vol = repo.get_object(type=VolumeV1_0)
         self.vol.label = 'ocn460678076_V.1'
+        self.vol.pid = 'rdxtest:4606'
 
     def test_ark_uri(self):
         ark_uri = 'http://pid.co/ark:/12345/ba45'
@@ -428,6 +429,7 @@ class PageV1_1Test(TestCase):
 
     def test_ocr_ids(self):
         page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
+        page.pid = 'rdxtest:4607'
 
         with patch.object(page, 'ocr') as mockocr:
             mockocr.exists = True
@@ -838,9 +840,13 @@ class BookViewsTest(TestCase):
 
         mockpage = NonCallableMock()
         mockpaginator.return_value.page.return_value = mockpage
-        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts'])
+        results = NonCallableMagicMock(spec=['__iter__', 'facet_counts', 'highlighting'])
         results.__iter__.return_value = iter(solr_result)
-
+        # patch in highlighting - apparent change in sunburnt behavior
+        results.highlighting = {
+            'page:1': {'page_text': ['snippet with search term']},
+            'page:233':  {'page_text': ['sample text result from content']}
+        }
         mockpage.object_list = results
         mockpage.has_other_pages = False
         mockpage.paginator.count = 2
@@ -1351,6 +1357,7 @@ class OCRtoTEIFacsimileXSLTest(TestCase):
     def test_pageV1_1(self):
         # page 1.1 - mets/alto content
         page = PageV1_1(Mock()) # use mock for fedora api, since we won't make any calls
+        page.pid = 'rdxtest:4608'
         # set mets fixture as page ocr
         page.ocr.content = self.mets_alto
         page.page_order = 3

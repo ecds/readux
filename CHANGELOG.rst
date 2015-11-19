@@ -3,6 +3,16 @@
 CHANGELOG
 =========
 
+Release 1.3.4
+-------------
+
+* bugfix: collection detail pagination navigation
+* bugfix: id generation error in OCR/TEI xml
+* Improved page mismatch detection when generating TEI from OCR
+* Revised placeholder page images for covers and volume browse
+* Modify update_page_arks manage command to handle the large number
+  of page arks in production
+
 Release 1.3.3
 -------------
 

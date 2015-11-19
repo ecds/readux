@@ -944,11 +944,11 @@ class Volume(DigitalObject, BaseVolume):
                     # requires an additional api call for each page
                     # to load the rels-ext, so use a local counter instead
 
-
                     # ensure graphic elements are present for image variants
                     # full size, page size, thumbnail, and deep zoom variants
-                    if teipage.graphics:
-                        del teipage.graphics[0]
+                    # NOTE: graphic elements need to come immediately after
+                    # surface and before zone; adding them before removing
+                    # existing graphic element should place them correctly.
 
                     # mapping of types we want in the tei and
                     # corresponding mode to pass to the url
@@ -957,13 +957,19 @@ class Volume(DigitalObject, BaseVolume):
                         'page': 'single-page',
                         'thumbnail': 'thumbnail',
                         'small-thumbnail': 'mini-thumbnail',
-                        'info': 'info',
+                        'json': 'info',
                     }
                     for image_type, mode in image_types.iteritems():
-                        teipage.graphics.append(tei.Graphic(type=image_type,
+                        teipage.graphics.append(tei.Graphic(rend=image_type,
                             url=absolutize_url(reverse('books:page-image',
                                 kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
-                    )
+                        )
+
+                    # page tei should have an existing graphic reference
+                    # remove it from our output
+                    if teipage.graphics[0].rend is None:
+                        del teipage.graphics[0]
+
                     vol_tei.page_list.append(teipage)
 
                     page_order += 1

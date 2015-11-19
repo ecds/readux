@@ -19,8 +19,8 @@ class Graphic(TeiBase):
     ROOT_NAME = 'graphic'
     #: url
     url = xmlmap.StringField('@url')
-    #: type
-    type = xmlmap.StringField('@type')
+    #: rend
+    rend = xmlmap.StringField('@rend')
 
 class Zone(TeiBase):
     'XmlObject for a zone in a TEI facsimile document'

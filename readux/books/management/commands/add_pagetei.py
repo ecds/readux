@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import defaultdict
 from optparse import make_option
 import os
@@ -186,10 +187,19 @@ class Command(BaseCommand):
                     'utf-8', 'replace'))
                 ocr_text = normalize_ws(unicode(ocr_pages[index]))
 
-                # if text is present, check for at least 95% match
+                # NOTE: if there are unicode discrepancies, we may want to
+                # add generalized unicode cleanup or convert specific characters, e.g
+                # ocr_text = unicodedata.normalize('NFKD', ocr_text).encode('ascii','ignore')
+                # ocr_text = ocr_text.replace(u'¬', u'-')
+
+                # if page has text, check for at least 95% token match
+                # NOTE: using token set match gives better results than
+                # straight fuzz.ratio, where minor differences like
+                # ¬ vs - results in a very low score
                 if (page_text and ocr_text) and \
-                  fuzz.ratio(page_text, ocr_text) < 95:
+                  fuzz.token_set_ratio(page_text, ocr_text) < 95:
                     self.stderr.write('Error: page text for %d does not seem to match OCR' % index)
+                    # TBD: should we keep processing even if we get a mismatch?
                     break
 
             if page.tei.exists:
@@ -323,5 +333,5 @@ class Command(BaseCommand):
 
 def normalize_ws(val):
     # normalize whitespace and remove control characters
-    val = ' '.join(val.split())  # split on whitespace and rejoin
-    return ''.join([c for c in val if ord(c) > 31 or ord(c) == 9])
+    val = u' '.join(val.split())  # split on whitespace and rejoin
+    return u''.join([c for c in val if ord(c) > 31 or ord(c) == 9])

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import defaultdict
 from optparse import make_option
 import os
@@ -34,6 +35,10 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help='Regenerate TEI even if already present'),
+        make_option('--regenerate-ids',
+            action='store_true',
+            default=False,
+            help='Regenerate OCR IDs even if already present (NOT RECOMMENDED)'),
         make_option('--collection', '-c',
             help='Find and process volumes that belong to the specified collection pid ' + \
             '(list of pids on the command line takes precedence over this option)'),
@@ -48,6 +53,7 @@ class Command(BaseCommand):
         self.repo = ManagementRepository()
         self.verbosity = int(options.get('verbosity', self.v_normal))
         self.update_existing = options.get('update')
+        self.regenerate_ids = options.get('regenerate_ids')
 
         # if no pids are specified
         if not pids:
@@ -140,10 +146,15 @@ class Command(BaseCommand):
                       % vol.pid)
 
         # if volume does not yet have ids in the ocr, add them
-        if not vol.ocr_has_ids:
+        # OR if id-regeneration is requested
+        if self.regenerate_ids or not vol.ocr_has_ids:
             if self.verbosity >= self.v_normal:
                 self.stdout.write('Adding ids to %s OCR' % vol.pid)
-            vol.add_ocr_ids()
+            added = vol.add_ocr_ids()
+            # if for some reason adding ids failed, bail out
+            if not added:
+                self.stderr.write('Error adding ids to OCR for %s' % vol.pid)
+                return
             vol.save('Adding ids to OCR')
 
         ocr_pages = vol.ocr.content.pages
@@ -176,10 +187,19 @@ class Command(BaseCommand):
                     'utf-8', 'replace'))
                 ocr_text = normalize_ws(unicode(ocr_pages[index]))
 
-                # if text is present, check for at least 95% match
+                # NOTE: if there are unicode discrepancies, we may want to
+                # add generalized unicode cleanup or convert specific characters, e.g
+                # ocr_text = unicodedata.normalize('NFKD', ocr_text).encode('ascii','ignore')
+                # ocr_text = ocr_text.replace(u'¬', u'-')
+
+                # if page has text, check for at least 95% token match
+                # NOTE: using token set match gives better results than
+                # straight fuzz.ratio, where minor differences like
+                # ¬ vs - results in a very low score
                 if (page_text and ocr_text) and \
-                  fuzz.ratio(page_text, ocr_text) < 95:
+                  fuzz.token_set_ratio(page_text, ocr_text) < 95:
                     self.stderr.write('Error: page text for %d does not seem to match OCR' % index)
+                    # TBD: should we keep processing even if we get a mismatch?
                     break
 
             if page.tei.exists:
@@ -239,10 +259,12 @@ class Command(BaseCommand):
                 continue
 
             # if page does not yet have ids in the ocr, add them
-            if not page.ocr_has_ids:
+            # OR if id-regeneration is requested
+            if self.regenerate_ids or not page.ocr_has_ids:
                 if self.verbosity > self.v_normal:
                     self.stdout.write('Adding ids to %s OCR' % page.pid)
-                page.add_ocr_ids()
+                if not page.add_ocr_ids():
+                    self.stdout.write('Failed to add OCR ids to %s' % page.pid)
                 page.save('Adding ids to OCR')
 
             if page.tei.exists:
@@ -311,5 +333,5 @@ class Command(BaseCommand):
 
 def normalize_ws(val):
     # normalize whitespace and remove control characters
-    val = ' '.join(val.split())  # split on whitespace and rejoin
-    return ''.join([c for c in val if ord(c) > 31 or ord(c) == 9])
+    val = u' '.join(val.split())  # split on whitespace and rejoin
+    return u''.join([c for c in val if ord(c) > 31 or ord(c) == 9])

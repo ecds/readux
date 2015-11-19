@@ -84,12 +84,13 @@
     <section class="volume-list">
       {% if paginator.count %}
         <h2 class="section-heading">
+
       {% if filters %}Displaying {{ paginator.count|intcomma }} volume{{ paginator.count|pluralize }}
       {% else %}{{ paginator.count|intcomma }} volume{{ paginator.count|pluralize }} in this collection{% endif %}
       </h2>
         <p class="lead">
             {% if page_obj.has_other_pages and items|length > 1 %}
-            displaying {{ items.start_index|intcomma }} - {{ items.end_index|intcomma }}{% endif %}
+            displaying {{ page_obj.start_index|intcomma }} - {{ page_obj.end_index|intcomma }}{% endif %}
             {# if more than one item on this page, display range of results #}
         </p>
         <div id="view-toggle" class="pull-right padding">
@@ -102,7 +103,7 @@
             </div>
 
             <div class="col-xs-3 col-xs-offset-0 col-sm-3 col-sm-offset-0 col-md-2 col-md-offset-2">
-                {% if items.has_other_pages %}
+                {% if page_obj.has_other_pages %}
                    {% include 'eultheme/snippets/pagination_dropdown.html' with results=items %}
                 {% endif %}
 
@@ -118,7 +119,7 @@
         <h2 id="no-results-found">No volumes in this collection.</h2>
       {% endif %}
 
-    {% if items.has_other_pages %}
+    {% if page_obj.has_other_pages %}
       {% include 'eultheme/snippets/pagination_all_pages.html' with results=items %}
     {% endif %}
 

@@ -118,31 +118,6 @@ class Command(BaseCommand):
             for res in self.get_search_results(pidman, search_args):
                 yield res
 
-
-    def get_search_results_OLD(self, search_results, pidman, search_args):
-        # generator to page through pidman search results and
-        # return the results
-        if 'results' in search_results:
-            for res in search_results['results']:
-                if res['pid'] not in self.processed:
-                    yield res
-
-        if 'next_page_link' in search_results and \
-          search_results['next_page_link'] is not None:
-            next_page = int(search_results['current_page_number']) + 1
-            try:
-                results = pidman.search_pids(page=next_page, **search_args)
-                for res in self.get_search_results(results, pidman, search_args):
-                    yield res
-            except requests.exceptions.HTTPError:
-                # 404 should mean we hit the end of the search results
-                pass
-
-        # because the list changes as we iterate through it, run the
-        # same search again
-
-
-
     def interrupt_handler(self, signum, frame):
         '''Gracefully handle a SIGINT.  Stop and report what was done.'''
         if signum == signal.SIGINT:

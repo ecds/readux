@@ -78,8 +78,20 @@ class Book(DigitalObject):
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
     #: default view for new object
-    #: FIXME: needs at least preliminary book view to point to (?)
     NEW_OBJECT_VIEW = 'books:volume'
+    # FIXME: needs at least preliminary book view to point to (?)
+    # NOTE: this is semi-bogus, since book-level records are currently
+    # not displayed in readux
+
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return (self.NEW_OBJECT_VIEW, [self.pid])
+
+    @permalink
+    def get_absolute_url(self):
+        'Absolute url to view this object within the site'
+        return (self.NEW_OBJECT_VIEW, [str(self.pid)])
 
     @property
     def best_description(self):
@@ -438,12 +450,14 @@ class PageV1_1(Page):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
-                result =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                result = self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode, id_prefix='rdx_%s.' % self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result)
+                return True
             except etree.XMLSyntaxError:
                 logger.warn('OCR xml for %s is invalid', self.pid)
+                return False
 
 
 class BaseVolume(object):
@@ -1047,13 +1061,16 @@ class VolumeV1_0(Volume):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
-                result =  self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode)
+                result = self.ocr.content.xsl_transform(filename=xslfile,
+                    return_type=unicode, id_prefix='rdx_%s.' % self.noid)
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result,
                     abbyyocr.Document)
-            except etree.XMLSyntaxError:
+                return True
+            except etree.XMLSyntaxError as err:
+                print err
                 logger.warn('OCR xml for %s is invalid', self.pid)
+                return False
 
 
 class VolumeV1_1(Volume):
@@ -1150,10 +1167,6 @@ class SolrPage(UserDict):
 
     def thumbnail_url(self):
         return self.iiif.thumbnail()
-        return '%s%s%s/full/!300,300/0/default.png' % (
-            settings.IIIF_API_ENDPOINT, settings.IIIF_ID_PREFIX,
-            self.pid)
-
 
 
 

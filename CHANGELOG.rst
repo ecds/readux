@@ -3,6 +3,22 @@
 CHANGELOG
 =========
 
+Release 1.3.4
+-------------
+
+* bugfix: collection detail pagination navigation
+* bugfix: id generation error in OCR/TEI xml
+* Improved page mismatch detection when generating TEI from OCR
+* Revised placeholder page images for covers and volume browse
+* Modify update_page_arks manage command to handle the large number
+  of page arks in production
+
+Release 1.3.3
+-------------
+
+* bugfix: collection detail pagination display
+* bugfix: correct page absolute url, esp. for use in annotation uris
+
 Release 1.3 - Simple Annotation
 -------------------------------
 
@@ -54,7 +70,8 @@ Annotation
 * As a researcher I want to see which pages I have annotated so that I
   can assess the status of my digital edition.
 * As a researcher I want to make annotations anchored to stable
-  identifiers so that I can maintain consistency in digital editions.
+  identifiers that are unique across an entire volume so that I can
+  maintain consistency and generate valid exports in my digital editions.
 * As a user I want to see a created or last modified timestamp on
   annotations so that I know when they were last updated.
 * As a user I want to see only the date created or last modified on

@@ -14,6 +14,7 @@ takes one option, should be path to bag with book/volume contents
 report on what was done
 '''
 import bagit
+import logging
 from lxml.etree import XMLSyntaxError
 from optparse import make_option
 import os
@@ -27,6 +28,9 @@ from eulxml.xmlmap.dc import DublinCore
 from readux.fedora import ManagementRepository
 from readux.books.models import Book, VolumeV1_1, MinMarcxml, PageV1_1
 from readux.collection.models import Collection
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -309,17 +313,18 @@ class Command(BaseCommand):
             # path is relative to bag root dir
             img_filename = os.path.join(path, imgfile)
 
-            with open(img_filename) as img_content:
-                page = repo.get_object(type=PageV1_1)
-                # set page label
-                page.label = '%s page %d' % (vol.label, pageindex)
-                # set the relation to the volume object
-                page.volume = vol
-                # set a dc:title based on volume title
-                page.dc.content.title = '%s page %d' % (vol.dc.content.title, pageindex)
-                # set page order
-                page.page_order = pageindex
+            page = repo.get_object(type=PageV1_1)
+            # set page label
+            page.label = '%s page %d' % (vol.label, pageindex)
+            # set the relation to the volume object
+            page.volume = vol
+            logger.debug('Page %s volume %s' % (page.pid, page.volume.pid))
+            # set a dc:title based on volume title
+            page.dc.content.title = '%s page %d' % (vol.dc.content.title, pageindex)
+            # set page order
+            page.page_order = pageindex
 
+            with open(img_filename) as img_content:
                 # set image content
                 page.image.content = img_content
                 page.image.checksum = bag.entries[imgfile]['md5']
@@ -353,7 +358,6 @@ class Command(BaseCommand):
                         # (unclear what would cause load to fail midway)
 
                         saved = page.save()
-
 
                         if not saved:
                             raise CommandError('Failed to ingest page %d into repository' \

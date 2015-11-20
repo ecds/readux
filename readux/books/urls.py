@@ -34,4 +34,7 @@ urlpatterns = patterns('',
 
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/(?P<mode>(thumbnail|mini-thumbnail|single-page|fullsize|info))/$',
         views.PageImage.as_view(),  name='page-image'),
+    url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/(?P<mode>iiif)(?P<url>.*)$',
+        views.PageImage.as_view())
+
 )

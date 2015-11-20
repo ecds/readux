@@ -95,8 +95,10 @@ class Note(TeiBase):
     ana = xmlmap.StringField('@ana')
     #: xlink href
     href = xmlmap.StringField('@xlink:href')
-    # list of paragraphs as strings
+    #: list of paragraphs as strings
     paragraphs = xmlmap.StringListField('tei:p')
+    #: code for the markdown used in the original annotation
+    markdown = xmlmap.StringField('tei:code[@lang="markdown"]')
 
 
 class Bibl(TeiBase):

@@ -47,6 +47,9 @@ class AnnotatedTei(TestCase):
         self.assert_('<ref target="#fn1" type="noteAnchor">1</ref>' in
             teinote.serialize())
 
+        # markdown should be included in a code element
+        self.assertEqual(note.text, teinote.markdown)
+
     def test_insert_anchor(self):
         def get_test_elements():
             div = etree.fromstring('''<div>

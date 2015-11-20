@@ -138,6 +138,10 @@ def annotation_to_tei(annotation):
     if annotation.user:
         teinote.resp = annotation.user.username
 
+    # include full markdown of the annotation, as a backup for losing
+    # content converting from markdown to tei, and for easy display
+    teinote.markdown = annotation.text
+
     return teinote
 
 def html_xpath_to_tei(xpath):

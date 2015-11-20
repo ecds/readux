@@ -11,6 +11,7 @@ from django.views.decorators.http import condition, require_http_methods, \
 from django.views.decorators.vary import vary_on_cookie
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.base import RedirectView
+import json
 from urllib import urlencode
 import os
 import requests
@@ -23,7 +24,7 @@ from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
 from readux.books.forms import BookSearch
 from readux.books import view_helpers
-from readux.utils import solr_interface
+from readux.utils import solr_interface, absolutize_url
 from readux.views import VaryOnCookieMixin
 
 
@@ -587,6 +588,7 @@ class ProxyView(View):
 
     def get(self, request, *args, **kwargs):
         url = self.get_redirect_url(*args, **kwargs)
+        print url
         # use headers to allow browsers to cache downloaded copies
         headers = {}
         for header in ['HTTP_IF_MODIFIED_SINCE', 'HTTP_IF_UNMODIFIED_SINCE',
@@ -604,8 +606,20 @@ class ProxyView(View):
                 # FIXME: link header is valuable, but would
                 # need to be made relative to current url
                 local_response[header] = value
-        # include response content if any
-        local_response.content = remote_response.content
+
+        # special case, for deep zoom (hack)
+        if kwargs['mode'] == 'info':
+            data = remote_response.json()
+            # need to adjust the id to be relative to current url
+            # this is a hack, patching in a proxy iiif interface at this url
+            data['@id'] = absolutize_url(request.path.replace('/info/', '/iiif'))
+            local_response.content = json.dumps(data)
+            # upate content-length for change in data
+            local_response['content-length'] = len(local_response.content)
+        else:
+            # include response content if any
+            local_response.content = remote_response.content
+
         return local_response
 
     def head(self, request, *args, **kwargs):
@@ -632,6 +646,7 @@ class PageImage(ProxyView):
     def get_redirect_url(self, *args, **kwargs):
         repo = TypeInferringRepository()
         page = repo.get_object(kwargs['pid'], type=Page)
+
         if kwargs['mode'] == 'thumbnail':
             return page.iiif.thumbnail()
         elif kwargs['mode'] == 'mini-thumbnail':
@@ -642,3 +657,5 @@ class PageImage(ProxyView):
             return page.iiif
         elif kwargs['mode'] == 'info':
             return page.iiif.info()
+        elif kwargs['mode'] == 'iiif':
+            return page.iiif.info().replace('info.json', kwargs['url'].rstrip('/'))

@@ -13,6 +13,7 @@ from django.views.generic import ListView, DetailView, View
 from django.views.generic.base import RedirectView
 from urllib import urlencode
 import os
+import requests
 import logging
 
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
@@ -581,7 +582,48 @@ class PageRedirect(RedirectView):
         return ''.join([page_url, kwargs['path']])
 
 
-class PageImage(RedirectView):
+class ProxyView(View):
+    # quick and dirty proxyview modeled on RedirectView
+
+    def get(self, request, *args, **kwargs):
+        url = self.get_redirect_url(*args, **kwargs)
+        # use headers to allow browsers to cache downloaded copies
+        headers = {}
+        for header in ['HTTP_IF_MODIFIED_SINCE', 'HTTP_IF_UNMODIFIED_SINCE',
+                       'HTTP_IF_MATCH', 'HTTP_IF_NONE_MATCH']:
+            if header in request.META:
+                headers[header.replace('HTTP_', '')] = request.META.get(header)
+        remote_response = requests.get(url, headers=headers)
+        local_response = HttpResponse()
+        local_response.status_code = remote_response.status_code
+
+        # include response headers, except for server-specific items
+        for header, value in remote_response.headers.iteritems():
+            if header not in ['Connection', 'Server', 'Keep-Alive',
+                             'Access-Control-Allow-Origin', 'Link']:
+                # FIXME: link header is valuable, but would
+                # need to be made relative to current url
+                local_response[header] = value
+        # include response content if any
+        local_response.content = remote_response.content
+        return local_response
+
+    def head(self, request, *args, **kwargs):
+        url = self.get_redirect_url(*args, **kwargs)
+        remote_response = requests.head(url)
+        response = HttpResponse()
+        for header, value in remote_response.headers.iteritems():
+            if header not in ['Connection', 'Server', 'Keep-Alive',
+                             'Access-Control-Allow-Origin', 'Link']:
+                response[header] = value
+        return response
+
+
+# class PageImage(RedirectView):
+# NOTE: previously, was redirecting to loris, but currently the loris
+# image server is not externally accessible
+
+class PageImage(ProxyView):
     '''Local view for page images.  These all return redirects to the
     configured IIIF image viewer, but allow for a local, semantic
     image url independent of image handling implementations

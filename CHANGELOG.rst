@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.3.5
+-------------
+
+* Proxy all IIIF image requests through the application, to handle
+  IIIF server that is not externally accessible.
+
 Release 1.3.4
 -------------
 

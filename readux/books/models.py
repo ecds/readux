@@ -120,6 +120,7 @@ class IIIFImage(iiif.IIIFImageClient):
     api_endpoint = settings.IIIF_API_ENDPOINT
     image_id_prefix = getattr(settings, 'IIIF_ID_PREFIX', '')
     pid = None
+    long_side = 'height'
 
     def __init__(self, *args, **kwargs):
         pid = None
@@ -139,19 +140,20 @@ class IIIFImage(iiif.IIIFImageClient):
     def get_image_id(self):
         return '%s%s' % (self.image_id_prefix, self.pid)
 
+    # NOTE: using long edge instead of specifying both with exact
+    # results in cleaner urls/filenams (no !), and more reliable result
+    # depending on IIIF implementation
+
     def thumbnail(self):
-        return self.size(width=300, height=300, exact=True).format('png')
+        return self.size(**{self.long_side: 300}).format('png')
 
     def mini_thumbnail(self):
-        return self.thumbnail().size(width=100, height=100, exact=True)
+        return self.size(**{self.long_side: 100}).format('png')
 
     SINGLE_PAGE_SIZE = 1000
 
     def page_size(self):
-        return self.size(width=self.SINGLE_PAGE_SIZE, height=self.SINGLE_PAGE_SIZE,
-            exact=True)
-
-
+        return self.size(**{self.long_side: self.SINGLE_PAGE_SIZE})
 
 
 
@@ -176,7 +178,17 @@ class Image(DigitalObject):
 
     def __init__(self, *args, **kwargs):
         super(Image, self).__init__(*args, **kwargs)
-        self.iiif = IIIFImage(pid=self.pid)
+
+    _iiif = None
+    @property
+    def iiif(self):
+        # since initializing iiif requires loris call for image metadata,
+        # only initialize on demand
+        if self._iiif is None:
+            self._iiif = IIIFImage(pid=self.pid)
+            if self.width > self.height:
+                self._iiif.long_side = 'width'
+        return self._iiif
 
     _image_metadata = None
     @property

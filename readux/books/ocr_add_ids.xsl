@@ -9,6 +9,8 @@
 
   <!-- prefix for ids, to ensure they are unique -->
   <xsl:param name="id_prefix"/>
+  <!-- regenerate ids: create new ids even if ids are already present -->
+  <xsl:param name="regenerate_ids" select="false()"/>
 
 
   <!-- transform to add ids to Alto or abbyy OCR -->
@@ -70,13 +72,20 @@
   <xsl:template name="copy-with-id">
     <xsl:param name="prefix"/>
     <xsl:copy>
-      <!-- generate an id if there is not already one present -->
-      <xsl:if test="not(@xml:id)">
+      <!-- generate an id if there is not already one present or if regenerate_ids was specified-->
+      <xsl:if test="$regenerate_ids or not(@xml:id)">
         <xsl:attribute name="xml:id"><xsl:value-of select="concat($id_prefix,
           $prefix, '.', generate-id())"/></xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="@xml:id">
+    <!-- if regenerate_ids was specified, skip copy on existing xml:id attributes -->
+    <xsl:if test="not($regenerate_ids)">
+      <xsl:copy-of select="."/>
+    </xsl:if>
   </xsl:template>
 
 </xsl:stylesheet>

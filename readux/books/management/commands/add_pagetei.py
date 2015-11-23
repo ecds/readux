@@ -150,7 +150,7 @@ class Command(BaseCommand):
         if self.regenerate_ids or not vol.ocr_has_ids:
             if self.verbosity >= self.v_normal:
                 self.stdout.write('Adding ids to %s OCR' % vol.pid)
-            added = vol.add_ocr_ids()
+            added = vol.add_ocr_ids(regenerate_ids=self.regenerate_ids)
             # if for some reason adding ids failed, bail out
             if not added:
                 self.stderr.write('Error adding ids to OCR for %s' % vol.pid)
@@ -263,7 +263,7 @@ class Command(BaseCommand):
             if self.regenerate_ids or not page.ocr_has_ids:
                 if self.verbosity > self.v_normal:
                     self.stdout.write('Adding ids to %s OCR' % page.pid)
-                if not page.add_ocr_ids():
+                if not page.add_ocr_ids(regenerate_ids=self.regenerate_ids):
                     self.stdout.write('Failed to add OCR ids to %s' % page.pid)
                 page.save('Adding ids to OCR')
 

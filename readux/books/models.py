@@ -362,13 +362,15 @@ class Page(Image):
     def image_url(self):
         # preliminary image url, for use in tei facsimile
         # TODO: we probably want to use some version of the ARK here
-        return unicode(self.iiif)
-        # return absolutize_url(reverse('books:page-image-fs',
-            # kwargs={'vol_pid': self.volume.pid, 'pid': self.pid}))
+        # return unicode(self.iiif)
+        # use the readux url, rather than exposing IIIF url directly
+        return absolutize_url(reverse('books:page-image',
+            kwargs={'vol_pid': self.volume.pid, 'pid': self.pid,
+                    'mode': 'fullsize'}))
 
     @property
     def tei_options(self):
-        'Parameters for use in XSLT when generating page-levl TEI facsimile'
+        'Parameters for use in XSLT when generating page-level TEI facsimile'
 
         # construct brief bibliographic information for use in sourceDesc/bibl
         src_info = ''
@@ -509,12 +511,13 @@ class PageV1_1(Page):
         if self.ocr.exists:
             return self.ocr.content.node.xpath('count(//@xml:id)') > 0.0
 
-    def add_ocr_ids(self):
+    def add_ocr_ids(self, regenerate_ids=False):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
                 result = self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode, id_prefix='rdx_%s.' % self.noid)
+                    return_type=unicode, id_prefix='rdx_%s.' % self.noid,
+                    regenerate_ids='true' if regenerate_ids else '')
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result)
                 return True
@@ -987,12 +990,13 @@ class VolumeV1_0(Volume):
         if self.ocr.exists:
             return self.ocr.content.node.xpath('count(//@xml:id)') > 0.0
 
-    def add_ocr_ids(self):
+    def add_ocr_ids(self, regenerate_ids=False):
         'Update OCR xml with ids for pages, blocks, lines, etc'
         with open(self.ocr_add_ids_xsl) as xslfile:
             try:
                 result = self.ocr.content.xsl_transform(filename=xslfile,
-                    return_type=unicode, id_prefix='rdx_%s.' % self.noid)
+                    return_type=unicode, id_prefix='rdx_%s.' % self.noid,
+                    regenerate_ids='true' if regenerate_ids else '')
                 # set the result as ocr datastream content
                 self.ocr.content = xmlmap.load_xmlobject_from_string(result,
                     abbyyocr.Document)

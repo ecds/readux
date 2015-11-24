@@ -150,7 +150,7 @@ class Command(BaseCommand):
         if self.regenerate_ids or not vol.ocr_has_ids:
             if self.verbosity >= self.v_normal:
                 self.stdout.write('Adding ids to %s OCR' % vol.pid)
-            added = vol.add_ocr_ids()
+            added = vol.add_ocr_ids(regenerate_ids=self.regenerate_ids)
             # if for some reason adding ids failed, bail out
             if not added:
                 self.stderr.write('Error adding ids to OCR for %s' % vol.pid)
@@ -192,14 +192,23 @@ class Command(BaseCommand):
                 # ocr_text = unicodedata.normalize('NFKD', ocr_text).encode('ascii','ignore')
                 # ocr_text = ocr_text.replace(u'¬', u'-')
 
-                # if page has text, check for at least 95% token match
+                # if page has text, check for exact match or
+                # at least 90% token match
                 # NOTE: using token set match gives better results than
                 # straight fuzz.ratio, where minor differences like
                 # ¬ vs - results in a very low score
+                # also note, fuzzywuzz doesn't seem to do well with punctuation
+                token_ratio = fuzz.token_set_ratio(page_text, ocr_text)
                 if (page_text and ocr_text) and \
-                  fuzz.token_set_ratio(page_text, ocr_text) < 95:
+                   token_ratio < 90 and page_text != ocr_text:
                     self.stderr.write('Error: page text for %d does not seem to match OCR' % index)
-                    # TBD: should we keep processing even if we get a mismatch?
+                    # in verbose mode, output content to allow investigation
+                    if self.verbosity > self.v_normal:
+                        self.stdout.write('Page text:\n%s\n\n' % page_text)
+                        self.stdout.write('OCR text:\n%s\n\n' % ocr_text)
+                        self.stdout.write('Fuzzy token set ration score: %f' % token_ratio)
+
+                    # stop processing this volume to avoid loading bad data
                     break
 
             if page.tei.exists:
@@ -263,7 +272,7 @@ class Command(BaseCommand):
             if self.regenerate_ids or not page.ocr_has_ids:
                 if self.verbosity > self.v_normal:
                     self.stdout.write('Adding ids to %s OCR' % page.pid)
-                if not page.add_ocr_ids():
+                if not page.add_ocr_ids(regenerate_ids=self.regenerate_ids):
                     self.stdout.write('Failed to add OCR ids to %s' % page.pid)
                 page.save('Adding ids to OCR')
 

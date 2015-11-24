@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.3.6
+-------------
+
+* Improved regenerate-id logic for OCR, use a readux image url when
+  generating page TEI.
+
 Release 1.3.5
 -------------
 

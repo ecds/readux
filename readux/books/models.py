@@ -1010,7 +1010,7 @@ class Volume(DigitalObject, BaseVolume):
         vol_tei.pubstmt.date_normal = export_date
 
         # save current volume tei in django cache
-        cache.set(cache_key, vol_tei.serialize(), 30)
+        cache.set(cache_key, vol_tei.serialize(), 3000)
 
 
         return vol_tei

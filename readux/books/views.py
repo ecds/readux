@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
+from django.core.servers.basehttp import FileWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
-    HttpResponsePermanentRedirect
+    HttpResponsePermanentRedirect, StreamingHttpResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition, require_http_methods, \
@@ -23,7 +24,7 @@ from eulfedora.views import raw_datastream, RawDatastreamView
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
 from readux.books.forms import BookSearch
-from readux.books import view_helpers, annotate
+from readux.books import view_helpers, annotate, export
 from readux.utils import solr_interface, absolutize_url
 from readux.views import VaryOnCookieMixin
 
@@ -520,6 +521,26 @@ class VolumeTei(View):
         # generate a default filename based on the object label
         response['Content-Disposition'] = 'attachment;filename="%s.xml"' % \
             base_filename
+        response.set_cookie('%s-tei-export' % vol.noid, 'complete', max_age=10)
+        return response
+
+
+class AnnotatedVolumeExport(View):
+
+    def get(self, request, *args, **kwargs):
+        repo = TypeInferringRepository()
+        vol = repo.get_object(self.kwargs['pid'])
+        # if object doesn't exist, isn't a volume, or doesn't have tei text - 404
+        if not vol.exists or not vol.has_requisite_content_models or not vol.has_tei:
+            raise Http404
+
+        webzipfile = export.static_website(vol)
+        response = StreamingHttpResponse(FileWrapper(open(webzipfile), 8192),
+                content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % \
+            os.path.basename(webzipfile)
+        response['Content-Length'] = os.path.getsize(webzipfile)
+        response.set_cookie('%s-static-export' % vol.noid, 'complete', max_age=10)
         return response
 
 

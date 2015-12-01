@@ -45,12 +45,6 @@
 {% url 'books:volume' vol.pid as volume_url %}{# annotation count for each volume #}
 {% include 'books/snippets/comment_count.html' with item_url=volume_url annotation_count=annotated_volumes %}
 
-{% if volume_url in annotated_volumes %}
-{# if volume has annotations, give user option to download annotated TEI #}
-    <a href="{% url 'books:annotated-tei' vol.pid %}"
-    title="Annotated TEI facsimile" class="btn btn-info{% if small_buttons %} btn-xs{% endif %}">Generate Annotated TEI</a>
-{% endif %}
-
 {% if vol.large_pdf %}
 <p class="small text-warning">Some browsers will not be able to show large
     PDF files; in any browser large files might take a few minutes to load.

@@ -88,4 +88,21 @@ $(document).ready(function() {
         $(this).attr('src', error_images.cover_mini_thumb);
     });
 
+    // volume export indicator for long-running downloads
+    $(".volume-export").on('click', function(evt) {
+        // show the "generating" spinner
+        $('#export-generating').removeClass('hidden');
+        // link id is cookie id; cookie gets set when download completes
+        var cookie_id = this.id;
+
+        // check for the cookie and hide the spinner
+        var check_complete = window.setInterval(check_cookie, 500);
+        function check_cookie() {
+          if (Cookies.get(cookie_id) == 'complete') {
+              $('#export-generating').addClass('hidden');
+              Cookies.remove(cookie_id);
+              clearInterval(check_complete);
+          }
+        }
+    });
 });

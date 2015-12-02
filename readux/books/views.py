@@ -535,11 +535,11 @@ class AnnotatedVolumeExport(View):
             raise Http404
 
         webzipfile = export.static_website(vol)
-        response = StreamingHttpResponse(FileWrapper(open(webzipfile), 8192),
+        response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                 content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % \
-            os.path.basename(webzipfile)
-        response['Content-Length'] = os.path.getsize(webzipfile)
+        response['Content-Disposition'] = 'attachment; filename="%s_annotated_site.zip"' % \
+            vol.noid
+        response['Content-Length'] = os.path.getsize(webzipfile.name)
         response.set_cookie('%s-static-export' % vol.noid, 'complete', max_age=10)
         return response
 

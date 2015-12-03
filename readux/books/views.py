@@ -550,7 +550,7 @@ class AnnotatedVolumeExport(View):
         # set a cookie to indicate download is complete; used by javascript
         # to hide waiting indicator
         # TODO: html request should probably be a post, and include cookie name
-        response.set_cookie('%s-%s-export' % (mode, vol.noid),
+        response.set_cookie('%s-%s-export' % (vol.noid, mode),
             'complete', max_age=10)
         return response
 

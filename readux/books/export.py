@@ -34,8 +34,11 @@ def website(vol, static=True):
     jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme-master')
     # run the jekyll import script in the jekyll site dir
     logger.debug('Running jekyll import TEI facsimile script')
-    subprocess.call(['jekyllimport_teifacsimile', '-q', teifile.name],
-        cwd=jekyll_site_dir)
+    import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
+    # when generating a site, configure jekyll site to generate relative links
+    if static:
+        import_command.append('--relative-links')
+    subprocess.call(import_command, cwd=jekyll_site_dir)
     # check for return val == 0 ?
 
     # NOTE: putting export content in a separate dir to make it easy to create

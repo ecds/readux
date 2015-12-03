@@ -541,7 +541,11 @@ class AnnotatedVolumeExport(View):
             return HttpResponseBadRequest('Export mode "%s" is not supported' % mode)
 
         static_site = mode == 'static'
-        webzipfile = export.website(vol, static=static_site)
+
+        # generate annotated tei
+        tei = annotate.annotated_tei(vol.generate_volume_tei(),
+            vol.annotations(user=request.user))
+        webzipfile = export.website(vol, tei, static=static_site)
         response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                 content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \

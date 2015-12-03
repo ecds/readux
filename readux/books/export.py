@@ -15,10 +15,20 @@ JEKYLL_THEME_ZIP = os.path.join(settings.BASE_DIR, 'readux', 'books',
     'fixtures', 'digitaledition-jekylltheme.zip')
 
 
-def website(vol, static=True):
+def website(vol, tei, static=True):
+    '''Generate a zipfile of a jekyll website for a volume with annotations.
+    Creates a jekyll site, imports pages and annotations from the TEI,
+    and then packages it as a zipfile.
+
+    :param vol: readux volume object (1.0 or 1.1)
+    :param tei: annotated TEI facsimile (e.g.,
+        :class:`~readux.books.tei.AnnotatedFacsimile`)
+    :param static: if true, zip file contains the built jekyll site;
+        otherwise, returns the full jekyll site.
+    :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
+    '''
     logger.debug('Generating %s website for %s',
         'static' if static else 'jekyll', vol.pid)
-    tei = vol.generate_volume_tei()
     tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export')
     logger.debug('Building export for %s in %s', vol.pid, tmpdir)
     teifile = tempfile.NamedTemporaryFile(suffix='.xml', prefix='tei-',
@@ -55,7 +65,6 @@ def website(vol, static=True):
         built_site_dir = os.path.join(export_dir, '%s_annotated_site' % vol.noid)
         subprocess.call(['jekyll', 'build', '-q', '-d', built_site_dir],
             cwd=jekyll_site_dir)
-
 
     # otherwise, zip up the entire (unbuilt) jekyll site
     else:

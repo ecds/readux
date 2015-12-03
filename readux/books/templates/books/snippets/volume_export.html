@@ -9,8 +9,10 @@
   </button>
   <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="export-menu">
     <li class="dropdown-header">Annotated edition</li>
+    {# FIXME: should these be POST instead of GET? And send cookie name for js completion check #}
     <li><a id="{{ vol.noid }}-tei-export" class="volume-export" href="{% url 'books:annotated-tei' vol.pid %}">TEI</a></li>
-    <li><a id="{{ vol.noid }}-static-export" class="volume-export" href="{% url 'books:webexport-static' vol.pid %}">Static website</a></li>
+    <li><a id="{{ vol.noid }}-static-export" class="volume-export" href="{% url 'books:webexport' vol.pid 'static' %}">Static website</a></li>
+    <li><a id="{{ vol.noid }}-jekyll-export" class="volume-export" href="{% url 'books:webexport' vol.pid 'jekyll' %}">Jekyll website</a></li>
   </ul>
   <p id="export-generating" class="hidden text-info">Generating... <i class="fa fa-cog fa-lg fa-spin"></i></p>
 </div>

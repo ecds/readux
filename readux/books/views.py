@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.core.servers.basehttp import FileWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
-    HttpResponsePermanentRedirect, StreamingHttpResponse
+    HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition, require_http_methods, \
@@ -526,6 +526,7 @@ class VolumeTei(View):
 
 
 class AnnotatedVolumeExport(View):
+    export_modes = ['static', 'jekyll']
 
     def get(self, request, *args, **kwargs):
         repo = TypeInferringRepository()
@@ -534,13 +535,23 @@ class AnnotatedVolumeExport(View):
         if not vol.exists or not vol.has_requisite_content_models or not vol.has_tei:
             raise Http404
 
-        webzipfile = export.static_website(vol)
+        # currently, supported modes are static (built) site and jekyll
+        mode = kwargs.get('mode', 'static')
+        if mode not in self.export_modes:
+            return HttpResponseBadRequest('Export mode "%s" is not supported' % mode)
+
+        static_site = mode == 'static'
+        webzipfile = export.website(vol, static=static_site)
         response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                 content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="%s_annotated_site.zip"' % \
-            vol.noid
+        response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
+            (vol.noid, mode)
         response['Content-Length'] = os.path.getsize(webzipfile.name)
-        response.set_cookie('%s-static-export' % vol.noid, 'complete', max_age=10)
+        # set a cookie to indicate download is complete; used by javascript
+        # to hide waiting indicator
+        # TODO: html request should probably be a post, and include cookie name
+        response.set_cookie('%s-%s-export' % (mode, vol.noid),
+            'complete', max_age=10)
         return response
 
 

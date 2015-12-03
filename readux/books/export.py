@@ -32,7 +32,7 @@ def website(vol, tei, static=True):
     tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export')
     logger.debug('Building export for %s in %s', vol.pid, tmpdir)
     teifile = tempfile.NamedTemporaryFile(suffix='.xml', prefix='tei-',
-        dir=tmpdir)
+        dir=tmpdir, delete=False)
     logger.debug('Saving TEI as %s', teifile.name)
     # write out tei to temporary file
     tei.serializeDocument(teifile)
@@ -84,7 +84,6 @@ def website(vol, tei, static=True):
         'Static' if static else 'Jekyll site', vol.pid, webzipfile.name)
 
     # clean up temporary files
-    del teifile  # tempfile cleans up on deletion, complains if it's already gone
     shutil.rmtree(tmpdir)
     # NOTE: method has to return the tempfile itself, or else it will get cleaned up when
     # the reference is destroyed

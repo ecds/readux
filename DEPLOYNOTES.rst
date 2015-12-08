@@ -145,6 +145,9 @@ Release 1.3
 
       python manage.py migrate
 
+* If using MySQL, make sure the database has time zone data loaded:
+  http://dev.mysql.com/doc/refman/5.7/en/mysql-tzinfo-to-sql.html
+
 * The URL format for pages has changed; update page ARK records by
   running a script::
 

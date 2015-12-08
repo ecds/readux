@@ -36,6 +36,9 @@ def website(vol, tei, static=True):
     logger.debug('Saving TEI as %s', teifile.name)
     # write out tei to temporary file
     tei.serializeDocument(teifile)
+    # IMPORTANT: close the filehandle to ensure *all* content is flushed
+    # and available before running the ruby script
+    teifile.close()
     # unzip jekyll template site
     logger.debug('Extracting jekyll template site')
     with ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:

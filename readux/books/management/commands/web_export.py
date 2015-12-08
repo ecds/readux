@@ -19,7 +19,6 @@ class Command(BaseCommand):
             help='Use the specified TEI file instead of generating it')
 
     def handle(self, *args, **options):
-        print args
         repo = Repository()
         for pid in options['pid']:
             vol = repo.get_object(pid, type=Volume)

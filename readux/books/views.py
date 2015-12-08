@@ -545,12 +545,17 @@ class AnnotatedVolumeExport(View):
         # generate annotated tei
         tei = annotate.annotated_tei(vol.generate_volume_tei(),
             vol.annotations(user=request.user))
-        webzipfile = export.website(vol, tei, static=static_site)
-        response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
+        try:
+            webzipfile = export.website(vol, tei, static=static_site)
+            response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                 content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
-            (vol.noid, mode)
-        response['Content-Length'] = os.path.getsize(webzipfile.name)
+            response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
+                (vol.noid, mode)
+            response['Content-Length'] = os.path.getsize(webzipfile.name)
+        except export.ExportException as err:
+            response = HttpResponse(content='Export failed. %s' % err)
+            response.status_code = 500
+
         # set a cookie to indicate download is complete; used by javascript
         # to hide waiting indicator
         # TODO: html request should probably be a post, and include cookie name

@@ -1,6 +1,6 @@
 from eulfedora.server import Repository
 from eulxml.xmlmap import load_xmlobject_from_file
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 import shutil
 
 from readux.books import annotate, export
@@ -27,7 +27,11 @@ class Command(BaseCommand):
             else:
                 tei = annotate.annotated_tei(vol.generate_volume_tei(),
                     vol.annotations())
-            zipfile = export.website(vol, tei, static=options['static'])
+            try:
+                zipfile = export.website(vol, tei, static=options['static'])
+            except export.ExportException as err:
+                raise CommandError(err)
+
             zipfilename = '%s-annotated-site.zip' % vol.noid
             shutil.copyfile(zipfile.name, zipfilename)
 

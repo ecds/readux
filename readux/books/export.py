@@ -15,6 +15,10 @@ JEKYLL_THEME_ZIP = os.path.join(settings.BASE_DIR, 'readux', 'books',
     'fixtures', 'digitaledition-jekylltheme.zip')
 
 
+class ExportException(Exception):
+    pass
+
+
 def website(vol, tei, static=True):
     '''Generate a zipfile of a jekyll website for a volume with annotations.
     Creates a jekyll site, imports pages and annotations from the TEI,
@@ -51,8 +55,10 @@ def website(vol, tei, static=True):
     # when generating a site, configure jekyll site to generate relative links
     if static:
         import_command.append('--relative-links')
-    subprocess.call(import_command, cwd=jekyll_site_dir)
-    # check for return val == 0 ?
+    try:
+        subprocess.check_call(import_command, cwd=jekyll_site_dir)
+    except subprocess.CalledProcessError:
+        raise ExportException('Error importing TEI facsimile to jekyll site')
 
     # NOTE: putting export content in a separate dir to make it easy to create
     # the zip file with the right contents and structure
@@ -66,8 +72,11 @@ def website(vol, tei, static=True):
         logger.debug('Building jekyll site')
         # directory where the built jekyll site will be put
         built_site_dir = os.path.join(export_dir, '%s_annotated_site' % vol.noid)
-        subprocess.call(['jekyll', 'build', '-q', '-d', built_site_dir],
-            cwd=jekyll_site_dir)
+        try:
+            subprocess.check_call(['jekyll', 'build', '-q', '-d', built_site_dir],
+                cwd=jekyll_site_dir)
+        except subprocess.CalledProcessError:
+            raise ExportException('Error building jekyll site')
 
     # otherwise, zip up the entire (unbuilt) jekyll site
     else:

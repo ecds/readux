@@ -11,6 +11,7 @@ from django.views.decorators.http import condition, require_http_methods, \
    last_modified
 from django.views.decorators.vary import vary_on_cookie
 from django.views.generic import ListView, DetailView, View
+from django.views.generic.edit import FormMixin, ProcessFormView
 from django.views.generic.base import RedirectView
 import json
 from urllib import urlencode
@@ -23,7 +24,7 @@ from eulfedora.views import raw_datastream, RawDatastreamView
 
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
-from readux.books.forms import BookSearch
+from readux.books.forms import BookSearch, VolumeExport
 from readux.books import view_helpers, annotate, export
 from readux.utils import solr_interface, absolutize_url
 from readux.views import VaryOnCookieMixin
@@ -525,42 +526,71 @@ class VolumeTei(View):
         return response
 
 
-class AnnotatedVolumeExport(View):
+class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
+                            VaryOnCookieMixin):
     export_modes = ['static', 'jekyll']
 
-    def get(self, request, *args, **kwargs):
-        repo = TypeInferringRepository()
-        vol = repo.get_object(self.kwargs['pid'])
-        # if object doesn't exist, isn't a volume, or doesn't have tei text - 404
-        if not vol.exists or not vol.has_requisite_content_models or not vol.has_tei:
+    model = Volume
+    template_name = 'books/volume_export.html'
+    context_object_name = 'vol'
+    form_class = VolumeExport
+
+    @method_decorator(last_modified(view_helpers.volume_modified))
+    def dispatch(self, *args, **kwargs):
+        return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
+
+
+    def get_object(self, queryset=None):
+        # kwargs are set based on configured url pattern
+        pid = self.kwargs['pid']
+        repo = Repository(request=self.request)
+        vol = repo.get_object(pid, type=Volume)
+        # 404 if object doesn't exist, isn't a volume, or doesn't have tei
+        if not vol.exists or not vol.is_a_volume or not vol.has_tei:
             raise Http404
+        # TODO: is it also an error if volume doesn't have any annotations?
+        return vol
 
-        # currently, supported modes are static (built) site and jekyll
-        mode = kwargs.get('mode', 'static')
-        if mode not in self.export_modes:
-            return HttpResponseBadRequest('Export mode "%s" is not supported' % mode)
+    def get_context_data(self, **kwargs):
+        context_data = super(AnnotatedVolumeExport, self).get_context_data()
+        context_data['export_form'] = self.get_form()
+        return context_data
 
+    def post(self, request, *arrgs, **kwargs):
+        vol = self.object = self.get_object()  #
+        # get posted form data and use that to generate the export
+        export_form = self.get_form()
+        if export_form.is_valid():
+            cleaned_data = export_form.cleaned_data
+            mode = cleaned_data['mode']
+
+        # set a boolean flag for static site output
         static_site = mode == 'static'
 
         # generate annotated tei
         tei = annotate.annotated_tei(vol.generate_volume_tei(),
             vol.annotations(user=request.user))
         try:
-            webzipfile = export.website(vol, tei, static=static_site)
+            webzipfile = export.website(vol, tei, static=static_site,
+                page_one=cleaned_data['page_one'])
             response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                 content_type='application/zip')
             response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
                 (vol.noid, mode)
             response['Content-Length'] = os.path.getsize(webzipfile.name)
         except export.ExportException as err:
-            response = HttpResponse(content='Export failed. %s' % err)
+            # display error to user and redisplay the form
+            context_data = self.get_context_data()
+            context_data['error'] = 'Export failed. %s' % err
+            response = render(request, self.template_name, context_data)
+            # response = HttpResponse(content='Export failed. %s' % err)
             response.status_code = 500
 
-        # set a cookie to indicate download is complete; used by javascript
-        # to hide waiting indicator
-        # TODO: html request should probably be a post, and include cookie name
-        response.set_cookie('%s-%s-export' % (vol.noid, mode),
-            'complete', max_age=10)
+        # set a cookie to indicate download is complete, that can be
+        # used by javascript to hide a 'generating' indicator
+        completion_cookie_name = request.POST.get('completion-cookie',
+            '%s-web-export' % vol.noid)
+        response.set_cookie(completion_cookie_name, 'complete', max_age=10)
         return response
 
 

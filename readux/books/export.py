@@ -19,7 +19,7 @@ class ExportException(Exception):
     pass
 
 
-def website(vol, tei, static=True):
+def website(vol, tei, static=True, page_one=None):
     '''Generate a zipfile of a jekyll website for a volume with annotations.
     Creates a jekyll site, imports pages and annotations from the TEI,
     and then packages it as a zipfile.
@@ -29,6 +29,7 @@ def website(vol, tei, static=True):
         :class:`~readux.books.tei.AnnotatedFacsimile`)
     :param static: if true, zip file contains the built jekyll site;
         otherwise, returns the full jekyll site.
+    :param page_one: page where numbering should start from 1 in the export
     :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
     '''
     logger.debug('Generating %s website for %s',
@@ -52,6 +53,11 @@ def website(vol, tei, static=True):
     # run the jekyll import script in the jekyll site dir
     logger.debug('Running jekyll import TEI facsimile script')
     import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
+
+    # if a page number is specified, pass it as a parameter to the script
+    if page_one is not None:
+        import_command.extend(['--page-one', unicode(page_one)])
+
     # when generating a site, configure jekyll site to generate relative links
     if static:
         import_command.append('--relative-links')

@@ -1,0 +1,42 @@
+{% extends 'site_base.html' %}
+{% load static widget_tweaks %}
+
+
+{% block page-subtitle %}{{ vol.display_label }} | Export {% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+   <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    {% include 'books/snippets/volume_header.html' %}
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {{ export_for.non_field_errors }}
+    <form class="volume-webexport form-horizontal" method="POST">{% csrf_token %}
+        {% for field in export_form %}
+        <div class="form-group{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.name }}">{{ field.label }}</label>
+            {{ field|add_class:"form-control" }}
+            <p class="help-block">{{ field.help_text}}</p>
+            <div class="text-warning">{{ field.errors }}</div>
+            {# TODO: display validation errors, required/optional ? #}
+        </div>
+        {% endfor %}
+
+        <div class="form-group">
+          <input type="hidden" name="completion-cookie" value="{{ vol.noid|add:'-web-export' }}"/>
+          <button type="submit" class="volume-export btn btn-default">Export</button>
+          <span id="export-generating" class="hidden text-info">Generating... <i class="fa fa-cog fa-lg fa-spin"></i></span>
+        </div>
+        </form>
+
+    </div>
+</article>
+{% endblock %}

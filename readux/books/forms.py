@@ -16,3 +16,20 @@ class BookSearch(forms.Form):
         has already been validated and cleaned_data is available.'''
         # get list of keywords and phrases
         return search_terms(self.cleaned_data['keyword'])
+
+
+class VolumeExport(forms.Form):
+    export_modes = ['static', 'jekyll']
+    export_mode_choices = [(val, val) for val in export_modes]
+
+    #: export mode - currently supports jekyll or static
+    mode = forms.ChoiceField(choices=export_mode_choices, required=True,
+        label="Export Mode")
+
+    #: which readux page should be 1 in the exported volume
+    page_one = forms.IntegerField(label="Start Page", min_value=1, required=False,
+        help_text='Select the page in the Readux that should be the first '+ \
+        ' numbered page in your digital edition. Preceding pages will ' + \
+        ' be numbered with a prefix, and can be customized after export.' + \
+        ' (Optional)')
+

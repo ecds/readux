@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pid>[^/]+)/tei/$', views.VolumeTei.as_view(), name='tei'),
     url(r'^(?P<pid>[^/]+)/annotated-tei/$', views.VolumeTei.as_view(),
         {'mode': 'annotated'}, name='annotated-tei'),
-    url(r'^(?P<pid>[^/]+)/export/(?P<mode>(static|jekyll))/$',
+    url(r'^(?P<pid>[^/]+)/export/$',
          views.AnnotatedVolumeExport.as_view(), name='webexport'),
 
     # page views

@@ -88,14 +88,10 @@ $(document).ready(function() {
         $(this).attr('src', error_images.cover_mini_thumb);
     });
 
-    // volume export indicator for long-running downloads
-    $(".volume-export").on('click', function(evt) {
+    function export_generating(cookie_id) {
         // show the "generating" spinner
         $('#export-generating').removeClass('hidden');
-        // link id is cookie id; cookie gets set when download completes
-        var cookie_id = this.id;
-
-        // check for the cookie and hide the spinner
+        // check for the cookie by requested id and hide the spinner
         var check_complete = window.setInterval(check_cookie, 500);
         function check_cookie() {
           if (Cookies.get(cookie_id) == 'complete') {
@@ -104,5 +100,13 @@ $(document).ready(function() {
               clearInterval(check_complete);
           }
         }
+    }
+
+    // volume export indicator for long-running downloads
+    $("a.volume-export").on('click', function(evt) {
+        export_generating(this.id);
+    });
+    $("form.volume-webexport").on('submit', function(evt) {
+        export_generating($(this).find("input[name='completion-cookie']").attr('value'));
     });
 });

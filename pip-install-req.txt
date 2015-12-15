@@ -1,4 +1,4 @@
-Django>=1.8
+Django>=1.8,<1.9
 eulxml>=0.22
 eulfedora>=1.3
 # dev eulcm content model objects (until initial eulcm release)
@@ -33,3 +33,4 @@ pytz
 fuzzywuzzy
 # restrict to pre-2.0 alpha of feincms for now
 feincms<2.0a
+mistune

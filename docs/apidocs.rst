@@ -40,6 +40,22 @@ DigWF
 .. automodule:: readux.books.digwf
     :members:
 
+TEI
+^^^
+.. automodule:: readux.books.tei
+    :members:
+
+annotate
+^^^^^^^^
+.. automodule:: readux.books.annotate
+    :members:
+
+markdown_tei
+^^^^^^^^^^^^
+.. automodule:: readux.books.markdown_tei
+    :members:
+
+
 Manage Commands
 ^^^^^^^^^^^^^^^
 
@@ -64,20 +80,6 @@ built-in django verbosity options.
     .. autoclass:: readux.books.management.commands.update_arks.Command
        :members:
 
-DynDZI
-------
-.. automodule:: readux.dyndzi
-    :members:
-
-Models
-^^^^^^
-.. automodule:: readux.dyndzi.models
-    :members:
-
-Views
-^^^^^^
-.. automodule:: readux.dyndzi.views
-    :members:
 
 Fedora
 ^^^^^^

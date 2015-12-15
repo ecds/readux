@@ -1,4 +1,5 @@
-from UserDict import UserDict
+from datetime import datetime
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.db.models import permalink, Count
@@ -6,9 +7,11 @@ from django.template.defaultfilters import truncatechars
 from lxml import etree
 import json
 import logging
-import requests
 import os
+import requests
+import time
 from urllib import urlencode, unquote
+from UserDict import UserDict
 
 from bs4 import BeautifulSoup
 import rdflib
@@ -21,8 +24,9 @@ from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
 
+from readux import __version__
 from readux.annotations.models import Annotation
-from readux.books import abbyyocr, iiif
+from readux.books import abbyyocr, iiif, tei
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
 from readux.utils import solr_interface, absolutize_url
@@ -216,63 +220,6 @@ class Image(DigitalObject):
             return int(self.image_metadata['height'])
 
 
-class TeiZone(teimap.Tei):
-    'XmlObject for a zone in a TEI facsimile document'
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS}
-    #: xml id
-    id = xmlmap.StringField('@xml:id')
-    #: type attribute
-    type = xmlmap.StringField('@type')
-    #: upper left x coord
-    ulx = xmlmap.IntegerField('@ulx')
-    #: upper left y coord
-    uly = xmlmap.IntegerField('@uly')
-    #: lower right x coord
-    lrx = xmlmap.IntegerField('@lrx')
-    #: lower right y coord
-    lry = xmlmap.IntegerField('@lry')
-    #: text content
-    text = xmlmap.StringField('tei:line|tei:w')
-    #: list of word zones contained in this zone (e.g., within a textLine zone)
-    word_zones = xmlmap.NodeListField('.//tei:zone[@type="string"]', 'self')
-    #: nearest preceding sibling word zone (e.g., previous word in this line), if any)
-    preceding = xmlmap.NodeField('preceding-sibling::tei:zone[1]', 'self')
-    #: nearest ancestor zone
-    parent = xmlmap.NodeField('ancestor::tei:zone[1]', 'self')
-    #: containing page
-    page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
-    # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
-
-    @property
-    def width(self):
-        return self.lrx - self.ulx
-
-    @property
-    def height(self):
-        return self.lry - self.uly
-
-    @property
-    def avg_height(self):
-        'Average height of word zones in the current zone (i.e. in a text line)'
-        if self.word_zones:
-            word_heights = [w.height for w in self.word_zones]
-            return sum(word_heights) / float(len(word_heights))
-
-class TeiFacsimile(teimap.Tei):
-    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
-    ROOT_NS = teimap.TEI_NAMESPACE
-    ROOT_NAMESPACES = {'tei' : ROOT_NS}
-    XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
-                                           'books', 'schema', 'TEIPageView.xsd')
-
-    xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
-    # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
-    # referenced files in the same directory
-    page = xmlmap.NodeField('tei:facsimile/tei:surface[@type="page"]', TeiZone)
-    # NOTE: tei facsimile could include illustrations, but ignoring those for now
-    lines = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="textLine" or @type="line"]', TeiZone)
-    word_zones = xmlmap.NodeListField('tei:facsimile//tei:zone[@type="string"]', TeiZone)
 
 
 class Page(Image):
@@ -284,7 +231,7 @@ class Page(Image):
 
     #: xml datastream for a tei facsimile version of this page
     #: unversioned because generated from the mets or abbyy ocr
-    tei = XmlDatastream('tei', 'TEI Facsimile for page content', TeiFacsimile, defaults={
+    tei = XmlDatastream('tei', 'TEI Facsimile for page content', tei.Facsimile, defaults={
         'control_group': 'M',
         'versionable': False,
     })
@@ -380,7 +327,9 @@ class Page(Image):
 
         src_info += '%s, %s.' % (self.volume.display_label, self.volume.date)
         return {
-           'graphic_url': self.image_url,
+           # 'graphic_url': self.image_url,
+           'graphic_url': reverse('books:page-image',
+                kwargs={'vol_pid': self.volume.pid, 'pid': self.pid, 'mode': 'fs'}),
            'title': self.display_label,
            'distributor': settings.TEI_DISTRIBUTOR,
            'source_bibl': src_info,
@@ -442,7 +391,7 @@ class PageV1_0(Page):
             result =  ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
-            return xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
+            return xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
 
         except etree.XMLSyntaxError:
             logger.warn('OCR xml for %s is invalid', self.pid)
@@ -488,22 +437,22 @@ class PageV1_1(Page):
     def generate_tei(self):
         '''Generate TEI facsimile for the current page'''
         try:
-            result =  self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
+            result = self.ocr.content.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
-            tei = xmlmap.load_xmlobject_from_string(result, TeiFacsimile)
-            return tei
+            teidoc = xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
+            return teidoc
 
         except etree.XMLSyntaxError:
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self):
         # check to make sure generated TEI is valid
-        tei = self.generate_tei()
-        if not tei.schema_valid():
+        pagetei = self.generate_tei()
+        if not pageteidoc.schema_valid():
             raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
-        self.tei.content = tei
+        self.tei.content = pagetei
 
     @property
     def ocr_has_ids(self):
@@ -721,6 +670,27 @@ class Volume(DigitalObject, BaseVolume):
             # convert eulxml list to normal list so it can be serialized via json
             return list(dates)
 
+    @property
+    def digital_ed_date(self):
+        'Date of the digital edition'
+        # some books (at least) include the digitization date (date of the
+        # electronic ediction). If there are multiple dates, return the newest
+        # it is after 2000
+
+        # if dates are present in current volume dc, use those
+        if self.dc.content.date_list:
+            dates = self.dc.content.date_list
+        # otherwise, use dates from book dc
+        else:
+            dates = self.book.dc.content.date_list
+
+        if dates:
+            sorted_dates = sorted([d.strip('[]') for d in dates])
+            sorted_dates = [d for d in sorted_dates if d > '2000']
+            if sorted_dates:
+                return sorted_dates[-1]
+
+
     def index_data(self):
         '''Extend the default
         :meth:`eulfedora.models.DigitalObject.index_data`
@@ -937,6 +907,118 @@ class Volume(DigitalObject, BaseVolume):
         # queryset returns a list of dict; convert to a dict for easy lookup
         return dict([(n['volume_uri'], n['count']) for n in notes])
 
+    def generate_volume_tei(self):
+        '''Generate TEI for a volume by combining the TEI for
+        all pages.'''
+        if not self.has_tei:
+            return
+
+        # store volume TEI in django cache, because generating TEI
+        # for a large volume is expensive (fedora api calls for each page)
+        cache_key = '%s-tei' % self.pid
+        vol_tei_xml = cache.get(cache_key, None)
+        if vol_tei_xml:
+            logger.debug('Loading volume TEI for %s from cache' % self.pid)
+            vol_tei = xmlmap.load_xmlobject_from_string(vol_tei_xml,
+                tei.Facsimile)
+
+        # if tei was not in the cache, generate it
+        if vol_tei_xml is None:
+            start = time.time()
+            vol_tei = tei.Facsimile()
+            # populate header information
+            vol_tei.create_header()
+            vol_tei.header.title = self.title
+            # publication statement
+            vol_tei.distributor = settings.TEI_DISTRIBUTOR
+            vol_tei.pubstmt.distributor_readux = 'Readux'
+            vol_tei.pubstmt.desc = 'TEI facsimile generated by Readux version %s' % __version__
+            # source description - original publication
+            vol_tei.create_original_source()
+            vol_tei.original_source.title = self.title
+            # original publication date
+            if self.date:
+                vol_tei.original_source.date = self.date[0]
+            # if authors are set, it should be a list
+            if self.creator:
+                vol_tei.original_source.authors = self.creator
+            # source description - digital edition
+            vol_tei.create_digital_source()
+            vol_tei.digital_source.title = '%s, digital edition' % self.title
+            vol_tei.digital_source.date = self.digital_ed_date
+            # FIXME: ideally, these would be ARKs, but ARKs for readux volume
+            # content do not yet resolve to Readux urls
+            vol_tei.digital_source.url = absolutize_url(self.get_absolute_url())
+            vol_tei.digital_source.pdf_url = absolutize_url(self.pdf_url())
+
+            # loop through pages and add tei content
+            # for page in self.pages[:10]:   # FIXME: temporary, for testing/speed
+            page_order = 1
+            for page in self.pages:
+                if page.tei.exists and page.tei.content.page:
+                    # include facsimile page *only* from the tei for each page
+                    # tei facsimile already includes a graphic url
+                    teipage = page.tei.content.page
+
+                    # add a reference from tei page to readux page
+                    # pages should have ARKS; fall back to readux url if
+                    # ark is not present (only expected to happen in dev)
+                    teipage.href = page.ark_uri or absolutize_url(page.get_absolute_url())
+                    # NOTE: generating ark_uri currently requires loading
+                    # DC from fedora; could we generate reliably based on the pid?
+
+                    # teipage.n = page.page_order
+                    teipage.n = page_order
+                    # NOTE: normally we would use page.page_order, but that
+                    # requires an additional api call for each page
+                    # to load the rels-ext, so use a local counter instead
+
+                    # ensure graphic elements are present for image variants
+                    # full size, page size, thumbnail, and deep zoom variants
+                    # NOTE: graphic elements need to come immediately after
+                    # surface and before zone; adding them before removing
+                    # existing graphic element should place them correctly.
+
+                    # mapping of types we want in the tei and
+                    # corresponding mode to pass to the url
+                    image_types = {
+                        'full': 'fs',
+                        'page': 'single-page',
+                        'thumbnail': 'thumbnail',
+                        'small-thumbnail': 'mini-thumbnail',
+                        'json': 'info',
+                    }
+                    for image_type, mode in image_types.iteritems():
+                        teipage.graphics.append(tei.Graphic(rend=image_type,
+                            url=absolutize_url(reverse('books:page-image',
+                                kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
+                        )
+
+                    # page tei should have an existing graphic reference
+                    # remove it from our output
+                    if teipage.graphics[0].rend is None:
+                        del teipage.graphics[0]
+
+                    vol_tei.page_list.append(teipage)
+
+                    page_order += 1
+
+            logger.info('Volume TEI for %s with %d pages generated in %.02fs' %  \
+                (self.pid, len(self.pages), time.time() - start))
+
+        # update current date for either version (new or cached)
+        # store current date (tei generation) in publication statement
+        export_date = datetime.now()
+        vol_tei.pubstmt.date = export_date
+        vol_tei.pubstmt.date_normal = export_date
+
+        # save current volume tei in django cache
+        cache.set(cache_key, vol_tei.serialize(), 3000)
+
+
+        return vol_tei
+
+
 class VolumeV1_0(Volume):
     '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''
     #: volume content model
@@ -1002,8 +1084,7 @@ class VolumeV1_0(Volume):
                     abbyyocr.Document)
                 return True
             except etree.XMLSyntaxError as err:
-                print err
-                logger.warn('OCR xml for %s is invalid', self.pid)
+                logger.warn('OCR xml for %s is invalid: %s', self.pid, err)
                 return False
 
 

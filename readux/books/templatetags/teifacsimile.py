@@ -5,7 +5,7 @@ overlaid on top of a scaled page image.
 
 from django import template
 from django.utils.safestring import mark_safe
-from readux.books.models import TeiZone
+from readux.books import tei
 
 register = template.Library()
 
@@ -17,7 +17,7 @@ def percent(a, b):
 @register.filter
 def zone_style(zone, scale):
     ''''Generate an HTML style and data attributes for a
-    :class:`readux.books.models.TeiZone` element so that the text can be
+    :class:`readux.books.models.tei.Zone` element so that the text can be
     scaled and positioned for display on a resized page image.
     Takes a zone element (expected to have x/y coordinate attirbutes) and
     a scale, which is used for fallback sizing where percentages cannot
@@ -26,7 +26,7 @@ def zone_style(zone, scale):
 
     styles = {}
     data = {}
-    if isinstance(zone, TeiZone):
+    if isinstance(zone, tei.Zone):
 
         if zone.type in ['textLine', 'line']:
             # text lines are absolutely positioned boxes

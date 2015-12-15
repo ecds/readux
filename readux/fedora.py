@@ -93,7 +93,6 @@ class DigitalObject(models.DigitalObject):
     @property
     def ark_uri(self):
         for dcid in self.dc.content.identifier_list:
-            print dcid
             if 'ark:/' in dcid:
                 return dcid
 

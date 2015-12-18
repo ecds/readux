@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.3.7
+-------------
+
+* As a site administrator I want to include video content in site pages
+  so that I can share dynamic content like screencasts.
+
 Release 1.3.6
 -------------
 

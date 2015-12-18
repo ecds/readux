@@ -190,6 +190,8 @@ header#page-bg .container{
     border: 1px solid #CFCFCF;
     border-bottom-width: 2px;
     transition:border-color 0.2s ease;
+    padding-right: 0;
+    margin-right: 10px;
 }
 
 #volume-list .media a.pull-left:hover,

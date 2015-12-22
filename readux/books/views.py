@@ -570,8 +570,13 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         # generate annotated tei
         tei = annotate.annotated_tei(vol.generate_volume_tei(),
             vol.annotations(user=request.user))
+
+        # check form data to see if github repo is requested
+
+        # def website_gitrepo(user, repo_name, vol, tei, page_one=None):
+
         try:
-            webzipfile = export.website(vol, tei, static=static_site,
+            webzipfile = export.website_zip(vol, tei, static=static_site,
                 page_one=cleaned_data['page_one'])
             response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                 content_type='application/zip')

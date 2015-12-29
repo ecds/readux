@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'mptt',
     'feincms.module.page',
     'feincms.module.medialibrary',
-    'braces',
     'readux.annotations',
     'readux.books',
     'readux.collection',

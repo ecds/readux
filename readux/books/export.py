@@ -181,6 +181,9 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
     # using the user's oauth token credentials
     git.push([repo_url, 'master:gh-pages'])
 
+    # clean up temporary files after push to github
+    shutil.rmtree(export_dir)
+
     # generate public repo url for display to user
     public_repo_url = 'https://github.com/%s/%s' % (github_username, repo_name)
     return (public_repo_url, github_pages_url)

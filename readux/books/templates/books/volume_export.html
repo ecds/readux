@@ -18,16 +18,41 @@
     <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
 
+    {% if github_export %}
+      <div class="alert alert-success">GitHub jekyll site export succeeded.</div>
+
+      <p>Your website export has been generated and saved to a new
+      GitHub repository at <a href="{{ repo_url }}">{{ repo_url }}</a>.
+      Your annotated web edition should now be accessible via GitHub Pages
+      at <a href="{{ ghpages_url }}">{{ ghpages_url }}</a>.</p>
+
+      <p>For more information on using and customizing your site,
+      see the
+      <a href="https://help.github.com/categories/github-pages-basics/">Github
+      Pages help documentation</a>.</p>
+
+    {% else %}
+
     {{ export_for.non_field_errors }}
     <form class="volume-webexport form-horizontal" method="POST">{% csrf_token %}
         {% for field in export_form %}
+          {% if field.name = 'github' %}
+          <div class="form-group{% if field.errors %} has-error{% endif %}">
+            <div class="checkbox">
+              <label>{{ field }} {{ field.label }}</label>
+            </div>
+            <div class="help-block">{{ field.help_text}}</div>
+            <div class="text-warning">{{ field.errors }}</div>
+          </div>
+          {% else %}
         <div class="form-group{% if field.errors %} has-error{% endif %}">
             <label for="{{ field.name }}">{{ field.label }}</label>
             {{ field|add_class:"form-control" }}
-            <p class="help-block">{{ field.help_text}}</p>
+            <div class="help-block">{{ field.help_text}}</div>
             <div class="text-warning">{{ field.errors }}</div>
             {# TODO: display validation errors, required/optional ? #}
         </div>
+        {% endif %}
         {% endfor %}
 
         <div class="form-group">
@@ -36,6 +61,8 @@
           <span id="export-generating" class="hidden text-info">Generating... <i class="fa fa-cog fa-lg fa-spin"></i></span>
         </div>
         </form>
+
+    {% endif %}
 
     </div>
 </article>

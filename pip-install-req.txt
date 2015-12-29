@@ -35,3 +35,4 @@ fuzzywuzzy
 feincms<2.0a
 mistune
 gitpython
+pyyaml

@@ -7,6 +7,7 @@ from django.http import Http404, HttpResponse, HttpResponseNotFound, \
     HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
 from django.views.decorators.vary import vary_on_cookie
@@ -16,6 +17,7 @@ from django.views.generic.base import RedirectView
 import json
 from urllib import urlencode
 import os
+import re
 import requests
 import logging
 
@@ -551,18 +553,38 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         # TODO: is it also an error if volume doesn't have any annotations?
         return vol
 
+    def get_initial(self):
+        # initial data for the form
+        # construct a preliminary semi-reasonable github repo name
+        # based on the volume title
+        repo_name = slugify(self.object.title)
+        # remove first-word articles
+        repo_name = re.sub('^(a|the|de)-', '', repo_name)
+        pieces = repo_name.split('-')
+        # truncate down to first 5 words
+        if len(pieces) > 5:
+            repo_name = '-'.join(pieces[:5])
+        return {'github_repo': repo_name}
+
     def get_context_data(self, **kwargs):
         context_data = super(AnnotatedVolumeExport, self).get_context_data()
         context_data['export_form'] = self.get_form()
         return context_data
 
-    def post(self, request, *arrgs, **kwargs):
+    def render(self, request, context_data=None):
+        if context_data is None:
+            context_data = self.get_context_data()
+        return render(request, self.template_name, context_data)
+
+    def post(self, request, *args, **kwargs):
         vol = self.object = self.get_object()  #
         # get posted form data and use that to generate the export
         export_form = self.get_form()
         if export_form.is_valid():
             cleaned_data = export_form.cleaned_data
             mode = cleaned_data['mode']
+        else:
+            return self.render(request)
 
         # set a boolean flag for static site output
         static_site = mode == 'static'
@@ -572,31 +594,46 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
             vol.annotations(user=request.user))
 
         # check form data to see if github repo is requested
+        if cleaned_data['github']:
+            try:
+                repo_url, ghpages_url = export.website_gitrepo(request.user,
+                    cleaned_data['github_repo'], vol, tei,
+                    page_one=cleaned_data['page_one'])
 
-        # def website_gitrepo(user, repo_name, vol, tei, page_one=None):
+                context_data = self.get_context_data()
+                context_data.update({'repo_url': repo_url,
+                    'ghpages_url': ghpages_url, 'github_export': True})
+                # NOTE: could use a separate template here...
+                return self.render(request, context_data=context_data)
+            except export.GithubExportException as err:
+                context_data = self.get_context_data()
+                context_data['error'] = 'Export failed: %s' % err
+                response = self.render(request, context_data=context_data)
+                response.status_code = 400  # maybe?
+                return response
+        else:
+            # non github export: download zipfile
+            try:
+                webzipfile = export.website_zip(vol, tei, static=static_site,
+                    page_one=cleaned_data['page_one'])
+                response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
+                    content_type='application/zip')
+                response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
+                    (vol.noid, mode)
+                response['Content-Length'] = os.path.getsize(webzipfile.name)
+            except export.ExportException as err:
+                # display error to user and redisplay the form
+                context_data = self.get_context_data()
+                context_data['error'] = 'Export failed. %s' % err
+                response = self.render(request, context_data=context_data)
+                response.status_code = 500
 
-        try:
-            webzipfile = export.website_zip(vol, tei, static=static_site,
-                page_one=cleaned_data['page_one'])
-            response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
-                content_type='application/zip')
-            response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
-                (vol.noid, mode)
-            response['Content-Length'] = os.path.getsize(webzipfile.name)
-        except export.ExportException as err:
-            # display error to user and redisplay the form
-            context_data = self.get_context_data()
-            context_data['error'] = 'Export failed. %s' % err
-            response = render(request, self.template_name, context_data)
-            # response = HttpResponse(content='Export failed. %s' % err)
-            response.status_code = 500
-
-        # set a cookie to indicate download is complete, that can be
-        # used by javascript to hide a 'generating' indicator
-        completion_cookie_name = request.POST.get('completion-cookie',
-            '%s-web-export' % vol.noid)
-        response.set_cookie(completion_cookie_name, 'complete', max_age=10)
-        return response
+            # set a cookie to indicate download is complete, that can be
+            # used by javascript to hide a 'generating' indicator
+            completion_cookie_name = request.POST.get('completion-cookie',
+                '%s-web-export' % vol.noid)
+            response.set_cookie(completion_cookie_name, 'complete', max_age=10)
+            return response
 
 
 class Unapi(View):

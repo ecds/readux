@@ -8,6 +8,9 @@ from readux import __version__
 
 
 class GithubApi(object):
+    # partial GitHub API access
+    # does NOT implement the full API, only those portions we need
+    # for readux export functionality
 
     url = 'https://api.github.com'
 
@@ -38,12 +41,23 @@ class GithubApi(object):
         '''
         return cls(cls.github_token(user))
 
-    def create_repo(self, name, description=None):
+    def create_repo(self, name, description=None, homepage=None):
+        'Create a new user repository with the specified name.'
         repo_data = {'name': name}
         if description:
             repo_data['description'] = description
+        if homepage:
+            repo_data['homepage'] = homepage
         # other options we might care about: homepage url, private/public,
         # has_issues, has_wiki, has_downloads, license_template
         response = self.session.post('%s/user/repos' % self.url,
             data=json.dumps(repo_data))
         return response.status_code == requests.codes.created
+
+    def list_repos(self, user):
+        # could get current user repos at: /user/repos
+        # but that includes org repos user has access to
+        # could specify type, but default of owner is probably fine for now
+        response = self.session.get('%s/users/%s/repos' % (self.url, user))
+        if response.status_code == requests.codes.ok:
+            return response.json()

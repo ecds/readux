@@ -33,3 +33,15 @@ class VolumeExport(forms.Form):
         ' be numbered with a prefix, and can be customized after export.' + \
         ' (Optional)')
 
+    # NOTE: github export only makes sense with non-static mode, but
+    # static export will hopefully be going away, so not implementing
+    # additional form validation at this point.
+
+    github = forms.BooleanField(label='Publish on GitHub',
+        help_text='Create a new GitHub repository with the ' + \
+        'generated Jekyll site content and publish it using Github Pages.',
+        required=False)
+    github_repo = forms.SlugField(label='GitHub repository name',
+        help_text='Name of the repository to be created, which will also determine' + \
+        ' the GitHub pages URL.')
+

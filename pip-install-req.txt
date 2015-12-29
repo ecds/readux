@@ -36,3 +36,4 @@ feincms<2.0a
 mistune
 gitpython
 pyyaml
+django-braces

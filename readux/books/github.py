@@ -6,6 +6,12 @@ import requests
 from readux import __version__
 
 
+class GithubApiException(Exception):
+    pass
+
+class GithubAccountNotFound(GithubApiException):
+    pass
+
 
 class GithubApi(object):
     # partial GitHub API access
@@ -15,6 +21,8 @@ class GithubApi(object):
     url = 'https://api.github.com'
 
     def __init__(self, token):
+        # initialize a request session that will pass the oauth token
+        # as an authorization header
         self.session = requests.Session()
         self.session.headers.update({
             'Authorization': 'token %s' % token,
@@ -24,22 +32,32 @@ class GithubApi(object):
         })
 
     @staticmethod
+    def github_account(user):
+        account = user.social_auth.filter(provider='github').first()
+        if account is None:
+            raise GithubAccountNotFound
+        return account
+
+    @staticmethod
     def github_token(user):
         # TODO: handle no github account, check for appropriate scope
-        github_account = user.social_auth.filter(provider='github').first()
-        return github_account.tokens
+        return GithubApi.github_account(user).tokens
 
     @staticmethod
     def github_username(user):
-        # TODO: handle no github account
-        github_account = user.social_auth.filter(provider='github').first()
-        return github_account.extra_data['login']
+        return GithubApi.github_account(user).extra_data['login']
 
     @classmethod
     def connect_as_user(cls, user):
         '''Initialize a new GithubApi connection for the specified user.
         '''
         return cls(cls.github_token(user))
+
+    def oauth_scopes(self):
+        'Get a list of scopes availabl for the current oauth token'
+        response = self.session.head('%s/user' % self.url)
+        if response.status_code == requests.codes.ok:
+            return response.headers['x-oauth-scopes'].split(',')
 
     def create_repo(self, name, description=None, homepage=None):
         'Create a new user repository with the specified name.'

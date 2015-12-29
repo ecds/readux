@@ -21,13 +21,15 @@ import re
 import requests
 import logging
 
+from braces.views import LoginRequiredMixin
+
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream, RawDatastreamView
 
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
 from readux.books.forms import BookSearch, VolumeExport
-from readux.books import view_helpers, annotate, export
+from readux.books import view_helpers, annotate, export, github
 from readux.utils import solr_interface, absolutize_url
 from readux.views import VaryOnCookieMixin
 
@@ -528,14 +530,21 @@ class VolumeTei(View):
         return response
 
 
-class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
-                            VaryOnCookieMixin):
+class AnnotatedVolumeExport(LoginRequiredMixin, DetailView, FormMixin,
+                            ProcessFormView, VaryOnCookieMixin):
     export_modes = ['static', 'jekyll']
 
     model = Volume
     template_name = 'books/volume_export.html'
     context_object_name = 'vol'
     form_class = VolumeExport
+
+    github_account_msg = 'Export to GitHub requires a GitHub account.' + \
+        ' Please authorize access to your GitHub account to use this feature.'
+
+    github_scope_msg = 'GitHub account has insufficient access. ' + \
+        'Please re-authorize your GitHub account to enable ' + \
+        ' the permissions needed for export.'
 
     @method_decorator(last_modified(view_helpers.volume_modified))
     def dispatch(self, *args, **kwargs):
@@ -569,11 +578,18 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
     def get_context_data(self, **kwargs):
         context_data = super(AnnotatedVolumeExport, self).get_context_data()
         context_data['export_form'] = self.get_form()
+
+        # check that user has a github account linked
+        try:
+            github.GithubApi.github_account(self.request.user)
+        except github.GithubAccountNotFound:
+            context_data['error'] = self.github_account_msg
+
         return context_data
 
-    def render(self, request, context_data=None):
-        if context_data is None:
-            context_data = self.get_context_data()
+    def render(self, request, **kwargs):
+        context_data = self.get_context_data()
+        context_data.update(kwargs)
         return render(request, self.template_name, context_data)
 
     def post(self, request, *args, **kwargs):
@@ -583,6 +599,21 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         if export_form.is_valid():
             cleaned_data = export_form.cleaned_data
             mode = cleaned_data['mode']
+
+            # if github export is requested, make sure user has a
+            # github account available to use for access
+            if cleaned_data['github']:
+                try:
+                    github.GithubApi.github_account(self.request.user)
+                except github.GithubAccountNotFound:
+                    return self.render(request, error=self.github_account_msg)
+
+                # check that oauth token has sufficient permission
+                # to do needed export steps
+                gh = github.GithubApi.connect_as_user(self.request.user)
+                # note: repo would also work here, but currently asking for public_repo
+                if 'public_repo' not in gh.oauth_scopes():
+                    return self.render(request, error=self.github_scope_msg)
         else:
             return self.render(request)
 
@@ -600,15 +631,11 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                     cleaned_data['github_repo'], vol, tei,
                     page_one=cleaned_data['page_one'])
 
-                context_data = self.get_context_data()
-                context_data.update({'repo_url': repo_url,
-                    'ghpages_url': ghpages_url, 'github_export': True})
-                # NOTE: could use a separate template here...
-                return self.render(request, context_data=context_data)
+                # NOTE: maybe use a separate template here?
+                return self.render(request, repo_url=repo_url,
+                    ghpages_url=ghpages_url, github_export=True)
             except export.GithubExportException as err:
-                context_data = self.get_context_data()
-                context_data['error'] = 'Export failed: %s' % err
-                response = self.render(request, context_data=context_data)
+                response = self.render(request, error='Export failed: %s' % err)
                 response.status_code = 400  # maybe?
                 return response
         else:
@@ -623,9 +650,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                 response['Content-Length'] = os.path.getsize(webzipfile.name)
             except export.ExportException as err:
                 # display error to user and redisplay the form
-                context_data = self.get_context_data()
-                context_data['error'] = 'Export failed. %s' % err
-                response = self.render(request, context_data=context_data)
+                response = self.render(request, error='Export failed. %s' % err)
                 response.status_code = 500
 
             # set a cookie to indicate download is complete, that can be

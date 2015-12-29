@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'mptt',
     'feincms.module.page',
     'feincms.module.medialibrary',
+    'braces',
     'readux.annotations',
     'readux.books',
     'readux.collection',
@@ -148,6 +149,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
+
+# additioal github permisions, for annotated volume export to github
+SOCIAL_AUTH_GITHUB_SCOPE = ['public_repo']
 
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')

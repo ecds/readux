@@ -15,7 +15,9 @@
     {% include 'books/snippets/volume_header.html' %}
 
     {% if error %}
-    <div class="alert alert-danger">{{ error }}</div>
+    <div class="alert alert-danger">
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+      {{ error }}</div>
     {% endif %}
 
     {% if github_export %}

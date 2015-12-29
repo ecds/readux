@@ -14,14 +14,13 @@ from django.views.decorators.vary import vary_on_cookie
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import FormMixin, ProcessFormView
 from django.views.generic.base import RedirectView
+from eulcommon.djangoextras.auth import login_required_with_ajax
 import json
 from urllib import urlencode
 import os
 import re
 import requests
 import logging
-
-from braces.views import LoginRequiredMixin
 
 from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
 from eulfedora.views import raw_datastream, RawDatastreamView
@@ -530,8 +529,8 @@ class VolumeTei(View):
         return response
 
 
-class AnnotatedVolumeExport(LoginRequiredMixin, DetailView, FormMixin,
-                            ProcessFormView, VaryOnCookieMixin):
+class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
+                            VaryOnCookieMixin):
     export_modes = ['static', 'jekyll']
 
     model = Volume
@@ -546,9 +545,14 @@ class AnnotatedVolumeExport(LoginRequiredMixin, DetailView, FormMixin,
         'Please re-authorize your GitHub account to enable ' + \
         ' the permissions needed for export.'
 
+    @method_decorator(login_required_with_ajax())
     @method_decorator(last_modified(view_helpers.volume_modified))
     def dispatch(self, *args, **kwargs):
         return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
+
+    # FIXME: login required behavior isn't quite right here, because
+    # it redirects to a login page - but we don't have one, since readux
+    # uses social auth, accessible from any page.
 
 
     def get_object(self, queryset=None):

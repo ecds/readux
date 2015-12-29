@@ -109,4 +109,9 @@ $(document).ready(function() {
     $("form.volume-webexport").on('submit', function(evt) {
         export_generating($(this).find("input[name='completion-cookie']").attr('value'));
     });
+
+    // turn on bootstrap tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
 });

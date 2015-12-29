@@ -9,6 +9,11 @@ if __version_info__[-1] is not None:
 
 # context processor to add version to the template environment
 def context_extras(request):
+    socialauth_providers = []
+    # generate a list of social auth providers associated with this account,
+    # for use in displaying available backends
+    if not request.user.is_anonymous():
+        socialauth_providers = [auth.provider for auth in request.user.social_auth.all()]
     return {
         # software version
         'SW_VERSION': __version__,
@@ -20,5 +25,6 @@ def context_extras(request):
             'github': 'GitHub',
             'google-oauth2': 'Google',
         },
+        'user_socialauth_providers': socialauth_providers
     }
 

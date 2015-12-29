@@ -27,7 +27,7 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="socialLoginMenu">
-        {% if user %}Link another account{% else %}Sign In{% endif %}</h4>
+        {% if user and not user.is_anonymous %}Link another account{% else %}Sign In{% endif %}</h4>
       </div>
       <div class="modal-body">
         <ul class="login-list list-group">

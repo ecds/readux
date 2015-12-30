@@ -111,6 +111,9 @@ Release 1.4
       source /opt/rh/python27/enable
       export PATH=$PATH:/opt/rh/rh-ruby22/root/usr/local/bin
 
+* The GitHub export uses new **GIT_AUTHOR_EMAIL** and **GIT_AUTHOR_NAME**
+  configurations; defaults are included in ``settings.py``, but can
+  be overriden in ``localsettings.py``.
 
 Release 1.3
 -----------

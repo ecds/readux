@@ -170,6 +170,9 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = {
     'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js'
 }
 
+GIT_AUTHOR_EMAIL = 'readux.emory@gmail.com'
+GIT_AUTHOR_NAME = 'readux'
+
 
 try:
     from localsettings import *

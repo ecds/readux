@@ -155,6 +155,10 @@ IIIF_API_ENDPOINT = 'http://loris.server/'
 IIIF_ID_PREFIX = 'prefix:'
 
 
+# override default git author name if desired
+# GIT_AUTHOR_NAME = 'readux'
+
+
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/
 LOGGING = {

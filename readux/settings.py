@@ -149,7 +149,7 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_REDIRECT_URL = '/'
 
-# additioal github permisions, for annotated volume export to github
+# additional github permissions, for annotated volume export to github
 SOCIAL_AUTH_GITHUB_SCOPE = ['public_repo']
 
 # path to local copy of solr schema

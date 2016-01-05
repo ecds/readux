@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'feincms.module.page',
     'feincms.module.medialibrary',
     'readux.annotations',
+    'readux.accounts',
     'readux.books',
     'readux.collection',
     'readux.pages',
@@ -52,7 +53,7 @@ MIDDLEWARE_CLASSES = (
     'eultheme.middleware.DownpageMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware'
+    'readux.accounts.middleware.LocalSocialAuthExceptionMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

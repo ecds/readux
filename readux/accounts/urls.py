@@ -1,7 +1,6 @@
 from django.conf.urls import url
-from django.views.generic import TemplateView
+from .views import AccountErrorView
 
 urlpatterns = [
-    url(r'^error/', TemplateView.as_view(template_name="accounts/error.html"),
-        name='error'),
+    url(r'^error/', AccountErrorView.as_view(), name='error'),
 ]

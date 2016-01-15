@@ -389,7 +389,7 @@ class PageDetail(DetailView, VaryOnCookieMixin):
             # determine scale for positioning OCR text in TEI facsimile
             # based on original image size in the OCR and image as displayed
             # - find maximum of width/height
-            long_edge  = max(self.object.tei.content.page.width,
+            long_edge = max(self.object.tei.content.page.width,
                 self.object.tei.content.page.height)
             # NOTE: using the size from image the OCR was run on, since that
             # may or may not match the size of the master image loaded in
@@ -444,6 +444,8 @@ class VolumeDatastreamView(RawDatastreamView):
     accept_range_request = False
     pid_url_kwarg = 'pid'
     repository_class = Repository
+    # use streaming http response, to handle large files better
+    streaming = True
 
 
 class VolumePdf(VolumeDatastreamView):

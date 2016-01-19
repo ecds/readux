@@ -164,15 +164,22 @@ class AnnotationSearch(View):
         # (For non-superusers, this is only notes they own)
         notes = Annotation.objects.visible_to(request.user)
 
-        uri = request.GET.get('uri', None)
-        if uri is not None:
-            notes = notes.filter(uri=uri)
-        text = request.GET.get('text', None)
-        if text is not None:
-            notes = notes.filter(text__icontains=text)
-        user = request.GET.get('user', None)
-        if user is not None:
-            notes = notes.filter(user__username=user)
+        search_keys = request.GET.keys()
+        for field in search_keys:
+            search_val = request.GET[field]
+            if field == 'text':
+                notes = notes.filter(text__icontains=search_val)
+            elif field == 'quote':
+                notes = notes.filter(text__icontains=search_val)
+            elif field == 'user':
+                notes = notes.filter(user__username=search_val)
+            elif field in Annotation.common_fields:
+                notes = notes.filter(**{field: search_val})
+
+        # for now, ignore date fields and extra data
+        # NOTE: date searching would be nice, but probably requires
+        # parsing dates and generating date ranges
+        # tag searching may be important eventually too
 
         # minimal pagination: limit/offset
         limit = request.GET.get('limit', None)

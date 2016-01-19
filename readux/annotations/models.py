@@ -205,11 +205,17 @@ class Annotation(models.Model):
             ('quote', self.quote),
             ('uri', self.uri),
             ('user', self.user.username if self.user else ''),
-            # tags TODO
+            # tags handled as part of extra data
         ])
         # There shouldn't be collisions between extra data and db
         # fields, but in case there are, none of the extra data shoudl
         # override core fields
         info.update({k: v for k, v in self.extra_data.iteritems()
                      if k not in info})
+
+        # volume uri would be extra data to anyone else, but since it
+        # is stored outside extra data, add it here
+        if self.volume_uri:
+            info['volume_uri'] = self.volume_uri
+
         return info

@@ -72,8 +72,10 @@ or (eventually, but not supported in readux 1.3)::
 
   http://readux.library.emory.edu/annotations/api/search?volume_uri=http://readux.library.emory.edu/books/pid:###/
 
-Save annotations as JSON and replace source urls with destination urls
-(e.g., readux.library to testreadux.library), and then import them
+Save annotations as JSON and replace the base source urls with
+destination site urls  (e.g., readux.library to testreadux.library, but
+note that this *must* match the url configured in your Django sites,
+so if you are using a proxy use that url).  Then import the annotations
 into your destination readux instance::
 
   python manage.py import_annotations my_annotations.json

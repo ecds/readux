@@ -29,7 +29,7 @@ def get_jekyll_site_dir(base_dir, noid):
     ensure consistency between :meth:`website` and :meth:`website_gitrepo`).'''
     return os.path.join(base_dir, '%s_annotated_jekyll_site' % noid)
 
-def website(vol, tei, static=True, page_one=None):
+def website(vol, tei, page_one=None):
     '''Generate a zipfile of a jekyll website for a volume with annotations.
     Creates a jekyll site, imports pages and annotations from the TEI,
     and then packages it as a zipfile.
@@ -37,13 +37,10 @@ def website(vol, tei, static=True, page_one=None):
     :param vol: readux volume object (1.0 or 1.1)
     :param tei: annotated TEI facsimile (e.g.,
         :class:`~readux.books.tei.AnnotatedFacsimile`)
-    :param static: if true, zip file contains the built jekyll site;
-        otherwise, returns the full jekyll site.
     :param page_one: page where numbering should start from 1 in the export
     :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
     '''
-    logger.debug('Generating %s website for %s',
-        'static' if static else 'jekyll', vol.pid)
+    logger.debug('Generating jekyll website for %s', vol.pid)
     tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export')
     logger.debug('Building export for %s in %s', vol.pid, tmpdir)
     teifile = tempfile.NamedTemporaryFile(suffix='.xml', prefix='tei-',
@@ -68,9 +65,6 @@ def website(vol, tei, static=True, page_one=None):
     if page_one is not None:
         import_command.extend(['--page-one', unicode(page_one)])
 
-    # when generating a site, configure jekyll site to generate relative links
-    if static:
-        import_command.append('--relative-links')
     try:
         subprocess.check_call(import_command, cwd=jekyll_site_dir)
     except subprocess.CalledProcessError:
@@ -81,29 +75,14 @@ def website(vol, tei, static=True, page_one=None):
     export_dir = os.path.join(tmpdir, 'export')
     os.mkdir(export_dir)
 
-    # if static website is requested, build the jekyll site and zip that up
-    if static:
-        # build the static jekyll site
-        # run jekyll build from the jekyll site dir, output to build dir
-        logger.debug('Building jekyll site')
-        # directory where the built jekyll site will be put
-        built_site_dir = get_jekyll_site_dir(export_dir, vol.noid)
-        try:
-            subprocess.check_call(['jekyll', 'build', '-q', '-d', built_site_dir],
-                cwd=jekyll_site_dir)
-        except subprocess.CalledProcessError:
-            raise ExportException('Error building jekyll site')
-
-    # otherwise, zip up the entire (unbuilt) jekyll site
-    else:
-        # rename the jekyll dir and move it into our export dir
-        shutil.move(jekyll_site_dir,
-            os.path.join(export_dir, '%s_annotated_jekyll_site' % vol.noid))
+    # rename the jekyll dir and move it into the export dir
+    shutil.move(jekyll_site_dir,
+        os.path.join(export_dir, '%s_annotated_jekyll_site' % vol.noid))
 
     return export_dir
 
-def website_zip(vol, tei, static=True, page_one=None):
-    export_dir = website(vol, tei, static=static, page_one=page_one)
+def website_zip(vol, tei, page_one=None):
+    export_dir = website(vol, tei, page_one=page_one)
 
     # create a tempfile to hold a zip file of the site
     # (using tempfile for automatic cleanup after use)
@@ -113,8 +92,8 @@ def website_zip(vol, tei, static=True, page_one=None):
          'zip',  # archive format; could also do tar
          export_dir
         )
-    logger.debug('%s web export zipfile for %s is %s',
-        'Static' if static else 'Jekyll site', vol.pid, webzipfile.name)
+    logger.debug('Jekyll site web export zipfile for %s is %s',
+        vol.pid, webzipfile.name)
 
     # clean up temporary files
     shutil.rmtree(export_dir)
@@ -126,22 +105,24 @@ class GithubExportException(Exception):
     pass
 
 def website_gitrepo(user, repo_name, vol, tei, page_one=None):
-    export_dir = website(vol, tei, static=False, page_one=page_one)
-    # jekyll dir is *inside* the export directory;
-    # for the jekyll site to display correctly, we need to commit what
-    # is in the directory, not the directory itself
-    jekyll_dir = get_jekyll_site_dir(export_dir, vol.noid)
-
-    # connect to github as the user and create the repository
+    # connect to github as the user in order to create the repository
     github = GithubApi.connect_as_user(user)
     github_username = GithubApi.github_username(user)
     github_pages_url = 'http://%s.github.io/%s/' % (github_username, repo_name)
 
-    # check if repo already exists; if so, bail out with an error
+    # before even starting to generate the jekyll site,
+    # check if requested repo name already exists; if so, bail out with an error
     current_repos = github.list_repos(github_username)
     current_repo_names = [repo['name'] for repo in current_repos]
     if repo_name in current_repo_names:
         raise GithubExportException('GitHub repo %s already exists.' % repo_name)
+
+    export_dir = website(vol, tei, page_one=page_one)
+
+    # jekyll dir is *inside* the export directory;
+    # for the jekyll site to display correctly, we need to commit what
+    # is in the directory, not the directory itself
+    jekyll_dir = get_jekyll_site_dir(export_dir, vol.noid)
 
     # modify the jekyll config for relative url on github.io
     config_file_path = os.path.join(jekyll_dir, '_config.yml')

@@ -13,8 +13,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('pid', nargs='+', type=str)
-        parser.add_argument('--static', action='store_true', default=False,
-            help='Generate built (static) site instead of jekyll site')
         parser.add_argument('--tei',
             help='Use the specified TEI file instead of generating it')
 
@@ -28,7 +26,7 @@ class Command(BaseCommand):
                 tei = annotate.annotated_tei(vol.generate_volume_tei(),
                     vol.annotations())
             try:
-                zipfile = export.website(vol, tei, static=options['static'])
+                zipfile = export.website(vol, tei)
             except export.ExportException as err:
                 raise CommandError(err)
 

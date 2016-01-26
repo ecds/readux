@@ -533,8 +533,6 @@ class VolumeTei(View):
 
 class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                             VaryOnCookieMixin):
-    export_modes = ['static', 'jekyll']
-
     model = Volume
     template_name = 'books/volume_export.html'
     context_object_name = 'vol'
@@ -604,7 +602,6 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         export_form = self.get_form()
         if export_form.is_valid():
             cleaned_data = export_form.cleaned_data
-            mode = cleaned_data['mode']
 
             # if github export is requested, make sure user has a
             # github account available to use for access
@@ -622,9 +619,6 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                     return self.render(request, error=self.github_scope_msg)
         else:
             return self.render(request)
-
-        # set a boolean flag for static site output
-        static_site = mode == 'static'
 
         # generate annotated tei
         tei = annotate.annotated_tei(vol.generate_volume_tei(),
@@ -647,12 +641,12 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         else:
             # non github export: download zipfile
             try:
-                webzipfile = export.website_zip(vol, tei, static=static_site,
+                webzipfile = export.website_zip(vol, tei,
                     page_one=cleaned_data['page_one'])
                 response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                     content_type='application/zip')
-                response['Content-Disposition'] = 'attachment; filename="%s_annotated_%s_site.zip"' % \
-                    (vol.noid, mode)
+                response['Content-Disposition'] = 'attachment; filename="%s_annotated_jeyll_site.zip"' % \
+                    (vol.noid)
                 response['Content-Length'] = os.path.getsize(webzipfile.name)
             except export.ExportException as err:
                 # display error to user and redisplay the form

@@ -775,6 +775,8 @@ class ProxyView(View):
             local_response.content = json.dumps(data)
             # upate content-length for change in data
             local_response['content-length'] = len(local_response.content)
+
+            local_response['Access-Control-Allow-Origin'] = ''
         else:
             # include response content if any
             local_response.content = remote_response.content

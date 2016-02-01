@@ -9,16 +9,15 @@ from zipfile import ZipFile
 from git.cmd import Git
 import yaml
 
+import digitaledition_jekylltheme
 from readux import __version__
 from readux.books.github import GithubApi
 
 
 logger = logging.getLogger(__name__)
 
-
 # zip file of base jekyll site with digital edition templates
-JEKYLL_THEME_ZIP = os.path.join(settings.BASE_DIR, 'readux', 'books',
-    'fixtures', 'digitaledition-jekylltheme.zip')
+JEKYLL_THEME_ZIP = digitaledition_jekylltheme.ZIPFILE_PATH
 
 
 class ExportException(Exception):
@@ -56,7 +55,8 @@ def website(vol, tei, page_one=None):
     with ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:
         jekyllzip.extractall(tmpdir)
     # run the script to import tei as jekyll site content
-    jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme-master')
+    jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
+    # jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme-master')
     # run the jekyll import script in the jekyll site dir
     logger.debug('Running jekyll import TEI facsimile script')
     import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]

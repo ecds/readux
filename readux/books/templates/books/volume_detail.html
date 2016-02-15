@@ -89,6 +89,10 @@
                 </ul>
                 {# some information in dc:type might be useful (but other info not...) #}
 
+                {% if vol.ark_uri %}
+                <p><strong>Permalink:</strong> <a href="{{ vol.ark_uri }}" rel="bookmark">{{ vol.ark_uri }}</a></p>
+                {% endif %}
+
                 {% include 'books/snippets/volume_links.html' with small_buttons=False %}
                 <div class="clearfix"></div>
                 {# link to any other volumes associated with the same book #}

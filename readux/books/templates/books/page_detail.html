@@ -113,6 +113,11 @@
             </div>
         </div>
 
+      {% if page.ark_uri %}
+        <p><strong>Permanent URL:</strong> <a href="{{ page.ark_uri }}" rel="bookmark">{{ page.ark_uri }}</a></p>
+      {% endif %}
+
+
         {% if prev %}
         <a class="left carousel-control" href="{% url 'books:page' page.volume.pid prev.pid %}" role="button" data-slide="prev" title="Prev: Page {{ prev.page_order }}" rel="prev">
             <span class="glyphicon glyphicon-chevron-left"></span>

@@ -24,16 +24,40 @@ class BookViewsTest(TestCase):
         'superuser': {'username': 'testsuper', 'password': 'superme'}
     }
 
+    # sample datastream profile xml
+    xml_profile = '''<datastreamProfile xmlns="http://www.fedora.info/definitions/1/0/management/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/1/0/management/ http://www.fedora.info/definitions/1/0/datastreamProfile.xsd" pid="synctest:1" dsID="DC">
+<dsLabel>Dublin Core Record for this object</dsLabel>
+<dsVersionID>DC1.0</dsVersionID>
+<dsCreateDate>2016-02-10T16:36:25.913Z</dsCreateDate>
+<dsState>A</dsState>
+<dsMIME>text/xml</dsMIME>
+<dsFormatURI>http://www.openarchives.org/OAI/2.0/oai_dc/</dsFormatURI>
+<dsControlGroup>X</dsControlGroup>
+<dsSize>379</dsSize>
+<dsVersionable>true</dsVersionable>
+<dsInfoType/>
+<dsLocation>synctest:1+DC+DC1.0</dsLocation>
+<dsLocationType/>
+<dsChecksumType>MD5</dsChecksumType>
+<dsChecksum>cc0db0ef0fcd559065a788a22442d3c7</dsChecksum>
+</datastreamProfile>'''
+
     @patch('readux.books.views.VolumePdf.repository_class')
-    @patch('eulfedora.views.raw_datastream')
-    def test_pdf(self, mockraw_ds, mockrepo):
+    @patch('eulfedora.views._raw_datastream')
+    def test_pdf(self, mockraw_ds, mockrepo_class):
         mockobj = Mock()
         mockobj.pid = 'vol:1'
         mockobj.label = 'ocm30452349_1908'
-        mockrepo.return_value.get_object.return_value = mockobj
+        mockrepo = mockrepo_class.return_value
+        mockrepo.get_object.return_value = mockobj
+        # get datastream called by etag/last-modified methods
+        mockrepo.api.getDatastream.return_value.content = self.xml_profile
+        mockrepo.api.getDatastream.return_value.url = 'http://fedora.co/objects/ds'
+
         # to support for last modified conditional
         mockobj.pdf.created = datetime.now()
-        mockobj.getDatastreamObject.return_value.created = mockobj.pdf.created
+        # mockrepo.api.getDatastreamDissemination.return_value =
+        # mockobj.getDatastreamObject.return_value.created = mockobj.pdf.created
 
         # class-based view handling requires an actual response
         mockraw_ds.return_value = HttpResponse()
@@ -54,8 +78,7 @@ class BookViewsTest(TestCase):
         # third arg should be datstream id
         self.assertEqual(Volume.pdf.id, args[2])
         # digital object class should be specified
-        self.assertEqual(Volume, kwargs['type'])
-        self.assertEqual(mockrepo.return_value, kwargs['repo'])
+        self.assertEqual(mockrepo, kwargs['repo'])
         self.assertEqual({'Content-Disposition': 'filename="%s.pdf"' % mockobj.label},
             kwargs['headers'])
 
@@ -202,14 +225,19 @@ class BookViewsTest(TestCase):
             mockvolclass.volume_annotation_count.assert_called_with(testuser)
 
     @patch('readux.books.views.VolumeText.repository_class') #TypeInferringRepository')
-    def test_text(self, mockrepo):
+    def test_text(self, mockrepo_class):
         mockobj = Mock()
         mockobj.pid = 'vol:1'
         mockobj.label = 'ocm30452349_1908'
         # has to return a datetime (and not a mock) for last-modified conditional
         mockobj.getDatastreamObject.return_value.created = datetime.now()
 
-        mockrepo.return_value.get_object.return_value = mockobj
+        mockrepo = mockrepo_class.return_value
+        mockrepo.get_object.return_value = mockobj
+        # get datastream called by etag/last-modified methods
+        mockrepo.api.getDatastream.return_value.content = self.xml_profile
+        mockrepo.api.getDatastream.return_value.url = 'http://fedora.co/objects/ds'
+
         mockobj.get_fulltext.return_value = 'sample text content'
         # to support for last modified conditional
         mockobj.ocr.created = datetime.now()
@@ -598,7 +626,7 @@ class BookViewsTest(TestCase):
         #     msg_prefix='page with tei should link to tei in header')
 
     @patch('readux.books.views.PageTei.repository_class')
-    def test_page_tei(self, mockrepo):
+    def test_page_tei(self, mockrepo_class):
         mockobj = Mock()
         mockobj.exists = True
         mockobj.pid = 'page:1'
@@ -607,7 +635,15 @@ class BookViewsTest(TestCase):
         mockds.exists = True
         mockds.created = datetime.now()
         mockds.info.size = 100
-        mockrepo.return_value.get_object.return_value = mockobj
+
+        mockrepo = mockrepo_class.return_value
+        mockrepo = mockrepo_class.return_value
+        mockrepo.get_object.return_value = mockobj
+        # get datastream called by etag/last-modified methods
+        mockrepo.api.getDatastream.return_value.content = self.xml_profile
+        mockrepo.api.getDatastream.return_value.url = 'http://fedora.co/objects/ds'
+        # required so raw_ds view can update with local headers
+        mockrepo.api.getDatastreamDissemination.return_value.headers = {}
 
         url = reverse('books:page-tei',
             kwargs={'vol_pid': mockobj.volume.pid, 'pid': mockobj.pid})
@@ -619,7 +655,8 @@ class BookViewsTest(TestCase):
             response['content-disposition'],
             'tei response should have a content-disposition header set')
 
-        mockobj.getDatastreamObject.assert_called_with(Page.tei.id, as_of_date=None)
+        mockrepo.api.getDatastreamDissemination.assert_called_with(mockobj.pid,
+            Page.tei.id, asOfDateTime=None, rqst_headers={}, stream=True)
 
 
     @patch('readux.books.views.TypeInferringRepository')

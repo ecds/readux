@@ -1,20 +1,26 @@
 {% load readux_utils %}
 <div class="navbar-right">
-<div class="social-login navbar-text">
+<div class="social-login navbar-text {% if user.is_anonymous %} anonymous {% endif %}">
   <div class="dropdown dropdown-menu-right">
   {% if user and not user.is_anonymous %}
   <span id="login-welcome" class="text">Welcome, {{ user.get_full_name|default:user.username }}</span>
   {% endif %}
-  {# Button to trigger modal login window #}
-  <button type="button" class="btn btn-primary btn-link" data-toggle="modal" data-target="#loginMenu">
+  {# Button to trigger modal login window or link accounts #}
+  <button id="login-menu" type="button" class="btn btn-primary btn-link" data-toggle="modal" data-target="#loginMenu">
     {% if user and not user.is_anonymous %} {# when already logged in, use this to link other accounts #}
     <i class="fa fa-link" title="Link another account" data-toggle="tooltip" data-placement="bottom"></i>{% else %}Login <i class="fa fa-sign-in"></i>{% endif %}
   </button>
+  {% if user and user.is_staff %}
+    <a class="btn btn-link admin-link" href="{% url 'admin:index' %}" title="admin">
+    <i class="fa fa-cog"></i></a>
+  {% endif %}
   {% if user and not user.is_anonymous %}
-  <a class="btn btn-link" href="{% url 'auth:logout' %}?next={{ request.path }}" title="Logout">
+  <a class="btn btn-link" href="{% url 'auth:logout' %}?next={{ request.path }}" title="Logout"
+    data-toggle="tooltip" data-placement="bottom">
     <span class="text">Logout </span><i class="fa fa-sign-out"></i></a>
   {% endif %}
   </div>
+
 </div>
 </div>
 </div>

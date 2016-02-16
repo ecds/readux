@@ -133,13 +133,6 @@ header#page-bg .breadcrumb>.active{
     color:#FFF;
 }
 
-@media(min-width:767px){
-    header#page-bg .breadcrumb{
-        text-align: left;
-        opacity:0.7;
-    }
-}
-
 header#page-bg p{
     width: 90%;
     margin: auto;
@@ -149,12 +142,19 @@ header#page-bg p{
     text-align:center;
 }
 
+
 @media(min-width:767px){
+    header#page-bg .breadcrumb{
+        text-align: left;
+        opacity:0.7;
+    }
+
     header#page-bg p{
         width: 70%;
         font-size: 1.25em;
     }
 }
+
 
 @media(min-width:993px){
     header#page-bg p{
@@ -1021,6 +1021,14 @@ header#page-bg .collection-image-info.collasped .info{
 .social-login {
     display: inline-block;
 }
+
+.social-login.navbar-text {
+    margin: 5px 0;
+    padding: 4px;
+}
+.social-login.anonymous #login-menu {
+    margin-top: 1px;
+}
 .social-login ul {
     margin: 0;
     padding: 0;
@@ -1130,20 +1138,39 @@ header#page-bg .collection-image-info.collasped .info{
   overflow: visible;
 }
 
-.social-login.navbar-text {
-    margin: 11px 0;
-    padding: 4px;
-}
-@media(max-width:1020px, min-width: 768px){
+@media(max-width:1120px) {
     .social-login .text {
         display: none;
     }
-}
-@media(max-width:1020px) {
     .social-login #login-welcome {
         display:none;
     }
+
 }
+
+@media (max-width:1000px) and (min-width: 768px) {
+    /* collapse search bar at medium widths to provide more space */
+    #nav-search input {
+        display: none;
+    }
+    #nav-search .input-group {
+        position: relative;
+    }
+    #nav-search .btn {
+        border-radius: 4px;
+    }
+    #nav-search:hover input {
+        display: inline;
+        position: absolute;
+        right: 39px;
+        width: 175px;
+    }
+    #nav-search:hover .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}
+
 
 .meltdown_bar{
   z-index: 100;

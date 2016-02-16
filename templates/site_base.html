@@ -57,20 +57,24 @@
   {% feincms_nav feincms_page level=1 as nav %}
   {% endif %}
   {% for page in nav %}
-       <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
+     <li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>
   {% endfor %}
 
 {% endblock %}
 
+{% block admin-navlink %} {# override eultheme default #}{% endblock %}
+
+
 {% block navbar-extra %}
 {% if search_form %}
 <div class="navbar-right">
-<form class="form-inline navbar-form" role="form" method="GET" action="{% url 'books:search' %}">
+<form id="nav-search" class="form-inline navbar-form" role="form" method="GET" action="{% url 'books:search' %}">
    <div class="form-group">
       <div class="input-group">
       <label class="sr-only" for="{{ search_form.keyword.name }}">{{ search_form.keyword.label }}</label>
-      {% render_field search_form.keyword class+="form-control" placeholder="Search all volumes" %}
+      {% render_field search_form.keyword class+="form-control" placeholder="Search all volumes" autocomplete="false" data-toggle="tooltip" data-original-title=search_form.keyword.help_text|striptags data-placement="bottom" %}
       {# TODO: help text #}
+
       <span class="input-group-btn">
         <button type="submit" class="btn">
             <span class="glyphicon glyphicon-search"></span>

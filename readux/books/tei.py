@@ -203,6 +203,8 @@ class Anchor(TeiBase):
     id = xmlmap.StringField('@xml:id')
     #: type
     type = xmlmap.StringField('@type')
+    #: next attribute
+    next = xmlmap.StringField('@next')
 
 
 class Interp(TeiBase, teimap.TeiInterp):

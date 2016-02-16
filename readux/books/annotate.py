@@ -192,7 +192,8 @@ def insert_note(teivol, teipage, annotation):
             end = end[0]
 
         start_anchor = tei.Anchor(type='text-annotation-highlight-start',
-            id='highlight-start-%s' % annotation.id)
+            id='highlight-start-%s' % annotation.id,
+            next='highlight-end-%s' % annotation.id)
         end_anchor = tei.Anchor(type='text-annotation-highlight-end',
             id='highlight-end-%s' % annotation.id)
 

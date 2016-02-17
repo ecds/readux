@@ -14,6 +14,14 @@
 
     {% include 'books/snippets/volume_header.html' %}
 
+    {% if user.is_anonymous %}
+      {# display a warning to users who are not logged in #}
+      <div class="alert alert-warning">Export functionality is only available
+      to logged in users.</div>
+
+      <p>To export an annotated edition of this volume or any other,
+      please log in.</p>
+    {% else %}
     {% if error %}
     <div class="alert alert-danger">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
@@ -66,6 +74,7 @@
 
     {% endif %}
 
+  {% endif %}  {# logged in user #}
+
     </div>
-</article>
 {% endblock %}

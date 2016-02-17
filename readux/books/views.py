@@ -545,15 +545,9 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         'Please re-authorize your GitHub account to enable ' + \
         ' the permissions needed for export.'
 
-    @method_decorator(login_required_with_ajax())
     @method_decorator(last_modified(view_helpers.volume_modified))
     def dispatch(self, *args, **kwargs):
         return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
-
-    # FIXME: login required behavior isn't quite right here, because
-    # it redirects to a login page - but we don't have one, since readux
-    # uses social auth, accessible from any page.
-
 
     def get_object(self, queryset=None):
         # kwargs are set based on configured url pattern
@@ -563,7 +557,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         # 404 if object doesn't exist, isn't a volume, or doesn't have tei
         if not vol.exists or not vol.is_a_volume or not vol.has_tei:
             raise Http404
-        # TODO: is it also an error if volume doesn't have any annotations?
+        # NOTE: not currently an error if volume doesn't have any
+        # annotations, but export is probably not meaningful
         return vol
 
     def get_initial(self):
@@ -581,13 +576,14 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
 
     def get_context_data(self, **kwargs):
         context_data = super(AnnotatedVolumeExport, self).get_context_data()
-        context_data['export_form'] = self.get_form()
+        if not self.request.user.is_anonymous():
+            context_data['export_form'] = self.get_form()
 
-        # check that user has a github account linked
-        try:
-            github.GithubApi.github_account(self.request.user)
-        except github.GithubAccountNotFound:
-            context_data['error'] = self.github_account_msg
+            # check that user has a github account linked
+            try:
+                github.GithubApi.github_account(self.request.user)
+            except github.GithubAccountNotFound:
+                context_data['error'] = self.github_account_msg
 
         return context_data
 
@@ -597,7 +593,14 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         return render(request, self.template_name, context_data)
 
     def post(self, request, *args, **kwargs):
-        vol = self.object = self.get_object()  #
+        vol = self.object = self.get_object()
+
+        # don't do anything if user is not logged in
+        if self.request.user.is_anonymous():
+            response = render(request, self.template_name, self.get_context_data())
+            response.status_code = 400  # bad request
+            return response
+
         # get posted form data and use that to generate the export
         export_form = self.get_form()
         if export_form.is_valid():

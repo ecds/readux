@@ -4,7 +4,8 @@ from django.utils import timezone
 import os
 
 from eulfedora.views import datastream_etag
-from eulfedora.server import Repository, RequestFailed
+from eulfedora.server import Repository
+from eulfedora.util import RequestFailed
 
 from readux.annotations.models import Annotation
 from readux.books.models import Volume, VolumeV1_0, Page, PageV1_0

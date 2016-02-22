@@ -22,7 +22,8 @@ import re
 import requests
 import logging
 
-from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
+from eulfedora.server import Repository, TypeInferringRepository
+from eulfedora.util import RequestFailed
 from eulfedora.views import raw_datastream, RawDatastreamView
 
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \

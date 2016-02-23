@@ -97,10 +97,10 @@ directory.  From the top level of your virtualenv directory, run::
 Release 1.4
 -----------
 
-* Basic export functionality requires the following:
-
-  - jekyll - http://jekyllrb.com/docs/installation/
-  - teifacsimile-to-jekyll gem - https://github.com/emory-libraries-ecds/teifacsimile-to-jekyll
+* Basic export functionality requires the teifacsimile-to-jekyll gem
+  version 0.5 be installed (available from
+  `0.5 release <https://github.com/emory-libraries-ecds/teifacsimile-to-jekyll/releases/tag/0.5.0>`_
+  on GitHub).
 
   The application expects the jekyll and jekyllimport_teifacsimile
   commands to be available in the configured environment path.  One way
@@ -113,7 +113,7 @@ Release 1.4
 
 * The GitHub export uses new **GIT_AUTHOR_EMAIL** and **GIT_AUTHOR_NAME**
   configurations; defaults are included in ``settings.py``, but can
-  be overriden in ``localsettings.py``.
+  be overridden in ``localsettings.py``.
 
 Release 1.3
 -----------

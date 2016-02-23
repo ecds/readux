@@ -3,6 +3,76 @@
 CHANGELOG
 =========
 
+Release 1.4 - Basic Export
+--------------------------
+
+This release adds the capability to export a single Readux volume with
+annotations to create a standalone annotated website edition, using
+Jekyll and with optional GitHub / GitHub Pages integration.
+
+
+Export functionality
+^^^^^^^^^^^^^^^^^^^^
+
+* As an annotated edition author I want to export an edition that has TEI
+  with text, image references, and annotations so that I can have a
+  durable format copy of my edition with my annotation content.
+* As an annotated edition author, I want to generate a web site package
+  with volume content and annotations so that I can publish my digital
+  edition.
+* As an annotated edition author I want to generate a website package that
+  can be modified so that I can customize my edition.
+* As an annotated edition author, I want a website package that allows me
+  to browse pages by thumbnail so that site visitor can easily select a
+  page of interest.
+* As an annotated edition author, I want my website edition to include
+  annotation counts for each page so that my site visitors know which
+  pages have annotations.
+* As an annotated edition author, I want my website edition to include
+  tags in the annotation display so that my site visitors can see my
+  categorization.
+* As an annotated edition author, I want my website edition to support
+  keyword searching so that my site visitors can find content of
+  interest.
+* As an annotated edition author, I want to be able to customize my
+  website edition’s page urls to match the number in the source text so
+  that my site visitors experience an intuitive navigation of the
+  edition.
+* As an annotated edition author, I want the option of creating a new
+  GitHub repository with my exported website edition, so that I can
+  version my data and publish it on GitHub Pages.
+* As an annotated edition author, I want my website edition to include
+  citation information so that my site visitors can reference it properly.
+* As an annotated edition author, I want to have a copy of the exported
+  TEI in the website bundle so that I can see the data used to generate
+  the web edition.
+* As an annotated edition author, I want my website edition to include
+  social media integration so that my site visitors can share content.
+* As an annotated edition author, I want my website edition to be viewable
+  on tablets so that my site visitors can view it on multiple devices.
+* As an annotated edition author I want my website edition to include
+  individual annotation pages so that users can more easily view and
+  cite long form and multimedia annotation content.
+
+Other updates
+^^^^^^^^^^^^^
+
+* As a site user, I want to link my social login accounts so that I can
+  access annotations from any of my accounts.
+* As an annotated edition author, I want to see an error message in the
+  event that I log out while trying to export my edition so that I know
+  I need to be logged in to complete the export.
+* As a site user I want to see a permanent url on the pages for volume
+  and single-page so that I can make stable references.
+* Update latest 3.x Bootstrap and django-eultheme 1.2.1
+
+
+Release 1.3.7
+-------------
+
+* As a site administrator I want to include video content in site pages
+  so that I can share dynamic content like screencasts.
+
 Release 1.3.6
 -------------
 

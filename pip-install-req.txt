@@ -1,11 +1,11 @@
 Django>=1.8,<1.9
 eulxml>=0.22
-eulfedora>=1.3
+eulfedora>=1.5
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
 # require at least downtime 1.0.4 for exempting exact urls
 django-downtime>=1.0.4
--e git://github.com/emory-libraries/django-eultheme.git@1.2.1#egg=eultheme
+-e git://github.com/emory-libraries/django-eultheme.git@develop#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as
@@ -33,3 +33,8 @@ pytz
 fuzzywuzzy
 # restrict to pre-2.0 alpha of feincms for now
 feincms<2.0a
+mistune
+gitpython
+pyyaml
+# jekyll theme for zipfile used in export functionality
+-e git+http://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@0.5#egg=digitaledition-jekylltheme

@@ -208,8 +208,16 @@ class Command(BaseCommand):
                         self.stdout.write('OCR text:\n%s\n\n' % ocr_text)
                         self.stdout.write('Fuzzy token set ration score: %f' % token_ratio)
 
-                    # stop processing this volume to avoid loading bad data
-                    break
+                    print 'index = ', index
+                    print 'page length = ', len(page_text)
+                    # special case for first pages, which may have very little
+                    # content and ocr discrepancies
+                    if index == 1 and len(page_text) < 300:
+                        self.stdout.write('Short first page mismatch, allowing')
+
+                    else:
+                        # stop processing this volume to avoid loading bad data
+                        break
 
             if page.tei.exists:
                 verb = 'updated'

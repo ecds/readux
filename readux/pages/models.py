@@ -9,6 +9,7 @@ from feincms.content.richtext.models import RichTextContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.video.models import VideoContent
 
+
 # Page.register_extensions('datepublisher', 'translations') # Example set of extensions
 # Page.register_extensions('changedate')  # in docs but not available
 
@@ -25,6 +26,7 @@ Page.create_content_type(RichTextContent)
 Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
     ('default', _('default')),
     ('lightbox', _('lightbox')),
+    ('responsive_embed_4by3.html', _('responsive_embed_4by3.html')),
     ))
 
 Page.create_content_type(VideoContent)

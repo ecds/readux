@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'feincms.module.page',
     'feincms.module.medialibrary',
     'readux.annotations',
+    'readux.accounts',
     'readux.books',
     'readux.collection',
     'readux.pages',
@@ -52,7 +53,7 @@ MIDDLEWARE_CLASSES = (
     'eultheme.middleware.DownpageMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware'
+    'readux.accounts.middleware.LocalSocialAuthExceptionMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -149,6 +150,9 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_REDIRECT_URL = '/'
 
+# additional github permissions, for annotated volume export to github
+SOCIAL_AUTH_GITHUB_SCOPE = ['public_repo']
+
 # path to local copy of solr schema
 SOLR_SCHEMA = os.path.join(BASE_DIR, 'deploy', 'solr', 'schema.xml')
 
@@ -166,6 +170,9 @@ DOWNTIME_EXEMPT_EXACT_URLS = (
 FEINCMS_RICHTEXT_INIT_CONTEXT = {
     'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js'
 }
+
+GIT_AUTHOR_EMAIL = 'readux.emory@gmail.com'
+GIT_AUTHOR_NAME = 'readux'
 
 
 try:

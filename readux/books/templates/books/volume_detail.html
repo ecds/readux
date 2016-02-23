@@ -1,4 +1,5 @@
 {% extends 'site_base.html' %}
+{% load static %}
 
 {% block metadata %}{{ block.super }}
     {% url 'books:page-image' vol.pid vol.primary_image.pid 'thumbnail' as image_url %}
@@ -22,9 +23,17 @@
   <link rel="alternate" href="{% url 'books:text' vol.pid %}" type="text/plain" /> {# plain text #}
 {% endblock %}
 
+{% block javascript %}
+  {{ block.super }}
+   <script type="text/javascript" src="{% static 'js/js.cookie.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container" typeof="schema:Book">
+
     {% include 'books/snippets/volume_header.html' with rdfa=1 %}
+
+    {% include 'books/snippets/volume_export_links.html'  %}
     <article class="book">
         <div class="media">
             {% if vol.primary_image %}
@@ -79,6 +88,10 @@
                     {% endfor %}
                 </ul>
                 {# some information in dc:type might be useful (but other info not...) #}
+
+                {% if vol.ark_uri %}
+                <p><strong>Permalink:</strong> <a href="{{ vol.ark_uri }}" rel="bookmark">{{ vol.ark_uri }}</a></p>
+                {% endif %}
 
                 {% include 'books/snippets/volume_links.html' with small_buttons=False %}
                 <div class="clearfix"></div>

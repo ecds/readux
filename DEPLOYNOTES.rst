@@ -94,6 +94,27 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.4
+-----------
+
+* Basic export functionality requires the teifacsimile-to-jekyll gem
+  version 0.5 be installed (available from
+  `0.5 release <https://github.com/emory-libraries-ecds/teifacsimile-to-jekyll/releases/tag/0.5.0>`_
+  on GitHub).
+
+  The application expects the jekyll and jekyllimport_teifacsimile
+  commands to be available in the configured environment path.  One way
+  to do this is by creating a file to be sourced when users login and
+  by /etc/sysconfig/httpd.  Example environment file::
+
+      source /opt/rh/rh-ruby22/enable
+      source /opt/rh/python27/enable
+      export PATH=$PATH:/opt/rh/rh-ruby22/root/usr/local/bin
+
+* The GitHub export uses new **GIT_AUTHOR_EMAIL** and **GIT_AUTHOR_NAME**
+  configurations; defaults are included in ``settings.py``, but can
+  be overridden in ``localsettings.py``.
+
 Release 1.3
 -----------
 
@@ -126,6 +147,9 @@ Release 1.3
 * Run migrations for database updates::
 
       python manage.py migrate
+
+* If using MySQL, make sure the database has time zone data loaded:
+  http://dev.mysql.com/doc/refman/5.7/en/mysql-tzinfo-to-sql.html
 
 * The URL format for pages has changed; update page ARK records by
   running a script::

@@ -133,13 +133,6 @@ header#page-bg .breadcrumb>.active{
     color:#FFF;
 }
 
-@media(min-width:767px){
-    header#page-bg .breadcrumb{
-        text-align: left;
-        opacity:0.7;
-    }
-}
-
 header#page-bg p{
     width: 90%;
     margin: auto;
@@ -149,12 +142,19 @@ header#page-bg p{
     text-align:center;
 }
 
+
 @media(min-width:767px){
+    header#page-bg .breadcrumb{
+        text-align: left;
+        opacity:0.7;
+    }
+
     header#page-bg p{
         width: 70%;
         font-size: 1.25em;
     }
 }
+
 
 @media(min-width:993px){
     header#page-bg p{
@@ -190,6 +190,8 @@ header#page-bg .container{
     border: 1px solid #CFCFCF;
     border-bottom-width: 2px;
     transition:border-color 0.2s ease;
+    padding-right: 0;
+    margin-right: 10px;
 }
 
 #volume-list .media a.pull-left:hover,
@@ -1019,6 +1021,14 @@ header#page-bg .collection-image-info.collasped .info{
 .social-login {
     display: inline-block;
 }
+
+.social-login.navbar-text {
+    margin: 5px 0;
+    padding: 4px;
+}
+.social-login.anonymous #login-menu {
+    margin-top: 1px;
+}
 .social-login ul {
     margin: 0;
     padding: 0;
@@ -1030,20 +1040,13 @@ header#page-bg .collection-image-info.collasped .info{
     margin-top: -5px;
     margin-bottom: -5px;
 }
-.social-login button:hover,
-.social-login button:focus{
+.social-login button:hover, .social-login button:focus,
+.social-login a.btn:hover, .social-login a.btn:focus {
   background-color: #42A5F5;
   color: white;
   text-decoration:none;
 }
 
-.social-login .fa {
-    border-right: 1px solid black;
-    padding: 5px;
-    margin: 0 5px 0 0;
-    width: 30px;  /* make all the icons consistent width */
-    text-align: center;
-}
 .modal-backdrop{
   z-index: 300;
 }
@@ -1084,9 +1087,14 @@ header#page-bg .collection-image-info.collasped .info{
 }
 
 .login-list li.list-group-item a:hover,
-.login-list li.list-group-item a:focus{
+.login-list li.list-group-item a:focus {
   text-decoration:none;
   opacity:0.7;
+}
+
+.login-list li.list-group-item.disabled a {
+  text-decoration:none;
+   opacity:0.5;
 }
 
 .login-list li.list-group-item a span{
@@ -1130,14 +1138,39 @@ header#page-bg .collection-image-info.collasped .info{
   overflow: visible;
 }
 
-.social-login.navbar-text {
-    margin: 11px 0;
-    padding: 4px;
+@media(max-width:1120px) {
+    .social-login .text {
+        display: none;
+    }
+    .social-login #login-welcome {
+        display:none;
+    }
+
 }
 
-.meltdown_wrap{
-  width:100% !important;
+@media (max-width:1000px) and (min-width: 768px) {
+    /* collapse search bar at medium widths to provide more space */
+    #nav-search input {
+        display: none;
+    }
+    #nav-search .input-group {
+        position: relative;
+    }
+    #nav-search .btn {
+        border-radius: 4px;
+    }
+    #nav-search:hover input {
+        display: inline;
+        position: absolute;
+        right: 39px;
+        width: 175px;
+    }
+    #nav-search:hover .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 }
+
 
 .meltdown_bar{
   z-index: 100;
@@ -1199,4 +1232,8 @@ li.meltdown_controlbutton > span {
 
 .carousel-control{
   width:10%;
+}
+
+button.volume-export {
+    margin-right: 2em;
 }

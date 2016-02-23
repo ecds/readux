@@ -248,7 +248,7 @@ def deploy(path=None, user=None, url_prefix='', remote_proxy=None,
     configure_site()
     update_links()
     compare_localsettings()
-    rm_old_builds(noinput=True)
+    rm_old_builds()
 
 
 @task

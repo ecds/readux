@@ -39,6 +39,7 @@ urlpatterns = patterns('',
 
     url(r'^collections/', include('readux.collection.urls', namespace='collection')),
     url(r'^books/', include('readux.books.urls', namespace='books')),
+    url(r'^accounts/', include('readux.accounts.urls', namespace='accounts')),
 
     # index data for solr
     url(r'^indexdata/', include('eulfedora.indexdata.urls', namespace='indexdata')),

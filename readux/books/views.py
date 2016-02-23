@@ -1,29 +1,35 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
+from django.core.servers.basehttp import FileWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
-    HttpResponsePermanentRedirect
+    HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
 from django.views.decorators.vary import vary_on_cookie
 from django.views.generic import ListView, DetailView, View
+from django.views.generic.edit import FormMixin, ProcessFormView
 from django.views.generic.base import RedirectView
+from eulcommon.djangoextras.auth import login_required_with_ajax
 import json
 from urllib import urlencode
 import os
+import re
 import requests
 import logging
 
-from eulfedora.server import Repository, TypeInferringRepository, RequestFailed
+from eulfedora.server import Repository, TypeInferringRepository
+from eulfedora.util import RequestFailed
 from eulfedora.views import raw_datastream, RawDatastreamView
 
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
-from readux.books.forms import BookSearch
-from readux.books import view_helpers
+from readux.books.forms import BookSearch, VolumeExport
+from readux.books import view_helpers, annotate, export, github
 from readux.utils import solr_interface, absolutize_url
 from readux.views import VaryOnCookieMixin
 
@@ -384,7 +390,7 @@ class PageDetail(DetailView, VaryOnCookieMixin):
             # determine scale for positioning OCR text in TEI facsimile
             # based on original image size in the OCR and image as displayed
             # - find maximum of width/height
-            long_edge  = max(self.object.tei.content.page.width,
+            long_edge = max(self.object.tei.content.page.width,
                 self.object.tei.content.page.height)
             # NOTE: using the size from image the OCR was run on, since that
             # may or may not match the size of the master image loaded in
@@ -439,6 +445,8 @@ class VolumeDatastreamView(RawDatastreamView):
     accept_range_request = False
     pid_url_kwarg = 'pid'
     repository_class = Repository
+    # use streaming http response, to handle large files better
+    streaming = True
 
 
 class VolumePdf(VolumeDatastreamView):
@@ -499,6 +507,162 @@ class VolumeText(VolumeOcr):
         # NOTE: currently etag/last-modified will only work
         # for volume v1.0 objects with an ocr datastream
         return response
+
+class VolumeTei(View):
+
+    def get(self, request, *args, **kwargs):
+        repo = TypeInferringRepository()
+        vol = repo.get_object(self.kwargs['pid'])
+        # if object doesn't exist, isn't a volume, or doesn't have tei text - 404
+        if not vol.exists or not vol.has_requisite_content_models or not vol.has_tei:
+            raise Http404
+
+        tei = vol.generate_volume_tei()
+        base_filename = '%s-tei' % vol.noid
+        if kwargs.get('mode', None) == 'annotated':
+            tei = annotate.annotated_tei(tei, vol.annotations(user=request.user))
+            base_filename += '-annotated'
+
+        response = HttpResponse(tei.serialize(pretty=True),
+            content_type='application/xml')
+        # generate a default filename based on the object label
+        response['Content-Disposition'] = 'attachment;filename="%s.xml"' % \
+            base_filename
+        response.set_cookie('%s-tei-export' % vol.noid, 'complete', max_age=10)
+        return response
+
+
+class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
+                            VaryOnCookieMixin):
+    model = Volume
+    template_name = 'books/volume_export.html'
+    context_object_name = 'vol'
+    form_class = VolumeExport
+
+    github_account_msg = 'Export to GitHub requires a GitHub account.' + \
+        ' Please authorize access to your GitHub account to use this feature.'
+
+    github_scope_msg = 'GitHub account has insufficient access. ' + \
+        'Please re-authorize your GitHub account to enable ' + \
+        ' the permissions needed for export.'
+
+    @method_decorator(last_modified(view_helpers.volume_modified))
+    def dispatch(self, *args, **kwargs):
+        return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
+
+    def get_object(self, queryset=None):
+        # kwargs are set based on configured url pattern
+        pid = self.kwargs['pid']
+        repo = Repository(request=self.request)
+        vol = repo.get_object(pid, type=Volume)
+        # 404 if object doesn't exist, isn't a volume, or doesn't have tei
+        if not vol.exists or not vol.is_a_volume or not vol.has_tei:
+            raise Http404
+        # NOTE: not currently an error if volume doesn't have any
+        # annotations, but export is probably not meaningful
+        return vol
+
+    def get_initial(self):
+        # initial data for the form
+        # construct a preliminary semi-reasonable github repo name
+        # based on the volume title
+        repo_name = slugify(self.object.title)
+        # remove first-word articles
+        repo_name = re.sub('^(a|the|de)-', '', repo_name)
+        pieces = repo_name.split('-')
+        # truncate down to first 5 words
+        if len(pieces) > 5:
+            repo_name = '-'.join(pieces[:5])
+        return {'github_repo': repo_name}
+
+    def get_context_data(self, **kwargs):
+        context_data = super(AnnotatedVolumeExport, self).get_context_data()
+        if not self.request.user.is_anonymous():
+            context_data['export_form'] = self.get_form()
+
+            # check that user has a github account linked
+            try:
+                github.GithubApi.github_account(self.request.user)
+            except github.GithubAccountNotFound:
+                context_data['error'] = self.github_account_msg
+
+        return context_data
+
+    def render(self, request, **kwargs):
+        context_data = self.get_context_data()
+        context_data.update(kwargs)
+        return render(request, self.template_name, context_data)
+
+    def post(self, request, *args, **kwargs):
+        vol = self.object = self.get_object()
+
+        # don't do anything if user is not logged in
+        if self.request.user.is_anonymous():
+            response = render(request, self.template_name, self.get_context_data())
+            response.status_code = 400  # bad request
+            return response
+
+        # get posted form data and use that to generate the export
+        export_form = self.get_form()
+        if export_form.is_valid():
+            cleaned_data = export_form.cleaned_data
+
+            # if github export is requested, make sure user has a
+            # github account available to use for access
+            if cleaned_data['github']:
+                try:
+                    github.GithubApi.github_account(self.request.user)
+                except github.GithubAccountNotFound:
+                    return self.render(request, error=self.github_account_msg)
+
+                # check that oauth token has sufficient permission
+                # to do needed export steps
+                gh = github.GithubApi.connect_as_user(self.request.user)
+                # note: repo would also work here, but currently asking for public_repo
+                if 'public_repo' not in gh.oauth_scopes():
+                    return self.render(request, error=self.github_scope_msg)
+        else:
+            return self.render(request)
+
+        # generate annotated tei
+        tei = annotate.annotated_tei(vol.generate_volume_tei(),
+            vol.annotations(user=request.user))
+
+        # check form data to see if github repo is requested
+        if cleaned_data['github']:
+            try:
+                repo_url, ghpages_url = export.website_gitrepo(request.user,
+                    cleaned_data['github_repo'], vol, tei,
+                    page_one=cleaned_data['page_one'])
+
+                # NOTE: maybe use a separate template here?
+                return self.render(request, repo_url=repo_url,
+                    ghpages_url=ghpages_url, github_export=True)
+            except export.GithubExportException as err:
+                response = self.render(request, error='Export failed: %s' % err)
+                response.status_code = 400  # maybe?
+                return response
+        else:
+            # non github export: download zipfile
+            try:
+                webzipfile = export.website_zip(vol, tei,
+                    page_one=cleaned_data['page_one'])
+                response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
+                    content_type='application/zip')
+                response['Content-Disposition'] = 'attachment; filename="%s_annotated_jeyll_site.zip"' % \
+                    (vol.noid)
+                response['Content-Length'] = os.path.getsize(webzipfile.name)
+            except export.ExportException as err:
+                # display error to user and redisplay the form
+                response = self.render(request, error='Export failed. %s' % err)
+                response.status_code = 500
+
+            # set a cookie to indicate download is complete, that can be
+            # used by javascript to hide a 'generating' indicator
+            completion_cookie_name = request.POST.get('completion-cookie',
+                '%s-web-export' % vol.noid)
+            response.set_cookie(completion_cookie_name, 'complete', max_age=10)
+            return response
 
 
 class Unapi(View):
@@ -588,7 +752,6 @@ class ProxyView(View):
 
     def get(self, request, *args, **kwargs):
         url = self.get_redirect_url(*args, **kwargs)
-        print url
         # use headers to allow browsers to cache downloaded copies
         headers = {}
         for header in ['HTTP_IF_MODIFIED_SINCE', 'HTTP_IF_UNMODIFIED_SINCE',
@@ -601,8 +764,8 @@ class ProxyView(View):
 
         # include response headers, except for server-specific items
         for header, value in remote_response.headers.iteritems():
-            if header not in ['Connection', 'Server', 'Keep-Alive',
-                             'Access-Control-Allow-Origin', 'Link']:
+            if header not in ['Connection', 'Server', 'Keep-Alive', 'Link']:
+                             # 'Access-Control-Allow-Origin', 'Link']:
                 # FIXME: link header is valuable, but would
                 # need to be made relative to current url
                 local_response[header] = value
@@ -616,6 +779,9 @@ class ProxyView(View):
             local_response.content = json.dumps(data)
             # upate content-length for change in data
             local_response['content-length'] = len(local_response.content)
+            # needed to allow external site (i.e. jekyll export)
+            # to use deepzoom
+            local_response['Access-Control-Allow-Origin'] = '*'
         else:
             # include response content if any
             local_response.content = remote_response.content
@@ -653,9 +819,11 @@ class PageImage(ProxyView):
             return page.iiif.mini_thumbnail()
         elif kwargs['mode'] == 'single-page':
             return page.iiif.page_size()
-        elif kwargs['mode'] == 'fullsize':
+        elif kwargs['mode'] == 'fs':  # full size
             return page.iiif
         elif kwargs['mode'] == 'info':
+            # TODO: needs an 'Access-Control-Allow-Origin' header
+            # to allow jekyll sites to use for deep zoom
             return page.iiif.info()
         elif kwargs['mode'] == 'iiif':
             return page.iiif.info().replace('info.json', kwargs['url'].rstrip('/'))

@@ -4,7 +4,8 @@ from django.core.urlresolvers import reverse
 from django.core.servers.basehttp import FileWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
-    HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest
+    HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest, \
+    JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
@@ -199,6 +200,7 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
     def dispatch(self, *args, **kwargs):
         return super(VolumeDetail, self).dispatch(*args, **kwargs)
 
+
     def get_object(self, queryset=None):
         # kwargs are set based on configured url pattern
         pid = self.kwargs['pid']
@@ -234,13 +236,14 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
             q = solr.query().filter(content_model=Page.PAGE_CMODEL_PATTERN,
                                     isConstituentOf=self.object.uri) \
                     .query(query) \
-                    .field_limit(['page_order', 'pid'], score=True) \
+                    .field_limit(['page_order', 'pid', 'identifier'], score=True) \
                     .highlight('page_text', snippets=3) \
                     .sort_by('-score').sort_by('page_order') \
                     .results_as(SolrPage)
 
             # return highlighted snippets from page text
             # sort by relevance and then by page order
+
 
             # paginate the solr result set
             paginator = Paginator(q, 30)
@@ -267,7 +270,7 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                 'url_params': urlencode(url_params),
                 # provided for consistency with class-based view pagination
                 'paginator': paginator,
-                'page_obj': results,
+                'page_obj': results
             })
 
         else:
@@ -282,6 +285,28 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                     }
 
         return context_data
+
+    def render_to_response(self, context, **response_kwargs):
+        # return json to ajax request or when requested;
+        # currently used for annotation related pages autocomplete
+        if self.request.is_ajax() or self.request.GET.get('format', '') == 'json':
+            solr_result = context['pages']
+            highlighting = {}
+            if solr_result.object_list.highlighting:
+                highlighting = solr_result.object_list.highlighting
+            data = [{
+                    'pid': result.pid,
+                    # NOTE: this will break if ark is not present for some reason
+                    'uri': [uri for uri in result['identifier'] if 'ark:' in uri][0],
+                    'label': 'p. %s' % result['page_order'],
+                    'thumbnail': reverse('books:page-image',
+                            kwargs={'mode': 'mini-thumbnail', 'pid': result.pid,
+                                    'vol_pid': self.object.pid}),
+                    'highlights': highlighting.get(result.pid, {}).get('page_text', '')
+                } for result in solr_result.object_list]
+            return JsonResponse(data, safe=False)
+        else:
+            return super(VolumeDetail, self).render_to_response(context, **response_kwargs)
 
 
 class VolumePageList(ListView, VaryOnCookieMixin):

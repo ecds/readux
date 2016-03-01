@@ -31,13 +31,18 @@ class AnnotationTestCase(TestCase):
         ],
         # "user": "alice",
         "consumer": "annotateit",
-        "tags": [ "review", "error" ],
+        "tags": ["review", "error"],
         "permissions": {
             "read": ["group:__world__"],
             "admin": [],
             "update": [],
             "delete": []
-        }
+        },
+        'related_pages': [
+            'http://testpid.co/ark:/1234/11',
+            'http://testpid.co/ark:/1234/22',
+            'http://testpid.co/ark:/1234/qq'
+        ]
         # add sample extra annotation data
     }
 
@@ -118,6 +123,19 @@ class AnnotationTestCase(TestCase):
 
     def last_updated_time(self):
         self.assertEqual(None, Annotation.objects.all().last_updated_time())
+
+    def test_related_pages(self):
+        note = Annotation.create_from_request(self.mockrequest)
+        self.assertEqual(len(self.annotation_data['related_pages']),
+            len(note.related_pages))
+        for idx in range(len(self.annotation_data['related_pages'])):
+            self.assertEqual(self.annotation_data['related_pages'][idx],
+                note.related_pages[idx])
+            self.assertEqual(self.annotation_data['related_pages'][idx],
+                note.extra_data['related_pages'][idx])
+
+        note = Annotation()
+        self.assertEqual(None, note.related_pages)
 
 
 @override_settings(AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',))

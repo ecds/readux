@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.4.1
+-------------
+
+* As a Readux admin, I want a record when the export feature is used so
+  that I can find out who is creating exported editions.
+
 Release 1.4 - Basic Export
 --------------------------
 

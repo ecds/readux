@@ -44,8 +44,8 @@
               editorExtensions: [
                   annotatormeltdown.getEditorExtension({min_width: '500px'}),
                   suppress_permissions.editorExtension,
-                  _marginalia.editorExtension,
                   related_pages.getEditorExtension({search_url: '{{ page.volume.absolute_url }}'}),
+                  _marginalia.editorExtension,  /* includes tags */
               ]
           })
           .include(annotator.storage.http, {
@@ -64,7 +64,10 @@
             show_author: true,
             {% endif %}
             viewer: annotatormeltdown.render,
-            toggle:{
+            renderExtensions: [
+                related_pages.renderExtension,
+            ],
+            toggle: {
               class: 'btn btn-green',
               show: function(){
                 $(".carousel-control").fadeOut();

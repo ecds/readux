@@ -1,18 +1,56 @@
-function split(val) {
-    return val.split(/,\s*/);
-}
-function extractLast(term) {
-    return split(term).pop();
-}
+/**
+Annotator plugin for related pages.
 
+- editor extension adds a multi-value autocomplete field to search for
+  pages in the same volume and add them to the annotation record
+  by ARK URI (requires a search url option)
+- marginalia render extension to display related pages
+- uses jquery-ui autocomplete for editor input field
 
+*/
 var related_pages = {
 
-    getEditorExtension: function getEditorExtension(options) {
-            // define a new editor function, with the configured
-            // search url to find pages
+    split: function (val) {
+        return val.split(/,\s*/);
+    },
+    extractLast: function (term) {
+        return related_pages.split(term).pop();
+    },
 
-            return function editorExtension(editor) {
+    renderExtension: function(annotation, item) {
+        // replace existing related pages block with updated version
+        var rel_pages = related_pages.renderRelatedPages(annotation);
+        item.find('.annotator-related-pages').remove();
+        // insert before tags or footer, whichever comes first
+        rel_pages.insertBefore(item.find('.annotator-tags,.annotation-footer').first());
+        return item;
+    },
+
+    arkNoid: function(ark_uri) {
+        // return the noid portion of an ark uri for short-hand display
+        // (assumes unqualified ark)
+        return ark_uri.split('/').pop();
+    },
+
+    renderRelatedPages: function(annotation) {
+        var rel_pages = '';
+        if (annotation.related_pages && $.isArray(annotation.related_pages) &&
+                                  annotation.related_pages.length) {
+          rel_pages = $('<div/>').addClass('annotator-related-pages').html(function () {
+            return 'Related pages: ' + $.map(annotation.related_pages, function (related_page) {
+              return '<a href="' + related_page + '">' +
+                     related_pages.arkNoid(related_page) + '</a>';
+              }).join(', ');
+          });
+        }
+        return rel_pages;
+      },
+
+    getEditorExtension: function getEditorExtension(options) {
+        // define a new editor function, with the configured
+        // search url to find pages
+
+        return function editorExtension(editor) {
             // The input element added to the Annotator.Editor wrapped in jQuery.
             // Cached to save having to recreate it everytime the editor is displayed.
             var field = null;
@@ -31,7 +69,7 @@ var related_pages = {
             function setRelatedPages(field, annotation) {
                 // split comma-separated uris into an array,
                 // removing any empty or duplicated values
-                annotation.related_pages = split(input.val()).filter(function(el, index, arr){
+                annotation.related_pages = related_pages.split(input.val()).filter(function(el, index, arr){
                     return el !== '' && index === arr.indexOf(el);
                 });
             }
@@ -52,7 +90,7 @@ var related_pages = {
                 minLength: 2,
                 source: function( request, response ) {
                     $.getJSON(options.search_url, {
-                        keyword: extractLast( request.term )
+                        keyword: related_pages.extractLast( request.term )
                     }, response );
                 },
                 open: function(event, ui) {
@@ -63,7 +101,7 @@ var related_pages = {
                 },
                 select: function( event, ui ) {
                   /* multi-valued input */
-                  var terms = split(this.value);
+                  var terms = related_pages.split(this.value);
                   // remove the current input (seach term)
                   terms.pop();
                   // add the selected item

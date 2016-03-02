@@ -115,8 +115,10 @@ class AnnotatedTei(TestCase):
                     {'start': '//div[@id="fnstr.idm320760248608"]/span[1]',
                      'end': '//div[@id="fnstr.idm320760242176"]/span[1]',
                      'startOffset': 0,
-                     'endOffset': 6}
-                ]
+                     'endOffset': 6
+                     }
+                ],
+                'ark': page_uri
                 }),
             user=user)
         note.save()
@@ -128,7 +130,9 @@ class AnnotatedTei(TestCase):
                     'h': '20.73%',
                     'w': '14.70%',
                     'y': '62.42%',
-                    'x': '61.60%'}
+                    'x': '61.60%'
+                    },
+                'ark': page_uri
                 })
             )
         imagenote.save()

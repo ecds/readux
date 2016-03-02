@@ -83,7 +83,7 @@ def annotated_tei(teivol, annotations):
             for note in page_annotations:
                 # possible to get extra matches for page url in related pages,
                 # so skip any notes where ark doesn't match page url
-                if note.extra_data['ark'] != page.href:
+                if note.extra_data.get('ark', '') != page.href:
                     continue
 
                 insert_note(teivol, page, note)

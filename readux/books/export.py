@@ -94,7 +94,6 @@ def website_zip(vol, tei, page_one=None):
         )
     logger.debug('Jekyll site web export zipfile for %s is %s',
         vol.pid, webzipfile.name)
-
     # clean up temporary files
     shutil.rmtree(export_dir)
     # NOTE: method has to return the tempfile itself, or else it will get cleaned up when

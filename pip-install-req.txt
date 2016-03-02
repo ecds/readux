@@ -37,4 +37,4 @@ mistune
 gitpython
 pyyaml
 # jekyll theme for zipfile used in export functionality
--e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@0.5#egg=digitaledition-jekylltheme
+-e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@develop#egg=digitaledition-jekylltheme

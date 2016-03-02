@@ -111,7 +111,7 @@ $(document).ready(function() {
     });
 
     // turn on bootstrap tooltips
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip();
-    })
+    // $(function () {
+      // $('[data-toggle="tooltip"]').tooltip();
+    // })
 });

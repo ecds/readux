@@ -17,11 +17,14 @@ from readux.books.tests.models import FIXTURE_DIR
 class AnnotatedTei(TestCase):
 
     def test_annotation_to_tei(self):
+        teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR, 'teifacsimile.xml'),
+            tei.AnnotatedFacsimile)
+
         note = Annotation(text="Here's the thing", quote="really",
             extra_data=json.dumps({'sample data': 'foobar',
                 'tags': ['test', 'one', 'two']}))
 
-        teinote = annotation_to_tei(note)
+        teinote = annotation_to_tei(note, teidoc)
         self.assert_(isinstance(teinote, tei.Note))
         self.assertEqual('annotation-%s' % note.id, teinote.id)
         self.assert_(teinote.href.endswith(note.get_absolute_url()))
@@ -31,7 +34,7 @@ class AnnotatedTei(TestCase):
         user = get_user_model()(username='an_annotator')
         user.save()
         note.user = user
-        teinote = annotation_to_tei(note)
+        teinote = annotation_to_tei(note, teidoc)
         self.assertEqual(user.username, teinote.resp)
 
         # tags should be set as interp ids ana attribute
@@ -43,12 +46,27 @@ class AnnotatedTei(TestCase):
 
 [^1]: This is some footnote content.'''
         note.text = footnote
-        teinote = annotation_to_tei(note)
+        teinote = annotation_to_tei(note, teidoc)
         self.assert_('<ref target="#fn1" type="noteAnchor">1</ref>' in
             teinote.serialize())
 
         # markdown should be included in a code element
         self.assertEqual(note.text, teinote.markdown)
+
+        # related page references
+        rel_pages = [
+            'http://testpid.co/ark:/1234/11',
+            'http://testpid.co/ark:/1234/22',
+            'http://testpid.co/ark:/1234/qq'
+        ]
+        note.extra_data = json.dumps({'related_pages': rel_pages})
+        teinote = annotation_to_tei(note, teidoc)
+        self.assertEqual(len(rel_pages), len(teinote.related_pages))
+        # first ark has a corresponding id in the fixture, should be converted
+        self.assertEqual('#%s' % teidoc.page_id_by_xlink(rel_pages[0]),
+            teinote.related_pages[0].target)
+        for idx in range(len(rel_pages)):
+            self.assertEqual(rel_pages[idx], teinote.related_pages[idx].text)
 
     def test_insert_anchor(self):
         def get_test_elements():

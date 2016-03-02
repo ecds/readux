@@ -137,6 +137,13 @@ class Annotation(models.Model):
         return format_html('<a href="{}">{}</a>', self.uri, self.uri)
     uri_link.short_description = 'URI'
 
+    @property
+    def related_pages(self):
+        'convenience access to list of related pages in extra data'
+        if 'related_pages' in self.extra_data:
+            return self.extra_data['related_pages']
+
+
     @classmethod
     def create_from_request(cls, request):
         '''Initialize a new :class:`Annotation` based on data from a

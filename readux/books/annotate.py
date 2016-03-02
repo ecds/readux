@@ -81,6 +81,11 @@ def annotated_tei(teivol, annotations):
         page_annotations = annotations.filter(Q(uri=page.href)|Q(extra_data__contains=page.href))
         if page_annotations.exists():
             for note in page_annotations:
+                # possible to get extra matches for page url in related pages,
+                # so skip any notes where ark doesn't match page url
+                if note.extra_data['ark'] != page.href:
+                    continue
+
                 insert_note(teivol, page, note)
                 # collect a list of unique tags as we work through the notes
                 if 'tags' in note.info():
@@ -99,12 +104,14 @@ def annotated_tei(teivol, annotations):
     return teivol
 
 
-def annotation_to_tei(annotation):
+def annotation_to_tei(annotation, teivol):
     '''Generate a tei note from an annotation.  Sets annotation id,
     slugified tags as ana attribute, username as resp attribute, and
     annotation content is converted from markdown to TEI.
 
     :param annotation: :class:`~readux.annotations.models.Annotation`
+    :param teivol: :class:`~readux.books.tei.AnnotatedFacsimile` tei
+        document, for converting related page ARK uris into TEI ids
     :returns: :class:`readux.books.tei.Note`
     '''
     # NOTE: annotation created/edited dates are not included here
@@ -141,6 +148,16 @@ def annotation_to_tei(annotation):
     # include full markdown of the annotation, as a backup for losing
     # content converting from markdown to tei, and for easy display
     teinote.markdown = annotation.text
+
+    # if annotation contains related pages, generate a link group
+    if annotation.related_pages:
+        for rel_page in annotation.related_pages:
+            page_ref = tei.Ref(text=rel_page, type='related page')
+            # find tei page identifier from the page ark
+            target = teivol.page_id_by_xlink(rel_page)
+            if target is not None:
+                page_ref.target = '#%s' % target
+            teinote.related_pages.append(page_ref)
 
     return teinote
 
@@ -236,7 +253,7 @@ def insert_note(teivol, teipage, annotation):
 
     # call annotation_to_tei and insert the resulting note into
     # the appropriate part of the document
-    teinote = annotation_to_tei(annotation)
+    teinote = annotation_to_tei(annotation, teivol)
     teinote.target = target
     # append actual annotation to tei annotations div
     teivol.annotations.append(teinote)

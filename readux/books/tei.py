@@ -79,6 +79,16 @@ class Zone(TeiBase):
             word_heights = [w.height for w in self.word_zones]
             return sum(word_heights) / float(len(word_heights))
 
+class Ref(TeiBase):
+    'Tei reference'
+    ROOT_NAME = 'ref'
+    #: target
+    target = xmlmap.StringField('@target')
+    #: type
+    type = xmlmap.StringField('@type')
+    #: text
+    text = xmlmap.StringField('text()')
+
 
 class Note(TeiBase):
     'Tei Note, intendd to contain an annotation'
@@ -99,7 +109,9 @@ class Note(TeiBase):
     paragraphs = xmlmap.StringListField('tei:p')
     #: code for the markdown used in the original annotation
     markdown = xmlmap.StringField('tei:code[@lang="markdown"]')
-
+    #: links to related pages
+    related_pages = xmlmap.NodeListField('tei:ref[@type="related page"]',
+        Ref)
 
 class Bibl(TeiBase):
     'TEI Bibl, with mappings for digital edition and pdf urls'
@@ -195,6 +207,12 @@ class AnnotatedFacsimile(Facsimile):
     #: annotation tags, as :class:`~eulxml.xmlmap.teimap.TeiInterpGroup`
     tags = xmlmap.NodeField('tei:back/tei:interpGrp[@type="tags"]',
         teimap.TeiInterpGroup)
+
+    def page_id_by_xlink(self, link):
+        results = self.node.xpath('//tei:surface[@type="page"][@xlink:href="%s"]/@xml:id' \
+            % link, namespaces=self.ROOT_NAMESPACES)
+        if results:
+            return results[0]
 
 class Anchor(TeiBase):
     'TEI Anchor, for marking start and end of text annotation highlights'

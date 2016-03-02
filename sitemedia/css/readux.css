@@ -1237,3 +1237,8 @@ li.meltdown_controlbutton > span {
 button.volume-export {
     margin-right: 2em;
 }
+
+/* annotation display: related pages link */
+.annotator-related-pages {
+    padding-left: 5px;
+}

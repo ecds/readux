@@ -86,11 +86,6 @@ class Book(DigitalObject):
     @permalink
     def get_absolute_url(self):
         'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [self.pid])
-
-    @permalink
-    def get_absolute_url(self):
-        'Absolute url to view this object within the site'
         return (self.NEW_OBJECT_VIEW, [str(self.pid)])
 
     @property

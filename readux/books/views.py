@@ -547,6 +547,8 @@ class VolumeTei(View):
         if kwargs.get('mode', None) == 'annotated':
             tei = annotate.annotated_tei(tei, vol.annotations(user=request.user))
             base_filename += '-annotated'
+            logger.info('Exporting %s as annotated TEI for user %s',
+                    vol.pid, request.user.username)
 
         response = HttpResponse(tei.serialize(pretty=True),
             content_type='application/xml')
@@ -660,6 +662,9 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                     cleaned_data['github_repo'], vol, tei,
                     page_one=cleaned_data['page_one'])
 
+                logger.info('Exported %s to GitHub repo %s for user %s',
+                    vol.pid, repo_url, request.user.username)
+
                 # NOTE: maybe use a separate template here?
                 return self.render(request, repo_url=repo_url,
                     ghpages_url=ghpages_url, github_export=True)
@@ -672,6 +677,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
             try:
                 webzipfile = export.website_zip(vol, tei,
                     page_one=cleaned_data['page_one'])
+                logger.info('Exported %s as jekyll zipfile for user %s',
+                    vol.pid, request.user.username)
                 response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
                     content_type='application/zip')
                 response['Content-Disposition'] = 'attachment; filename="%s_annotated_jeyll_site.zip"' % \

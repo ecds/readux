@@ -44,7 +44,7 @@
               editorExtensions: [
                   annotatormeltdown.getEditorExtension({min_width: '500px'}),
                   suppress_permissions.editorExtension,
-                  related_pages.getEditorExtension({search_url: '{{ page.volume.absolute_url }}'}),
+                  related_pages.getEditorExtension({search_url: '{{ page.volume.get_absolute_url }}'}),
                   _marginalia.editorExtension,  /* includes tags */
               ]
           })

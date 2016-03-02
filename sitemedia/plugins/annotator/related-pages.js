@@ -21,8 +21,10 @@ var related_pages = {
         // replace existing related pages block with updated version
         var rel_pages = related_pages.renderRelatedPages(annotation);
         item.find('.annotator-related-pages').remove();
-        // insert before tags or footer, whichever comes first
-        rel_pages.insertBefore(item.find('.annotator-tags,.annotation-footer').first());
+        // insert related pages (if any) before tags or footer, whichever comes first
+        if (rel_pages != '') {
+            rel_pages.insertBefore(item.find('.annotator-tags,.annotation-footer').first());
+        }
         return item;
     },
 

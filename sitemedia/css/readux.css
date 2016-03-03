@@ -1242,3 +1242,8 @@ button.volume-export {
 .annotator-related-pages {
     padding-left: 5px;
 }
+
+.marginalia-item audio {
+    width: 99%;
+    display: block;
+}

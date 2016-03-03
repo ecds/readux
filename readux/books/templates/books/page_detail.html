@@ -7,15 +7,13 @@
 
   {# local copy of annotator v2.0-alpha css #}
   <link rel="stylesheet" type="text/css" href="{% static 'plugins/annotator/annotator.min.css' %}"/>
-  <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-meltdown/build/0.1.0/annotator.meltdown.min.css" />
+  <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-meltdown/build/0.2.0/annotator.meltdown.min.css" />
   <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-marginalia/build/0.2.0/annotator.marginalia.min.css" />
   <link rel="stylesheet" href="{% static 'plugins/jquery-ui/jquery-ui.min.css' %}"/>
       {{ block.super }}
 {% endblock %}
 
 {% block javascript %}
-  {# FIXME: this should be redundant, but annotator requires at least jquery 1.6 and wasn't workining without #}
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   {{ block.super }}
   {# local copy of annotator; currently v2.0.0-alpha.2 #}
   <script type="text/javascript" src="{% static 'js/annotator.min.js' %}"></script>
@@ -25,7 +23,7 @@
   <script type="text/javascript" src="{% static 'js/hammer.min.js' %}"></script>
 
   <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-marginalia/build/0.2.0/annotator.marginalia.min.js"></script>
-  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-meltdown/build/0.1.1/annotator.meltdown.min.js"></script>
+  <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-meltdown/build/0.2.0/annotator.meltdown.min.js"></script>
   <script type="text/javascript" src="{% static 'plugins/annotator/suppress_permissions.js' %}"></script>
   <script type="text/javascript" src="{% static 'plugins/jquery-ui/jquery-ui.autocomplete.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'plugins/annotator/related-pages.js' %}"></script>

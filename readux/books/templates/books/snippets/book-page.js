@@ -42,7 +42,7 @@
               ],
               */{% endcomment %}
               editorExtensions: [
-                  annotatormeltdown.getEditorExtension({min_width: '500px'}),
+                  annotatormeltdown.getEditorExtension({min_width: '500px', font_awesome: true}),
                   suppress_permissions.editorExtension,
                   related_pages.getEditorExtension({search_url: '{{ page.volume.get_absolute_url }}'}),
                   _marginalia.editorExtension,  /* includes tags */

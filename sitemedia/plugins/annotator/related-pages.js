@@ -62,7 +62,7 @@ var related_pages = {
                 // convert list of related uris stored in the annnotation
                 // into a comma-separated list for the form
                 var value = '';
-                if (annotation.related_pages) {
+                if (annotation.related_pages && annotation.related_pages.size) {
                     value = annotation.related_pages.join(', ') + ', ';
                 }
                 input.val(value);

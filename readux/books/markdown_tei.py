@@ -1,3 +1,4 @@
+import re
 import mistune
 
 def convert(text):
@@ -15,6 +16,14 @@ class TeiMarkdownRenderer(mistune.Renderer):
     '''TEI Markdown renderer for use with :mod:`mistune` markdown
     parsing and rendering library.  Renderer is based on the built-in
     mistune HTML renderer.'''
+
+    audio_regex = re.compile(
+        r'<audio[^>]*>\s*'   # open audio tag, with any attributes
+        # source with url and type in any order
+        r'<source\s+(src|type)=["\']([^"\']+)["\']\s+(src|type)=["\']([^"\']+)["\']\s+/>'
+        r'\s*</audio>',      # close audio tag
+        re.MULTILINE | re.DOTALL | re.UNICODE
+    )
 
     def __init__(self, **kwargs):
         self.options = kwargs
@@ -52,10 +61,21 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def block_html(self, html):
         """Rendering block level pure html content.
+        Currently only supports html5 audio tags.
 
         :param html: text content of the html snippet.
         """
-        # TODO - do we need to support this?
+        match = self.audio_regex.match(html)
+        if match:
+            # returns list of tuples; first of each pair is the attribute name
+            values = match.groups()
+            values_dict = {
+                values[0]: values[1],
+                values[2]: values[3]
+            }
+            return '<media mimeType="%(type)s" url="%(src)s"/>' % values_dict
+
+        # NOTE: default mistune logic here; probably not useful for TEI
         if self.options.get('skip_style') and \
            html.lower().startswith('<style'):
             return ''

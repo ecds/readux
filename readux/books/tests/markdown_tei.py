@@ -3,9 +3,10 @@ from readux.books import markdown_tei
 
 class MarkdownTei(TestCase):
 
-    def test_markdown_to_tei(self):
-        # several example inputs taken from markdown documentation at
-        # https://daringfireball.net/projects/markdown/syntax#block
+    # several example inputs taken from markdown documentation at
+    # https://daringfireball.net/projects/markdown/syntax#block
+
+    def test_paragraphs(self):
 
         # single paragraph
         ptext = 'Single paragraph'
@@ -16,12 +17,16 @@ class MarkdownTei(TestCase):
         self.assertEqual('<p>%s</p><p>%s</p>' % (ptext, ptext2),
             markdown_tei.convert('%s\n\n%s' % (ptext, ptext2)))
 
+    def test_emphasis(self):
+
         # emphasis - bold
         self.assertEqual('<p>a <emph rend="bold">bold</emph> statement</p>',
             markdown_tei.convert('a **bold** statement'))
         # emphasis - italic
         self.assertEqual('<p>an <emph rend="italic">emphatic</emph> statement</p>',
             markdown_tei.convert('an *emphatic* statement'))
+
+    def test_lists(self):
 
         # list - unordered
         unordered_list = '* Red\n' + \
@@ -36,6 +41,8 @@ class MarkdownTei(TestCase):
         self.assertEqual('<list rend="numbered"><item>Red</item><item>Green</item><item>Blue</item></list>',
             markdown_tei.convert(ordered_list))
 
+    def test_headers(self):
+
         # headers
         self.assertEqual('<head type="level1">This is an H1</head>',
             markdown_tei.convert('# This is an H1'))
@@ -48,6 +55,7 @@ class MarkdownTei(TestCase):
         self.assertEqual('<milestone @rend="horizontal-rule"/>',
             markdown_tei.convert('* * *'))
 
+    def test_blockquote(self):
 
         blockquote = '\n'.join([
             '> This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet',
@@ -61,6 +69,7 @@ class MarkdownTei(TestCase):
         self.assert_('risus.</p><p>Donec' in tei_blockquote)
         self.assert_(tei_blockquote.endswith('adipiscing.</p></quote>'))
 
+    def test_links(self):
         # link
         linktext = 'This is [an example](http://example.com/ "Title") inline link.'
         self.assertEqual('<p>This is <ref target="http://example.com/" n="Title">an example</ref> inline link.</p>',
@@ -69,6 +78,7 @@ class MarkdownTei(TestCase):
         self.assertEqual('<p><ref target="http://example.net/">This link</ref> has no title attribute.</p>',
             markdown_tei.convert(linktext))
 
+    def test_images(self):
         # image
         imglink = '![Alt text](/path/to/img.png)'
         tei_imglink = markdown_tei.convert(imglink)
@@ -82,6 +92,7 @@ class MarkdownTei(TestCase):
         self.assert_('<desc><head>Optional title</head><p>Alt text</p></desc>'
             in tei_imglink_title)
 
+    def test_footnotes(self):
         # footnote
         footnote = '''Footnotes[^1] have a label and content.
 
@@ -91,6 +102,7 @@ class MarkdownTei(TestCase):
         self.assert_('<note xml:id="fn1" type="footnote"><p>This is some footnote content.</p></note>'
             in tei_footnote)
 
+    def test_tables(self):
         # table
         table = '''
 Firstly  | Secondly
@@ -104,6 +116,8 @@ B.1  | B.2
         self.assert_('<row><cell role="data">B.1</cell><cell role="data">B.2</cell></row>'
             in tei_table)
 
+    def test_code(self):
+
         # code, inline and block
         self.assertEqual('<p>Here is some <code>code</code> inline.</p>',
             markdown_tei.convert('Here is some `code` inline.'))
@@ -112,3 +126,30 @@ markdown = Redcarpet.new("Hello World!")
 puts markdown.to_html'''
         self.assertEqual('<code lang="ruby">%s</code>' % code_snippet,
             markdown_tei.convert('```ruby\n%s\n```' % code_snippet))
+
+    def test_audio(self):
+        # using html5 audio embedded in markdown
+        mimetype = 'audio/mpeg'
+        url = 'http://some.audio/file.mp3'
+        audio = '''<audio controls='controls'>
+  <source src='%s' type='%s'/>
+</audio>''' % (url, mimetype)
+
+        self.assertEqual('<media mimeType="%s" url="%s"/>' % (mimetype, url),
+            markdown_tei.convert(audio))
+
+        # source attribute tag order shouldn't matter
+        audio = '''<audio controls='controls'>
+          <source type='%s' src='%s'/>
+        </audio>''' % (mimetype, url)
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(audio))
+
+        audio_plus = '''<script>console.log("test");</script>
+
+%s
+
+testing  ... again ...''' % audio
+        self.assert_(expected in markdown_tei.convert(audio_plus))
+
+

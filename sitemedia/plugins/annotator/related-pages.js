@@ -11,7 +11,15 @@ Annotator plugin for related pages.
 var related_pages = {
 
     split: function (val) {
-        return val.split(/,\s*/);
+        var values;
+        // if there is no comma, assume a single item
+        if (val.indexOf(',') == -1) {
+            values = new Array(val);
+        } else {
+            values = val.split(/,\s*/);
+        }
+        // trim any whitespace on the values
+        return $.map(values, $.trim);
     },
     extractLast: function (term) {
         return related_pages.split(term).pop();
@@ -22,7 +30,7 @@ var related_pages = {
         var rel_pages = related_pages.renderRelatedPages(annotation);
         item.find('.annotator-related-pages').remove();
         // insert related pages (if any) before tags or footer, whichever comes first
-        if (rel_pages != '') {
+        if (rel_pages && rel_pages.length) {
             rel_pages.insertBefore(item.find('.annotator-tags,.annotation-footer').first());
         }
         return item;
@@ -62,7 +70,7 @@ var related_pages = {
                 // convert list of related uris stored in the annnotation
                 // into a comma-separated list for the form
                 var value = '';
-                if (annotation.related_pages && annotation.related_pages.size) {
+                if (annotation.related_pages && annotation.related_pages.length) {
                     value = annotation.related_pages.join(', ') + ', ';
                 }
                 input.val(value);
@@ -90,9 +98,9 @@ var related_pages = {
             /* enable autocomplete on related pages input */
             $(".related-pages").relatedPageComplete({
                 minLength: 2,
-                source: function( request, response ) {
+                source: function(request, response) {
                     $.getJSON(options.search_url, {
-                        keyword: related_pages.extractLast( request.term )
+                        keyword: related_pages.extractLast(request.term)
                     }, response );
                 },
                 open: function(event, ui) {
@@ -104,7 +112,7 @@ var related_pages = {
                 select: function( event, ui ) {
                   /* multi-valued input */
                   var terms = related_pages.split(this.value);
-                  // remove the current input (seach term)
+                  // remove the current input (search term)
                   terms.pop();
                   // add the selected item
                   terms.push(ui.item.uri);
@@ -115,6 +123,32 @@ var related_pages = {
                 },
                 focus: function() {
                     // prevent value inserted on focus
+                    return false;
+                },
+                change: function(event, ui) {
+                    // If ui is not set, value was entered directly without
+                    // selecting from the list.
+                    // Search to confirm it's a valid page ark for this volume
+                    if (ui.item == null) {
+                        var terms = related_pages.split(this.value);
+                        var last_term = terms.pop();
+                        $.getJSON(options.search_url, {
+                            keyword: last_term
+                        }, function(data) {
+                            if (data.length == 1 && last_term == data[0].uri) {
+                                // nothing to do - input value is valid
+                            } else {
+                                // no match - term is not a valid page ark
+                                // update autocomplete value without the last term
+
+                                // add placeholder to get the comma-and-space at the end
+                                terms.push("");
+                                this.value = terms.join(", ");
+                                // also update input for display to the user
+                                $('.related-pages').val(this.value);
+                            }
+                        });
+                    }
                     return false;
                 },
                 position: { my : "right top", at: "right bottom" }

@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.utils.text import slugify
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
-from django.views.decorators.vary import vary_on_cookie
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import FormMixin, ProcessFormView
 from django.views.generic.base import RedirectView
@@ -197,6 +197,7 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
     context_object_name = 'vol'
 
     @method_decorator(last_modified(view_helpers.volume_modified))
+    @method_decorator(vary_on_headers('X-Requested-With')) # vary on ajax request
     def dispatch(self, *args, **kwargs):
         return super(VolumeDetail, self).dispatch(*args, **kwargs)
 
@@ -226,12 +227,14 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
         # instead of volume info
         if self.form.is_valid():
             terms = self.form.search_terms()
-
             solr = solr_interface()
             query = solr.Q()
             for t in terms:
                 # NOTE: should this be OR or AND?
                 query |= solr.Q(page_text=t)
+                if t.isnumeric():
+                    query |= solr.Q(page_order=t)**2
+                query |= solr.Q(identifier=t)**3
             # search for pages that belong to this book
             q = solr.query().filter(content_model=Page.PAGE_CMODEL_PATTERN,
                                     isConstituentOf=self.object.uri) \

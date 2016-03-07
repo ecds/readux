@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.utils.html import mark_safe
 from eulcommon.searchutil import search_terms
@@ -10,12 +11,23 @@ class BookSearch(forms.Form):
                       'Wildcards <b>*</b> and <b>?</b> are supported.'),
             error_messages={'required': 'Please enter one or more search terms'})
 
+
     def search_terms(self):
         '''Get a list of keywords and phrases from the keyword input field,
         using :meth:`eulcommon.searchutil.search_terms`.  Assumes that the form
         has already been validated and cleaned_data is available.'''
         # get list of keywords and phrases
-        return search_terms(self.cleaned_data['keyword'])
+        keywords = self.cleaned_data['keyword']
+        # NOTE: currently using searchutil.search_terms to separate out
+        # single words and exact phrases.  Because it also looks for
+        # fielded search terms (like title:something or title:"another thing")
+        # it can't handle searching on an ARK URI.  As a workaround,
+        # encode known colons that should be preserved before running
+        # search terms, and then restore them after.
+
+        keywords = re.sub(r'(http|ark):', r'\1;;', keywords)
+        return [re.sub(r'(http|ark);;', r'\1:', term)
+               for term in search_terms(keywords)]
 
 
 class VolumeExport(forms.Form):

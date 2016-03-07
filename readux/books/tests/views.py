@@ -12,7 +12,7 @@ from urllib import unquote
 
 from readux.annotations.models import Annotation
 from readux.books.models import SolrVolume, Volume, Page, SolrPage
-from readux.books import sitemaps, views, view_helpers
+from readux.books import sitemaps, views, view_helpers, forms
 from readux.utils import absolutize_url
 
 
@@ -857,6 +857,24 @@ class SitemapTestCase(TestCase):
         vol_sitemap.items()
         mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CMODEL_PATTERN)
         mocksolr.query.return_value.field_limit.assert_called_with(['pid', 'last_modified'])
+
+
+class BookSearchTest(TestCase):
+
+    def test_search_terms(self):
+        form = forms.BookSearch({'keyword': 'term "exact phrase" term2'})
+        self.assertTrue(form.is_valid())
+        terms = form.search_terms()
+        self.assert_('term' in terms)
+        self.assert_('term2' in terms)
+        self.assert_('exact phrase' in terms)
+
+        # test searching on page ark
+        ark = 'http://testpid.library.emory.edu/ark:/25593/pwtbb'
+        form = forms.BookSearch({'keyword': ark})
+        self.assertTrue(form.is_valid())
+        terms = form.search_terms()
+        self.assertEqual([ark], terms)
 
 
 

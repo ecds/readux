@@ -20,7 +20,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
     audio_regex = re.compile(
         r'<audio[^>]*>\s*'   # open audio tag, with any attributes
         # source with url and type in any order
-        r'<source\s+(src|type)=["\']([^"\']+)["\']\s+(src|type)=["\']([^"\']+)["\']\s+/>'
+        r'<source\s+(src|type)=["\']([^"\']+)["\']\s+(src|type)=["\']([^"\']+)["\']\s*/>'
         r'\s*</audio>',      # close audio tag
         re.MULTILINE | re.DOTALL | re.UNICODE
     )

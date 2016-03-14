@@ -152,4 +152,45 @@ puts markdown.to_html'''
 testing  ... again ...''' % audio
         self.assert_(expected in markdown_tei.convert(audio_plus))
 
+        # inline audio block
+        audio_attrs = {
+            'url': 'http://soundbible.com/mp3/Audience_Applause-Matthiew11-1206899159.mp3',
+            'mimetype': 'audio/mpeg'
+        }
+        inline_audio = '''applause
+text inline with audio<audio controls="controls">
+<source src="%(url)s" type="%(mimetype)s"/>
+</audio>will cause the TEI to break''' % audio_attrs
+        inline_tei_audio = markdown_tei.convert(inline_audio)
+        self.assert_('<media mimeType="%(mimetype)s" url="%(url)s"/>' % audio_attrs
+             in inline_tei_audio)
+
+        # no type attribute - mimetype inferred from audio src url
+        mimetype = 'audio/mpeg'
+        url = 'http://some.audio/file.mp3'
+        audio = '''<audio controls='controls'>
+          <source src='%s'/>
+        </audio>''' % (url, )
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(audio))
+
+        mimetype = 'audio/aac'
+        url = 'http://some.audio/file.aac'
+        audio = '''<audio controls='controls'>
+          <source src='%s'/>
+        </audio>''' % (url, )
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(audio))
+
+        # fallback mimetype where extension is not informative
+        mimetype = 'audio/mpeg'
+        url = 'http://some.audio/file/without/ext/'
+        audio = '''<audio controls='controls'>
+          <source src='%s'/>
+        </audio>''' % (url, )
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(audio))
+
+
+
 

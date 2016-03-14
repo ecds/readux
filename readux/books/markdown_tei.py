@@ -1,3 +1,4 @@
+import os.path
 import re
 import mistune
 
@@ -9,7 +10,7 @@ def convert(text):
     on its own.
     '''
     mkdown = mistune.Markdown(renderer=TeiMarkdownRenderer())
-    return mkdown(text)
+    return mkdown(TeiMarkdownRenderer.preprocess(text))
 
 
 class TeiMarkdownRenderer(mistune.Renderer):
@@ -19,11 +20,29 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     audio_regex = re.compile(
         r'<audio[^>]*>\s*'   # open audio tag, with any attributes
-        # source with url and type in any order
-        r'<source\s+(src|type)=["\']([^"\']+)["\']\s+(src|type)=["\']([^"\']+)["\']\s*/>'
+        # source with url and type in any order; type optional
+        r'<source\s+(src|type)=["\']([^"\']+)["\'](\s+(src|type)=["\']([^"\']+)["\'])?\s*/>'
         r'\s*</audio>',      # close audio tag
         re.MULTILINE | re.DOTALL | re.UNICODE
     )
+    audio_block_re = re.compile(r'(<audio(?!</audio>).*</audio>)',
+        re.MULTILINE | re.DOTALL | re.UNICODE)
+
+    #: common html5 audio file extensions and corresponding mimetypes
+    audio_ext_mimetype = {
+        '.aac': 'audio/aac',
+        '.mp4': 'audio/mp4',
+        '.m4a': 'audio/mp4',
+        '.mp1': 'audio/mpeg',
+        '.mp2': 'audio/mpeg',
+        '.mp3': 'audio/mpeg',
+        '.mpg': 'audio/mpeg',
+        '.mpeg': 'audio/mpeg',
+        '.oga': 'audio/ogg',
+        '.ogg': 'audio/ogg',
+        '.wav': 'audio/wav',
+        '.webm': 'audio/webm'
+    }
 
     def __init__(self, **kwargs):
         self.options = kwargs
@@ -39,6 +58,18 @@ class TeiMarkdownRenderer(mistune.Renderer):
     #     separate format like docx or pdf).
     #     """
     #     return "<?xml:namespace ns='%s' ?>" % TeiNote.ROOT_NS
+
+    @classmethod
+    def preprocess(cls, text):
+        '''Method to preprocess text to make sure it is converted properly.
+        Currently, adds whitespace to ensure that any audio tags will
+        be processed as an html block.
+        '''
+        # Add extra newlines around *any* audio blocks; doesn't hurt to
+        # have extra whitespace, but without it the audio tags will
+        # not be converted properly.
+        return cls.audio_block_re.sub(r'\n\n\1\n\n', text)
+
 
     def block_code(self, code, lang=None):
         """Rendering block level code.
@@ -66,13 +97,36 @@ class TeiMarkdownRenderer(mistune.Renderer):
         :param html: text content of the html snippet.
         """
         match = self.audio_regex.match(html)
+        # if block contains audio, convert to TEI mimetype tag
         if match:
-            # returns list of tuples; first of each pair is the attribute name
+            # returns tuple of matches
             values = match.groups()
+            # first pair: first attribute/value (url if type is not set)
             values_dict = {
-                values[0]: values[1],
-                values[2]: values[3]
+                values[0]: values[1]
             }
+            # NOTE: technically the regex will allow for a type attribute
+            # without a src; but that would be a broken, nonsensical,
+            # non-playable input - so that case is not handled.
+            if 'src' not in values_dict:
+                next
+
+            # because the secondary match is optional, check if
+            # remaining matches are set the last two are secondary attribute/value
+            if len(values) == 5 and values[2] is not None:
+                values_dict[values[3]] = values[4]
+
+            # mimetype is needed for tei media tag; if we don't have one,
+            # try to guess from the url
+            if 'type' not in values_dict:
+                basename, ext = os.path.splitext(values_dict['src'])
+                if ext in self.audio_ext_mimetype:
+                    values_dict['type'] = self.audio_ext_mimetype[ext]
+                else:
+                    # fallback to at least indicate media is audio
+                    # (mpeg probably most common web audio format)
+                    values_dict['type'] = 'audio/mpeg'
+
             return '<media mimeType="%(type)s" url="%(src)s"/>' % values_dict
 
         # NOTE: default mistune logic here; probably not useful for TEI
@@ -202,7 +256,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
         else:
             tag = 'ref'
             attr = ' target="%s"' % link
-        return '<%(tag)s%(attr)>%(text)s</%(tag)s>' % {
+        return '<%(tag)s%(attr)s>%(text)s</%(tag)s>' % {
             'tag':tag, 'text': link, 'attr': attr}
 
     def link(self, link, title, text):

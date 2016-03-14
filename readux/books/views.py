@@ -444,6 +444,10 @@ class PageDatastreamView(RawDatastreamView):
     pid_url_kwarg = 'pid'
     repository_class = Repository
 
+    def get_headers(self):
+        return {
+            'Access-Control-Allow-Origin': '*'
+        }
 
 class PageOcr(PageDatastreamView):
     '''Display the page-level OCR content, if available (for
@@ -460,11 +464,13 @@ class PageTei(PageDatastreamView):
     datastream_id = Page.tei.id
 
     def get_headers(self):
-        return {
+        headers = super(PageTei, self).get_headers()
+        headers.update({
             # generate a default filename based on the object pid
             'Content-Disposition': 'filename="%s_tei.xml"' % \
-                 self.kwargs['pid'].replace(':', '-')
-        }
+                 self.kwargs['pid'].replace(':', '-'),
+        })
+        return headers
 
 class VolumeDatastreamView(RawDatastreamView):
     '''Base view for :class:`~readux.books.models.Volume` datastreams.'''

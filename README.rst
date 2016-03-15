@@ -25,16 +25,28 @@ This software is distributed under the Apache 2.0 License.
 Dependencies
 ^^^^^^^^^^^^
 
-* SQL database for administration, collection banner images, annotation storage
+Services
+''''''''
+
+* SQL database for administration, user accounts, collection banner images,
+  and annotation storage
 * Fedora repository for access to digitized book content
 * `Apache Solr <http://lucene.apache.org/solr/>`_ for browse by collection,
   search across all volumes, and search within a single volume
+* `IIIF <http://iiif.io/>`_ image server for page image content; e.g.
+  `Loris <https://github.com/loris-imageserver/loris>`_
+
+Software Dependencies
+'''''''''''''''''''''
+
 * `Python Social Auth <https://github.com/omab/python-social-auth>`_ for
   social authentication, and access to GitHub accounts for annotated
   volume export
-* `IIIF <http://iiif.io/>`_ image server for page image content; e.g.
-  `Loris <https://github.com/loris-imageserver/loris>`_
+* 'eulfedora <https://github.com/emory-libraries/eulfedora>`_
+* `django-eultheme <https://github.com/emory-libraries/django-eultheme>`
 * `Annotator.js <http://annotatorjs.org/>`_ for annotation
+* `annotator plugins <https://github.com/emory-lits-labs?query=annotator>`_
+  for marginal display, formatting, and image selection
 * `teifacsimile-to-jekyll <https://github.com/emory-libraries-ecds/teifacsimile-to-jekyll>`_
   and `digitaledition-jekylltheme <https://github.com/emory-libraries-ecds/digitaledition-jekylltheme>`_
   for exporting annotated editions
@@ -57,5 +69,5 @@ Components
 
 ``readux.pages``
     Functionality for site content such as an about page, annotation and export
-    documentation, credits.  Powered by `FeinCMS <http://www.feincms.org/>`_.
+    documentation, credits.  Content management based on `FeinCMS <http://www.feincms.org/>`_.
 

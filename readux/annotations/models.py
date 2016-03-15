@@ -9,9 +9,10 @@ from jsonfield import JSONField
 
 
 class AnnotationQuerySet(models.QuerySet):
+    'Custom :class:`~django.models.QuerySet` for :class:`Annotation`'
 
     def visible_to(self, user):
-        '''Restrict to annotations the current user is allowed to access.
+        '''Restrict to annotations the specified user is allowed to access.
         Currently, superusers can view all annotations; all other users
         can access only their own annotations.'''
         # currently, superusers can view all annotations;
@@ -37,20 +38,26 @@ class AnnotationQuerySet(models.QuerySet):
             pass
 
 class AnnotationManager(models.Manager):
+    '''Custom :class:`~django.models.Manager` for :class:`Annotation`.
+    Returns :class:`AnnotationQuerySet` as default queryset, and exposes
+    :meth:`visible_to` for convenience.'''
+
     def get_queryset(self):
         return AnnotationQuerySet(self.model, using=self._db)
 
     def visible_to(self, user):
+        'Convenience access to :meth:`AnnotationQuerySet.visible_to`'
         return self.get_queryset().visible_to(user)
 
 class Annotation(models.Model):
-    '''AnnotatorJS annotation model, based on the documentation at
-    http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html.'''
+    '''Django database model to store Annotator.js annotation data,
+    based on the
+    `annotation format documentation <http://docs.annotatorjs.org/en/v1.2.x/annotation-format.html>`_.'''
 
-    #: regex for recognizing valid UUID, for use in urls
+    #: regex for recognizing valid UUID, for use in site urls
     UUID_REGEX = r'[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 
-    #: schema version: default v1.0
+    #: annotation schema version: default v1.0
     schema_version = "v1.0"
     # for now, hard-coding until or unless we need to support more than
     # one version of annotation
@@ -60,9 +67,9 @@ class Annotation(models.Model):
     # data model includes version, do we need to set that in the db?
     # "annotator_schema_version": "v1.0",        # schema version: default v1.0
 
-    #: datetime annotation was created; automatically set
+    #: datetime annotation was created; automatically set when added
     created = models.DateTimeField(auto_now_add=True)
-    #: datetime annotation was last updated; automatically set
+    #: datetime annotation was last updated; automatically updated on save
     updated = models.DateTimeField(auto_now=True)
     #: content of the annotation
     text = models.TextField()
@@ -76,7 +83,7 @@ class Annotation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 
     #: Readux-specific field: URI for the volume that an annotation
-    #: is associated (i.e., volume a page is part of)
+    #: is associated with (i.e., volume a page is part of)
     volume_uri = models.URLField(blank=True)
 
     # tags still todo
@@ -142,7 +149,6 @@ class Annotation(models.Model):
         'convenience access to list of related pages in extra data'
         if 'related_pages' in self.extra_data:
             return self.extra_data['related_pages']
-
 
     @classmethod
     def create_from_request(cls, request):

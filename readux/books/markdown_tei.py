@@ -28,7 +28,8 @@ class TeiMarkdownRenderer(mistune.Renderer):
     audio_block_re = re.compile(r'(<audio(?!</audio>).*</audio>)',
         re.MULTILINE | re.DOTALL | re.UNICODE)
 
-    #: common html5 audio file extensions and corresponding mimetypes
+    #: common html5 audio file extensions and corresponding mimetypes;
+    #: used to infer audio mimetype when it is not specified
     audio_ext_mimetype = {
         '.aac': 'audio/aac',
         '.mp4': 'audio/mp4',

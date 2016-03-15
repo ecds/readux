@@ -1,8 +1,13 @@
-
 '''
-Objects to interact with the Digitization Workflow API in order to
-retrieve information about LSDI content.
+Client and :class:`~eulxml.xmlmap.XmlObject` classes to interact with
+the Digitization Workflow API in order to retrieve information about
+Large Scale Digitization Initiative (LSDI) content.
 
+.. Note::
+
+    DigWF is a legacy application (no longer in use) that contains
+    data about existing Emory Readux volumes.  The DigWF API was used
+    to import cover images and selected page images.
 '''
 
 import requests
@@ -40,7 +45,7 @@ class Client(object):
 
 
 class Item(xmlmap.XmlObject):
-    '''class:`~eulxml.xmlmap.XmlObject` to read Item information returned
+    ''':class:`~eulxml.xmlmap.XmlObject` to read Item information returned
     by the DigWF API.
 
     (Not all fields provided by DigWF are mapped here; only those
@@ -65,7 +70,7 @@ class Item(xmlmap.XmlObject):
 
 
 class Items(xmlmap.XmlObject):
-    '''class:`~eulxml.xmlmap.XmlObject` for the response returned by getItems.
+    ''':class:`~eulxml.xmlmap.XmlObject` for the response returned by getItems.
     Has a count of the number of items found, and a list of :class:`Item`
     objects with details about each item.'''
     count = xmlmap.IntegerField('@count')

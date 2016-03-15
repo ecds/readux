@@ -16,8 +16,11 @@ class Command(BaseCommand):
 Takes an optional list of pids; otherwise, looks for all Volume objects in
 the configured fedora instance.  Updates both unqualified and PDF ARK targets.
 
-NOTE: this script should be run after covers have been imported, so PDF start
-page information (if any) can be taken advantage when generating PDF target urls.
+.. Note::
+
+    This script should be run after covers have been imported, so PDF
+    start page information (if any) can be taken advantage when generating
+    PDF target urls.
 '''
     help = __doc__
 

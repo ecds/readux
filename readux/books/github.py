@@ -14,9 +14,9 @@ class GithubAccountNotFound(GithubApiException):
 
 
 class GithubApi(object):
-    # partial GitHub API access
-    # does NOT implement the full API, only those portions we need
-    # for readux export functionality
+    '''Partial GitHub API access.
+    Does **NOT** implement the full API, only those portions currently
+    needed for readux export functionality.'''
 
     url = 'https://api.github.com'
 
@@ -33,6 +33,9 @@ class GithubApi(object):
 
     @staticmethod
     def github_account(user):
+        '''Static method to find a user's GitHub account (current or
+        linked account via python-social-auth); raises
+        :class:`GithubAccountNotFound` if none is found.'''
         account = user.social_auth.filter(provider='github').first()
         if account is None:
             raise GithubAccountNotFound
@@ -40,11 +43,14 @@ class GithubApi(object):
 
     @staticmethod
     def github_token(user):
+        '''Retrieve a GitHub user account's token'''
         # TODO: handle no github account, check for appropriate scope
         return GithubApi.github_account(user).tokens
 
     @staticmethod
     def github_username(user):
+        '''Retrieve the GitHub username for a linked GitHub social auth
+        account'''
         return GithubApi.github_account(user).extra_data['login']
 
     @classmethod
@@ -54,7 +60,7 @@ class GithubApi(object):
         return cls(cls.github_token(user))
 
     def oauth_scopes(self):
-        'Get a list of scopes availabl for the current oauth token'
+        'Get a list of scopes available for the current oauth token'
         response = self.session.head('%s/user' % self.url)
         if response.status_code == requests.codes.ok:
             return response.headers['x-oauth-scopes'].split(',')
@@ -73,6 +79,7 @@ class GithubApi(object):
         return response.status_code == requests.codes.created
 
     def list_repos(self, user):
+        'Get a list of a repositories by user'
         # could get current user repos at: /user/repos
         # but that includes org repos user has access to
         # could specify type, but default of owner is probably fine for now

@@ -1,10 +1,10 @@
 .. _README:
 
 Readux
-======
+------
 
 Overview
---------
+^^^^^^^^
 
 Readux is a repository-based `Django <https://www.djangoproject.com/>`_
 web application for access to digitized books.  Readux runs on
@@ -18,12 +18,12 @@ text and image selections of page images, and can export an annotated
 volume as TEI or a standalone `Jekyll <http://jekyllrb.com/>`_ website.
 
 License
--------
+^^^^^^^
 
 This software is distributed under the Apache 2.0 License.
 
 Dependencies
-------------
+^^^^^^^^^^^^
 
 * SQL database for administration, collection banner images, annotation storage
 * Fedora repository for access to digitized book content
@@ -40,7 +40,7 @@ Dependencies
   for exporting annotated editions
 
 Components
-----------
+^^^^^^^^^^
 
 ``readux.collection``
     Models and views for access to collections, which are
@@ -54,7 +54,6 @@ Components
 ``readux.annotations``
     Django db models and views to provide an annotator-store backend;
     implements the `Annotator Core Storage api <http://docs.annotatorjs.org/en/v1.2.x/storage.html>`_.
-
 
 ``readux.pages``
     Functionality for site content such as an about page, annotation and export

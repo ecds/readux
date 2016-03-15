@@ -1,4 +1,5 @@
-# methods for generating annotated tei
+'''Methods to generate annotated TEI for export.'''
+
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -17,11 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 def annotated_tei(teivol, annotations):
-    '''Take a TEI Facsimile document and an annotation queryset,
-    and generate an annotated TEI Facsimile document.  Tei header is
+    '''Takes a TEI :class:`~readux.books.tei.Facsimile` document and an
+    :class:`~readux.annotation.models.Annotation` queryset,
+    and generates an annotated TEI Facsimile document.  Tei header is
     updated to reflect annotated edition, with a responsibility based
     on the users associated with the annotations passed in.  Annotation
-    references are added to the facsimile data, in the form of start and
+    references are added to the facsimile data in the form of start and
     end anchors for text annotations and new zones for image annotations.
     Annotation content is added to the body of the TEI, and annotation
     tags, if any, are added as an interpGrp.

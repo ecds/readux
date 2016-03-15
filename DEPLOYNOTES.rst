@@ -1,7 +1,7 @@
 .. _DEPLOYNOTES:
 
-DEPLOYNOTES
-===========
+Insallation and Deploy
+======================
 
 Installation
 ------------

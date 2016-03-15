@@ -4,6 +4,12 @@ from eulxml.xmlmap import teimap
 from lxml import etree
 import os
 
+'''
+:class:`eulxml.xmlmap.XmlObject` subclasses for dealing with TEI,
+particularly for the TEI facsimile used for positional OCR data for
+readux pages and for generating annotated TEI for export.
+'''
+
 
 class TeiBase(teimap.Tei):
     'Base class for all TEI objects, with all namespaces'
@@ -53,22 +59,29 @@ class Zone(TeiBase):
     page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
     # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
 
+    #: list of graphic elements (i.e. page images)
     graphics = xmlmap.NodeListField('tei:graphic', Graphic)
 
     # convenience mappings to specific sizes of page image
+    #: full size image (tei:graphic with type "full")
     full_image = xmlmap.NodeField('tei:graphic[@type="full"]', Graphic)
+    #: page size image (tei:graphic with type "page")
     page_image = xmlmap.NodeField('tei:graphic[@type="page"]', Graphic)
+    #: thumbnail image (tei:graphic with type "thumbnail")
     thumbnail = xmlmap.NodeField('tei:graphic[@type="thumbnail"]', Graphic)
+    #: small thumbnail image (tei:graphic with type "small-thumbnail")
     small_thumbnail = xmlmap.NodeField('tei:graphic[@type="small-thumbnail"]', Graphic)
+    #: image info as provided by IIIF (tei:graphic with type "info")
     image_info = xmlmap.NodeField('tei:graphic[@type="info"]', Graphic)
-
 
     @property
     def width(self):
+        'zone width'
         return self.lrx - self.ulx
 
     @property
     def height(self):
+        'zone height'
         return self.lry - self.uly
 
     @property
@@ -91,7 +104,7 @@ class Ref(TeiBase):
 
 
 class Note(TeiBase):
-    'Tei Note, intendd to contain an annotation'
+    'Tei Note, used here to contain an annotation'
     ROOT_NAME = 'note'
     #: xml id
     id = xmlmap.StringField('@xml:id')
@@ -142,10 +155,11 @@ class PublicationStatement(TeiBase):
 
 
 class Facsimile(TeiBase):
-    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
+    '''Extension of :class:`eulxml.xmlmap.teimap.TEI` to provide access
+    to TEI facsimile elements'''
+    #: local xsd schema
     XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
                                            'books', 'schema', 'TEIPageView.xsd')
-
     ROOT_NAME = 'TEI'
     xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
     # NOTE: not using xmlmap.loadSchema because it doesn't correctly load
@@ -201,6 +215,7 @@ class AnnotatedFacsimile(Facsimile):
         Name)
 
     # additional mappings for annotation data
+
     #: list of annotations at body/div[@type="annotations"]/note[@type="annotation"], as :class:`Note`
     annotations = xmlmap.NodeListField('tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
         Note)

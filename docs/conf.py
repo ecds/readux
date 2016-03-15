@@ -37,7 +37,7 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -106,6 +106,25 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'alabaster'
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
+html_theme = 'alabaster'
+html_style = 'style.css'
+html_theme_options = {
+    'logo': 'readux.png',  # must be in _static dir
+    'github_user': 'emory-libraries',
+    'github_repo': 'readux',
+    # 'travis_button': True,  # enable when we get travis-ci set up
+    'description': '''Django web application for search, browse, and
+      annotation of digitized books in a Fedora Commons 3.x repository'''
+    # 'analytics_id':
+}
+
+html_sidebars = {
+    '**': ['about.html', 'navigation.html',
+          'searchbox.html', 'sidebar_footer.html'],
+}
+
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -273,5 +292,8 @@ intersphinx_mapping = {
     'eulfedora': ('http://eulfedora.readthedocs.org/en/latest/', None),
     'python': ('http://docs.python.org/', None),
     'rdflib': ('http://rdflib.readthedocs.org/en/latest/', None),
+    'djangoimagetools': ('http://django-image-tools.readthedocs.org/en/latest/', None),
 }
 
+
+autodoc_member_order = 'bysource'

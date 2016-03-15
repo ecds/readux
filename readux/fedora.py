@@ -33,7 +33,7 @@ class ManagementRepository(server.Repository):
 
     .. Note::
 
-        This :class:`~eulfedora.server.Repository` variant should only
+        This :class:`~eulfedora.server.Repository` variant should *only*
         be used for maintainance tasks (e.g., scripts that ingest,
         modify, or otherwise manage content).  It should **not** be
         used for general website views or access; those views should
@@ -55,8 +55,8 @@ class ManagementRepository(server.Repository):
 
 
 class DigitalObject(models.DigitalObject):
-    """Extend the default fedora DigitalObject class with logic for setting
-    pids based on PID manager ids."""
+    """Readux base :class:`~eulfedora.models.DigitalObject` class with logic
+    for setting and accessing pids based on PID manager ids."""
 
 
     #: :class:`~eulfedora.models.XmlDatastream` for the required Fedora

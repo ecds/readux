@@ -12,7 +12,7 @@ from readux.utils import absolutize_url
 
 
 class AnnotationIndex(View):
-    'API index view, with information and links for API urls.'
+    'Annotator store API index view, with information and links for API urls.'
 
     def get(self, request):
         # Include absolute API links as per annotator 2.0 documentation
@@ -136,7 +136,8 @@ class AnnotationView(View):
             return HttpResponseBadRequest(non_ajax_error_msg)
 
     def delete(self, request, id):
-        '''Remove the annotation.'''
+        '''Remove the annotation.  On success, returns a 204 No Content
+        response as per the annotator store API documentation.'''
         self.get_object().delete()
         response = HttpResponse('')
         # return 204 no content, according to annotator store api docs
@@ -145,14 +146,17 @@ class AnnotationView(View):
 
 
 class AnnotationSearch(View):
-    '''Search annotations and display as JSON.
+    '''Search annotations and display as JSON.  Results are restricted
+    to annotations the users has permission to view (currently only
+    annotations owned by the user for everyone other than superusers).
 
     The following search fields are currently supported:
        - uri (exact match)
        - text (case-insensitive partial match)
+       - quote (case-insensitive partial match)
        - user (exact match on username)
 
-    Search results can be limited by specifing ``limit`` or ``offset``
+    Search results can be limited by specifying ``limit`` or ``offset``
     parameters.
     '''
 

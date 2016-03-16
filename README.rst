@@ -1,7 +1,7 @@
 .. _README:
 
 Readux
-------
+======
 
 Overview
 ^^^^^^^^

@@ -18,8 +18,7 @@ import readux
 
 def all_deps():
     '''Locally install all dependencies.'''
-    local('pip install -r pip-install-req.txt')
-    local('pip install -r pip-dev-req.txt')
+    local('pip install -r requirments/dev.txt')
     if os.path.exists('pip-local-req.txt'):
         local('pip install -r pip-local-req.txt')
 
@@ -154,7 +153,7 @@ def setup_virtualenv(python=None):
             % (env['build_dir'], python_opt), user=env.remote_acct)
         # activate the environment and install required packages
         with prefix('source env/bin/activate'):
-            pip_cmd = 'pip install -r pip-install-req.txt'
+            pip_cmd = 'pip install -r requirements.txt'
             if env.remote_proxy:
                 pip_cmd += ' --proxy=%(remote_proxy)s' % env
             sudo(pip_cmd, user=env.remote_acct)

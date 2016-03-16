@@ -27,7 +27,6 @@ pdfminer<=20140328
 beautifulsoup4
 bagit
 python-social-auth
-django-auth-ldap
 jsonfield
 pytz
 fuzzywuzzy

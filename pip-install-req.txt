@@ -16,8 +16,8 @@ django-widget-tweaks
 # sunburnt requires *either* httplib2 or python-requests
 requests
 eulcommon
-# local pid manager client
-https://wilson.library.emory.edu/jenkins/job/pidman-rest-client_1.2.x/lastSuccessfulBuild/artifact/pidmanclient/dist/pidservices-1.2.0.tar.gz
+# pidman client
+-e git+https://github.com/emory-libraries/pidmanclient.git@release-1.2.0#egg=pidservices
 django-image-tools>=0.8.b3
 python-magic
 # NOTE: Counter widget missing in progessbar 2.2, but 2.3 package is unverified (?)

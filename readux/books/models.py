@@ -567,7 +567,9 @@ class BaseVolume(object):
 
 class Volume(DigitalObject, BaseVolume):
     '''Fedora Volume object with common functionality for all Volume variants.
-    Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.'''
+    Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.
+    See also :class:`VolumeV1_0` and :class:`VolumeV1_1`.
+    '''
 
     #: content model pattern for finding supported variant volumes
     VOLUME_CMODEL_PATTERN = "info:fedora/emory-control:ScannedVolume-1.?"

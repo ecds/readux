@@ -3,9 +3,6 @@
 Readux
 ======
 
-Overview
-^^^^^^^^
-
 Readux is a repository-based `Django <https://www.djangoproject.com/>`_
 web application for access to digitized books.  Readux runs on
 `Fedora Commons 3.8 <https://wiki.duraspace.org/display/FEDORA38/Fedora+3.8+Documentation>`_
@@ -42,8 +39,8 @@ Software Dependencies
 * `Python Social Auth <https://github.com/omab/python-social-auth>`_ for
   social authentication, and access to GitHub accounts for annotated
   volume export
-* 'eulfedora <https://github.com/emory-libraries/eulfedora>`_
-* `django-eultheme <https://github.com/emory-libraries/django-eultheme>`
+* `eulfedora <https://github.com/emory-libraries/eulfedora>`_
+* `django-eultheme <https://github.com/emory-libraries/django-eultheme>`_
 * `Annotator.js <http://annotatorjs.org/>`_ for annotation
 * `annotator plugins <https://github.com/emory-lits-labs?query=annotator>`_
   for marginal display, formatting, and image selection

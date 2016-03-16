@@ -1,7 +1,7 @@
 .. _DEPLOYNOTES:
 
-Insallation and Deploy
-======================
+Installation and Deploy
+=======================
 
 Installation
 ------------
@@ -81,7 +81,7 @@ Initial QA/production deploy
 
 
 Upgrade Notes
-=============
+-------------
 
 **Patch affects all releases until further notice**
 
@@ -95,7 +95,7 @@ directory.  From the top level of your virtualenv directory, run::
 ----
 
 Release 1.4
------------
+~~~~~~~~~~~
 
 * Basic export functionality requires the teifacsimile-to-jekyll gem
   version 0.5 be installed (available from
@@ -116,7 +116,7 @@ Release 1.4
   be overridden in ``localsettings.py``.
 
 Release 1.3
------------
+~~~~~~~~~~~
 
 * Some page images in Fedora have a generic mimetype, which Loris can't
   handle for recognizing and generating images.  Before switching to the
@@ -165,7 +165,7 @@ Release 1.3
 
 
 Release 1.2.1
--------------------------
+~~~~~~~~~~~~~
 
 * The dependency on :mod:`eullocal` has been removed, so eullocal can
   be uninstalled after upgrading if re-using a pre-existing virtualenv.
@@ -174,7 +174,7 @@ Release 1.2.1
   downtime periods.
 
 Release 1.2
--------------
+~~~~~~~~~~~
 
 * This release includes an update to Django 1.7 and includes new database
   migrations.  To update the database, run::
@@ -195,7 +195,7 @@ Release 1.2
   needed.
 
 Release 1.1
--------------
+~~~~~~~~~~~
 
 * Update Fedora XACML policies to include new variant content models
   (ScannedVolume-1.1 and ScannedPage-1.1) and reload policies so that newly
@@ -207,7 +207,7 @@ Release 1.1
   See sample config and default value in ``localsettings.py.dist``.
 
 Release 1.0.2
--------------
+~~~~~~~~~~~~~
 
 * Run **syncrepo** manage script to ensure all Fedora content models are
   loaded in the configured repository::
@@ -215,7 +215,7 @@ Release 1.0.2
     python manage.py syncrepo
 
 Release 1.0
------------
+~~~~~~~~~~~
 
 * Run the manage script to import covers for all books::
 

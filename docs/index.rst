@@ -3,12 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+Contents:
 
 .. toctree::
    :maxdepth: 1
 
-   codedocs
    deploynotes
+   architecture
+   codedocs
    Version History <changelog>
    devnotes
 

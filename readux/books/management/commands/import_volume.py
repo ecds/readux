@@ -1,17 +1,23 @@
 
 '''
-import volume manage Command
+Manage command to import a single volume.
 
-assume single volume only, and not in the repo (onus on user to check for now)
+Currently assumes single volume only, and one that is not already in
+the reposistory (onus on user to check for now).
 
-takes one option, should be path to bag with book/volume contents
+Takes a path to bag with book/volume contents, a collection id
+that the book should be added to, and an optional flag to use
+fast bagit validation.
+
+Basic functionalty:
 
 - check that the bag is valid
 - identify required files in the bag
 - construct and ingest book object
 - construct and ingest volume object
+- iterate through page content and ingest page objects
 
-report on what was done
+Report on what was done.
 '''
 import bagit
 import logging
@@ -21,7 +27,7 @@ import os
 import time
 
 from django.core.management.base import BaseCommand, CommandError
-from eulfedora.server import RequestFailed
+from eulfedora.util import RequestFailed
 from eulxml.xmlmap import load_xmlobject_from_file, load_xmlobject_from_string
 from eulxml.xmlmap.dc import DublinCore
 

@@ -60,6 +60,23 @@ to the TEI and then the HTML displayed on the Readux site for annotation,
 in order to ensure durability and correlation of content with annotations.
 
 
+Fedora pids
+^^^^^^^^^^^
+
+Readux is intended for display and access, and not as a management tool.
+However, for historical reasons it currently includes some scripts for
+importing covers and pages, and also a preliminary script for importing
+a new Volume-1.1 work with pages and metadata (see :ref:`import_volume`).
+Prior to Readux, existing Emory Libraries digitized book content in the
+repository only included Book and Volume records.  There are manage commands
+to :ref:`import_covers` and :ref:`import_pages`, but the current implementation
+uses a legacy Digitization Workflow (:mod:`readux.books.digwf`).
+
+Following our standard practice, any objects ingested via Readux
+have Archival Resource Keys (ARKs) generated via our
+`PID manager application <https://github.com/emory-libraries/pidman>`_,
+which are then used as the basis for Fedora object pids.  The ARK is stored
+in the object metadata and displayed on the website as a permalink.
 
 
 

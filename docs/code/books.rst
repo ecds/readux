@@ -23,7 +23,7 @@ Views
     :members:
 
 DigWF
-^^^^^^
+^^^^^
 .. automodule:: readux.books.digwf
     :members:
 
@@ -70,15 +70,29 @@ The following management commands are available.  For more details, use
 ``manage.py help <command>``.  As much as possible, all custom commands honor the
 built-in django verbosity options.
 
-* **import_covers**
+.. _import_covers:
+
+import_covers
+~~~~~~~~~~~~~
     .. automodule:: readux.books.management.commands.import_covers
         :members:
 
-* **import_pages**
+.. _import_pages:
+
+import_pages
+~~~~~~~~~~~~
+
     .. automodule:: readux.books.management.commands.import_pages
        :members:
 
-* **update_arks**
+update_arks
+~~~~~~~~~~~
     .. autoclass:: readux.books.management.commands.update_arks.Command
        :members:
 
+.. _import_volume:
+
+import_volume
+~~~~~~~~~~~~~
+    .. automodule:: readux.books.management.commands.import_volume
+       :members:

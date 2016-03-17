@@ -3,6 +3,21 @@
 Readux
 ======
 
+**documentation**
+  .. image:: https://readthedocs.org/projects/readux/badge/?version=develop
+    :target: http://readux.readthedocs.org/en/develop/?badge=develop
+    :alt: Documentation Status
+
+**code**
+  .. image:: https://codeclimate.com/github/emory-libraries/readux/badges/gpa.svg
+    :target: https://codeclimate.com/github/emory-libraries/readux
+    :alt: Code Climate
+
+  .. image:: https://requires.io/github/emory-libraries/readux/requirements.svg?branch=develop
+     :target: https://requires.io/github/emory-libraries/readux/requirements/?branch=develop
+     :alt: Requirements Status
+
+
 Readux is a repository-based `Django <https://www.djangoproject.com/>`_
 web application for access to digitized books.  Readux runs on
 `Fedora Commons 3.8 <https://wiki.duraspace.org/display/FEDORA38/Fedora+3.8+Documentation>`_
@@ -13,6 +28,9 @@ For volumes with pages loaded, OCR text is provided as an invisible overlay
 on page images for selection and search.  Logged in users can annotate
 text and image selections of page images, and can export an annotated
 volume as TEI or a standalone `Jekyll <http://jekyllrb.com/>`_ website.
+
+Documentation available at
+`readux.readthedocs.org <http://readux.readthedocs.org/en/develop/>`_.
 
 License
 ^^^^^^^

@@ -18,7 +18,7 @@ import readux
 
 def all_deps():
     '''Locally install all dependencies.'''
-    local('pip install -r requirments/dev.txt')
+    local('pip install -r requirements/dev.txt')
     if os.path.exists('pip-local-req.txt'):
         local('pip install -r pip-local-req.txt')
 

@@ -158,8 +158,11 @@ class Facsimile(TeiBase):
     '''Extension of :class:`eulxml.xmlmap.teimap.TEI` to provide access
     to TEI facsimile elements'''
     #: local xsd schema
-    XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
-                                           'books', 'schema', 'TEIPageView.xsd')
+    XSD_SCHEMA = 'file://%s' % os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                           'schema', 'TEIPageView.xsd')
+    # NOTE: using absolute path for schema to avoid path issues when
+    # building documentation on readthedocs.org
+
     ROOT_NAME = 'TEI'
     xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
     # NOTE: not using xmlmap.loadSchema because it doesn't correctly load

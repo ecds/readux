@@ -14,6 +14,13 @@
 
 import sys
 import os
+
+# before importing readux, add add readux project directory to the path
+# and configure django settings
+# (redundant from makefile, but required for readthedocs build)
+sys.path.append("..")
+os.environ['DJANGO_SETTINGS_MODULE'] = 'readux.settings'
+
 import readux
 
 # If extensions (or modules to document with autodoc) are in another directory,

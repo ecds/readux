@@ -1,6 +1,47 @@
 Architecture
 ------------
 
+.. _architecture-overview:
+
+High-Level Architecture
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The following diagram provides a high-level view of the Readux system
+architecture.  The direction of arrows indicates the flow of data.
+
+.. diagram of fedora/solr/eulindexer
+
+.. graphviz:: diagrams/architecture.dot
+
+Readux is a Django application running on a web server.  It uses a
+SQL database for user accounts, collection banner images and annotations.
+Collection and digitized book content is stored in a Fedora Commons
+3.x repository and accessed using REST APIs with
+`eulfedora <https://github.com/emory-libraries/eulfedora>`_.
+
+Readux uses `Apache Solr <http://lucene.apache.org/solr/>`_ for search
+and browse functionality.  This includes:
+
+- searching across all volumes (see :meth:`~readux.books.views.VolumeSearch`)
+- searching within a single volume (see :meth:`~readux.books.views.VolumeDetail`)
+- browsing volumes by collection (see :meth:`~readux.collection.views.CollectionDetail`
+  or :meth:`~readux.collection.views.CollectionCoverDetail`)
+- browsing pages within a volume (see :meth:`~readux.books.views.VolumePageList`)
+
+We use `eulindexer <https://github.com/emory-libraries/eulindexer>`_ to
+manage and update Fedora-based Solr indexes.  :mod:`eulindexer` loads the Solr
+configuration from Readux and listens to the Fedora messaging queue for
+updates.  When an update event occurs, :mod:`eulinedexer` queries Fedora
+to determine the content type (based on content model), and then queries
+the relevant application for the index data to be sent to Solr.  Readux
+uses the :mod:`eulfedora.indexdata` views and extends the default
+:meth:`eulfedora.models.DigitalObject.index_data` method to include
+additional fields needed for Readux-specific functionality; see the code
+for :meth:`readux.books.models.Volume.index_data` and
+:meth:`readux.books.models.Page.index_data` for specifics.  The current
+Solr schema is included in the ``deploy/solr`` directory.
+
+
 .. _book-content-models:
 
 Book Content Models

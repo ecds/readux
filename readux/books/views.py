@@ -313,6 +313,11 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
 
 
 class VolumePageList(ListView, VaryOnCookieMixin):
+    '''Display a paginated list of :class:`~readux.books.models.Page`
+    objects associated with a single :class:`~readux.books.models.Volume`.
+    Pages are displayed by thumbnail; thumbnails include an annotation count
+    indicator for logged in users with annotations.
+    '''
 
     template_name = 'books/volume_pages_list.html'
     paginate_by = 30

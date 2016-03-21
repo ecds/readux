@@ -17,7 +17,9 @@ Readux is a Django application running on a web server.  It uses a
 SQL database for user accounts, collection banner images and annotations.
 Collection and digitized book content is stored in a Fedora Commons
 3.x repository and accessed using REST APIs with
-`eulfedora <https://github.com/emory-libraries/eulfedora>`_.
+`eulfedora <https://github.com/emory-libraries/eulfedora>`_.  In normal
+operations, Readux does *not* ingest or modify content in Fedora (although
+the codebase does currently include scripts for ingesting contents).
 
 Readux uses `Apache Solr <http://lucene.apache.org/solr/>`_ for search
 and browse functionality.  This includes:

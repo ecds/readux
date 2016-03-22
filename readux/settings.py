@@ -144,6 +144,7 @@ AUTHENTICATION_BACKENDS = (
     'social.backends.github.GithubOAuth2',
     'social.backends.google.GoogleOAuth2',
     'social.backends.twitter.TwitterOAuth',
+    'social.backends.zotero.ZoteroOAuth',
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )

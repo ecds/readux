@@ -21,9 +21,5 @@ ratings:
   - "**.js"
   - "**.py"
 exclude_paths:
-  - "sitemedia/js/openseadragon/*"
-  - "sitemedia/plugins/**"
-  - "sitemedia/js/annotator.min.js"
-  - "sitemedia/js/isotope.min.js"
-  - "sitemedia/js/js.cookie.js"
+  - "sitemedia/ext/**"
 

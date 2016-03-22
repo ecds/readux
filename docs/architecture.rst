@@ -21,6 +21,16 @@ Collection and digitized book content is stored in a Fedora Commons
 operations, Readux does *not* ingest or modify content in Fedora (although
 the codebase does currently include scripts for ingesting contents).
 
+Readux uses `Loris IIIF Image Server <https://github.com/loris-imageserver/loris>`_
+to serve out page image in various sizes and support deep zoom.  Loris is
+configured to pull images from Fedora by URL.  Currently, Loris
+is not directly exposed to users; Loris IIIF outputs are mediated through
+the Readux application (although this is something that may be revisited).
+The page image urls do matter: Readux image annotations reference the
+image url, so changing urls will require updating existing annotations.  Using
+more semantic image urls (thumbnail, page, full) within Readux *may* be a
+more durable choice than exposing specific IIIF URLs with sizes hard-coded.
+
 Readux uses `Apache Solr <http://lucene.apache.org/solr/>`_ for search
 and browse functionality.  This includes:
 

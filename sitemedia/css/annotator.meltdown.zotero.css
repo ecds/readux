@@ -1,0 +1,25 @@
+#zotero-modal label {
+    height: 32px;
+    width: 32px;
+    color: transparent;  /* make text Z invisible */
+    background-image: url('../img/zotero_32x32.png');
+    vertical-align: top;
+    margin: 0;
+}
+
+#zotero-modal #zotero-lookup {
+    width: 90%;
+    height: 32px;
+}
+
+#zotero-modal .in-progress {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+}
+
+
+
+.meltdown_control-zotero > span  {
+    color: #990000 !important;
+}

@@ -77,6 +77,10 @@
               }
             }
           })
+          .include(annotatorMeltdownZotero, {
+            user_id: '{{ zotero_userid }}', token: '{{ zotero_token}}'
+          })
+
 
       app.start()
           .then(function () {

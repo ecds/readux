@@ -439,6 +439,17 @@ class PageDetail(DetailView, VaryOnCookieMixin):
 
         context_data.update({'next': nxt, 'prev': prev,
             'page_chunk': page_chunk, 'form': form, 'scale': scale})
+
+        # if user is logged in, check for zotero account and pass
+        # token and user id through for annotation citation
+        if not self.request.user.is_anonymous():
+            zotero_account = self.request.user.social_auth.filter(provider='zotero').first()
+            if zotero_account:
+                context_data.update({
+                    'zotero_userid': zotero_account.extra_data['access_token']['userID'],
+                    'zotero_token': zotero_account.extra_data['access_token']['oauth_token']
+                    })
+
         return context_data
 
 class PageDatastreamView(RawDatastreamView):

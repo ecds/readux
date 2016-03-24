@@ -10,7 +10,8 @@
   <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-meltdown/build/0.2.2/annotator.meltdown.min.css" />
   <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-marginalia/build/0.2.2/annotator.marginalia.min.css" />
   <link rel="stylesheet" href="{% static 'ext/jquery-ui/jquery-ui.min.css' %}"/>
-      {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/annotator.meltdown.zotero.css' %}"/>
+  {{ block.super }}
 {% endblock %}
 
 {% block javascript %}
@@ -28,8 +29,13 @@
   <script type="text/javascript" src="{% static 'ext/jquery-ui/jquery-ui.autocomplete.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/related-pages.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/annotator/selection-ids.js' %}"></script>
+
   <link rel="stylesheet" type="text/css" href="http://emory-lits-labs.github.io/annotator-imgselect/src/jquery.imgareaselect-0.9.10/css/imgareaselect-default.css" />
   <script type="text/javascript" src="http://emory-lits-labs.github.io/annotator-imgselect/build/0.2.2/annotator.imgselect.min.js"></script>
+
+  <script type="text/javascript" src="{% static 'js/annotator/meltdown-zotero.js' %}"></script>
+  <script type="text/javascript" src="{% static 'ext/jquery.rest.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/zotero.js' %}"></script>
 
   {% include 'books/snippets/book-page.js' %}
 

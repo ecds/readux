@@ -42,8 +42,16 @@ treatment of germ-cell cancer."
                 // any existing input from previous lookups for easy re-entry
                 $('#zotero-lookup').focus().select();
 
+                // make sure zotero modal shows up over the meltdown window
+                $('#zotero-modal').zIndex(parseInt($('.meltdown_wrap').zIndex()) + 1);
+
                 // for simplicity, hide the editor while the zotero lookup is active
                 $('.annotator-editor').hide();
+
+                // FIXME: would be nicer not to do this when meltdown is
+                // fullscreen, which is easy to check;
+                // however, zotero-modal does not show up *over* the fullscreen
+                // meltdown window (and it does not seem to be a z-index issue)
             });
             $('#zotero-modal').on('hidden.bs.modal', function () {
                 // restore editor visibility
@@ -70,10 +78,29 @@ treatment of germ-cell cancer."
                 select: function(event, ui) {
                     // on select, put the citation id into the annotation text
                     // and hide the modal
-                    if (meltdown) {
+                    if (meltdown) {  // requires access to meltdown editor
+
+                        // insert a placeholder/internal link in the text
                         // insert a placeholder in the text that can be converted
                         // into a citation reference on save/update
                         meltdown.editor.replaceSelectedText('[zotero:' + ui.item.id + ']', "select");
+
+
+                        // get the zotero citation as html and add to the end of the text
+                        zotero.get_item(ui.item.id, 'bib', function(data) {
+                            console.log('get item callback');
+                            console.log(data);
+                        })
+
+                        // figure out how to get the zotero citation as tei and
+                        // add to annotation extra data
+                        // (probably not here but on annotation update/create,
+                        // since we don't have access to the annotation object here)
+                        // zotero.get_item(ui.item.id, 'tei', function(data) {
+                        //     console.log(data);
+                        // })
+
+
                     }
                     // close the modal
                     $('#zotero-modal').modal('hide');

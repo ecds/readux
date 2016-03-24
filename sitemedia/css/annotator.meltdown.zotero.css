@@ -19,7 +19,16 @@
 }
 
 
-
+/* Zotero launcher button on meltdown control panel */
 .meltdown_control-zotero > span  {
-    color: #990000 !important;
+    /* zotero red */
+    /*color: #990000 !important;
+    font-weight: bold;*/
+    color: transparent !important;  /* make text Z invisible */
+    background-image: url('../img/zotero_16x16.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-top: -3px; /* bring closer in line to other controls */
 }
+
+

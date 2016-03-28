@@ -15,7 +15,6 @@ function annotatorMeltdownZotero(options) {
         '</div></div>'].join('\n'));
 
     function customize_meltdown() {
-        console.log('annotator-meltdown-zotero customize meltdown');
         // add a Zotero citation action to default meltdown controls
         var controls = $.meltdown.defaults.controls,
             fs_index = controls.indexOf('fullscreen');
@@ -79,17 +78,48 @@ treatment of germ-cell cancer."
                     // on select, put the citation id into the annotation text
                     // and hide the modal
                     if (meltdown) {  // requires access to meltdown editor
-
-                        // insert a placeholder/internal link in the text
-                        // insert a placeholder in the text that can be converted
-                        // into a citation reference on save/update
-                        meltdown.editor.replaceSelectedText('[zotero:' + ui.item.id + ']', "select");
-
-
                         // get the zotero citation as html and add to the end of the text
-                        zotero.get_item(ui.item.id, 'bib', function(data) {
-                            console.log('get item callback');
-                            console.log(data);
+                        // format json, include bib
+                        zotero.get_item(ui.item.id, 'json', 'bib,data', function(data) {
+                            // construct in-text citation with internal link;
+                            // using chicago style for now (zotero default)
+                            var text_label;
+                            // zotero handles one, two, multiple authors for us
+                            if (data.meta.creatorSummary) {
+                                text_label = data.meta.creatorSummary;
+                            // otherwise, cite in text by title (e.g. website)
+                            } else if (data.data.shortTitle) {
+                                text_label = data.data.shortTitle;
+                            } else {
+                                text_label = data.data.title;
+                            }
+                            // include first 4 letters (year) of date, if available
+                            if (data.meta.parsedDate) {
+                                text_label += ' ' + data.meta.parsedDate.substring(0, 4);
+                            }
+
+                            // construct parenthetical markdown internal link;
+                            // using zotero item key as identifier
+                            var text_citation = '([' + text_label + '](./#' + data.key + '))';
+                            // insert in-text citation where the cursor is
+                            meltdown.editor.replaceSelectedText(text_citation,
+                                "select");
+
+                            var textarea = $(meltdown.editor.context);
+                            var ed_content = textarea.val();
+                            // parse the html citation from the zotero result
+                            // and pull out just the entry
+                            var citation = $($.parseXML(data.bib)).find("[class=csl-entry]");
+
+                            // add a new citations section if not already present
+                            if (ed_content.indexOf('### Citations') == -1) {
+                                ed_content += '\n\n---\n### Citations\n';
+                            }
+                            // add the citation at the end of the annotation content
+                            // using formatted citation from Zotero, but adding a named
+                            // anchor for linking to in-text citation
+                            ed_content += '\n* <a name="' + data.key + '"></a>' + citation.html();
+                            textarea.val(ed_content)
                         })
 
                         // figure out how to get the zotero citation as tei and

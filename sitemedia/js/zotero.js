@@ -82,23 +82,15 @@ ZoteroClient.prototype.autocomplete_search = function(search_term, callback) {
 }
 
 
-ZoteroClient.prototype.get_item = function(id, format, callback) {
-    console.log("getting item " + id + " format " + format);
-    var request = this.client.items.read(id, {format: format});
-    request.always(function(xhrObject) {
-        // fixme: for some reason, done isn't firing, but data is availlable here
-        console.log('always handler');
-        console.log(xhrObject);
-        // content available as responseText
-        // readystate = 4?
+ZoteroClient.prototype.get_item = function(id, format, include, callback) {
+    /* Get a single zotero citation item.
+    Format and include parameters as described in the Zotero documentation:
+    https://www.zotero.org/support/dev/web_api/v3/basics#read_requests
 
-    });
+    (user items only for now)
+    */
+    var request = this.client.items.read(id, {format: format, include: include});
     request.done(function(data, textstatus, xhrObject) {
-
-        console.log('item request is done');
-        console.log(data);
-        console.log(textstatus);
-        console.log(xhrObject);
         callback(data);
     });
 

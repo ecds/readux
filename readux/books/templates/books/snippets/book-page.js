@@ -78,7 +78,8 @@
             }
           })
           .include(annotatorMeltdownZotero, {
-            user_id: '{{ zotero_userid }}', token: '{{ zotero_token}}'
+            user_id: '{{ zotero_userid }}', token: '{{ zotero_token}}',
+            disabled_message: 'Please link your Zotero account to enable Zotero functionality',
           })
 
 

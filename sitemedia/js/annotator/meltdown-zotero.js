@@ -1,18 +1,39 @@
-function annotatorMeltdownZotero(options) {
+function annotatorMeltdownZotero(user_options) {
     var _t = annotator.util.gettext;
-    var options = options || {};
-    var zotero, zotero_initialized = false;
+    var _app;
+    var options = {
+        // default disabled message (can be overriden)
+        disabled_message: 'Zotero functionality is not available',
+    };
+    $.extend(options, user_options);
+    var zotero, zotero_initialized = false,
+        disabled = !(options.user_id && options.token);
+    // if zotero credentials are not supplied, then run in disabled mode
 
+    // bootstrap modal for zotero lookup
     var modal_template = $([
         '<div id="zotero-modal" class="modal" tabindex="-1" role="dialog">',
         '<div class="modal-dialog"><div class="modal-content">',
+        // no close button for zotero lookup, for now
         // '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>',
             '<div class="modal-body">',
-                '<label for="zotero-lookup">Z</label>',
+                '<label class="zotero-icon" for="zotero-lookup">Z</label>',
                 '<input id="zotero-lookup"/>',
                 '<span class="in-progress" style="display:none"><i class="fa fa-2x fa-spinner fa-spin"></i></span>',
         '</div></div>',
         '</div></div>'].join('\n'));
+
+    // bootstrap modal with disabled message
+    var modal_template_disabled = $([
+        '<div id="zotero-modal" class="modal" tabindex="-1" role="dialog">',
+        '<div class="modal-dialog"><div class="modal-content">',
+        '<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>',
+            '<div class="modal-body">',
+                '<span class="zotero-icon pull-left"></span>',
+                '<p>' + options.disabled_message + '</p>',
+        '</div></div>',
+        '</div></div>'].join('\n'));
+
 
     function customize_meltdown() {
         // add a Zotero citation action to default meltdown controls
@@ -31,13 +52,10 @@ function annotatorMeltdownZotero(options) {
     }
 
     function has_citations(text) {
+        // check if editor content includes a works cited section
         return text !== undefined && text.indexOf('### Works Cited') != '-1';
     }
-/* sample markdown annotation syntax ?
-[#Beyer2013]: http://dx.doi.org/ 10.1093/annonc/mds579 "Maintaining success, reducing treatment burden,
-focusing on survivorship: highlights from the third European consensus conference on diagnosis and
-treatment of germ-cell cancer."
-*/
+
     function zotero_lookup(meltdown) {
         if (! zotero_initialized) {
             $('#zotero-modal').on('shown.bs.modal', function () {
@@ -125,10 +143,9 @@ treatment of germ-cell cancer."
                             // add the citation at the end of the annotation content
                             // using formatted citation from Zotero, but adding a named
                             // anchor for linking to in-text citation
-                            ed_content += '\n* <a name="' + data.key + '"></a>' + citation.html();
+                            ed_content += '\n* <a name="' + data.key + '" id="' + data.key +
+                                '"></a>' + citation.html();
                             textarea.val(ed_content);
-
-                            console.log('editor val = ' + meltdown.editor.val());
                         });
 
                     }
@@ -143,6 +160,8 @@ treatment of germ-cell cancer."
                     .append('<p>' + item.description + '</p>')
                     .appendTo( ul );
             };
+        // set initialized so init doesn't happen again
+        zotero_initialized = true;
         }
 
         // show the modal
@@ -156,6 +175,7 @@ treatment of germ-cell cancer."
         var matches = [], found;
 
         console.log('update citations, annotation text is ' + annotation.text);
+        console.log(annotation);
 
         // if annotation includes citations, scan for zotero ids
         // and attach additional data to the annotation
@@ -191,10 +211,6 @@ treatment of germ-cell cancer."
                         if (annotation.citations.indexOf(tei_bibl) == -1) {
                             annotation.citations.push(tei_bibl);
                         }
-
-                        console.log('annotation citations = ');
-                        console.log(annotation.citations);
-
                         // resolve the promise after the api request is processed
                         resolve();
                     });
@@ -206,16 +222,20 @@ treatment of germ-cell cancer."
             // return a promise that will resolve when all promises resolve,
             // so annotator will wait to save the annotation until
             // all citations are processed and data is added
-            return Promise.all(promises);
 
           } // has citations
+
+          return Promise.all(promises);
         }; // update citations
 
 
     return {
 
         start: function (app) {
+            _app = app;
+
             // any startup config / warnings needed?
+
 
             // check for meltdown
             if (!jQuery.meltdown || typeof jQuery.meltdown !== 'object') {
@@ -226,13 +246,21 @@ treatment of germ-cell cancer."
 
             // also check for annotator-meltdown?  zotero client? jquery.rest ?
 
+            // add zotero button to meltdown editor control panel
             customize_meltdown();
 
             // if required options are not present, disable with a message
-            if (!(options.user_id && options.token)) {
-                console.log('disabling');
-                // todo: actually disable somehow, with message to user
+            if (disabled) {
+                console.log('disabling zotero');
+                // load the disabled message modal template
+                $('body').append(modal_template_disabled);
 
+                // add a handler to disable zotero button after
+                // meltdown editor is initalized the first time
+                // (the html does not yet exist until that point)
+                $(document).on('annotator-meltdown:meltdown-initialized', function() {
+                    $('.meltdown_control-zotero').addClass('zotero-disabled');
+                });
             } else {
 
                 // dynamically add modal for zotero autocomplete into the document
@@ -240,7 +268,7 @@ treatment of germ-cell cancer."
                 // zotero word CWYW modal has a red border with zotero z label for input bot
                 $('body').append(modal_template);
 
-                // init zotero rest api client;
+                // init zotero rest api client with provided id/token
                 zotero = new ZoteroClient(options);
             }
 
@@ -249,23 +277,48 @@ treatment of germ-cell cancer."
 
         },
 
-        // TODO: maybe add a custom event to annotator-meltdown
-        // that can fire off whenever the editor is closed,
-        // so the annotation content can be updated then?
+        // NOTE: ideally, update_annotations should be run on
+        // beforeAnnotationCreated, but that event seems to fire too soon
+        // (before the annotation text is available to be updated).
 
-        beforeAnnotationCreated: function (annotation) {
-            // FIXME: this event seems to fire before annotation text
-            // is populated, when editor is displayed - not
-            // when editor is closed
-            return update_citations(annotation);
+
+        annotationCreated: function (annotation) {
+            // Check for and update citations after a brand new annotation
+            // is created, and re-save the annotation if necessary.
+
+            if (disabled) { return true; }   // if zotero is disabled, do nothing
+            // use citation count to check for changes; on a new
+            // annotation we expect this to be zero no matter what
+            var citation_count = 0;
+            if (annotation.citations) {
+                citation_count = annotation.citations.length;
+            }
+
+            // var update_promise = update_citations(annotation);
+            // update_promise.then(function(){
+
+            update_citations(annotation).then(function(){
+                console.log("update promise success");
+                if (annotation.citations && citation_count != annotation.citations.length) {
+                    console.log('citation counts differ, updating');
+                    _app.registry.utilities.storage.update(annotation);
+                }
+            }, function() {
+                // promise failure - no action
+            });
+
         },
 
+
         beforeAnnotationUpdated: function (annotation) {
+            if (disabled) { return true; }   // if zotero is disabled, do nothing
             // FIXME: sometimes seems to be called when annotation is
             // loaded for edit, not when the editor is closed
             return update_citations(annotation);
         }
     };
 };
+
+
 
 

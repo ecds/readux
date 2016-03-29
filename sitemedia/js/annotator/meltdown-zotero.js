@@ -29,6 +29,10 @@ function annotatorMeltdownZotero(options) {
             }
         };
     }
+
+    function has_citations(text) {
+        return text !== undefined && text.indexOf('### Works Cited') != '-1';
+    }
 /* sample markdown annotation syntax ?
 [#Beyer2013]: http://dx.doi.org/ 10.1093/annonc/mds579 "Maintaining success, reducing treatment burden,
 focusing on survivorship: highlights from the third European consensus conference on diagnosis and
@@ -80,6 +84,8 @@ treatment of germ-cell cancer."
                     if (meltdown) {  // requires access to meltdown editor
                         // get the zotero citation as html and add to the end of the text
                         // format json, include bib
+
+
                         zotero.get_item(ui.item.id, 'json', 'bib,data', function(data) {
                             // construct in-text citation with internal link;
                             // using chicago style for now (zotero default)
@@ -105,31 +111,25 @@ treatment of germ-cell cancer."
                             meltdown.editor.replaceSelectedText(text_citation,
                                 "select");
 
-                            var textarea = $(meltdown.editor.context);
-                            var ed_content = textarea.val();
                             // parse the html citation from the zotero result
                             // and pull out just the entry
                             var citation = $($.parseXML(data.bib)).find("[class=csl-entry]");
 
+                            var textarea = $(meltdown.editor.context);
+                            var ed_content = textarea.val();
+
                             // add a new citations section if not already present
-                            if (ed_content.indexOf('### Citations') == -1) {
-                                ed_content += '\n\n---\n### Citations\n';
+                            if (! has_citations(ed_content)) {
+                                ed_content += '\n\n---\n### Works Cited\n';
                             }
                             // add the citation at the end of the annotation content
                             // using formatted citation from Zotero, but adding a named
                             // anchor for linking to in-text citation
                             ed_content += '\n* <a name="' + data.key + '"></a>' + citation.html();
-                            textarea.val(ed_content)
-                        })
+                            textarea.val(ed_content);
 
-                        // figure out how to get the zotero citation as tei and
-                        // add to annotation extra data
-                        // (probably not here but on annotation update/create,
-                        // since we don't have access to the annotation object here)
-                        // zotero.get_item(ui.item.id, 'tei', function(data) {
-                        //     console.log(data);
-                        // })
-
+                            console.log('editor val = ' + meltdown.editor.val());
+                        });
 
                     }
                     // close the modal
@@ -152,10 +152,65 @@ treatment of germ-cell cancer."
 
     // convert zotero citation references into full markdown citations
     function update_citations(annotation) {
-        // scan for [zotero:id] in text and convert into a markdown
-        // citation
-        console.log(annotation.text);
-    }
+        var name_re = new RegExp('a name="([^"]+)"', 'gm');
+        var matches = [], found;
+
+        console.log('update citations, annotation text is ' + annotation.text);
+
+        // if annotation includes citations, scan for zotero ids
+        // and attach additional data to the annotation
+        if (has_citations(annotation.text)) {
+            // list of promises, one for each api request to be done
+            var promises = [];
+
+            // Look for name anchors like those created by adding
+            // citations in order to find all possible citation ids
+            while (found = name_re.exec(annotation.text)) {
+                matches.push(found[1]);   // 0 is full match, 1 is first group
+            }
+
+            // retrieve & store the tei citation information as extra data
+            // on the annotation
+
+            // clear out any stored citations to ensure content and tei
+            // citations stay in sync
+            annotation.citations = [];
+            for(var i = 0; i < matches.length; i++) {
+                // get tei record for full metadata & easy export
+                // NOTE: tei record includes zotero item id, so not
+                // fetching or storing id separately
+
+                promises.push(new Promise(function(resolve, reject) {
+                    zotero.get_item(matches[i], 'tei', '', function(data) {
+                        console.log('fetched tei');
+                        // zotero returns the citation wrapped in a listBibl
+                        // element that we don't need; just extract the bibl itself
+                        var tei_data = $($.parseXML(data)).find("biblStruct");
+                        var tei_bibl = tei_data.get(0).outerHTML;
+                        // don't duplicate an entry (could happen due to delayed processing)
+                        if (annotation.citations.indexOf(tei_bibl) == -1) {
+                            annotation.citations.push(tei_bibl);
+                        }
+
+                        console.log('annotation citations = ');
+                        console.log(annotation.citations);
+
+                        // resolve the promise after the api request is processed
+                        resolve();
+                    });
+
+                }));
+            }  // for loop on matches
+
+
+            // return a promise that will resolve when all promises resolve,
+            // so annotator will wait to save the annotation until
+            // all citations are processed and data is added
+            return Promise.all(promises);
+
+          } // has citations
+        }; // update citations
+
 
     return {
 
@@ -194,14 +249,21 @@ treatment of germ-cell cancer."
 
         },
 
+        // TODO: maybe add a custom event to annotator-meltdown
+        // that can fire off whenever the editor is closed,
+        // so the annotation content can be updated then?
+
         beforeAnnotationCreated: function (annotation) {
-            console.log('before creation');
-            update_citations(annotation);
+            // FIXME: this event seems to fire before annotation text
+            // is populated, when editor is displayed - not
+            // when editor is closed
+            return update_citations(annotation);
         },
 
-        annotationUpdated: function (annotation) {
-            console.log('before save');
-            update_citations(annotation);
+        beforeAnnotationUpdated: function (annotation) {
+            // FIXME: sometimes seems to be called when annotation is
+            // loaded for edit, not when the editor is closed
+            return update_citations(annotation);
         }
     };
 };

@@ -90,6 +90,13 @@ ZoteroClient.prototype.get_item = function(id, format, include, callback) {
     (user items only for now)
     */
     var request = this.client.items.read(id, {format: format, include: include});
+    request.always(function(xhrObject) {
+        // non-json content doesn't seem to fire the done action,
+        // so add the callback here for non-json content
+        if (format != 'json' && xhrObject.readyState == 4) {
+            callback(xhrObject.responseText);
+        }
+    });
     request.done(function(data, textstatus, xhrObject) {
         callback(data);
     });

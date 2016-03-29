@@ -103,6 +103,18 @@ class Ref(TeiBase):
     text = xmlmap.StringField('text()')
 
 
+class BiblStruct(TeiBase):
+    'Structured Bibliographic citation'
+    # minimal mappings for now
+    ROOT_NAME = 'BiblStruct'
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    #: corresp
+    corresp = xmlmap.StringField('@corresp')
+    #: type
+    type = xmlmap.StringField('@type')
+
+
 class Note(TeiBase):
     'Tei Note, used here to contain an annotation'
     ROOT_NAME = 'note'
@@ -125,6 +137,8 @@ class Note(TeiBase):
     #: links to related pages
     related_pages = xmlmap.NodeListField('tei:ref[@type="related page"]',
         Ref)
+    #: list of bibliographic citations/works cited
+    citations = xmlmap.NodeListField('tei:listBibl/tei:biblStruct', BiblStruct)
 
 class Bibl(TeiBase):
     'TEI Bibl, with mappings for digital edition and pdf urls'

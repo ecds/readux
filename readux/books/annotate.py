@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.text import slugify
-from eulxml.xmlmap import load_xmlobject_from_string, teimap
+from eulxml.xmlmap import load_xmlobject_from_string, teimap, XmlObject
 import logging
 from lxml import etree
 import mistune
@@ -160,6 +160,13 @@ def annotation_to_tei(annotation, teivol):
             if target is not None:
                 page_ref.target = '#%s' % target
             teinote.related_pages.append(page_ref)
+
+    # if annotation includes citations, add them to the tei
+    # NOTE: expects these citations to be TEI encoded already (generated
+    # by the zotero api and added via meltdown-zotero annotator plugin)
+    if annotation.extra_data['citations']:
+        for bibl in annotation.extra_data['citations']:
+            teinote.citations.append(load_xmlobject_from_string(bibl, tei.BiblStruct))
 
     return teinote
 

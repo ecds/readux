@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import datetime
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -67,6 +68,32 @@ class AnnotatedTei(TestCase):
             teinote.related_pages[0].target)
         for idx in range(len(rel_pages)):
             self.assertEqual(rel_pages[idx], teinote.related_pages[idx].text)
+
+    def test_annotation_citation_to_tei(self):
+        teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR, 'teifacsimile.xml'),
+            tei.AnnotatedFacsimile)
+
+        note = Annotation(text=u'''update test ing la lala ([Jockers and Mimno 2013](./#MUXAEE89))
+more content ([Underwood and Sellers 2012](./#7CBCH6E8))
+la la la foo bar lala
+---
+### Works Cited
+* &lt;a name="MUXAEE89"&gt;&lt;/a&gt;Jockers, Matthew L., and David Mimno. “Significant Themes in 19th-Century Literature.” &lt;i&gt;Poetics&lt;/i&gt; 41, no. 6 (December 2013): 750–69. doi:10.1016/j.poetic.2013.08.005.
+* &lt;a name="7CBCH6E8"&gt;&lt;/a&gt;Underwood, Ted, and Jordan Sellers. “The Emergence of Literary Diction.” &lt;i&gt;Journal of Digital Humanities&lt;/i&gt;, June 26, 2012. http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/.''',
+            quote="really",
+            extra_data=json.dumps({'citations': [
+    '<biblStruct xmlns="http://www.tei-c.org/ns/1.0" type="webpage" xml:id="Underwood2012" corresp="http://zotero.org/users/758030/items/7CBCH6E8"><monogr><title level="m">The Emergence of Literary Diction</title><author><forename>Ted</forename><surname>Underwood</surname></author><author><forename>Jordan</forename><surname>Sellers</surname></author><imprint><date>2012</date><note type="accessed">2015-05-09T22:02:51Z</note><note type="url">http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/</note></imprint></monogr></biblStruct>',
+    '<biblStruct xmlns="http://www.tei-c.org/ns/1.0" type="journalArticle" xml:id="Jockers2013" corresp="http://zotero.org/users/758030/items/MUXAEE89"><analytic><title level="a">Significant themes in 19th-century literature</title><author><forename>Matthew L.</forename><surname>Jockers</surname></author><author><forename>David</forename><surname>Mimno</surname></author></analytic><monogr><title level="j">Poetics</title><imprint><biblScope unit="volume">41</biblScope><biblScope unit="issue">6</biblScope><biblScope unit="page">750-769</biblScope><date>2013</date><note type="accessed">2016-01-24T02:44:56Z</note><note type="url">http://linkinghub.elsevier.com/retrieve/pii/S0304422X13000673</note></imprint></monogr><idno type="ISSN">0304422X</idno><idno type="DOI">10.1016/j.poetic.2013.08.005</idno></biblStruct>'
+    ]}))
+
+        teinote = annotation_to_tei(note, teidoc)
+        # number of citations should match
+        self.assertEqual(len(note.extra_data['citations']), len(teinote.citations))
+        # minimal inspection to check that values carried through as expected
+        self.assertEqual('webpage', teinote.citations[0].type)
+        self.assertEqual('journalArticle', teinote.citations[1].type)
+        self.assertEqual('Underwood2012', teinote.citations[0].id)
+        self.assertEqual('Jockers2013', teinote.citations[1].id)
 
     def test_insert_anchor(self):
         def get_test_elements():

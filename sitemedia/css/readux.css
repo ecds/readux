@@ -1261,3 +1261,9 @@ button.volume-export {
     width: 99%;
     display: block;
 }
+
+/* overrides for annotator-meltdown-zotero */
+#zotero-modal .in-progress {
+    right: 20px;
+    font-size: 150%;
+}

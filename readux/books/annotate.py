@@ -164,7 +164,7 @@ def annotation_to_tei(annotation, teivol):
     # if annotation includes citations, add them to the tei
     # NOTE: expects these citations to be TEI encoded already (generated
     # by the zotero api and added via meltdown-zotero annotator plugin)
-    if annotation.extra_data['citations']:
+    if annotation.extra_data.get('citations', None):
         for bibl in annotation.extra_data['citations']:
             teinote.citations.append(load_xmlobject_from_string(bibl, tei.BiblStruct))
 

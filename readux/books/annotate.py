@@ -1,6 +1,7 @@
 '''Methods to generate annotated TEI for export.'''
 
 from datetime import datetime
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.text import slugify
@@ -81,11 +82,14 @@ def annotated_tei(teivol, annotations):
         # page.href should either be local readux uri OR ARK uri;
         # local uri is stored as annotation uri, but ark is in extra data
         page_annotations = annotations.filter(Q(uri=page.href)|Q(extra_data__contains=page.href))
+
         if page_annotations.exists():
             for note in page_annotations:
                 # possible to get extra matches for page url in related pages,
                 # so skip any notes where ark doesn't match page url
-                if note.extra_data.get('ark', '') != page.href:
+                if note.extra_data.get('ark', '') != page.href and not settings.DEV_ENV:
+                    # NOTE: allow without ark in dev, since test page records
+                    # may not have ARKs
                     continue
 
                 insert_note(teivol, page, note)

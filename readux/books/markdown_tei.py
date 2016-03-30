@@ -1,5 +1,6 @@
 import os.path
 import re
+from bs4 import BeautifulSoup
 import mistune
 
 def convert(text):
@@ -149,7 +150,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def hrule(self):
         """Rendering method for horizontal rule."""
-        return '<milestone @rend="horizontal-rule"/>'
+        return '<milestone rend="horizontal-rule"/>'
 
     def list(self, body, ordered=True):
         """Rendering list tags.
@@ -311,6 +312,24 @@ class TeiMarkdownRenderer(mistune.Renderer):
         :param html: text content of the html snippet.
         """
         # TODO
+
+        # use beautiful soup to parse and read element name, attributes
+        soup = BeautifulSoup(html, 'xml')
+        # only expect one element here
+        element = soup.contents[0]
+
+        if element.name in ['i', 'em']:
+            return '<emph rend="italic">%s</emph>' % element.string
+        if element.name in ['b', 'strong']:
+            return '<emph rend="bold">%s</emph>' % element.string
+        if element.name == 'a':
+            # convert name anchor to <anchor xml:id="###"/>
+            # **preliminary**  (anchor not valid in all contexts)
+            if element.get('name', None) or element.get('id', None):
+                el_id = element.get('id', None) or element.get('name', None)
+                return '<anchor xml:id="%s">%s</anchor>' % \
+                    (el_id, element.string or '')
+
         if self.options.get('escape'):
             return mistune.escape(html)
         return html

@@ -73,13 +73,13 @@ class AnnotatedTei(TestCase):
         teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR, 'teifacsimile.xml'),
             tei.AnnotatedFacsimile)
 
-        note = Annotation(text=u'''update test ing la lala ([Jockers and Mimno 2013](./#MUXAEE89))
-more content ([Underwood and Sellers 2012](./#7CBCH6E8))
+        note = Annotation(text=u'''update test ing la lala ([Jockers and Mimno 2013](#zotero-MUXAEE89))
+more content ([Underwood and Sellers 2012](#zotero-7CBCH6E8))
 la la la foo bar lala
 ---
 ### Works Cited
-* &lt;a name="MUXAEE89"&gt;&lt;/a&gt;Jockers, Matthew L., and David Mimno. “Significant Themes in 19th-Century Literature.” &lt;i&gt;Poetics&lt;/i&gt; 41, no. 6 (December 2013): 750–69. doi:10.1016/j.poetic.2013.08.005.
-* &lt;a name="7CBCH6E8"&gt;&lt;/a&gt;Underwood, Ted, and Jordan Sellers. “The Emergence of Literary Diction.” &lt;i&gt;Journal of Digital Humanities&lt;/i&gt;, June 26, 2012. http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/.''',
+* <a name="zotero-MUXAEE89"></a>Jockers, Matthew L., and David Mimno. “Significant Themes in 19th-Century Literature.” <i>Poetics</i> 41, no. 6 (December 2013): 750–69. doi:10.1016/j.poetic.2013.08.005.
+* <a name="zotero-7CBCH6E8"></a>Underwood, Ted, and Jordan Sellers. “The Emergence of Literary Diction.” <i>Journal of Digital Humanities</i>, June 26, 2012. http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/.''',
             quote="really",
             extra_data=json.dumps({'citations': [
     '<biblStruct xmlns="http://www.tei-c.org/ns/1.0" type="webpage" xml:id="Underwood2012" corresp="http://zotero.org/users/758030/items/7CBCH6E8"><monogr><title level="m">The Emergence of Literary Diction</title><author><forename>Ted</forename><surname>Underwood</surname></author><author><forename>Jordan</forename><surname>Sellers</surname></author><imprint><date>2012</date><note type="accessed">2015-05-09T22:02:51Z</note><note type="url">http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/</note></imprint></monogr></biblStruct>',
@@ -87,6 +87,8 @@ la la la foo bar lala
     ]}))
 
         teinote = annotation_to_tei(note, teidoc)
+        # TODO: test ref/name anchors in note content
+        # print teinote.serialize(pretty=True)
         # number of citations should match
         self.assertEqual(len(note.extra_data['citations']), len(teinote.citations))
         # minimal inspection to check that values carried through as expected

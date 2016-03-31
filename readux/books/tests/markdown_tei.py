@@ -52,7 +52,7 @@ class MarkdownTei(TestCase):
             markdown_tei.convert('###### This is an H6'))
 
         # horizontal rule
-        self.assertEqual('<milestone @rend="horizontal-rule"/>',
+        self.assertEqual('<milestone rend="horizontal-rule"/>',
             markdown_tei.convert('* * *'))
 
     def test_blockquote(self):

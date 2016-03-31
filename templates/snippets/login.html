@@ -37,8 +37,20 @@
       </div>
       <div class="modal-body">
         <ul class="login-list list-group">
+
+          {# local LDAP/django db login #}
+          {% if not user.is_authenticated %}
+          {# NOTE: ldap can't be linked with social auth; only show for login, not for linking #}
+          <li role="presentation" class="list-group-item login-ldap">
+            <a role="menuitem" tabindex="-1" href="{% url 'auth:login' %}?next={{ request.path }}">
+              <span class="login-icon"></span>
+              <span class="login-label">Login with Emory credentials</span>
+           </a>
+          </li>
+          {% endif %}
+
+          {# configured social auth backends #}
           {% for backend in backends.backends %}
-          {# TODO: only show backends that user hasn't already authorized #}
           {% with backend_name=backend_names|dict_item:backend|default:backend|title %}
           <li role="presentation" class="list-group-item login-{{ backend }}{% if backend_name|lower in user_socialauth_providers %} disabled{% endif %}">
               <a role="menuitem" tabindex="-1"
@@ -49,6 +61,7 @@
           </li>
           {% endwith %}
           {% endfor %}
+
         </ul>
       </div>
     </div>

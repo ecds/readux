@@ -1134,6 +1134,14 @@ header#page-bg .collection-image-info.collasped .info{
     color: white;
 }
 
+.login-list .login-ldap .login-icon {
+    /* re-use emory logo from eultheme in banner */
+    background-image: url('/static/eultheme/img/EmoryVt_hero.png');
+    background-size: 90% 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .carousel-inner{
   overflow: visible;
 }

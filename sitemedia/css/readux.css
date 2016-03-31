@@ -1134,6 +1134,7 @@ header#page-bg .collection-image-info.collasped .info{
     color: white;
 }
 
+
 /* zotero - dark red from the logo */
 .login-list .login-zotero a {
     background-color: #990000;
@@ -1146,6 +1147,14 @@ header#page-bg .collection-image-info.collasped .info{
     font-weight: bold;
     font: sans-serif;
     font-size: 105%;
+}
+
+.login-list .login-ldap .login-icon {
+    /* re-use emory logo from eultheme in banner */
+    background-image: url('/static/eultheme/img/EmoryVt_hero.png');
+    background-size: 90% 90%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .carousel-inner{

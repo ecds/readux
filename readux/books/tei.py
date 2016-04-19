@@ -114,6 +114,12 @@ class BiblStruct(TeiBase):
     #: type
     type = xmlmap.StringField('@type')
 
+class AnnotationWorksCited(TeiBase):
+    milestone = xmlmap.NodeField('preceding-sibling::tei:milestone',
+                                 xmlmap.XmlObject)
+    ref_list = xmlmap.NodeField(
+        'parent::tei:list[contains(tei:item/tei:anchor/@xml:id, "zotero")]',
+        xmlmap.XmlObject)
 
 class Note(TeiBase):
     'Tei Note, used here to contain an annotation'
@@ -139,6 +145,21 @@ class Note(TeiBase):
         Ref)
     #: list of bibliographic citations/works cited
     citations = xmlmap.NodeListField('tei:listBibl/tei:biblStruct', BiblStruct)
+
+    # in-text citation generated from markdown; these fields
+    # are mapped so they can be removed from the annotated tei document
+    works_cited = xmlmap.NodeField(
+        'tei:head[text() = "Works Cited"]',
+        xmlmap.XmlObject)
+    zotero_items = xmlmap.NodeField(
+        'tei:list[contains(tei:item/tei:anchor/@xml:id, "zotero")]',
+        xmlmap.XmlObject)
+    works_cited_milestone = xmlmap.NodeField(
+        'tei:milestone[following-sibling::tei:head/text() = "Works Cited"]',
+        xmlmap.XmlObject)
+    # mapped to remove empty list bibl element
+    list_bibl = xmlmap.NodeField('tei:listBibl', xmlmap.XmlObject)
+
 
 class Bibl(TeiBase):
     'TEI Bibl, with mappings for digital edition and pdf urls'
@@ -236,9 +257,17 @@ class AnnotatedFacsimile(Facsimile):
     #: list of annotations at body/div[@type="annotations"]/note[@type="annotation"], as :class:`Note`
     annotations = xmlmap.NodeListField('tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
         Note)
+
+    #: list of bibliographic citations/works cited
+    citations = xmlmap.NodeListField('tei:listBibl/tei:biblStruct', BiblStruct)
+    #: list of bibliographic citation ids
+
+    citation_ids = xmlmap.StringListField('tei:listBibl/tei:biblStruct/@xml:id')
+
     #: annotation tags, as :class:`~eulxml.xmlmap.teimap.TeiInterpGroup`
     tags = xmlmap.NodeField('tei:back/tei:interpGrp[@type="tags"]',
         teimap.TeiInterpGroup)
+
 
     def page_id_by_xlink(self, link):
         results = self.node.xpath('//tei:surface[@type="page"][@xlink:href="%s"]/@xml:id' \

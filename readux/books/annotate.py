@@ -9,6 +9,7 @@ from eulxml.xmlmap import load_xmlobject_from_string, teimap, XmlObject
 import logging
 from lxml import etree
 import mistune
+from bs4 import BeautifulSoup
 
 from readux import __version__
 from readux.books import tei, markdown_tei
@@ -97,6 +98,8 @@ def annotated_tei(teivol, annotations):
                 if 'tags' in note.info():
                     tags |= set(t.strip() for t in note.info()['tags'])
 
+    consolidate_bibliography(teivol)
+
     # tags are included in the back matter as an interpGrp
     if tags:
         # create back matter interpgrp for annotation tags
@@ -170,9 +173,21 @@ def annotation_to_tei(annotation, teivol):
     # by the zotero api and added via meltdown-zotero annotator plugin)
     if annotation.extra_data.get('citations', None):
         for bibl in annotation.extra_data['citations']:
-            teinote.citations.append(load_xmlobject_from_string(bibl, tei.BiblStruct))
+            # zotero tei export currently includes an id that is not
+            # a valid ncname (contianes : and /)
+            bibsoup = BeautifulSoup(bibl, 'xml')
+            # convert xml id into the format we want:
+            # zotero-#### (zotero item id)
+            for bibl_struct in bibsoup.find_all('biblStruct'):
+                bibl_struct['xml:id'] = 'zotero-%s' % \
+                    bibl_struct['xml:id'].split('/')[-1]
+
+            teibibl = load_xmlobject_from_string(bibsoup.biblStruct.prettify(),
+                                                 tei.BiblStruct)
+            teinote.citations.append(teibibl)
 
     return teinote
+
 
 def html_xpath_to_tei(xpath):
     '''Convert xpaths generated on the readux site to the
@@ -300,3 +315,29 @@ def insert_anchor(element, anchor, offset):
         anchor.tail = el_text[offset:]
 
 
+def consolidate_bibliography(teivol):
+    '''Clean up redundant bibliographic elements in individual works cited
+    and consolidate into a single bibliography at the end of the document,
+    updating so id references in the annotations match.'''
+    # - remove works cited & milestones from individual notes
+    # - generate biblstruct at end of documnt with one entry for
+    #   each citation
+    # - make sure note references and bibl citations match
+    for note in teivol.annotations:
+        # clean up any note that has citations
+        if note.citations:
+            # move all citations to the bibliography
+            for cit in note.citations:
+                # if citation id is not already present, add to
+                # main document biblography
+                if cit.id not in teivol.citation_ids:
+                    teivol.citations.append(cit)
+            # remove all citations from the note
+            note.citations = []
+
+        # remove unstructured citation information generated from markdown
+        if note.works_cited:
+            del note.works_cited_milestone
+            del note.zotero_items
+            del note.works_cited
+            del note.list_bibl

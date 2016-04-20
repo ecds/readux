@@ -213,6 +213,9 @@ la la la foo bar lala
         self.assertEqual('test', annotei.tags.interp[0].id)
         self.assertEqual('test', annotei.tags.interp[0].value)
 
+        # encoding desc should be present
+        self.assert_(annotei.encoding_desc)
+
     def test_consolidate_bibl(self):
         teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR,
                                                        'teifacsimile.xml'),

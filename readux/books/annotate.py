@@ -1,15 +1,18 @@
 '''Methods to generate annotated TEI for export.'''
 
+from bs4 import BeautifulSoup
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.text import slugify
-from eulxml.xmlmap import load_xmlobject_from_string, teimap, XmlObject
+from eulxml.xmlmap import load_xmlobject_from_string, teimap, \
+    load_xmlobject_from_file, XmlObject
 import logging
 from lxml import etree
 import mistune
-from bs4 import BeautifulSoup
+import os
+
 
 from readux import __version__
 from readux.books import tei, markdown_tei
@@ -17,6 +20,10 @@ from readux.utils import absolutize_url
 
 
 logger = logging.getLogger(__name__)
+
+TEI_ENCODING_DESCRIPTION = os.path.join(
+    os.path.dirname(__file__),
+    'annotated_tei_encodingDesc.xml')
 
 
 def annotated_tei(teivol, annotations):
@@ -73,6 +80,10 @@ def annotated_tei(teivol, annotations):
     export_date = datetime.now()
     teivol.pubstmt.date = export_date
     teivol.pubstmt.date_normal = export_date
+
+    # add stock encoding description
+    teivol.encoding_desc = load_xmlobject_from_file(TEI_ENCODING_DESCRIPTION,
+                                                    XmlObject)
 
     for page in teivol.page_list:
         # use page.href to find annotations for this page

@@ -218,7 +218,10 @@ class Facsimile(TeiBase):
     distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
     #: publication statmnt as :class:`PublicationStatement`
     pubstmt = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:publicationStmt',
-        PublicationStatement)
+                                PublicationStatement)
+    #: encoding description
+    encoding_desc = xmlmap.NodeField('tei:teiHeader/tei:encodingDesc',
+                                    xmlmap.XmlObject)
 
     #: source description for the original volume
     original_source = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:bibl[@type="original"]',

@@ -89,7 +89,8 @@ la la la foo bar lala
         teinote = annotation_to_tei(self.zotero_note, teidoc)
         # print teinote.serialize(pretty=True)
         # number of citations should match
-        self.assertEqual(len(note.extra_data['citations']), len(teinote.citations))
+        self.assertEqual(len(self.zotero_note.extra_data['citations']),
+                         len(teinote.citations))
         # minimal inspection to check that values carried through as expected
         self.assertEqual('webpage', teinote.citations[0].type)
         self.assertEqual('journalArticle', teinote.citations[1].type)

@@ -1266,7 +1266,7 @@ button.volume-export {
     padding-left: 5px;
 }
 
-.marginalia-item audio {
+.marginalia-item audio, .marginalia-item video {
     width: 99%;
     display: block;
 }

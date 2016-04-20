@@ -201,6 +201,66 @@ text inline with audio<audio controls="controls">
         expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
         self.assertEqual(expected, markdown_tei.convert(audio))
 
+    def test_video(self):
+        # using html5 video embedded in markdown
+        mimetype = 'video/mp4'
+        url = 'http://some.video/file.mp4'
+        video = '''<video controls='controls'>
+  <source src='%s' type='%s'/>
+</video>''' % (url, mimetype)
 
+        self.assertEqual('<media mimeType="%s" url="%s"/>' % (mimetype, url),
+            markdown_tei.convert(video))
 
+        # source attribute tag order shouldn't matter
+        video = '''<video controls='controls'>
+          <source type='%s' src='%s'/>
+        </video>''' % (mimetype, url)
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(video))
 
+        video_plus = '''<script>console.log("test");</script>
+
+%s
+
+testing  ... again ...''' % video
+        self.assert_(expected in markdown_tei.convert(video_plus))
+
+        # inline video block
+        video_attrs = {
+            'url': 'http://www.w3schools.com/html/mov_bbb.mp4',
+            'mimetype': 'video/mp4'
+        }
+        inline_video = '''applause
+text inline with audio<video controls="controls">
+<source src="%(url)s" type="%(mimetype)s"/>
+</video>will cause the TEI to break''' % video_attrs
+        inline_tei_video = markdown_tei.convert(inline_video)
+        self.assert_('<media mimeType="%(mimetype)s" url="%(url)s"/>' %
+                     video_attrs in inline_tei_video)
+
+        # no type attribute - mimetype inferred from video src url
+        mimetype = 'video/mp4'
+        url = 'http://some.video/file.mp4'
+        video = '''<video controls='controls'>
+          <source src='%s'/>
+        </video>''' % (url, )
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(video))
+
+        mimetype = 'video/ogg'
+        url = 'http://some.video/file.ogg'
+        video = '''<video controls='controls'>
+          <source src='%s'/>
+        </video>''' % (url, )
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(video))
+
+        # fallback mimetype where extension is not informative
+        mimetype = 'video/mp4'
+        url = 'http://some.video/file/without/ext/'
+        video = '''<video controls='controls'>
+          <source src='%s'/>
+        </video>''' % (url, )
+        expected = '<media mimeType="%s" url="%s"/>' % (mimetype, url)
+        self.assertEqual(expected, markdown_tei.convert(video))

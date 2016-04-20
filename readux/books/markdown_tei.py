@@ -1,7 +1,12 @@
+import logging
 import os.path
 import re
 from bs4 import BeautifulSoup
 import mistune
+
+
+logger = logging.getLogger(__name__)
+
 
 def convert(text):
     '''Render markdown text as simple TEI.
@@ -316,19 +321,24 @@ class TeiMarkdownRenderer(mistune.Renderer):
         # use beautiful soup to parse and read element name, attributes
         soup = BeautifulSoup(html, 'xml')
         # only expect one element here
+        if not soup.contents:
+            logger.warn('No element found for inline html %s' % html)
+            return
         element = soup.contents[0]
 
+        text_content = element.string or ''
+
         if element.name in ['i', 'em']:
-            return '<emph rend="italic">%s</emph>' % element.string
+            return '<emph rend="italic">%s</emph>' % text_content
         if element.name in ['b', 'strong']:
-            return '<emph rend="bold">%s</emph>' % element.string
+            return '<emph rend="bold">%s</emph>' % text_content
         if element.name == 'a':
             # convert name anchor to <anchor xml:id="###"/>
             # **preliminary**  (anchor not valid in all contexts)
             if element.get('name', None) or element.get('id', None):
                 el_id = element.get('id', None) or element.get('name', None)
                 return '<anchor xml:id="%s">%s</anchor>' % \
-                    (el_id, element.string or '')
+                    (el_id, text_content)
 
         if self.options.get('escape'):
             return mistune.escape(html)

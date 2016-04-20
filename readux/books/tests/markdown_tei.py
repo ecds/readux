@@ -116,6 +116,16 @@ B.1  | B.2
         self.assert_('<row><cell role="data">B.1</cell><cell role="data">B.2</cell></row>'
             in tei_table)
 
+    def test_inline_html(self):
+        # code, inline and block
+        html = 'Something about <i>Murder in the Cathedral</i> by Eliot'
+        self.assertEqual('<p>Something about <emph rend="italic">Murder in ' +
+                         'the Cathedral</emph> by Eliot</p>',
+                         markdown_tei.convert(html))
+
+        self.assertEqual('<p>empty inline <emph rend="italic"></emph></p>',
+                         markdown_tei.convert('empty inline <i/>'))
+
     def test_code(self):
 
         # code, inline and block

@@ -314,15 +314,12 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
         :param html: text content of the html snippet.
         """
-        # TODO
-
         # use beautiful soup to parse and read element name, attributes
-        soup = BeautifulSoup(html, 'xml')
+        soup = BeautifulSoup(html, 'lxml')
         # only expect one element here
-        if not soup.contents:
-            logger.warn('No element found for inline html %s' % html)
-            return
-        element = soup.contents[0]
+        # NOTE: using xml parser had inconsistent results; using lxml
+        # wraps contents inside html body tags, so access content there
+        element = soup.html.body.contents[0]
 
         text_content = element.string or ''
 

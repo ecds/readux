@@ -240,6 +240,18 @@ class Name(TeiBase):
     value = xmlmap.StringField('.')
 
 
+class Interp(TeiBase, teimap.TeiInterp):
+    # extend eulxml.xmlmap.teimap version because it does not include
+    # the xml namespace for setting xml:id
+    ROOT_NAME = 'interp'
+    value = xmlmap.StringField('.')
+
+
+class InterpGroup(teimap.TeiInterpGroup):
+    # extend eulxml.xmlmap.teimap version to map our local interp
+    interp = xmlmap.NodeListField("tei:interp", Interp)
+
+
 class AnnotatedFacsimile(Facsimile):
     '''Annotated Tei facsimile, with mappings needed to generate
     TEI with annotations.
@@ -258,18 +270,18 @@ class AnnotatedFacsimile(Facsimile):
     # additional mappings for annotation data
 
     #: list of annotations at body/div[@type="annotations"]/note[@type="annotation"], as :class:`Note`
-    annotations = xmlmap.NodeListField('tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
+    annotations = xmlmap.NodeListField('tei:text/tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
         Note)
 
     #: list of bibliographic citations/works cited
-    citations = xmlmap.NodeListField('tei:listBibl/tei:biblStruct', BiblStruct)
+    citations = xmlmap.NodeListField('tei:text/tei:body/tei:div[@type="works-cited"]/tei:listBibl/tei:biblStruct', BiblStruct)
     #: list of bibliographic citation ids
 
-    citation_ids = xmlmap.StringListField('tei:listBibl/tei:biblStruct/@xml:id')
+    citation_ids = xmlmap.StringListField('tei:text/tei:body/tei:div[@type="works-cited"]/tei:listBibl/tei:biblStruct/@xml:id')
 
     #: annotation tags, as :class:`~eulxml.xmlmap.teimap.TeiInterpGroup`
-    tags = xmlmap.NodeField('tei:back/tei:interpGrp[@type="tags"]',
-        teimap.TeiInterpGroup)
+    tags = xmlmap.NodeField('tei:text/tei:back/tei:interpGrp[@type="tags"]',
+        InterpGroup)
 
 
     def page_id_by_xlink(self, link):
@@ -288,9 +300,4 @@ class Anchor(TeiBase):
     #: next attribute
     next = xmlmap.StringField('@next')
 
-
-class Interp(TeiBase, teimap.TeiInterp):
-    # extend eulxml.xmlmap.teimap version because it does not include
-    # the xml namespace for setting xml:id
-    ROOT_NAME = 'interp'
 

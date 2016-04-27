@@ -31,6 +31,10 @@ class AnnotatedTei(TestCase):
         self.assert_(teinote.href.endswith(note.get_absolute_url()))
         self.assertEqual(note.text, teinote.paragraphs[0])
 
+        # todo: add a schema validation once we get the output to be valid
+        # teidoc.schema_valid()
+        # access errors with teidoc.schema_validation_errors()
+
         # annotation user should be set as note response
         user = get_user_model()(username='an_annotator')
         user.save()

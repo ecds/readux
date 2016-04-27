@@ -6,6 +6,7 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
 {% url 'books:volume' vol.pid as volume_url %}
 
 <header class="page-header">
+    <div class="annotation-search"></div>
     {% if page %}
     <div class="page-search">
       <a class="trigger" href="#">Search this volume</a>

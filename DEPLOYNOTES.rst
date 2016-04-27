@@ -94,6 +94,13 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.5
+~~~~~~~~~~~
+
+* Zotero should be configured as a social authentication backend
+  to support citation lookups.  Add OAuth keys based on the example
+  configuration in ``localsettings.py.dist``
+
 Release 1.4
 ~~~~~~~~~~~
 

@@ -26,7 +26,8 @@ progressbar<=2.3
 pdfminer<=20140328
 beautifulsoup4
 bagit
-python-social-auth
+# 0.2.16 breaks extra_data (string instead of json?)
+python-social-auth==0.2.14
 jsonfield
 pytz
 fuzzywuzzy

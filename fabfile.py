@@ -142,7 +142,6 @@ def setup_virtualenv(python=None):
     python_opt = '--python=' + python if python else ''
 
     with cd('%(remote_path)s/%(build_dir)s' % env):
-        # TODO: we should be using an http proxy here  (how?)
         # create the virtualenv under the build dir
         sudo('virtualenv --no-site-packages %s env' % (python_opt,),
              user=env.remote_acct)
@@ -152,6 +151,7 @@ def setup_virtualenv(python=None):
         sudo('virtualenv --no-site-packages --prompt=\'[%s]\' %s env' \
             % (env['build_dir'], python_opt), user=env.remote_acct)
         # activate the environment and install required packages
+        # NOTE: could use -q on pip commands to suppress all output
         with prefix('source env/bin/activate'):
             pip_cmd = 'pip install -r requirements.txt'
             if env.remote_proxy:

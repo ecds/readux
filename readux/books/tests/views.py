@@ -858,6 +858,16 @@ class SitemapTestCase(TestCase):
         mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CMODEL_PATTERN)
         mocksolr.query.return_value.field_limit.assert_called_with(['pid', 'last_modified'])
 
+    @patch('readux.books.sitemaps.solr_interface')
+    def test_volume_page_sitemap(self, mocksolr_interface):
+        volpage_sitemap = sitemaps.VolumePageSitemap()
+        mocksolr = mocksolr_interface.return_value
+
+        # check for expected solr query
+        volpage_sitemap.items()
+        mocksolr.query.assert_called_with(content_model=Page.PAGE_CMODEL_PATTERN)
+        mocksolr.query.return_value.field_limit.assert_called_with(['pid', 'last_modified',
+            'isConstituentOf'])
 
 class BookSearchTest(TestCase):
 

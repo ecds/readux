@@ -2,7 +2,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.urlresolvers import reverse
 
 from readux.utils import solr_interface
-from readux.books.models import Volume
+from readux.books.models import Volume, Page
 
 class _BaseVolumeSitemap(Sitemap):
     # common items/lastmodification logic for volumes and volume pdfs
@@ -18,7 +18,10 @@ class _BaseVolumeSitemap(Sitemap):
 
 
 class VolumePdfSitemap(_BaseVolumeSitemap):
-    # priority unknown
+    # priority uncertain;
+    # default priority is 0.5; set PDFs slightly lower
+    priority = 0.4
+
 
     def location(self, item):
         return reverse('books:pdf', kwargs={'pid': item['pid']})
@@ -29,3 +32,25 @@ class VolumeSitemap(_BaseVolumeSitemap):
 
     def location(self, item):
         return reverse('books:volume', kwargs={'pid': item['pid']})
+
+
+class VolumePageSitemap(Sitemap):
+    'Sitemap for individual pages'
+
+    # default priority is 0.5; set pages slightly lower
+    priority = 0.4
+
+    def items(self):
+        solr = solr_interface()
+        return solr.query(content_model=Page.PAGE_CMODEL_PATTERN) \
+                   .field_limit(['pid', 'last_modified',
+                                 'isConstituentOf'])
+
+    def lastmod(self, item):
+        return item['last_modified']
+
+    def location(self, item):
+        # volume page belongs to is indexed based on fedora relation
+        vol_pid = item['isConstituentOf'][0].replace('info:fedora/', '')
+        return reverse('books:page',
+                       kwargs={'pid': item['pid'], 'vol_pid': vol_pid})

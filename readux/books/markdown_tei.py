@@ -1,6 +1,12 @@
+import logging
 import os.path
 import re
+from bs4 import BeautifulSoup
 import mistune
+
+
+logger = logging.getLogger(__name__)
+
 
 def convert(text):
     '''Render markdown text as simple TEI.
@@ -18,31 +24,30 @@ class TeiMarkdownRenderer(mistune.Renderer):
     parsing and rendering library.  Renderer is based on the built-in
     mistune HTML renderer.'''
 
-    audio_regex = re.compile(
-        r'<audio[^>]*>\s*'   # open audio tag, with any attributes
-        # source with url and type in any order; type optional
-        r'<source\s+(src|type)=["\']([^"\']+)["\'](\s+(src|type)=["\']([^"\']+)["\'])?\s*/>'
-        r'\s*</audio>',      # close audio tag
-        re.MULTILINE | re.DOTALL | re.UNICODE
-    )
-    audio_block_re = re.compile(r'(<audio(?!</audio>).*</audio>)',
+    audiovideo_block_re = re.compile(
+        r'(<(audio|video)(?!</(audio>|video)).*</(audio|video)>)',
         re.MULTILINE | re.DOTALL | re.UNICODE)
 
     #: common html5 audio file extensions and corresponding mimetypes;
     #: used to infer audio mimetype when it is not specified
-    audio_ext_mimetype = {
-        '.aac': 'audio/aac',
-        '.mp4': 'audio/mp4',
-        '.m4a': 'audio/mp4',
-        '.mp1': 'audio/mpeg',
-        '.mp2': 'audio/mpeg',
-        '.mp3': 'audio/mpeg',
-        '.mpg': 'audio/mpeg',
-        '.mpeg': 'audio/mpeg',
-        '.oga': 'audio/ogg',
-        '.ogg': 'audio/ogg',
-        '.wav': 'audio/wav',
-        '.webm': 'audio/webm'
+    audiovideo_ext_mimetype = {
+        # audio/ or video/ content prefix supplied based on html tag
+        '.aac': 'aac',
+        '.mp4': 'mp4',
+        '.m4a': 'mp4',
+        '.mp1': 'mpeg',
+        '.mp2': 'mpeg',
+        '.mp3': 'mpeg',
+        '.mpg': 'mpeg',
+        '.mpeg': 'mpeg',
+        '.oga': 'ogg',
+        '.ogg': 'ogg',
+        '.wav': 'wav',
+        '.webm': 'webm'
+    }
+    default_mimetype = {
+        'audio': 'mpeg',
+        'video': 'mp4'
     }
 
     def __init__(self, **kwargs):
@@ -69,7 +74,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
         # Add extra newlines around *any* audio blocks; doesn't hurt to
         # have extra whitespace, but without it the audio tags will
         # not be converted properly.
-        return cls.audio_block_re.sub(r'\n\n\1\n\n', text)
+        return cls.audiovideo_block_re.sub(r'\n\n\1\n\n', text)
 
 
     def block_code(self, code, lang=None):
@@ -97,38 +102,37 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
         :param html: text content of the html snippet.
         """
-        match = self.audio_regex.match(html)
-        # if block contains audio, convert to TEI mimetype tag
-        if match:
-            # returns tuple of matches
-            values = match.groups()
-            # first pair: first attribute/value (url if type is not set)
-            values_dict = {
-                values[0]: values[1]
-            }
+        # parse html block so it can be easily inspected & traversed
+        soup = BeautifulSoup(html, 'xml')
+        # audio or video tag, if present
+        audiovideo = soup.audio or soup.video
+
+        # if block contains audio or video, convert to TEI mimetype tag
+        if audiovideo:
+            src = audiovideo.source.get('src', None)
+            content_type = audiovideo.source.get('type', None)
+
             # NOTE: technically the regex will allow for a type attribute
             # without a src; but that would be a broken, nonsensical,
             # non-playable input - so that case is not handled.
-            if 'src' not in values_dict:
+            if not src:
                 next
-
-            # because the secondary match is optional, check if
-            # remaining matches are set the last two are secondary attribute/value
-            if len(values) == 5 and values[2] is not None:
-                values_dict[values[3]] = values[4]
 
             # mimetype is needed for tei media tag; if we don't have one,
             # try to guess from the url
-            if 'type' not in values_dict:
-                basename, ext = os.path.splitext(values_dict['src'])
-                if ext in self.audio_ext_mimetype:
-                    values_dict['type'] = self.audio_ext_mimetype[ext]
-                else:
-                    # fallback to at least indicate media is audio
-                    # (mpeg probably most common web audio format)
-                    values_dict['type'] = 'audio/mpeg'
-
-            return '<media mimeType="%(type)s" url="%(src)s"/>' % values_dict
+            if not content_type:
+                basename, ext = os.path.splitext(src)
+                content_type = '%s/%s' % (
+                    audiovideo.name.lower(),  # audio or video
+                    # content subtype by extension, with fallback
+                    self.audiovideo_ext_mimetype.get(
+                        ext,
+                        self.default_mimetype[audiovideo.name.lower()]
+                    )
+                )
+            return '<media mimeType="%(type)s" url="%(src)s"/>' % {
+                'type': content_type, 'src': src
+            }
 
         # NOTE: default mistune logic here; probably not useful for TEI
         if self.options.get('skip_style') and \
@@ -149,7 +153,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def hrule(self):
         """Rendering method for horizontal rule."""
-        return '<milestone @rend="horizontal-rule"/>'
+        return '<milestone rend="horizontal-rule"/>'
 
     def list(self, body, ordered=True):
         """Rendering list tags.
@@ -310,7 +314,27 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
         :param html: text content of the html snippet.
         """
-        # TODO
+        # use beautiful soup to parse and read element name, attributes
+        soup = BeautifulSoup(html, 'lxml')
+        # only expect one element here
+        # NOTE: using xml parser had inconsistent results; using lxml
+        # wraps contents inside html body tags, so access content there
+        element = soup.html.body.contents[0]
+
+        text_content = element.string or ''
+
+        if element.name in ['i', 'em']:
+            return '<emph rend="italic">%s</emph>' % text_content
+        if element.name in ['b', 'strong']:
+            return '<emph rend="bold">%s</emph>' % text_content
+        if element.name == 'a':
+            # convert name anchor to <anchor xml:id="###"/>
+            # **preliminary**  (anchor not valid in all contexts)
+            if element.get('name', None) or element.get('id', None):
+                el_id = element.get('id', None) or element.get('name', None)
+                return '<anchor xml:id="%s">%s</anchor>' % \
+                    (el_id, text_content)
+
         if self.options.get('escape'):
             return mistune.escape(html)
         return html

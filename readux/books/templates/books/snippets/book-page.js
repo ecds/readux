@@ -31,7 +31,26 @@
           }
         };
       };
-      var _marginalia = annotatorMarginalia();
+      var marginalia_opts = {
+        {% if user.is_superuser %}
+        show_author: true,
+        {% endif %}
+        viewer: annotatormeltdown.render,
+        renderExtensions: [
+            related_pages.renderExtension,
+        ],
+        toggle: {
+          class: 'btn btn-green',
+          show: function(){
+            $(".carousel-control").fadeOut();
+          },
+          hide: function(){
+            $(".carousel-control").fadeIn();
+          }
+        }
+      };
+      // configuring marginalia here so it can be referenced in annotator search
+      var _marginalia = annotatorMarginalia(marginalia_opts);
       var app = new annotator.App()
           .include(annotator.ui.main, {
               element: document.querySelector('.content .inner'),
@@ -59,23 +78,17 @@
           .include(annotatorSelectionId, {
             element: $('.content .inner'),
           })
-          .include(annotatorMarginalia, {
-            {% if user.is_superuser %}
-            show_author: true,
-            {% endif %}
-            viewer: annotatormeltdown.render,
-            renderExtensions: [
-                related_pages.renderExtension,
-            ],
-            toggle: {
-              class: 'btn btn-green',
-              show: function(){
-                $(".carousel-control").fadeOut();
-              },
-              hide: function(){
-                $(".carousel-control").fadeIn();
-              }
-            }
+          .include(annotatorMarginalia, marginalia_opts)
+          .include(annotatorMeltdownZotero, {
+            user_id: '{{ zotero_userid }}', token: '{{ zotero_token}}',
+            disabled_message: 'Please link your Zotero account to enable Zotero functionality',
+          })
+          .include(annotatorSearch, {
+            render: _marginalia.renderAnnotation,
+            placeholder_text: 'Search annotations on this volume',
+            filter: {
+              volume_uri: '{{ page.volume.absolute_url }}'
+            },
           })
 
       app.start()

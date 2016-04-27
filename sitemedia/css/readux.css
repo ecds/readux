@@ -1134,6 +1134,21 @@ header#page-bg .collection-image-info.collasped .info{
     color: white;
 }
 
+
+/* zotero - dark red from the logo */
+.login-list .login-zotero a {
+    background-color: #990000;
+    color: white;
+}
+
+/* no font-awesome icon for Zotero; emulate the Z from their logo */
+.login-zotero .login-icon.fa-zotero:before {
+    content: "Z";
+    font-weight: bold;
+    font: sans-serif;
+    font-size: 105%;
+}
+
 .login-list .login-ldap .login-icon {
     /* re-use emory logo from eultheme in banner */
     background-image: url('/static/eultheme/img/EmoryVt_hero.png');
@@ -1251,7 +1266,41 @@ button.volume-export {
     padding-left: 5px;
 }
 
-.marginalia-item audio {
+.marginalia-item audio, .marginalia-item video {
     width: 99%;
     display: block;
+}
+
+/* overrides for annotator-meltdown-zotero */
+#zotero-modal .in-progress {
+    right: 20px;
+    font-size: 150%;
+}
+
+
+/* customize annotation search result display */
+
+.marginalia-item h3 {
+    font-size: 105%;
+}
+
+.annotation-search {
+
+}
+
+/* emphasize division between notes */
+.annotation-search-result  {
+    border-bottom: 1px dashed;
+}
+.annotation-search-result:last-child  {
+    border-bottom: none;
+}
+
+.annotation-search-result .marginalia-item {
+    font-size: 90%;
+    min-width: 280px;
+}
+
+.annotation-search-result .marginalia-item nav {
+    display: none;
 }

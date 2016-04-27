@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import datetime
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -10,7 +11,7 @@ from readux import __version__
 from readux.annotations.models import Annotation
 from readux.books import tei
 from readux.books.annotate import annotation_to_tei, insert_anchor, \
-    annotated_tei
+    annotated_tei, consolidate_bibliography
 from readux.books.tests.models import FIXTURE_DIR
 
 
@@ -29,6 +30,10 @@ class AnnotatedTei(TestCase):
         self.assertEqual('annotation-%s' % note.id, teinote.id)
         self.assert_(teinote.href.endswith(note.get_absolute_url()))
         self.assertEqual(note.text, teinote.paragraphs[0])
+
+        # todo: add a schema validation once we get the output to be valid
+        # teidoc.schema_valid()
+        # access errors with teidoc.schema_validation_errors()
 
         # annotation user should be set as note response
         user = get_user_model()(username='an_annotator')
@@ -67,6 +72,36 @@ class AnnotatedTei(TestCase):
             teinote.related_pages[0].target)
         for idx in range(len(rel_pages)):
             self.assertEqual(rel_pages[idx], teinote.related_pages[idx].text)
+
+
+    zotero_note = Annotation(text=u'''update test ing la lala ([Jockers and Mimno 2013](#zotero-MUXAEE89))
+more content ([Underwood and Sellers 2012](#zotero-7CBCH6E8))
+la la la foo bar lala
+---
+### Works Cited
+* <a name="zotero-MUXAEE89"></a>Jockers, Matthew L., and David Mimno. “Significant Themes in 19th-Century Literature.” <i>Poetics</i> 41, no. 6 (December 2013): 750–69. doi:10.1016/j.poetic.2013.08.005.
+* <a name="zotero-7CBCH6E8"></a>Underwood, Ted, and Jordan Sellers. “The Emergence of Literary Diction.” <i>Journal of Digital Humanities</i>, June 26, 2012. http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/.''',
+            quote="really",
+            extra_data=json.dumps({'citations': [
+    '<biblStruct xmlns="http://www.tei-c.org/ns/1.0" type="webpage" xml:id="zoteroItem-http://zotero.org/users/758030/items/7CBCH6E8" corresp="http://zotero.org/users/758030/items/7CBCH6E8"><monogr><title level="m">The Emergence of Literary Diction</title><author><forename>Ted</forename><surname>Underwood</surname></author><author><forename>Jordan</forename><surname>Sellers</surname></author><imprint><date>2012</date><note type="accessed">2015-05-09T22:02:51Z</note><note type="url">http://journalofdigitalhumanities.org/1-2/the-emergence-of-literary-diction-by-ted-underwood-and-jordan-sellers/</note></imprint></monogr></biblStruct>',
+    '<biblStruct xmlns="http://www.tei-c.org/ns/1.0" type="journalArticle" xml:id="zoteroItem-http://zotero.org/users/758030/items/MUXAEE89" corresp="http://zotero.org/users/758030/items/MUXAEE89"><analytic><title level="a">Significant themes in 19th-century literature</title><author><forename>Matthew L.</forename><surname>Jockers</surname></author><author><forename>David</forename><surname>Mimno</surname></author></analytic><monogr><title level="j">Poetics</title><imprint><biblScope unit="volume">41</biblScope><biblScope unit="issue">6</biblScope><biblScope unit="page">750-769</biblScope><date>2013</date><note type="accessed">2016-01-24T02:44:56Z</note><note type="url">http://linkinghub.elsevier.com/retrieve/pii/S0304422X13000673</note></imprint></monogr><idno type="ISSN">0304422X</idno><idno type="DOI">10.1016/j.poetic.2013.08.005</idno></biblStruct>'
+    ]}))
+    def test_annotation_citation_to_tei(self):
+        teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR, 'teifacsimile.xml'),
+            tei.AnnotatedFacsimile)
+
+        teinote = annotation_to_tei(self.zotero_note, teidoc)
+        # print teinote.serialize(pretty=True)
+        # number of citations should match
+        self.assertEqual(len(self.zotero_note.extra_data['citations']),
+                         len(teinote.citations))
+        # minimal inspection to check that values carried through as expected
+        self.assertEqual('webpage', teinote.citations[0].type)
+        self.assertEqual('journalArticle', teinote.citations[1].type)
+
+        self.assertEqual('zotero-7CBCH6E8', teinote.citations[0].id)
+        self.assertEqual('zotero-MUXAEE89', teinote.citations[1].id)
+
 
     def test_insert_anchor(self):
         def get_test_elements():
@@ -182,5 +217,33 @@ class AnnotatedTei(TestCase):
         self.assertEqual('test', annotei.tags.interp[0].id)
         self.assertEqual('test', annotei.tags.interp[0].value)
 
+        # encoding desc should be present
+        self.assert_(annotei.encoding_desc)
 
+    def test_consolidate_bibl(self):
+        teidoc = load_xmlobject_from_file(os.path.join(FIXTURE_DIR,
+                                                       'teifacsimile.xml'),
+                                          tei.AnnotatedFacsimile)
+        teinote = annotation_to_tei(self.zotero_note, teidoc)
+        teidoc.annotations.append(teinote)
+        consolidate_bibliography(teidoc)
 
+        self.assertEqual(2, len(teidoc.citations),
+            'annotation citations should be present in main document bibl')
+        teinote = teidoc.annotations[0]
+        self.assertEqual(0, len(teinote.citations),
+            'citations should not be present on individual annotation')
+        self.assertEqual(None, teinote.works_cited)
+        self.assertEqual(None, teinote.zotero_items)
+        self.assertEqual(None, teinote.works_cited_milestone)
+        teinote_xml = teinote.serialize()
+        self.assertFalse('<item><anchor xml:id="zotero-' in teinote_xml)
+        self.assertFalse('<listBibl/>' in teinote_xml)
+
+        # repeated zotero ids should only appear once in document bibl
+        # load the same note and add it again
+        teinote = annotation_to_tei(self.zotero_note, teidoc)
+        teidoc.annotations.append(teinote)
+        consolidate_bibliography(teidoc)
+        self.assertEqual(2, len(teidoc.citations),
+            'citations repeated in annotations should only appear once')

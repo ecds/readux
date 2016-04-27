@@ -1276,3 +1276,31 @@ button.volume-export {
     right: 20px;
     font-size: 150%;
 }
+
+
+/* customize annotation search result display */
+
+.marginalia-item h3 {
+    font-size: 105%;
+}
+
+.annotation-search {
+
+}
+
+/* emphasize division between notes */
+.annotation-search-result  {
+    border-bottom: 1px dashed;
+}
+.annotation-search-result:last-child  {
+    border-bottom: none;
+}
+
+.annotation-search-result .marginalia-item {
+    font-size: 90%;
+    min-width: 280px;
+}
+
+.annotation-search-result .marginalia-item nav {
+    display: none;
+}

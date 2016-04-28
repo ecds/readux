@@ -197,10 +197,9 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
     context_object_name = 'vol'
 
     @method_decorator(last_modified(view_helpers.volume_modified))
-    @method_decorator(vary_on_headers('X-Requested-With')) # vary on ajax request
+    @method_decorator(vary_on_headers('X-Requested-With'))  # vary on ajax request
     def dispatch(self, *args, **kwargs):
         return super(VolumeDetail, self).dispatch(*args, **kwargs)
-
 
     def get_object(self, queryset=None):
         # kwargs are set based on configured url pattern
@@ -299,8 +298,10 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                 highlighting = solr_result.object_list.highlighting
             data = [{
                     'pid': result.pid,
-                    # NOTE: this will break if ark is not present for some reason
-                    'uri': [uri for uri in result['identifier'] if 'ark:' in uri][0],
+                    # extra logic to handle records where ARK is not
+                    # present (should only happen in dev)
+                    'uri': next(iter([uri for uri in result['identifier']
+                                      if 'ark:' in uri]), ''),
                     'label': 'p. %s' % result['page_order'],
                     'thumbnail': reverse('books:page-image',
                             kwargs={'mode': 'mini-thumbnail', 'pid': result.pid,

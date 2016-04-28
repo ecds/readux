@@ -24,15 +24,14 @@ function annotatorSearch(user_options) {
             _app = app;
             storage = _app.registry.getUtility('storage');
 
-            // create serach input
-            var input = $(document.createElement('input'))
-                .attr('type', 'text')
-                .attr('placeholder', options.placeholder_text);
-            options.element.append(input);
-
+            // find search input element
+            var input = options.element.find('input').first();
             /* enable autocomplete on search input */
             $(input).autocomplete({
                 minLength: 2,
+                // include the autocomplete on the element, to simplify
+                // styling and placement issues
+                appendTo: options.element,
                 source: function( request, response ) {
                     // use annotator storage query as the source
                     var search_opts = {keyword: request.term}
@@ -43,13 +42,14 @@ function annotatorSearch(user_options) {
                     })
                 },
                 select: function( event, ui ) {
-                    // if annotation is for another page, go there
-                    // TODO: can we use a hash to select annotation?
+                    // if annotation is for another page, load it
+                    // add annotation id as hash, so it can be selected
+                    // if a trigger for that is supported
                     if (window.location.href != ui.item.uri) {
-                        window.location.assign(ui.item.uri);
+                        window.location.assign(ui.item.uri + '#' + ui.item.id);
                     }
                     // otherwise, select the annotation on this page
-                    // TODO: make select action configurable
+                    // by triggering the corresponding highlight change
                     $annotation = $('.annotator-hl[data-annotation-id='+ui.item.id+']');
                     $annotation.trigger('click');
                 }

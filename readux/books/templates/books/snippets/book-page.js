@@ -85,7 +85,6 @@
           })
           .include(annotatorSearch, {
             render: _marginalia.renderAnnotation,
-            placeholder_text: 'Search annotations on this volume',
             filter: {
               volume_uri: '{{ page.volume.absolute_url }}'
             },

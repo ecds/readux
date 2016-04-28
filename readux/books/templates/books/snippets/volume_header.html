@@ -6,11 +6,22 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
 {% url 'books:volume' vol.pid as volume_url %}
 
 <header class="page-header">
-    <div class="annotation-search"></div>
     {% if page %}
     <div class="page-search">
       <a class="trigger" href="#">Search this volume</a>
       {% include 'books/snippets/volume_search_form.html' %}
+    </div>
+    <div class="form-group annotation-search">
+      <div class="input-group">
+          <label class="sr-only" for="annotation-search">Search annotations on this volume</label>
+          <input type="text" class="form-control" placeholder="Search annotations on this volume..." autocomplete="false"/>
+          <span class="input-group-btn">
+            <button class="btn btn-primary">
+                <span class="glyphicon glyphicon-search"></span>
+                <span class="glyphicon glyphicon-edit"></span>
+            </button>
+          </span>
+      </div>
     </div>
     {% endif %}
     <h1>

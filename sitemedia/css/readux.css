@@ -1285,8 +1285,35 @@ button.volume-export {
 }
 
 .annotation-search {
-
+    text-align: right;
+    padding-top: 10px;
+    margin-bottom: -25px;  /* don't take up as much space before volume header */
 }
+
+.annotation-search input.form-control {
+    /* hide input by default */
+    display: none;
+}
+
+.annotation-search .btn.btn-primary {
+    border-radius: 4px;
+}
+.annotation-search .input-group {
+    position: relative;
+}
+
+.annotation-search:hover input {
+    display: inline;
+    position: absolute;
+    right: 55px;
+    width: 90%;
+}
+
+.annotation-search:hover .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
 
 /* emphasize division between notes */
 .annotation-search-result  {

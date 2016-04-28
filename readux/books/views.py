@@ -285,6 +285,8 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                     context_data['annotated_volumes'] = {
                         self.object.get_absolute_url(): annotation_count
                     }
+                # enable annotation search if any annotations are present
+                context_data['annotation_search_enabled'] = bool(annotation_count)
 
         return context_data
 
@@ -357,7 +359,10 @@ class VolumePageList(ListView, VaryOnCookieMixin):
                                    for k, v in notes.iteritems()])
         else:
             annotated_pages = {}
-        context_data['annotated_pages'] = annotated_pages
+        context_data.update({
+            'annotated_pages': annotated_pages,
+            'annotation_search_enabled': bool(annotated_pages)
+        })
 
         # Check if the first page of the volume is wider than it is tall
         # to set the layout of the pages
@@ -450,6 +455,11 @@ class PageDetail(DetailView, VaryOnCookieMixin):
                     'zotero_userid': zotero_account.extra_data['access_token']['userID'],
                     'zotero_token': zotero_account.extra_data['access_token']['oauth_token']
                     })
+
+            # if user is logged in, check if annotations exist and
+            # search should be enabled
+            context_data['annotation_search_enabled'] = \
+                self.object.volume.annotations(user=self.request.user).exists()
 
         return context_data
 

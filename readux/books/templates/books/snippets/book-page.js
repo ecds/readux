@@ -16,86 +16,10 @@
           fullPageButton: 'dz-fs',
       });
 
-      {# only enable annotation if tei is present for logged in users #}
+      /* {# only enable annotation if tei is present for logged in users #} */
       {% if page.tei.exists and user.is_authenticated %}
 
-      /* function to include page & volume urls in the annotation data */
-      var readuxUris = function () {
-        return {
-          beforeAnnotationCreated: function (ann) {
-            ann.uri = '{{ page.absolute_url }}';
-            ann.volume_uri = '{{ page.volume.absolute_url }}';
-            {% if page.ark_uri %}
-            ann.ark = '{{ page.ark_uri }}';
-            {% endif %}
-          }
-        };
-      };
-      var marginalia_opts = {
-        {% if user.is_superuser %}
-        show_author: true,
-        {% endif %}
-        viewer: annotatormeltdown.render,
-        renderExtensions: [
-            related_pages.renderExtension,
-        ],
-        toggle: {
-          class: 'btn btn-green',
-          show: function(){
-            $(".carousel-control").fadeOut();
-          },
-          hide: function(){
-            $(".carousel-control").fadeIn();
-          }
-        }
-      };
-      // configuring marginalia here so it can be referenced in annotator search
-      var _marginalia = annotatorMarginalia(marginalia_opts);
-      var app = new annotator.App()
-          .include(annotator.ui.main, {
-              element: document.querySelector('.content .inner'),
-              {% comment %}/*  {# not using default viewer, so these don't matter, see marginalia #}
-              viewerExtensions: [
-                  annotatormeltdown.viewerExtension,
-                  annotator.ui.tags.viewerExtension
-              ],
-              */{% endcomment %}
-              editorExtensions: [
-                  annotatormeltdown.getEditorExtension({min_width: '500px', font_awesome: true}),
-                  suppress_permissions.editorExtension,
-                  related_pages.getEditorExtension({search_url: '{{ page.volume.get_absolute_url }}'}),
-                  _marginalia.editorExtension,  /* includes tags */
-              ]
-          })
-          .include(annotator.storage.http, {
-              prefix: '{% url "annotation-api-prefix" %}',
-              headers: {"X-CSRFToken": csrftoken}
-          })
-          .include(readuxUris)
-          .include(annotatorImageSelect, {
-            element: $('.content .inner img'),
-          })
-          .include(annotatorSelectionId, {
-            element: $('.content .inner'),
-          })
-          .include(annotatorMarginalia, marginalia_opts)
-          .include(annotatorMeltdownZotero, {
-            user_id: '{{ zotero_userid }}', token: '{{ zotero_token}}',
-            disabled_message: 'Please link your Zotero account to enable Zotero functionality',
-          })
-          .include(annotatorSearch, {
-            render: _marginalia.renderAnnotation,
-            filter: {
-              volume_uri: '{{ page.volume.absolute_url }}'
-            },
-          })
-
-      app.start()
-          .then(function () {
-               app.annotations.load({uri: '{{ page.absolute_url }}'});
-          });
-      {# set user identity to allow for basic permission checking #}
-      app.ident.identity = "{{ user.username }}";
+      {% include 'books/snippets/annotator-init.js' with mode='full' volume_uri=page.volume.absolute_url %}
 
       {% endif %} {# end annotation config #}
 

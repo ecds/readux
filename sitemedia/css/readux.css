@@ -1285,9 +1285,7 @@ button.volume-export {
 }
 
 .annotation-search {
-    text-align: right;
     padding-top: 10px;
-    margin-bottom: -25px;  /* don't take up as much space before volume header */
 }
 
 .annotation-search input.form-control {

@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -155,6 +156,8 @@ class AnnotationSearch(View):
        - text (case-insensitive partial match)
        - quote (case-insensitive partial match)
        - user (exact match on username)
+       - keyword: case-insensitive partial match on text, quote, or
+         with extra data (e.g., to match tags)
 
     Search results can be limited by specifying ``limit`` or ``offset``
     parameters.
@@ -179,6 +182,15 @@ class AnnotationSearch(View):
                 notes = notes.filter(user__username=search_val)
             elif field in Annotation.common_fields:
                 notes = notes.filter(**{field: search_val})
+            # special case: "keyword" search on multiple fields
+            elif field == 'keyword':
+                notes = notes.filter(
+                    Q(text__icontains=search_val) |
+                    Q(quote__icontains=search_val) |
+                    Q(extra_data__icontains=search_val)
+                )
+                # NOTE: contains search on extra data jsonfield is
+                # probably not a great idea...
 
         # for now, ignore date fields and extra data
         # NOTE: date searching would be nice, but probably requires

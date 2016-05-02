@@ -4,8 +4,8 @@ Readux
 ======
 
 **documentation**
-  .. image:: https://readthedocs.org/projects/readux/badge/?version=develop
-    :target: http://readux.readthedocs.org/en/develop/?badge=develop
+  .. image:: https://readthedocs.org/projects/readux/badge/
+    :target: http://readux.readthedocs.org/en/stable/
     :alt: Documentation Status
 
 **code**
@@ -13,8 +13,8 @@ Readux
     :target: https://codeclimate.com/github/emory-libraries/readux
     :alt: Code Climate
 
-  .. image:: https://requires.io/github/emory-libraries/readux/requirements.svg?branch=develop
-     :target: https://requires.io/github/emory-libraries/readux/requirements/?branch=develop
+  .. image:: https://requires.io/github/emory-libraries/readux/requirements.svg
+     :target: https://requires.io/github/emory-libraries/readux/requirements/
      :alt: Requirements Status
 
 

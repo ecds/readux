@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.5.1
+-------------
+
+* Reference final released versions of annotator-meltdown and
+  annotator-meltdown-zotero
+
 Release 1.5 - Enhanced Annotation
 ---------------------------------
 

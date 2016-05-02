@@ -1,6 +1,6 @@
 .. _DEVNOTES:
 
-DEVELOPER NOTES
+Developer Notes
 ===============
 
 Useful Queries
@@ -26,21 +26,6 @@ Find Volume objects in Fedora that do *not* have a cover image:
 
 Other tasks
 -----------
-
-Remove post-1922 yearbooks from the Solr index
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Start up a django python shell (``python manage.py shell``) and do
-the following::
-
-```
-from readux.utils import solr_interface
-from readux.books.models import VolumeV1_0, SolrVolume
-solr = solr_interface()
-vols = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks').results_as(SolrVolume)
-solr.delete([{'pid': vol['pid']} for vol in vols if int(vol.volume[:4]) >= 1923])
-solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL, collection_id='emory-control:LSDI-EmoryYearbooks').count()
-```
 
 Sync volume content and annotations between instances
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -68,12 +53,12 @@ associated with your volume, e.g.:
 
   http://readux.library.emory.edu/annotations/api/search?user=<username>
 
-or (eventually, but not supported in readux 1.3)::
+or search by volume uri (available as of readux 1.4)::
 
   http://readux.library.emory.edu/annotations/api/search?volume_uri=http://readux.library.emory.edu/books/pid:###/
 
-Save annotations as JSON and replace the base source urls with
-destination site urls  (e.g., readux.library to testreadux.library, but
+Save annotations as JSON and edit to replace the base source urls with
+destination site urls  (e.g., readux.library to testreadux.library; but
 note that this *must* match the url configured in your Django sites,
 so if you are using a proxy use that url).  Then import the annotations
 into your destination readux instance::
@@ -85,6 +70,25 @@ Note that this requires equivalent user accounts to exist in both instances
 location, you have just given them access to another person's annotations).
 
 
+Remove post-1922 yearbooks from the Solr index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+For historical reasons, the Emory repository includes digitized yearbooks
+that are not public domain but are inaccurately described as public
+domain in the metadata.  For now, these must be suppressed from discovery
+within Readux.
+
+Start up a django python shell (``python manage.py shell``) and do
+the following::
+
+
+  from readux.utils import solr_interface
+  from readux.books.models import VolumeV1_0, SolrVolume
+  solr = solr_interface()
+  vols = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL,
+     collection_id='emory-control:LSDI-EmoryYearbooks').results_as(SolrVolume)
+  solr.delete([{'pid': vol['pid']} for vol in vols if int(vol.volume[:4]) >= 1923])
+  solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL,
+     collection_id='emory-control:LSDI-EmoryYearbooks').count()
 
 

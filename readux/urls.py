@@ -8,7 +8,8 @@ from django.views.generic.base import RedirectView
 from feincms.module.page.sitemap import PageSitemap
 
 from readux.annotations import views as annotation_views
-from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap
+from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap, \
+    VolumePageSitemap
 from readux.collection.sitemaps import CollectionSitemap
 from readux.collection.views import CollectionCoverList
 
@@ -19,6 +20,7 @@ sitemaps = {
     'collections': CollectionSitemap,
     'volume-pdfs': VolumePdfSitemap,
     'volumes': VolumeSitemap,
+    'volume-pages': VolumePageSitemap,
     'pages': PageSitemap
 }
 

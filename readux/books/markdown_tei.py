@@ -1,4 +1,12 @@
+import logging
+import os.path
+import re
+from bs4 import BeautifulSoup
 import mistune
+
+
+logger = logging.getLogger(__name__)
+
 
 def convert(text):
     '''Render markdown text as simple TEI.
@@ -8,13 +16,39 @@ def convert(text):
     on its own.
     '''
     mkdown = mistune.Markdown(renderer=TeiMarkdownRenderer())
-    return mkdown(text)
+    return mkdown(TeiMarkdownRenderer.preprocess(text))
 
 
 class TeiMarkdownRenderer(mistune.Renderer):
     '''TEI Markdown renderer for use with :mod:`mistune` markdown
     parsing and rendering library.  Renderer is based on the built-in
     mistune HTML renderer.'''
+
+    audiovideo_block_re = re.compile(
+        r'(<(audio|video)(?!</(audio>|video)).*</(audio|video)>)',
+        re.MULTILINE | re.DOTALL | re.UNICODE)
+
+    #: common html5 audio file extensions and corresponding mimetypes;
+    #: used to infer audio mimetype when it is not specified
+    audiovideo_ext_mimetype = {
+        # audio/ or video/ content prefix supplied based on html tag
+        '.aac': 'aac',
+        '.mp4': 'mp4',
+        '.m4a': 'mp4',
+        '.mp1': 'mpeg',
+        '.mp2': 'mpeg',
+        '.mp3': 'mpeg',
+        '.mpg': 'mpeg',
+        '.mpeg': 'mpeg',
+        '.oga': 'ogg',
+        '.ogg': 'ogg',
+        '.wav': 'wav',
+        '.webm': 'webm'
+    }
+    default_mimetype = {
+        'audio': 'mpeg',
+        'video': 'mp4'
+    }
 
     def __init__(self, **kwargs):
         self.options = kwargs
@@ -30,6 +64,18 @@ class TeiMarkdownRenderer(mistune.Renderer):
     #     separate format like docx or pdf).
     #     """
     #     return "<?xml:namespace ns='%s' ?>" % TeiNote.ROOT_NS
+
+    @classmethod
+    def preprocess(cls, text):
+        '''Method to preprocess text to make sure it is converted properly.
+        Currently, adds whitespace to ensure that any audio tags will
+        be processed as an html block.
+        '''
+        # Add extra newlines around *any* audio blocks; doesn't hurt to
+        # have extra whitespace, but without it the audio tags will
+        # not be converted properly.
+        return cls.audiovideo_block_re.sub(r'\n\n\1\n\n', text)
+
 
     def block_code(self, code, lang=None):
         """Rendering block level code.
@@ -52,10 +98,43 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def block_html(self, html):
         """Rendering block level pure html content.
+        Currently only supports html5 audio tags.
 
         :param html: text content of the html snippet.
         """
-        # TODO - do we need to support this?
+        # parse html block so it can be easily inspected & traversed
+        soup = BeautifulSoup(html, 'xml')
+        # audio or video tag, if present
+        audiovideo = soup.audio or soup.video
+
+        # if block contains audio or video, convert to TEI mimetype tag
+        if audiovideo:
+            src = audiovideo.source.get('src', None)
+            content_type = audiovideo.source.get('type', None)
+
+            # NOTE: technically the regex will allow for a type attribute
+            # without a src; but that would be a broken, nonsensical,
+            # non-playable input - so that case is not handled.
+            if not src:
+                next
+
+            # mimetype is needed for tei media tag; if we don't have one,
+            # try to guess from the url
+            if not content_type:
+                basename, ext = os.path.splitext(src)
+                content_type = '%s/%s' % (
+                    audiovideo.name.lower(),  # audio or video
+                    # content subtype by extension, with fallback
+                    self.audiovideo_ext_mimetype.get(
+                        ext,
+                        self.default_mimetype[audiovideo.name.lower()]
+                    )
+                )
+            return '<media mimeType="%(type)s" url="%(src)s"/>' % {
+                'type': content_type, 'src': src
+            }
+
+        # NOTE: default mistune logic here; probably not useful for TEI
         if self.options.get('skip_style') and \
            html.lower().startswith('<style'):
             return ''
@@ -74,7 +153,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
     def hrule(self):
         """Rendering method for horizontal rule."""
-        return '<milestone @rend="horizontal-rule"/>'
+        return '<milestone rend="horizontal-rule"/>'
 
     def list(self, body, ordered=True):
         """Rendering list tags.
@@ -182,7 +261,7 @@ class TeiMarkdownRenderer(mistune.Renderer):
         else:
             tag = 'ref'
             attr = ' target="%s"' % link
-        return '<%(tag)s%(attr)>%(text)s</%(tag)s>' % {
+        return '<%(tag)s%(attr)s>%(text)s</%(tag)s>' % {
             'tag':tag, 'text': link, 'attr': attr}
 
     def link(self, link, title, text):
@@ -235,7 +314,27 @@ class TeiMarkdownRenderer(mistune.Renderer):
 
         :param html: text content of the html snippet.
         """
-        # TODO
+        # use beautiful soup to parse and read element name, attributes
+        soup = BeautifulSoup(html, 'lxml')
+        # only expect one element here
+        # NOTE: using xml parser had inconsistent results; using lxml
+        # wraps contents inside html body tags, so access content there
+        element = soup.html.body.contents[0]
+
+        text_content = element.string or ''
+
+        if element.name in ['i', 'em']:
+            return '<emph rend="italic">%s</emph>' % text_content
+        if element.name in ['b', 'strong']:
+            return '<emph rend="bold">%s</emph>' % text_content
+        if element.name == 'a':
+            # convert name anchor to <anchor xml:id="###"/>
+            # **preliminary**  (anchor not valid in all contexts)
+            if element.get('name', None) or element.get('id', None):
+                el_id = element.get('id', None) or element.get('name', None)
+                return '<anchor xml:id="%s">%s</anchor>' % \
+                    (el_id, text_content)
+
         if self.options.get('escape'):
             return mistune.escape(html)
         return html

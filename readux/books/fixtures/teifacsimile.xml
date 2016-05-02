@@ -1,4 +1,5 @@
-<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<TEI xmlns="http://www.tei-c.org/ns/1.0"
+    xmlns:xlink="http://www.w3.org/TR/xlink/">
   <teiHeader>
     <fileDesc>
       <titleStmt>
@@ -15,7 +16,8 @@
     </fileDesc>
   </teiHeader>
   <facsimile xml:id="fnfcs.idm320760264096">
-    <surface xml:id="fnpg.idm320760263840" type="page" ulx="0" uly="0" lrx="11874" lry="9483">
+    <surface xml:id="fnpg.idm320760263840" type="page" ulx="0" uly="0" lrx="11874" lry="9483"
+      xlink:href="http://testpid.co/ark:/1234/11">
       <graphic url=""/>
       <zone xml:id="fntbk.idm320760251904" type="textBlock" ulx="4020" uly="627" lrx="8185" lry="811">
         <zone xml:id="fntln.idm320760250272" type="textLine" ulx="4020" uly="627" lrx="8185" lry="811">

@@ -101,6 +101,10 @@ SOCIAL_AUTH_FACEBOOK_KEY = '' # the numerical Facebook App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']   # request email address (not included by default)
 
+# Zotero. Register application at https://www.zotero.org/oauth/apps
+SOCIAL_AUTH_ZOTERO_KEY = ''
+SOCIAL_AUTH_ZOTERO_SECRET = ''
+
 # If a different set of authentication backends is needed
 # than what is configured in readux.settings,
 # override AUTHENTICATION_BACKENDS here

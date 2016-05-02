@@ -1,3 +1,5 @@
+'''Methods to export an annotated volume as a Jekyll website.'''
+
 from django.conf import settings
 import logging
 import os
@@ -29,15 +31,16 @@ def get_jekyll_site_dir(base_dir, noid):
     return os.path.join(base_dir, '%s_annotated_jekyll_site' % noid)
 
 def website(vol, tei, page_one=None):
-    '''Generate a zipfile of a jekyll website for a volume with annotations.
-    Creates a jekyll site, imports pages and annotations from the TEI,
-    and then packages it as a zipfile.
+    '''Generate a jekyll website for a volume with annotations.
+    Creates a jekyll site and imports pages and annotations from the TEI,
+    and then returns the directory for further use (e.g., packaging as
+    a zipfile for download, or for creating a new GitHub repository).
 
     :param vol: readux volume object (1.0 or 1.1)
     :param tei: annotated TEI facsimile (e.g.,
         :class:`~readux.books.tei.AnnotatedFacsimile`)
     :param page_one: page where numbering should start from 1 in the export
-    :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
+    :return: directory containing the generated jekyll site
     '''
     logger.debug('Generating jekyll website for %s', vol.pid)
     tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export')
@@ -82,6 +85,11 @@ def website(vol, tei, page_one=None):
     return export_dir
 
 def website_zip(vol, tei, page_one=None):
+    '''Package up a Jekyll site created by :meth:`website` as a zip file
+    for easy download.
+
+    :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
+    '''
     export_dir = website(vol, tei, page_one=page_one)
 
     # create a tempfile to hold a zip file of the site
@@ -104,6 +112,21 @@ class GithubExportException(Exception):
     pass
 
 def website_gitrepo(user, repo_name, vol, tei, page_one=None):
+    '''Create a new GitHub repository and populate it with content from
+    a newly generated jekyll website export created via :meth:`website`.
+
+    :param user: user
+    :param repo_name: name of the GitHub repository to be created;
+        raises :class:`GithubExportException` if the repository already
+        exists
+    :param vol: :class:`~readux.books.models.Volume` to be exported
+        (1.0 or 1.1)
+    :param tei: annotated TEI facsimile (e.g.,
+        :class:`~readux.books.tei.AnnotatedFacsimile`)
+    :param page_one: page where numbering should start from 1 in the export
+    :return: on success, returns a tuple of public repository url and
+        github pages url for the newly created repo and site
+    '''
     # connect to github as the user in order to create the repository
     github = GithubApi.connect_as_user(user)
     github_username = GithubApi.github_username(user)

@@ -44,10 +44,12 @@ repomgmt_ns = {'eul-repomgmt': REPOMGMT}
 
 
 class MinMarcxml(xmlmap.XmlObject):
-    # minimal marc xml with only fields needed for readux import/display
+    '''Minimal MARC :class:`~eulxml.xmlmap.XmlObject`; currently only includes
+    fields needed for readux import and display.'''
     ROOT_NS = 'http://www.loc.gov/MARC21/slim'
-    ROOT_NAMESPACES = { 'marc21' : ROOT_NS }
+    ROOT_NAMESPACES = {'marc21': ROOT_NS}
 
+    #: ocm number in controlfield tag 0001
     ocm_number = xmlmap.StringField('marc21:record/marc21:controlfield[@tag="001"]')
 
     # NOTE: consider using pymarc for any marcxml handling instead
@@ -64,29 +66,24 @@ class Book(DigitalObject):
     '''
     #: content model for books
     BOOK_CONTENT_MODEL = 'info:fedora/emory-control:ScannedBook-1.0'
-    CONTENT_MODELS = [ BOOK_CONTENT_MODEL ]
+    CONTENT_MODELS = [BOOK_CONTENT_MODEL]
 
     #: marcxml :class:`~eulfedora.models.XMlDatastream` with the metadata
-    #: record for all associated volumes
-    #: NOTE: using generic xmlobject for now
+    #: record for all associated volumes; xml content will be instance of
+    #: :class:`MinMarcxml`
     marcxml = XmlDatastream("MARCXML", "MARC21 metadata", MinMarcxml, defaults={
         'control_group': 'M',
         'versionable': True,
     })
 
-    #: :class:`~readux.collection.models.Collection` this book belongs to
+    #: :class:`~readux.collection.models.Collection` this book belongs to,
+    #: via fedora rels-ext isMemberOfcollection
     collection = Relation(relsext.isMemberOfCollection, type=Collection)
 
     #: default view for new object
     NEW_OBJECT_VIEW = 'books:volume'
-    # FIXME: needs at least preliminary book view to point to (?)
     # NOTE: this is semi-bogus, since book-level records are currently
     # not displayed in readux
-
-    @permalink
-    def get_absolute_url(self):
-        'Absolute url to view this object within the site'
-        return (self.NEW_OBJECT_VIEW, [self.pid])
 
     @permalink
     def get_absolute_url(self):
@@ -96,7 +93,8 @@ class Book(DigitalObject):
     @property
     def best_description(self):
         '''Single best description to use when only one can be displayed (e.g.,
-        for twitter or facebook integration)
+        for twitter or facebook integration). Currently selects the longest
+        description from available dc:description values.
         '''
         # for now, just return the longest description
         # eventually we should be able to update this to make use of the MARCXML
@@ -117,6 +115,9 @@ class Book(DigitalObject):
 # Volume relation definitions
 
 class IIIFImage(iiif.IIIFImageClient):
+    '''Subclass of :class:`readux.books.iiif.IIIFImageClient`, for generating
+    IIIF Image URIs for page images in Fedora.'''
+
     api_endpoint = settings.IIIF_API_ENDPOINT
     image_id_prefix = getattr(settings, 'IIIF_ID_PREFIX', '')
     pid = None
@@ -138,6 +139,7 @@ class IIIFImage(iiif.IIIFImageClient):
         return copy
 
     def get_image_id(self):
+        'image id, based on fedora pid and configured prefix'
         return '%s%s' % (self.image_id_prefix, self.pid)
 
     # NOTE: using long edge instead of specifying both with exact
@@ -145,25 +147,29 @@ class IIIFImage(iiif.IIIFImageClient):
     # depending on IIIF implementation
 
     def thumbnail(self):
+        'default thumbnail: 300px on the long edge'
         return self.size(**{self.long_side: 300}).format('png')
 
     def mini_thumbnail(self):
+        'mini thumbnail: 100px on the long edge'
         return self.size(**{self.long_side: 100}).format('png')
 
+    #: long edge size for single page display
     SINGLE_PAGE_SIZE = 1000
 
     def page_size(self):
+        'page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'
         return self.size(**{self.long_side: self.SINGLE_PAGE_SIZE})
 
 
 
 class Image(DigitalObject):
     ''':class:`~eulfedora.models.DigitalObject` for image content,
-    with an Image-1.0 content model and Fedora services for image
+    objects with an Image-1.0 content model and Fedora services for image
     preview and manipulation.'''
 
     IMAGE_CONTENT_MODEL = 'info:fedora/emory-control:Image-1.0'
-    CONTENT_MODELS = [ IMAGE_CONTENT_MODEL]
+    CONTENT_MODELS = [IMAGE_CONTENT_MODEL]
     IMAGE_SERVICE = 'emory-control:DjatokaImageService'
 
     content_types = ('image/jpeg', 'image/jp2', 'image/gif', 'image/bmp',
@@ -182,6 +188,7 @@ class Image(DigitalObject):
     _iiif = None
     @property
     def iiif(self):
+        'Access to :class:`IIIFImage` for this pid'
         # since initializing iiif requires loris call for image metadata,
         # only initialize on demand
         if self._iiif is None:
@@ -193,8 +200,7 @@ class Image(DigitalObject):
     _image_metadata = None
     @property
     def image_metadata(self):
-        '''Image metadata as returned by Djatoka getMetadata method
-        (width, height, etc.).'''
+        '''Image metadata as returned by IIIF service'''
         if self._image_metadata is None:
             response = requests.get(self.iiif.info())
             if response.status_code == requests.codes.ok:
@@ -220,8 +226,6 @@ class Image(DigitalObject):
             return int(self.image_metadata['height'])
 
 
-
-
 class Page(Image):
     '''Page object with common functionality for all versions of
     ScannedPage content.'''
@@ -236,11 +240,13 @@ class Page(Image):
         'versionable': False,
     })
 
+    #: page order property stored in rels-ext, for sorting pages in
+    #: volume order
     page_order = Relation(REPOMGMT.pageOrder,
                           ns_prefix=repomgmt_ns, rdf_type=rdflib.XSD.int)
 
+    #: :class:`Volume` this page is a part of, via `isConstituentOf` relation
     volume = Relation(relsext.isConstituentOf, type=DigitalObject)
-    'Volume this page is a part of, via `isConstituentOf` relation'
     # NOTE: can't set type as Volume here because it is not yet defined
 
     #: path to xsl for generating TEI facsimile from mets/alto ocr or
@@ -273,11 +279,11 @@ class Page(Image):
         return '%s, p. %d' % (self.volume.display_label, self.page_order)
 
     def get_fulltext(self):
-        # to be implemented by version-specific subclass
+        '(to be implemented by version-specific subclass)'
         pass
 
     def has_fulltext(self):
-        # to be implemented by version-specific subclass
+        '(to be implemented by version-specific subclass)'
         pass
 
     def index_data(self):
@@ -307,7 +313,7 @@ class Page(Image):
 
     @property
     def image_url(self):
-        # preliminary image url, for use in tei facsimile
+        'Preliminary image url, for use in tei facsimile'
         # TODO: we probably want to use some version of the ARK here
         # return unicode(self.iiif)
         # use the readux url, rather than exposing IIIF url directly
@@ -337,8 +343,7 @@ class Page(Image):
         }
 
     def annotations(self, user=None):
-        '''Find annotations for this page , optionally
-        filtered by user.'''
+        '''Find annotations for this page, optionally filtered by user.'''
         notes = Annotation.objects.filter(volume_uri=self.absolute_url)
         # if user is specified, show only notes that user can view
         if user is not None:
@@ -347,20 +352,28 @@ class Page(Image):
 
 
 class PageV1_0(Page):
-    '''Page subclass for emory-control:ScannedPage-1.0.'''
+    ''':class:`Page` subclass for emory-control:ScannedPage-1.0.
+
+    ScannedPage-1.0 objects include a plain text OCR datastream and a
+    word position file, in addition to common page image and metadata.
+    '''
     # NOTE: eulfedora syncrepo only knows how to create content models for
     # DigitalObject classes with only one content model, so a fixture
     # cmodel object is provided in fixtures/initial_data
+
+    #: Page 1.0 content model
     PAGE_CONTENT_MODEL = 'info:fedora/emory-control:ScannedPage-1.0'
     CONTENT_MODELS = [PAGE_CONTENT_MODEL, Image.IMAGE_CONTENT_MODEL]
     NEW_OBJECT_VIEW = 'books:page'
 
+    #: ocr text
     text = FileDatastream('text', "page text", defaults={
             'mimetype': 'text/plain',
         })
     ''':class:`~eulfedora.models.FileDatastream` page text content
     generated by OCR'''
 
+    #: word position information
     position = FileDatastream('position', "word positions", defaults={
             'mimetype': 'text/plain',
         })
@@ -368,6 +381,7 @@ class PageV1_0(Page):
     information generated by OCR'''
 
     def has_fulltext(self):
+        'check if text datastream is available'
         return self.text.exists
 
     def get_fulltext(self):
@@ -376,7 +390,7 @@ class PageV1_0(Page):
         if self.text.exists:
             # if content is a StreamIO, use getvalue to avoid utf-8 issues
             if hasattr(self.text.content, 'getvalue'):
-                textval =  self.text.content.getvalue().decode('utf-8', 'replace')
+                textval = self.text.content.getvalue().decode('utf-8', 'replace')
                 # remove control characters
                 control_chars = dict.fromkeys(range(32))
                 # replace whitespace control characters with a space:
@@ -388,7 +402,7 @@ class PageV1_0(Page):
     def generate_tei(self, ocrpage):
         '''Generate TEI facsimile for the current page'''
         try:
-            result =  ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
+            result = ocrpage.xsl_transform(filename=self.ocr_to_teifacsimile_xsl,
                 return_type=unicode, **self.tei_options)
             # returns _XSLTResultTree, which is not JSON serializable;
             return xmlmap.load_xmlobject_from_string(result, tei.Facsimile)
@@ -397,28 +411,37 @@ class PageV1_0(Page):
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self, ocrpage):
+        '''Run :meth:`generate_tei`, check that the result is valid, and if so
+        save the result as tei datastream content.'''
         # check that TEI is valid
-        tei = self.generate_tei(ocrpage)
-        if not tei.schema_valid():
+        pagetei = self.generate_tei(ocrpage)
+        if not pagetei.schema_valid():
             raise Exception('TEI is not valid according to configured schema')
-        self.tei.content = tei
+        self.tei.content = pagetei
 
 
 class PageV1_1(Page):
-    '''Page subclass for emory-control:ScannedPage-1.1.'''
+    '''Page subclass for emory-control:ScannedPage-1.1.
+
+    ScannedPage-1.1 objects include a METS/ALTO OCR datastream, in
+    addition to common page image and metadata.
+    '''
     # NOTE: fixture cmodel provided in fixtures/initial_data
+
+    #: Page 1.1 content model
     PAGE_CONTENT_MODEL = 'info:fedora/emory-control:ScannedPage-1.1'
     CONTENT_MODELS = [PAGE_CONTENT_MODEL, Image.IMAGE_CONTENT_MODEL]
     NEW_OBJECT_VIEW = 'books:page'
 
     #: xml ocr datastream for mets/alto content for this page;
-    #: keeping text datastream id for consistency with ScannedPage-1.0
+    #: using text datastream id for consistency with ScannedPage-1.0
     ocr = XmlDatastream('text', "OCR XML for page content", xmlmap.XmlObject, defaults={
         'control_group': 'M',
         'versionable': True,
     })
 
     def has_fulltext(self):
+        'check if ocr datastream is available'
         return self.ocr.exists
 
     def get_fulltext(self):
@@ -447,6 +470,8 @@ class PageV1_1(Page):
             logger.warn('OCR xml for %s is invalid', self.pid)
 
     def update_tei(self):
+        '''Run :meth:`generate_tei`, check that the result is valid, and if so
+        save the result as tei datastream content.'''
         # check to make sure generated TEI is valid
         pagetei = self.generate_tei()
         if not pageteidoc.schema_valid():
@@ -511,13 +536,14 @@ class BaseVolume(object):
 
     def voyant_url(self):
         '''Generate a url for sending the content of the current volume to Voyant
-        for text analysis.'''
+        for text analysis.  Includes a parameter for the default English
+        stopword list if the volume language is English.'''
 
         url_params = {
             'corpus': self.pid,
             'archive': self.fulltext_absolute_url()
         }
-            # if language is known to be english, set a default stopword list
+        # if language is known to be english, set a default stopword list
         # NOTE: we could add this for other languages at some point
         if self.language and "eng" in self.language:
             url_params['stopList'] = 'stop.en.taporware.txt'
@@ -540,8 +566,10 @@ class BaseVolume(object):
 
 
 class Volume(DigitalObject, BaseVolume):
-    '''Fedora Volume object with common functionality for all versions.
-    Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.'''
+    '''Fedora Volume object with common functionality for all Volume variants.
+    Extends :class:`~eulfedora.models.DigitalObject` and :class:`BaseVolume`.
+    See also :class:`VolumeV1_0` and :class:`VolumeV1_1`.
+    '''
 
     #: content model pattern for finding supported variant volumes
     VOLUME_CMODEL_PATTERN = "info:fedora/emory-control:ScannedVolume-1.?"
@@ -562,7 +590,7 @@ class Volume(DigitalObject, BaseVolume):
     pages = ReverseRelation(relsext.isConstituentOf, Page, multiple=True,
                             order_by=REPOMGMT.pageOrder)
 
-    #: :class:`Book` this volume is associated with
+    #: :class:`Book` this volume is associated with, via isConstituentOf
     book = Relation(relsext.isConstituentOf, type=Book)
 
     #: start page - 1-based index of the first non-blank page in the PDF
@@ -649,10 +677,16 @@ class Volume(DigitalObject, BaseVolume):
 
     @property
     def creator(self):
+        'list of creators, from dublin core metadata'
         return self.book.dc.content.creator_list
 
     @property
     def date(self):
+        '''List of dates, from volume metadata or book metadata if no
+        dates are present in the volume metadata.  Becuase some volumes
+        include the digitization date (as the date of the electronic edition),
+        when there are multiple dates only the oldest is returned.'''
+
         # some books (at least) include the digitization date (date of the
         # electronic ediction). If there are multiple dates, only include the oldest.
 
@@ -672,7 +706,9 @@ class Volume(DigitalObject, BaseVolume):
 
     @property
     def digital_ed_date(self):
-        'Date of the digital edition'
+        '''Date of the digital edition.  Some volumes include the digitization
+        date; if there are multiple dates, return the newest one if it is
+        after 2000.'''
         # some books (at least) include the digitization date (date of the
         # electronic ediction). If there are multiple dates, return the newest
         # it is after 2000
@@ -689,7 +725,6 @@ class Volume(DigitalObject, BaseVolume):
             sorted_dates = [d for d in sorted_dates if d > '2000']
             if sorted_dates:
                 return sorted_dates[-1]
-
 
     def index_data(self):
         '''Extend the default
@@ -1020,10 +1055,15 @@ class Volume(DigitalObject, BaseVolume):
 
 
 class VolumeV1_0(Volume):
-    '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.'''
+    '''Fedora object for ScannedVolume-1.0.  Extends :class:`Volume`.
+
+    ScannedVolume-1.0 objects include an Abbyy FineReader OCR XML datastream
+    with the OCR content for the entire volume.
+    '''
+
     #: volume content model
     VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.0'
-    CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
+    CONTENT_MODELS = [VOLUME_CONTENT_MODEL]
     # NEW_OBJECT_VIEW = 'books:book-pages'
 
     # inherits dc, rels-ext, pdf
@@ -1045,6 +1085,7 @@ class VolumeV1_0(Volume):
     # shortcuts for consistency with SolrVolume
     @property
     def fulltext_available(self):
+        'check if ocr is available'
         return self.ocr.exists
 
     def get_fulltext(self):
@@ -1052,7 +1093,7 @@ class VolumeV1_0(Volume):
         if self.ocr.exists:
             with open(self.ocr_to_text_xsl) as xslfile:
                 try:
-                    transform =  self.ocr.content.xsl_transform(filename=xslfile,
+                    transform = self.ocr.content.xsl_transform(filename=xslfile,
                         return_type=unicode)
                     # returns _XSLTResultTree, which is not JSON serializable;
                     # convert to unicode
@@ -1089,10 +1130,14 @@ class VolumeV1_0(Volume):
 
 
 class VolumeV1_1(Volume):
-    '''Fedora object for ScannedVolume-1.1.  Extends :class:`Volume`.'''
+    '''Fedora object for ScannedVolume-1.1.  Extends :class:`Volume`.
+
+    ScannedVolume-1.1 objects have no additional datastreams because
+    ScannedPage-1.1 objects have page-level ALTO OCR XML.
+    '''
     #: volume content model
     VOLUME_CONTENT_MODEL = 'info:fedora/emory-control:ScannedVolume-1.1'
-    CONTENT_MODELS = [ VOLUME_CONTENT_MODEL ]
+    CONTENT_MODELS = [VOLUME_CONTENT_MODEL]
     NEW_OBJECT_VIEW = 'books:volume'
 
     # inherits dc, rels-ext, pdf
@@ -1106,7 +1151,7 @@ class VolumeV1_1(Volume):
 
     def get_fulltext(self):
         '''Return OCR full text (if available)'''
-        q =  self.find_solr_pages()
+        q = self.find_solr_pages()
         q = q.field_limit(['page_text'])
         return '\n\n'.join(p['page_text'] for p in q if 'page_text' in p)
 
@@ -1139,6 +1184,7 @@ class SolrVolume(UserDict, BaseVolume):
 
     @property
     def has_pages(self):
+        'boolean indicator if a volume has pages loaded (not true for cover page only)'
         return int(self.data.get('page_count', 0)) > 1
 
     @property
@@ -1150,6 +1196,7 @@ class SolrVolume(UserDict, BaseVolume):
     _primary_image = None
     @property
     def primary_image(self):
+        'Access to primary (cover) image analogous to :attr:`Volume.primary_image`'
         # allow template access to cover image pid to work the same way as
         # it does with Volume - vol.primary_image.pid
         if self._primary_image is None:
@@ -1162,6 +1209,7 @@ class SolrVolume(UserDict, BaseVolume):
 
     @property
     def start_page(self):
+        'start page within the pdf'
         return self.data.get('start_page')
 
     @property
@@ -1169,6 +1217,9 @@ class SolrVolume(UserDict, BaseVolume):
         return self.data.get('pdf_size')
 
 class SolrPage(UserDict):
+    '''Extension of :class:`~UserDict.UserDict` for use with Solr results
+    for page-specific content.
+    '''
 
     def __init__(self, **kwargs):
         # sunburnt passes fields as kwargs; userdict wants them as a dict
@@ -1181,8 +1232,8 @@ class SolrPage(UserDict):
         return self.data.get('pid')
 
     def thumbnail_url(self):
+        'IIIF thumbnail url'
         return self.iiif.thumbnail()
-
 
 
 # hack: patch in volume as the related item type for pages

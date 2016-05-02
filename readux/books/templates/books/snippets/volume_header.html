@@ -47,3 +47,7 @@ Expects volume object as vol; set rdfa to true to enable RDFa properties.
       {% include 'books/snippets/volume_search_form.html' %}
     {% endif %}
 </header>
+
+{% if annotation_search_enabled %} {# should be set in the view based on user, presence of annotations #}
+{% include 'books/snippets/annotation_search_form.html' %}
+{% endif %}

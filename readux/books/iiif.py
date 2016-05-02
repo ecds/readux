@@ -1,7 +1,18 @@
 # iiifclient
 
 class IIIFImageClient(object):
-    '''Simple IIIF Image API client for generating IIIF image urls.'''
+    '''Simple IIIF Image API client for generating IIIF image urls
+    in an object-oriented, pythonic fashion.  Can be extended,
+    when custom logic is needed to set the image id.  Provides
+    a fluid interface, so that IIIF methods can be chained, e.g.::
+
+        iiif_img.size(width=300).format('png')
+
+    .. Note::
+
+        Methods to set region, rotation, and quality are not yet
+        implemented.
+    '''
 
     api_endpoint = None
     image_id = None

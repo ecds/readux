@@ -51,6 +51,15 @@ class TeiFacsimileTest(TestCase):
         # check line content
         self.assertEqual('Presentation', self.abbyy_tei.lines[0].text)
 
+    def test_page_id_by_xlink(self):
+        uri = 'http://testpid.co/ark:/1234/11'
+        teidoc = tei.AnnotatedFacsimile(self.alto_tei.node)
+        page_id = teidoc.page_id_by_xlink(uri)
+        self.assertEqual(self.alto_tei.page_list[0].id, page_id)
+        # no match, should return none
+        uri = '%sqqq' % uri
+        self.assertEqual(None, teidoc.page_id_by_xlink(uri))
+
 @override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
 class OCRtoTEIFacsimileXSLTest(TestCase):
 

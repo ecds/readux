@@ -4,6 +4,12 @@ from eulxml.xmlmap import teimap
 from lxml import etree
 import os
 
+'''
+:class:`eulxml.xmlmap.XmlObject` subclasses for dealing with TEI,
+particularly for the TEI facsimile used for positional OCR data for
+readux pages and for generating annotated TEI for export.
+'''
+
 
 class TeiBase(teimap.Tei):
     'Base class for all TEI objects, with all namespaces'
@@ -53,22 +59,29 @@ class Zone(TeiBase):
     page = xmlmap.NodeField('ancestor::tei:surface[@type="page"]', 'self')
     # not exactly a zone, but same attributes we care about (type, id, ulx/y, lrx/y)
 
+    #: list of graphic elements (i.e. page images)
     graphics = xmlmap.NodeListField('tei:graphic', Graphic)
 
     # convenience mappings to specific sizes of page image
+    #: full size image (tei:graphic with type "full")
     full_image = xmlmap.NodeField('tei:graphic[@type="full"]', Graphic)
+    #: page size image (tei:graphic with type "page")
     page_image = xmlmap.NodeField('tei:graphic[@type="page"]', Graphic)
+    #: thumbnail image (tei:graphic with type "thumbnail")
     thumbnail = xmlmap.NodeField('tei:graphic[@type="thumbnail"]', Graphic)
+    #: small thumbnail image (tei:graphic with type "small-thumbnail")
     small_thumbnail = xmlmap.NodeField('tei:graphic[@type="small-thumbnail"]', Graphic)
+    #: image info as provided by IIIF (tei:graphic with type "info")
     image_info = xmlmap.NodeField('tei:graphic[@type="info"]', Graphic)
-
 
     @property
     def width(self):
+        'zone width'
         return self.lrx - self.ulx
 
     @property
     def height(self):
+        'zone height'
         return self.lry - self.uly
 
     @property
@@ -79,9 +92,37 @@ class Zone(TeiBase):
             word_heights = [w.height for w in self.word_zones]
             return sum(word_heights) / float(len(word_heights))
 
+class Ref(TeiBase):
+    'Tei reference'
+    ROOT_NAME = 'ref'
+    #: target
+    target = xmlmap.StringField('@target')
+    #: type
+    type = xmlmap.StringField('@type')
+    #: text
+    text = xmlmap.StringField('text()')
+
+
+class BiblStruct(TeiBase):
+    'Structured Bibliographic citation'
+    # minimal mappings for now
+    ROOT_NAME = 'BiblStruct'
+    #: xml id
+    id = xmlmap.StringField('@xml:id')
+    #: corresp
+    corresp = xmlmap.StringField('@corresp')
+    #: type
+    type = xmlmap.StringField('@type')
+
+class AnnotationWorksCited(TeiBase):
+    milestone = xmlmap.NodeField('preceding-sibling::tei:milestone',
+                                 xmlmap.XmlObject)
+    ref_list = xmlmap.NodeField(
+        'parent::tei:list[contains(tei:item/tei:anchor/@xml:id, "zotero")]',
+        xmlmap.XmlObject)
 
 class Note(TeiBase):
-    'Tei Note, intendd to contain an annotation'
+    'Tei Note, used here to contain an annotation'
     ROOT_NAME = 'note'
     #: xml id
     id = xmlmap.StringField('@xml:id')
@@ -99,6 +140,25 @@ class Note(TeiBase):
     paragraphs = xmlmap.StringListField('tei:p')
     #: code for the markdown used in the original annotation
     markdown = xmlmap.StringField('tei:code[@lang="markdown"]')
+    #: links to related pages
+    related_pages = xmlmap.NodeListField('tei:ref[@type="related page"]',
+        Ref)
+    #: list of bibliographic citations/works cited
+    citations = xmlmap.NodeListField('tei:listBibl/tei:biblStruct', BiblStruct)
+
+    # in-text citation generated from markdown; these fields
+    # are mapped so they can be removed from the annotated tei document
+    works_cited = xmlmap.NodeField(
+        'tei:head[text() = "Works Cited"]',
+        xmlmap.XmlObject)
+    zotero_items = xmlmap.NodeField(
+        'tei:list[contains(tei:item/tei:anchor/@xml:id, "zotero")]',
+        xmlmap.XmlObject)
+    works_cited_milestone = xmlmap.NodeField(
+        'tei:milestone[following-sibling::tei:head/text() = "Works Cited"]',
+        xmlmap.XmlObject)
+    # mapped to remove empty list bibl element
+    list_bibl = xmlmap.NodeField('tei:listBibl', xmlmap.XmlObject)
 
 
 class Bibl(TeiBase):
@@ -130,9 +190,13 @@ class PublicationStatement(TeiBase):
 
 
 class Facsimile(TeiBase):
-    'Extension of TEI XmlObject to provide access to TEI facsimile elements'
-    XSD_SCHEMA = 'file://%s' % os.path.join(settings.BASE_DIR, 'readux',
-                                           'books', 'schema', 'TEIPageView.xsd')
+    '''Extension of :class:`eulxml.xmlmap.teimap.TEI` to provide access
+    to TEI facsimile elements'''
+    #: local xsd schema
+    XSD_SCHEMA = 'file://%s' % os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                           'schema', 'TEIPageView.xsd')
+    # NOTE: using absolute path for schema to avoid path issues when
+    # building documentation on readthedocs.org
 
     ROOT_NAME = 'TEI'
     xmlschema = etree.XMLSchema(etree.parse(XSD_SCHEMA))
@@ -154,7 +218,10 @@ class Facsimile(TeiBase):
     distributor = xmlmap.StringField('tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:distributor')
     #: publication statmnt as :class:`PublicationStatement`
     pubstmt = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:publicationStmt',
-        PublicationStatement)
+                                PublicationStatement)
+    #: encoding description
+    encoding_desc = xmlmap.NodeField('tei:teiHeader/tei:encodingDesc',
+                                    xmlmap.XmlObject)
 
     #: source description for the original volume
     original_source = xmlmap.NodeField('tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:bibl[@type="original"]',
@@ -173,6 +240,18 @@ class Name(TeiBase):
     value = xmlmap.StringField('.')
 
 
+class Interp(TeiBase, teimap.TeiInterp):
+    # extend eulxml.xmlmap.teimap version because it does not include
+    # the xml namespace for setting xml:id
+    ROOT_NAME = 'interp'
+    value = xmlmap.StringField('.')
+
+
+class InterpGroup(teimap.TeiInterpGroup):
+    # extend eulxml.xmlmap.teimap version to map our local interp
+    interp = xmlmap.NodeListField("tei:interp", Interp)
+
+
 class AnnotatedFacsimile(Facsimile):
     '''Annotated Tei facsimile, with mappings needed to generate
     TEI with annotations.
@@ -189,12 +268,27 @@ class AnnotatedFacsimile(Facsimile):
         Name)
 
     # additional mappings for annotation data
+
     #: list of annotations at body/div[@type="annotations"]/note[@type="annotation"], as :class:`Note`
-    annotations = xmlmap.NodeListField('tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
+    annotations = xmlmap.NodeListField('tei:text/tei:body/tei:div[@type="annotations"]/tei:note[@type="annotation"]',
         Note)
+
+    #: list of bibliographic citations/works cited
+    citations = xmlmap.NodeListField('tei:text/tei:body/tei:div[@type="works-cited"]/tei:listBibl/tei:biblStruct', BiblStruct)
+    #: list of bibliographic citation ids
+
+    citation_ids = xmlmap.StringListField('tei:text/tei:body/tei:div[@type="works-cited"]/tei:listBibl/tei:biblStruct/@xml:id')
+
     #: annotation tags, as :class:`~eulxml.xmlmap.teimap.TeiInterpGroup`
-    tags = xmlmap.NodeField('tei:back/tei:interpGrp[@type="tags"]',
-        teimap.TeiInterpGroup)
+    tags = xmlmap.NodeField('tei:text/tei:back/tei:interpGrp[@type="tags"]',
+        InterpGroup)
+
+
+    def page_id_by_xlink(self, link):
+        results = self.node.xpath('//tei:surface[@type="page"][@xlink:href="%s"]/@xml:id' \
+            % link, namespaces=self.ROOT_NAMESPACES)
+        if results:
+            return results[0]
 
 class Anchor(TeiBase):
     'TEI Anchor, for marking start and end of text annotation highlights'
@@ -206,9 +300,4 @@ class Anchor(TeiBase):
     #: next attribute
     next = xmlmap.StringField('@next')
 
-
-class Interp(TeiBase, teimap.TeiInterp):
-    # extend eulxml.xmlmap.teimap version because it does not include
-    # the xml namespace for setting xml:id
-    ROOT_NAME = 'interp'
 

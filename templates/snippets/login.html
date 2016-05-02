@@ -37,18 +37,46 @@
       </div>
       <div class="modal-body">
         <ul class="login-list list-group">
+
+          {# local LDAP/django db login #}
+          {% if not user.is_authenticated %}
+          {# NOTE: ldap can't be linked with social auth; only show for login, not for linking #}
+          <li role="presentation" class="list-group-item login-ldap">
+            <a role="menuitem" tabindex="-1" href="{% url 'auth:login' %}?next={{ request.path }}">
+              <span class="login-icon"></span>
+              <span class="login-label">Login with Emory credentials</span>
+           </a>
+          </li>
+          {% endif %}
+
+          {# configured social auth backends #}
           {% for backend in backends.backends %}
-          {# TODO: only show backends that user hasn't already authorized #}
           {% with backend_name=backend_names|dict_item:backend|default:backend|title %}
-          <li role="presentation" class="list-group-item login-{{ backend }}{% if backend_name|lower in user_socialauth_providers %} disabled{% endif %}">
+          {% if backend_name|lower = 'zotero' %}
+          {# special case: we don't want to use zotero for login, but do want it available as a linked account #}
+            {% with disabled=user.is_anonymous %}
+            <li role="presentation" class="list-group-item login-{{ backend }} {% if disabled %}disabled{% endif %}
+              {% if backend_name|lower in user_socialauth_providers %} disabled{% endif %}">
+                <a role="menuitem" tabindex="-1"
+                {% if not disabled %} href="{% url 'social:begin' backend %}?next={{ request.path }}" {% endif %}
+                {% if disabled %}title="Zotero is only available as a linked account. Please log in with another account first, then authorize Zotero access."{% endif %}>
+                  <span class="login-icon fa fa-lg fa-{{ backend_name|lower }}"></span>
+                  <span class="login-label">Authorize {{ backend_name }}</span>
+                </a>
+            </li>
+            {% endwith %}
+          {% else %}
+          <li role="presentation" class="list-group-item login-{{ backend }}{% if backend_name|lower in user_socialauth_providers %} disabled{% endif %}{% if backend_name|lower = 'zotero' and user.is_anonyomus %}disabled{% endif %}"> {# mark as disabled if already authorized as a linked account #}
               <a role="menuitem" tabindex="-1"
               href="{% url 'social:begin' backend %}?next={{ request.path }}">
                 <span class="login-icon fa fa-lg fa-{{ backend_name|lower }}"></span>
                 <span class="login-label">{% if user and not user.is_anonymous %}Authorize {% else %}Login with {% endif %}{{ backend_name }}</span>
               </a>
           </li>
+          {% endif %}
           {% endwith %}
           {% endfor %}
+
         </ul>
       </div>
     </div>

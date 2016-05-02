@@ -26,6 +26,7 @@ from readux.views import VaryOnCookieMixin
 
 
 class CollectionList(ListView):
+    '''List and display all collections'''
     model = Collection
     template_name = 'collection/collection_list.html'
     display_mode = 'list'
@@ -65,6 +66,7 @@ class CollectionList(ListView):
 
 
 class CollectionCoverList(CollectionList):
+    '''List and display collections by cover image'''
     display_mode = 'covers'
 
 
@@ -192,4 +194,7 @@ class CollectionDetail(DetailView, VaryOnCookieMixin):
 
 
 class CollectionCoverDetail(CollectionDetail):
+    '''View volumes in a single collection, as in :class:`CollectionDetail`,
+    but display volumes covers instead of in a list.
+    '''
     display_mode = 'covers'

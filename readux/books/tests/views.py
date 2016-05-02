@@ -12,7 +12,7 @@ from urllib import unquote
 
 from readux.annotations.models import Annotation
 from readux.books.models import SolrVolume, Volume, Page, SolrPage
-from readux.books import sitemaps, views, view_helpers
+from readux.books import sitemaps, views, view_helpers, forms
 from readux.utils import absolutize_url
 
 
@@ -436,12 +436,15 @@ class BookViewsTest(TestCase):
         solr_result = NonCallableMagicMock(spec_set=['__iter__', 'facet_counts'])
 
         # *only* mock iter, to avoid weirdness with django templates & callables
-        solr_result.__iter__.return_value = [
+        solr_results = [
             SolrPage(**{'pid': 'page:1', 'page_order': '1', 'score': 0.5,
-             'solr_highlights': {'page_text': ['snippet with search term']}}),
+             'solr_highlights': {'page_text': ['snippet with search term']},
+                 'identifier': ['http://testpid.co/ark:/1234/11/']}),
             SolrPage(**{'pid': 'page:233', 'page_order': '123', 'score': 0.02,
-             'solr_highlights': {'page_text': ['sample text result from content']}}),
+             'solr_highlights': {'page_text': ['sample text result from content']},
+              'identifier': ['http://testpid.co/ark:/1234/22/']}),
         ]
+        solr_result.__iter__.return_value = solr_results
         mocksolr.query.__iter__.return_value = iter(solr_result)
         mocksolr.count.return_value = 2
 
@@ -479,6 +482,39 @@ class BookViewsTest(TestCase):
                 msg_prefix='search results should link to full page view')
             self.assertContains(response, '... %s ...' % page['solr_highlights']['page_text'][0],
                 msg_prefix='solr snippets should display when available')
+
+        # ajax request
+        with patch('readux.books.views.VolumeDetail.get_context_data') as mock_ctx:
+            results = NonCallableMagicMock(spec=['__iter__', 'facet_counts', 'highlighting'])
+            results.__iter__.return_value = iter(solr_result)
+            results.highlighting = {
+                solr_results[0].pid: {
+                    'page_text': 'sample highlighting snippet'
+                },
+                solr_results[1].pid: {
+                    'page_text': 'another highlighting snippet'
+                }
+
+            }
+            mockpage = NonCallableMagicMock(spec=['__iter__'])
+            mockpage.object_list = results
+            mock_ctx.return_value = {
+                 'pages': mockpage,
+             }
+            response = self.client.get(vol_url, {'keyword': 'determine'},
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            self.assertEqual('application/json', response['content-type'])
+            data = json.loads(response.content)
+            for idx in range(len(data)):
+                self.assertEqual(solr_results[idx].pid, data[idx]['pid'])
+                self.assertEqual('p. %s' % solr_results[idx]['page_order'],
+                    data[idx]['label'])
+                self.assertEqual(reverse('books:page-image', kwargs={'vol_pid': mockobj.pid,
+                    'pid': solr_results[idx].pid, 'mode': 'mini-thumbnail'}),
+                    data[idx]['thumbnail'])
+                self.assertEqual(results.highlighting[solr_results[idx].pid]['page_text'],
+                    data[idx]['highlights'])
+
 
     @patch('readux.books.views.Repository')
     @patch('readux.books.views.Paginator', spec=Paginator)
@@ -821,6 +857,34 @@ class SitemapTestCase(TestCase):
         vol_sitemap.items()
         mocksolr.query.assert_called_with(content_model=Volume.VOLUME_CMODEL_PATTERN)
         mocksolr.query.return_value.field_limit.assert_called_with(['pid', 'last_modified'])
+
+    @patch('readux.books.sitemaps.solr_interface')
+    def test_volume_page_sitemap(self, mocksolr_interface):
+        volpage_sitemap = sitemaps.VolumePageSitemap()
+        mocksolr = mocksolr_interface.return_value
+
+        # check for expected solr query
+        volpage_sitemap.items()
+        mocksolr.query.assert_called_with(content_model=Page.PAGE_CMODEL_PATTERN)
+        mocksolr.query.return_value.field_limit.assert_called_with(['pid', 'last_modified',
+            'isConstituentOf'])
+
+class BookSearchTest(TestCase):
+
+    def test_search_terms(self):
+        form = forms.BookSearch({'keyword': 'term "exact phrase" term2'})
+        self.assertTrue(form.is_valid())
+        terms = form.search_terms()
+        self.assert_('term' in terms)
+        self.assert_('term2' in terms)
+        self.assert_('exact phrase' in terms)
+
+        # test searching on page ark
+        ark = 'http://testpid.library.emory.edu/ark:/25593/pwtbb'
+        form = forms.BookSearch({'keyword': ark})
+        self.assertTrue(form.is_valid())
+        terms = form.search_terms()
+        self.assertEqual([ark], terms)
 
 
 

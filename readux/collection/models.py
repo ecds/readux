@@ -8,11 +8,11 @@ from readux.utils import solr_interface
 
 
 class BaseCollection(object):
-    '''Common functionality for :class:`Collection` and :class:`SolrCollection`'''
+    '''Common properties shared by for :class:`Collection` and :class:`SolrCollection`'''
 
     @property
     def images(self):
-        'associated :class:`CollectionImage` if there is one for this pid'
+        'associated :class:`CollectionImage` if there is one for this collection'
         try:
             return CollectionImage.objects.filter(collection=self.pid).get()
         except CollectionImage.DoesNotExist:
@@ -26,7 +26,7 @@ class BaseCollection(object):
 
     @property
     def banner(self):
-        'cover image for associated :class:`CollectionImage`, if available'
+        'banner image for associated :class:`CollectionImage`, if available'
         if self.images:
             return self.images.banner
 
@@ -36,7 +36,7 @@ class Collection(Collectionv1_0, BaseCollection):
     :class:`~eulcm.models.collection.v1_0.Collection`.
     '''
     #: common label prefix on all collections
-    LABEL_PREFIX = 'Large-Scale Digitization Initiative \(LSDI\) -'
+    LABEL_PREFIX = r'Large-Scale Digitization Initiative \(LSDI\) -'
     #: common label suffix on all collections
     LABEL_SUFFIX = 'Collection'
 
@@ -58,7 +58,7 @@ class Collection(Collectionv1_0, BaseCollection):
 
 class SolrCollection(UserDict, BaseCollection):
     '''Extension of :class:`~UserDict.UserDict` for use with Solr results
-    for volume-specific content.  Extends :class:`BaseCollection` for common
+    for collection-specific content.  Extends :class:`BaseCollection` for common
     collection logic (specifically access to related images).
     '''
 
@@ -68,12 +68,13 @@ class SolrCollection(UserDict, BaseCollection):
 
     @property
     def pid(self):
-        'object pid'
+        'collection pid'
         return self.data.get('pid')
 
 
 def collection_choices():
-    'collection choices (pid and title) for :attr:`CollectionImage.collection`'
+    '''Collection choices (pid and title) to be used when editing
+    :attr:`CollectionImage.collection`'''
     solr = solr_interface()
     results = solr.query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
           .filter(owner='LSDI-project') \
@@ -85,10 +86,17 @@ def collection_choices():
 
 
 class CollectionImage(models.Model):
+    '''Django database model for associating images with collections in Fedora.
+    Intended to be edited via django admin.
+    '''
+
     # NOTE: collection field should be selected from fedora lsdi collections;
     # stores the pid, but displays the collection label to the user
+    #: fedora collection
     collection = models.CharField(max_length=255, unique=True, choices=[])
+    #: cover image; foreign key to :class:`django_image_tools.models.Image`
     cover = models.ForeignKey(Image, related_name='coverimage_set')
+    #: banner image; foreign key to :class:`django_image_tools.models.Image`
     banner = models.ForeignKey(Image, blank=True, null=True,
                                related_name='bannerimage_set')
 
@@ -102,6 +110,7 @@ class CollectionImage(models.Model):
 
     @property
     def collection_label(self):
+        'collection label; pulled from Solr by pid'
         # get collection label from solr via pid
         solr = solr_interface()
         results = solr.query(pid=self.collection).field_limit('title')
@@ -116,11 +125,13 @@ class CollectionImage(models.Model):
 
     @property
     def cover_thumbnail(self):
+        'cover thumbnail for display in django admin'
         if self.cover:
             return self.cover.thumbnail
 
     @property
     def banner_thumbnail(self):
+        'banner thumbnail for display in django admin'
         if self.banner:
             return self.banner.thumbnail
 

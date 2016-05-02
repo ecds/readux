@@ -4,13 +4,14 @@ from django.core.urlresolvers import reverse
 from django.core.servers.basehttp import FileWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
-    HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest
+    HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest, \
+    JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
 from django.views.decorators.http import condition, require_http_methods, \
    last_modified
-from django.views.decorators.vary import vary_on_cookie
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import FormMixin, ProcessFormView
 from django.views.generic.base import RedirectView
@@ -196,6 +197,7 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
     context_object_name = 'vol'
 
     @method_decorator(last_modified(view_helpers.volume_modified))
+    @method_decorator(vary_on_headers('X-Requested-With'))  # vary on ajax request
     def dispatch(self, *args, **kwargs):
         return super(VolumeDetail, self).dispatch(*args, **kwargs)
 
@@ -224,23 +226,26 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
         # instead of volume info
         if self.form.is_valid():
             terms = self.form.search_terms()
-
             solr = solr_interface()
             query = solr.Q()
             for t in terms:
                 # NOTE: should this be OR or AND?
                 query |= solr.Q(page_text=t)
+                if t.isnumeric():
+                    query |= solr.Q(page_order=t)**2
+                query |= solr.Q(identifier=t)**3
             # search for pages that belong to this book
             q = solr.query().filter(content_model=Page.PAGE_CMODEL_PATTERN,
                                     isConstituentOf=self.object.uri) \
                     .query(query) \
-                    .field_limit(['page_order', 'pid'], score=True) \
+                    .field_limit(['page_order', 'pid', 'identifier'], score=True) \
                     .highlight('page_text', snippets=3) \
                     .sort_by('-score').sort_by('page_order') \
                     .results_as(SolrPage)
 
             # return highlighted snippets from page text
             # sort by relevance and then by page order
+
 
             # paginate the solr result set
             paginator = Paginator(q, 30)
@@ -267,7 +272,7 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                 'url_params': urlencode(url_params),
                 # provided for consistency with class-based view pagination
                 'paginator': paginator,
-                'page_obj': results,
+                'page_obj': results
             })
 
         else:
@@ -280,11 +285,42 @@ class VolumeDetail(DetailView, VaryOnCookieMixin):
                     context_data['annotated_volumes'] = {
                         self.object.get_absolute_url(): annotation_count
                     }
+                # enable annotation search if any annotations are present
+                context_data['annotation_search_enabled'] = bool(annotation_count)
 
         return context_data
 
+    def render_to_response(self, context, **response_kwargs):
+        # return json to ajax request or when requested;
+        # currently used for annotation related pages autocomplete
+        if self.request.is_ajax() or self.request.GET.get('format', '') == 'json':
+            solr_result = context['pages']
+            highlighting = {}
+            if solr_result.object_list.highlighting:
+                highlighting = solr_result.object_list.highlighting
+            data = [{
+                    'pid': result.pid,
+                    # extra logic to handle records where ARK is not
+                    # present (should only happen in dev)
+                    'uri': next(iter([uri for uri in result['identifier']
+                                      if 'ark:' in uri]), ''),
+                    'label': 'p. %s' % result['page_order'],
+                    'thumbnail': reverse('books:page-image',
+                            kwargs={'mode': 'mini-thumbnail', 'pid': result.pid,
+                                    'vol_pid': self.object.pid}),
+                    'highlights': highlighting.get(result.pid, {}).get('page_text', '')
+                } for result in solr_result.object_list]
+            return JsonResponse(data, safe=False)
+        else:
+            return super(VolumeDetail, self).render_to_response(context, **response_kwargs)
+
 
 class VolumePageList(ListView, VaryOnCookieMixin):
+    '''Display a paginated list of :class:`~readux.books.models.Page`
+    objects associated with a single :class:`~readux.books.models.Volume`.
+    Pages are displayed by thumbnail; thumbnails include an annotation count
+    indicator for logged in users with annotations.
+    '''
 
     template_name = 'books/volume_pages_list.html'
     paginate_by = 30
@@ -323,7 +359,10 @@ class VolumePageList(ListView, VaryOnCookieMixin):
                                    for k, v in notes.iteritems()])
         else:
             annotated_pages = {}
-        context_data['annotated_pages'] = annotated_pages
+        context_data.update({
+            'annotated_pages': annotated_pages,
+            'annotation_search_enabled': bool(annotated_pages)
+        })
 
         # Check if the first page of the volume is wider than it is tall
         # to set the layout of the pages
@@ -406,6 +445,22 @@ class PageDetail(DetailView, VaryOnCookieMixin):
 
         context_data.update({'next': nxt, 'prev': prev,
             'page_chunk': page_chunk, 'form': form, 'scale': scale})
+
+        # if user is logged in, check for zotero account and pass
+        # token and user id through for annotation citation
+        if not self.request.user.is_anonymous():
+            zotero_account = self.request.user.social_auth.filter(provider='zotero').first()
+            if zotero_account:
+                context_data.update({
+                    'zotero_userid': zotero_account.extra_data['access_token']['userID'],
+                    'zotero_token': zotero_account.extra_data['access_token']['oauth_token']
+                    })
+
+            # if user is logged in, check if annotations exist and
+            # search should be enabled
+            context_data['annotation_search_enabled'] = \
+                self.object.volume.annotations(user=self.request.user).exists()
+
         return context_data
 
 class PageDatastreamView(RawDatastreamView):
@@ -416,6 +471,10 @@ class PageDatastreamView(RawDatastreamView):
     pid_url_kwarg = 'pid'
     repository_class = Repository
 
+    def get_headers(self):
+        return {
+            'Access-Control-Allow-Origin': '*'
+        }
 
 class PageOcr(PageDatastreamView):
     '''Display the page-level OCR content, if available (for
@@ -432,11 +491,13 @@ class PageTei(PageDatastreamView):
     datastream_id = Page.tei.id
 
     def get_headers(self):
-        return {
+        headers = super(PageTei, self).get_headers()
+        headers.update({
             # generate a default filename based on the object pid
             'Content-Disposition': 'filename="%s_tei.xml"' % \
-                 self.kwargs['pid'].replace(':', '-')
-        }
+                 self.kwargs['pid'].replace(':', '-'),
+        })
+        return headers
 
 class VolumeDatastreamView(RawDatastreamView):
     '''Base view for :class:`~readux.books.models.Volume` datastreams.'''

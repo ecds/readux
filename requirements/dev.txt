@@ -1,5 +1,9 @@
+-r common.txt
+
 Sphinx
 coverage
 mock
 django-nose>=1.4
 fabric
+graphviz
+

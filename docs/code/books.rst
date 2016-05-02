@@ -1,29 +1,16 @@
-:mod:`readux` Code Documentation
-=================================
-
-.. automodule:: readux
-
-
-Collection
-----------
-.. automodule:: readux.collection
-    :members:
-
-Models
-^^^^^^
-.. automodule:: readux.collection.models
-    :members:
-
-Views
-^^^^^^
-.. automodule:: readux.collection.views
-    :members:
-
-
 Books
 -----
+
+.. contents:: Contents
+    :local:
+    :depth: 2
+
 .. automodule:: readux.books
     :members:
+
+For more information on the Fedora content modeling and object
+relations, see :ref:`book-content-models` and :ref:`volume_page_variants`.
+
 
 Models
 ^^^^^^
@@ -36,8 +23,13 @@ Views
     :members:
 
 DigWF
-^^^^^^
+^^^^^
 .. automodule:: readux.books.digwf
+    :members:
+
+IIIF Client
+^^^^^^^^^^^
+.. automodule:: readux.books.iiif
     :members:
 
 TEI
@@ -45,64 +37,62 @@ TEI
 .. automodule:: readux.books.tei
     :members:
 
-annotate
+Annotate
 ^^^^^^^^
 .. automodule:: readux.books.annotate
     :members:
 
-markdown_tei
-^^^^^^^^^^^^
+Markdown to TEI
+^^^^^^^^^^^^^^^
 .. automodule:: readux.books.markdown_tei
     :members:
 
+Export
+^^^^^^
+.. automodule:: readux.books.export
+    :members:
 
-Manage Commands
-^^^^^^^^^^^^^^^
+GitHub
+^^^^^^
+.. automodule:: readux.books.github
+    :undoc-members:
+    :members:
+
+
+Custom manage commands
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: readux.books.management.page_import
     :members:
 
-Custom manage commands
-----------------------
+
 The following management commands are available.  For more details, use
 ``manage.py help <command>``.  As much as possible, all custom commands honor the
 built-in django verbosity options.
 
-* **import_covers**
+.. _import_covers:
+
+import_covers
+~~~~~~~~~~~~~
     .. automodule:: readux.books.management.commands.import_covers
         :members:
 
-* **import_pages**
+.. _import_pages:
+
+import_pages
+~~~~~~~~~~~~
+
     .. automodule:: readux.books.management.commands.import_pages
        :members:
 
-* **update_arks**
+update_arks
+~~~~~~~~~~~
     .. autoclass:: readux.books.management.commands.update_arks.Command
        :members:
 
+.. _import_volume:
 
-Fedora
-^^^^^^
-.. automodule:: readux.fedora
-    :members:
-
-Utilities
----------
-.. automodule:: readux.utils
-    :members:
-
-
-Annotation
-----------
-.. automodule:: readux.annotations
-    :members:
-
-Models
-^^^^^^
-.. automodule:: readux.annotations.models
-    :members:
-
-Views
-^^^^^^
-.. automodule:: readux.annotations.views
-    :members:
+import_volume
+~~~~~~~~~~~~~
+    .. automodule:: readux.books.management.commands.import_volume
+       :members:

@@ -3,6 +3,34 @@
 CHANGELOG
 =========
 
+Release 1.5 - Enhanced Annotation
+---------------------------------
+
+* As a researcher I want to make internal references to other pages in
+  order to show connections to other parts of the same work.
+* As a researcher I want to include audio in my annotations so I can
+  demonstrate audible differences in the content.
+* As a researcher I want to include video in my annotations so I can
+  associate enriched media with volume content.
+* As a researcher I want to link my Zotero account with my Readux login
+  so that I can add Zotero citations to my annotations.
+* As a researcher I want to look up Zotero citations and add them to my
+  annotations in order to show my sources.
+* As researcher I want to search the text of my annotations for the
+  volume I am working on in order to find specific notes or content.
+* As a site user I want to login in with Emory credentials so that
+  I can easily start making annotations.
+* As a user, I can find readux volume pages through a search engine,
+  so I can easily find relevant content.
+* TEI export now includes an encoding description in the TEI header.
+* bugfix: Annotation window sometimes pops up in the top right of the
+  screen, should hover near highlighted text/image.  (Actual fix in
+  `annotator-marginalia <http://emory-lits-labs.github.io/annotator-marginalia/>`_)
+* bugfix: Exported site browse annotations by tag never displays more
+  than one annotation. (Actual fix in `digitaledition-jekylltheme <https://github.com/emory-libraries-ecds/digitaledition-jekylltheme>`_)
+* Project documentation now includes technical descriptions and diagrams
+  of Fedora object models and readux processes.
+
 Release 1.4.1
 -------------
 

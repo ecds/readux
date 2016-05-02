@@ -1285,7 +1285,7 @@ button.volume-export {
 }
 
 .annotation-search {
-    padding-top: 10px;
+    max-width: 98%;
 }
 
 .annotation-search input.form-control {

@@ -185,7 +185,7 @@ def annotation_to_tei(annotation, teivol):
     if annotation.extra_data.get('citations', None):
         for bibl in annotation.extra_data['citations']:
             # zotero tei export currently includes an id that is not
-            # a valid ncname (contianes : and /)
+            # a valid ncname (contains : and /)
             bibsoup = BeautifulSoup(bibl, 'xml')
             # convert xml id into the format we want:
             # zotero-#### (zotero item id)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from readux.annotations.models import Annotation
+from readux.annotations.models import Annotation, Group
 
 
 class AnnotationAdmin(admin.ModelAdmin):
@@ -18,8 +18,15 @@ class AnnotationAdmin(admin.ModelAdmin):
     # for now, make these fields read-only, so annotations can only
     # be deleted or have user modified via admin; the rest should
     # be handled via the annotator interface.
-    readonly_fields = ('text', 'quote', 'extra_data', 'uri_link')
+    # readonly_fields = ('text', 'quote', 'extra_data', 'uri_link')
+    readonly_fields = ('text', 'quote', 'uri_link')
+
+
+class GroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'num_members', 'created', 'updated')
+    date_hierarchy = 'created'
+    filter_horizontal = ('members',)
 
 
 admin.site.register(Annotation, AnnotationAdmin)
-
+admin.site.register(Group, GroupAdmin)

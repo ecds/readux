@@ -37,6 +37,7 @@ class AnnotationQuerySet(models.QuerySet):
         except Annotation.DoesNotExist:
             pass
 
+
 class AnnotationManager(models.Manager):
     '''Custom :class:`~django.models.Manager` for :class:`Annotation`.
     Returns :class:`AnnotationQuerySet` as default queryset, and exposes
@@ -48,6 +49,7 @@ class AnnotationManager(models.Manager):
     def visible_to(self, user):
         'Convenience access to :meth:`AnnotationQuerySet.visible_to`'
         return self.get_queryset().visible_to(user)
+
 
 class Annotation(models.Model):
     '''Django database model to store Annotator.js annotation data,
@@ -232,3 +234,19 @@ class Annotation(models.Model):
             info['volume_uri'] = self.volume_uri
 
         return info
+
+
+class Group(models.Model):
+    #: display name for the group
+    name = models.CharField(max_length=255)
+    #: users who belong to the group
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                     related_name='annotation_groups')
+    #: datetime annotation was created; automatically set when added
+    created = models.DateTimeField(auto_now_add=True)
+    #: datetime annotation was last updated; automatically updated on save
+    updated = models.DateTimeField(auto_now=True)
+
+    def num_members(self):
+        return self.members.count()
+    num_members.short_description = '# members'

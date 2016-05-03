@@ -47,6 +47,10 @@ class Collection(Collectionv1_0, BaseCollection):
         '''
         # remove prefix at the beginning, suffix at the end, strip any outer whitespace
         short_label = re.sub('^%s' % self.LABEL_PREFIX, '', self.label.strip())
+        # NOTE: using dc:title should be equivalent, and might make it
+        # possible to drop an extra api call in some cases
+        # short_label = re.sub('^%s' % self.LABEL_PREFIX, '',
+                             # self.dc.content.title.strip())
         return re.sub('%s$' % self.LABEL_SUFFIX, '', short_label).strip()
 
     def index_data(self):

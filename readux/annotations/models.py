@@ -4,6 +4,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import Group, User
 from django.utils.html import format_html
 from jsonfield import JSONField
 
@@ -126,6 +127,13 @@ class Annotation(models.Model):
 
     objects = AnnotationManager()
 
+    class Meta:
+        # extend default permissions to add a view option
+        # change_annotation and delete_annotation provided by django
+        permissions = (
+            ('view_annotation', 'View annotation'),
+        )
+
     def __unicode__(self):
         return self.text
 
@@ -236,17 +244,19 @@ class Annotation(models.Model):
         return info
 
 
-class Group(models.Model):
-    #: display name for the group
-    name = models.CharField(max_length=255)
-    #: users who belong to the group
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                     related_name='annotation_groups')
+class AnnotationGroup(Group):
+    # inherits name from Group
+
+    #: optional notes field
+    notes = models.TextField(blank=True)
     #: datetime annotation was created; automatically set when added
     created = models.DateTimeField(auto_now_add=True)
     #: datetime annotation was last updated; automatically updated on save
     updated = models.DateTimeField(auto_now=True)
 
     def num_members(self):
-        return self.members.count()
+        return self.user_set.count()
     num_members.short_description = '# members'
+
+    def __repr__(self):
+        return '<Annotation Group: %s>' % self.name

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'mptt',
     'feincms.module.page',
     'feincms.module.medialibrary',
+    'guardian',
     'readux.annotations',
     'readux.accounts',
     'readux.books',
@@ -147,6 +148,7 @@ AUTHENTICATION_BACKENDS = (
     'social.backends.zotero.ZoteroOAuth',
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 LOGIN_REDIRECT_URL = '/'

@@ -26,4 +26,8 @@ class Migration(migrations.Migration):
             name='annotation',
             options={'permissions': (('view_annotation', 'View annotation'),)},
         ),
+        migrations.AlterModelOptions(
+            name='annotation',
+            options={'permissions': (('view_annotation', 'View annotation'), ('admin_annotation', 'Manage annotation'))},
+        ),
     ]

@@ -1,5 +1,6 @@
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 import json
+import logging
 import uuid
 from django.db import models
 from django.conf import settings
@@ -9,6 +10,9 @@ from django.utils.html import format_html
 from jsonfield import JSONField
 from guardian.shortcuts import assign_perm, get_perms_for_model
 from guardian.models import UserObjectPermission, GroupObjectPermission
+
+
+logger = logging.getLogger(__name__)
 
 
 class AnnotationQuerySet(models.QuerySet):
@@ -134,6 +138,7 @@ class Annotation(models.Model):
         # change_annotation and delete_annotation provided by django
         permissions = (
             ('view_annotation', 'View annotation'),
+            ('admin_annotation', 'Manage annotation'),
         )
 
     def __unicode__(self):
@@ -200,7 +205,10 @@ class Annotation(models.Model):
         # NOTE: assuming for now that user should NOT be changed
         # after annotation is created
         for field in ['updated', 'created', 'id', 'user']:
-            del data[field]
+            try:
+                del data[field]
+            except KeyError:
+                pass
 
         # set any db fields, and remove from extra data
         for field in self.common_fields:
@@ -217,7 +225,7 @@ class Annotation(models.Model):
         if data:
             # any other data included in the request and not yet
             # processed should be stored as extra data
-            self.extra_data = data
+            self.extra_data.update(data)
 
         self.save()
 
@@ -259,7 +267,8 @@ class Annotation(models.Model):
     permission_to_codename = {
         'read': 'view_annotation',
         'update': 'change_annotation',
-        'delete': 'delete_annotation'
+        'delete': 'delete_annotation',
+        'admin': 'admin_annotation'
     }
     #: lookup annotation permission mode by django permission codename
     codename_to_permission = dict([(codename, mode) for mode, codename
@@ -275,6 +284,27 @@ class Annotation(models.Model):
         objects associated with this annotation.'''
         return GroupObjectPermission.objects.filter(object_pk=self.pk)
 
+    def get_group_or_user(self, ident):
+        # look up annotation group or user based on username
+        # or group id in annotation permissions list
+        if ident.startswith('group:'):
+            group_id = ident[len('group:'):]
+            try:
+                return AnnotationGroup.objects.get(id=int(group_id))
+            except ValueError:
+                # non-integer identifier found
+                logger.warn("Invalid group id '%s' in annotation %s permissions",
+                            group_id, self.pk)
+            except AnnotationGroup.DoesNotExist:
+                logger.warn("Error finding group '%s' in annotation %s permissions",
+                            group_id, self.pk)
+        else:
+            try:
+                return User.objects.get(username=ident)
+            except User.DoesNotExist:
+                logger.warn("Error finding user '%s' in annotation %s permissions",
+                            ident, self.pk)
+
     def db_permissions(self, permissions):
         '''Convert annotation permission data into actionable
         django permissions using :mod:`guardian` per-object permissions.
@@ -284,26 +314,29 @@ class Annotation(models.Model):
         self.user_permissions().delete()
         self.group_permissions().delete()
 
+        # NOTE: should eventually handle special case
+        # group:__world__, but setting that is currently not supported
+        # by the readux annotator permissions module
+
         # then re-assign permissions based on annotation permissions
         for mode, users in permissions.iteritems():
             for ident in users:
-                if ident.startswith('group:'):
-                    group_id = ident[len('group:'):]
-                    entity = AnnotationGroup.objects.get(id=int(group_id))
-                else:
-                    entity = User.objects.get(username=ident)
-
-                # give user or group the appropriate permission on this object
-                assign_perm(self.permission_to_codename[mode], entity, self)
+                entity = self.get_group_or_user(ident)
+                if entity is not None:
+                    print 'mode is ', mode
+                    print 'codename is ', self.permission_to_codename[mode]
+                    # give user/group the appropriate permission on this object
+                    assign_perm(self.permission_to_codename[mode],
+                                entity, self)
 
     def permissions_dict(self):
         '''Convert stored :mod:`guardian` per-object permissions into
         annotation permission dictionary format'''
         # convert db permissions into annotator style permissions
 
-        # construct permissions using defaultdict,
-        # i.e. starting with an empty list for each mode
-        permissions = defaultdict(list)
+        # construct base permissions dict, empty list for each mode
+        permissions = dict([(mode, [])
+                           for mode in self.permission_to_codename.keys()])
 
         for user_perm in self.user_permissions():
             # convert db codename to annotation mode
@@ -313,7 +346,7 @@ class Annotation(models.Model):
 
         for group_perm in self.group_permissions():
             mode = self.codename_to_permission[group_perm.permission.codename]
-            permissions[mode].append('group:%d' % group_perm.group.pk)
+            permissions[mode].append(group_perm.group.annotationgroup.annotation_id)
 
         return permissions
 
@@ -334,3 +367,7 @@ class AnnotationGroup(Group):
 
     def __repr__(self):
         return '<Annotation Group: %s>' % self.name
+
+    @property
+    def annotation_id(self):
+        return 'group:%d' % self.pk

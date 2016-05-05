@@ -51,9 +51,13 @@ a volume_uri for loading annotations and filtering search.
           */{% endcomment %}
           editorExtensions: [
               annotatormeltdown.getEditorExtension({min_width: '500px', font_awesome: true}),
-              suppress_permissions.editorExtension,
               related_pages.getEditorExtension({search_url: '{{ page.volume.get_absolute_url }}'}),
               _marginalia.editorExtension,  /* includes tags */
+              annotation_permissions.getEditorExtension({
+                groups: { {% for group in request.user.groups.all %}
+                  "group:{{ group.id }}": "{{ group.name }}",
+                {% endfor %} }
+              }),
           ]
       })
       .include(readuxUris)
@@ -79,6 +83,7 @@ a volume_uri for loading annotations and filtering search.
           volume_uri: '{{ volume_uri }}'
         },
       })
+      .include(annotation_permissions.getModule);
 
   app.start()
       .then(function () {

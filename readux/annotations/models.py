@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import json
 import uuid
 from django.db import models
@@ -7,6 +7,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group, User
 from django.utils.html import format_html
 from jsonfield import JSONField
+from guardian.shortcuts import assign_perm, get_perms_for_model
+from guardian.models import UserObjectPermission, GroupObjectPermission
 
 
 class AnnotationQuerySet(models.QuerySet):
@@ -185,7 +187,6 @@ class Annotation(models.Model):
         # convert extra data back to json for storage in a single json field
         return cls(extra_data=json.dumps(extra_data), **model_data)
 
-
     def update_from_request(self, request):
         '''Update attributes from data in a
         :class:`django.http.HttpRequest`. Expects request body content to be
@@ -193,25 +194,30 @@ class Annotation(models.Model):
         data = json.loads(request.body)
         # NOTE: could keep a list of modified fields and
         # and allow Django to do a more efficient db update
+
+        # ignore backend-generated fields, and don't include in
+        # the extra data
+        # NOTE: assuming for now that user should NOT be changed
+        # after annotation is created
+        for field in ['updated', 'created', 'id', 'user']:
+            del data[field]
+
+        # set any db fields, and remove from extra data
         for field in self.common_fields:
-            # ignore backend-generated fields, but don't include in
-            # the extra data
-            # NOTE: assuming for now that user should NOT be changed
-            # after annotation is created
-            if field in ['updated', 'created', 'id', 'user'] \
-              and field in data:
-
-                del data[field]
-                continue
-
             if field in data:
                 setattr(self, field, data[field])
                 del data[field]
 
+        # if permissions are specified, convert into actionable django
+        # permissions and remove from the data
+        if 'permissions' in data:
+            self.db_permissions(data['permissions'])
+            del data['permissions']
+
         if data:
-            # add/update extra data json with any other data included
-            # in the request
-            self.extra_data.update(data)
+            # any other data included in the request and not yet
+            # processed should be stored as extra data
+            self.extra_data = data
 
         self.save()
 
@@ -236,12 +242,80 @@ class Annotation(models.Model):
         info.update({k: v for k, v in self.extra_data.iteritems()
                      if k not in info})
 
+        # annotation permissions dict based on database permissions
+        permissions = self.permissions_dict()
+        # only include if at least one permission is not empty
+        if any(permissions.values()):
+            info['permissions'] = permissions
+
         # volume uri would be extra data to anyone else, but since it
         # is stored outside extra data, add it here
         if self.volume_uri:
             info['volume_uri'] = self.volume_uri
 
         return info
+
+    #: map annotator permissions to django annotation permission codenames
+    permission_to_codename = {
+        'read': 'view_annotation',
+        'update': 'change_annotation',
+        'delete': 'delete_annotation'
+    }
+    #: lookup annotation permission mode by django permission codename
+    codename_to_permission = dict([(codename, mode) for mode, codename
+                                   in permission_to_codename.iteritems()])
+
+    def user_permissions(self):
+        '''Queryset of :class:`guardian.model.UserObjectPermission`
+        objects associated with this annotation.'''
+        return UserObjectPermission.objects.filter(object_pk=self.pk)
+
+    def group_permissions(self):
+        '''Queryset of :class:`guardian.model.GroupObjectPermission`
+        objects associated with this annotation.'''
+        return GroupObjectPermission.objects.filter(object_pk=self.pk)
+
+    def db_permissions(self, permissions):
+        '''Convert annotation permission data into actionable
+        django permissions using :mod:`guardian` per-object permissions.
+        '''
+        # since there is no way to know what permissions were
+        # previously in place and need to be removed, remove all permissions
+        self.user_permissions().delete()
+        self.group_permissions().delete()
+
+        # then re-assign permissions based on annotation permissions
+        for mode, users in permissions.iteritems():
+            for ident in users:
+                if ident.startswith('group:'):
+                    group_id = ident[len('group:'):]
+                    entity = AnnotationGroup.objects.get(id=int(group_id))
+                else:
+                    entity = User.objects.get(username=ident)
+
+                # give user or group the appropriate permission on this object
+                assign_perm(self.permission_to_codename[mode], entity, self)
+
+    def permissions_dict(self):
+        '''Convert stored :mod:`guardian` per-object permissions into
+        annotation permission dictionary format'''
+        # convert db permissions into annotator style permissions
+
+        # construct permissions using defaultdict,
+        # i.e. starting with an empty list for each mode
+        permissions = defaultdict(list)
+
+        for user_perm in self.user_permissions():
+            # convert db codename to annotation mode
+            mode = self.codename_to_permission[user_perm.permission.codename]
+            # store by username
+            permissions[mode].append(user_perm.user.username)
+
+        for group_perm in self.group_permissions():
+            mode = self.codename_to_permission[group_perm.permission.codename]
+            permissions[mode].append('group:%d' % group_perm.group.pk)
+
+        return permissions
 
 
 class AnnotationGroup(Group):

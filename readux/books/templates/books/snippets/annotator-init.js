@@ -24,7 +24,9 @@ a volume_uri for loading annotations and filtering search.
     viewer: annotatormeltdown.render,
     renderExtensions: [
         related_pages.renderExtension,
+        {% if mode = 'full' %}
         annotation_permissions.renderExtension,
+        {% endif %}
     ],
     toggle: {
       class: 'btn btn-green',
@@ -52,11 +54,13 @@ a volume_uri for loading annotations and filtering search.
               annotatormeltdown.getEditorExtension({min_width: '500px', font_awesome: true}),
               related_pages.getEditorExtension({search_url: '{{ page.volume.get_absolute_url }}'}),
               _marginalia.editorExtension,  /* includes tags */
+              {% if mode = 'full' %}
               annotation_permissions.getEditorExtension({
                 groups: { {% for group in request.user.groups.all %}
                   "group:{{ group.id }}": "{{ group.name }}",
                 {% endfor %} }
               }),
+              {% endif %}
           ]
       })
       .include(readuxUris)
@@ -82,7 +86,9 @@ a volume_uri for loading annotations and filtering search.
           volume_uri: '{{ volume_uri }}'
         },
       })
+      {% if mode = 'full' %}
       .include(annotation_permissions.getModule);
+      {% endif %}
 
   app.start()
       .then(function () {

@@ -290,7 +290,8 @@ var annotation_permissions = {
         item.find('.annotation-permissions').remove();
         // nothing to do if no permissions are set
         if ($.isEmptyObject(annotation.permissions)) {
-            return;
+            // return item unchanged
+            return item;
         }
         // get a list of people/groups other than current user with
         // permission on this annotation

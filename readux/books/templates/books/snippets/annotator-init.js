@@ -92,3 +92,7 @@ a volume_uri for loading annotations and filtering search.
       });
   {# set user identity to allow for basic permission checking #}
   app.ident.identity = "{{ user.username }}";
+  // set groups and superuser status to allow auth checking
+  // (enforced at application level, only affects what is displayed)
+  app.ident.groups = [{% for group in request.user.groups.all %}"group:{{ group.id }}", {% endfor %}];
+  app.ident.is_superuser = {{ request.user.is_superuser|lower }};

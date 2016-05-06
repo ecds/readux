@@ -29,8 +29,47 @@ Annotator module for group permissions.
 
 - input fields are currently grouped and styled using bootstrap css
 
+- Extends default SimpleIdentityPolicy to allow checking for group
+  and superuser permissions. Those should be set similar to the way that
+  the default identity is:
+
+      app.ident.identity = "username";
+      app.ident.groups = ['mygroup1', 'group2'];
+      app.ident.is_superuser = false;
+
 */
 
+
+/* based on annotator SimpleIdentityPolicy */
+
+var IdentityPolicy;
+
+IdentityPolicy = function IdentityPolicy() {
+    this.identity = null;
+    this.groups = [];
+    this.is_superuser = false;
+};
+
+IdentityPolicy.prototype.who = function () {
+    return this.identity;
+};
+
+/* extend built-in authz policy with a method to check superuser and groups */
+annotator.authz.AclAuthzPolicy.prototype.extended_permits = function (action, context, identity) {
+    // as soon as we get a permitted response; otherwise, keep checking
+    if (identity.is_superuser) { return true; }
+    // username based check
+    if (annotator.authz.AclAuthzPolicy.prototype.permits(action, context, identity.identity)) {
+        return true;
+    }
+    // check each group id in turn
+    for (var i = 0; i < identity.groups.length; i++) {
+         if (annotator.authz.AclAuthzPolicy.prototype.permits(action, context, identity.groups[i])) {
+            return true;
+        }
+    }
+    return false;
+}
 
 var annotation_permissions = {
     options: {},
@@ -211,10 +250,21 @@ var annotation_permissions = {
         return true;
     },
 
+    identity: new IdentityPolicy(),
+
     getModule: function() {
         return {
             // name, for identification in list of annotator modules
             name: 'annotation-permissions',
+
+            // configuration based on SimpleIdentityPolicy
+            configure: function (registry) {
+                registry.registerUtility(annotation_permissions.identity, 'identityPolicy');
+            },
+            beforeAnnotationCreated: function (annotation) {
+                annotation.user = annotation_permissions.identity.who();
+            },
+
             start: function (app) {
                 // store a reference to the app, in order to retrieve
                 // storage and identity

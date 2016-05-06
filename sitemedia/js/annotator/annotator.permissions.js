@@ -31,8 +31,9 @@ Annotator module for group permissions.
 
 */
 
-var annotation_permissions = {
 
+var annotation_permissions = {
+    options: {},
     permissions: ['read', 'update', 'delete'],
     getId: function(mode) {
         return 'annotator-permissions-' + mode;
@@ -44,6 +45,8 @@ var annotation_permissions = {
 
     getEditorExtension: function getEditorExtension(options) {
         // customize the editor to add permission editing
+
+        annotation_permissions.options = options;
 
         return function editorExtension(editor) {
             // The input element added to the Annotator.Editor wrapped in jQuery.
@@ -200,6 +203,9 @@ var annotation_permissions = {
 
             // re-save the annotation after making changes
             annotation_permissions._app.registry.getUtility('storage').update(annotation);
+            // update the display to re-render changes (marginalia specific)
+            annotation_permissions.renderExtension(annotation,
+                $('.marginalia-item[data-annotation-id=' + annotation.id + ']'));
         }
 
         return true;
@@ -228,6 +234,41 @@ var annotation_permissions = {
                 annotation_permissions.fix_permissions(annotation);
             }
         };
-    }
+    },
+
+    renderExtension: function(annotation, item) {
+        item.find('.annotation-permissions').remove();
+        // nothing to do if no permissions are set
+        if ($.isEmptyObject(annotation.permissions)) {
+            return;
+        }
+        // get a list of people/groups other than current user with
+        // permission on this annotation
+        var shared_with = [];
+        // combine lists from all permissions
+        $.each(annotation.permissions, function(mode, values) {
+            $.each(values, function(i, val) {
+                // if not annotation author and not already present, add to list
+                if (val != annotation.user && shared_with.indexOf(val) === -1) {
+                    shared_with.push(val);
+                }
+            });
+        });
+
+        // if there is a list, add an icon
+        if (shared_with.length) {
+            // convert group identifiers into display names
+            var group_names = [];
+            $.each(shared_with, function(i, group_id) {
+                group_names.push(annotation_permissions.options.groups[group_id]);
+            });
+
+            var perms_icon = $('<span class="annotation-permissions text-info pull-right"/>');
+            perms_icon.attr('title', 'Shared with ' + group_names);
+            perms_icon.append($('<i class="fa fa-users" aria-hidden="true"></i>'));
+            item.find('.annotation-footer').append(perms_icon);
+        }
+        return item;
+    },
 
 };

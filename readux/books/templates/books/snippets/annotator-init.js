@@ -20,12 +20,11 @@ a volume_uri for loading annotations and filtering search.
   };
 {% endif %}
   var marginalia_opts = {
-    {% if user.is_superuser %}
     show_author: true,
-    {% endif %}
     viewer: annotatormeltdown.render,
     renderExtensions: [
         related_pages.renderExtension,
+        annotation_permissions.renderExtension,
     ],
     toggle: {
       class: 'btn btn-green',

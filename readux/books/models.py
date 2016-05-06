@@ -344,11 +344,15 @@ class Page(Image):
 
     def annotations(self, user=None):
         '''Find annotations for this page, optionally filtered by user.'''
-        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
-        # if user is specified, show only notes that user can view
+        # if user is specified, restrict to only notes that user can view
         if user is not None:
-            return notes.visible_to(user)
-        return notes
+            notes = Annotation.objects.visible_to(user)
+        else:
+            notes = Annotation.objects.all()
+
+        return notes.filter(volume_uri=self.absolute_url)
+
+
 
 
 class PageV1_0(Page):
@@ -898,14 +902,14 @@ class Volume(DigitalObject, BaseVolume):
     def annotations(self, user=None):
         '''Find annotations for any page in this volume, optionally
         filtered by user.'''
-        # NOTE: should match on full url *with* domain name
-        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
-
-        # if user is specified, show only notes that user can view
+        # if user is specified, first restrict to only notes that user can view
         if user is not None:
-            return notes.visible_to(user)
+            notes = Annotation.objects.visible_to(user)
+        else:
+            notes = Annotation.objects.all()
 
-        return notes
+        # NOTE: should match on full url *with* domain name
+        return notes.filter(volume_uri=self.absolute_url)
 
     def page_annotation_count(self, user=None):
         '''Generate a dictionary with a count of annotations for each

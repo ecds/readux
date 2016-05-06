@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse, resolve
 from django.test import TestCase
 from django.test.utils import override_settings
+from guardian.shortcuts import remove_perm
 
 from readux.annotations.models import Annotation, AnnotationGroup
 
@@ -157,6 +158,32 @@ class AnnotationTestCase(TestCase):
         note = Annotation()
         self.assertEqual(None, note.related_pages)
 
+    def test_user_permissions(self):
+        # annotation user/owner automatically gets permissions
+        user = get_user_model().objects.get(username='testuser')
+        note = Annotation.create_from_request(self.mockrequest)
+        note.user = user
+        note.save()
+
+        user_perms = note.user_permissions()
+        self.assertEqual(4, user_perms.count())
+        self.assert_(user_perms.filter(user=user,
+                                       permission__codename='view_annotation')
+                               .exists())
+        self.assert_(user_perms.filter(user=user,
+                                       permission__codename='change_annotation')
+                               .exists())
+        self.assert_(user_perms.filter(user=user,
+                                       permission__codename='delete_annotation')
+                               .exists())
+        self.assert_(user_perms.filter(user=user,
+                                       permission__codename='admin_annotation')
+                               .exists())
+
+        note.save()
+        # saving again shouldn't duplicate the permissions
+        self.assertEqual(4, note.user_permissions().count())
+
     def test_db_permissions(self):
         note = Annotation.create_from_request(self.mockrequest)
         note.save()
@@ -293,6 +320,10 @@ class AnnotationViewsTest(TestCase):
         # NOTE: currently fixture only has one note for each user.
         # If that changes, use filter(...).first()
 
+        # run the updated save method to grant author access
+        for note in Annotation.objects.all():
+            note.save()
+
     def test_api_index(self):
         resp = self.client.get(reverse('annotation-api:index'))
         self.assertEqual('application/json', resp['Content-Type'])
@@ -327,6 +358,37 @@ class AnnotationViewsTest(TestCase):
         self.assertEqual(notes.count(), len(data))
         self.assertEqual(data[0]['id'], unicode(notes[0].id))
         self.assertEqual(data[1]['id'], unicode(notes[1].id))
+
+        # test group permissions
+        self.client.login(**self.user_credentials['user'])
+        # reassign testuser notes to superuser
+        superuser_name = self.user_credentials['superuser']['username']
+        user = get_user_model().objects.get(username='testuser')
+        superuser = get_user_model().objects.get(username=superuser_name)
+        for note in user_notes:
+            note.user = superuser
+            note.save()
+            # manually remove the permission, since the model
+            # does not expect annotation owners to change
+            remove_perm('view_annotation', user, note)
+
+        group = AnnotationGroup.objects.create(name='annotation group')
+        group.user_set.add(user)
+        group.save()
+
+        resp = self.client.get(reverse('annotation-api:annotations'))
+        data = json.loads(resp.content)
+        # user should not have access to any notes
+        self.assertEqual(0, len(data))
+
+        # update first note with group read permissions
+        user_notes[0].db_permissions({'read': [group.annotation_id]})
+
+        resp = self.client.get(reverse('annotation-api:annotations'))
+        data = json.loads(resp.content)
+        # user should have access to any notes by group permissiosn
+        self.assertEqual(1, len(data))
+        self.assertEqual(data[0]['id'], unicode(notes[0].id))
 
     def test_create_annotation(self):
         url = reverse('annotation-api:annotations')
@@ -410,7 +472,7 @@ class AnnotationViewsTest(TestCase):
             content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(401, resp.status_code,
-            'should return 401 Unauthorized on anonymous attempt to update annotation, got %s' \
+            'expected 401 Unauthorized on anonymous attempt to update annotation, got %s' \
             % resp.status_code)
 
         # log in as a regular user
@@ -420,7 +482,8 @@ class AnnotationViewsTest(TestCase):
             content_type='application/json',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(303, resp.status_code,
-            'should return 303 See Other on succesful annotation update')
+            'expected 303 See Other on succesful annotation update, got %s' \
+            % resp.status_code)
         # get view information
         self.assertEqual('http://testserver%s' % url, resp['Location'])
         # get a fresh copy from the db and check values
@@ -438,7 +501,7 @@ class AnnotationViewsTest(TestCase):
             data=json.dumps(AnnotationTestCase.annotation_data),
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(403, resp.status_code,
-            'should return 403 Forbidden on attempt to view update user\'s annotation, got %s' \
+            'expected 403 Forbidden on attempt to view update user\'s annotation, got %s' \
             % resp.status_code)
 
         # log in as a superuser - can edit other user's notes
@@ -459,7 +522,6 @@ class AnnotationViewsTest(TestCase):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(404, resp.status_code)
 
-
     def test_delete_annotation(self):
         # login/permission checking is common to get/update/delete views, but
         # just to be sure nothing breaks, duplicate those
@@ -475,7 +537,8 @@ class AnnotationViewsTest(TestCase):
         resp = self.client.delete(url,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(204, resp.status_code,
-            'should return 204 No Content on succesful annotation deletion')
+            'expected 204 No Content for succesful annotation deletion, got %s' %\
+            resp.status_code)
         self.assertEqual('', resp.content,
             'deletion response should have no content')
 
@@ -484,7 +547,7 @@ class AnnotationViewsTest(TestCase):
         resp = self.client.delete(url,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(403, resp.status_code,
-            'should return 403 Forbidden on attempt to delete another user\'s annotation, got %s' \
+            'expected 403 Forbidden on attempt to delete another user\'s annotation, got %s' \
             % resp.status_code)
 
         # not explicitly tested: superuser can delete other user's note

@@ -84,8 +84,8 @@ class AnnotationTestCase(TestCase):
         self.assertEqual(self.annotation_data['ranges'][0]['start'],
             note.extra_data['ranges'][0]['start'])
         self.assert_('permissions' not in note.extra_data)
-        # existing sample data should still be present
-        self.assertEqual('foobar', note.extra_data['sample data'])
+        # existing extra data should no longer present
+        self.assert_('sample data' not in note.extra_data)
 
         # TODO assert calls db_permissions when appropriate
 

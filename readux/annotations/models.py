@@ -241,7 +241,11 @@ class Annotation(models.Model):
         if data:
             # any other data included in the request and not yet
             # processed should be stored as extra data
-            self.extra_data.update(data)
+            # NOTE: replacing existing extra data rather than updating;
+            # any extra data should have been included in the annotation
+            # that was loaded for editing; using update would make it
+            # impossible to delete extra data fields.
+            self.extra_data = data
 
         self.save()
 

@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group, User
 from django.utils.html import format_html
 from jsonfield import JSONField
 from guardian.shortcuts import assign_perm, get_objects_for_user, \
-    get_perms_for_model, get_perms
+    get_objects_for_group, get_perms_for_model, get_perms
 from guardian.models import UserObjectPermission, GroupObjectPermission
 
 
@@ -34,6 +34,21 @@ class AnnotationQuerySet(models.QuerySet):
 
         """
         return get_objects_for_user(user, 'view_annotation',
+                                    Annotation)
+
+    def visible_to_group(self, group):
+        """
+        Return annotations the specified group is allowed to view.
+        Objects are found based on view_annotation permission and
+        per-object permissions.
+
+        .. Note::
+            Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
+            this method must be used first, as it does not filter based
+            on existing queryset.
+
+        """
+        return get_objects_for_group(group, 'view_annotation',
                                     Annotation)
 
     def last_created_time(self):
@@ -64,6 +79,10 @@ class AnnotationManager(models.Manager):
     def visible_to(self, user):
         'Convenience access to :meth:`AnnotationQuerySet.visible_to`'
         return self.get_queryset().visible_to(user)
+
+    def visible_to_group(self, group):
+        'Convenience access to :meth:`AnnotationQuerySet.visible_to_group`'
+        return self.get_queryset().visible_to_group(group)
 
 
 class Annotation(models.Model):

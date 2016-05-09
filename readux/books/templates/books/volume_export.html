@@ -22,10 +22,10 @@
       <p>To export an annotated edition of this volume or any other,
       please log in.</p>
     {% else %}
-    {% if error %}
-    <div class="alert alert-danger">
+    {% if warning %}
+    <div class="alert alert-warning">
       <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-      {{ error }}</div>
+      {{ warning }}</div>
     {% endif %}
 
     {% if github_export %}
@@ -54,6 +54,9 @@
             <div class="help-block">{{ field.help_text}}</div>
             <div class="text-warning">{{ field.errors }}</div>
           </div>
+          {% elif field.name = 'annotations' and export_form.hide_annotation_choice %}
+          {# hide annotation choice when flag is set (i.e., only one choice available) #}
+            {{ field|add_class:"hidden" }}
           {% else %}
         <div class="form-group{% if field.errors %} has-error{% endif %}">
             <label for="{{ field.name }}">{{ field.label }}</label>

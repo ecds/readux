@@ -899,12 +899,14 @@ class Volume(DigitalObject, BaseVolume):
         # exposing as a property here for consistency with SolrVolume result
         return self.dc.content.language
 
-    def annotations(self, user=None):
+    def annotations(self, user=None, group=None):
         '''Find annotations for any page in this volume, optionally
-        filtered by user.'''
+        filtered by user or group.'''
         # if user is specified, first restrict to only notes that user can view
         if user is not None:
             notes = Annotation.objects.visible_to(user)
+        elif group is not None:
+            notes = Annotation.objects.visible_to_group(group)
         else:
             notes = Annotation.objects.all()
 

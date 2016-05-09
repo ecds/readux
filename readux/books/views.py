@@ -27,6 +27,7 @@ from eulfedora.server import Repository, TypeInferringRepository
 from eulfedora.util import RequestFailed
 from eulfedora.views import raw_datastream, RawDatastreamView
 
+from readux.annotations.models import AnnotationGroup
 from readux.books.models import Volume, SolrVolume, Page, VolumeV1_0, \
     PageV1_1, SolrPage
 from readux.books.forms import BookSearch, VolumeExport
@@ -625,6 +626,13 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         # annotations, but export is probably not meaningful
         return vol
 
+    def get_form_kwargs(self):
+        # keyword arguments needed to initialize the form
+        kwargs = super(AnnotatedVolumeExport, self).get_form_kwargs()
+        # add user, which is used to determine available groups
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def get_initial(self):
         # initial data for the form
         # construct a preliminary semi-reasonable github repo name
@@ -647,7 +655,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
             try:
                 github.GithubApi.github_account(self.request.user)
             except github.GithubAccountNotFound:
-                context_data['error'] = self.github_account_msg
+                context_data['warning'] = self.github_account_msg
 
         return context_data
 
@@ -687,9 +695,21 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         else:
             return self.render(request)
 
+        # determine which annotations should be loaded
+        if cleaned_data['annotations'] == 'user':
+            # annotations by this user
+            annotations = vol.annotations(user=request.user)
+        elif cleaned_data['annotations'].startswith('group:'):
+            # all annotations visible to a group this user belongs to
+            group_id = cleaned_data['annotations'][len('group:'):]
+            # NOTE: object not found error should not occur here,
+            # because only valid group ids should be valid choices
+            group = AnnotationGroup.objects.get(pk=group_id)
+            annotations = vol.annotations(group=group)
+
         # generate annotated tei
         tei = annotate.annotated_tei(vol.generate_volume_tei(),
-            vol.annotations(user=request.user))
+                                     annotations)
 
         # check form data to see if github repo is requested
         if cleaned_data['github']:

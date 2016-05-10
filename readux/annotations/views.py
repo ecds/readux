@@ -130,6 +130,8 @@ class AnnotationView(View):
             if not note.user_can_update(self.request.user):
                 raise PermissionDenied()
 
+            # NOTE: if user has update permission but not admin permission,
+            # any changes to annotation permissions will be ignored
             note.update_from_request(request)
             return HttpResponseSeeOtherRedirect(note.get_absolute_url())
         else:

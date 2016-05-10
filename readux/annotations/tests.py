@@ -1,5 +1,5 @@
 import json
-from mock import Mock
+from mock import Mock, patch
 import uuid
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse, resolve
@@ -76,18 +76,30 @@ class AnnotationTestCase(TestCase):
             extra_data=json.dumps({'sample data': 'foobar'}))
         note.save()
 
-        note.update_from_request(self.mockrequest)
-        self.assertEqual(self.annotation_data['text'], note.text)
-        self.assertEqual(self.annotation_data['quote'], note.quote)
-        self.assertEqual(self.annotation_data['uri'], note.uri)
-        self.assert_('ranges' in note.extra_data)
-        self.assertEqual(self.annotation_data['ranges'][0]['start'],
-            note.extra_data['ranges'][0]['start'])
-        self.assert_('permissions' not in note.extra_data)
-        # existing extra data should no longer present
-        self.assert_('sample data' not in note.extra_data)
+        # permissions check requires a real user
+        user = get_user_model().objects.get(username='testuser')
+        self.mockrequest.user = user
 
-        # TODO assert calls db_permissions when appropriate
+        with patch.object(note, 'db_permissions') as mock_db_perms:
+            note.update_from_request(self.mockrequest)
+            self.assertEqual(self.annotation_data['text'], note.text)
+            self.assertEqual(self.annotation_data['quote'], note.quote)
+            self.assertEqual(self.annotation_data['uri'], note.uri)
+            self.assert_('ranges' in note.extra_data)
+            self.assertEqual(self.annotation_data['ranges'][0]['start'],
+                note.extra_data['ranges'][0]['start'])
+            self.assert_('permissions' not in note.extra_data)
+            # existing extra data should no longer present
+            self.assert_('sample data' not in note.extra_data)
+
+            # testuser does not have admin on this annotation;
+            # permissions should not be updated
+            mock_db_perms.assert_not_called()
+
+            # give user admin permission and update again
+            note.assign_permission('admin_annotation', user)
+            note.update_from_request(self.mockrequest)
+            mock_db_perms.assert_called_with(self.annotation_data['permissions'])
 
     def test_info(self):
         note = Annotation.create_from_request(self.mockrequest)

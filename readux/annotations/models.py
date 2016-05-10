@@ -254,7 +254,14 @@ class Annotation(models.Model):
         # if permissions are specified, convert into actionable django
         # permissions and remove from the data
         if 'permissions' in data:
-            self.db_permissions(data['permissions'])
+            # only change permissions if user has admin annotation
+            # permission; otherwise, ignore any changes
+            if self.user_has_perm(request.user, 'admin_annotation'):
+                print 'user has admin perms, updating db permissions'
+                self.db_permissions(data['permissions'])
+            else:
+                print 'user does not have admin perms, ignoring permissions'
+
             del data['permissions']
 
         if data:
@@ -407,7 +414,7 @@ class Annotation(models.Model):
         'Check if a user has a specific permission on this object.'
         # NOTE: according to guardian docs, it should work to use this
         # user.has_perm(permission, self)
-        # but that check fails when it shoud not.
+        # but that check fails when it should not.
 
         return permission in get_perms(user, self)
 

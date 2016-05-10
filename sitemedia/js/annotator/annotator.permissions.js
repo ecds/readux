@@ -82,6 +82,16 @@ var annotation_permissions = {
             .attr('for', annotation_permissions.getId(mode));
     },
 
+    adminAllowed: function(annotation) {
+        // check if the current user has admin access to the
+        // specified annotation
+        var app = annotation_permissions._app,
+            ident = app.registry.getUtility('identityPolicy'),
+            authz = app.registry.getUtility('authorizationPolicy');
+
+        return authz.extended_permits('admin', annotation, ident);
+    },
+
     getEditorExtension: function getEditorExtension(options) {
         // customize the editor to add permission editing
 
@@ -101,6 +111,20 @@ var annotation_permissions = {
             function loadPermissions(field, annotation) {
                 // load permissions from the annotation object
                 // to preselect groups that already have access
+
+                // if current user does not have admin permissions on this
+                // annotation, hide permissions
+                if (! annotation_permissions.adminAllowed(annotation)) {
+                    // find the permission div that contains this fields
+                    $(field).closest('.permission').hide();
+                    return;
+                }
+
+                // ensure permissions are visible, since the editor
+                // is re-used for all anotnations and permissions
+                // may have previously been hidden
+                $(field).closest('.permission').show();
+
                 var id, input;
                 if (annotation.permissions)  {
                     for (var mode in annotation.permissions) {
@@ -115,6 +139,12 @@ var annotation_permissions = {
             function setPermissions(field, annotation) {
                 // set annotation permissions based on selected
                 // values on the edit form
+
+                // if current user does not have admin permissions on this
+                // annotation, do nothing
+                if (! annotation_permissions.adminAllowed(annotation)) {
+                    return;
+                }
 
                 // NOTE: don't add any permissions data if nothing is selected
                 var perms = $.extend({}, annotation.permissions),
@@ -260,6 +290,7 @@ var annotation_permissions = {
             // configuration based on SimpleIdentityPolicy
             configure: function (registry) {
                 registry.registerUtility(annotation_permissions.identity, 'identityPolicy');
+
             },
             beforeAnnotationCreated: function (annotation) {
                 annotation.user = annotation_permissions.identity.who();

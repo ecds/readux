@@ -29,12 +29,17 @@ class AnnotationQuerySet(models.QuerySet):
 
         .. Note::
             Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
-            this method must be used first, as it does not filter based
-            on existing queryset.
+            it is recommended to use this method must be used first; it
+            does combine the existing queryset query, but it does not
+            chain as querysets normally do.
 
         """
-        return get_objects_for_user(user, 'view_annotation',
+        qs = get_objects_for_user(user, 'view_annotation',
                                     Annotation)
+        # combine the current queryset query, if any, with the newly
+        # created queryset from django guardian
+        qs.query.combine(self.query, 'AND')
+        return qs
 
     def visible_to_group(self, group):
         """
@@ -44,12 +49,17 @@ class AnnotationQuerySet(models.QuerySet):
 
         .. Note::
             Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
-            this method must be used first, as it does not filter based
-            on existing queryset.
+            it is recommended to use this method first; it does combine
+            the existing queryset query, but it does not chain as querysets
+            normally do.
 
         """
-        return get_objects_for_group(group, 'view_annotation',
-                                    Annotation)
+        qs = get_objects_for_group(group, 'view_annotation',
+                                   Annotation)
+        # combine current queryset query, if any, with the newly
+        # created queryset from django guardian
+        qs.query.combine(self.query, 'AND')
+        return qs
 
     def last_created_time(self):
         '''Creation time of the most recently created annotation. If

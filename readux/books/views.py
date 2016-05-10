@@ -460,7 +460,8 @@ class PageDetail(DetailView, VaryOnCookieMixin):
             # if user is logged in, check if annotations exist and
             # search should be enabled
             context_data['annotation_search_enabled'] = \
-                self.object.volume.annotations(user=self.request.user).exists()
+                self.object.volume.annotations() \
+                    .visible_to(user=self.request.user).exists()
 
         return context_data
 
@@ -582,7 +583,8 @@ class VolumeTei(View):
         tei = vol.generate_volume_tei()
         base_filename = '%s-tei' % vol.noid
         if kwargs.get('mode', None) == 'annotated':
-            tei = annotate.annotated_tei(tei, vol.annotations(user=request.user))
+            tei = annotate.annotated_tei(tei, vol.annotations() \
+                                                 .filter(user=request.user))
             base_filename += '-annotated'
             logger.info('Exporting %s as annotated TEI for user %s',
                     vol.pid, request.user.username)
@@ -697,15 +699,16 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
 
         # determine which annotations should be loaded
         if cleaned_data['annotations'] == 'user':
-            # annotations by this user
-            annotations = vol.annotations(user=request.user)
+            # annotations *by* this user
+            # (NOT all annotations the user can view)
+            annotations = vol.annotations().filter(user=request.user)
         elif cleaned_data['annotations'].startswith('group:'):
             # all annotations visible to a group this user belongs to
             group_id = cleaned_data['annotations'][len('group:'):]
             # NOTE: object not found error should not occur here,
             # because only valid group ids should be valid choices
             group = AnnotationGroup.objects.get(pk=group_id)
-            annotations = vol.annotations(group=group)
+            annotations = vol.annotations().visible_to_group(group)
 
         # generate annotated tei
         tei = annotate.annotated_tei(vol.generate_volume_tei(),

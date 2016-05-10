@@ -128,11 +128,11 @@ class VolumeTest(TestCase):
         self.assert_(v2p1 not in annotations)
 
         # filter by user
-        annotations = vol.annotations(testuser)
+        annotations = vol.annotations().visible_to(testuser)
         self.assertEqual(3, annotations.count())
         self.assert_(sup2 not in annotations)
 
-        annotations = vol.annotations(testadmin)
+        annotations = vol.annotations().visible_to(testadmin)
         self.assertEqual(4, annotations.count())
         self.assert_(sup2 in annotations)
 

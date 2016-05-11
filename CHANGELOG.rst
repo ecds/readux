@@ -3,6 +3,34 @@
 CHANGELOG
 =========
 
+Release 1.6 - Group Annotation
+------------------------------
+
+* As a site administrator I want to create and manage annotation groups
+  of existing users so that I can support group annotation projects.
+* As a logged in user I want to see annotations shared with groups I
+  belong to so that I can collaborate with other members of those groups.
+* As a logged in user when I am making an annotation I want to grant
+  annotation groups access to read, edit, or delete my annotation so
+  that I can collaborate with group members.
+* As a logged in user, I want to see an indication when an annotation
+  is shared with a group.
+* As a logged in user, I want to see who authored an annotation so that
+  I can easily distinguish my annotations from those shared with groups
+  I belong to.
+* As a logged in user, I can only update annotation permissions if
+  I have the admin annotation permission, so that full access to editing
+  and deleting annotations can be controlled.
+* As a logged in user when I export a volume I want to choose between
+  exporting only my annotations or all annotations in a group I belong
+  to so that I can export an individual or collaborative project.
+* Now using `django-guardian <https://github.com/django-guardian/django-guardian>`_
+  for per-object annotation permissions.
+* Includes a new annotator permissions Javasscript module (included in
+  readux codebase for now).
+* Data migrations to clean up redundant data in annotation extra data
+  JSON field and grant default annotation author permissions.
+
 Release 1.5.1
 -------------
 

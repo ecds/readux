@@ -1329,3 +1329,18 @@ button.volume-export {
 .annotation-search-result .marginalia-item nav {
     display: none;
 }
+
+
+/* annotation permissions */
+h3.annotation-permissions {
+    font-size: 115%;
+    font-weight: bold;
+    cursor: pointer
+}
+
+.permission .form-group {
+    padding: 5px;
+}
+.permission label {
+    font-weight: bold;
+}

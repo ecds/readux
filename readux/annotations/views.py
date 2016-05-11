@@ -57,8 +57,9 @@ class AnnotationIndex(View):
 
 non_ajax_error_msg = 'Currently Annotations can only be updated or created via AJAX.'
 
+
 class Annotations(View):
-    '''API annotations view.
+    """API annotations view.
 
     On GET, lists annotations.
     On AJAX POST with json data in request body, creates a new
@@ -66,7 +67,7 @@ class Annotations(View):
 
     Users must be logged in to create new annotations, and can only
     view their own annotations.
-    '''
+    """
 
     def get(self, request):
         'List viewable annotations as JSON.'
@@ -76,11 +77,6 @@ class Annotations(View):
 
         notes = Annotation.objects.visible_to(request.user)
         # TODO: sort order?
-
-        # superusers can view all annotations;
-        # other users can only see their own
-        if not request.user.is_superuser:
-            notes = notes.filter(user__username=request.user.username)
 
         # TODO: pagination? look at reference implementation
         return JsonResponse([n.info() for n in notes], safe=False)
@@ -113,12 +109,11 @@ class AnnotationView(View):
 
     def get_object(self):
         note = get_object_or_404(Annotation, id=self.kwargs.get('id', None))
-        # check permissions: notes can only be viewed by superuser or not owner
-        if not self.request.user.is_superuser and not self.request.user == note.user:
+        # check permissions for view access
+        # NOTE: assumes user must have view access in order to change/delete
+        if not note.user_can_view(self.request.user):
             raise PermissionDenied()
-            # tpl = get_template('403.html')
-            # return HttpResponseForbidden(tpl.render(RequestContext(request)))
-            # return HttpResponseForbidden()
+
         return note
 
     def get(self, request, id):
@@ -131,6 +126,12 @@ class AnnotationView(View):
         '''Update the annotation via JSON data posted by AJAX.'''
         if request.is_ajax():
             note = self.get_object()
+
+            if not note.user_can_update(self.request.user):
+                raise PermissionDenied()
+
+            # NOTE: if user has update permission but not admin permission,
+            # any changes to annotation permissions will be ignored
             note.update_from_request(request)
             return HttpResponseSeeOtherRedirect(note.get_absolute_url())
         else:
@@ -139,7 +140,12 @@ class AnnotationView(View):
     def delete(self, request, id):
         '''Remove the annotation.  On success, returns a 204 No Content
         response as per the annotator store API documentation.'''
-        self.get_object().delete()
+        note = self.get_object()
+
+        if not note.user_can_delete(self.request.user):
+            raise PermissionDenied()
+
+        note.delete()
         response = HttpResponse('')
         # return 204 no content, according to annotator store api docs
         response.status_code = 204

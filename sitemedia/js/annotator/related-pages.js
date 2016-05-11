@@ -1,5 +1,5 @@
 /**
-Annotator plugin for related pages.
+Annotator module for related pages.
 
 - editor extension adds a multi-value autocomplete field to search for
   pages in the same volume and add them to the annotation record

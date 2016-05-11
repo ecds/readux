@@ -5,7 +5,7 @@ eulfedora>=1.5
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
 # require at least downtime 1.0.4 for exempting exact urls
 django-downtime>=1.0.4
--e git+https://github.com/emory-libraries/django-eultheme.git@develop#egg=eultheme
+-e git+https://github.com/emory-libraries/django-eultheme.git@1.3#egg=eultheme
 django-widget-tweaks
 #sunburnt
 # need unreleased sunburnt for results_as
@@ -37,4 +37,5 @@ mistune
 gitpython
 pyyaml
 # jekyll theme for zipfile used in export functionality
--e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@develop#egg=digitaledition-jekylltheme
+-e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@0.6#egg=digitaledition-jekylltheme
+django-guardian

@@ -31,6 +31,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('annotations', '0004_clean_extra_data'),
+        ('guardian', '0001_initial'),
     ]
 
     operations = [

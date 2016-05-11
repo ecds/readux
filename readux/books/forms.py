@@ -32,16 +32,52 @@ class BookSearch(forms.Form):
 
 class VolumeExport(forms.Form):
     #: which readux page should be 1 in the exported volume
-    page_one = forms.IntegerField(label="Start Page", min_value=1, required=False,
-        help_text='Select the page in the Readux that should be the first '+ \
-        ' numbered page in your digital edition. Preceding pages will ' + \
-        ' be numbered with a prefix, and can be customized after export.' + \
+    page_one = forms.IntegerField(
+        label="Start Page", min_value=1, required=False,
+        help_text='Select the page in the Readux that should be the first ' +
+        ' numbered page in your digital edition. Preceding pages will ' +
+        ' be numbered with a prefix, and can be customized after export.' +
         ' (Optional)')
-    github = forms.BooleanField(label='Publish on GitHub',
-        help_text='Create a new GitHub repository with the ' + \
+    #: annotations to export: individual or group
+    annotations = forms.ChoiceField(
+        label='Annotations to export',
+        help_text='Individual annotations or all annotations shared with ' +
+        'a single group')
+    #: boolean, should the export be sent to github?
+    github = forms.BooleanField(
+        label='Publish on GitHub',
+        help_text='Create a new GitHub repository with the ' +
         'generated Jekyll site content and publish it using Github Pages.',
         required=False)
-    github_repo = forms.SlugField(label='GitHub repository name',
-        help_text='Name of the repository to be created, which will also determine' + \
-        ' the GitHub pages URL.')
+    #: github repository name to be created
+    github_repo = forms.SlugField(
+        label='GitHub repository name',
+        help_text='Name of the repository to be created, which will also ' +
+        'determine the GitHub pages URL.')
 
+    # flag to allow suppressing annotation choice display when
+    # user does not belong to any annotation groups
+    hide_annotation_choice = False
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+
+        # initialize normally
+        super(VolumeExport, self).__init__(*args, **kwargs)
+
+        # set annotation choices and default
+        self.fields['annotations'].choices = self.annotation_authors()
+        self.fields['annotations'].default = 'user'
+        # if user only has one choice for annotations, set hide flag
+        if len(self.fields['annotations'].choices) == 1:
+            self.hide_annotation_choice = True
+
+    def annotation_authors(self):
+        # choices for annotations to be exported:
+        # individual user, or annotations visible by group
+        choices = [('user', 'Authored by me')]
+        for group in self.user.groups.all():
+            if group.annotationgroup:
+                choices.append((group.annotationgroup.annotation_id,
+                                'All annotations shared with %s' % group.name))
+        return choices

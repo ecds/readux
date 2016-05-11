@@ -20,12 +20,13 @@ a volume_uri for loading annotations and filtering search.
   };
 {% endif %}
   var marginalia_opts = {
-    {% if user.is_superuser %}
     show_author: true,
-    {% endif %}
     viewer: annotatormeltdown.render,
     renderExtensions: [
         related_pages.renderExtension,
+        {% if mode = 'full' %}
+        annotation_permissions.renderExtension,
+        {% endif %}
     ],
     toggle: {
       class: 'btn btn-green',
@@ -51,9 +52,15 @@ a volume_uri for loading annotations and filtering search.
           */{% endcomment %}
           editorExtensions: [
               annotatormeltdown.getEditorExtension({min_width: '500px', font_awesome: true}),
-              suppress_permissions.editorExtension,
               related_pages.getEditorExtension({search_url: '{{ page.volume.get_absolute_url }}'}),
               _marginalia.editorExtension,  /* includes tags */
+              {% if mode = 'full' %}
+              annotation_permissions.getEditorExtension({
+                groups: { {% for group in request.user.groups.all %}
+                  "group:{{ group.id }}": "{{ group.name }}",
+                {% endfor %} }
+              }),
+              {% endif %}
           ]
       })
       .include(readuxUris)
@@ -79,6 +86,9 @@ a volume_uri for loading annotations and filtering search.
           volume_uri: '{{ volume_uri }}'
         },
       })
+      {% if mode = 'full' %}
+      .include(annotation_permissions.getModule);
+      {% endif %}
 
   app.start()
       .then(function () {
@@ -88,3 +98,7 @@ a volume_uri for loading annotations and filtering search.
       });
   {# set user identity to allow for basic permission checking #}
   app.ident.identity = "{{ user.username }}";
+  // set groups and superuser status to allow auth checking
+  // (enforced at application level, only affects what is displayed)
+  app.ident.groups = [{% for group in request.user.groups.all %}"group:{{ group.id }}", {% endfor %}];
+  app.ident.is_superuser = {{ request.user.is_superuser|lower }};

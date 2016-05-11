@@ -94,6 +94,14 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.6
+~~~~~~~~~~~
+
+* Run migrations for database updates::
+
+      python manage.py migrate
+
+
 Release 1.5
 ~~~~~~~~~~~
 

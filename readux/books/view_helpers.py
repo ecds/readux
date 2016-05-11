@@ -62,7 +62,8 @@ def volume_modified(request, pid):
         repo = Repository()
         vol = repo.get_object(pid, type=Volume)
         # newest annotation creation for pages in this volume
-        latest_note = vol.annotations(request.user).last_created_time()
+        latest_note = vol.annotations().visible_to(request.user) \
+                         .last_created_time()
 
     solrtime = results[0]['timestamp'] if results.count() else None
     return solrtimestamp_or_datetime(solrtime, latest_note)
@@ -98,7 +99,7 @@ def volume_pages_modified(request, pid):
     if request.user.is_authenticated():
         # get annotations for pages in this volume
         try:
-            latest_note = vol.annotations(request.user) \
+            latest_note = vol.annotations().visible_to(request.user) \
                              .last_created_time()
         except Annotation.DoesNotExist:
             # no notes for this volume
@@ -123,7 +124,7 @@ def page_modified(request, vol_pid, pid):
         # last update for annotations on this volume, if any
         repo = Repository()
         page = repo.get_object(pid, type=Page)
-        latest_note = page.annotations(request.user) \
+        latest_note = page.annotations().visible_to(request.user) \
                           .last_updated_time()
 
     solrtime = results[0]['timestamp'] if results.count() else None

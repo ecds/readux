@@ -342,13 +342,13 @@ class Page(Image):
            'page_number': str(self.page_order)
         }
 
-    def annotations(self, user=None):
-        '''Find annotations for this page, optionally filtered by user.'''
-        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
-        # if user is specified, show only notes that user can view
-        if user is not None:
-            return notes.visible_to(user)
-        return notes
+    def annotations(self):
+        '''Find annotations for this page.
+        Returns a queryset that can be filtered further, e.g.
+        annotations created by a particular user or visible
+        to a user or group.
+        '''
+        return Annotation.objects.filter(volume_uri=self.absolute_url)
 
 
 class PageV1_0(Page):
@@ -895,40 +895,44 @@ class Volume(DigitalObject, BaseVolume):
         # exposing as a property here for consistency with SolrVolume result
         return self.dc.content.language
 
-    def annotations(self, user=None):
-        '''Find annotations for any page in this volume, optionally
-        filtered by user.'''
+    def annotations(self):
+        '''Find annotations for any page in this volume.
+        Returns a queryset that can be filtered further, e.g.
+        annotations created by a particular user or visible
+        to a particular user or group.
+        '''
         # NOTE: should match on full url *with* domain name
-        notes = Annotation.objects.filter(volume_uri=self.absolute_url)
-
-        # if user is specified, show only notes that user can view
-        if user is not None:
-            return notes.visible_to(user)
-
-        return notes
+        return Annotation.objects.filter(volume_uri=self.absolute_url)
 
     def page_annotation_count(self, user=None):
         '''Generate a dictionary with a count of annotations for each
-        unique page uri within the current volume.'''
+        unique page uri within the current volume.  Filtered by
+        *visibility* to user, if specified.'''
         # aggregate anotations by unique uri and return a count
         # of the number of annotations for each uri
-        notes = self.annotations(user=user) \
-                   .values('uri').distinct() \
-                   .annotate(count=Count('uri')) \
-                   .values('uri', 'count')
+        notes = self.annotations()
+        if user is not None:
+            notes = notes.visible_to(user=user)
+
+        notes = notes.values('uri').distinct() \
+                     .annotate(count=Count('uri')) \
+                     .values('uri', 'count')
 
         # queryset returns a list of dict; convert to a dict for easy lookup
         return dict([(n['uri'], n['count']) for n in notes])
 
     def annotation_count(self, user=None):
-        '''Total number of annotations for this volume, filtered by user
-        if specified.'''
-        return self.annotations(user=user).count()
+        '''Total number of annotations for this volume; filtered by annotations
+        *visible* to a particular user, if specified.'''
+        notes = self.annotations()
+        if user is not None:
+            notes = notes.visible_to(user)
+        return notes.count()
 
     @classmethod
     def volume_annotation_count(cls, user=None):
         '''Generate a dictionary with a count of annotations for each
-        unique volume uri.'''
+        unique volume uri.  Filtered by *visibility* to user if specified.'''
         # aggregate anotations by unique uri and return a count
         # of the number of annotations for each uri
         notes = Annotation.objects.all()

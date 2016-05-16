@@ -211,7 +211,7 @@ if DEBUG or DEV_ENV:
         import debug_toolbar
         # import to ensure debug panel is available before configuring
         # (not yet in released version of eulfedora)
-        from eulfedora import debug_panel
+        # from eulfedora import debug_panel
         INSTALLED_APPS.append('debug_toolbar')
     except ImportError:
         pass

@@ -47,9 +47,7 @@ class Command(BaseCommand):
             default=False,
             help='Calculate total size of volumes and associated objects')
 
-
     def handle(self, *args, **options):
-        print options
         # expects a plain text file with a list of pids,
         # one per line
         start = time.time()

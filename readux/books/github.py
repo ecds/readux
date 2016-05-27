@@ -84,5 +84,20 @@ class GithubApi(object):
         # but that includes org repos user has access to
         # could specify type, but default of owner is probably fine for now
         response = self.session.get('%s/users/%s/repos' % (self.url, user))
+
         if response.status_code == requests.codes.ok:
             return response.json()
+
+    def list_user_repos(self):
+        '''Get a list of the current user's repositories'''
+        response = self.session.get('%s/user/repos' % self.url)
+        if response.status_code == requests.codes.ok:
+            repos = response.json()
+            # repository list is paged; if there is a rel=next link,
+            # there is more content
+            while response.links.get('next', None):
+                # for now, assuming that if the first response is ok
+                # subsequent ones will be too
+                response = self.session.get(response.links['next']['url'])
+                repos.extend(response.json())
+            return repos

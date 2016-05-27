@@ -604,6 +604,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
     template_name = 'books/volume_export.html'
     context_object_name = 'vol'
     form_class = VolumeExport
+    user_has_github = False
 
     github_account_msg = 'Export to GitHub requires a GitHub account.' + \
         ' Please authorize access to your GitHub account to use this feature.'
@@ -612,7 +613,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         'Please re-authorize your GitHub account to enable ' + \
         ' the permissions needed for export.'
 
-    @method_decorator(last_modified(view_helpers.volume_modified))
+    # @method_decorator(last_modified(view_helpers.volume_modified))
     def dispatch(self, *args, **kwargs):
         return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
 
@@ -633,6 +634,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         kwargs = super(AnnotatedVolumeExport, self).get_form_kwargs()
         # add user, which is used to determine available groups
         kwargs['user'] = self.request.user
+        # add flag to indicate if user has a github account
+        kwargs['user_has_github'] = self.user_has_github
         return kwargs
 
     def get_initial(self):
@@ -651,13 +654,14 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
     def get_context_data(self, **kwargs):
         context_data = super(AnnotatedVolumeExport, self).get_context_data()
         if not self.request.user.is_anonymous():
-            context_data['export_form'] = self.get_form()
-
             # check that user has a github account linked
             try:
                 github.GithubApi.github_account(self.request.user)
+                self.user_has_github = True
             except github.GithubAccountNotFound:
                 context_data['warning'] = self.github_account_msg
+
+            context_data['export_form'] = self.get_form()
 
         return context_data
 
@@ -682,7 +686,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
 
             # if github export is requested, make sure user has a
             # github account available to use for access
-            if cleaned_data['github']:
+            if cleaned_data['mode'] == 'github':
                 try:
                     github.GithubApi.github_account(self.request.user)
                 except github.GithubAccountNotFound:
@@ -715,7 +719,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                                      annotations)
 
         # check form data to see if github repo is requested
-        if cleaned_data['github']:
+        if cleaned_data['mode'] == 'github':
             try:
                 repo_url, ghpages_url = export.website_gitrepo(request.user,
                     cleaned_data['github_repo'], vol, tei,

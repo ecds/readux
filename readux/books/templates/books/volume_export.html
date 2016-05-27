@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load static widget_tweaks %}
+{% load static widget_tweaks readux_utils %}
 
 
 {% block page-subtitle %}{{ vol.display_label }} | Export {% endblock %}
@@ -7,6 +7,9 @@
 {% block javascript %}
   {{ block.super }}
    <script type="text/javascript" src="{% static 'ext/js.cookie.js' %}"></script>
+  <script type="text/javascript" src="//emory-lits-labs.github.io/annotator-meltdown-zotero/build/0.1.0/annotator.meltdown.zotero.min.js"></script> <!-- includes jquery-ui autocomplete -->
+  <link rel="stylesheet" type="text/css" href="//emory-lits-labs.github.io/annotator-meltdown-zotero/build/0.1.0/annotator.meltdown.zotero.min.css" />
+
 {% endblock %}
 
 {% block content %}
@@ -45,20 +48,29 @@
 
     {{ export_for.non_field_errors }}
     <form class="volume-webexport form-horizontal" method="POST">{% csrf_token %}
-        {% for field in export_form %}
-          {% if field.name = 'github' %}
-          <div class="form-group{% if field.errors %} has-error{% endif %}">
-            <div class="checkbox">
-              <label>{{ field }} {{ field.label }}</label>
+    {% for field in export_form %}
+    {# TODO: github options should be disabled if user does not have a github account #}
+    {# TODO: add visual indication for disabled fields #}
+          {% if field.name = 'mode' %}
+          {# special handling for export mode radio buttons & help text #}
+          <div class="help-block">{{ field.help_text}}</div>
+          {% for radio in field %}
+            <div class="radio">
+              <label for="{{ radio.id_for_label }}">
+                  {{ radio.tag }} {{ radio.choice_label}}
+              </label>
+              {% with forloop.counter|cut:' ' as index %}
+                <div class="help-block">{{ export_form.mode_help|slice:index|last }}</div>
+              {% endwith %}
             </div>
-            <div class="help-block">{{ field.help_text}}</div>
-            <div class="text-warning">{{ field.errors }}</div>
-          </div>
+          {% endfor %}
+          <div class="text-warning">{{ field.errors }}</div>
+
           {% elif field.name = 'annotations' and export_form.hide_annotation_choice %}
           {# hide annotation choice when flag is set (i.e., only one choice available) #}
             {{ field|add_class:"hidden" }}
           {% else %}
-        <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <div class="form-group{% if field.errors %} has-error{% endif %}"{% if field.name = 'github_repo' or field.name = 'update_repo' %}style="display:none"{% endif %}>
             <label for="{{ field.name }}">{{ field.label }}</label>
             {{ field|add_class:"form-control" }}
             <div class="help-block">{{ field.help_text}}</div>
@@ -76,6 +88,33 @@
         </form>
 
     {% endif %}
+
+    <script>
+    {# Show/hide subportions of the form based on export mode #}
+      $(document).ready(function(){
+        var transition = 500;
+        var github_repo = $("div.form-group:has(#id_github_repo)");
+        var update_repo = $("div.form-group:has(#id_update_repo)");
+        $("input[type=radio][name=mode]").change(function() {
+          // hide everything by default, then show as appropriate by mode
+          github_repo.hide(transition);
+          update_repo.hide(transition);
+          if (this.value == 'github') {
+            github_repo.show(transition);
+          } else if (this.value == 'github_update') {
+            update_repo.show(transition);
+          }
+        });
+
+        // load github repo data once, and use as variable data source
+        $.getJSON("{% url 'accounts:github-repos' %}", function( data ) {
+            $("#id_update_repo").autocomplete({
+                source: data
+            });
+        });
+
+      });
+    </script>
 
   {% endif %}  {# logged in user #}
 

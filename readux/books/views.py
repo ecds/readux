@@ -613,7 +613,6 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         'Please re-authorize your GitHub account to enable ' + \
         ' the permissions needed for export.'
 
-    # @method_decorator(last_modified(view_helpers.volume_modified))
     def dispatch(self, *args, **kwargs):
         return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
 

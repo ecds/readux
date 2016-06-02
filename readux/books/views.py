@@ -683,7 +683,6 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         if export_form.is_valid():
             cleaned_data = export_form.cleaned_data
             export_mode = cleaned_data['mode']
-            print 'mode == ', export_mode
 
             # if github export or update is requested, make sure user
             # has a github account available to use for access
@@ -700,8 +699,6 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                 if 'public_repo' not in gh.oauth_scopes():
                     return self.render(request, error=self.github_scope_msg)
         else:
-            print 'form is not valid!'
-            print export_form.errors
             return self.render(request)
 
         # determine which annotations should be loaded

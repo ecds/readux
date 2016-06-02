@@ -248,6 +248,11 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None):
     # and available before running the ruby script
     teifile.close()
 
+    # remove all annotations so that if an annotation is removed in
+    # readux it will be removed in the export (annotations that are
+    # unchanged should be restored by the tei jekyll import)
+    repo.index.remove(['_annotations/*'])
+
     # run the script to get a freash import of tei as jekyll site content
     logger.debug('Running jekyll import TEI facsimile script')
     import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]

@@ -50,7 +50,7 @@ class VolumeExport(forms.Form):
         choices=[
             ('download', 'Download'),
             ('github', 'Publish on GitHub'),
-            ('github_update', 'Update existing Github repo')
+            ('github_update', 'Update an existing Github repo')
         ],
         widget=forms.RadioSelect,
         help_text='Choose how to export your volume as a Jekyll site.'
@@ -72,7 +72,9 @@ class VolumeExport(forms.Form):
     update_repo = forms.CharField(
         label='GitHub repository to update', required=False,
         help_text='Existing repository to be updated ' +
-                  '(type to search and select from your GitHub repos)')
+                  '(type to search and select from your GitHub repos). ' +
+                  'If you specified a start page in your previous export, ' +
+                  'you should specify the same one to avoid changes.')
 
     # flag to allow suppressing annotation choice display when
     # user does not belong to any annotation groups

@@ -158,8 +158,12 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
     config_file_path = os.path.join(jekyll_dir, '_config.yml')
     with open(config_file_path, 'r') as configfile:
         config_data = yaml.load(configfile)
-    config_data['url'] = github_pages_url
-    config_data['baseurl'] = '/%s' % repo_name
+
+    # split out github pages url into the site url and path
+    parsed_gh_url = urlparse(github_pages_url)
+    config_data['url'] = '%s://%s' % (parsed_gh_url.scheme,
+                                      parsed_gh_url.netloc)
+    config_data['baseurl'] = parsed_gh_url.path.rstrip('/')
     with open(config_file_path, 'w') as configfile:
         yaml.safe_dump(config_data, configfile,
             default_flow_style=False)

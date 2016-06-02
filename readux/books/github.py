@@ -119,11 +119,8 @@ class GithubApi(object):
         if text is not None:
             data['body'] = text
 
-        print 'pr url = , %s/repos/%s/pulls' % (self.url, repo)
         response = self.session.post('%s/repos/%s/pulls' % (self.url, repo),
                                      data=json.dumps(data))
-        print response
-        print response.content
         if response.status_code == requests.codes.created:
             return response.json()
         else:

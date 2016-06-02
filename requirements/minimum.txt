@@ -1,6 +1,7 @@
 Django>=1.8,<1.9
 eulxml>=0.22
-eulfedora>=1.5
+#eulfedora>=1.5
+-e git://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora
 # dev eulcm content model objects (until initial eulcm release)
 -e git://github.com/emory-libraries/eulcm.git@4c97a98c79#egg=eulcm
 # require at least downtime 1.0.4 for exempting exact urls
@@ -37,5 +38,5 @@ mistune
 gitpython
 pyyaml
 # jekyll theme for zipfile used in export functionality
--e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@0.6#egg=digitaledition-jekylltheme
+-e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@develop#egg=digitaledition-jekylltheme
 django-guardian

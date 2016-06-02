@@ -48,7 +48,7 @@ class VolumeExport(forms.Form):
     mode = forms.ChoiceField(
         label='Export mode',
         choices=[
-            ('jekyll', 'Download'),
+            ('download', 'Download'),
             ('github', 'Publish on GitHub'),
             ('github_update', 'Update existing Github repo')
         ],
@@ -65,12 +65,12 @@ class VolumeExport(forms.Form):
 
     #: github repository name to be created
     github_repo = forms.SlugField(
-        label='GitHub repository name',
+        label='GitHub repository name', required=False,
         help_text='Name of the repository to be created, which will also ' +
         'determine the GitHub pages URL.')
     #: github repository to be updated, if update is selected
     update_repo = forms.CharField(
-        label='GitHub repository to update',
+        label='GitHub repository to update', required=False,
         help_text='Existing repository to be updated ' +
                   '(type to search and select from your GitHub repos)')
 

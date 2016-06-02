@@ -683,10 +683,12 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         export_form = self.get_form()
         if export_form.is_valid():
             cleaned_data = export_form.cleaned_data
+            export_mode = cleaned_data['mode']
+            print 'mode == ', export_mode
 
             # if github export or update is requested, make sure user
             # has a github account available to use for access
-            if cleaned_data['mode'] in ['github', 'github_update']:
+            if export_mode in ['github', 'github_update']:
                 try:
                     github.GithubApi.github_account(self.request.user)
                 except github.GithubAccountNotFound:
@@ -699,6 +701,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                 if 'public_repo' not in gh.oauth_scopes():
                     return self.render(request, error=self.github_scope_msg)
         else:
+            print 'form is not valid!'
+            print export_form.errors
             return self.render(request)
 
         # determine which annotations should be loaded
@@ -719,7 +723,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                                      annotations)
 
         # check form data to see if github repo is requested
-        if cleaned_data['mode'] == 'github':
+        if export_mode == 'github':
             # create a new github repository with exported jekyll site
             try:
                 repo_url, ghpages_url = export.website_gitrepo(request.user,
@@ -738,7 +742,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                 response.status_code = 400  # maybe?
                 return response
 
-        elif cleaned_data['mode'] == 'github_update':
+        elif export_mode == 'github_update':
             # update an existing github repository with new branch and
             # a pull request
             try:
@@ -756,8 +760,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                 response.status_code = 400  # maybe?
                 return response
 
-        else:
-            # non github export: download zipfile
+        elif export_mode == 'download':
+            # non github export: download a jekyll site as a zipfile
             try:
                 webzipfile = export.website_zip(vol, tei,
                     page_one=cleaned_data['page_one'])
@@ -778,6 +782,13 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
             completion_cookie_name = request.POST.get('completion-cookie',
                 '%s-web-export' % vol.noid)
             response.set_cookie(completion_cookie_name, 'complete', max_age=10)
+            return response
+
+        else:
+            response = self.render(request,
+                                   error='Unrecognized export mode "%s"' % \
+                                   export_mode)
+            response.status_code = 400
             return response
 
 

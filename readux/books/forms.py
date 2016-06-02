@@ -57,10 +57,10 @@ class VolumeExport(forms.Form):
     )
     #: help text for export mode choices
     mode_help = [
-        'Download a new Jekyll site as a zip file',
+        'Download a zip file with all Jekyll site contents',
         '''Create a new GitHub repository with the generated Jekyll
-                site content and publish it using Github Pages''',
-        'Update existing GitHub repo'
+            site content and publish it using Github Pages''',
+        'Update a Jekyll site in an existing GitHub repo'
     ]
 
     #: github repository name to be created
@@ -71,7 +71,8 @@ class VolumeExport(forms.Form):
     #: github repository to be updated, if update is selected
     update_repo = forms.CharField(
         label='GitHub repository to update',
-        help_text='Existing repository to be updated')
+        help_text='Existing repository to be updated ' +
+                  '(type to search and select from your GitHub repos)')
 
     # flag to allow suppressing annotation choice display when
     # user does not belong to any annotation groups

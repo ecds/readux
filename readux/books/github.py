@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 import json
 import requests
 
-
 from readux import __version__
 
 
@@ -101,3 +100,37 @@ class GithubApi(object):
                 response = self.session.get(response.links['next']['url'])
                 repos.extend(response.json())
             return repos
+
+    def create_pull_request(self, repo, title, head, base,
+                            text=None):
+        '''Create a new pull request.
+        https://developer.github.com/v3/pulls/#create-a-pull-request
+
+        :param repo: repository where the pull request will be created,
+            in owner/repo format
+        :param title: title of the pull request
+        :param head: name of the branch with the changes to be pulled in
+        :param base: name of the branch where changes should will be
+            pulled into (e.g., master)
+        :param text: optional text body content for the pull request
+        '''
+        # pull request url is /repos/:owner/:repo/pulls
+        data = {'title': title, 'head': head, 'base': base}
+        if text is not None:
+            data['body'] = text
+
+        print 'pr url = , %s/repos/%s/pulls' % (self.url, repo)
+        response = self.session.post('%s/repos/%s/pulls' % (self.url, repo),
+                                     data=json.dumps(data))
+        print response
+        print response.content
+        if response.status_code == requests.codes.created:
+            return response.json()
+        else:
+            error_message = 'Error creating pull request'
+            try:
+                error_message += ': %s' % response.json()['message']
+            except Exception:
+                pass
+
+            raise GithubApiException(error_message)

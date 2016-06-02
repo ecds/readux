@@ -1,13 +1,16 @@
 '''Methods to export an annotated volume as a Jekyll website.'''
 
+from datetime import datetime
 from django.conf import settings
 import logging
 import os
 import shutil
 import subprocess
 import tempfile
+from urlparse import urlparse
 from zipfile import ZipFile
 
+import git
 from git.cmd import Git
 import yaml
 
@@ -25,10 +28,12 @@ JEKYLL_THEME_ZIP = digitaledition_jekylltheme.ZIPFILE_PATH
 class ExportException(Exception):
     pass
 
+
 def get_jekyll_site_dir(base_dir, noid):
     '''Utility method to generate a jekyll site directory name (to
     ensure consistency between :meth:`website` and :meth:`website_gitrepo`).'''
     return os.path.join(base_dir, '%s_annotated_jekyll_site' % noid)
+
 
 def website(vol, tei, page_one=None):
     '''Generate a jekyll website for a volume with annotations.
@@ -84,6 +89,7 @@ def website(vol, tei, page_one=None):
 
     return export_dir
 
+
 def website_zip(vol, tei, page_one=None):
     '''Package up a Jekyll site created by :meth:`website` as a zip file
     for easy download.
@@ -108,8 +114,10 @@ def website_zip(vol, tei, page_one=None):
     # the reference is destroyed
     return webzipfile
 
+
 class GithubExportException(Exception):
     pass
+
 
 def website_gitrepo(user, repo_name, vol, tei, page_one=None):
     '''Create a new GitHub repository and populate it with content from
@@ -194,3 +202,78 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
     public_repo_url = 'https://github.com/%s/%s' % (github_username, repo_name)
     return (public_repo_url, github_pages_url)
 
+
+def update_gitrepo(user, repo_url, vol, tei, page_one=None):
+    '''Update an existing GitHub repository previously created by
+    Readux export.  Checks out the repository, creates a new branch,
+    runs the tei to jekyll import on that branch, pushes it to github,
+    and creates a pull request.  Returns the HTML url for the new
+    pull request on success.'''
+
+    # NOTE: some overlap in functionality with website export and
+    # website_gitrepo methods, but not obvious how to share the functionality
+
+    # connect to github as the user in order to access the repository
+    github = GithubApi.connect_as_user(user)
+
+    # parse github url to add oauth token for access (as in website_gitrepo)
+    parsed_repo_url = urlparse(repo_url)
+    auth_repo_url = '%s://%s:x-oauth-basic@%s%s.git' % \
+        (parsed_repo_url.scheme, GithubApi.github_token(user),
+         parsed_repo_url.netloc, parsed_repo_url.path)
+
+    # create a tmpdir to clone the git repo into
+    tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-update')
+    logger.debug('Cloning %s to %s', repo_url, tmpdir)
+    repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
+    # create and switch to a new branch and switch to it; using datetime
+    # for uniqueness
+    git_branch_name = 'readux-update-%s' % \
+        datetime.now().strftime('%Y%m%d-%H%M%S')
+    update_branch = repo.create_head(git_branch_name)
+    update_branch.checkout()
+
+    logger.debug('Updating export for %s in %s', vol.pid, tmpdir)
+    teifile = tempfile.NamedTemporaryFile(suffix='.xml', prefix='tei-',
+                                          dir=tmpdir, delete=False)
+    logger.debug('Saving TEI as %s', teifile.name)
+
+    # write out tei to temporary file for use with import script
+    tei.serializeDocument(teifile)
+    # IMPORTANT: close the filehandle to ensure *all* content is flushed
+    # and available before running the ruby script
+    teifile.close()
+
+    # run the script to get a freash import of tei as jekyll site content
+    logger.debug('Running jekyll import TEI facsimile script')
+    import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
+    # if a page number is specified, pass it as a parameter to the script
+    if page_one is not None:
+        import_command.extend(['--page-one', unicode(page_one)])
+    try:
+        subprocess.check_call(import_command, cwd=tmpdir)
+    except subprocess.CalledProcessError:
+        raise ExportException('Error running jekyll import on TEI facsimile')
+
+    # add any files that could be updated to the git index
+    repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
+                    'tei.xml', '_data/tags.yml', 'tags/*'])
+    git_author = git.Actor(settings.GIT_AUTHOR_NAME,
+                           settings.GIT_AUTHOR_EMAIL)
+    # commit all changes
+    repo.index.commit('Updated Jekyll site by Readux %s' % __version__,
+                      author=git_author)
+
+    # push the update to a new branch on github
+    repo.remotes.origin.push('%(branch)s:%(branch)s' %
+                             {'branch': git_branch_name})
+    # convert repo url to form needed to generate pull request
+    repo = repo_url.replace('https://github.com/', '')
+    pullrequest = github.create_pull_request(
+        repo, 'Updated export', git_branch_name, 'gh-pages')
+
+    # clean up local checkout after successful push
+    shutil.rmtree(tmpdir)
+
+    # return the html url for the new pull request
+    return pullrequest['html_url']

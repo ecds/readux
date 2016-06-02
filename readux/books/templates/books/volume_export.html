@@ -44,6 +44,14 @@
       <a href="https://help.github.com/categories/github-pages-basics/">Github
       Pages help documentation</a>.</p>
 
+    {% elif github_update %}
+      <div class="alert alert-success">GitHub jekyll site update succeeded.</div>
+
+      <p>A new <a href="{{ pullrequest_url }}">pull request</a> has been created
+      on your <a href="{{ repo_ur }}">GitHub repository</a> with all the latest
+      changes.  You can review the changes and merge them into your
+      published edition.</p>
+
     {% else %}
 
     {{ export_for.non_field_errors }}

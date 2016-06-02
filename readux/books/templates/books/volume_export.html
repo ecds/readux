@@ -60,7 +60,7 @@
     {# TODO: github options should be disabled if user does not have a github account #}
     {# TODO: add visual indication for disabled fields #}
           {% if field.name = 'mode' %}
-          {# special handling for export mode radio buttons & help text #}
+          {# special handling for export mode radio buttons and help text #}
           <div class="help-block">{{ field.help_text}}</div>
           {% for radio in field %}
             <div class="radio">
@@ -115,6 +115,7 @@
         });
 
         // load github repo data once, and use as variable data source
+        // for the update repository autocomplete input
         $.getJSON("{% url 'accounts:github-repos' %}", function( data ) {
             $("#id_update_repo").autocomplete({
                 source: data

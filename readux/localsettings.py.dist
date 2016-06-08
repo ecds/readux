@@ -157,6 +157,8 @@ DOWNTIME_ALLOWED_IPS = ['127.0.0.1']
 IIIF_API_ENDPOINT = 'http://loris.server/'
 # optional prefix, for use with Loris templating http resolver; include
 IIIF_ID_PREFIX = 'prefix:'
+# optional suffix, used when loris expects datastream dilineation (e.g. '|source-image')
+IIIF_ID_SUFFIX = ''
 
 
 # override default git author name if desired

@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 import json
 import requests
 
-
 from readux import __version__
 
 
@@ -84,5 +83,51 @@ class GithubApi(object):
         # but that includes org repos user has access to
         # could specify type, but default of owner is probably fine for now
         response = self.session.get('%s/users/%s/repos' % (self.url, user))
+
         if response.status_code == requests.codes.ok:
             return response.json()
+
+    def list_user_repos(self):
+        '''Get a list of the current user's repositories'''
+        response = self.session.get('%s/user/repos' % self.url)
+        if response.status_code == requests.codes.ok:
+            repos = response.json()
+            # repository list is paged; if there is a rel=next link,
+            # there is more content
+            while response.links.get('next', None):
+                # for now, assuming that if the first response is ok
+                # subsequent ones will be too
+                response = self.session.get(response.links['next']['url'])
+                repos.extend(response.json())
+            return repos
+
+    def create_pull_request(self, repo, title, head, base,
+                            text=None):
+        '''Create a new pull request.
+        https://developer.github.com/v3/pulls/#create-a-pull-request
+
+        :param repo: repository where the pull request will be created,
+            in owner/repo format
+        :param title: title of the pull request
+        :param head: name of the branch with the changes to be pulled in
+        :param base: name of the branch where changes should will be
+            pulled into (e.g., master)
+        :param text: optional text body content for the pull request
+        '''
+        # pull request url is /repos/:owner/:repo/pulls
+        data = {'title': title, 'head': head, 'base': base}
+        if text is not None:
+            data['body'] = text
+
+        response = self.session.post('%s/repos/%s/pulls' % (self.url, repo),
+                                     data=json.dumps(data))
+        if response.status_code == requests.codes.created:
+            return response.json()
+        else:
+            error_message = 'Error creating pull request'
+            try:
+                error_message += ': %s' % response.json()['message']
+            except Exception:
+                pass
+
+            raise GithubApiException(error_message)

@@ -18,6 +18,12 @@ management in this and other Python projects. If you don't have them
 installed, you can get them with ``sudo easy_install pip`` and then
 ``sudo pip install virtualenv``.
 
+As for the Digital Edition Jekyll Site export module, it is built in and 
+handled by the `fab deploy` process. For details please refer to
+`requirements/minimum.txt` where it specifies the source of the
+`digitaledition-jekylltheme` as well as the specific branch that it uses
+to power the export functionality.
+
 ------
 
 Bootstrapping a development environment

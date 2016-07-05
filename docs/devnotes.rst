@@ -3,6 +3,20 @@
 Developer Notes
 ===============
 
+Export Dependencies
+-------------------
+
+The `digitaledition-jekylltheme <https://github.com/emory-libraries-ecds/digitaledition-jekylltheme>`_
+dependency is setup so as a minimal python module so it can be installed
+as a python dependency.  It is currently included in `requirements/minimum.txt`,
+which can be modified to require a branch or tagged version, and the
+appropriate version is automatically installed as part of the fab deploy process.
+
+However, note that the appropriate version of the
+`teifacsimile-to-jekyll <https://github.com/emory-libraries-ecds/teifacsimile-to-jekyll>`_
+Ruby gem must currently be installed manually.
+
+
 Useful Queries
 --------------
 

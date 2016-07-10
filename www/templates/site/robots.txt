@@ -1,7 +1,0 @@
-User-agent: *
-Disablow: /a/
-Disablow: /user/settings/
-Disablow: /site/privacy/
-Disablow: /site/terms/
-
-

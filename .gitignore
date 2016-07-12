@@ -49,3 +49,23 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Rope
+.ropeproject
+
+# Django stuff:
+*.log
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+# Local DB files
+*_db
+assets/collect/*
+!assets/collect/index.html
+assets/upload/*
+!assets/upload/index.html
+
+.DS_Store
+seekrets.json

@@ -24,6 +24,9 @@ handled by the `fab deploy` process. For details please refer to
 `digitaledition-jekylltheme` as well as the specific branch that it uses
 to power the export functionality.
 
+In the requirements/dev.txt, module Pygments is specified to be 2.1 because
+newer versions will not build correctly and throw an uncompilable regex error.
+
 ------
 
 Bootstrapping a development environment

@@ -599,7 +599,7 @@ class VolumeTei(View):
         return response
 
 
-class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
+class AnnotatedVolumeExport(DetailView, FormMixin,
                             VaryOnCookieMixin):
     model = Volume
     template_name = 'books/volume_export.html'

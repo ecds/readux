@@ -783,14 +783,6 @@ class BookViewsTest(TestCase):
       to logged in users.</div>''',
             msg_prefix='Anonymous user should see warning when viewing export page',
             html=True)
-        response = self.client.post(export_url)
-        self.assertEqual(400, response.status_code,
-            'Anonymous POST to export should return a status of 400 Bad Request')
-        self.assertContains(response,
-            '''<div class="alert alert-warning">Export functionality is only available
-      to logged in users.</div>''',
-            msg_prefix='Anonymous user should see warning when viewing export page',
-            html=True, status_code=400)
 
         # log in as a regular user
         self.client.login(**self.user_credentials['user'])
@@ -799,9 +791,6 @@ class BookViewsTest(TestCase):
             'export form should be set in response context for logged in user')
         self.assertContains(response, 'Export to GitHub requires a GitHub account.',
             msg_prefix='user should see a warning about github account')
-
-        # NOTE: currently not testing POST, as it would be difficult
-        # and/or not useful to mock
 
 
 ## tests for view helpers

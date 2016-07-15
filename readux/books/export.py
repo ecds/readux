@@ -252,7 +252,13 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None):
     # or a tag is no longer used in readux, it will be removed in the export
     # (annotations and tags that are unchanged will be restored by the tei
     # jekyll import, and look unchanged to git if no different)
-    repo.index.remove(['_annotations/*', 'tags/*'])
+    try:
+        repo.index.remove(['_annotations/*', 'tags/*'])
+    except git.GitCommandError:
+        # it's possible that an export has no annotations or tags
+        # (although unlikely to occur anywhere but development & testing)
+        # if there's an error on removal, ignore it
+        pass
 
     # run the script to get a freash import of tei as jekyll site content
     logger.debug('Running jekyll import TEI facsimile script')

@@ -19,9 +19,23 @@
     {% include 'books/snippets/volume_header.html' %}
 
     <div class="status" style="display:none">
-        <div class="alert alert-info">Your export has been requested.  Please leave
-        this page open to be notified when it is complete.</div>
-        <div class="updates"></div>
+      <div class="alert alert-info">Your export has been requested.  Please leave
+      this page open to be notified when it is complete.</div>
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default" id="export-status-panel">
+          <div class="panel-heading" id="export-status-heading">
+            <a data-toggle="collapse"
+               data-parent="#accordion"
+               href="#status-panel"
+               class="panel-title">
+                Expand to view export status details
+            </a>
+          </div>
+          <div id="status-panel" class="panel-collapse collapse in">
+            <div class="panel-body updates" id="status-updates"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     {% if user.is_anonymous %}

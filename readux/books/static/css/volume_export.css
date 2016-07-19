@@ -1,0 +1,23 @@
+/*
+  stylesheet for the Jekyll export page
+
+  templates:
+  - readux/books/templates/books/volume_export.html
+*/
+
+/* alternating row background colors in the export status updates */
+.updates > p:nth-child(even) {
+  background-color: #eeeeee;
+}
+
+/* scrollable export status block */
+.updates {
+  height: 200px;
+  overflow-x: auto;
+  overflow-y: scroll;
+}
+
+/* spacing after the export status block */
+.status {
+  margin-bottom: 15px;
+}

@@ -35,7 +35,7 @@ def get_jekyll_site_dir(base_dir, noid):
     return os.path.join(base_dir, '%s_annotated_jekyll_site' % noid)
 
 
-def website(vol, tei, page_one=None):
+def website(vol, tei, page_one=None, update_callback=None):
     '''Generate a jekyll website for a volume with annotations.
     Creates a jekyll site and imports pages and annotations from the TEI,
     and then returns the directory for further use (e.g., packaging as
@@ -45,6 +45,7 @@ def website(vol, tei, page_one=None):
     :param tei: annotated TEI facsimile (e.g.,
         :class:`~readux.books.tei.AnnotatedFacsimile`)
     :param page_one: page where numbering should start from 1 in the export
+    :param update_callback: optional callback for receiving status updates
     :return: directory containing the generated jekyll site
     '''
     logger.debug('Generating jekyll website for %s', vol.pid)
@@ -59,14 +60,21 @@ def website(vol, tei, page_one=None):
     # and available before running the ruby script
     teifile.close()
     # unzip jekyll template site
-    logger.debug('Extracting jekyll template site')
+    update_msg = 'Extracting jekyll template site'
+    logger.debug(update_msg)
+    if update_callback is not None:
+        update_callback(update_msg)
+
     with ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:
         jekyllzip.extractall(tmpdir)
     # run the script to import tei as jekyll site content
     jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
     # jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme-master')
     # run the jekyll import script in the jekyll site dir
-    logger.debug('Running jekyll import TEI facsimile script')
+    update_msg = 'Running jekyll import TEI facsimile script'
+    logger.debug(update_msg)
+    if update_callback is not None:
+        update_callback(update_msg)
     import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
 
     # if a page number is specified, pass it as a parameter to the script
@@ -76,7 +84,10 @@ def website(vol, tei, page_one=None):
     try:
         subprocess.check_call(import_command, cwd=jekyll_site_dir)
     except subprocess.CalledProcessError:
-        raise ExportException('Error importing TEI facsimile to jekyll site')
+        err_msg = 'Error importing TEI facsimile to jekyll site'
+        if update_callback is not None:
+            update_callback(err_msg, 'error')
+        raise ExportException(err_msg)
 
     # NOTE: putting export content in a separate dir to make it easy to create
     # the zip file with the right contents and structure
@@ -90,13 +101,14 @@ def website(vol, tei, page_one=None):
     return export_dir
 
 
-def website_zip(vol, tei, page_one=None):
+def website_zip(vol, tei, page_one=None, update_callback=None):
     '''Package up a Jekyll site created by :meth:`website` as a zip file
     for easy download.
 
     :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
     '''
-    export_dir = website(vol, tei, page_one=page_one)
+    export_dir = website(vol, tei, page_one=page_one,
+                         update_callback=update_callback)
 
     # create a tempfile to hold a zip file of the site
     # (using tempfile for automatic cleanup after use)
@@ -119,7 +131,8 @@ class GithubExportException(Exception):
     pass
 
 
-def website_gitrepo(user, repo_name, vol, tei, page_one=None):
+def website_gitrepo(user, repo_name, vol, tei, page_one=None,
+                    update_callback=None):
     '''Create a new GitHub repository and populate it with content from
     a newly generated jekyll website export created via :meth:`website`.
 
@@ -147,7 +160,8 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
     if repo_name in current_repo_names:
         raise GithubExportException('GitHub repo %s already exists.' % repo_name)
 
-    export_dir = website(vol, tei, page_one=page_one)
+    export_dir = website(vol, tei, page_one=page_one,
+                         update_callback=update_callback)
 
     # jekyll dir is *inside* the export directory;
     # for the jekyll site to display correctly, we need to commit what
@@ -172,6 +186,8 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
         # nested collections in block format
 
     logger.debug('Creating github repo %s for %s' % (repo_name, github_username))
+    if update_callback is not None:
+        update_callback('Creating GitHub repo %s' % repo_name)
     github.create_repo(repo_name,
         description='An annotated digital edition created with Readux',
         homepage=github_pages_url)
@@ -196,7 +212,10 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
         '--author="%s <%s>"' % (settings.GIT_AUTHOR_NAME, settings.GIT_AUTHOR_EMAIL)])
     # push local master to the gh-pages branch of the newly created repo,
     # using the user's oauth token credentials
-    logger.debug('Pushing content to github')
+    update_msg = 'Pushing content to github'
+    logger.debug(update_msg)
+    if update_callback is not None:
+        update_callback(update_msg)
     git.push([repo_url, 'master:gh-pages'])
 
     # clean up temporary files after push to github
@@ -207,7 +226,8 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None):
     return (public_repo_url, github_pages_url)
 
 
-def update_gitrepo(user, repo_url, vol, tei, page_one=None):
+def update_gitrepo(user, repo_url, vol, tei, page_one=None,
+                   update_callback=None):
     '''Update an existing GitHub repository previously created by
     Readux export.  Checks out the repository, creates a new branch,
     runs the tei to jekyll import on that branch, pushes it to github,
@@ -229,6 +249,8 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None):
     # create a tmpdir to clone the git repo into
     tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-update')
     logger.debug('Cloning %s to %s', repo_url, tmpdir)
+    if update_callback is not None:
+        update_callback('Cloning %s' % repo_url)
     repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
     # create and switch to a new branch and switch to it; using datetime
     # for uniqueness
@@ -261,7 +283,10 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None):
         pass
 
     # run the script to get a freash import of tei as jekyll site content
-    logger.debug('Running jekyll import TEI facsimile script')
+    update_msg = 'Running jekyll import TEI facsimile script'
+    logger.debug(update_msg)
+    if update_callback is not None:
+        update_callback(update_msg)
     import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
     # if a page number is specified, pass it as a parameter to the script
     if page_one is not None:
@@ -269,7 +294,10 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None):
     try:
         subprocess.check_call(import_command, cwd=tmpdir)
     except subprocess.CalledProcessError:
-        raise ExportException('Error running jekyll import on TEI facsimile')
+        err_msg = 'Error running jekyll import on TEI facsimile'
+        if update_callback is not None:
+            update_callback(err_msg, 'error')
+        raise ExportException(err_msg)
 
     # add any files that could be updated to the git index
     repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
@@ -285,6 +313,8 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None):
                              {'branch': git_branch_name})
     # convert repo url to form needed to generate pull request
     repo = repo_url.replace('https://github.com/', '')
+    if update_callback is not None:
+        update_callback('Creating pull request with updates')
     pullrequest = github.create_pull_request(
         repo, 'Updated export', git_branch_name, 'gh-pages')
 

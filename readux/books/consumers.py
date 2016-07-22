@@ -103,9 +103,10 @@ def volume_export(message):
 
     # generate annotated tei
     tei = annotate.annotated_tei(tei, annotations)
-    notify.send({'text': 'Annotated TEI'})
+    notify_msg('Annotated TEI')
 
-    # TODO: pass info so export method can send websocket updates also
+    # NOTE: passing in notify_msg method so that export methods
+    # can also report on progress
 
     # check form data to see if github repo is requested
     if cleaned_data['mode'] == 'github':
@@ -113,7 +114,8 @@ def volume_export(message):
         try:
             repo_url, ghpages_url = export.website_gitrepo(
                 user, cleaned_data['github_repo'], vol, tei,
-                page_one=cleaned_data['page_one'])
+                page_one=cleaned_data['page_one'],
+                update_callback=notify_msg)
 
             logger.info('Exported %s to GitHub repo %s for user %s',
                         vol.pid, repo_url, user.username)
@@ -132,7 +134,8 @@ def volume_export(message):
         try:
             pr_url = export.update_gitrepo(
                 user, cleaned_data['update_repo'],
-                vol, tei, page_one=cleaned_data['page_one'])
+                vol, tei, page_one=cleaned_data['page_one'],
+                update_callback=notify_msg)
 
             notify_msg('Github jekyll site update completed', 'status',
                        github_update=True, pullrequest_url=pr_url,
@@ -145,9 +148,10 @@ def volume_export(message):
         # non github export: download a jekyll site as a zipfile
         try:
             webzipfile = export.website_zip(vol, tei,
-                                            page_one=cleaned_data['page_one'])
+                                            page_one=cleaned_data['page_one'],
+                                            update_callback=notify_msg)
             logger.info('Exported %s as jekyll zipfile for user %s',
-                         vol.pid, user.username)
+                        vol.pid, user.username)
             notify_msg('Jeyll zipfile has been generated')
 
             # upload the zipfile to Amazon S3 in a bucket configured

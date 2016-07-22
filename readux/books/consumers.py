@@ -20,13 +20,12 @@ logger = logging.getLogger(__name__)
 
 
 def volume_export(message):
-    print message.content
-    # why is reply channel not set?
-    print 'reply channel = ', message.reply_channel
-    # message.reply_channel.send({'text': 'test sending via reply channel'})
     user = message.content['user']
     pid = message.content['formdata']['pid']
-    notify = Group("notify-%s" % user.username)
+    # NOTE: for some reason, reply channel is not set on this message
+    # using a group notification based on username rather than
+    # relying on current websocket
+    notify = Group(u"notify-%s" % user.username)
 
     def notify_msg(text, msg_type=None, **data):
         msg_data = {'message': text}
@@ -37,7 +36,6 @@ def volume_export(message):
 
     notify_msg('Export started')
 
-    # notify = Group('notify-%s' % user.username)
     user_has_github = False
     if not user.is_anonymous():
         # check if user has a github account linked
@@ -47,7 +45,6 @@ def volume_export(message):
         except github.GithubAccountNotFound:
             notify_msg(AnnotatedVolumeExport.github_account_msg, 'warning')
 
-    print 'form data = ', message.content['formdata']
     export_form = VolumeExport(message.content['user'],
                                user_has_github,
                                message.content['formdata'])
@@ -99,7 +96,7 @@ def volume_export(message):
                'status')
     notify_msg('Generating volume TEI', 'status')
     tei = vol.generate_volume_tei()
-    notify_msg('Finished generating Volume TEI', 'status')
+    notify_msg('Finished generating volume TEI', 'status')
 
     # generate annotated tei
     tei = annotate.annotated_tei(tei, annotations)
@@ -121,7 +118,7 @@ def volume_export(message):
                         vol.pid, repo_url, user.username)
 
             # send success with urls to be displayed
-            notify_msg('Export to Github complete', 'status',
+            notify_msg('Export to GitHub complete', 'status',
                        github_export=True, repo_url=repo_url,
                        ghpages_url=ghpages_url)
 
@@ -137,7 +134,7 @@ def volume_export(message):
                 vol, tei, page_one=cleaned_data['page_one'],
                 update_callback=notify_msg)
 
-            notify_msg('Github jekyll site update completed', 'status',
+            notify_msg('GitHub jekyll site update completed', 'status',
                        github_update=True, pullrequest_url=pr_url,
                        repo_url=cleaned_data['update_repo'])
 
@@ -152,27 +149,34 @@ def volume_export(message):
                                             update_callback=notify_msg)
             logger.info('Exported %s as jekyll zipfile for user %s',
                         vol.pid, user.username)
-            notify_msg('Jeyll zipfile has been generated')
+            notify_msg('Generated Jeyll zip file')
 
-            # upload the zipfile to Amazon S3 in a bucket configured
-            # to auto-expire after 23 hours
-            s3_conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
-                                   settings.AWS_SECRET_ACCESS_KEY)
-            s3_bucket = s3_conn.get_bucket(settings.AWS_S3_BUCKET)
-            key = Key(s3_bucket)
-            file_basename = basename(webzipfile.name)
-            key.key = file_basename
-            # NOTE: if zip file exports get very large (e.g. when including
-            # images or deep zoom), this will need to be converted to a
-            # multi-part upload
-            key.set_contents_from_filename(webzipfile.name)
-            key.set_acl('public-read')
+            # upload the generated zipfile to an Amazon S3 bucket configured
+            # to auto-expire after 23 hours, so user can download
+            download_url = s3_upload(webzipfile.name)
 
-            notify_msg('Zipfile available for download', 'status',
-                       download=True,
-                       download_url='https://s3.amazonaws.com/%s/%s' %
-                       (settings.AWS_S3_BUCKET, file_basename))
+            notify_msg('Zip file available for download', 'status',
+                       download=True, download_url=download_url)
 
         except export.ExportException as err:
             # display error to user
             notify_msg('Export failed: %s' % err, 'error')
+
+
+def s3_upload(filename):
+    # upload a file to Amazon S3 in a bucket configured
+    # to auto-expire after 23 hours
+    s3_conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
+                           settings.AWS_SECRET_ACCESS_KEY)
+    s3_bucket = s3_conn.get_bucket(settings.AWS_S3_BUCKET)
+    key = Key(s3_bucket)
+    file_basename = basename(filename)
+    key.key = file_basename
+    # NOTE: if zip file exports get very large (e.g. when including
+    # images or deep zoom), this will need to be converted to a
+    # multi-part upload
+    key.set_contents_from_filename(filename)
+    # make the file publicly readable
+    key.set_acl('public-read')
+
+    return 'https://s3.amazonaws.com/%s/%s' % file_basename

@@ -43,3 +43,4 @@ django-guardian
 channels
 daphne
 asgi_redis
+boto

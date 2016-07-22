@@ -164,6 +164,11 @@ IIIF_ID_SUFFIX = ''
 # override default git author name if desired
 # GIT_AUTHOR_NAME = 'readux'
 
+# AWS S3 settings
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_S3_BUCKET = ''
+
 
 # Logging
 # https://docs.djangoproject.com/en/1.6/topics/logging/

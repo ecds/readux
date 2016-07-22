@@ -1,9 +1,13 @@
+from os.path import basename
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from channels import Group
 import json
 import logging
 
 from eulfedora.server import Repository
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
 
 from readux.annotations.models import AnnotationGroup
 from readux.books import annotate, export, github
@@ -13,7 +17,6 @@ from readux.books.views import AnnotatedVolumeExport
 
 
 logger = logging.getLogger(__name__)
-
 
 
 def volume_export(message):
@@ -142,17 +145,30 @@ def volume_export(message):
         # non github export: download a jekyll site as a zipfile
         try:
             webzipfile = export.website_zip(vol, tei,
-                page_one=cleaned_data['page_one'])
+                                            page_one=cleaned_data['page_one'])
             logger.info('Exported %s as jekyll zipfile for user %s',
-                vol.pid, user.username)
-            # response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
-            #     content_type='application/zip')
-            # response['Content-Disposition'] = 'attachment; filename="%s_annotated_jeyll_site.zip"' % \
-            #     (vol.noid)
-            # response['Content-Length'] = os.path.getsize(webzipfile.name)
+                         vol.pid, user.username)
             notify_msg('Jeyll zipfile has been generated')
 
-            # TODO: how do we make it available to user?
+            # upload the zipfile to Amazon S3 in a bucket configured
+            # to auto-expire after 23 hours
+            s3_conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
+                                   settings.AWS_SECRET_ACCESS_KEY)
+            s3_bucket = s3_conn.get_bucket(settings.AWS_S3_BUCKET)
+            key = Key(s3_bucket)
+            file_basename = basename(webzipfile.name)
+            key.key = file_basename
+            # NOTE: if zip file exports get very large (e.g. when including
+            # images or deep zoom), this will need to be converted to a
+            # multi-part upload
+            key.set_contents_from_filename(webzipfile.name)
+            key.set_acl('public-read')
+
+            notify_msg('Zipfile available for download', 'status',
+                       download=True,
+                       download_url='https://s3.amazonaws.com/%s/%s' %
+                       (settings.AWS_S3_BUCKET, file_basename))
+
         except export.ExportException as err:
             # display error to user
             notify_msg('Export failed: %s' % err, 'error')

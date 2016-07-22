@@ -106,6 +106,10 @@ Release 1.6
 
       python manage.py migrate
 
+* Configure Amazon S3 settings for temporary storage of background export
+  for downloaded zip files.  See the required fields in
+  ``localsettings.py.dist``.
+
 
 Release 1.5
 ~~~~~~~~~~~

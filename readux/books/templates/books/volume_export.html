@@ -24,11 +24,11 @@
       <div class="panel-group" id="accordion">
         <div class="panel panel-default" id="export-status-panel">
           <div class="panel-heading" id="export-status-heading">
-            <a data-toggle="collapse"
+            <a data-toggle="collapse" role="button"
                data-parent="#accordion"
                href="#status-panel"
                class="panel-title">
-                Expand to view export status details
+                Status details
             </a>
           </div>
           <div id="status-panel" class="panel-collapse collapse in">
@@ -76,6 +76,16 @@
       changes.  You can review the changes and merge them into your
       published edition.</p>
     </div>
+
+    <div id="download-zip" style="display:none">
+    {# download update success message; urls populated by javascript #}
+      <div class="alert alert-success">Jekyll site generated and available for download.</div>
+
+      <p>A zip file of your new Jekyll site is available for
+      <a class="download-url">download</a> now.  This file will be available
+      for 24 hours.</p>
+    </div>
+
 
     <form class="volume-webexport form-horizontal">{% csrf_token %}
       {{ export_form.non_field_errors }}
@@ -158,15 +168,14 @@
             message = e.data;
           }
           if (data.type == 'error') {
-              // clear out status messages
-              // $('.status').empty();   // maybe better to hide/collapse progress?
+              // collapse the status panel
+              $('#status-panel').collapse('hide');
               // show the error
-              $('.status').append($('<div class="alert alert-warning">').text(message));
+              $('.status').append($('<div class="alert alert-danger error">').text(message));
               // redisplay the form, in case user wants to resubmit
               $('.volume-webexport').show();
           } else {
-              // todo: maybe also display time, so it looks more like a log?
-              // needs CSS, and maybe made collapsible (bootstrap collapse?)
+             // not an error, text as a status message
               var now = new moment(), p = $('<p>');
               p.append($('<span class="time text-muted">')
                 .text(now.format("HH:mm:ss")));
@@ -187,14 +196,26 @@
             // set repo url and github pages links
             div.find('.repo-url').attr('href', data.repo_url).text(data.repo_url);
             div.find('.ghpages-url').attr('href', data.ghpages_url).text(data.ghpages_url)
-            div.show()
+            div.show();
+
+            $('#status-panel').collapse('hide');
+
           } else if (data.github_update) {
             // github update completed
             var div = $('#github-update');
             // set repo url and pull request links
             div.find('.repo-url').attr('href', data.repo_url);
             div.find('.pullrequest-url').attr('href', data.pullrequest_url);
+            div.show();
+
+           $('#status-panel').collapse('hide');
+
+          } else if (data.download) {
+            var div = $('#download-zip');
+            div.find('.download-url').attr('href', data.download_url);
             div.show()
+
+            $('#status-panel').collapse('hide');
           }
       }
 
@@ -210,9 +231,15 @@
           $this.hide();
           // don't submit via normal means
           event.preventDefault();
-          // clear then show the status box
-          // $('.status').empty();
-          $('.status').show()
+
+          // clear out status updates from a previous submission
+          // (e.g. invalid form)
+          $('#status-updates').empty();
+          // remove error message if any
+          $('.status .error').remove();
+          // and then show the status box, and make sure it is not collapsed
+          $('.status').show();
+          $('#status-panel').collapse('show');
         });
 
       });

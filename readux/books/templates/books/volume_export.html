@@ -156,7 +156,12 @@
 
       // Note that the path doesn't currently matter for routing; any WebSocket
       // connection gets bumped over to WebSocket consumers
-      socket = new WebSocket("ws://" + window.location.host + "/notify/");
+      // Use secure websocket when using https
+      var ws_protocol = 'ws:';
+      if (window.location.protocol == 'https:') {
+        ws_protocol = 'wss:';
+      }
+      socket = new WebSocket(ws_protocol + "//" + window.location.host + "/notify/");
       socket.onmessage = function(e) {
           var message, data = {};
           try {

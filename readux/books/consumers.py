@@ -179,4 +179,5 @@ def s3_upload(filename):
     # make the file publicly readable
     key.set_acl('public-read')
 
-    return 'https://s3.amazonaws.com/%s/%s' % file_basename
+    return 'https://s3.amazonaws.com/%s/%s' % \
+        (settings.AWS_S3_BUCKET, file_basename)

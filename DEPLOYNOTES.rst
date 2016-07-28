@@ -99,12 +99,8 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
-Release 1.6
+Release 1.7
 ~~~~~~~~~~~
-
-* Run migrations for database updates::
-
-      python manage.py migrate
 
 * Configure Amazon S3 settings for temporary storage of background export
   for downloaded zip files.  See the required fields in
@@ -113,6 +109,14 @@ Release 1.6
 * This release makes use of Channels.  See the
   `channels deploy documentation <https://channels.readthedocs.io/en/latest/deploying.html>`_
   and configure **CHANNEL_LAYERS** in ``localsettings.py``.
+
+
+Release 1.6
+~~~~~~~~~~~
+
+* Run migrations for database updates::
+
+      python manage.py migrate
 
 Release 1.5
 ~~~~~~~~~~~

@@ -154,18 +154,6 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_REDIRECT_URL = '/'
 
-# channels backend configuration (NOTE: probably should be in localsettings)
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        # "BACKEND": "asgi_redis.RedisChannelLayer",
-        # "CONFIG": {
-        #     "hosts": [("localhost", 6379)],
-        # },
-        "ROUTING": "readux.routing.channel_routing",
-    },
-}
-
 # additional github permissions, for annotated volume export to github
 SOCIAL_AUTH_GITHUB_SCOPE = ['public_repo']
 

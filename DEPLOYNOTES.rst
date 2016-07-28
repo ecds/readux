@@ -110,6 +110,9 @@ Release 1.6
   for downloaded zip files.  See the required fields in
   ``localsettings.py.dist``.
 
+* This release makes use of Channels.  See the
+  `channels deploy documentation <https://channels.readthedocs.io/en/latest/deploying.html>`_
+  and configure **CHANNEL_LAYERS** in ``localsettings.py``.
 
 Release 1.5
 ~~~~~~~~~~~

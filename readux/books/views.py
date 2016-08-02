@@ -604,6 +604,7 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
     template_name = 'books/volume_export.html'
     context_object_name = 'vol'
     form_class = VolumeExport
+    user_has_github = False
 
     github_account_msg = 'Export to GitHub requires a GitHub account.' + \
         ' Please authorize access to your GitHub account to use this feature.'
@@ -612,7 +613,6 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         'Please re-authorize your GitHub account to enable ' + \
         ' the permissions needed for export.'
 
-    @method_decorator(last_modified(view_helpers.volume_modified))
     def dispatch(self, *args, **kwargs):
         return super(AnnotatedVolumeExport, self).dispatch(*args, **kwargs)
 
@@ -633,6 +633,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         kwargs = super(AnnotatedVolumeExport, self).get_form_kwargs()
         # add user, which is used to determine available groups
         kwargs['user'] = self.request.user
+        # add flag to indicate if user has a github account
+        kwargs['user_has_github'] = self.user_has_github
         return kwargs
 
     def get_initial(self):
@@ -651,13 +653,14 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
     def get_context_data(self, **kwargs):
         context_data = super(AnnotatedVolumeExport, self).get_context_data()
         if not self.request.user.is_anonymous():
-            context_data['export_form'] = self.get_form()
-
             # check that user has a github account linked
             try:
                 github.GithubApi.github_account(self.request.user)
+                self.user_has_github = True
             except github.GithubAccountNotFound:
                 context_data['warning'] = self.github_account_msg
+
+            context_data['export_form'] = self.get_form()
 
         return context_data
 
@@ -679,10 +682,11 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         export_form = self.get_form()
         if export_form.is_valid():
             cleaned_data = export_form.cleaned_data
+            export_mode = cleaned_data['mode']
 
-            # if github export is requested, make sure user has a
-            # github account available to use for access
-            if cleaned_data['github']:
+            # if github export or update is requested, make sure user
+            # has a github account available to use for access
+            if export_mode in ['github', 'github_update']:
                 try:
                     github.GithubApi.github_account(self.request.user)
                 except github.GithubAccountNotFound:
@@ -715,7 +719,8 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                                      annotations)
 
         # check form data to see if github repo is requested
-        if cleaned_data['github']:
+        if export_mode == 'github':
+            # create a new github repository with exported jekyll site
             try:
                 repo_url, ghpages_url = export.website_gitrepo(request.user,
                     cleaned_data['github_repo'], vol, tei,
@@ -724,15 +729,35 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
                 logger.info('Exported %s to GitHub repo %s for user %s',
                     vol.pid, repo_url, request.user.username)
 
-                # NOTE: maybe use a separate template here?
+                # NOTE: template checks for github export to display the
+                # new github repo & pages urls with some help text
                 return self.render(request, repo_url=repo_url,
                     ghpages_url=ghpages_url, github_export=True)
             except export.GithubExportException as err:
                 response = self.render(request, error='Export failed: %s' % err)
                 response.status_code = 400  # maybe?
                 return response
-        else:
-            # non github export: download zipfile
+
+        elif export_mode == 'github_update':
+            # update an existing github repository with new branch and
+            # a pull request
+            try:
+                pr_url = export.update_gitrepo(
+                    request.user, cleaned_data['update_repo'],
+                    vol, tei, page_one=cleaned_data['page_one'])
+
+                # NOTE: template checks for update flag to display the
+                # pull request url with some help text
+                return self.render(request, repo_url=cleaned_data['update_repo'],
+                                   pullrequest_url=pr_url, github_update=True)
+
+            except export.GithubExportException as err:
+                response = self.render(request, error='Export failed: %s' % err)
+                response.status_code = 400  # maybe?
+                return response
+
+        elif export_mode == 'download':
+            # non github export: download a jekyll site as a zipfile
             try:
                 webzipfile = export.website_zip(vol, tei,
                     page_one=cleaned_data['page_one'])
@@ -753,6 +778,13 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
             completion_cookie_name = request.POST.get('completion-cookie',
                 '%s-web-export' % vol.noid)
             response.set_cookie(completion_cookie_name, 'complete', max_age=10)
+            return response
+
+        else:
+            response = self.render(request,
+                                   error='Unrecognized export mode "%s"' % \
+                                   export_mode)
+            response.status_code = 400
             return response
 
 

@@ -3,6 +3,12 @@
 CHANGELOG
 =========
 
+Release 1.6.1
+-------------
+
+* Require eulfedora 1.6 or greater for debug filter and connection retries
+
+
 Release 1.6 - Group Annotation
 ------------------------------
 

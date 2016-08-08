@@ -153,6 +153,10 @@ AUTHENTICATION_BACKENDS = (
 
 LOGIN_REDIRECT_URL = '/'
 
+# use eulfedora filter to keep fedora credentials from showing up
+# in debug stack traces and emails when an exception occurs in an api request
+DEFAULT_EXCEPTION_REPORTER_FILTER = 'eulfedora.util.SafeExceptionReporterFilter'
+
 # additional github permissions, for annotated volume export to github
 SOCIAL_AUTH_GITHUB_SCOPE = ['public_repo']
 

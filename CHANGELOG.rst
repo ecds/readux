@@ -9,6 +9,11 @@ Release 1.7 (preliminary)
 * New **IIIF_ID_SUFFIX** configuration option for IIIF image server (`#4 <https://github.com/emory-libraries/readux/pull/4>`_ via `@ghukill <https://github.com/ghukill>`_)
 * OCR to TEI facsimile now supports output from ABBYY Recognition Server (`#4 <https://github.com/emory-libraries/readux/pull/4>`_ via `@ghukill <https://github.com/ghukill>`_)
 
+Release 1.6.1
+-------------
+
+* Require eulfedora 1.6 or greater for debug filter and connection retries
+
 Release 1.6 - Group Annotation
 ------------------------------
 

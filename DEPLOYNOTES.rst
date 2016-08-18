@@ -18,8 +18,6 @@ management in this and other Python projects. If you don't have them
 installed, you can get them with ``sudo easy_install pip`` and then
 ``sudo pip install virtualenv``.
 
-------
-
 Bootstrapping a development environment
 ---------------------------------------
 

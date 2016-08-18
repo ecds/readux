@@ -15,7 +15,8 @@ django-widget-tweaks
 # NOTE: also want new enough dev version for python-requests support
 -e git+https://github.com/rlskoeser/sunburnt.git@solr4-join-support#egg=sunburnt
 # sunburnt requires *either* httplib2 or python-requests
-requests
+# eulfedora not yet compatible with requests 2.11
+requests<2.11
 eulcommon
 # pidman client
 -e git+https://github.com/emory-libraries/pidmanclient.git@release-1.2.0#egg=pidservices

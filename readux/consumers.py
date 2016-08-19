@@ -25,7 +25,8 @@ def ws_message(message):
         formdata = dict((key, val[0])
                         for key, val in parse_qs(data['volume_export']).iteritems())
         Channel('volume-export').send({
-            'user': message.user,
+            # has to be json serializable, so send username rather than user
+            'user': message.user.username,
             'formdata': formdata,
             # fixme: why is reply channel not automatically set?
             # 'reply_channel': message.reply_channel

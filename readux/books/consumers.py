@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 
 
 def volume_export(message):
-    user = message.content['user']
+    username = message.content['user']
+    user = get_user_model().objects.get(username=username)
     pid = message.content['formdata']['pid']
     # NOTE: for some reason, reply channel is not set on this message
     # using a group notification based on username rather than
@@ -45,8 +46,7 @@ def volume_export(message):
         except github.GithubAccountNotFound:
             notify_msg(AnnotatedVolumeExport.github_account_msg, 'warning')
 
-    export_form = VolumeExport(message.content['user'],
-                               user_has_github,
+    export_form = VolumeExport(user, user_has_github,
                                message.content['formdata'])
 
     if not export_form.is_valid():

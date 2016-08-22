@@ -108,6 +108,9 @@ Release 1.7
   `channels deploy documentation <https://channels.readthedocs.io/en/latest/deploying.html>`_
   and configure **CHANNEL_LAYERS** in ``localsettings.py``.
 
+* **JEKYLLIMPORT_TEI_SCRIPT** can now be specified in ``localsettings.py``
+  if the exact path needs to be specified.
+
 
 Release 1.6
 ~~~~~~~~~~~

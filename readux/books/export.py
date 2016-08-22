@@ -75,7 +75,8 @@ def website(vol, tei, page_one=None, update_callback=None):
     logger.debug(update_msg)
     if update_callback is not None:
         update_callback(update_msg)
-    import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
+    jekyllimport_tei_script = settings.JEKYLLIMPORT_TEI_SCRIPT
+    import_command = [jekyllimport_tei_script, '-q', teifile.name]
 
     # if a page number is specified, pass it as a parameter to the script
     if page_one is not None:
@@ -287,7 +288,8 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None,
     logger.debug(update_msg)
     if update_callback is not None:
         update_callback(update_msg)
-    import_command = ['jekyllimport_teifacsimile', '-q', teifile.name]
+    jekyllimport_tei_script = settings.JEKYLLIMPORT_TEI_SCRIPT
+    import_command = [jekyllimport_tei_script, '-q', teifile.name]
     # if a page number is specified, pass it as a parameter to the script
     if page_one is not None:
         import_command.extend(['--page-one', unicode(page_one)])

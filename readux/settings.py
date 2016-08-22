@@ -182,6 +182,9 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = {
 GIT_AUTHOR_EMAIL = 'readux.emory@gmail.com'
 GIT_AUTHOR_NAME = 'readux'
 
+# path to jekyll import ruby script; override in localsettings if you
+# need to specify the path
+JEKYLLIMPORT_TEI_SCRIPT = 'jekyllimport_teifacsimile'
 
 try:
     from localsettings import *

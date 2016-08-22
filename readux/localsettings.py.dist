@@ -164,6 +164,11 @@ IIIF_ID_SUFFIX = ''
 # override default git author name if desired
 # GIT_AUTHOR_NAME = 'readux'
 
+# path to jekyll import ruby script; override in localsettings if you
+# need to specify the path
+#JEKYLLIMPORT_TEI_SCRIPT = 'jekyllimport_teifacsimile'
+
+
 # channels backend configuration
 CHANNEL_LAYERS = {
     "default": {

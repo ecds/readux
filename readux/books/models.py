@@ -23,10 +23,11 @@ from eulfedora.models import  Relation, ReverseRelation, \
 from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
+from piffle import iiif
 
 from readux import __version__
 from readux.annotations.models import Annotation
-from readux.books import abbyyocr, iiif, tei
+from readux.books import abbyyocr, tei
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
 from readux.utils import solr_interface, absolutize_url

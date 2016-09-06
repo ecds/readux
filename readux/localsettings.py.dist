@@ -160,7 +160,6 @@ IIIF_ID_PREFIX = 'prefix:'
 # optional suffix, used when loris expects datastream dilineation (e.g. '|source-image')
 IIIF_ID_SUFFIX = ''
 
-
 # override default git author name if desired
 # GIT_AUTHOR_NAME = 'readux'
 
@@ -186,6 +185,10 @@ CHANNEL_LAYERS = {
 AWS_ACCESS_KEY_ID = ''
 AWS_SECRET_ACCESS_KEY = ''
 AWS_S3_BUCKET = ''
+
+
+# Optional filter for Collections objects in Fedora by owner attribute
+# COLLECTIONS_OWNER = ''
 
 
 # Logging

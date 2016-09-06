@@ -111,6 +111,11 @@ Release 1.7
 * **JEKYLLIMPORT_TEI_SCRIPT** can now be specified in ``localsettings.py``
   if the exact path needs to be specified.
 
+* New configuration in ``localsettings.py`` to configure Fedora Collections
+  to be listed based on owner attribute.  For Emory, this should be set
+  to the value **LSDI-project**.  See ``localsettings.py.dist`` for
+  example and more details.
+
 
 Release 1.6
 ~~~~~~~~~~~

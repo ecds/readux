@@ -1,6 +1,7 @@
 from random import shuffle
 from urllib import urlencode
 
+from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404
@@ -38,7 +39,7 @@ class CollectionList(ListView):
     def get_queryset(self):
         solr = solr_interface()
         return solr.query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
-                  .filter(owner='LSDI-project') \
+                  .filter(owner=settings.COLLECTIONS_OWNER) \
                   .sort_by('title_exact') \
                   .results_as(SolrCollection)
 

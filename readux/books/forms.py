@@ -3,6 +3,14 @@ from django import forms
 from django.utils.html import mark_safe
 from eulcommon.searchutil import search_terms
 
+
+# add is_checkbox method to all form fields, to enable template logic.
+# thanks to:
+# http://stackoverflow.com/questions/3927018/django-how-to-check-if-field-widget-is-checkbox-in-the-template
+setattr(forms.Field, 'is_checkbox',
+        lambda self: isinstance(self.widget, forms.CheckboxInput))
+
+
 class BookSearch(forms.Form):
     '''Form for searching books.'''
     #: keyword
@@ -43,6 +51,14 @@ class VolumeExport(forms.Form):
         label='Annotations to export',
         help_text='Individual annotations or all annotations shared with ' +
         'a single group')
+
+    #: include page images in export, instead of referencing on readux
+    include_images = forms.BooleanField(
+        label='Include page images in export package',
+        help_text='By default, page images are served via Readux.  Enable this' +
+        'option to make your site more functional as a standalone entity' +
+        '(including images will make your site larger).',
+        required=False)
 
     #: export mode
     mode = forms.ChoiceField(

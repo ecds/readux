@@ -112,7 +112,16 @@
           {% elif field.name = 'annotations' and export_form.hide_annotation_choice %}
           {# hide annotation choice when flag is set (i.e., only one choice available) #}
             {{ field|add_class:"hidden" }}
-          {% else %}
+
+        {% elif field.field.is_checkbox %}
+        {# bootstrap styles for checkbox input #}
+        <div class="checkbox">
+          <label>
+            {{ field }} {{ field.label }}
+          </label>
+          <div class="help-block">{{ field.help_text}}</div>
+        </div>
+        {% else %}
         <div class="form-group{% if field.errors %} has-error{% endif %}"{% if field.name = 'github_repo' or field.name = 'update_repo' %}style="display:none"{% endif %}>
             <label for="{{ field.name }}">{{ field.label }}</label>
             {{ field|add_class:"form-control" }}

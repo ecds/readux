@@ -163,9 +163,8 @@ IIIF_ID_SUFFIX = ''
 # override default git author name if desired
 # GIT_AUTHOR_NAME = 'readux'
 
-# Optional filter for Collections Cover list by owner of Fedora object
-# (empty string matches all or absent owners)
-COLLECTIONS_OWNER = ''
+# Optional filter for Collections objects in Fedora by owner attribute
+# COLLECTIONS_OWNER = ''
 
 
 # Logging

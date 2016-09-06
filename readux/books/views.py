@@ -949,4 +949,4 @@ class PageImage(ProxyView):
             # to allow jekyll sites to use for deep zoom
             return page.iiif.info()
         elif kwargs['mode'] == 'iiif':
-            return page.iiif.info().replace('info.json', kwargs['url'].rstrip('/'))
+            return page.iiif.info().replace('info.json', kwargs['url'].strip('/'))

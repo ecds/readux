@@ -97,6 +97,15 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.7
+~~~~~~~~~~~
+
+* New configuration in ``localsettings.py`` to configure Fedora Collections
+  to be listed based on owner attribute.  For Emory, this should be set
+  to the value **LSDI-project**.  See ``localsettings.py.dist`` for
+  example and more details.
+
+
 Release 1.6
 ~~~~~~~~~~~
 

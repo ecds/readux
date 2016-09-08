@@ -45,4 +45,4 @@ channels
 daphne
 asgi_redis
 boto
-piffle
+piffle>=0.2.1

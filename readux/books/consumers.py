@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from channels import Group
 import json
 import logging
+import re
 
 from eulfedora.server import Repository
 from boto.s3.connection import S3Connection
@@ -11,12 +12,35 @@ from boto.s3.key import Key
 
 from readux.annotations.models import AnnotationGroup
 from readux.books import annotate, export, github
-from readux.books.models import Volume
+from readux.books.models import Volume, IIIFImage
 from readux.books.forms import VolumeExport
 from readux.books.views import AnnotatedVolumeExport
 
 
 logger = logging.getLogger(__name__)
+
+
+class ExportIIIFImage(IIIFImage):
+    '''Extend Page object IIIF image for export purposes
+    re-using thumbnail, mini-thumbnail, and page size methods,
+    but simplified path and image id.'''
+    api_endpoint = 'images/pages'
+    image_id_prefix = ''
+    image_id_suffix = ''
+
+
+def export_image_to_url(export_url):
+    '''Method to convert export image path to IIIF image url where the content
+    can be downloaded.'''
+    # FIXME: this is potentially unreliable if there are variations in pidspace
+    return re.sub(r'images/pages/([^/]+)/',
+                  ''.join([settings.IIIF_API_ENDPOINT,
+                           getattr(settings, 'IIIF_ID_PREFIX', ''),
+                           settings.FEDORA_PIDSPACE, ':'   # FIXME: reliable ?
+                           r'\1',
+                           getattr(settings, 'IIIF_ID_SUFFIX', ''),
+                           r'/']),
+                  export_url)
 
 
 def volume_export(message):
@@ -58,6 +82,7 @@ def volume_export(message):
     # if form is valid, then proceed with the export
     cleaned_data = export_form.cleaned_data
     export_mode = cleaned_data['mode']
+    include_images = cleaned_data['include_images']
 
     # if github export or update is requested, make sure user
     # has a github account available to use for access
@@ -94,9 +119,37 @@ def volume_export(message):
 
     notify_msg('Collected %d annotations' % annotations.count(),
                'status')
+    # NOTE: could update message to indicate if using IIIF image urls
     notify_msg('Generating volume TEI', 'status')
     tei = vol.generate_volume_tei()
     notify_msg('Finished generating volume TEI', 'status')
+
+    # if user requests images included, the image paths in the tei
+    # need to be updated and the images need to be downloaded
+    # to the local package (which doesn't exist yet...)
+    if include_images:
+        notify_msg('Updating image references in TEI', 'status')
+        for i in range(len(tei.page_list)):
+            teipage = tei.page_list[i]
+            page = vol.pages[i]
+            print page.pid, page.noid
+            img = ExportIIIFImage(pid=page.noid)
+            for graphic in teipage.graphics:
+                # NOTE: some redundancy here with mode checks
+                # and modes in the page image view
+                if graphic.rend == 'full':
+                    graphic.url = unicode(img)
+                elif graphic.rend == 'page':
+                    graphic.url = unicode(img.page_size())
+                elif graphic.rend == 'thumbnail':
+                    graphic.url = unicode(img.thumbnail())
+                elif graphic.rend == 'small-thumbnail':
+                    graphic.url = unicode(img.mini_thumbnail())
+                elif graphic.rend == 'json':
+                    graphic.url = unicode(img.info())
+
+                # TODO: canonicalize image url before saving/referencing
+                print graphic.rend, graphic.url
 
     # generate annotated tei
     tei = annotate.annotated_tei(tei, annotations)
@@ -112,7 +165,9 @@ def volume_export(message):
             repo_url, ghpages_url = export.website_gitrepo(
                 user, cleaned_data['github_repo'], vol, tei,
                 page_one=cleaned_data['page_one'],
-                update_callback=notify_msg)
+                update_callback=notify_msg,
+                include_images=include_images,
+                image_path_to_url=export_image_to_url)
 
             logger.info('Exported %s to GitHub repo %s for user %s',
                         vol.pid, repo_url, user.username)
@@ -134,6 +189,8 @@ def volume_export(message):
                 vol, tei, page_one=cleaned_data['page_one'],
                 update_callback=notify_msg)
 
+            # TODO: include images if requested
+
             notify_msg('GitHub jekyll site update completed', 'status',
                        github_update=True, pullrequest_url=pr_url,
                        repo_url=cleaned_data['update_repo'])
@@ -146,10 +203,15 @@ def volume_export(message):
         try:
             webzipfile = export.website_zip(vol, tei,
                                             page_one=cleaned_data['page_one'],
-                                            update_callback=notify_msg)
+                                            update_callback=notify_msg,
+                                            include_images=include_images,
+                                            image_path_to_url=export_image_to_url)
             logger.info('Exported %s as jekyll zipfile for user %s',
                         vol.pid, user.username)
             notify_msg('Generated Jeyll zip file')
+
+            # testing without upload to aws
+            return
 
             # upload the generated zipfile to an Amazon S3 bucket configured
             # to auto-expire after 23 hours, so user can download

@@ -13,6 +13,7 @@ from zipfile import ZipFile
 import git
 from git.cmd import Git
 import yaml
+import requests
 
 import digitaledition_jekylltheme
 from readux import __version__
@@ -35,7 +36,8 @@ def get_jekyll_site_dir(base_dir, noid):
     return os.path.join(base_dir, '%s_annotated_jekyll_site' % noid)
 
 
-def website(vol, tei, page_one=None, update_callback=None):
+def website(vol, tei, page_one=None, update_callback=None,
+            include_images=False, image_path_to_url=None):
     '''Generate a jekyll website for a volume with annotations.
     Creates a jekyll site and imports pages and annotations from the TEI,
     and then returns the directory for further use (e.g., packaging as
@@ -69,7 +71,7 @@ def website(vol, tei, page_one=None, update_callback=None):
         jekyllzip.extractall(tmpdir)
     # run the script to import tei as jekyll site content
     jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
-    # jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme-master')
+
     # run the jekyll import script in the jekyll site dir
     update_msg = 'Running jekyll import TEI facsimile script'
     logger.debug(update_msg)
@@ -90,6 +92,15 @@ def website(vol, tei, page_one=None, update_callback=None):
             update_callback(err_msg, 'error')
         raise ExportException(err_msg)
 
+    if include_images:
+        update_msg = 'Downloading page images'
+        logger.debug(update_msg)
+        if update_callback is not None:
+            update_callback(update_msg)
+
+        save_page_images(tei, jekyll_site_dir,
+                         image_path_to_url=image_path_to_url)
+
     # NOTE: putting export content in a separate dir to make it easy to create
     # the zip file with the right contents and structure
     export_dir = os.path.join(tmpdir, 'export')
@@ -102,19 +113,23 @@ def website(vol, tei, page_one=None, update_callback=None):
     return export_dir
 
 
-def website_zip(vol, tei, page_one=None, update_callback=None):
+def website_zip(vol, tei, page_one=None, update_callback=None,
+                include_images=False, image_path_to_url=None):
     '''Package up a Jekyll site created by :meth:`website` as a zip file
     for easy download.
 
     :return: :class:`tempfile.NamedTemporaryFile` temporary zip file
     '''
     export_dir = website(vol, tei, page_one=page_one,
-                         update_callback=update_callback)
+                         update_callback=update_callback,
+                         include_images=include_images,
+                         image_path_to_url=image_path_to_url)
 
     # create a tempfile to hold a zip file of the site
     # (using tempfile for automatic cleanup after use)
     webzipfile = tempfile.NamedTemporaryFile(suffix='.zip',
-        prefix='%s_annotated_site_' % vol.noid)
+        prefix='%s_annotated_site_' % vol.noid,
+        delete=False)   # temporary
     shutil.make_archive(os.path.splitext(webzipfile.name)[0],  # name of the zipfile to create without .zip
          'zip',  # archive format; could also do tar
          export_dir
@@ -133,7 +148,8 @@ class GithubExportException(Exception):
 
 
 def website_gitrepo(user, repo_name, vol, tei, page_one=None,
-                    update_callback=None):
+                    update_callback=None, include_images=False,
+                    image_path_to_url=None):
     '''Create a new GitHub repository and populate it with content from
     a newly generated jekyll website export created via :meth:`website`.
 
@@ -152,7 +168,8 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None,
     # connect to github as the user in order to create the repository
     github = GithubApi.connect_as_user(user)
     github_username = GithubApi.github_username(user)
-    github_pages_url = 'http://%s.github.io/%s/' % (github_username, repo_name)
+    # NOTE: github pages sites now default to https
+    github_pages_url = 'https://%s.github.io/%s/' % (github_username, repo_name)
 
     # before even starting to generate the jekyll site,
     # check if requested repo name already exists; if so, bail out with an error
@@ -162,7 +179,9 @@ def website_gitrepo(user, repo_name, vol, tei, page_one=None,
         raise GithubExportException('GitHub repo %s already exists.' % repo_name)
 
     export_dir = website(vol, tei, page_one=page_one,
-                         update_callback=update_callback)
+                         update_callback=update_callback,
+                         include_images=include_images,
+                         image_path_to_url=image_path_to_url)
 
     # jekyll dir is *inside* the export directory;
     # for the jekyll site to display correctly, we need to commit what
@@ -301,6 +320,8 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None,
             update_callback(err_msg, 'error')
         raise ExportException(err_msg)
 
+    # TODO: needs to update images if they are included in the export
+
     # add any files that could be updated to the git index
     repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
                     'tei.xml', '_data/tags.yml', 'tags/*'])
@@ -325,3 +346,45 @@ def update_gitrepo(user, repo_url, vol, tei, page_one=None,
 
     # return the html url for the new pull request
     return pullrequest['html_url']
+
+
+def save_page_images(tei, jekyll_site_dir, image_path_to_url=None):
+    for teipage in tei.page_list:
+        for graphic in teipage.graphics:
+            # NOTE: could potentially use a channel consumer so
+            # that image downloads could happen in parallel, but would
+            # require additional error handling
+            imgdir = os.path.dirname(graphic.url)
+            # imgfile = os.path.basename(graphic.url)
+            # create all needed directories for path
+            # depending on order images are encountered,
+            # could get an error for a directory already existing
+            try:
+                os.makedirs(os.path.join(jekyll_site_dir, imgdir))
+            except OSError:
+                pass
+            # for now, expects a method to convert export image url
+            # into downloadable url (but maybe that is backwards?)
+            if image_path_to_url is not None:
+                imgurl = image_path_to_url(graphic.url)
+            else:
+                imgurl = graphic.url
+            # FIXME: error if img url doesn't start with http ?
+            logger.debug('Downloading page image %s', imgurl)
+            # NOTE: json info file as downloaded references the configured
+            # IIIF image server; this is OK for now, as it allows us
+            # to serve deep zoom tiles from the image server
+            # Will need to be updated once including deep zoom is
+            # an export option.
+            save_url_to_file(imgurl,
+                             os.path.join(jekyll_site_dir, graphic.url))
+
+
+def save_url_to_file(url, filepath):
+    resp = requests.get(url, stream=True)
+    if resp.status_code == requests.codes.ok:
+        with open(filepath, 'wb') as fd:
+            for chunk in resp.iter_content(1000):
+                fd.write(chunk)
+    else:
+        logger.warning('Status code %s on %s', resp.status_code, url)

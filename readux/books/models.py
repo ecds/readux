@@ -142,7 +142,7 @@ class IIIFImage(iiif.IIIFImageClient):
 
     def get_image_id(self):
         'image id, based on fedora pid, configured prefix, and optional suffix'
-        return '%s%s%s' % (self.image_id_prefix, self.pid, self.image_id_suffix)
+        return ''.join([self.image_id_prefix, self.pid, self.image_id_suffix])
 
     # NOTE: using long edge instead of specifying both with exact
     # results in cleaner urls/filenams (no !), and more reliable result
@@ -162,7 +162,6 @@ class IIIFImage(iiif.IIIFImageClient):
     def page_size(self):
         'page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'
         return self.size(**{self.long_side: self.SINGLE_PAGE_SIZE})
-
 
 
 class Image(DigitalObject):
@@ -1030,10 +1029,13 @@ class Volume(DigitalObject, BaseVolume):
                         'json': 'info',
                     }
                     for image_type, mode in image_types.iteritems():
+                        img_url = absolutize_url(
+                            reverse('books:page-image', kwargs={
+                                'vol_pid': self.pid, 'pid': page.pid,
+                                'mode': mode}
+                            ))
                         teipage.graphics.append(tei.Graphic(rend=image_type,
-                            url=absolutize_url(reverse('books:page-image',
-                                kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
-                        )
+                                                            url=img_url))
 
                     # page tei should have an existing graphic reference
                     # remove it from our output

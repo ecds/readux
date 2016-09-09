@@ -132,8 +132,10 @@ def volume_export(message):
         for i in range(len(tei.page_list)):
             teipage = tei.page_list[i]
             page = vol.pages[i]
-            print page.pid, page.noid
             img = ExportIIIFImage(pid=page.noid)
+            # TODO: store full resolvable url here, and let export
+            # convert from http to local path/url
+
             for graphic in teipage.graphics:
                 # NOTE: some redundancy here with mode checks
                 # and modes in the page image view
@@ -149,11 +151,14 @@ def volume_export(message):
                     graphic.url = unicode(img.info())
 
                 # TODO: canonicalize image url before saving/referencing
-                print graphic.rend, graphic.url
-
     # generate annotated tei
     tei = annotate.annotated_tei(tei, annotations)
     notify_msg('Annotated TEI')
+
+    exporter = export.VolumeExport(
+        vol, tei, page_one=cleaned_data['page_one'],
+        update_callback=notify_msg, include_images=include_images,
+        image_path_to_url=export_image_to_url)
 
     # NOTE: passing in notify_msg method so that export methods
     # can also report on progress
@@ -162,12 +167,8 @@ def volume_export(message):
     if cleaned_data['mode'] == 'github':
         # create a new github repository with exported jekyll site
         try:
-            repo_url, ghpages_url = export.website_gitrepo(
-                user, cleaned_data['github_repo'], vol, tei,
-                page_one=cleaned_data['page_one'],
-                update_callback=notify_msg,
-                include_images=include_images,
-                image_path_to_url=export_image_to_url)
+            repo_url, ghpages_url = exporter.website_gitrepo(
+                user, cleaned_data['github_repo'])
 
             logger.info('Exported %s to GitHub repo %s for user %s',
                         vol.pid, repo_url, user.username)
@@ -184,10 +185,7 @@ def volume_export(message):
         # update an existing github repository with new branch and
         # a pull request
         try:
-            pr_url = export.update_gitrepo(
-                user, cleaned_data['update_repo'],
-                vol, tei, page_one=cleaned_data['page_one'],
-                update_callback=notify_msg)
+            pr_url = exporter.update_gitrepo(user, cleaned_data['update_repo'])
 
             # TODO: include images if requested
 
@@ -201,17 +199,10 @@ def volume_export(message):
     elif cleaned_data['mode'] == 'download':
         # non github export: download a jekyll site as a zipfile
         try:
-            webzipfile = export.website_zip(vol, tei,
-                                            page_one=cleaned_data['page_one'],
-                                            update_callback=notify_msg,
-                                            include_images=include_images,
-                                            image_path_to_url=export_image_to_url)
+            webzipfile = exporter.website_zip()
             logger.info('Exported %s as jekyll zipfile for user %s',
                         vol.pid, user.username)
             notify_msg('Generated Jeyll zip file')
-
-            # testing without upload to aws
-            return
 
             # upload the generated zipfile to an Amazon S3 bucket configured
             # to auto-expire after 23 hours, so user can download

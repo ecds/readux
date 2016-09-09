@@ -14,6 +14,7 @@ import git
 from git.cmd import Git
 import yaml
 import requests
+from piffle.iiif import IIIFImageClient
 
 import digitaledition_jekylltheme
 from readux import __version__
@@ -52,13 +53,12 @@ class VolumeExport(object):
     '''
 
     def __init__(self, volume, tei, page_one=None, update_callback=None,
-                 include_images=False, image_path_to_url=None):
+                 include_images=False):
         self.volume = volume
         self.tei = tei
         self.page_one = page_one
         self.update_callback = update_callback
         self.include_images = include_images
-        self.image_path_to_url = image_path_to_url
 
         # initialize github connection values to None
         self.github = None
@@ -113,19 +113,21 @@ class VolumeExport(object):
         tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export')
         logger.debug('Building export for %s in %s', self.volume.pid, tmpdir)
 
-        teifile = self.save_tei_file(tmpdir)
-
         # unzip jekyll template site
         self.log_status('Extracting jekyll template site')
         with ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:
             jekyllzip.extractall(tmpdir)
-        # run the script to import tei as jekyll site content
         jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
 
-        self.import_tei_jekyll(teifile, jekyll_site_dir)
-
+        # save image files if requested, and update image paths in tei
+        # to use local references
         if self.include_images:
             self.save_page_images(jekyll_site_dir)
+
+        teifile = self.save_tei_file(tmpdir)
+
+        # run the script to import tei as jekyll site content
+        self.import_tei_jekyll(teifile, jekyll_site_dir)
 
         # NOTE: putting export content in a separate dir to make it easy to create
         # the zip file with the right contents and structure
@@ -146,26 +148,34 @@ class VolumeExport(object):
                 # NOTE: could potentially use a channel consumer so
                 # that image downloads could happen in parallel, but would
                 # require additional error handling
-                imgdir = os.path.dirname(graphic.url)
-                # imgfile = os.path.basename(graphic.url)
+
+                # graphic url attribute is full, resolvable IIIF url
+                imgurl = graphic.url
+                # parse image url as IIIF
+                iiif_img = IIIFImageClient.init_from_url(imgurl)
+                # convert api endpoint to local path
+                iiif_img.api_endpoint = 'images'
+                # simplify image id: strip out iiif id prefix and pidspace
+                # prefix, if possible
+                iiif_img.image_id = iiif_img.image_id \
+                    .replace(settings.IIIF_ID_PREFIX, '') \
+                    .replace('%s:' % settings.FEDORA_PIDSPACE, '')
+                # serialize updated iiif image url for use as local image path
+                image_path = unicode(iiif_img)
+
+                # update path in the TEI to use local reference
+                # in the jekyll site
+                graphic.url = image_path
+
+                imgdir = os.path.dirname(image_path)
                 # create all needed directories for path
-                # depending on order images are encountered,
-                # could get an error for a directory already existing
                 try:
                     os.makedirs(os.path.join(jekyll_site_dir, imgdir))
                 except OSError:
+                    # depending on order images are encountered,
+                    # could get an error for a directory already existing,
+                    # but it's not a real issue
                     pass
-                # for now, expects a method to convert export image url
-                # into downloadable url (but maybe that is backwards?)
-                if self.image_path_to_url is not None:
-                    imgurl = self.image_path_to_url(graphic.url)
-                else:
-                    imgurl = graphic.url
-
-                # if image url doesn't start with http, we can't download
-                if not imgurl.startswith('http'):
-                    raise ExportException('Unable to download page image at %s', imgurl)
-
                 logger.debug('Downloading page image %s', imgurl)
                 # NOTE: json info file as downloaded references the configured
                 # IIIF image server; this is OK for now, as it allows us
@@ -173,7 +183,7 @@ class VolumeExport(object):
                 # Will need to be updated once including deep zoom is
                 # an export option.
                 save_url_to_file(imgurl,
-                                 os.path.join(jekyll_site_dir, graphic.url))
+                                 os.path.join(jekyll_site_dir, image_path))
 
     def website_zip(self):
         '''Package up a Jekyll site created by :meth:`website` as a zip file
@@ -187,6 +197,7 @@ class VolumeExport(object):
         # (using tempfile for automatic cleanup after use)
         webzipfile = tempfile.NamedTemporaryFile(
             suffix='.zip',
+            delete=False, # temporary, testing
             prefix='%s_annotated_site_' % self.volume.noid)
         shutil.make_archive(
             # name of the zipfile to create without .zip
@@ -349,7 +360,6 @@ class VolumeExport(object):
         update_branch.checkout()
 
         logger.debug('Updating export for %s in %s', self.volume.pid, tmpdir)
-        teifile = self.save_tei_file(tmpdir)
 
         # remove all annotations and tag pages so that if an annotation is removed
         # or a tag is no longer used in readux, it will be removed in the export
@@ -363,11 +373,15 @@ class VolumeExport(object):
             # if there's an error on removal, ignore it
             pass
 
-        # run the script to get a freash import of tei as jekyll site content
-        self.import_tei_jekyll(teifile, tmpdir)
-
+        # save image files if requested, and update image paths in tei
+        # to use local references
         if self.include_images:
             self.save_page_images(tmpdir)
+
+        teifile = self.save_tei_file(tmpdir)
+
+        # run the script to get a fresh import of tei as jekyll site content
+        self.import_tei_jekyll(teifile, tmpdir)
 
         # add any files that could be updated to the git index
         repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',

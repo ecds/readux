@@ -20,29 +20,6 @@ from readux.books.views import AnnotatedVolumeExport
 logger = logging.getLogger(__name__)
 
 
-class ExportIIIFImage(IIIFImage):
-    '''Extend Page object IIIF image for export purposes
-    re-using thumbnail, mini-thumbnail, and page size methods,
-    but simplified path and image id.'''
-    api_endpoint = 'images/pages'
-    image_id_prefix = ''
-    image_id_suffix = ''
-
-
-def export_image_to_url(export_url):
-    '''Method to convert export image path to IIIF image url where the content
-    can be downloaded.'''
-    # FIXME: this is potentially unreliable if there are variations in pidspace
-    return re.sub(r'images/pages/([^/]+)/',
-                  ''.join([settings.IIIF_API_ENDPOINT,
-                           getattr(settings, 'IIIF_ID_PREFIX', ''),
-                           settings.FEDORA_PIDSPACE, ':'   # FIXME: reliable ?
-                           r'\1',
-                           getattr(settings, 'IIIF_ID_SUFFIX', ''),
-                           r'/']),
-                  export_url)
-
-
 def volume_export(message):
     username = message.content['user']
     user = get_user_model().objects.get(username=username)
@@ -132,33 +109,32 @@ def volume_export(message):
         for i in range(len(tei.page_list)):
             teipage = tei.page_list[i]
             page = vol.pages[i]
-            img = ExportIIIFImage(pid=page.noid)
-            # TODO: store full resolvable url here, and let export
-            # convert from http to local path/url
-
+            # convert from readux image url to
+            # IIIF image url, so it can be downloaded and converted to
+            # an image path local to the site
             for graphic in teipage.graphics:
                 # NOTE: some redundancy here with mode checks
                 # and modes in the page image view
                 if graphic.rend == 'full':
-                    graphic.url = unicode(img)
+                    graphic.url = unicode(page.iiif)
                 elif graphic.rend == 'page':
-                    graphic.url = unicode(img.page_size())
+                    graphic.url = unicode(page.iiif.page_size())
                 elif graphic.rend == 'thumbnail':
-                    graphic.url = unicode(img.thumbnail())
+                    graphic.url = unicode(page.iiif.thumbnail())
                 elif graphic.rend == 'small-thumbnail':
-                    graphic.url = unicode(img.mini_thumbnail())
+                    graphic.url = unicode(page.iiif.mini_thumbnail())
                 elif graphic.rend == 'json':
-                    graphic.url = unicode(img.info())
+                    graphic.url = unicode(page.iiif.info())
 
-                # TODO: canonicalize image url before saving/referencing
+                # TODO: canonicalize image urls *before* saving/referencing
+
     # generate annotated tei
     tei = annotate.annotated_tei(tei, annotations)
     notify_msg('Annotated TEI')
 
     exporter = export.VolumeExport(
         vol, tei, page_one=cleaned_data['page_one'],
-        update_callback=notify_msg, include_images=include_images,
-        image_path_to_url=export_image_to_url)
+        update_callback=notify_msg, include_images=include_images)
 
     # NOTE: passing in notify_msg method so that export methods
     # can also report on progress
@@ -187,8 +163,6 @@ def volume_export(message):
         try:
             pr_url = exporter.update_gitrepo(user, cleaned_data['update_repo'])
 
-            # TODO: include images if requested
-
             notify_msg('GitHub jekyll site update completed', 'status',
                        github_update=True, pullrequest_url=pr_url,
                        repo_url=cleaned_data['update_repo'])
@@ -207,6 +181,7 @@ def volume_export(message):
             # upload the generated zipfile to an Amazon S3 bucket configured
             # to auto-expire after 23 hours, so user can download
             download_url = s3_upload(webzipfile.name)
+            raise Exception
 
             notify_msg('Zip file available for download', 'status',
                        download=True, download_url=download_url)

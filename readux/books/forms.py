@@ -63,6 +63,23 @@ class VolumeExport(forms.Form):
     # on the rights and permissions for the individual volume, and might
     # not be available for all content that can be exported.
 
+    deep_zoom = forms.ChoiceField(
+        label='Deep zoom images',
+        choices=[
+            ('hosted', 'Hosted and served out via Readux / IIIF image server'),
+            ('include', 'Include Deep Zoom images in export'),
+            # To be added: no deep zoom
+        ],
+        initial='hosted',
+        # NOTE: could structure like export mode, but requires extra
+        # template work
+        # widget=forms.RadioSelect,
+        help_text='Deep zoom images can be included in your site to make ' +
+        'the site more functional as a standalone entity, but it will make ' +
+        'your site larger.  Including deep zoom requires page images to ' +
+        'be included.'
+        )
+
     #: export mode
     mode = forms.ChoiceField(
         label='Export mode',
@@ -71,6 +88,7 @@ class VolumeExport(forms.Form):
             ('github', 'Publish on GitHub'),
             ('github_update', 'Update an existing Github repo')
         ],
+        initial='download',
         widget=forms.RadioSelect,
         help_text='Choose how to export your volume as a Jekyll site.'
     )
@@ -115,6 +133,17 @@ class VolumeExport(forms.Form):
         # if not user_has_github:
             # would be nice to mark github options as disabled
             # TODO: mark github radio button options as disabled
+
+    def clean(self):
+        cleaned_data = super(VolumeExport, self).clean()
+        include_images = cleaned_data.get("include_images")
+        deep_zoom = cleaned_data.get("deep_zoom")
+
+        if deep_zoom == 'included' and not include_images:
+            raise forms.ValidationError(
+                'Including Deep Zoom images in your export requires that ' +
+                ' you also include page images'
+            )
 
     def annotation_authors(self):
         # choices for annotations to be exported:

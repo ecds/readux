@@ -88,7 +88,9 @@
 
 
     <form class="volume-webexport form-horizontal">{% csrf_token %}
-      {{ export_form.non_field_errors }}
+      <div class="text-danger form-errors">
+        {{ export_form.non_field_errors }}
+      </div>
       {# include volume pid as a hidden field so it is included in websocket form submission #}
       <input type="hidden" name="pid" value="{{ vol.pid }}"/>
     {% for field in export_form %}
@@ -107,7 +109,7 @@
               {% endwith %}
             </div>
           {% endfor %}
-          <div class="text-warning mode-errors">{{ field.errors }}</div>
+          <div class="text-danger mode-errors">{{ field.errors }}</div>
 
           {% elif field.name = 'annotations' and export_form.hide_annotation_choice %}
           {# hide annotation choice when flag is set (i.e., only one choice available) #}
@@ -200,9 +202,15 @@
 
           // form was invalid, redisplay form with errors
           if (data.form_errors) {
+            console.log(data.form_errors);
             for (var field in data.form_errors) {
-              // update existing field error field with text from validation
-              $('.' + field + '-errors').text(data.form_errors[field]);
+              if (field == '__all__') {
+                // non-field error
+                $('.form-errors').text(data.form_errors[field]);
+              } else {
+                // update existing field error field with text from validation
+                $('.' + field + '-errors').text(data.form_errors[field]);
+              }
             }
           } else if (data.github_export) {
             // github export completed

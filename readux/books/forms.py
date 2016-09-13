@@ -59,6 +59,9 @@ class VolumeExport(forms.Form):
         'option to make your site more functional as a standalone entity' +
         '(including images will make your site larger).',
         required=False)
+    # NOTE: at some point in the future, option to include images may depend
+    # on the rights and permissions for the individual volume, and might
+    # not be available for all content that can be exported.
 
     #: export mode
     mode = forms.ChoiceField(

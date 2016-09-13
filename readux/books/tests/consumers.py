@@ -70,18 +70,20 @@ class VolumeExportTest(ChannelTestCase):
                 'pid': 'vol:1', 'annotations': 'user', 'mode': 'download',
                 'page_one': '5',
             },
-            'user': self.testuser
+            'user': self.testuser.username
         })
         volume_export(self.get_next_message(u"volume-export", require=True))
 
         mockannotate.annotated_tei.assert_called_with(
             mockobj.generate_volume_tei.return_value, annotations)
-        export_args, export_kwargs = mockexport.website_zip.call_args
-        self.assertEqual(mockobj, export_args[0])
+        vol_exporter = mockexport.VolumeExport.return_value
+        vol_exporter.website_zip.assert_called_with()
+        export_init_args, export_init_kwargs = mockexport.VolumeExport.call_args
+        self.assertEqual(mockobj, export_init_args[0])
         self.assertEqual(mockannotate.annotated_tei.return_value,
-                         export_args[1])
+                         export_init_args[1])
         # value from form should be passed through
-        self.assertEqual(5, export_kwargs['page_one'])
+        self.assertEqual(5, export_init_kwargs['page_one'])
 
         # expected progress updates in order
         status_updates = [
@@ -120,7 +122,8 @@ class VolumeExportTest(ChannelTestCase):
         # mock urls to be returned by export method
         repo_url = 'http://github.org/org/repo'
         ghpages_url = 'http://org.github.io/repo'
-        mockexport.website_gitrepo.return_value = (
+        vol_exporter = mockexport.VolumeExport.return_value
+        vol_exporter.website_gitrepo.return_value = (
             repo_url, ghpages_url)
 
         Group(u"notify-tester").add(u'test-channel')
@@ -154,13 +157,14 @@ class VolumeExportTest(ChannelTestCase):
         })
         volume_export(self.get_next_message(u"volume-export", require=True))
 
-        export_args, export_kwargs = mockexport.website_gitrepo.call_args
+        export_args, export_kwargs = vol_exporter.website_gitrepo.call_args
         self.assertEqual(self.testuser, export_args[0])
         self.assertEqual('foo', export_args[1])
-        self.assertEqual(mockobj, export_args[2])
+        export_init_args, export_init_kwargs = mockexport.VolumeExport.call_args
+        self.assertEqual(mockobj, export_init_args[0])
         self.assertEqual(mockannotate.annotated_tei.return_value,
-                         export_args[3])
-        self.assertEqual(3, export_kwargs['page_one'])
+                         export_init_args[1])
+        self.assertEqual(3, export_init_kwargs['page_one'])
 
         status_updates = [
             'Export started',
@@ -186,7 +190,7 @@ class VolumeExportTest(ChannelTestCase):
             'user': self.testuser
         })
         mockexport.GithubExportException = GithubExportException
-        mockexport.website_gitrepo.side_effect = GithubExportException('Repository already exists')
+        vol_exporter.website_gitrepo.side_effect = GithubExportException('Repository already exists')
         volume_export(self.get_next_message(u"volume-export", require=True))
 
         # the last message on the notify channel should have the error
@@ -215,7 +219,8 @@ class VolumeExportTest(ChannelTestCase):
 
         # mock url to be returned by export method
         pr_url = 'http://github.org/org/repo/pull/1'
-        mockexport.update_gitrepo.return_value = pr_url
+        vol_exporter = mockexport.VolumeExport.return_value
+        vol_exporter.update_gitrepo.return_value = pr_url
 
         Group(u"notify-tester").add(u'test-channel')
 
@@ -225,17 +230,19 @@ class VolumeExportTest(ChannelTestCase):
         }
         Channel('volume-export').send({
             'formdata': form_data,
-            'user': self.testuser
+            'user': self.testuser.username
         })
         volume_export(self.get_next_message(u"volume-export", require=True))
 
-        export_args, export_kwargs = mockexport.update_gitrepo.call_args
+        export_args, export_kwargs = vol_exporter.update_gitrepo.call_args
         self.assertEqual(self.testuser, export_args[0])
         self.assertEqual('foobar', export_args[1])
-        self.assertEqual(mockobj, export_args[2])
+        # some options now specied when exporter is initalized
+        export_init_args, export_init_kwargs = mockexport.VolumeExport.call_args
+        self.assertEqual(mockobj, export_init_args[0])
         self.assertEqual(mockannotate.annotated_tei.return_value,
-                         export_args[3])
-        self.assertEqual(3, export_kwargs['page_one'])
+                         export_init_args[1])
+        self.assertEqual(3, export_init_kwargs['page_one'])
 
         # check the last message on the notify channel
         msg = json.loads(self.get_last_message(u'test-channel')['text'])
@@ -247,7 +254,7 @@ class VolumeExportTest(ChannelTestCase):
 
         # simulate update error
         mockexport.GithubExportException = GithubExportException
-        mockexport.update_gitrepo.side_effect = GithubExportException('Something went wrong')
+        vol_exporter.update_gitrepo.side_effect = GithubExportException('Something went wrong')
 
         Channel('volume-export').send({
             'formdata': form_data,

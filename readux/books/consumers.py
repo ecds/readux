@@ -181,7 +181,6 @@ def volume_export(message):
             # upload the generated zipfile to an Amazon S3 bucket configured
             # to auto-expire after 23 hours, so user can download
             download_url = s3_upload(webzipfile.name)
-            raise Exception
 
             notify_msg('Zip file available for download', 'status',
                        download=True, download_url=download_url)

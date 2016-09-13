@@ -102,8 +102,6 @@ class VolumeExport(object):
             if self.update_callback is not None:
                 self.update_callback(err_msg, 'error')
             raise ExportException(err_msg)
-        except Exception as err:
-            print err
 
     def generate_website(self):
         """Generate a jekyll website for a volume with annotations.
@@ -206,7 +204,6 @@ class VolumeExport(object):
         # (using tempfile for automatic cleanup after use)
         webzipfile = tempfile.NamedTemporaryFile(
             suffix='.zip',
-            delete=False,  # temporary, testing
             prefix='%s_annotated_site_' % self.volume.noid)
         shutil.make_archive(
             # name of the zipfile to create without .zip

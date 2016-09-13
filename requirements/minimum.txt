@@ -46,3 +46,4 @@ daphne
 asgi_redis
 boto
 piffle>=0.2.1
+iiif

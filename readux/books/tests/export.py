@@ -54,11 +54,12 @@ class VolumeExportTest(TestCase):
         # check that filehandle is closed
         self.assertTrue(teifile.closed)
 
-        # basic check of file contents - should be an empty tei file
+        # basic check of file contents
+        # (could copare with fixture file... )
         with open(teifile.name) as teicontents:
             content = teicontents.read()
-            self.assert_('<tei:TEI' in content)
-            self.assert_(content.endswith('>'))
+            self.assert_('<TEI' in content)
+            self.assert_(content.endswith('</TEI>'))
 
     @patch('readux.books.export.subprocess')
     def test_import_tei_jekyll(self, mocksubprocess):
@@ -99,6 +100,13 @@ class VolumeExportTest(TestCase):
             (path, defaults)
         image_path = self.exporter.iiif_url_to_local_path(iiif_url)
         self.assertEqual(image_path, 'images/%s%s' % (path, defaults))
+
+        # info urls should return as info urls
+        iiif_info = 'http://www.example.org/image-service/%s/info.json' % \
+            path
+        print iiif_info
+        image_path = self.exporter.iiif_url_to_local_path(iiif_info)
+        self.assertEqual(image_path, 'images/%s/info.json' % path)
 
         with override_settings(IIIF_ID_PREFIX='test:',
                                FEDORA_PIDSPACE='testpid'):

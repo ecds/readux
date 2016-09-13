@@ -12,9 +12,10 @@ from zipfile import ZipFile
 
 import git
 from git.cmd import Git
-import yaml
+from iiif.static import IIIFStatic
 import requests
 from piffle.iiif import IIIFImageClient
+import yaml
 
 import digitaledition_jekylltheme
 from readux import __version__
@@ -53,12 +54,13 @@ class VolumeExport(object):
     '''
 
     def __init__(self, volume, tei, page_one=None, update_callback=None,
-                 include_images=False):
+                 include_images=False, include_deep_zoom=False):
         self.volume = volume
         self.tei = tei
         self.page_one = page_one
         self.update_callback = update_callback
         self.include_images = include_images
+        self.include_deep_zoom = include_deep_zoom
 
         # initialize github connection values to None
         self.github = None
@@ -123,6 +125,8 @@ class VolumeExport(object):
         # to use local references
         if self.include_images:
             self.save_page_images(jekyll_site_dir)
+        if self.include_deep_zoom:
+            self.generate_deep_zoom(jekyll_site_dir)
 
         teifile = self.save_tei_file(tmpdir)
 
@@ -145,6 +149,8 @@ class VolumeExport(object):
         '''Convert an IIIF Image API url to a local path that can be
         referenced within the jekyll site.
         '''
+        # check if we have an info url, so that it can be duplicated
+        is_info = imgurl.endswith('info.json')
         iiif_img = IIIFImageClient.init_from_url(imgurl)
         # convert api endpoint to local path
         iiif_img.api_endpoint = 'images'
@@ -156,6 +162,8 @@ class VolumeExport(object):
             .replace(settings.IIIF_ID_PREFIX, '') \
             .replace('%s:' % settings.FEDORA_PIDSPACE, '')
         # serialize updated iiif image url for use as local image path
+        if is_info:
+            return unicode(iiif_img.info())
         return unicode(iiif_img)
 
     def save_page_images(self, jekyll_site_dir):
@@ -191,6 +199,18 @@ class VolumeExport(object):
                 # an export option.
                 save_url_to_file(imgurl,
                                  os.path.join(jekyll_site_dir, image_path))
+
+    def generate_deep_zoom(self, jekyll_site_dir):
+        self.log_status('Downloading deep zoom images')
+        # TOOD: don't hard-code the images dir everywhere!
+        imagedir = os.path.join(jekyll_site_dir, 'images')
+        staticgen = IIIFStatic(dst=imagedir, prefix='/images/')
+        for teipage in self.tei.page_list:
+            for graphic in teipage.graphics:
+                if graphic.rend == 'full':
+                    imgsrc = os.path.join(jekyll_site_dir, graphic.url)
+                    iiif_img = IIIFImageClient.init_from_url(graphic.url)
+                    staticgen.generate(imgsrc, identifier=iiif_img.image_id)
 
     def website_zip(self):
         '''Package up a Jekyll site created by :meth:`website` as a zip file

@@ -102,6 +102,8 @@ class VolumeExport(object):
             if self.update_callback is not None:
                 self.update_callback(err_msg, 'error')
             raise ExportException(err_msg)
+        except Exception as err:
+            print err
 
     def generate_website(self):
         """Generate a jekyll website for a volume with annotations.
@@ -141,6 +143,23 @@ class VolumeExport(object):
 
         return export_dir
 
+    def iiif_url_to_local_path(self, imgurl):
+        '''Convert an IIIF Image API url to a local path that can be
+        referenced within the jekyll site.
+        '''
+        iiif_img = IIIFImageClient.init_from_url(imgurl)
+        # convert api endpoint to local path
+        iiif_img.api_endpoint = 'images'
+        # simplify image id: strip out iiif id prefix and pidspace
+        # prefix, if possible
+        # (leaving any id suffix, since those are likely needed to
+        # guarantee uniqueness)
+        iiif_img.image_id = iiif_img.image_id \
+            .replace(settings.IIIF_ID_PREFIX, '') \
+            .replace('%s:' % settings.FEDORA_PIDSPACE, '')
+        # serialize updated iiif image url for use as local image path
+        return unicode(iiif_img)
+
     def save_page_images(self, jekyll_site_dir):
         self.log_status('Downloading page images')
         for teipage in self.tei.page_list:
@@ -152,17 +171,7 @@ class VolumeExport(object):
                 # graphic url attribute is full, resolvable IIIF url
                 imgurl = graphic.url
                 # parse image url as IIIF
-                iiif_img = IIIFImageClient.init_from_url(imgurl)
-                # convert api endpoint to local path
-                iiif_img.api_endpoint = 'images'
-                # simplify image id: strip out iiif id prefix and pidspace
-                # prefix, if possible
-                iiif_img.image_id = iiif_img.image_id \
-                    .replace(settings.IIIF_ID_PREFIX, '') \
-                    .replace('%s:' % settings.FEDORA_PIDSPACE, '')
-                # serialize updated iiif image url for use as local image path
-                image_path = unicode(iiif_img)
-
+                image_path = self.iiif_url_to_local_path(imgurl)
                 # update path in the TEI to use local reference
                 # in the jekyll site
                 graphic.url = image_path
@@ -197,7 +206,7 @@ class VolumeExport(object):
         # (using tempfile for automatic cleanup after use)
         webzipfile = tempfile.NamedTemporaryFile(
             suffix='.zip',
-            delete=False, # temporary, testing
+            delete=False,  # temporary, testing
             prefix='%s_annotated_site_' % self.volume.noid)
         shutil.make_archive(
             # name of the zipfile to create without .zip

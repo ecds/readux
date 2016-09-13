@@ -5,6 +5,6 @@ from readux.books.tests.views import *
 from readux.books.tests.tei import *
 from readux.books.tests.annotate import *
 from readux.books.tests.markdown_tei import *
-
-
+from readux.books.tests.export import *
+from readux.books.tests.consumers import *
 

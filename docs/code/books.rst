@@ -27,11 +27,6 @@ DigWF
 .. automodule:: readux.books.digwf
     :members:
 
-IIIF Client
-^^^^^^^^^^^
-.. automodule:: readux.books.iiif
-    :members:
-
 TEI
 ^^^
 .. automodule:: readux.books.tei
@@ -56,6 +51,12 @@ GitHub
 ^^^^^^
 .. automodule:: readux.books.github
     :undoc-members:
+    :members:
+
+Consumers
+^^^^^^^^^
+
+.. automodule:: readux.books.consumers
     :members:
 
 

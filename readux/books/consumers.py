@@ -21,6 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 def volume_export(message):
+    '''Consumer method to handle volume export form submission via
+    websockets.  Initializes :class:`readux.books.export.VolumeExport`
+    and then calls the appropriate method based on the requested export
+    mode.
+    '''
+
     username = message.content['user']
     user = get_user_model().objects.get(username=username)
     pid = message.content['formdata']['pid']
@@ -198,8 +204,8 @@ def volume_export(message):
 
 
 def s3_upload(filename):
-    # upload a file to Amazon S3 in a bucket configured
-    # to auto-expire after 23 hours
+    '''Upload a file to the Amazon S3 bucket configured in local settings.
+    (Should be configured to auto-expire after 24 hours.)'''
     s3_conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
                            settings.AWS_SECRET_ACCESS_KEY)
     s3_bucket = s3_conn.get_bucket(settings.AWS_S3_BUCKET)

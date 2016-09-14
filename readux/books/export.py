@@ -53,6 +53,9 @@ class VolumeExport(object):
         included in the export
     '''
 
+    # local path for images, when page and deep zoom images are included
+    image_dir = 'images'
+
     def __init__(self, volume, tei, page_one=None, update_callback=None,
                  include_images=False, include_deep_zoom=False):
         self.volume = volume
@@ -153,7 +156,7 @@ class VolumeExport(object):
         is_info = imgurl.endswith('info.json')
         iiif_img = IIIFImageClient.init_from_url(imgurl)
         # convert api endpoint to local path
-        iiif_img.api_endpoint = 'images'
+        iiif_img.api_endpoint = self.image_dir
         # simplify image id: strip out iiif id prefix and pidspace
         # prefix, if possible
         # (leaving any id suffix, since those are likely needed to
@@ -202,11 +205,11 @@ class VolumeExport(object):
 
     def generate_deep_zoom(self, jekyll_site_dir):
         self.log_status('Downloading deep zoom images')
-        # TOOD: don't hard-code the images dir everywhere!
-        imagedir = os.path.join(jekyll_site_dir, 'images')
-        staticgen = IIIFStatic(dst=imagedir, prefix='/images/')
+        imagedir = os.path.join(jekyll_site_dir, self.image_dir)
+        staticgen = IIIFStatic(dst=imagedir, prefix='/%s/' % self.image_dir)
         for teipage in self.tei.page_list:
             for graphic in teipage.graphics:
+                print 'graphic ', graphic, 'rend = ', graphic.rend
                 if graphic.rend == 'full':
                     imgsrc = os.path.join(jekyll_site_dir, graphic.url)
                     iiif_img = IIIFImageClient.init_from_url(graphic.url)
@@ -411,7 +414,8 @@ class VolumeExport(object):
 
         # add any files that could be updated to the git index
         repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
-                        'tei.xml', '_data/tags.yml', 'tags/*', 'images/*'])
+                        'tei.xml', '_data/tags.yml', 'tags/*',
+                        '%s/*' % self.image_dir])
         git_author = git.Actor(settings.GIT_AUTHOR_NAME,
                                settings.GIT_AUTHOR_EMAIL)
         # commit all changes

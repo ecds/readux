@@ -10,12 +10,12 @@ from readux.books.views import AnnotatedVolumeExport
 from readux.books.export import GithubExportException
 
 
-class VolumeExportTest(ChannelTestCase):
+class ConsumerVolumeExportTest(ChannelTestCase):
 
     def setUp(self):
         self.testuser = get_user_model().objects.create(username='tester')
 
-        super(VolumeExportTest, self).setUp()
+        super(ConsumerVolumeExportTest, self).setUp()
 
     def test_invalid(self):
         # create a test channel so notify messages can be retrieved
@@ -68,7 +68,8 @@ class VolumeExportTest(ChannelTestCase):
         Channel('volume-export').send({
             'formdata': {
                 'pid': 'vol:1', 'annotations': 'user', 'mode': 'download',
-                'page_one': '5',
+                'page_one': '5', 'include_images': False,
+                'deep_zoom': 'hosted'
             },
             'user': self.testuser.username
         })
@@ -130,7 +131,8 @@ class VolumeExportTest(ChannelTestCase):
 
         form_data = {
             'pid': 'vol:1', 'annotations': 'user', 'mode': 'github',
-            'page_one': '3', 'github_repo': 'foo'
+            'page_one': '3', 'github_repo': 'foo', 'include_images': False,
+            'deep_zoom': 'hosted'
         }
         Channel('volume-export').send({
             'formdata': form_data,
@@ -226,7 +228,8 @@ class VolumeExportTest(ChannelTestCase):
 
         form_data = {
             'pid': 'vol:1', 'annotations': 'user', 'mode': 'github_update',
-            'page_one': '3', 'update_repo': 'foobar'
+            'page_one': '3', 'update_repo': 'foobar', 'include_images': False,
+            'deep_zoom': 'hosted'
         }
         Channel('volume-export').send({
             'formdata': form_data,

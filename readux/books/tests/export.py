@@ -142,3 +142,26 @@ class VolumeExportTest(TestCase):
         img_path = os.path.join(self.tmpdir, local_imgurl)
         # test that save_url_to_file is called as expected
         mocksaveurl_to_file.assert_called_with(iiif_url, img_path)
+
+    @patch('readux.books.export.IIIFStatic')
+    @patch('readux.books.export.IIIFImageClient')
+    def test_generate_deep_zoom(self, mockiiifimgclient, mockiiifstatic):
+        # update tei with info url to test with
+        defaults = '/full/full/0/default.jpg'
+        image_id = 'abcd1234'
+        iiif_url = '%s/%s%s' % (VolumeExport.image_dir, image_id, defaults)
+        # deep zoom looks for master/full image as source for generating
+        # deep zoom
+        teigraphic = self.tei.page_list[0].graphics[0]
+        teigraphic.rend = 'full'
+        teigraphic.url = iiif_url
+        mockiiifimgclient.init_from_url.return_value.image_id = image_id
+
+        self.exporter.generate_deep_zoom(self.tmpdir)
+
+        imgdir = os.path.join(self.tmpdir, 'images')
+        mockiiifstatic.assert_called_with(dst=imgdir, prefix='/images/')
+        mockiiifimgclient.init_from_url.assert_called_with(teigraphic.url)
+        expected_src = os.path.join(self.tmpdir, teigraphic.url)
+        mockiiifstatic.return_value.generate.assert_called_with(
+            expected_src, identifier=image_id)

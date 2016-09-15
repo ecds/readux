@@ -53,7 +53,8 @@ class VolumeExport(forms.Form):
     )
     #: help text for export mode choices
     mode_help = [
-        'Download a TEI XML file with facsimile volume data and annotations',
+        mark_safe('Download a <a href="http://www.tei-c.org/">TEI</a> XML ' +
+                  'file with facsimile volume data and annotations'),
         'Download a zip file with all Jekyll site contents',
         '''Create a new GitHub repository with the generated Jekyll
             site content and publish it using Github Pages''',

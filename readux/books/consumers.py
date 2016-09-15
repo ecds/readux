@@ -1,10 +1,11 @@
 from os.path import basename
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.template.defaultfilters import filesizeformat
 from channels import Group
 import json
 import logging
-import re
+import os
 
 from eulfedora.server import Repository
 from boto.s3.connection import S3Connection
@@ -12,7 +13,7 @@ from boto.s3.key import Key
 
 from readux.annotations.models import AnnotationGroup
 from readux.books import annotate, export, github
-from readux.books.models import Volume, IIIFImage
+from readux.books.models import Volume
 from readux.books.forms import VolumeExport
 from readux.books.views import AnnotatedVolumeExport
 
@@ -245,6 +246,10 @@ def s3_upload(filename, label=None, content_disposition=None):
     # NOTE: if zip file exports get very large (e.g. when including
     # images or deep zoom), this will need to be converted to a
     # multi-part upload
+    # for now, log file size so we can check on errors
+    filesize = os.stat(filename).st_size
+    logger.info('File %s to upload to S3 is %s (%sb)',
+                 filename, filesizeformat(filesize), filesize)
     key.set_contents_from_filename(filename)
     # make the file publicly readable
     key.set_acl('public-read')

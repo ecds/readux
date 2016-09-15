@@ -95,6 +95,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
             'Finished generating volume TEI',
             'Annotated TEI',
             'Generated Jeyll zip file',
+            'Uploading zip file to Amazon S3',
             'Zip file available for download'
         ]
 
@@ -269,6 +270,65 @@ class ConsumerVolumeExportTest(ChannelTestCase):
                          msg['message'])
         self.assertEqual('error', msg['type'])
 
+    @patch('readux.books.consumers.s3_upload')
+    @patch('readux.books.consumers.export')
+    @patch('readux.books.consumers.annotate')
+    @patch('readux.books.consumers.Repository')
+    def test_tei(self, mockrepo, mockannotate, mockexport,
+                             mocks3_upload):
+
+        # use mock to simulate volume being exported
+        mockobj = NonCallableMock()
+        mockobj.pid = 'vol:1'
+        # use queryset of annotations for testing
+        annotations = Annotation.objects.all()
+        mockobj.annotations.return_value.filter.return_value = annotations
+
+        mockrepo.return_value.get_object.return_value = mockobj
+
+        # s3 upload returns the url where the zipfile can be downloaded
+        mocks3_upload.return_value = 'http://samp.le/file/tei.xml'
+
+        Group(u"notify-tester").add(u'test-channel')
+
+        Channel('volume-export').send({
+            'formdata': {
+                'pid': 'vol:1', 'annotations': 'user', 'mode': 'tei',
+                # deep zoom opt is required even though not relevant for tei
+                'deep_zoom': 'hosted'
+            },
+            'user': self.testuser.username
+        })
+        volume_export(self.get_next_message(u"volume-export", require=True))
+
+        mockannotate.annotated_tei.assert_called_with(
+            mockobj.generate_volume_tei.return_value, annotations)
+        vol_exporter = mockexport.VolumeExport.return_value
+        vol_exporter.save_tei_file.assert_called_with()
+        export_init_args, export_init_kwargs = mockexport.VolumeExport.call_args
+        self.assertEqual(mockobj, export_init_args[0])
+        self.assertEqual(mockannotate.annotated_tei.return_value,
+                         export_init_args[1])
+        # value from form should be passed through
+
+        # expected progress updates in order
+        status_updates = [
+            'Export started',
+            AnnotatedVolumeExport.github_account_msg,
+            'Collected 0 annotations',
+            'Generating volume TEI',
+            'Finished generating volume TEI',
+            'Annotated TEI',
+            'TEI file available for download'
+        ]
+
+        for expexted_msg in status_updates:
+            msg = json.loads(self.get_next_message(u'test-channel')['text'])
+            self.assertEqual(expexted_msg, msg['message'])
+
+        # last message should also have download url
+        self.assertTrue(msg['download_tei'])
+        self.assertEqual(mocks3_upload.return_value, msg['download_url'])
 
     # helper method
     def get_last_message(self, channel):

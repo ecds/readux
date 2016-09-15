@@ -60,6 +60,8 @@ def volume_export(message):
     if not export_form.is_valid():
         notify_msg('Form is not valid; please modify and resubmit',
                    'error', form_errors=export_form.errors)
+        print 'form is not valid'
+        print export_form.errors
         # bail out
         return
 
@@ -249,7 +251,7 @@ def s3_upload(filename, label=None, content_disposition=None):
     # for now, log file size so we can check on errors
     filesize = os.stat(filename).st_size
     logger.info('File %s to upload to S3 is %s (%sb)',
-                 filename, filesizeformat(filesize), filesize)
+                filename, filesizeformat(filesize), filesize)
     key.set_contents_from_filename(filename)
     # make the file publicly readable
     key.set_acl('public-read')

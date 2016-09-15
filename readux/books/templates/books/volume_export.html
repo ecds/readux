@@ -86,6 +86,15 @@
       for 24 hours.</p>
     </div>
 
+    <div id="download-tei" style="display:none">
+      {# download TEI update success message; urls populated by javascript #}
+      <div class="alert alert-success">Annotated TEI generated and available for download.</div>
+
+      <p>A TEI facsimile document with annotations is available for
+      <a class="download-url">download</a> now.  This file will be available
+      for 24 hours.</p>
+    </div>
+
 
     <form class="volume-webexport form-horizontal">{% csrf_token %}
       <div class="text-danger form-errors">
@@ -233,7 +242,15 @@
            $('#status-panel').collapse('hide');
 
           } else if (data.download) {
+            // download jekyll website zipfile
             var div = $('#download-zip');
+            div.find('.download-url').attr('href', data.download_url);
+            div.show()
+
+            $('#status-panel').collapse('hide');
+          } else if (data.download_tei) {
+            // download tei facsimle with annoations
+            var div = $('#download-tei');
             div.find('.download-url').attr('href', data.download_url);
             div.show()
 

@@ -152,8 +152,23 @@ def volume_export(message):
     # NOTE: passing in notify_msg method so that export methods
     # can also report on progress
 
+    # exporting annotated tei only
+    if export_mode == 'tei':
+        # reuse volume exporter logic to serialize the file to disk
+        teifile = exporter.save_tei_file()
+        # upload to temporary S3 bucket and send link to the user
+        # - include username to avoid collisions with different users
+        # exporting the same valume
+        filename = '%s_annotated_tei_%s.xml' % (vol.noid, user.username)
+        content_disposition = 'attachment;filename="%s"' % filename
+
+        download_url = s3_upload(teifile.name, filename,
+                                 content_disposition=content_disposition)
+        notify_msg('TEI file available for download', 'status',
+                   download_tei=True, download_url=download_url)
+
     # check form data to see if github repo is requested
-    if cleaned_data['mode'] == 'github':
+    elif export_mode == 'github':
         # create a new github repository with exported jekyll site
         try:
             repo_url, ghpages_url = exporter.website_gitrepo(
@@ -170,7 +185,7 @@ def volume_export(message):
         except export.GithubExportException as err:
             notify_msg('Export failed: %s' % err, 'error')
 
-    elif cleaned_data['mode'] == 'github_update':
+    elif export_mode == 'github_update':
         # update an existing github repository with new branch and
         # a pull request
         try:
@@ -183,7 +198,7 @@ def volume_export(message):
         except export.GithubExportException as err:
             notify_msg('Export failed: %s' % err, 'error')
 
-    elif cleaned_data['mode'] == 'download':
+    elif export_mode == 'download':
         # non github export: download a jekyll site as a zipfile
         try:
             webzipfile = exporter.website_zip()
@@ -193,7 +208,10 @@ def volume_export(message):
 
             # upload the generated zipfile to an Amazon S3 bucket configured
             # to auto-expire after 23 hours, so user can download
-            download_url = s3_upload(webzipfile.name)
+            notify_msg('Uploading zip file to Amazon S3')
+            # include username in downlaod file label to avoid collisions
+            label = '%s_annotated_jekyll_site_%s' % (vol.noid, user.username)
+            download_url = s3_upload(webzipfile.name, label)
 
             notify_msg('Zip file available for download', 'status',
                        download=True, download_url=download_url)
@@ -203,15 +221,27 @@ def volume_export(message):
             notify_msg('Export failed: %s' % err, 'error')
 
 
-def s3_upload(filename):
+def s3_upload(filename, label=None, content_disposition=None):
     '''Upload a file to the Amazon S3 bucket configured in local settings.
-    (Should be configured to auto-expire after 24 hours.)'''
+    (Should be configured to auto-expire after 24 hours.)
+
+    :param filename: full path to file to be uploaded
+    :param label: optional file name to use for the download; if not
+        specified, will be generated from filename basename
+    :param content_disposition: optional content-disposition header value,
+        e.g. to prompt download of a type that could be displayed
+        in the browser (e.g. xml)
+    '''
     s3_conn = S3Connection(settings.AWS_ACCESS_KEY_ID,
                            settings.AWS_SECRET_ACCESS_KEY)
     s3_bucket = s3_conn.get_bucket(settings.AWS_S3_BUCKET)
     key = Key(s3_bucket)
-    file_basename = basename(filename)
-    key.key = file_basename
+    # use base filename as label, if no label is specified
+    if label is None:
+        label = basename(filename)
+    key.key = label
+    if content_disposition is not None:
+        key.set_metadata('Content-Disposition', content_disposition)
     # NOTE: if zip file exports get very large (e.g. when including
     # images or deep zoom), this will need to be converted to a
     # multi-part upload
@@ -220,4 +250,4 @@ def s3_upload(filename):
     key.set_acl('public-read')
 
     return 'https://s3.amazonaws.com/%s/%s' % \
-        (settings.AWS_S3_BUCKET, file_basename)
+        (settings.AWS_S3_BUCKET, label)

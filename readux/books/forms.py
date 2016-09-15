@@ -39,6 +39,28 @@ class BookSearch(forms.Form):
 
 
 class VolumeExport(forms.Form):
+    #: export mode
+    mode = forms.ChoiceField(
+        label='Export mode',
+        choices=[
+            ('tei', 'Download TEI facsimile with annotations'),
+            ('download', 'Download Jekyll site'),
+            ('github', 'Publish Jekyll site on GitHub'),
+            ('github_update', 'Update an existing Github repo')
+        ],
+        initial='download',
+        widget=forms.RadioSelect,
+        help_text='Choose how to export your annotated volume.'
+    )
+    #: help text for export mode choices
+    mode_help = [
+        'Download a TEI XML file with facsimile volume data and annotations',
+        'Download a zip file with all Jekyll site contents',
+        '''Create a new GitHub repository with the generated Jekyll
+            site content and publish it using Github Pages''',
+        'Update a Jekyll site in an existing GitHub repo'
+    ]
+
     #: which readux page should be 1 in the exported volume
     page_one = forms.IntegerField(
         label="Start Page", min_value=1, required=False,
@@ -80,25 +102,6 @@ class VolumeExport(forms.Form):
         'be included.'
         )
 
-    #: export mode
-    mode = forms.ChoiceField(
-        label='Export mode',
-        choices=[
-            ('download', 'Download'),
-            ('github', 'Publish on GitHub'),
-            ('github_update', 'Update an existing Github repo')
-        ],
-        initial='download',
-        widget=forms.RadioSelect,
-        help_text='Choose how to export your volume as a Jekyll site.'
-    )
-    #: help text for export mode choices
-    mode_help = [
-        'Download a zip file with all Jekyll site contents',
-        '''Create a new GitHub repository with the generated Jekyll
-            site content and publish it using Github Pages''',
-        'Update a Jekyll site in an existing GitHub repo'
-    ]
 
     #: github repository name to be created
     github_repo = forms.SlugField(

@@ -81,7 +81,7 @@ class VolumeExport(object):
         if self.update_callback is not None:
             self.update_callback(msg)
 
-    def save_tei_file(self, tmpdir):
+    def save_tei_file(self, tmpdir=None):
         teifile = tempfile.NamedTemporaryFile(suffix='.xml', prefix='tei-',
                                               dir=tmpdir, delete=False)
         logger.debug('Saving TEI as %s', teifile.name)
@@ -209,7 +209,6 @@ class VolumeExport(object):
         staticgen = IIIFStatic(dst=imagedir, prefix='/%s/' % self.image_dir)
         for teipage in self.tei.page_list:
             for graphic in teipage.graphics:
-                print 'graphic ', graphic, 'rend = ', graphic.rend
                 if graphic.rend == 'full':
                     imgsrc = os.path.join(jekyll_site_dir, graphic.url)
                     iiif_img = IIIFImageClient.init_from_url(graphic.url)

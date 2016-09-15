@@ -125,7 +125,7 @@ the configured fedora instance, or in a single collection specified by pid.'''
         # otherwise, look for all volume objects in fedora
         else:
             objs = self.repo.get_objects_with_cmodel(VolumeV1_0.VOLUME_CONTENT_MODEL,
-                                                type=Volume)
+                                                type=VolumeV1_0)
 
         self.total = len(objs)
 

@@ -60,8 +60,7 @@ def volume_export(message):
     if not export_form.is_valid():
         notify_msg('Form is not valid; please modify and resubmit',
                    'error', form_errors=export_form.errors)
-        print 'form is not valid'
-        print export_form.errors
+        logger.debug("Export form is not valid: %s", export_form.errors)
         # bail out
         return
 

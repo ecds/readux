@@ -19,7 +19,6 @@ class BookSearch(forms.Form):
                       'Wildcards <b>*</b> and <b>?</b> are supported.'),
             error_messages={'required': 'Please enter one or more search terms'})
 
-
     def search_terms(self):
         '''Get a list of keywords and phrases from the keyword input field,
         using :meth:`eulcommon.searchutil.search_terms`.  Assumes that the form
@@ -98,10 +97,9 @@ class VolumeExport(forms.Form):
         # widget=forms.RadioSelect,
         help_text='Deep zoom images can be included in your site to make ' +
         'the site more functional as a standalone entity, but it will make ' +
-        'your site larger.  Including deep zoom requires page images to ' +
-        'be included.'
+        'your site larger.  (Incuding deep zoom images is only allowed ' +
+        'when page images are included.)'
         )
-
 
     #: github repository name to be created
     github_repo = forms.SlugField(
@@ -115,6 +113,11 @@ class VolumeExport(forms.Form):
                   '(type to search and select from your GitHub repos). ' +
                   'If you specified a start page in your previous export, ' +
                   'you should specify the same one to avoid changes.')
+
+    #: options that are relevant to jekyll export but not to TEI
+    jekyll_options = ['page_one', 'include_images', 'deep_zoom']
+    # used in the template to flag fields so javascript can hide them
+    # when TEI export is selected
 
     # flag to allow suppressing annotation choice display when
     # user does not belong to any annotation groups

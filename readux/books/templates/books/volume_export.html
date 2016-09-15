@@ -95,7 +95,6 @@
       for 24 hours.</p>
     </div>
 
-
     <form class="volume-webexport form-horizontal">{% csrf_token %}
       <div class="text-danger form-errors">
         {{ export_form.non_field_errors }}
@@ -120,20 +119,20 @@
           {% endfor %}
           <div class="text-danger mode-errors">{{ field.errors }}</div>
 
-          {% elif field.name = 'annotations' and export_form.hide_annotation_choice %}
+        {% elif field.name = 'annotations' and export_form.hide_annotation_choice %}
           {# hide annotation choice when flag is set (i.e., only one choice available) #}
             {{ field|add_class:"hidden" }}
 
         {% elif field.field.is_checkbox %}
         {# bootstrap styles for checkbox input #}
-        <div class="checkbox">
+        <div class="checkbox {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
           <label>
             {{ field }} {{ field.label }}
           </label>
           <div class="help-block">{{ field.help_text}}</div>
         </div>
         {% else %}
-        <div class="form-group{% if field.errors %} has-error{% endif %}"{% if field.name = 'github_repo' or field.name = 'update_repo' %}style="display:none"{% endif %}>
+        <div class="form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}"{% if field.name = 'github_repo' or field.name = 'update_repo' %}style="display:none"{% endif %}>
             <label for="{{ field.name }}">{{ field.label }}</label>
             {{ field|add_class:"form-control" }}
             <div class="help-block">{{ field.help_text}}</div>
@@ -155,14 +154,20 @@
         var transition = 500;
         var github_repo = $("div.form-group:has(#id_github_repo)");
         var update_repo = $("div.form-group:has(#id_update_repo)");
+        // some form options are relevant to jekyll but not TEI export
+        var jekyll_only = $('.jekyll-only');
         $("input[type=radio][name=mode]").change(function() {
           // hide everything by default, then show as appropriate by mode
           github_repo.hide(transition);
           update_repo.hide(transition);
+          jekyll_only.show(transition);
           if (this.value == 'github') {
             github_repo.show(transition);
           } else if (this.value == 'github_update') {
             update_repo.show(transition);
+          } else if (this.value == 'tei') {
+            // jekyll options not applicable for tei export
+            jekyll_only.hide(transition);
           }
         });
 
@@ -259,9 +264,7 @@
       }
 
         $('.volume-webexport').submit(function(event) {
-          console.log(this)
           var $this = $(this);
-          console.log(event);
           // submit form data as json over the websocket
           socket.send(JSON.stringify({
               volume_export: $this.serialize()

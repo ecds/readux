@@ -90,7 +90,7 @@ class VolumeExport(forms.Form):
         choices=[
             ('hosted', 'Hosted and served out via Readux / IIIF image server'),
             ('include', 'Include Deep Zoom images in export'),
-            # To be added: no deep zoom
+            ('exclude', 'Exclude Deep Zoom images in the export'),
         ],
         initial='hosted',
         # NOTE: could structure like export mode, but requires extra
@@ -99,7 +99,9 @@ class VolumeExport(forms.Form):
         help_text='Deep zoom images can be included in your site to make ' +
         'the site more functional as a standalone entity, but it will make ' +
         'your site larger.  (Incuding deep zoom images is only allowed ' +
-        'when page images are included.)'
+        'when page images are included.)  Deep zoom images can be excluded ' +
+        'entirely so the exported site can standalone without including all ' +
+        'the images and storage required for deep zoom.'
         )
 
     #: github repository name to be created

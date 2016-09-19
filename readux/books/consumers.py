@@ -68,7 +68,9 @@ def volume_export(message):
     cleaned_data = export_form.cleaned_data
     export_mode = cleaned_data['mode']
     include_images = cleaned_data['include_images']
-    include_deep_zoom = (cleaned_data['deep_zoom'] == 'include')
+    deep_zoom = cleaned_data['deep_zoom']
+    include_deep_zoom = (deep_zoom == 'include')
+    no_deep_zoom = (deep_zoom == 'exclude')
     # deep zoom can't be included without including page images
     # this should be caught by form validation, but in case it isn't,
     # just assume include images is true if we get to this point
@@ -149,7 +151,7 @@ def volume_export(message):
     exporter = export.VolumeExport(
         vol, tei, page_one=cleaned_data['page_one'],
         update_callback=notify_msg, include_images=include_images,
-        include_deep_zoom=include_deep_zoom)
+        deep_zoom=deep_zoom)
 
     # NOTE: passing in notify_msg method so that export methods
     # can also report on progress

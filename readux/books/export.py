@@ -57,13 +57,15 @@ class VolumeExport(object):
     image_dir = 'images'
 
     def __init__(self, volume, tei, page_one=None, update_callback=None,
-                 include_images=False, include_deep_zoom=False):
+                 include_images=False, deep_zoom='hosted'):
         self.volume = volume
         self.tei = tei
         self.page_one = page_one
         self.update_callback = update_callback
         self.include_images = include_images
-        self.include_deep_zoom = include_deep_zoom
+        self.deep_zoom = deep_zoom
+        self.include_deep_zoom = (deep_zoom == 'include')
+        self.no_deep_zoom = (deep_zoom == 'exclude')
 
         # initialize github connection values to None
         self.github = None
@@ -100,7 +102,13 @@ class VolumeExport(object):
         # if a page number is specified, pass it as a parameter to the script
         if self.page_one is not None:
             import_command.extend(['--page-one', unicode(self.page_one)])
+        # if no deep zoom is requested, pass through so the jekyll
+        #  config can be updated appropriately
+        if self.no_deep_zoom:
+            import_command.append('--no-deep-zoom')
+
         try:
+            logger.debug('Jekyll import command: %s', ' '.join(import_command))
             subprocess.check_call(import_command, cwd=tmpdir)
         except subprocess.CalledProcessError:
             err_msg = 'Error running jekyll import on TEI facsimile'

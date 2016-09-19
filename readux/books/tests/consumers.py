@@ -83,8 +83,9 @@ class ConsumerVolumeExportTest(ChannelTestCase):
         self.assertEqual(mockobj, export_init_args[0])
         self.assertEqual(mockannotate.annotated_tei.return_value,
                          export_init_args[1])
-        # value from form should be passed through
+        # values from form should be passed through
         self.assertEqual(5, export_init_kwargs['page_one'])
+        self.assertEqual('hosted', export_init_kwargs['deep_zoom'])
 
         # expected progress updates in order
         status_updates = [

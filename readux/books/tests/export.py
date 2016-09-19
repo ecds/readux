@@ -76,11 +76,21 @@ class VolumeExportTest(TestCase):
         exporter.import_tei_jekyll(teifile, self.tmpdir)
         mocksubprocess.check_call.assert_called_with(expected_cmd,
                                                      cwd=self.tmpdir)
+
+        # with no deep zoom option
+        exporter = VolumeExport(self.vol, self.tei, page_one=5,
+                                deep_zoom='exclude')
+        expected_cmd.extend(['--no-deep-zoom'])
+        exporter.import_tei_jekyll(teifile, self.tmpdir)
+        mocksubprocess.check_call.assert_called_with(expected_cmd,
+                                                     cwd=self.tmpdir)
+
         mocksubprocess.check_call.side_effect = subprocess.CalledProcessError(-1, 'error')
         mocksubprocess.CalledProcessError = subprocess.CalledProcessError
         mock_callback = Mock()
         exporter = VolumeExport(self.vol, self.tei,
                                 update_callback=mock_callback)
+
         # error
         with self.assertRaises(ExportException):
             exporter.import_tei_jekyll(teifile, self.tmpdir)

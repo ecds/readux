@@ -116,6 +116,8 @@ Release 1.7
   to the value **LSDI-project**.  See ``localsettings.py.dist`` for
   example and more details.
 
+* Requires an updated version of the teifacsimile-to-jekyll gem (0.7).
+
 
 Release 1.6
 ~~~~~~~~~~~

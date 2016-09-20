@@ -23,6 +23,7 @@ Page.register_templates({
     'regions': (
         ('main', _('Main content area')),
         # ('sidebar', _('Sidebar'), 'inherited'),
+        ('lead', _('Lead or tagline'), 'inherited'),
         ),
     })
 

@@ -20,11 +20,6 @@ from readux.collection import view_helpers
 from readux.collection.models import Collection, SolrCollection
 from readux.views import VaryOnCookieMixin
 
-# currently unused
-# def site_index(request):
-#     # placeholder index page (probably shouldn't be in readux.collection)
-#     return render(request, 'site_base.html')
-
 
 class CollectionList(ListView):
     '''List and display all collections'''

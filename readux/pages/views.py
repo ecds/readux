@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from feincms.views.cbv.views import Handler
 
-# Create your views here.
+
+class SiteIndex(Handler):
+    # extend default feincms view handler so it can be bound to the
+    # index url and referenced as a named route
+    pass

@@ -12,6 +12,7 @@ from readux.books.sitemaps import VolumePdfSitemap, VolumeSitemap, \
     VolumePageSitemap
 from readux.collection.sitemaps import CollectionSitemap
 from readux.collection.views import CollectionCoverList
+from readux.pages.views import SiteIndex
 
 
 admin.autodiscover()
@@ -37,7 +38,7 @@ urlpatterns = patterns('',
     # for now, using collection browse as site index
     # url(r'^$', 'readux.collection.views.site_index', name="site-index"),
     # url(r'^$', 'readux.collection.views.browse', name="site-index"),
-    url(r'^$', CollectionCoverList.as_view(), name="site-index"),
+    url(r'^$', SiteIndex.as_view(), name="site-index"),
 
     url(r'^collections/', include('readux.collection.urls', namespace='collection')),
     url(r'^books/', include('readux.books.urls', namespace='books')),

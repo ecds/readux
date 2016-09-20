@@ -33,8 +33,8 @@ python-social-auth==0.2.14
 jsonfield
 pytz
 fuzzywuzzy
-# restrict to pre-2.0 alpha of feincms for now
-feincms<2.0a
+# restrict to 1.11.x release of feincms for now
+feincms<1.12
 mistune
 gitpython
 pyyaml

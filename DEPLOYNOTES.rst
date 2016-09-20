@@ -100,6 +100,10 @@ directory.  From the top level of your virtualenv directory, run::
 Release 1.7
 ~~~~~~~~~~~
 
+* Run migrations for database updates::
+
+      python manage.py migrate
+
 * Configure Amazon S3 settings for temporary storage of background export
   for downloaded zip files.  See the required fields in
   ``localsettings.py.dist``.

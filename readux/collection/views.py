@@ -39,8 +39,8 @@ class CollectionList(ListView):
     def get_queryset(self):
         solr = solr_interface()
         solrq = solr.query(content_model=Collection.COLLECTION_CONTENT_MODEL) \
-                  .sort_by('title_exact') \
-                  .results_as(SolrCollection)
+                    .sort_by('title_exact') \
+                    .results_as(SolrCollection)
 
         # optional collection owner in settings; if set, filter collections
         # by the specified owner

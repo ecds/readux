@@ -176,8 +176,11 @@ DOWNTIME_EXEMPT_EXACT_URLS = (
 )
 
 FEINCMS_RICHTEXT_INIT_CONTEXT = {
-    'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js'
+    'TINYMCE_JS_URL': '//cdn.tinymce.com/4/tinymce.min.js'
 }
+# use local tinymce init to customize tinymce behavior
+FEINCMS_RICHTEXT_INIT_TEMPLATE = 'pages/init_tinymce4.html'
+
 
 GIT_AUTHOR_EMAIL = 'readux.emory@gmail.com'
 GIT_AUTHOR_NAME = 'readux'

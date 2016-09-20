@@ -8,6 +8,17 @@
   {{ feincms_page.content.media }} {# include any needed css/js media content #}
 {% endblock %}
 
+{% block metadata %}
+  {{block.super}}
+  <meta property="og:title" content="{{ feincms_page.title }}"/>
+  <meta name="twitter:title" content="{{ feincms_page.title }}">
+  {% if tagline %}
+  <meta itemprop="og:headline" content="{{ tagline|striptags }}" />
+  <meta name="twitter:description" content="{{ tagline|striptags }}" />
+  {% endif %}
+{% endblock %}
+
+
 {% block content %}
 <div class="container" style="margin-top:20px">
 

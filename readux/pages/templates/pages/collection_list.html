@@ -3,7 +3,6 @@
     <div id="cover-list" class="item-covers">
         <ul class="media-list collection-list cover-view">
             {% for coll, count in collections %}
-            {# {% for coll in collections %} #}
                {% include 'collection/snippets/list_collection_cover.html' %}
            {% endfor %}
        </ul>

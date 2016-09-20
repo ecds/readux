@@ -104,11 +104,6 @@ Release 1.7
 
       python manage.py migrate
 
-* Load default homepage (site index is now editable, this will preserve
-  something akin to current functionality which can be edited by admins)::
-
-      python manage.py loaddata readux/pages/fixtures/site_index.json
-
 * Configure Amazon S3 settings for temporary storage of background export
   for downloaded zip files.  See the required fields in
   ``localsettings.py.dist``.

@@ -11,6 +11,11 @@ from fabric.contrib.console import confirm
 
 import readux
 
+
+# set -H prefix for all sudo commands (sets home to match user)
+# (this is particularly important for pip install commands)
+env.sudo_prefix = 'sudo -H'
+
 ##
 # automated build/test tasks
 ##

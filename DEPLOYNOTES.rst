@@ -100,10 +100,27 @@ directory.  From the top level of your virtualenv directory, run::
 Release 1.7
 ~~~~~~~~~~~
 
+* Run migrations for database updates::
+
+      python manage.py migrate
+
+* Configure Amazon S3 settings for temporary storage of background export
+  for downloaded zip files.  See the required fields in
+  ``localsettings.py.dist``.
+
+* This release makes use of Channels.  See the
+  `channels deploy documentation <https://channels.readthedocs.io/en/latest/deploying.html>`_
+  and configure **CHANNEL_LAYERS** in ``localsettings.py``.
+
+* **JEKYLLIMPORT_TEI_SCRIPT** can now be specified in ``localsettings.py``
+  if the exact path needs to be specified.
+
 * New configuration in ``localsettings.py`` to configure Fedora Collections
   to be listed based on owner attribute.  For Emory, this should be set
   to the value **LSDI-project**.  See ``localsettings.py.dist`` for
   example and more details.
+
+* Requires an updated version of the teifacsimile-to-jekyll gem (0.7).
 
 
 Release 1.6
@@ -112,7 +129,6 @@ Release 1.6
 * Run migrations for database updates::
 
       python manage.py migrate
-
 
 Release 1.5
 ~~~~~~~~~~~

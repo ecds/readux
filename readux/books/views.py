@@ -1,3 +1,4 @@
+from channels import Channel
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
@@ -598,7 +599,7 @@ class VolumeTei(View):
         return response
 
 
-class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
+class AnnotatedVolumeExport(DetailView, FormMixin,
                             VaryOnCookieMixin):
     model = Volume
     template_name = 'books/volume_export.html'
@@ -669,123 +670,9 @@ class AnnotatedVolumeExport(DetailView, FormMixin, ProcessFormView,
         context_data.update(kwargs)
         return render(request, self.template_name, context_data)
 
-    def post(self, request, *args, **kwargs):
-        vol = self.object = self.get_object()
-
-        # don't do anything if user is not logged in
-        if self.request.user.is_anonymous():
-            response = render(request, self.template_name, self.get_context_data())
-            response.status_code = 400  # bad request
-            return response
-
-        # get posted form data and use that to generate the export
-        export_form = self.get_form()
-        if export_form.is_valid():
-            cleaned_data = export_form.cleaned_data
-            export_mode = cleaned_data['mode']
-
-            # if github export or update is requested, make sure user
-            # has a github account available to use for access
-            if export_mode in ['github', 'github_update']:
-                try:
-                    github.GithubApi.github_account(self.request.user)
-                except github.GithubAccountNotFound:
-                    return self.render(request, error=self.github_account_msg)
-
-                # check that oauth token has sufficient permission
-                # to do needed export steps
-                gh = github.GithubApi.connect_as_user(self.request.user)
-                # note: repo would also work here, but currently asking for public_repo
-                if 'public_repo' not in gh.oauth_scopes():
-                    return self.render(request, error=self.github_scope_msg)
-        else:
-            return self.render(request)
-
-        # determine which annotations should be loaded
-        if cleaned_data['annotations'] == 'user':
-            # annotations *by* this user
-            # (NOT all annotations the user can view)
-            annotations = vol.annotations().filter(user=request.user)
-        elif cleaned_data['annotations'].startswith('group:'):
-            # all annotations visible to a group this user belongs to
-            group_id = cleaned_data['annotations'][len('group:'):]
-            # NOTE: object not found error should not occur here,
-            # because only valid group ids should be valid choices
-            group = AnnotationGroup.objects.get(pk=group_id)
-            annotations = vol.annotations().visible_to_group(group)
-
-        # generate annotated tei
-        tei = annotate.annotated_tei(vol.generate_volume_tei(),
-                                     annotations)
-
-        # check form data to see if github repo is requested
-        if export_mode == 'github':
-            # create a new github repository with exported jekyll site
-            try:
-                repo_url, ghpages_url = export.website_gitrepo(request.user,
-                    cleaned_data['github_repo'], vol, tei,
-                    page_one=cleaned_data['page_one'])
-
-                logger.info('Exported %s to GitHub repo %s for user %s',
-                    vol.pid, repo_url, request.user.username)
-
-                # NOTE: template checks for github export to display the
-                # new github repo & pages urls with some help text
-                return self.render(request, repo_url=repo_url,
-                    ghpages_url=ghpages_url, github_export=True)
-            except export.GithubExportException as err:
-                response = self.render(request, error='Export failed: %s' % err)
-                response.status_code = 400  # maybe?
-                return response
-
-        elif export_mode == 'github_update':
-            # update an existing github repository with new branch and
-            # a pull request
-            try:
-                pr_url = export.update_gitrepo(
-                    request.user, cleaned_data['update_repo'],
-                    vol, tei, page_one=cleaned_data['page_one'])
-
-                # NOTE: template checks for update flag to display the
-                # pull request url with some help text
-                return self.render(request, repo_url=cleaned_data['update_repo'],
-                                   pullrequest_url=pr_url, github_update=True)
-
-            except export.GithubExportException as err:
-                response = self.render(request, error='Export failed: %s' % err)
-                response.status_code = 400  # maybe?
-                return response
-
-        elif export_mode == 'download':
-            # non github export: download a jekyll site as a zipfile
-            try:
-                webzipfile = export.website_zip(vol, tei,
-                    page_one=cleaned_data['page_one'])
-                logger.info('Exported %s as jekyll zipfile for user %s',
-                    vol.pid, request.user.username)
-                response = StreamingHttpResponse(FileWrapper(webzipfile, 8192),
-                    content_type='application/zip')
-                response['Content-Disposition'] = 'attachment; filename="%s_annotated_jeyll_site.zip"' % \
-                    (vol.noid)
-                response['Content-Length'] = os.path.getsize(webzipfile.name)
-            except export.ExportException as err:
-                # display error to user and redisplay the form
-                response = self.render(request, error='Export failed. %s' % err)
-                response.status_code = 500
-
-            # set a cookie to indicate download is complete, that can be
-            # used by javascript to hide a 'generating' indicator
-            completion_cookie_name = request.POST.get('completion-cookie',
-                '%s-web-export' % vol.noid)
-            response.set_cookie(completion_cookie_name, 'complete', max_age=10)
-            return response
-
-        else:
-            response = self.render(request,
-                                   error='Unrecognized export mode "%s"' % \
-                                   export_mode)
-            response.status_code = 400
-            return response
+    # NOTE: processing the submitted form is now handled by
+    # readux.books.consumers.volume_export
+    # (form data is submitted via websocket)
 
 
 class Unapi(View):

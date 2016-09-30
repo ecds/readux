@@ -163,6 +163,30 @@ IIIF_ID_SUFFIX = ''
 # override default git author name if desired
 # GIT_AUTHOR_NAME = 'readux'
 
+# path to jekyll import ruby script; override in localsettings if you
+# need to specify the path
+#JEKYLLIMPORT_TEI_SCRIPT = 'jekyllimport_teifacsimile'
+
+
+# channels backend configuration
+CHANNEL_LAYERS = {
+    "default": {
+        # in memory is fine for development; use redis for production/qa
+        "BACKEND": "asgiref.inmemory.ChannelLayer",
+        # "BACKEND": "asgi_redis.RedisChannelLayer",
+        # "CONFIG": {
+        #     "hosts": [("localhost", 6379)],
+        # },
+        "ROUTING": "readux.routing.channel_routing",
+    },
+}
+
+# AWS S3 settings
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+AWS_S3_BUCKET = ''
+
+
 # Optional filter for Collections objects in Fedora by owner attribute
 # COLLECTIONS_OWNER = ''
 

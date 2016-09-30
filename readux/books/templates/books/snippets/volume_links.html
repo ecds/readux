@@ -41,8 +41,16 @@
         <span class="glyphicon glyphicon-send"></span>
         <span>Send to Voyant</span>
 </a>
-
 {% url 'books:volume' vol.pid as volume_url %}{# annotation count for each volume #}
+
+{% if volume_url in annotated_volumes %}
+<a href="{% url 'books:webexport' vol.pid %}"
+   title="Export annotated edition" class="btn btn-default{% if small_buttons %} btn-xs{% endif %}">
+        <span class="fa fa-download"></span>
+        <span>Export</span>
+</a>
+{% endif %}
+
 {% include 'books/snippets/comment_count.html' with item_url=volume_url annotation_count=annotated_volumes %}
 
 {% if vol.large_pdf %}

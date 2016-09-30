@@ -1344,3 +1344,11 @@ h3.annotation-permissions {
 .permission label {
     font-weight: bold;
 }
+
+/* styles for volume export status/updates block */
+.status .updates {
+}
+
+.status .updates .time {
+    padding-right: 2em;
+}

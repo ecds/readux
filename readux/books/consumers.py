@@ -71,6 +71,8 @@ def volume_export(message):
     deep_zoom = cleaned_data['deep_zoom']
     include_deep_zoom = (deep_zoom == 'include')
     no_deep_zoom = (deep_zoom == 'exclude')
+    # This gets set below if exporting to GitHub.
+    github_repo = None
     # deep zoom can't be included without including page images
     # this should be caught by form validation, but in case it isn't,
     # just assume include images is true if we get to this point
@@ -79,9 +81,11 @@ def volume_export(message):
 
     # if github export or update is requested, make sure user
     # has a github account available to use for access
+    # and add the repo name to the parameters
     if export_mode in ['github', 'github_update']:
         try:
             github.GithubApi.github_account(user)
+            github_repo = cleaned_data['github_repo']
         except github.GithubAccountNotFound:
             notify_msg(AnnotatedVolumeExport.github_account_msg, 'error')
             return
@@ -151,7 +155,7 @@ def volume_export(message):
     exporter = export.VolumeExport(
         vol, tei, page_one=cleaned_data['page_one'],
         update_callback=notify_msg, include_images=include_images,
-        deep_zoom=deep_zoom)
+        deep_zoom=deep_zoom, github_repo=github_repo)
 
     # NOTE: passing in notify_msg method so that export methods
     # can also report on progress

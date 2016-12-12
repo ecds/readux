@@ -215,8 +215,9 @@ class VolumeExport(object):
     def generate_deep_zoom(self, jekyll_site_dir):
         self.log_status('Downloading deep zoom images')
         imagedir = os.path.join(jekyll_site_dir, self.image_dir)
-        _prefix = '/%s/%s' % (self.github_repo, self.image_dir) if self.github_repo else self.image_dir
-        staticgen = IIIFStatic(dst=imagedir, prefix='/%s/' % _prefix)
+        # If exporting to GitHub, add the repo name to the path.
+        _prefix = os.path.join(os.sep, self.github_repo, self.image_dir) if self.github_repo else os.path.join(os.sep, self.image_dir)
+        staticgen = IIIFStatic(dst=imagedir, prefix=_prefix)
         for teipage in self.tei.page_list:
             for graphic in teipage.graphics:
                 if graphic.rend == 'full':

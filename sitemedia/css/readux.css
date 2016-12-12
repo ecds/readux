@@ -5,6 +5,10 @@ body{
     padding:1em 0 0;
 }
 
+#content {
+  margin: auto 6em;
+}
+
 .progress {
     height: 10px;
 }

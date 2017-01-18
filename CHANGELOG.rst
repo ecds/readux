@@ -6,8 +6,15 @@ CHANGELOG
 Release 1.7 (preliminary)
 -------------------------
 
-* New **IIIF_ID_SUFFIX** configuration option for IIIF image server (`#4 <https://github.com/emory-libraries/readux/pull/4>`_ via `@ghukill <https://github.com/ghukill>`_)
-* OCR to TEI facsimile now supports output from ABBYY Recognition Server (`#4 <https://github.com/emory-libraries/readux/pull/4>`_ via `@ghukill <https://github.com/ghukill>`_)
+* New **IIIF_ID_SUFFIX** configuration option for IIIF image server
+  (`#4 <https://github.com/emory-libraries/readux/pull/4>`_ via
+  `@ghukill <https://github.com/ghukill>`_)
+* OCR to TEI facsimile now supports output from ABBYY Recognition
+  Server (`#4 <https://github.com/emory-libraries/readux/pull/4>`_
+  via `@ghukill <https://github.com/ghukill>`_)
+* As a scholarly edition author I can use a dynamic form that breaks
+  the export process up into logical steps so that I understand the choices
+  I am making when exporting a volume and avoid making incompatible choices.
 
 Release 1.6.1
 -------------

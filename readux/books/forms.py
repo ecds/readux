@@ -47,7 +47,7 @@ class VolumeExport(forms.Form):
             ('github', 'Publish Jekyll site on GitHub'),
             ('github_update', 'Update an existing Github repo')
         ],
-        initial='download',
+        initial='none',
         widget=forms.RadioSelect,
         help_text='Choose how to export your annotated volume.'
     )
@@ -64,10 +64,9 @@ class VolumeExport(forms.Form):
     #: which readux page should be 1 in the exported volume
     page_one = forms.IntegerField(
         label="Start Page", min_value=1, required=False,
-        help_text='Select the page in the Readux that should be the first ' +
+        help_text='Optional: Select the page in the Readux that should be the first ' +
         ' numbered page in your digital edition. Preceding pages will ' +
-        ' be numbered with a prefix, and can be customized after export.' +
-        ' (Optional)')
+        ' be numbered with a prefix, and can be customized after export.')
     #: annotations to export: individual or group
     annotations = forms.ChoiceField(
         label='Annotations to export',
@@ -81,25 +80,35 @@ class VolumeExport(forms.Form):
         'option to make your site more functional as a standalone entity' +
         '(including images will make your site larger).',
         required=False)
+
+    image_hosting = forms.ChoiceField(
+        label='Image Hosting',
+        choices=[
+            ('readux_hosted', 'Host images via Readux / IIIF image server'),
+            ('independently_hosted', 'Host images independently'),
+        ],
+        initial='readux_hosted',
+        help_text='Whether page images are served via Readux or independently in the export (i.e. images in the Jekyll export download or on GitHub; including images will make site larger).'
+    )
     # NOTE: at some point in the future, option to include images may depend
     # on the rights and permissions for the individual volume, and might
     # not be available for all content that can be exported.
 
     deep_zoom = forms.ChoiceField(
-        label='Deep zoom images',
+        label='Deep Zoom Images',
         choices=[
-            ('hosted', 'Hosted and served out via Readux / IIIF image server'),
             ('include', 'Include Deep Zoom images in export'),
-            ('exclude', 'Exclude Deep Zoom images in the export'),
+            ('exclude', 'Exclude Deep Zoom images in export'),
         ],
-        initial='hosted',
+        required=False,
+        initial='exclude',
         # NOTE: could structure like export mode, but requires extra
         # template work
         # widget=forms.RadioSelect,
         help_text='Deep zoom images can be included in your site to make ' +
         'the site more functional as a standalone entity, but it will make ' +
-        'your site larger.  (Incuding deep zoom images is only allowed ' +
-        'when page images are included.)  Deep zoom images can be excluded ' +
+        'your site larger. (Incuding deep zoom images is only allowed ' +
+        'when page images are included.) Deep zoom images can be excluded ' +
         'entirely so the exported site can standalone without including all ' +
         'the images and storage required for deep zoom.'
         )
@@ -118,7 +127,7 @@ class VolumeExport(forms.Form):
                   'you should specify the same one to avoid changes.')
 
     #: options that are relevant to jekyll export but not to TEI
-    jekyll_options = ['page_one', 'include_images', 'deep_zoom']
+    jekyll_options = ['page_one', 'deep_zoom', 'image_hosting']
     # used in the template to flag fields so javascript can hide them
     # when TEI export is selected
 
@@ -145,10 +154,10 @@ class VolumeExport(forms.Form):
 
     def clean(self):
         cleaned_data = super(VolumeExport, self).clean()
-        include_images = cleaned_data.get("include_images")
+        image_hosting = cleaned_data.get("image_hosting")
         deep_zoom = cleaned_data.get("deep_zoom")
 
-        if deep_zoom == 'included' and not include_images:
+        if deep_zoom == "included" and not image_hosting == "independently_hosted":
             raise forms.ValidationError(
                 'Including Deep Zoom images in your export requires that ' +
                 ' you also include page images'
@@ -163,4 +172,3 @@ class VolumeExport(forms.Form):
                 choices.append((group.annotationgroup.annotation_id,
                                 'All annotations shared with %s' % group.name))
         return choices
-

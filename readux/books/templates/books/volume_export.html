@@ -19,7 +19,7 @@
 
     {% include 'books/snippets/volume_header.html' %}
 
-    <div class="status" style="display:none">
+    <div class="status display-none">
       <div class="alert alert-info">Your export has been requested.  Please leave
       this page open to be notified when it is complete.</div>
       <div class="panel-group" id="accordion">
@@ -53,7 +53,7 @@
       {{ warning }}</div>
     {% endif %}
 
-    <div id="github-export" style="display:none">
+    <div id="github-export" class="display-none">
     {# github export success message; displayed & urls populated by javascript #}
       <div class="alert alert-success">GitHub jekyll site export succeeded.</div>
 
@@ -68,7 +68,7 @@
       Pages help documentation</a>.</p>
     </div>
 
-    <div id="github-update" style="display:none">
+    <div id="github-update" class="display-none">
     {# github update success message; displayed & urls populated by javascript #}
       <div class="alert alert-success">GitHub jekyll site update succeeded.</div>
 
@@ -78,7 +78,7 @@
       published edition.</p>
     </div>
 
-    <div id="download-zip" style="display:none">
+    <div id="download-zip" class="display-none">
     {# download update success message; urls populated by javascript #}
       <div class="alert alert-success">Jekyll site generated and available for download.</div>
 
@@ -87,7 +87,7 @@
       for 24 hours.</p>
     </div>
 
-    <div id="download-tei" style="display:none">
+    <div id="download-tei" class="display-none">
       {# download TEI update success message; urls populated by javascript #}
       <div class="alert alert-success">Annotated TEI generated and available for download.</div>
 
@@ -128,14 +128,14 @@
 
         {% elif field.field.is_checkbox %}
           {# bootstrap styles for checkbox input #}
-          <div style="display:none" class="checkbox {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
+          <div class="display-none checkbox {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
             <label>
               {{ field }} {{ field.label }}
             </label>
             <div class="help-block">{{ field.help_text}}</div>
           </div>
         {% else %}
-          <div style="display:none" class="form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}"{% if field.name = 'github_repo' or field.name = 'update_repo' %}style="display:none"{% endif %}>
+          <div class="display-none form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}"{% if field.name = 'github_repo' or field.name = 'update_repo' %}style="display:none"{% endif %}>
               <label for="{{ field.name }}">{{ field.label }}</label>
               {{ field|add_class:"form-control" }}
               <div class="help-block">{{ field.help_text}}</div>
@@ -323,6 +323,9 @@
 
 
     <style>
+      .display-none {
+        display: none;
+      }
       .export-title {
         text-transform: capitalize;
         font-size: 14px;

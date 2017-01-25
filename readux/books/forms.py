@@ -100,6 +100,7 @@ class VolumeExport(forms.Form):
             ('include', 'Include Deep Zoom images in export'),
             ('exclude', 'Exclude Deep Zoom images in export'),
         ],
+        required=False,
         initial='exclude',
         # NOTE: could structure like export mode, but requires extra
         # template work

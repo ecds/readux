@@ -51,4 +51,3 @@ asgi_redis==0.14.1
 asgiref==0.14.0
 redis==2.10.5
 piffle>=0.2.1
-iiif==1.0.2

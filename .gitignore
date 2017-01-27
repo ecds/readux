@@ -5,7 +5,7 @@ docs/_build
 parser.out
 parsetab.py
 # only ignore top-level static dir, not app-level static files
-./static/
+static/
 media/
 
 

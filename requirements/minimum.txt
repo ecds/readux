@@ -41,8 +41,8 @@ pyyaml
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@develop#egg=digitaledition-jekylltheme
 django-guardian
-channels
-daphne
+channels==0.17.3
+daphne==0.14.3
 asgi_redis
 boto
 piffle>=0.2.1

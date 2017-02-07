@@ -1,4 +1,8 @@
-Django>=1.8,<1.9
+amqp==1.4.9
+billiard==3.5.0.2
+boto==2.42.0
+celery==3.1.23
+Django==1.8.14
 eulxml>=0.22
 #eulfedora>=1.5
 -e git+https://github.com/emory-libraries/eulfedora.git@develop#egg=eulfedora
@@ -26,11 +30,11 @@ python-magic
 progressbar<=2.3
 -e git+https://github.com/openzoom/deepzoom.py.git#egg=deepzoom
 pdfminer<=20140328
-beautifulsoup4
+beautifulsoup4==4.5.3
 bagit
 # 0.2.16 breaks extra_data (string instead of json?)
 python-social-auth==0.2.14
-jsonfield
+iiif
 pytz
 fuzzywuzzy
 # restrict to 1.11.x release of feincms for now
@@ -41,9 +45,10 @@ pyyaml
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@develop#egg=digitaledition-jekylltheme
 django-guardian
-channels
-daphne
-asgi_redis
-boto
+channels==0.17.2
+daphne==0.15.0
+asgi_redis==0.14.1
+asgiref==0.14.0
+redis==2.10.5
 piffle>=0.2.1
-iiif
+jsonfield==1.0.3

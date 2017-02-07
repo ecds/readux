@@ -67,7 +67,8 @@ def volume_export(message):
     # if form is valid, then proceed with the export
     cleaned_data = export_form.cleaned_data
     export_mode = cleaned_data['mode']
-    include_images = cleaned_data['include_images']
+    image_hosting = cleaned_data['image_hosting']
+    include_images = (image_hosting == 'independently_hosted')
     deep_zoom = cleaned_data['deep_zoom']
     include_deep_zoom = (deep_zoom == 'include')
     no_deep_zoom = (deep_zoom == 'exclude')

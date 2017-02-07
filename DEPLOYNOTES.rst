@@ -122,6 +122,9 @@ Release 1.7
 
 * Requires an updated version of the teifacsimile-to-jekyll gem (0.7).
 
+* Requires using channels-0.17.3 and daphne-0.14.3 as for now to avoid
+  Django channel issues. Newer daphne and channels have been released but
+  we need to update our code in order to adapt to them.
 
 Release 1.6
 ~~~~~~~~~~~

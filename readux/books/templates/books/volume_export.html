@@ -162,24 +162,24 @@
         // some form options are relevant to jekyll but not TEI export
         var jekyll_only = $('.jekyll-only');
 
-        // // a function to toggle the usability of the deep_zoom image hosting
-        // // when image is hosted independently, the deep_zoom image hosting becomes an option
-        // // otherwise it is not an option
-        // var toggle_deep_zoom = function(target) {
-        //   if (target.value == "independently_hosted") {
-        //     $("#id_deep_zoom")[0].disabled = false;
-        //     $("div.form-group:has(#id_deep_zoom)").fadeTo( "fast" , 1);
-        //   } else {
-        //     $("div.form-group:has(#id_deep_zoom)").fadeTo( "fast" , 0.5);
-        //     $("#id_deep_zoom")[0].value = "exclude";
-        //     $("#id_deep_zoom")[0].disabled = true;
-        //   }
-        // };
+        // a function to toggle the usability of the deep_zoom image hosting
+        // when image is hosted independently, the deep_zoom image hosting becomes an option
+        // otherwise it is not an option
+        var toggle_deep_zoom = function(target) {
+          if (target.value == "independently_hosted") {
+            $("#id_deep_zoom")[0].disabled = false;
+            $("div.form-group:has(#id_deep_zoom)").fadeTo( "fast" , 1);
+          } else {
+            $("div.form-group:has(#id_deep_zoom)").fadeTo( "fast" , 0.5);
+            $("#id_deep_zoom")[0].value = "exclude";
+            $("#id_deep_zoom")[0].disabled = true;
+          }
+        };
 
-        // // add eventlistener to the image hosting select
-        // $("#id_image_hosting")[0].addEventListener("change",function(e) {
-        //   toggle_deep_zoom(e.target);
-        // });
+        // add eventlistener to the image hosting select
+        $("#id_image_hosting")[0].addEventListener("change",function(e) {
+          toggle_deep_zoom(e.target);
+        });
 
         $("input[type=radio][name=mode]").change(function() {
           // hide everything by default, then show as appropriate by mode
@@ -188,7 +188,7 @@
           jekyll_only.hide(transition);
 
           // toggle UI usabilities
-          // toggle_deep_zoom(deep_zoom_select[0]);
+          toggle_deep_zoom(deep_zoom_select[0]);
           $("#export-button")[0].disabled = false;
 
           if (this.value == 'github') {

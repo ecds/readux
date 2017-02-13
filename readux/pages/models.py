@@ -4,6 +4,7 @@ from django.template import Context, Template
 from django.template.loader import get_template
 from django.utils.translation import ugettext_lazy as _
 from random import shuffle
+from operator import itemgetter, attrgetter, methodcaller
 
 from feincms.module.page.models import Page
 from feincms.content.richtext.models import RichTextContent
@@ -64,10 +65,21 @@ class RandomCollectionContent(models.Model):
         collections = [(r, collection_counts.get(r['pid'])) for r in collq
                        if r['pid'] in collection_counts]
         # randomize the order, then select the requested number for display
-        shuffle(collections)
+        # shuffle(collections)
+
+        # order alphabetically
+        # please note that if we allow less collections to be displayed on the homepage
+        # than actual number of collections the ones from the lower side of the alphabet
+        # will never show up, compared with the randomized version
+        collections = sorted(collections, key=lambda collection: collection[0]["identifier"][0])
         collections = collections[:self.num_collections]
 
         tpl = get_template('pages/collection_list.html')
         return tpl.render({'collections': collections})
+
+    # A helper method to sort the collection alphabetically
+    # Returned is the identifier of each collection
+    def getIdentifier(collection):
+        return collection[0]["identifier"]
 
 Page.create_content_type(RandomCollectionContent)

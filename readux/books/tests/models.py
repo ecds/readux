@@ -53,7 +53,7 @@ class SolrVolumeTest(TestCase):
                          pid='testpid:1234')
 
         url = volume.fulltext_absolute_url()
-        self.assert_(url.startswith('http://'))
+        self.assert_(url.startswith('https://'))
         self.assert_(url.endswith(reverse('books:text', kwargs={'pid': volume.pid})))
         current_site = Site.objects.get_current()
         self.assert_(current_site.domain in url)
@@ -553,4 +553,3 @@ class AbbyyOCRTestCase(TestCase):
         self.assertEqual('fr6v1:par|fr8v2:par', abbyyocr.frns('par'))
         self.assertEqual('fr6v1:text/fr6v1:par|fr8v2:text/fr8v2:par',
                          abbyyocr.frns('text/par'))
-

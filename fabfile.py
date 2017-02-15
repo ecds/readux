@@ -23,9 +23,9 @@ env.sudo_prefix = 'sudo -H'
 
 def all_deps():
     '''Locally install all dependencies.'''
-    local('pip install -r requirements/dev.txt')
+    local('pip install -r requirements/dev.txt --exists-action w')
     if os.path.exists('pip-local-req.txt'):
-        local('pip install -r pip-local-req.txt')
+        local('pip install -r pip-local-req.txt --exists-action w')
 
 @task
 def test():

@@ -23,9 +23,9 @@ env.sudo_prefix = 'sudo -H'
 
 def all_deps():
     '''Locally install all dependencies.'''
-    local('pip install -r requirements/dev.txt')
+    local('pip install -r requirements/dev.txt --exists-action w')
     if os.path.exists('pip-local-req.txt'):
-        local('pip install -r pip-local-req.txt')
+        local('pip install -r pip-local-req.txt --exists-action w')
 
 @task
 def test():
@@ -158,12 +158,12 @@ def setup_virtualenv(python=None):
         # activate the environment and install required packages
         # NOTE: could use -q on pip commands to suppress all output
         with prefix('source env/bin/activate'):
-            pip_cmd = 'pip install -r requirements.txt'
+            pip_cmd = 'pip install -r requirements.txt --exists-action w'
             if env.remote_proxy:
                 pip_cmd += ' --proxy=%(remote_proxy)s' % env
             sudo(pip_cmd, user=env.remote_acct)
             if files.exists('../pip-local-req.txt'):
-                pip_cmd = 'pip install -r ../pip-local-req.txt'
+                pip_cmd = 'pip install -r ../pip-local-req.txt --exists-action w'
                 if env.remote_proxy:
                     pip_cmd += ' --proxy=%(remote_proxy)s' % env
                 sudo(pip_cmd, user=env.remote_acct)

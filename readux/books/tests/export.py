@@ -170,7 +170,7 @@ class VolumeExportTest(TestCase):
         self.exporter.generate_deep_zoom(self.tmpdir)
 
         imgdir = os.path.join(self.tmpdir, 'images')
-        mockiiifstatic.assert_called_with(dst=imgdir, prefix='/images/')
+        mockiiifstatic.assert_called_with(dst=imgdir, prefix='/images')
         mockiiifimgclient.init_from_url.assert_called_with(teigraphic.url)
         expected_src = os.path.join(self.tmpdir, teigraphic.url)
         mockiiifstatic.return_value.generate.assert_called_with(

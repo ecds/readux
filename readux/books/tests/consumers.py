@@ -68,8 +68,8 @@ class ConsumerVolumeExportTest(ChannelTestCase):
         Channel('volume-export').send({
             'formdata': {
                 'pid': 'vol:1', 'annotations': 'user', 'mode': 'download',
-                'page_one': '5', 'include_images': False,
-                'deep_zoom': 'hosted'
+                'page_one': '5', 'image_hosting': 'readux_hosted',
+                'deep_zoom': 'include'
             },
             'user': self.testuser.username
         })
@@ -133,8 +133,8 @@ class ConsumerVolumeExportTest(ChannelTestCase):
 
         form_data = {
             'pid': 'vol:1', 'annotations': 'user', 'mode': 'github',
-            'page_one': '3', 'github_repo': 'foo', 'include_images': False,
-            'deep_zoom': 'hosted'
+            'page_one': '3', 'github_repo': 'foo', 'image_hosting': 'readux_hosted',
+            'deep_zoom': 'include'
         }
         Channel('volume-export').send({
             'formdata': form_data,
@@ -230,8 +230,8 @@ class ConsumerVolumeExportTest(ChannelTestCase):
 
         form_data = {
             'pid': 'vol:1', 'annotations': 'user', 'mode': 'github_update',
-            'page_one': '3', 'update_repo': 'foobar', 'include_images': False,
-            'deep_zoom': 'hosted'
+            'page_one': '3', 'update_repo': 'foobar', 'image_hosting': 'readux_hosted',
+            'deep_zoom': 'include'
         }
         Channel('volume-export').send({
             'formdata': form_data,
@@ -341,4 +341,3 @@ class ConsumerVolumeExportTest(ChannelTestCase):
             last_message = msg
             msg = self.get_next_message(channel)
         return last_message
-

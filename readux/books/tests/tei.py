@@ -60,7 +60,6 @@ class TeiFacsimileTest(TestCase):
         uri = '%sqqq' % uri
         self.assertEqual(None, teidoc.page_id_by_xlink(uri))
 
-
 @override_settings(TEI_DISTRIBUTOR='Readux Test Publications')
 class OCRtoTEIFacsimileXSLTest(TestCase):
 

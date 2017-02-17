@@ -1,4 +1,4 @@
-__version_info__ = (1, 7, 0, 'dev')
+__version_info__ = (1, 7, 0, None)
 
 # Dot-connect all but the last. Last is dash-connected if not None.
 __version__ = '.'.join([str(i) for i in __version_info__[:-1]])
@@ -26,4 +26,3 @@ def context_extras(request):
         },
         'user_socialauth_providers': socialauth_providers
     }
-

@@ -3,11 +3,87 @@
 CHANGELOG
 =========
 
+Release 1.7 - Export Notifications, Export Search Improvements, Bug Triage
+--------------------------------------------------------------------------
+* As a site administrator, I want to embed collections into editable pages
+  that can be ordered randomly or alphabetically so that I can introduce
+  users to the site
+* Bugfix: Display issue in Readux export: Annotation highlighting cut off
+  on oblong pages
+* Bugfix: Display issue in Readux export: Right side of pages cut off on
+  oblong pages
+* Bugfix: Display issue in Readux export: Vertical page inelegantly displays
+  in box for vertical pages in oblong books
+* Bugfix: Image thumbnails show as broken links on "Annotations tagged
+  with..." pages in exported editions
+* Bugfix: Deep Zoom images are not loaded in the recent exports, even when
+  images are hosted independently and deep zoom is included in the export
+* As a scholarly edition author I can use a dynamic form that breaks the
+  export process up into logical steps so that I understand the choices
+  I am making when exporting a volume and avoid making incompatible choices
+* Bugfix: Jekyll site website packages downloaded in the testreadux
+  environment do not display page image thumbnails when uploaded to GitHub
+* Bugfix: Image thumbnails on the "browse pages" page and images for
+  individual pages served from Readux show as broken links in exported
+  editions
+* Bugfix: Top level navigation should include "Collections", "About",
+  "Annotation", "Export", and "Credits."
+* As a scholarly edition author I can start the generation of my edition
+  on my computer, run in the background, and receive notification when it
+  is ready, so that I can do other things while it is generating and
+  downloading
+* As a scholarly edition author I want the option to exclude deep zoom
+  from my website package so that I can display my edition without having
+  to connect to Readux
+* Bugfix: clicking on export button causes error when logged in via LDAP
+* As a scholarly edition author I want to the option to include deep
+  zoom images in my website package so that I can display my edition
+  without having to connect to Readux
+* Bugfix: Fix CSS/Jquery issue in GitHub export
+* Bugfix: No padding on simple pages
+* Bugfix: Editable pages cannot include span tags (for COinS) and html
+  source cannot be edited
+* As a site administrator, I want the Readux home page to be editable
+  and configurable so that I can display custom-designed text and collections
+  to introduce users to the site
+* As a scholarly edition author I want the option to download page images
+  with my website package so that I can display my edition without having
+  to connect to Readux
+* As a scholarly edition author I want users to to see an index based on
+  annotation tags that includes a count of annotation and page numbers so
+  that they can see how tags are used across the volume
+* As a user I want to see the option of downloading the TEI in the main
+  export form so that I can choose between all export options on the same
+  webpage
+* As an annotated edition author I want users to be able to keep track of
+  applied filters and search keywords in the URL so that each search could
+  be referenced in the future or shared with another person
+* As an annotated edition author I want users to be able to facet
+  annotation searches by tags so that they can more easily identify
+  relevant content
+* As an annotated edition author I want users to be able to facet
+  searches by annotation and page content so that they can more easily
+  identify relevant content
+* As an annotated edition author I want users to be able to search my
+  edition partial word matching so that they can more easily identify
+  relevant content
+* As a scholarly edition author I can refresh my website if I make changes
+  to the annotations on Readux, without overwriting my original local
+  customizations, so that  I can create an updated copy of my content
+* As an annotated edition author I want my site to include a sitemap for
+  volume pages, annotations and other content so that my site will be
+  findable by search engines
+* New **IIIF_ID_SUFFIX** configuration option for IIIF image server
+  (`#4 <https://github.com/emory-libraries/readux/pull/4>`_ via
+  `@ghukill <https://github.com/ghukill>`_)
+* OCR to TEI facsimile now supports output from ABBYY Recognition
+  Server (`#4 <https://github.com/emory-libraries/readux/pull/4>`_
+  via `@ghukill <https://github.com/ghukill>`_)
+
 Release 1.6.1
 -------------
 
 * Require eulfedora 1.6 or greater for debug filter and connection retries
-
 
 Release 1.6 - Group Annotation
 ------------------------------

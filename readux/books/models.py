@@ -23,10 +23,11 @@ from eulfedora.models import  Relation, ReverseRelation, \
 from eulfedora.rdfns import relsext
 from eulxml import xmlmap
 from eulxml.xmlmap import teimap
+from piffle import iiif
 
 from readux import __version__
 from readux.annotations.models import Annotation
-from readux.books import abbyyocr, iiif, tei
+from readux.books import abbyyocr, tei
 from readux.fedora import DigitalObject
 from readux.collection.models import Collection
 from readux.utils import solr_interface, absolutize_url
@@ -120,6 +121,7 @@ class IIIFImage(iiif.IIIFImageClient):
 
     api_endpoint = settings.IIIF_API_ENDPOINT
     image_id_prefix = getattr(settings, 'IIIF_ID_PREFIX', '')
+    image_id_suffix = getattr(settings, 'IIIF_ID_SUFFIX', '')
     pid = None
     long_side = 'height'
 
@@ -139,8 +141,8 @@ class IIIFImage(iiif.IIIFImageClient):
         return copy
 
     def get_image_id(self):
-        'image id, based on fedora pid and configured prefix'
-        return '%s%s' % (self.image_id_prefix, self.pid)
+        'image id, based on fedora pid, configured prefix, and optional suffix'
+        return ''.join([self.image_id_prefix, self.pid, self.image_id_suffix])
 
     # NOTE: using long edge instead of specifying both with exact
     # results in cleaner urls/filenams (no !), and more reliable result
@@ -160,7 +162,6 @@ class IIIFImage(iiif.IIIFImageClient):
     def page_size(self):
         'page size for display: :attr:`SINGLE_PAGE_SIZE` on the long edge'
         return self.size(**{self.long_side: self.SINGLE_PAGE_SIZE})
-
 
 
 class Image(DigitalObject):
@@ -474,7 +475,7 @@ class PageV1_1(Page):
         save the result as tei datastream content.'''
         # check to make sure generated TEI is valid
         pagetei = self.generate_tei()
-        if not pageteidoc.schema_valid():
+        if not pagetei.schema_valid():
             raise Exception('TEI is not valid according to configured schema')
         # load as tei should maybe happen here instead of in generate
         self.tei.content = pagetei
@@ -1028,10 +1029,13 @@ class Volume(DigitalObject, BaseVolume):
                         'json': 'info',
                     }
                     for image_type, mode in image_types.iteritems():
+                        img_url = absolutize_url(
+                            reverse('books:page-image', kwargs={
+                                'vol_pid': self.pid, 'pid': page.pid,
+                                'mode': mode}
+                            ))
                         teipage.graphics.append(tei.Graphic(rend=image_type,
-                            url=absolutize_url(reverse('books:page-image',
-                                kwargs={'vol_pid': self.pid, 'pid': page.pid, 'mode': mode}))),
-                        )
+                                                            url=img_url))
 
                     # page tei should have an existing graphic reference
                     # remove it from our output

@@ -18,8 +18,6 @@ management in this and other Python projects. If you don't have them
 installed, you can get them with ``sudo easy_install pip`` and then
 ``sudo pip install virtualenv``.
 
-------
-
 Bootstrapping a development environment
 ---------------------------------------
 
@@ -39,6 +37,11 @@ After configuring your database, run syncdb:
     python manage.py syncdb
 
 Use eulindexer to index Repository content into the configured Solr instance.
+
+For annotated edition export functionality, the digital edition jekyll theme
+automatically handled as a python dependency but the
+`teifacsimile-to-jekyll <https://github.com/emory-libraries-ecds/teifacsimile-to-jekyll>`_
+Ruby gem must currently be installed manually.
 
 Initial QA/production deploy
 ----------------------------
@@ -94,13 +97,41 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
-Release 1.6
+Release 1.7
 ~~~~~~~~~~~
 
 * Run migrations for database updates::
 
       python manage.py migrate
 
+* Configure Amazon S3 settings for temporary storage of background export
+  for downloaded zip files.  See the required fields in
+  ``localsettings.py.dist``.
+
+* This release makes use of Channels.  See the
+  `channels deploy documentation <https://channels.readthedocs.io/en/latest/deploying.html>`_
+  and configure **CHANNEL_LAYERS** in ``localsettings.py``.
+
+* **JEKYLLIMPORT_TEI_SCRIPT** can now be specified in ``localsettings.py``
+  if the exact path needs to be specified.
+
+* New configuration in ``localsettings.py`` to configure Fedora Collections
+  to be listed based on owner attribute.  For Emory, this should be set
+  to the value **LSDI-project**.  See ``localsettings.py.dist`` for
+  example and more details.
+
+* Requires an updated version of the teifacsimile-to-jekyll gem (0.7).
+
+* Requires using channels-0.17.3 and daphne-0.14.3 as for now to avoid
+  Django channel issues. Newer daphne and channels have been released but
+  we need to update our code in order to adapt to them.
+
+Release 1.6
+~~~~~~~~~~~
+
+* Run migrations for database updates::
+
+      python manage.py migrate
 
 Release 1.5
 ~~~~~~~~~~~

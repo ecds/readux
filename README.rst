@@ -16,6 +16,10 @@ Readux
   .. image:: https://requires.io/github/emory-libraries/readux/requirements.svg
      :target: https://requires.io/github/emory-libraries/readux/requirements/
      :alt: Requirements Status
+     
+  .. image:: https://landscape.io/github/emory-libraries/readux/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/emory-libraries/readux/master
+   :alt: Code Health
 
 
 Readux is a repository-based `Django <https://www.djangoproject.com/>`_

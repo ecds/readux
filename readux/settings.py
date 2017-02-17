@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'feincms.module.page',
     'feincms.module.medialibrary',
     'guardian',
+    'channels',
     'readux.annotations',
     'readux.accounts',
     'readux.books',
@@ -175,12 +176,18 @@ DOWNTIME_EXEMPT_EXACT_URLS = (
 )
 
 FEINCMS_RICHTEXT_INIT_CONTEXT = {
-    'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js'
+    'TINYMCE_JS_URL': '//cdn.tinymce.com/4/tinymce.min.js'
 }
+# use local tinymce init to customize tinymce behavior
+FEINCMS_RICHTEXT_INIT_TEMPLATE = 'pages/init_tinymce4.html'
+
 
 GIT_AUTHOR_EMAIL = 'readux.emory@gmail.com'
 GIT_AUTHOR_NAME = 'readux'
 
+# path to jekyll import ruby script; override in localsettings if you
+# need to specify the path
+JEKYLLIMPORT_TEI_SCRIPT = 'jekyllimport_teifacsimile'
 
 try:
     from localsettings import *
@@ -215,7 +222,7 @@ if DEBUG or DEV_ENV:
         import debug_toolbar
         # import to ensure debug panel is available before configuring
         # (not yet in released version of eulfedora)
-        from eulfedora import debug_panel
+        # from eulfedora import debug_panel
         INSTALLED_APPS.append('debug_toolbar')
     except ImportError:
         pass

@@ -5,6 +5,10 @@ body{
     padding:1em 0 0;
 }
 
+#content {
+  margin: auto 6em;
+}
+
 .progress {
     height: 10px;
 }
@@ -1343,4 +1347,12 @@ h3.annotation-permissions {
 }
 .permission label {
     font-weight: bold;
+}
+
+/* styles for volume export status/updates block */
+.status .updates {
+}
+
+.status .updates .time {
+    padding-right: 2em;
 }

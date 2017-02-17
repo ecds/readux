@@ -72,9 +72,20 @@
       <xsl:copy-of select="@xml:id"/>
       <xsl:attribute name="type">page</xsl:attribute>
       <xsl:attribute name="ulx">0</xsl:attribute>
-      <xsl:attribute name="uly">0</xsl:attribute>
-      <xsl:attribute name="lrx"><xsl:value-of select="@WIDTH"/></xsl:attribute>
-      <xsl:attribute name="lry"><xsl:value-of select="@HEIGHT"/></xsl:attribute>
+      <xsl:attribute name="uly">0</xsl:attribute>            
+      <!-- ABBYY Finereader and ABBYY Recognition Server encode page dimensions in different ways.  Catch that here.-->
+      <xsl:choose>                
+        <!-- ABBYY Finereader 8.0, with page dimensions in <alto:Page> element -->
+        <xsl:when test="@WIDTH|@HEIGHT">
+          <xsl:attribute name="lrx"><xsl:value-of select="@WIDTH"/></xsl:attribute>
+          <xsl:attribute name="lry"><xsl:value-of select="@HEIGHT"/></xsl:attribute>
+        </xsl:when>                
+        <!-- ABBYY Recognition Server with page dimensions in child <alto:PrintSpace> element -->
+        <xsl:when test="./alto:PrintSpace">
+          <xsl:attribute name="lrx"><xsl:value-of select="alto:PrintSpace/@WIDTH"/></xsl:attribute>                    
+          <xsl:attribute name="lry"><xsl:value-of select="alto:PrintSpace/@HEIGHT"/></xsl:attribute>
+        </xsl:when>
+      </xsl:choose>            
       <xsl:element name="graphic">
         <xsl:attribute name="url"><xsl:value-of select="$graphic_url"></xsl:value-of></xsl:attribute>
       </xsl:element>

@@ -51,8 +51,7 @@
 {% block nav_class %}navbar-inverse navbar-fixed-top{% endblock %}
 
 {% block navlinks %}
-{# NOTE: suppressed for now because collection browse is site home page #}
-{# <li><a href="{% url 'collection:browse' %}">Collections</a></li> #}
+  <li><a href="{% url 'collection:browse' %}">Collections</a></li>
   {% if feincms_page %} {# feincms nav only works if a page is laoded (should be set via context processor) #}
   {% feincms_nav feincms_page level=1 as nav %}
   {% endif %}

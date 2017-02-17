@@ -12,12 +12,13 @@ from urllib import urlencode, unquote
 
 from eulxml.xmlmap import load_xmlobject_from_file, XmlObject
 from eulfedora.server import Repository
+from piffle import iiif
 
 from readux.annotations.models import Annotation
 from readux.books import abbyyocr
 from readux.books.models import SolrVolume, Volume, VolumeV1_0, Book, BIBO, \
     DC, Page, PageV1_1
-from readux.books import iiif
+
 
 
 FIXTURE_DIR = os.path.join(settings.BASE_DIR, 'readux', 'books', 'fixtures')
@@ -52,7 +53,7 @@ class SolrVolumeTest(TestCase):
                          pid='testpid:1234')
 
         url = volume.fulltext_absolute_url()
-        self.assert_(url.startswith('http://'))
+        self.assert_(url.startswith('https://'))
         self.assert_(url.endswith(reverse('books:text', kwargs={'pid': volume.pid})))
         current_site = Site.objects.get_current()
         self.assert_(current_site.domain in url)
@@ -552,57 +553,3 @@ class AbbyyOCRTestCase(TestCase):
         self.assertEqual('fr6v1:par|fr8v2:par', abbyyocr.frns('par'))
         self.assertEqual('fr6v1:text/fr6v1:par|fr8v2:text/fr8v2:par',
                          abbyyocr.frns('text/par'))
-
-
-
-class IIIFImageClientTest(TestCase):
-
-    api_endpoint = 'http://imgserver.co/'
-    image_id = 'img1'
-
-    def setUp(self):
-        self.img = iiif.IIIFImageClient(api_endpoint=self.api_endpoint,
-            image_id=self.image_id)
-
-    def test_defaults(self):
-        # default image url
-        self.assertEqual('%s%s/full/full/0/default.jpg' % \
-            (self.api_endpoint, self.image_id), unicode(self.img))
-        # info url
-        self.assertEqual('%s%s/info.json' % \
-            (self.api_endpoint, self.image_id), self.img.info())
-
-    def test_size(self):
-        width, height, percent = 100, 150, 50
-        # width only
-        self.assertEqual('%s%s/full/%s,/0/default.jpg' % \
-            (self.api_endpoint, self.image_id, width),
-            unicode(self.img.size(width=width)))
-        # height only
-        self.assertEqual('%s%s/full/,%s/0/default.jpg' % \
-            (self.api_endpoint, self.image_id, height),
-            unicode(self.img.size(height=height)))
-        # width and height
-        self.assertEqual('%s%s/full/%s,%s/0/default.jpg' % \
-            (self.api_endpoint, self.image_id, width, height),
-            unicode(self.img.size(width=width, height=height)))
-        # exact width and height
-        self.assertEqual('%s%s/full/!%s,%s/0/default.jpg' % \
-            (self.api_endpoint, self.image_id, width, height),
-            unicode(self.img.size(width=width, height=height, exact=True)))
-        # percent
-        self.assertEqual('%s%s/full/pct:%s/0/default.jpg' % \
-            (self.api_endpoint, self.image_id, percent),
-            unicode(self.img.size(percent=percent)))
-
-    def test_format(self):
-        png = self.img.format('png')
-        jpg = self.img.format('jpg')
-        gif = self.img.format('gif')
-        self.assert_(unicode(png).endswith('.png'))
-        self.assert_(unicode(jpg).endswith('.jpg'))
-        self.assert_(unicode(gif).endswith('.gif'))
-
-        self.assertRaises(Exception, self.img.format, 'bogus')
-
-

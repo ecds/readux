@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from channels import Channel, Group
 from channels.tests import ChannelTestCase
 import json
-from mock import patch, NonCallableMock
+from mock import patch, NonCallableMock, MagicMock
+
 
 from readux.annotations.models import Annotation
 from readux.books.consumers import volume_export
@@ -52,7 +53,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
                              mocks3_upload):
 
         # use mock to simulate volume being exported
-        mockobj = NonCallableMock()
+        mockobj = MagicMock()
         mockobj.pid = 'vol:1'
         # use queryset of annotations for testing
         annotations = Annotation.objects.all()
@@ -85,7 +86,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
                          export_init_args[1])
         # values from form should be passed through
         self.assertEqual(5, export_init_kwargs['page_one'])
-        self.assertEqual('hosted', export_init_kwargs['deep_zoom'])
+        self.assertEqual('include', export_init_kwargs['deep_zoom'])
 
         # expected progress updates in order
         status_updates = [
@@ -94,15 +95,16 @@ class ConsumerVolumeExportTest(ChannelTestCase):
             'Collected 0 annotations',
             'Generating volume TEI',
             'Finished generating volume TEI',
+            'Updating image references in TEI',
             'Annotated TEI',
             'Generated Jeyll zip file',
             'Uploading zip file to Amazon S3',
             'Zip file available for download'
         ]
 
-        for expexted_msg in status_updates:
+        for expected_msg in status_updates:
             msg = json.loads(self.get_next_message(u'test-channel')['text'])
-            self.assertEqual(expexted_msg, msg['message'])
+            self.assertEqual(expected_msg, msg['message'])
 
         # last message should also have download url
         self.assertTrue(msg['download'])
@@ -114,7 +116,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
     @patch('readux.books.consumers.Repository')
     def test_github(self, mockrepo, mockannotate, mockexport, mockgithub):
         # use mock to simulate volume being exported
-        mockobj = NonCallableMock()
+        mockobj = MagicMock()
         mockobj.pid = 'vol:1'
         # use queryset of annotations for testing
         annotations = Annotation.objects.all()
@@ -175,6 +177,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
             'Collected 0 annotations',
             'Generating volume TEI',
             'Finished generating volume TEI',
+            'Updating image references in TEI',
             'Annotated TEI',
             'Export to GitHub complete',
         ]
@@ -209,7 +212,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
     @patch('readux.books.consumers.Repository')
     def test_github_update(self, mockrepo, mockannotate, mockexport, mockgithub):
         # use mock to simulate volume being exported
-        mockobj = NonCallableMock()
+        mockobj = MagicMock()
         mockobj.pid = 'vol:1'
         # use queryset of annotations for testing
         annotations = Annotation.objects.all()
@@ -279,7 +282,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
                              mocks3_upload):
 
         # use mock to simulate volume being exported
-        mockobj = NonCallableMock()
+        mockobj = MagicMock()
         mockobj.pid = 'vol:1'
         # use queryset of annotations for testing
         annotations = Annotation.objects.all()
@@ -295,13 +298,14 @@ class ConsumerVolumeExportTest(ChannelTestCase):
         Channel('volume-export').send({
             'formdata': {
                 'pid': 'vol:1', 'annotations': 'user', 'mode': 'tei',
-                # deep zoom opt is required even though not relevant for tei
-                'deep_zoom': 'hosted'
+                # deep zoom and image_hosting are required
+                # even though not relevant for tei
+                'deep_zoom': 'include', 'image_hosting': 'readux_hosted'
             },
             'user': self.testuser.username
         })
-        volume_export(self.get_next_message(u"volume-export", require=True))
 
+        volume_export(self.get_next_message(u"volume-export", require=True))
         mockannotate.annotated_tei.assert_called_with(
             mockobj.generate_volume_tei.return_value, annotations)
         vol_exporter = mockexport.VolumeExport.return_value
@@ -319,6 +323,7 @@ class ConsumerVolumeExportTest(ChannelTestCase):
             'Collected 0 annotations',
             'Generating volume TEI',
             'Finished generating volume TEI',
+            'Updating image references in TEI',
             'Annotated TEI',
             'TEI file available for download'
         ]

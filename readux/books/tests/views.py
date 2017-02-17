@@ -564,8 +564,8 @@ class BookViewsTest(TestCase):
         annotated_pages = response.context['annotated_pages']
         # counts should be preserved; urls should be non-absolute
         # whether they started that way or not
-        self.assertEqual(5, annotated_pages[page1_url])
-        self.assertEqual(2, annotated_pages[page2_url])
+        self.assertEqual(5, annotated_pages[absolutize_url(page1_url)])
+        self.assertEqual(2, annotated_pages[absolutize_url(page2_url)])
         self.assertEqual(13, annotated_pages[page3_url])
 
     @patch('readux.books.views.TypeInferringRepository')
@@ -874,6 +874,3 @@ class BookSearchTest(TestCase):
         self.assertTrue(form.is_valid())
         terms = form.search_terms()
         self.assertEqual([ark], terms)
-
-
-

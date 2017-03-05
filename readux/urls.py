@@ -54,7 +54,7 @@ urlpatterns = [
     url(r'^annotations/api', annotation_views.AnnotationIndex.as_view(), name='annotation-api-prefix'),
 
      # add redirect for favicon at root of site
-    (r'^favicon\.ico$', RedirectView.as_view(url='/static/img/%s.ico' % favicon, permanent=True)),
+    url(r'^favicon\.ico$', RedirectView.as_view(url='/static/img/%s.ico' % favicon, permanent=True)),
 
     # robots.txt and sitemaps
     url(r'^robots\.txt$',

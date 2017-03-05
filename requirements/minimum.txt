@@ -33,7 +33,7 @@ pdfminer<=20140328
 beautifulsoup4==4.5.3
 bagit
 # 0.2.16 breaks extra_data (string instead of json?)
-python-social-auth==0.2.14
+python-social-auth==0.2.15
 iiif
 pytz
 fuzzywuzzy
@@ -45,10 +45,10 @@ pyyaml
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@develop#egg=digitaledition-jekylltheme
 django-guardian
-channels==0.17.2
-daphne==0.15.0
-asgi_redis==0.14.1
-asgiref==0.14.0
+channels==1.0.3
+daphne==1.0.3
+asgi_redis==1.0.0
+asgiref==1.0.0
 redis==2.10.5
 piffle>=0.2.1
-jsonfield==1.0.3
+jsonfield==2.0.0

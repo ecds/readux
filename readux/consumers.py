@@ -39,6 +39,10 @@ def ws_message(message):
 
 @channel_session_user_from_http
 def ws_add(message):
+    # Backward compatability
+    # https://channels.readthedocs.io/en/stable/releases/1.0.0.html
+    # Accept connection
+    message.reply_channel.send({"accept": True})
     '''Connected to websocket.connect'''
     Group("notify-%s" % message.user.username).add(message.reply_channel)
 
@@ -47,5 +51,3 @@ def ws_add(message):
 def ws_disconnect(message):
     '''Connected to websocket.disconnect'''
     Group("notify-%s" % message.user.username).discard(message.reply_channel)
-
-

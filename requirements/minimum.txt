@@ -33,7 +33,7 @@ pdfminer<=20140328
 beautifulsoup4==4.5.3
 bagit
 # 0.2.16 breaks extra_data (string instead of json?)
-python-social-auth==0.2.15
+python-social-auth==0.2.21
 iiif
 pytz
 fuzzywuzzy

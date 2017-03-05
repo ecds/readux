@@ -37,8 +37,8 @@ python-social-auth==0.2.14
 iiif
 pytz
 fuzzywuzzy
-# restrict to 1.11.x release of feincms for now
-feincms<1.12
+# upgrade to 1.13.1 to support django 1.10 changes and let workers work again
+feincms==1.13.1
 mistune
 gitpython
 pyyaml

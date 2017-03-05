@@ -1,4 +1,7 @@
-from feincms.views.cbv.views import Handler
+# feincms.views.cbv has been removed. Use feincms.urls and feincms.views directly instead.
+# https://github.com/feincms/feincms/blob/776f569e53b6af445dd9194ce6cd05b14cf5a218/docs/releases/1.12.rst
+
+from feincms.views import Handler
 
 
 class SiteIndex(Handler):

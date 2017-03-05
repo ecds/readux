@@ -97,6 +97,18 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
+Release 1.7.1
+~~~~~~~~~~~~~
+* In ``localsettings.py``, replace::
+
+      django.utils.log.NullHandler
+
+  with::
+
+      logging.NullHandler
+
+  See here for details: `django deprecation - NullHandler <https://www.monotalk.xyz/blog/no-module-named-djangoutilslognullhandler-djangoutilslog-is-not-a-package/>`
+
 Release 1.7
 ~~~~~~~~~~~
 

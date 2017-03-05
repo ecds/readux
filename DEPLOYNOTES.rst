@@ -97,8 +97,8 @@ directory.  From the top level of your virtualenv directory, run::
 
 ----
 
-Release 1.7.1
-~~~~~~~~~~~~~
+Release 1.8
+~~~~~~~~~~~
 * In ``localsettings.py``, replace::
 
       django.utils.log.NullHandler

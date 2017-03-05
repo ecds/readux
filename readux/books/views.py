@@ -2,7 +2,7 @@ from channels import Channel
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import Http404, HttpResponse, HttpResponseNotFound, \
     HttpResponsePermanentRedirect, StreamingHttpResponse, HttpResponseBadRequest, \

@@ -41,7 +41,9 @@ def volume_export(message):
         if msg_type is not None:
             msg_data['type'] = msg_type
         msg_data.update(data)
-        notify.send({'text': json.dumps(msg_data)})
+        # breaking changes as of channels 1.0
+        # need to specify immediately=True to send messages before the consumer completes to the end
+        notify.send({'text': json.dumps(msg_data)}, immediately=True)
 
     notify_msg('Export started')
 

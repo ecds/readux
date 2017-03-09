@@ -48,7 +48,7 @@ class Command(BaseCommand):
             print "Records with collection_id {} found: {}, listing: ".format(collection_id, paginator.count)
 
             # Regex to match "_yyyy"
-            regex = r"(\_\d{4}$)"
+            regex = r"(\_\d{4})"
 
             # Counter of the currently processed pid
             current = 1

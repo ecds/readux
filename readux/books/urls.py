@@ -1,9 +1,11 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.views.generic.base import RedirectView
 
 from readux.books import views
 
-urlpatterns = patterns('',
+# as of django 1.8 use of patterns is deprecated. use plain list intead.
+# https://docs.djangoproject.com/en/1.9/ref/urls/#patterns
+urlpatterns = [
     url(r'^$', views.VolumeSearch.as_view(), name='search'),
     url(r'^covers/$', views.VolumeCoverSearch.as_view(), name='search-covers'),
     url(r'^unapi/$', views.Unapi.as_view(), name='unapi'),
@@ -42,4 +44,4 @@ urlpatterns = patterns('',
     url(r'^(?P<vol_pid>[^/]+)/pages/(?P<pid>[^/]+)/(?P<mode>iiif)(?P<url>.*)$',
         views.PageImage.as_view())
 
-)
+]

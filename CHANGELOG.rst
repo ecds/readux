@@ -2,6 +2,26 @@
 
 CHANGELOG
 =========
+Release 1.8 - WebSocket 1.x Upgrade, Move to ECDS VM
+----------------------------------------------------
+* Chore: Move Readux to New Prod server
+* Chore: As a Readux developer, I would like to replace the Social Auth
+  OAuth Key and Secret with Emory University Library accounts.
+* As a Readux admin, I would like to have a management command to make
+  post-1922 Emory Yearbooks not visible in Readux
+* Upgrade Daphne and related components from 0.x versions to 1.x fully
+  stable versions
+* Chore: Research related to beginning Readux 2.x development and setting
+  up a new AWS testing environment
+* Bugfix: Volume landing page does not display
+* Chore: Add lxml rebuild to the fabfile for deploy
+* Chore: Add missing tei page to emory:dzj14 and emory:cwv8v on Readux
+  production site and create KB article for this issue
+* Chore: Make a digitaledition_jekylltheme 0.7 release that is dependent
+  on by the Readux 1.7 Release
+* Chore: Fix pip install on Jenkins asking for user interaction
+* Bugfix: Export issue: Pages with no XML in volume "Original sacred harp"
+  are excluded from export
 
 Release 1.7 - Export Notifications, Export Search Improvements, Bug Triage
 --------------------------------------------------------------------------

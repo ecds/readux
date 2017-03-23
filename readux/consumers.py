@@ -24,22 +24,28 @@ def ws_message(message):
         # parse_qs returns values as lists
         formdata = dict((key, val[0])
                         for key, val in parse_qs(data['volume_export']).iteritems())
+        # breaking changes as of channels 1.0
+        # need to specify immediately=True to send messages before the consumer completes to the end
         Channel('volume-export').send({
             # has to be json serializable, so send username rather than user
             'user': message.user.username,
             'formdata': formdata,
             # fixme: why is reply channel not automatically set?
             # 'reply_channel': message.reply_channel
-        })
+        }, immediately=True)
     else:
         notify.send({
             "text": "%s" % message.content['text'],
-        })
+        }, immediately=True)
 
 
 @channel_session_user_from_http
 def ws_add(message):
+    # Backward compatability
+    # https://channels.readthedocs.io/en/stable/releases/1.0.0.html
+    # Accept connection
     '''Connected to websocket.connect'''
+    message.reply_channel.send({"accept": True})
     Group("notify-%s" % message.user.username).add(message.reply_channel)
 
 
@@ -47,5 +53,3 @@ def ws_add(message):
 def ws_disconnect(message):
     '''Connected to websocket.disconnect'''
     Group("notify-%s" % message.user.username).discard(message.reply_channel)
-
-

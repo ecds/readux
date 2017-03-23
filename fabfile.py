@@ -26,6 +26,7 @@ def all_deps():
     local('pip install -r requirements/dev.txt --exists-action w')
     if os.path.exists('pip-local-req.txt'):
         local('pip install -r pip-local-req.txt --exists-action w')
+    local('pip install lxml --upgrade --force-reinstall --no-binary :all:')
 
 @task
 def test():
@@ -162,6 +163,7 @@ def setup_virtualenv(python=None):
             if env.remote_proxy:
                 pip_cmd += ' --proxy=%(remote_proxy)s' % env
             sudo(pip_cmd, user=env.remote_acct)
+            sudo('pip install lxml --upgrade --force-reinstall --no-binary :all:', user=env.remote_acct)
             if files.exists('../pip-local-req.txt'):
                 pip_cmd = 'pip install -r ../pip-local-req.txt --exists-action w'
                 if env.remote_proxy:

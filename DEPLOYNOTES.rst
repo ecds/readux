@@ -109,6 +109,18 @@ Release 1.8
 
   See here for details: `django deprecation - NullHandler <https://www.monotalk.xyz/blog/no-module-named-djangoutilslognullhandler-djangoutilslog-is-not-a-package/>`
 
+* In ``localsettings.py``, add Python Social Auth credentials for corresponding environments.
+  There are currently two environments, one being the ``testreadux.ecds.emory.edu`` and
+  the other being ``readux.ecds.emory.edu``. These accounts could be found on social media
+  sites with the login ``eulsystems@gmail.com``. Or alternatively, the social auth keys and
+  secrets could also be found on ``emory-libraries/settings`` GitHub repository under Readux.
+  The social media accounts in this release includes: Facebook, GitHub, Google, Twitter, and
+  Zotero.
+
+* Please read ``https://www.pivotaltracker.com/story/show/141019047`` for detailed Daphne
+  upgrade details, which include a lot of changes made accommodate breaking changes that
+  were introduced since the ugprade.
+
 Release 1.7
 ~~~~~~~~~~~
 

@@ -71,7 +71,7 @@ class VolumeExport(forms.Form):
     annotations = forms.ChoiceField(
         label='Annotations to export',
         help_text='Individual annotations or all annotations shared with ' +
-        'a single group')
+        'a single group.')
 
     #: include page images in export, instead of referencing on readux
     include_images = forms.BooleanField(

@@ -159,6 +159,7 @@
         var deep_zoom = $("div.form-group:has(#id_deep_zoom)");
         var deep_zoom_select = $("#id_deep_zoom")[0];
         var image_hosting = $("div.form-group:has(#id_image_hosting)");
+        var annotations = $("div.form-group:has(#id_annotations)");
         // some form options are relevant to jekyll but not TEI export
         var jekyll_only = $('.jekyll-only');
 
@@ -186,6 +187,7 @@
           github_repo.hide(transition);
           update_repo.hide(transition);
           jekyll_only.hide(transition);
+          annotations.hide(transition);
 
           // toggle UI usabilities
           toggle_deep_zoom(deep_zoom_select[0]);
@@ -194,14 +196,18 @@
           if (this.value == 'github') {
             jekyll_only.show(transition);
             github_repo.show(transition);
+            annotations.show(transition);
           } else if (this.value == 'download') {
             jekyll_only.show(transition);
+            annotations.show(transition);
           } else if (this.value == 'github_update') {
             jekyll_only.show(transition);
             update_repo.show(transition);
+            annotations.show(transition);
           } else if (this.value == 'tei') {
             // jekyll options not applicable for tei export
             jekyll_only.css("display", "none");
+            annotations.show(transition);
           }
         });
 

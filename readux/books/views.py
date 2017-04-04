@@ -169,8 +169,8 @@ class VolumeSearch(ListView):
             if context_data['paginator'].count and self.request.user.is_authenticated():
                 notes = Volume.volume_annotation_count(self.request.user)
                 domain = get_current_site(self.request).domain.rstrip('/')
-                if not domain.startswith('http'):
-                    domain = 'http://' + domain
+                if not domain.startswith('https'):
+                    domain = 'https://' + domain
                 annotated_volumes = dict([(k.replace(domain, ''), v)
                                    for k, v in notes.iteritems()])
 
@@ -355,8 +355,9 @@ class VolumePageList(ListView, VaryOnCookieMixin):
             # strip out base site url for easy lookup in the template
             # (need leading / left to match item urls)
             domain = get_current_site(self.request).domain.rstrip('/')
-            if not domain.startswith('http'):
-                domain = 'http://' + domain
+            if not domain.startswith('https'):
+                domain = 'https://' + domain
+
             annotated_pages = dict([(k.replace(domain, ''), v)
                                    for k, v in notes.iteritems()])
         else:

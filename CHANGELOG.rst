@@ -2,6 +2,10 @@
 
 CHANGELOG
 =========
+Release 1.8.1 - Bug Fixes
+* Annotation counts do not appear in Volume list
+* Option to export personal versus group annotations is missing
+
 Release 1.8 - WebSocket 1.x Upgrade, Move to ECDS VM
 ----------------------------------------------------
 * Chore: Move Readux to New Prod server

@@ -85,7 +85,7 @@ var related_pages = {
             }
 
             field = editor.addField({
-                label: _t('Add related pages by permalink or search') + '\u2026',
+                label: _t('Add related pages from this volume by permalink or search (separated by commas)') + '\u2026',
                 load: updateField,
                 submit: setRelatedPages,
                 type: 'textarea'
@@ -175,5 +175,3 @@ $.widget("readux.relatedPageComplete", $.ui.autocomplete, {
         return li.appendTo(ul);
     },
 });
-
-

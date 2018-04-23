@@ -89,4 +89,10 @@ Components
 ``readux.pages``
     Functionality for site content such as an about page, annotation and export
     documentation, credits.  Content management based on `FeinCMS <http://www.feincms.org/>`_.
+    
+Publishing Notes
+^^^^^^^^^^
+Please note that links embedded into annotations **cannot** contain ampersands (&). This will prevent export. 
+
+
 

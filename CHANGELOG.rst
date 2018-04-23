@@ -2,7 +2,14 @@
 
 CHANGELOG
 =========
+Release 1.8.2 - Bug Fixes
+-------------------------
+* Bugfix: When a page has many annotations (more than 10) some
+  annotations are not clickable and some annotations are missing from
+  the side scroll bar
+
 Release 1.8.1 - Bug Fixes
+-------------------------
 * Annotation counts do not appear in Volume list
 * Option to export personal versus group annotations is missing
 

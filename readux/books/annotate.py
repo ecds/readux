@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.utils.text import slugify
 from eulxml.xmlmap import load_xmlobject_from_string, teimap, \
     load_xmlobject_from_file, XmlObject
+from django.utils import html
 import logging
 from lxml import etree
 import mistune
@@ -146,7 +147,7 @@ def annotation_to_tei(annotation, teivol):
     # xml tree; also, pags do not include namespace
     # wrap in a note element and set the default namespace as tei
     teinote = load_xmlobject_from_string('<note xmlns="%s">%s</note>' % \
-        (teimap.TEI_NAMESPACE, note_content),
+        (teimap.TEI_NAMESPACE, html.escape(note_content)),
         tei.Note)
 
     # what id do we want? annotation uuid? url?

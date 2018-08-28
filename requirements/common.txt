@@ -2,5 +2,3 @@
 
 -r minimum.txt
 
-django-auth-ldap==1.3.0
-# not included in common because of an ldap install error on readthedocs.org

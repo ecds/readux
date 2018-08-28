@@ -1,0 +1,3 @@
+[submodule "frontend/templates/mirador"]
+	path = frontend/templates/mirador
+	url = git@github.com:ecds/mirador.git

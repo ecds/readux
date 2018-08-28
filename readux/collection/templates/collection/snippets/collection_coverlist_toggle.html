@@ -1,5 +1,0 @@
-{% extends 'snippets/coverlist_toggle.html' %}
-{# cover/list toggle buttons with urls for collection browse #}
-
-{% block cover_url %}{% url 'collection:view-covers' collection.pid %}{% if current_url_params %}?{{ current_url_params }}{% endif %}{% endblock %}
-{% block list_url %}{% url 'collection:view' collection.pid %}{% if current_url_params %}?{{ current_url_params }}{% endif %}{% endblock %}

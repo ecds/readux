@@ -1,17 +1,13 @@
-from django.conf.urls import url
-
+from django.conf.urls import url, include
+from django.urls import path# from rest_framework import routers
 from readux.annotations import views
-from readux.annotations.models import Annotation
 
-# as of django 1.8 use of patterns is deprecated. use plain list intead.
-# https://docs.djangoproject.com/en/1.9/ref/urls/#patterns
+# router = routers.DefaultRouter()
+# router.register(r'annotations', views.AnnotationListCreate)
 
-# api urls only for now
 urlpatterns = [
-    url(r'^$', views.AnnotationIndex.as_view(), name='index'),
-    # urls are without trailing slashes per annotatorjs api documentation
-    url(r'^search$', views.AnnotationSearch.as_view(), name='search'),
-    url(r'^annotations$', views.Annotations.as_view(), name='annotations'),
-    url(r'^annotations/(?P<id>%s)$' % Annotation.UUID_REGEX,
-        views.AnnotationView.as_view(), name='view'),
+  # url(r'^', include(router.urls))
+  path('readux/annotations', views.AnnotationListCreate.as_view() ),
+  path('readux/annotations/<pk>', views.AnnotationUpdate.as_view() ),
+  path('readux/annotations/<vol>/<page>', views.AnnotationDetail.as_view() )
 ]

@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: http://readux.library.emory.edu/sitemap.xml

@@ -55,11 +55,13 @@ class Annotation(models.Model):
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_uris(sender, instance, **kwargs):
-    instance.uri = instance.iiif_annotation['on'][0]['full']
-    instance.volume_uri = instance.iiif_annotation['on'][0]['within']['@id']
-    instance.volume_identifier = instance.uri.split('/')[-3]
-    instance.page = instance.uri.split('/')[-1]
-    instance.iiif_annotation['annotatedBy'] = {'name': 'Me'}
-    instance.iiif_annotation['@id'] = str(instance.pk)
-
-    # https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json
+    print('%%%%%%%%')
+    print(type(instance.iiif_annotation))
+    print('%%%%%%%%')
+    if isinstance(instance.iiif_annotation, dict):
+        instance.uri = instance.iiif_annotation['on'][0]['full']
+        instance.volume_uri = instance.iiif_annotation['on'][0]['within']['@id']
+        instance.volume_identifier = instance.uri.split('/')[-3]
+        instance.page = instance.uri.split('/')[-1]
+        instance.iiif_annotation['annotatedBy'] = {'name': 'Me'}
+        instance.iiif_annotation['@id'] = str(instance.pk)

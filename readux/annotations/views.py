@@ -8,9 +8,9 @@ class AnnotationListCreate(generics.ListCreateAPIView):
   Endpoint that allows annotations to be listed or edited.
   """
   queryset = Annotation.objects.all()
-  serializer_class = AnnotationPostSerializer
+  serializer_class = AnnotationSerializer
 
-class AnnotationDetail(generics.ListAPIView):
+class AnnotationForPage(generics.ListAPIView):
   """
   Endpoint to to display annotations for a page.
   """
@@ -19,11 +19,11 @@ class AnnotationDetail(generics.ListAPIView):
   def get_queryset(self):
     return Annotation.objects.filter(volume_identifier=self.kwargs['vol']).filter(page=self.kwargs['page'])
 
-class AnnotationUpdate(generics.UpdateAPIView):
+class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
   """
   Endpoint to update annotation.
   """
   serializer_class = AnnotationPostSerializer
 
   def get_queryset(self):
-    return Annotation.objects.get(pk=self.kwargs['pk'])
+    return Annotation.objects.all()

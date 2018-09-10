@@ -7,7 +7,7 @@ from readux.annotations import views
 
 urlpatterns = [
   # url(r'^', include(router.urls))
-  path('readux/annotations', views.AnnotationListCreate.as_view() ),
-  path('readux/annotations/<pk>', views.AnnotationUpdate.as_view() ),
-  path('readux/annotations/<vol>/<page>', views.AnnotationDetail.as_view() )
+  path('readux/annotations/<uuid:pk>', views.AnnotationDetail.as_view() ),
+  path('readux/annotations/<vol>/<page>', views.AnnotationForPage.as_view() ),
+  path('readux/annotations', views.AnnotationListCreate.as_view() )
 ]

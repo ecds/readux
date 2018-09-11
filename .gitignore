@@ -81,5 +81,6 @@ static/plugins/annotator/scss/node_modules
 # Local Junk
 .vscode/
 .DS_Store
-local_settings.py
+localsettings.py
 db.cnf
+mydatabase

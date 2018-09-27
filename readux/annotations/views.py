@@ -5,7 +5,7 @@ from readux.annotations.serializers import AnnotationSerializer, AnnotationPostS
 
 class AnnotationListCreate(generics.ListCreateAPIView):
   """
-  Endpoint that allows annotations to be listed or edited.
+  Endpoint that allows annotations to be listed or created.
   """
   queryset = Annotation.objects.all()
   serializer_class = AnnotationSerializer
@@ -21,7 +21,7 @@ class AnnotationForPage(generics.ListAPIView):
 
 class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
   """
-  Endpoint to update annotation.
+  Endpoint to update and delete annotation.
   """
   serializer_class = AnnotationPostSerializer
 

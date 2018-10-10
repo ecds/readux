@@ -11,7 +11,7 @@ class AnnotationTests(APITestCase):
     fixtures = ['annotations.json']
 
     valid_annotation = {
-        'iiif_annotation': {
+        'iiif_annotation': '''{
             "on": [{
                 "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0007",
                 "@type": "oa:SpecificResource",
@@ -43,7 +43,7 @@ class AnnotationTests(APITestCase):
                 "chars": "<p>wfv3v3v3</p>"
             }],
             "motivation": ["oa:commenting"]
-        }
+        }'''
     }
 
     def test_annotation_creation(self):

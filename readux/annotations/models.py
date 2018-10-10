@@ -1,10 +1,10 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.conf import settings
 from django.db.models import signals
 from django.dispatch import receiver
 import json
 import uuid
-from django_mysql.models import JSONField
 
 
 class Annotation(models.Model):
@@ -32,11 +32,11 @@ class Annotation(models.Model):
     #: content of the annotation
     text = models.TextField()
     #: the annotated text
-    quote = models.TextField()
-    volume_identifier = models.TextField()
-    page = models.TextField()
+    quote = models.TextField(blank=False)
+    volume_identifier = models.TextField(blank=False)
+    page = models.TextField(blank=False)
     #: URI of the annotated document
-    uri = models.URLField()
+    uri = models.URLField(blank=False)
     #: user who owns the annotation
     #: when serialized, id of annotation owner OR an object with an 'id' property
     # Make user optional for now
@@ -52,11 +52,13 @@ class Annotation(models.Model):
     #: any additional data included in the annotation not parsed into
     #: specific model fields; this includes ranges, permissions,
     #: annotation data, etc
-    iiif_annotation = JSONField(default=dict)
+    iiif_annotation = JSONField(default=dict, blank=False)
 
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_uris(sender, instance, **kwargs):
+    instance.iiif_annotation = json.dumps(instance.iiif_annotation) if isinstance(
+        instance.iiif_annotation, dict) else json.loads(instance.iiif_annotation)
     if isinstance(instance.iiif_annotation, dict):
         instance.uri = instance.iiif_annotation['on'][0]['full']
         instance.volume_uri = instance.iiif_annotation['on'][0]['within']['@id']

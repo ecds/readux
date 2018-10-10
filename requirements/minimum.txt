@@ -1,6 +1,5 @@
 Django==2.1
 django-environ==0.4.5
 djangorestframework==3.8.2
-mysqlclient
-mysql-connector-python
-django-mysql
+psycopg2-binary
+django-extensions

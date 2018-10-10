@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'django_mysql',
     'readux.annotations',
     'frontend',
     'rest_framework'
@@ -112,6 +114,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 try:
-   from config.localsettings import *
+    from config.localsettings import *
 except ImportError:
     raise Exception("A localsettings.py file is required to run this project")

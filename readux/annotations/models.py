@@ -4,7 +4,8 @@ from django.db.models import signals
 from django.dispatch import receiver
 import json
 import uuid
-from jsonfield import JSONField
+from django_mysql.models import JSONField
+
 
 class Annotation(models.Model):
     '''
@@ -51,13 +52,11 @@ class Annotation(models.Model):
     #: any additional data included in the annotation not parsed into
     #: specific model fields; this includes ranges, permissions,
     #: annotation data, etc
-    iiif_annotation = JSONField(default=json.dumps({}))
+    iiif_annotation = JSONField(default=dict)
+
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_uris(sender, instance, **kwargs):
-    print('%%%%%%%%')
-    print(type(instance.iiif_annotation))
-    print('%%%%%%%%')
     if isinstance(instance.iiif_annotation, dict):
         instance.uri = instance.iiif_annotation['on'][0]['full']
         instance.volume_uri = instance.iiif_annotation['on'][0]['within']['@id']

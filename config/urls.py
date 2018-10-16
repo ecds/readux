@@ -5,5 +5,6 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include('readux.annotations.urls')),
-    url(r'^', include('frontend.urls'))
+    url(r'^', include('readux.collection.urls')),
+    url(r'^', include('readux.volumes.urls'))
 ]

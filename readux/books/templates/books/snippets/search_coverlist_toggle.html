@@ -1,5 +1,0 @@
-{% extends 'snippets/coverlist_toggle.html' %}
-{# cover/list toggle buttons with urls for book search #}
-
-{% block cover_url %}{% url 'books:search-covers' %}{% if current_url_params %}?{{ current_url_params }}{% endif %}{% endblock %}
-{% block list_url %}{% url 'books:search' %}{% if current_url_params %}?{{ current_url_params }}{% endif %}{% endblock %}

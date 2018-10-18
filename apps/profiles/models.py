@@ -155,7 +155,7 @@ class Profile(AbstractBaseUser, PermissionsMixin):
         # Translators: admin:skip
         help_text=_('USER.PHOTO.DESC'),
     )
-    
+
     status = models.CharField(
         # Translators: admin:skip
         _('USER.STATUS'),
@@ -204,10 +204,10 @@ class Profile(AbstractBaseUser, PermissionsMixin):
 
     def get_username(self):
         """
-        Return a unique user id instead of username 
+        Return a unique user id instead of username
         """
         return self.email
-        
+
     def get_absolute_url(self):
         """
         Return public URL for user

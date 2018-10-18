@@ -27,7 +27,7 @@ ADMIN_PERMISSIONS = {
 
 }
 
-# is_staff is not used, so staff will get these perms. 
+# is_staff is not used, so staff will get these perms.
 STAFF_PERMISSIONS = {
 
     'sitewide': {       # app name
@@ -47,6 +47,6 @@ STAFF_PERMISSIONS = {
 }
 
 AVAILABLE_GROUPS = {
-  'admin': ADMIN_PERMISSIONS,
-  'staff': STAFF_PERMISSIONS,
+    'admin': ADMIN_PERMISSIONS,
+    'staff': STAFF_PERMISSIONS,
 }

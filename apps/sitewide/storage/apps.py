@@ -14,7 +14,7 @@ class AppConfig(DjangoAppConfig):
     """
     Configuration entry point for the group app
     """
-    
+
     # Translators: admin
     name = _("GROUP")
     # Translators: admin

@@ -214,18 +214,18 @@ LANGUAGES = (
 )
 # https://meta.wikimedia.org/wiki/Template:List_of_language_names_ordered_by_code
 RTL_LANGUAGES = [
-  'ar',
-  'fa',
-  'he',
-  'arc',
-  'dv',
-  'ha',
-  'khw',
-  'ks',
-  'ku',
-  'ps',
-  'ur',
-  'yi'
+    'ar',
+    'fa',
+    'he',
+    'arc',
+    'dv',
+    'ha',
+    'khw',
+    'ks',
+    'ku',
+    'ps',
+    'ur',
+    'yi'
 ]
 LOCALE_PATHS = (
     os.path.abspath(os.path.join(BASE_DIR, 'locale')),
@@ -342,7 +342,7 @@ INSTALLED_APPS = AUTO_COMPLETE_APPS + INSTALLED_APPS + [
     'profiles',
     'sitewide',
     'api_v1',
-    
+
     # Must come last to finalize everything
     'finalware'
 ]
@@ -368,7 +368,7 @@ if 'corsheaders' in INSTALLED_APPS:
     CORS_ORIGIN_ALLOW_ALL = False
     CORS_URLS_REGEX = r'^/api/.*$|^/gql$'
     CORS_ORIGIN_WHITELIST = CORS_TRUSTED_ORIGINS
-    CORS_EXPOSE_HEADERS = ['Profile-Signature'] #  expose custom headers to browser
+    CORS_EXPOSE_HEADERS = ['Profile-Signature']  # expose custom headers to browser
 
 # Context-able data (finalware adds this list to context of all views)
 #######################################

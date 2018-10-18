@@ -39,10 +39,10 @@ def get_user_permissions(user):
 
     user_perms = user.user_permissions.all().values_list('codename', flat=True)
     group_perms = Permission.objects.filter(group__user=user).values_list('codename', flat=True)
-    
+
     permissions = list(user_perms) + list(set(group_perms) - set(user_perms))
     return permissions
-    
+
 
 def has_all_permissions(user, permissions):
     """ Return `True` only if the user has all the permissions """

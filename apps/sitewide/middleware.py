@@ -8,6 +8,7 @@
 
 from ipware import get_client_ip
 
+
 class ProcessIpAddressMiddleware:
     """ Grap the IP address from the header """
 

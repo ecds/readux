@@ -1,5 +1,26 @@
 {% extends "base.html" %}
 
+{% block content_body %}
+<div style="text-align:center">
+    <h1 style="margin-top:50px">
+        Welcome to Djangoware!
+    </h1>
+    <h3>
+        &rsaquo;&rsaquo; A Django starter project &lsaquo;&lsaquo;
+    </h3>
+
+    <h3>
+        <a target="_blank" rel="noopener" href="https://github.com/un33k/djangoware">Github Repo</a>
+    </h3>
+
+    <img class="content-img" width="300" alt="Neekware Logo" src="{% static 'images/neekware.gif' %}">
+
+    <h5>
+        <a target="_blank" rel="noopener" href="http://neekware.com">Neekware Inc.</a>
+    </h5>
+</div>
+{% endblock content_body %}
+
 {% block body_document_ready %}
-    {% include "analytics.html" %}
+{% include "analytics.html" %}
 {% endblock body_document_ready %}

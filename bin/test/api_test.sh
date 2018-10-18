@@ -1,6 +1,10 @@
-#__author__ = 'Val Neekman [neekware.com]'
-#__description__ = 'This script runs one, more or all the available tests in your project.'
-#__version__ = '0.0.1'
+##
+# @license
+# Copyright Neekware Inc. All Rights Reserved.
+#
+# Use of this source code is governed by an MIT-style license that can be
+# found in the LICENSE file at http://neekware.com/license/MIT.html
+###
 
 #!/usr/bin/env bash
 
@@ -135,4 +139,3 @@ while getopts "hsat" OPTION; do
 done
 
 test_show_usage
-

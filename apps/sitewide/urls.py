@@ -6,7 +6,6 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
-
 from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls import include

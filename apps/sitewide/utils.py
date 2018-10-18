@@ -7,7 +7,6 @@
 ###
 
 from django.conf import settings
-
 from toolware.utils.generic import get_site_proto
 
 

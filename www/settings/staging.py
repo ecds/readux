@@ -6,8 +6,7 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
-
-staimport sys
+import sys
 
 from .base.defaults import *
 

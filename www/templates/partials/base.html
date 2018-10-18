@@ -1,0 +1,53 @@
+{% extends "frame.html" %}
+
+{% block head_i %}
+    {% if media_cdn_domain %}
+        <link rel="dns-prefetch" href="//{{media_cdn_domain}}">
+        <script>var media_url = '{{media_cdn_url}}/';</script>
+    {% endif %}
+    {% if static_cdn_domain %}
+        <link rel="dns-prefetch" href="//{{static_cdn_domain}}">
+        <script>var static_url = '{{static_cdn_url}}/';</script>
+    {% endif %}
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    {{block.super}}
+{% endblock head_i %}
+
+{% block head_meta_common %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Content-Language" content="{{request.LANGUAGE_CODE}}">
+    {% for lang in ENABLED_LANGUAGES %}
+        {% if lang != request.LANGUAGE_CODE %}
+            <link rel="alternate" hreflang="{{l}}" href="{{request|altlang:lang}}" />
+        {% endif %}
+    {% endfor %}
+{% endblock head_meta_common %}
+
+{% block head_viewport %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+{% endblock head_viewport %}
+
+{% block head_title %}
+    <title>{{SITE_NAME}}</title>
+{% endblock head_title %}
+
+{% block head_description %}
+    <meta name="description" content="{{SITE_DESCRIPTION}}">
+{% endblock head_description %}
+
+{% block head_author %}
+    <meta name="author" content="{{SITE_AUTHOR}}">
+{% endblock head_author %}
+
+{% block head_favicon %}
+    <link rel="shortcut icon" href="{% static 'images/icons/favicon.ico' %}" type="image/x-icon">
+{% endblock head_favicon %}
+
+{% block vendor_fonts %}
+{% endblock vendor_fonts %}
+
+{% block head_css_custom %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock head_css_custom %}

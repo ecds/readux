@@ -6,7 +6,11 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
+import os
 
-__author__ = 'Val Neekman, Neekware Inc. [neekware.com]'
-__description__ = 'Neekware Inc.'
-__version__ = '0.0.1'
+
+def serializer_class(serializer_class):
+    def decorator(func):
+        func.serializer_class = serializer_class
+        return func
+    return decorator

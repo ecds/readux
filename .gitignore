@@ -69,3 +69,7 @@ assets/upload/*
 
 .DS_Store
 seekrets.json
+*_dev
+
+# profiler
+*.profile

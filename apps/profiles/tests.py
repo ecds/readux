@@ -6,7 +6,6 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
+from django.test import TestCase
 
-__author__ = 'Val Neekman, Neekware Inc. [neekware.com]'
-__description__ = 'Neekware Inc.'
-__version__ = '0.0.1'
+# Create your tests here.

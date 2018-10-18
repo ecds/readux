@@ -71,7 +71,6 @@ TEMPLATES_SUB_DIRS = [
     'server',       # HTTP server specific files (no context)
 ]
 TEMPLATES_DIRS = [os.path.join(TEMPLATES_BASE_DIR, dir) for dir in TEMPLATES_SUB_DIRS]
-print(TEMPLATES_DIRS)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

@@ -1,3 +1,9 @@
+## 0.0.3
+
+Enhancement:
+
+* Add instruction to readme file
+
 ## 0.0.2
 
 Enhancement:

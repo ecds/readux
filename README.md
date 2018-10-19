@@ -36,6 +36,9 @@ $ bin/development/manage.py runserver 0.0.0.0:8181
 1. Modify seekrets.json as per your development requirements
 2. Ensure that seekrets.json is stored in a separate private repo
 3. Default development database is sqlite
+4. Open http://localhost:8181/ in your browser
+5. Open http://localhost:8181/admin and enter your credentials.
+6. (default: email: `admin@djangoware.io`, pass: `hello`)
 
 How to use (PRODUCTION)
 ======================

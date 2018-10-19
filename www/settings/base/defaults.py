@@ -6,7 +6,6 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
-
 import os
 import sys
 
@@ -67,14 +66,15 @@ MIDDLEWARE = [
 #######################################
 TEMPLATES_BASE_DIR = os.path.abspath(os.path.join(BASE_DIR, 'www', 'templates'))
 TEMPLATES_SUB_DIRS = [
-    'partials',     # Partials and layout related (not view ready)
     'pages',        # Internal related pages
+    'partials',     # Partials and layout related (not view ready)
     'server',       # HTTP server specific files (no context)
 ]
+TEMPLATES_DIRS = [os.path.join(TEMPLATES_BASE_DIR, dir) for dir in TEMPLATES_SUB_DIRS]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_BASE_DIR],
+        'DIRS': TEMPLATES_DIRS,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -91,6 +91,7 @@ TEMPLATES = [
                 'django.templatetags.tz',
                 'django.contrib.humanize.templatetags.humanize',
                 'django.contrib.staticfiles.templatetags.staticfiles',
+                'sitewide.templatetags.languages',
             ],
             'loaders': (
                 (
@@ -215,18 +216,18 @@ LANGUAGES = (
 )
 # https://meta.wikimedia.org/wiki/Template:List_of_language_names_ordered_by_code
 RTL_LANGUAGES = [
-  'ar',
-  'fa',
-  'he',
-  'arc',
-  'dv',
-  'ha',
-  'khw',
-  'ks',
-  'ku',
-  'ps',
-  'ur',
-  'yi'
+    'ar',
+    'fa',
+    'he',
+    'arc',
+    'dv',
+    'ha',
+    'khw',
+    'ks',
+    'ku',
+    'ps',
+    'ur',
+    'yi'
 ]
 LOCALE_PATHS = (
     os.path.abspath(os.path.join(BASE_DIR, 'locale')),
@@ -343,7 +344,7 @@ INSTALLED_APPS = AUTO_COMPLETE_APPS + INSTALLED_APPS + [
     'profiles',
     'sitewide',
     'api_v1',
-    
+
     # Must come last to finalize everything
     'finalware'
 ]
@@ -369,7 +370,7 @@ if 'corsheaders' in INSTALLED_APPS:
     CORS_ORIGIN_ALLOW_ALL = False
     CORS_URLS_REGEX = r'^/api/.*$|^/gql$'
     CORS_ORIGIN_WHITELIST = CORS_TRUSTED_ORIGINS
-    CORS_EXPOSE_HEADERS = ['Profile-Signature'] #  expose custom headers to browser
+    CORS_EXPOSE_HEADERS = ['Profile-Signature']  # expose custom headers to browser
 
 # Context-able data (finalware adds this list to context of all views)
 #######################################

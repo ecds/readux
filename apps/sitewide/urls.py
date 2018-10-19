@@ -6,7 +6,6 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
-
 from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls import include
@@ -20,12 +19,25 @@ from .views import IndexPageView
 
 
 app_name = getattr(settings, 'SITE_NAME')
-admin.site.site_header = '{} Admin'.format(settings.SITE_NAME)
+admin.site.site_header = '{} Admin'.format(app_name)
 
 urlpatterns = i18n_patterns(
     url(r'^admin/', admin.site.urls),
     prefix_default_language=True
 )
+
+i18n_aware_patterns = ([
+    url(r'^$', IndexPageView.as_view(), name='index_page_view'),
+], 'i18n_portal')
+
+urlpatterns += i18n_patterns(
+    url(r'^', include(i18n_aware_patterns, namespace='i18n_portal')),
+    prefix_default_language=True
+)
+
+urlpatterns += [
+    url(r'^api/v1/', include(('api_v1.urls', 'api_v1'), namespace='api_v1')),
+]
 
 if settings.DEBUG:
     if getattr(settings, 'DEBUG_ENABLE_TOOLBAR', False):
@@ -33,7 +45,3 @@ if settings.DEBUG:
         urlpatterns += [
             url(r'^__debug__/', include(debug_toolbar.urls)),
         ]
-
-urlpatterns += [
-    url(r'^api/v1/', include(('api_v1.urls', 'api_v1'), namespace='api_v1')),
-]

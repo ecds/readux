@@ -6,7 +6,6 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
-
 import os
 import sys
 import json

@@ -1,9 +1,12 @@
-#__author__ = 'Val Neekman [neekware.com]'
-#__description__ = 'This script runs one, more or all the available tests in your project.'
-#__version__ = '0.0.1'
-
 #!/usr/bin/env bash
 
+##
+# @license
+# Copyright Neekware Inc. All Rights Reserved.
+#
+# Use of this source code is governed by an MIT-style license that can be
+# found in the LICENSE file at http://neekware.com/license/MIT.html
+###
 
 DEFAULT_TESTS="
 api_v1.tests.test_generics
@@ -135,4 +138,3 @@ while getopts "hsat" OPTION; do
 done
 
 test_show_usage
-

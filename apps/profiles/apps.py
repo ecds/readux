@@ -14,7 +14,7 @@ class ProfilesConfig(AppConfig):
     """
     Configuration entry point for the profiles app
     """
-    
+
     # Translators: admin
     name = "profiles"
     # Translators: admin

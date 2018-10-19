@@ -10,6 +10,7 @@ from django.db.models.signals import post_migrate
 from django.apps import AppConfig
 from django.conf import settings
 
+
 def post_migrate_callback(sender, **kwargs):
     from .group.utils import load_groups
     load_groups()
@@ -19,7 +20,7 @@ class SitewareConfig(AppConfig):
     """
     Configuration entry point for the sitewide app
     """
-    
+
     # Translators: admin
     name = "sitewide"
     # Translators: admin

@@ -6,15 +6,13 @@
 # found in the LICENSE file at http://neekware.com/license/MIT.html
 ###
 
-
 from django.conf import settings
-from django.views.generic.base import RedirectView
+from django.views.generic import TemplateView
 
 from .utils import get_app_fqdn
 
 
-class IndexPageView(RedirectView):
-    """ Redirecting to app """
+class IndexPageView(TemplateView):
+    """ Index - home page """
 
-    permanent = False
-    url = get_app_fqdn()
+    template_name = "home.html"

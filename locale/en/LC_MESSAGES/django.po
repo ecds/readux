@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 20:24+0000\n"
+"POT-Creation-Date: 2018-10-18 23:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -242,3 +242,7 @@ msgstr "Users"
 #: apps/sitewide/storage/apps.py:19 apps/sitewide/storage/apps.py:21
 msgid "GROUP"
 msgstr "Group"
+
+#: www/templates/pages/home.html:22
+msgid "ADMIN_PAGE"
+msgstr "Admin page"

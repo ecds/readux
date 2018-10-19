@@ -36,9 +36,10 @@ $ bin/development/manage.py runserver 0.0.0.0:8181
 1. Modify seekrets.json as per your development requirements
 2. Ensure that seekrets.json is stored in a separate private repo
 3. Default development database is sqlite
-4. Open http://localhost:8181/ in your browser
-5. Open http://localhost:8181/admin and enter your credentials.
-6. (default: email: `admin@djangoware.io`, pass: `hello`)
+4. Default credentials: email: `admin@djangoware.io`, pass: `hello`
+5. http://localhost:8181  (home page)
+6. http://localhost:8181/admin  (admin page)
+7. http://localhost:8181/api/v1/ (rest api test page)
 
 How to use (PRODUCTION)
 ======================
@@ -79,3 +80,15 @@ $ pip install -r env/requirements/development.txt
 $ bin/development/manage.py migrate
 $ bin/test/api_test.sh -a
 ```
+**Note:**
+1. `api_test.sh -a` performs various tests via the REST API
+2. Create a user
+3. Delete a user
+4. Chagne a passowrd
+5. If user exists
+6. Test throttling API requests
+
+License
+====================
+
+Released under a ([MIT](LICENSE)) license.

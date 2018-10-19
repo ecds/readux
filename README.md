@@ -10,7 +10,7 @@ Overview
 
 This is a starter project and it's meant to speed up your development to production process.  Many measures have been taken to ensure your production instance(s) remain secure.  You still need to make it your own!
 
-Please note that Djangoware is not an installable applicaiton.  Djangoware should be considered as a blueprint of your next Django project.  Simply fork the project, rename it to what you want and modify the seekrets.json file to reflect your needs.
+Please note that Djangoware is not an installable application.  Djangoware can be considered as a blueprint of your next Django project.  Simply fork the project, rename it to what you want and modify seekrets.json to reflect your needs.
 
 Notice
 ======================

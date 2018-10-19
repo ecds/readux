@@ -58,6 +58,7 @@ $ bin/production/manage.py collectstatic
 2. Ensure that seekrets.json is stored in a separate private repo
 3. The `collectstatic` stores the static artifacts in `assets/collect` by default
 4. If AWS credentials are set in seekrets.json, `collectstatic` stores the static artifacts to your `S3` buckets.
+5. Use `www/wsgi/production.py` with your production webserver
 
 How to TEST
 ======================

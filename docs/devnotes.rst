@@ -96,8 +96,8 @@ Start up a django python shell (``python manage.py shell``) and do
 the following::
 
 
-  from readux.utils import solr_interface
-  from readux.books.models import VolumeV1_0, SolrVolume
+  utils import solr_interface
+  books.models import VolumeV1_0, SolrVolume
   solr = solr_interface()
   vols = solr.query(content_model=VolumeV1_0.VOLUME_CONTENT_MODEL,
      collection_id='emory-control:LSDI-EmoryYearbooks').results_as(SolrVolume)

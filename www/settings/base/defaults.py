@@ -344,6 +344,9 @@ INSTALLED_APPS = AUTO_COMPLETE_APPS + INSTALLED_APPS + [
     'profiles',
     'sitewide',
     'api_v1',
+    'annotations',
+    'collection',
+    'volumes',
 
     # Must come last to finalize everything
     'finalware'

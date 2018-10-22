@@ -37,6 +37,9 @@ urlpatterns += i18n_patterns(
 
 urlpatterns += [
     url(r'^api/v1/', include(('api_v1.urls', 'api_v1'), namespace='api_v1')),
+    url(r'^', include('annotations.urls')),
+    url(r'^', include('collection.urls')),
+    url(r'^', include('volumes.urls'))
 ]
 
 if settings.DEBUG:

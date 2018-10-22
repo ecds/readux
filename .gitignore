@@ -121,10 +121,12 @@ static/plugins/annotator/scss/node_modules
 .vscode/
 .DS_Store
 localsettings.py
+venv
 db.cnf
 mydatabase
 # Sphinx documentation
 docs/_build/
+postgres
 
 # Local DB files
 *_db

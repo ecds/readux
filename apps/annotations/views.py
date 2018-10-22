@@ -1,7 +1,7 @@
-from readux.annotations.models import Annotation
 from django.contrib.auth.models import User
 from rest_framework import generics
-from readux.annotations.serializers import AnnotationSerializer
+from annotations.models import Annotation
+from annotations.serializers import AnnotationSerializer
 
 
 class AnnotationListCreate(generics.ListCreateAPIView):

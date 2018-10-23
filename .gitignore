@@ -15,6 +15,21 @@ media/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.py[cod]
+
+*.db
+*.swp
+*.log
+.DS_Store
+*~
+build
+src
+.svn
+*_db
+temp_data
+
+asset/collect/*
+!asset/collect/index.html
 
 # C extensions
 *.so
@@ -48,6 +63,30 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+*/bin
+!bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
 
 # Translations
 *.mo
@@ -82,5 +121,23 @@ static/plugins/annotator/scss/node_modules
 .vscode/
 .DS_Store
 localsettings.py
+venv
 db.cnf
 mydatabase
+# Sphinx documentation
+docs/_build/
+postgres
+
+# Local DB files
+*_db
+assets/collect/*
+!assets/collect/index.html
+assets/upload/*
+!assets/upload/index.html
+
+.DS_Store
+seekrets.json
+*_dev
+
+# profiler
+*.profile

@@ -1,14 +1,11 @@
 <ol>
-  {% for col in collections %}
+  {% for collection in results.collections %}
   <li>
-    <div>{{ col.label }}</div>
-    <ol>
-      {% for subcol in col.collections %}
-      <li>
-        <div>{{ subcol.label }}</div>
-      </li>
-      {% endfor %}
-    </ol>
+    <div>{{ collection.label }}</div>
+    <div>
+      <div>{{ collection.sub.label }}</div>
+      <img width="30px" src="{{ collection.sub.logo }}" />
+    </div>
   </li>
   {% endfor %}
 </ol>

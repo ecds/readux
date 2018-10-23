@@ -1,0 +1,248 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-18 23:56+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: api/api_v1/generics/views.py:39 api/api_v1/profiles/serializers.py:154
+#: api/api_v1/profiles/serializers.py:204
+msgid "EMAIL.IN_USE"
+msgstr "Email is in use"
+
+#: api/api_v1/generics/views.py:41
+msgid "EMAIL.NOT_IN_USE"
+msgstr "Email is available"
+
+#: api/api_v1/generics/views.py:42
+msgid "ERROR.MISSING_PARAMS"
+msgstr "Missing {__param__}"
+
+#: api/api_v1/profiles/serializers.py:219 api/api_v1/profiles/views.py:156
+#: api/api_v1/profiles/views.py:160
+msgid "PASSWORD.INVALID"
+msgstr "Invalid password"
+
+#: api/api_v1/profiles/views.py:133
+msgid "USER.DELETE.NOT_ALLOWED"
+msgstr "Deleting user is not allowed"
+
+#: api/api_v1/profiles/views.py:165
+msgid "PASSWORD.TOO_SIMILAR"
+msgstr "Password is already used to too similar to old passwords"
+
+#: api/api_v1/profiles/views.py:170
+msgid "PASSWORD.CHANGED"
+msgstr "Password changed"
+
+#. Translators: admin
+#: apps/profiles/admin.py:24
+msgid "USER.FIELDS.REQUIRED"
+msgstr "Field is required"
+
+#. Translators: admin
+#: apps/profiles/admin.py:26
+msgid "USER.FIELDS.PERSONAL"
+msgstr "User info"
+
+#. Translators: admin
+#: apps/profiles/admin.py:28
+msgid "USER.FIELDS.PERMISSIONS"
+msgstr "User permissions"
+
+#. Translators: admin
+#: apps/profiles/admin.py:30
+msgid "USER.FIELDS.DATES"
+msgstr "Date"
+
+#. Translators: admin
+#: apps/profiles/admin.py:32
+msgid "USER.FIELDS.MISC"
+msgstr "Misc."
+
+#. Translators: portal
+#: apps/profiles/defaults.py:22
+msgid "USER.STATUS.NEW"
+msgstr "New"
+
+#. Translators: portal
+#: apps/profiles/defaults.py:24
+msgid "USER.STATUS.OVERDUE"
+msgstr "Overdue"
+
+#. Translators: portal
+#: apps/profiles/defaults.py:26
+msgid "USER.STATUS.ACTIVE"
+msgstr "Active"
+
+#. Translators: portal
+#: apps/profiles/defaults.py:28
+msgid "USER.STATUS.BANNED"
+msgstr "Banned"
+
+#. Translators: portal
+#: apps/profiles/defaults.py:30
+msgid "USER.STATUS.SUSPENDED"
+msgstr "Suspended"
+
+#. Translators: auth:i18n
+#: apps/profiles/exceptions.py:16
+msgid "ERROR.INCORRECT.CREDENTIALS"
+msgstr "Incorrect credentials"
+
+#. Translators: auth:i18n
+#: apps/profiles/exceptions.py:30
+msgid "ERROR.INCORRECT.PERMISSIONS"
+msgstr "Incorrect permissions"
+
+#. Translators: auth:i18n
+#: apps/profiles/exceptions.py:44
+msgid "ERROR.BAD_REQUEST"
+msgstr "Bad request"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:56
+msgid "USER.EMAIL.REQUIRED"
+msgstr "Email is required"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:74
+msgid "USER.EMAIL"
+msgstr "Email"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:78
+msgid "USER.EMAIL.DESC"
+msgstr "User's email address"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:83
+msgid "USER.SUPERUSER"
+msgstr "Superuser"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:86
+msgid "USER.SUPERUSER.DESC"
+msgstr "Site superuser or admin"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:91
+msgid "USER.STAFF"
+msgstr "Staff"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:94
+msgid "USER.STAFF.DESC"
+msgstr "Site staff"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:99
+msgid "USER.ACTIVE"
+msgstr "Active"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:102
+msgid "USER.ACTIVE.DESC"
+msgstr "User is active"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:109
+msgid "USER.CREATED_AT"
+msgstr "Created at"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:115
+msgid "USER.UPDATED_AT"
+msgstr "Update at"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:121
+msgid "USER.FIRST_NAME"
+msgstr "First name"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:126
+msgid "USER.FIRST_NAME.DESC"
+msgstr "User's first name"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:131
+msgid "USER.LAST_NAME"
+msgstr "Last name"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:136
+msgid "USER.LAST_NAME.DESC"
+msgstr "User's last name"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:141
+msgid "USER.VERIFIED"
+msgstr "Verfied"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:144
+msgid "USER.VERIFIED.DESC"
+msgstr "User is verified"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:149
+msgid "USER.PHOTO"
+msgstr "Photo"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:156
+msgid "USER.PHOTO.DESC"
+msgstr "User photo or avatar"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:161
+msgid "USER.STATUS"
+msgstr "Status"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:166
+msgid "USER.STATUS.DESC"
+msgstr "User's account status"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:171
+msgid "USER.LANGUAGE"
+msgstr "Language"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:175
+msgid "USER.LANGUAGE.DESC"
+msgstr "User's language"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:188
+msgid "USER.LABEL"
+msgstr "User"
+
+#. Translators: admin:skip
+#: apps/profiles/models.py:190
+msgid "USER.LABEL.PLURAL"
+msgstr "Users"
+
+#. Translators: admin
+#: apps/sitewide/storage/apps.py:19 apps/sitewide/storage/apps.py:21
+msgid "GROUP"
+msgstr "Group"
+
+#: www/templates/pages/home.html:22
+msgid "ADMIN_PAGE"
+msgstr "Admin page"

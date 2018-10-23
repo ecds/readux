@@ -1,8 +1,14 @@
-
 <ol>
-{% for collection in collections %}
-<li>
-{{ collection.label }}
-</li>
-{% endfor %}
+  {% for col in collections %}
+  <li>
+    <div>{{ col.label }}</div>
+    <ol>
+      {% for subcol in col.collections %}
+      <li>
+        <div>{{ subcol.label }}</div>
+      </li>
+      {% endfor %}
+    </ol>
+  </li>
+  {% endfor %}
 </ol>

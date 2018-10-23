@@ -1,11 +1,12 @@
 from django.views.generic import TemplateView
-import collection.services
+from . import services as srv
+from . import defaults as defs
 
-# Create your views here.
+
 class CollectionList(TemplateView):
   template_name = 'collection_list.html'
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    context['collections'] = collection.services.get_all_collections()
+    context['collections'] = srv.get_collections_recursively(defs.IIIF_UNIVERSE_COLLECTION_URL, 2)
     return context

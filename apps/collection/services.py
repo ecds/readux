@@ -38,8 +38,4 @@ def get_collection_recursively(url, depth=1):
         
     data['collections'] = collections_with_sub
 
-    # with open('collections.json', 'w') as outfile:
-    #     json.dump(data, outfile, sort_keys = True, indent = 4,ensure_ascii = False)
-
     return data
-

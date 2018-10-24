@@ -1,8 +1,11 @@
-
 <ol>
-{% for collection in collections %}
-<li>
-{{ collection.label }}
-</li>
-{% endfor %}
+  {% for collection in results.collections %}
+  <li>
+    <div>{{ collection.label }}</div>
+    <div>
+      <div>{{ collection.sub.label }}</div>
+      <img width="30px" src="{{ collection.sub.logo }}" />
+    </div>
+  </li>
+  {% endfor %}
 </ol>

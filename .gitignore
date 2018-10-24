@@ -141,3 +141,6 @@ seekrets.json
 
 # profiler
 *.profile
+
+# dev json
+dev_*.json

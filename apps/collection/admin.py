@@ -27,3 +27,4 @@ class CollectionAdmin(admin.ModelAdmin):
     ]
 
     list_per_page = 25
+    readonly_fields = ['children']

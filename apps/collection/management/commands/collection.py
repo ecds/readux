@@ -27,7 +27,43 @@ class Command(BaseCommand):
             action='store_true',
             dest='fetch',
             default=False,
-            help='Fetch and load all collections to db'
+            help='Fetch collections from the IIIF endpoint'
+        )
+
+        parser.add_argument(
+            '-l',
+            '--load',
+            action='store_true',
+            dest='load',
+            default=False,
+            help='Fetch and load data to db'
+        )
+
+        parser.add_argument(
+            '-o',
+            '--overwrite',
+            action='store_true',
+            dest='overwrite',
+            default=False,
+            help='For update if data exists in db'
+        )
+
+        parser.add_argument(
+            '-s',
+            '--save',
+            action='store_true',
+            dest='save',
+            default=False,
+            help='Fetch and save to local json file'
+        )
+
+        parser.add_argument(
+            '-p',
+            '--print',
+            action='store_true',
+            dest='print',
+            default=False,
+            help='Fetch and print to screen'
         )
 
         parser.add_argument(
@@ -40,35 +76,43 @@ class Command(BaseCommand):
             help='Fetch sub collections of depth of <n>'
         )
 
-
     def handle(self, *args, **options):
         """ Handles command """
         self.verbosity = options['verbosity']
-        fetch = options['fetch']
-        depth = options['depth']
+        self.fetch = options['fetch']
+        self.load = options['load']
+        self.overwrite = options['overwrite']
+        self.depth = options['depth']
+        self.save = options['save']
+        self.print = options['print']
 
-        if not fetch:
+        if not self.fetch:
             self.print_help("", subcommand='collection')
             return
 
-        if depth > defs.MAX_SUB_COLLECTIONS_DEPTH:
+        if self.depth > defs.MAX_SUB_COLLECTIONS_DEPTH:
             self.stdout.write('Depth exceeding the max of {}'.format(self.MAX_SUB_COLLECTIONS_DEPTH))
             return
 
-        self.fetch()
+        self.process()
 
-    def fetch(self):
-        """ Fetch URLs """
+    def process(self, url=defs.IIIF_UNIVERSE_COLLECTION_URL):
+        """ Fetch and process url """
         if self.verbosity > 2:
-            self.stdout.write('Preparing to fetch collections ...')
+            self.stdout.write('Preparing to fetch collections ... ({})'.format(url))
 
-        data = self.fetch_collection(defs.IIIF_UNIVERSE_COLLECTION_URL, defs.HTTP_REQUEST_TIMEOUT, format='json')
+        data = self.fetch_collection(url, defs.HTTP_REQUEST_TIMEOUT, format='json')
         if not data:
             self.stdout.write('Failed to fetch collections ...')
             return
 
-        pprint(data)
-        self.dump_json_to_file('dev_iiif.json', data)
+        if self.print:
+            pprint(data)
+        
+        if self.save:
+            self.dump_json_to_file('dev_iiif.json', data)
+
+        return data
 
     @rate_limited(defs.API_CALLS_LIMIT_PER_SECONDS)
     def fetch_collection(self, url, timeout, format):

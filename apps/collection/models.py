@@ -99,6 +99,8 @@ class Collection(models.Model):
         # Translators: admin:skip
         verbose_name_plural = _('COLLECTION.NAME.PLURAL')
 
+        unique_together = ("identification", "depth")
+
         # permissions = (
         #     # ('add_collection', 'Can add new collection'),
         #     # ('change_collection', 'Can change all data on any collection'),

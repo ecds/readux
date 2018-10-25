@@ -76,9 +76,9 @@ class Collection(models.Model):
 
     class Meta:
         # Translators: admin:skip
-        verbose_name = _('COLLECTION.LABEL')
+        verbose_name = _('COLLECTION.NAME.LABEL')
         # Translators: admin:skip
-        verbose_name_plural = _('COLLECTION.LABEL.PLURAL')
+        verbose_name_plural = _('COLLECTION.NAME.PLURAL')
 
         # permissions = (
         #     # ('add_collection', 'Can add new collection'),

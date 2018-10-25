@@ -20,6 +20,13 @@ class Collection(models.Model):
         blank=False,
     )
 
+    depth = models.PositiveIntegerField(
+        # Translators: admin:skip
+        _('COLLECTION.DEPTH'),
+        default=1,
+        blank=False,
+    )
+
     context = models.CharField(
         # Translators: admin:skip
         _('COLLECTION.CONTEXT'),
@@ -33,6 +40,7 @@ class Collection(models.Model):
         _('COLLECTION.TYPE'),
         max_length=60,
         blank=False,
+        null=True,
     )
 
     label = models.CharField(
@@ -40,6 +48,7 @@ class Collection(models.Model):
         _('COLLECTION.LABEL'),
         max_length=255,
         blank=False,
+        null=True,
     )
 
     description = models.TextField(

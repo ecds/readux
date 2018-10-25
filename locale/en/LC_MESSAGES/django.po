@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-25 15:31+0000\n"
+"POT-Creation-Date: 2018-10-25 17:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,41 +50,51 @@ msgstr "Password changed"
 
 #. Translators: admin:skip
 #: apps/collection/models.py:17
-msgid "COLLECTION.CONTEXT"
-msgstr "Context"
-
-#. Translators: admin:skip
-#: apps/collection/models.py:24
 msgid "COLLECTION.IDENTIFICATION"
 msgstr "Id"
 
 #. Translators: admin:skip
-#: apps/collection/models.py:31
+#: apps/collection/models.py:25
+msgid "COLLECTION.DEPTH"
+msgstr "Depth"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:32
+msgid "COLLECTION.CONTEXT"
+msgstr "Context"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:40
 msgid "COLLECTION.TYPE"
 msgstr "Type"
 
 #. Translators: admin:skip
-#: apps/collection/models.py:38
+#: apps/collection/models.py:48
 msgid "COLLECTION.LABEL"
 msgstr "Label"
 
 #. Translators: admin:skip
-#: apps/collection/models.py:45
+#: apps/collection/models.py:56
 msgid "COLLECTION.DESCRIPTION"
 msgstr "Description"
 
 #. Translators: admin:skip
-#: apps/collection/models.py:52
+#: apps/collection/models.py:63
 msgid "COLLECTION.ATTRIBUTION"
 msgstr "Attribution"
 
 #. Translators: admin:skip
-#: apps/collection/models.py:79
+#: apps/collection/models.py:70
+msgid "COLLECTION.LOGO"
+msgstr "Label"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:98
 msgid "COLLECTION.NAME.LABEL"
 msgstr "Collection"
 
 #. Translators: admin:skip
-#: apps/collection/models.py:81
+#: apps/collection/models.py:100
 msgid "COLLECTION.NAME.PLURAL"
 msgstr "Collections"
 

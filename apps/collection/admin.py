@@ -8,6 +8,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
     list_display = [
         'id',
+        'depth',
         'label',
         'type',
         'updated_at',
@@ -16,6 +17,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
     search_fields = [
         'id',
+        'depth',
         'context',
         'identification',
         'type',

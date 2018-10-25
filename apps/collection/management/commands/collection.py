@@ -126,8 +126,7 @@ class Command(BaseCommand):
                 sys.stdout.write('Failed to fetch collection for ({})\n'.format(url))
             return
 
-        import pdb; pdb.set_trace()
-        instance = self.create_or_update(data)
+        instance = self.create_or_update(data, depth)
         collections_data = data.get('collections')
         if not collections_data:
             if self.verbosity >=3:
@@ -139,13 +138,13 @@ class Command(BaseCommand):
     def proccess_children(self, parent, collections_data, depth):
         """ Process sub collections """
         for child in collections_data:
-            instance = self.create_or_update(child)
+            instance = self.create_or_update(child, depth)
             if instance:
                 parent.children.add(instance)
             if depth > 0:
                 self.process(instance.identification, depth)
     
-    def create_or_update(self, data):
+    def create_or_update(self, data, depth):
         """ Given a dict of collection attributes, it creates or updates an instance. """
 
         default_data = {
@@ -153,11 +152,13 @@ class Command(BaseCommand):
             'context': data.get('@context'),
             'type': data.get('@type'),
             'label': data.get('label'),
+            'logo': data.get('logo'),
             'description': data.get('description'),
             'attribution': data.get('attribution'),
+            'depth': depth,
         }
 
-        instance, created = Collection.objects.get_or_create_unique(default_data, ['identification'])
+        instance, created = Collection.objects.get_or_create_unique(default_data, ['identification', 'depth'])
         if not instance:
             if self.verbosity >2:
                 sys.stdout.write('Failed to create collection for ({})\n'.format(identification))

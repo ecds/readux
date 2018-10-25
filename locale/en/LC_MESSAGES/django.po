@@ -85,8 +85,6 @@ msgstr "Collection"
 
 #. Translators: admin:skip
 #: apps/collection/models.py:81
-#, fuzzy
-#| msgid "COLLECTION.LABEL.PLURAL"
 msgid "COLLECTION.NAME.PLURAL"
 msgstr "Collections"
 

@@ -108,4 +108,6 @@ class Collection(models.Model):
         # )
 
     def __str__(self):
-        return self.label
+        if self.label:
+            return self.label
+        return 'unknown'

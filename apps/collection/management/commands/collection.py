@@ -99,7 +99,7 @@ class Command(BaseCommand):
 
         self.created = 0
         self.updated = 0
-        self.process(defs.IIIF_UNIVERSE_COLLECTION_URL, self.depth)
+        self.process(defs.IIIF_UNIVERSE_COLLECTION_URL, 0)
         if self.verbosity > 2:
             sys.stdout.write('Created collections: ({})\n'.format(self.created))
             sys.stdout.write('Updated collections: ({})\n'.format(self.updated))
@@ -133,7 +133,7 @@ class Command(BaseCommand):
                 sys.stdout.write('Not sub collections for ({})\n'.format(identification))
             return
 
-        self.proccess_children(instance, collections_data, depth-1)
+        self.proccess_children(instance, collections_data, depth+1)
 
     def proccess_children(self, parent, collections_data, depth):
         """ Process sub collections """
@@ -141,7 +141,7 @@ class Command(BaseCommand):
             instance = self.create_or_update(child, depth)
             if instance:
                 parent.children.add(instance)
-            if depth > 0:
+            if depth < self.depth:
                 self.process(instance.identification, depth)
     
     def create_or_update(self, data, depth):

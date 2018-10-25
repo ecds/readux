@@ -111,7 +111,7 @@ class Command(BaseCommand):
 
         data = self.fetch_collection(url, defs.HTTP_REQUEST_TIMEOUT, format='json')
         if not data:
-            self.stdout.write('Failed to fetch collections ...')
+            self.stdout.write('Failed to fetch collections ... ({})'.format(url))
             return
 
         if self.print:
@@ -179,7 +179,7 @@ class Command(BaseCommand):
     @rate_limited(defs.API_CALLS_LIMIT_PER_SECONDS)
     def fetch_collection(self, url, timeout, format):
         """ Fetch from API while throttling our calls """
-        resp = fetch_url(url, timeout=timeout, format=format)
+        resp = fetch_url(url, timeout=timeout, format=format, verbosity=self.verbosity)
         return resp
 
     def dump_json_to_file(self, file_name, content):

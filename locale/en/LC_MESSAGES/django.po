@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 23:56+0000\n"
+"POT-Creation-Date: 2018-10-25 15:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,43 @@ msgstr "Password is already used to too similar to old passwords"
 #: api/api_v1/profiles/views.py:170
 msgid "PASSWORD.CHANGED"
 msgstr "Password changed"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:17
+msgid "COLLECTION.CONTEXT"
+msgstr "Context"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:24
+msgid "COLLECTION.IDENTIFICATION"
+msgstr "Id"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:31
+msgid "COLLECTION.TYPE"
+msgstr "Type"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:38 apps/collection/models.py:79
+msgid "COLLECTION.LABEL"
+msgstr "Label"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:45
+msgid "COLLECTION.DESCRIPTION"
+msgstr "Description"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:52
+msgid "COLLECTION.ATTRIBUTION"
+msgstr "Attribution"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:81
+#, fuzzy
+#| msgid "USER.LABEL.PLURAL"
+msgid "COLLECTION.LABEL.PLURAL"
+msgstr "Users"
 
 #. Translators: admin
 #: apps/profiles/admin.py:24
@@ -243,6 +280,6 @@ msgstr "Users"
 msgid "GROUP"
 msgstr "Group"
 
-#: www/templates/pages/home.html:22
+#: www/templates/pages/home.html:23
 msgid "ADMIN_PAGE"
 msgstr "Admin page"

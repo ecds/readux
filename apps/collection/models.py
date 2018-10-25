@@ -24,7 +24,8 @@ class Collection(models.Model):
         # Translators: admin:skip
         _('COLLECTION.CONTEXT'),
         max_length=255,
-        blank=False,
+        blank=True,
+        null=True,
     )
 
     type = models.CharField(
@@ -51,6 +52,14 @@ class Collection(models.Model):
     attribution = models.TextField(
         # Translators: admin:skip
         _('COLLECTION.ATTRIBUTION'),
+        blank=True,
+        null=True,
+    )
+
+    logo = models.CharField(
+        # Translators: admin:skip
+        _('COLLECTION.LOGO'),
+        max_length=255,
         blank=True,
         null=True,
     )

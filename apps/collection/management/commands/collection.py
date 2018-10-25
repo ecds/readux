@@ -99,12 +99,12 @@ class Command(BaseCommand):
 
         self.created = 0
         self.updated = 0
-        self.process()
+        self.process(defs.IIIF_UNIVERSE_COLLECTION_URL, self.depth)
         if self.verbosity > 2:
             sys.stdout.write('Created collections: ({})\n'.format(self.created))
             sys.stdout.write('Updated collections: ({})\n'.format(self.updated))
 
-    def process(self, url=defs.IIIF_UNIVERSE_COLLECTION_URL, depth=0):
+    def process(self, url, depth):
         """ Fetch and process url """
         if self.verbosity > 2:
             self.stdout.write('Preparing to fetch collections ... ({})'.format(url))
@@ -126,18 +126,19 @@ class Command(BaseCommand):
                 sys.stdout.write('Failed to fetch collection for ({})\n'.format(url))
             return
 
+        import pdb; pdb.set_trace()
         instance = self.create_or_update(data)
-        collections = data.get('collections')
-        if not collections:
+        collections_data = data.get('collections')
+        if not collections_data:
             if self.verbosity >=3:
                 sys.stdout.write('Not sub collections for ({})\n'.format(identification))
             return
 
-        self.proccess_children(instance, collections, depth-1)
+        self.proccess_children(instance, collections_data, depth-1)
 
-    def proccess_children(self, parent, children, depth):
+    def proccess_children(self, parent, collections_data, depth):
         """ Process sub collections """
-        for child in children:
+        for child in collections_data:
             instance = self.create_or_update(child)
             if instance:
                 parent.children.add(instance)
@@ -147,7 +148,7 @@ class Command(BaseCommand):
     def create_or_update(self, data):
         """ Given a dict of collection attributes, it creates or updates an instance. """
 
-        defaults_values = {
+        default_data = {
             'identification': data.get('@id'),
             'context': data.get('@context'),
             'type': data.get('@type'),
@@ -156,12 +157,14 @@ class Command(BaseCommand):
             'attribution': data.get('attribution'),
         }
 
-        instance, created = Collection.objects.get_or_create_unique(defaults_values, ['identification'])
+        instance, created = Collection.objects.get_or_create_unique(default_data, ['identification'])
         if not instance:
             if self.verbosity >2:
                 sys.stdout.write('Failed to create collection for ({})\n'.format(identification))
             return
-        self.created += 1
+
+        if created:
+            self.created += 1
 
         if not created and self.overwrite:
             for attr, value in defaults.items():

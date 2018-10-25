@@ -3,6 +3,7 @@ import json
 import codecs
 import logging
 import requests
+import hashlib
 from pprint import pprint
 from datetime import datetime
 
@@ -11,8 +12,10 @@ from django.utils import timezone
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from ... import defaults as defs
+from toolware.utils.generic import get_uuid
 from utils.fetch import rate_limited, fetch_url
+from ...models import Collection
+from ... import defaults as defs
 
 log = logging.getLogger(__name__)
 
@@ -28,6 +31,16 @@ class Command(BaseCommand):
             dest='fetch',
             default=False,
             help='Fetch collections from the IIIF endpoint'
+        )
+
+        parser.add_argument(
+            '-d',
+            '--depth',
+            action='store',
+            dest='depth',
+            type=int,
+            default=1,
+            help='Fetch sub collections of depth of <n>'
         )
 
         parser.add_argument(
@@ -66,16 +79,6 @@ class Command(BaseCommand):
             help='Fetch and print to screen'
         )
 
-        parser.add_argument(
-            '-d',
-            '--depth',
-            action='store',
-            dest='depth',
-            type=int,
-            default=2,
-            help='Fetch sub collections of depth of <n>'
-        )
-
     def handle(self, *args, **options):
         """ Handles command """
         self.verbosity = options['verbosity']
@@ -94,9 +97,14 @@ class Command(BaseCommand):
             self.stdout.write('Depth exceeding the max of {}'.format(self.MAX_SUB_COLLECTIONS_DEPTH))
             return
 
+        self.created = 0
+        self.updated = 0
         self.process()
+        if self.verbosity > 2:
+            sys.stdout.write('Created collections: ({})\n'.format(self.created))
+            sys.stdout.write('Updated collections: ({})\n'.format(self.updated))
 
-    def process(self, url=defs.IIIF_UNIVERSE_COLLECTION_URL):
+    def process(self, url=defs.IIIF_UNIVERSE_COLLECTION_URL, depth=0):
         """ Fetch and process url """
         if self.verbosity > 2:
             self.stdout.write('Preparing to fetch collections ... ({})'.format(url))
@@ -110,9 +118,59 @@ class Command(BaseCommand):
             pprint(data)
         
         if self.save:
-            self.dump_json_to_file('dev_iiif.json', data)
+            self.dump_json_to_file('dev_iiif_{}.json'.format(get_uuid(16)), data)
 
-        return data
+        identification = data.get('@id')
+        if not identification:
+            if self.verbosity >2:
+                sys.stdout.write('Failed to fetch collection for ({})\n'.format(url))
+            return
+
+        instance = self.create_or_update(data)
+        collections = data.get('collections')
+        if not collections:
+            if self.verbosity >=3:
+                sys.stdout.write('Not sub collections for ({})\n'.format(identification))
+            return
+
+        self.proccess_children(instance, collections, depth-1)
+
+    def proccess_children(self, parent, children, depth):
+        """ Process sub collections """
+        for child in children:
+            instance = self.create_or_update(child)
+            if instance:
+                parent.children.add(instance)
+            if depth > 0:
+                self.process(instance.identification, depth)
+    
+    def create_or_update(self, data):
+        """ Given a dict of collection attributes, it creates or updates an instance. """
+
+        defaults_values = {
+            'identification': data.get('@id'),
+            'context': data.get('@context'),
+            'type': data.get('@type'),
+            'label': data.get('label'),
+            'description': data.get('description'),
+            'attribution': data.get('attribution'),
+        }
+
+        instance, created = Collection.objects.get_or_create_unique(defaults_values, ['identification'])
+        if not instance:
+            if self.verbosity >2:
+                sys.stdout.write('Failed to create collection for ({})\n'.format(identification))
+            return
+        self.created += 1
+
+        if not created and self.overwrite:
+            for attr, value in defaults.items():
+                if getattr(instance, attr):
+                    setattr(instance, attr, value)
+            instance.save()
+            self.updated += 1
+
+        return instance
 
     @rate_limited(defs.API_CALLS_LIMIT_PER_SECONDS)
     def fetch_collection(self, url, timeout, format):

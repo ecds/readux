@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinLengthValidator
 from django.core.validators import MaxLengthValidator
 
-from toolware.utils.query import CaseInsensitiveManager
+from toolware.utils.query import CaseInsensitiveUniqueManager
 
 
 class Collection(models.Model):
@@ -12,16 +12,17 @@ class Collection(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    context = models.CharField(
-        # Translators: admin:skip
-        _('COLLECTION.CONTEXT'),
-        max_length=255,
-        blank=False,
-    )
-
     identification = models.CharField(
         # Translators: admin:skip
         _('COLLECTION.IDENTIFICATION'),
+        max_length=255,
+        unique=True,
+        blank=False,
+    )
+
+    context = models.CharField(
+        # Translators: admin:skip
+        _('COLLECTION.CONTEXT'),
         max_length=255,
         blank=False,
     )
@@ -63,7 +64,7 @@ class Collection(models.Model):
 
 
     # ########## Add new fields above this line #############
-    objects = CaseInsensitiveManager()
+    objects = CaseInsensitiveUniqueManager()
 
     CASE_INSENSITIVE_FIELDS = [
       'context',

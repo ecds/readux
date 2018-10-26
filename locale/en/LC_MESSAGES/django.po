@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-18 23:56+0000\n"
+"POT-Creation-Date: 2018-10-25 17:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,56 @@ msgstr "Password is already used to too similar to old passwords"
 #: api/api_v1/profiles/views.py:170
 msgid "PASSWORD.CHANGED"
 msgstr "Password changed"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:17
+msgid "COLLECTION.IDENTIFICATION"
+msgstr "Id"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:25
+msgid "COLLECTION.DEPTH"
+msgstr "Depth"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:32
+msgid "COLLECTION.CONTEXT"
+msgstr "Context"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:40
+msgid "COLLECTION.TYPE"
+msgstr "Type"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:48
+msgid "COLLECTION.LABEL"
+msgstr "Label"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:56
+msgid "COLLECTION.DESCRIPTION"
+msgstr "Description"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:63
+msgid "COLLECTION.ATTRIBUTION"
+msgstr "Attribution"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:70
+msgid "COLLECTION.LOGO"
+msgstr "Label"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:98
+msgid "COLLECTION.NAME.LABEL"
+msgstr "Collection"
+
+#. Translators: admin:skip
+#: apps/collection/models.py:100
+msgid "COLLECTION.NAME.PLURAL"
+msgstr "Collections"
 
 #. Translators: admin
 #: apps/profiles/admin.py:24
@@ -243,6 +293,6 @@ msgstr "Users"
 msgid "GROUP"
 msgstr "Group"
 
-#: www/templates/pages/home.html:22
+#: www/templates/pages/home.html:23
 msgid "ADMIN_PAGE"
 msgstr "Admin page"

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block extra_css %}
+<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
+<style type="text/css">
+  #viewer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+  }
+ </style>
+{% endblock extra_css %}
+{% block content %}
+<div id='viewer'></div>
+{% endblock content %}
+{% block extra_javascript %}
+<script src="{% static 'mirador/mirador.js' %}"></script>
+<script type="text/javascript">
+  $(function() {
+    Mirador({
+      "id": "viewer",
+      "layout": "1x1",
+      "data": [
+        { "manifestUri": "http://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest", "location": "Harvard University"}
+      ],
+      'windowSettings' : {
+        "overlay" : true,
+        "canvasControls": {
+        "annotations" : {
+          "annotationLayer" : true,
+          "annotationCreation" : true,
+          "annotationState" : 'off',
+          "annotationRefresh" : false
+          }
+        }
+      },
+      "windowObjects": [{
+        loadedManifest: "http://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest",
+        annotationLayer: true,
+        annotationCreation: true,
+        annotationState: 'annoOncreateOn',
+        canvasID: 'http://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/fedora:emory:pchdn'
+      }],
+      "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
+    });
+  });
+</script>
+{% endblock extra_javascript %}

@@ -120,7 +120,7 @@ static/plugins/annotator/scss/node_modules
 # Local Junk
 .vscode/
 .DS_Store
-localsettings.py
+local.py
 venv
 db.cnf
 mydatabase
@@ -144,3 +144,12 @@ seekrets.json
 
 # dev json
 dev_*.json
+
+# Local Junk
+.vscode/
+.DS_Store
+localsettings.py
+venv
+mac-evn
+db.cnf
+postgres

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<ol>
+  {% for collection in collections %}
+  <li>
+    <div>
+        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          {{ collection.label }}
+        </a>
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% endblock content %}

@@ -1,5 +1,7 @@
 from django.apps import AppConfig
 
 
-class CollectionConfig(AppConfig):
-    name = 'collection'
+class CollectionAppConfig(AppConfig):
+
+    name = "readux.collection"
+    verbose_name = "Collection"

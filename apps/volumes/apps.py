@@ -1,5 +1,7 @@
 from django.apps import AppConfig
 
 
-class VolumesConfig(AppConfig):
-    name = 'volumes'
+class VolumesAppConfig(AppConfig):
+
+    name = "readux.volumes"
+    verbose_name = "Volumes"

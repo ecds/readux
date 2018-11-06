@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ volume.label }}</h1>
+<ul>
+    {% for page in volume.canvas_set.all %}
+    <li>
+    <a class="nav-link" href="{% url 'page' volume.collection.pid volume.pid page.pid %}">
+      {{ page.label }}
+    </a>
+    </li>
+    {% endfor %}
+{% endblock content %}

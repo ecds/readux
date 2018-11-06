@@ -2,13 +2,14 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinLengthValidator
 from django.core.validators import MaxLengthValidator
+import uuid
 
-from toolware.utils.query import CaseInsensitiveUniqueManager
-
+# from apps.institutions.models import Institution
 
 class Collection(models.Model):
     """ Collection Model """
-
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -20,28 +21,13 @@ class Collection(models.Model):
         blank=False,
     )
 
-    depth = models.PositiveIntegerField(
-        # Translators: admin:skip
-        _('COLLECTION.DEPTH'),
-        default=1,
-        blank=False,
-    )
-
-    context = models.CharField(
-        # Translators: admin:skip
-        _('COLLECTION.CONTEXT'),
-        max_length=255,
-        blank=True,
-        null=True,
-    )
-
-    type = models.CharField(
-        # Translators: admin:skip
-        _('COLLECTION.TYPE'),
-        max_length=60,
-        blank=False,
-        null=True,
-    )
+    # # TODO: What is this for?
+    # depth = models.PositiveIntegerField(
+    #     # Translators: admin:skip
+    #     _('COLLECTION.DEPTH'),
+    #     default=1,
+    #     blank=False,
+    # )
 
     label = models.CharField(
         # Translators: admin:skip
@@ -51,9 +37,9 @@ class Collection(models.Model):
         null=True,
     )
 
-    description = models.TextField(
+    summary = models.TextField(
         # Translators: admin:skip
-        _('COLLECTION.DESCRIPTION'),
+        _('COLLECTION.SUMMARY'),
         blank=True,
         null=True,
     )
@@ -65,33 +51,23 @@ class Collection(models.Model):
         null=True,
     )
 
-    logo = models.CharField(
-        # Translators: admin:skip
-        _('COLLECTION.LOGO'),
-        max_length=255,
-        blank=True,
-        null=True,
-    )
+    # logo = models.CharField(
+    #     # Translators: admin:skip
+    #     _('COLLECTION.LOGO'),
+    #     max_length=255,
+    #     blank=True,
+    #     null=True,
+    # )
 
-    children = models.ManyToManyField(
-      "self",
-      related_name='parents',
-      symmetrical=False,
-      blank=True,
-    )
+    # children = models.ManyToManyField(
+    #   "self",
+    #   related_name='parents',
+    #   symmetrical=False,
+    #   blank=True,
+    # )
 
 
     # ########## Add new fields above this line #############
-    objects = CaseInsensitiveUniqueManager()
-
-    CASE_INSENSITIVE_FIELDS = [
-      'context',
-      'identification',
-      'type',
-      'label',
-      'description',
-      'attribution',
-    ]
 
     class Meta:
         # Translators: admin:skip
@@ -99,7 +75,7 @@ class Collection(models.Model):
         # Translators: admin:skip
         verbose_name_plural = _('COLLECTION.NAME.PLURAL')
 
-        unique_together = ("identification", "depth")
+        unique_together = ("identification",)
 
         # permissions = (
         #     # ('add_collection', 'Can add new collection'),

@@ -34,7 +34,7 @@
             <li>
               <a class="{% if url_name == 'about' %} active{% endif %}" href="{% url 'about' %}">About</a>
             </li>
-            {% if request.user.is_authenticated %}
+            <!-- {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
@@ -52,13 +52,12 @@
                 {# URL provided by django-allauth/account/urls.py #}
                 <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
               </li>
-            {% endif %}
+            {% endif %} -->
           </ul>
       </nav>
 
     </div>
 
-    <div class="container">
 
       {% if messages %}
           {% for message in messages %}
@@ -67,10 +66,11 @@
       {% endif %}
 
       {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
+        <div class="uk-container">
+          <p>Use this document as a way to quick start any new project.</p>
+        </div>
       {% endblock content %}
 
-    </div>
 
     {% block modal %}{% endblock modal %}
 

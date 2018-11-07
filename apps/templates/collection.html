@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{ collection.label }}</h1>
+<div class="uk-container">
+<h1 class='uk-heading-primary'>{{ collection.label }}</h1>
 <ul>
 {% for volume in collection.manifest_set.all %}
 <li>
@@ -9,4 +10,6 @@
 </a>
 </li>
 {% endfor %}
+</ul>
+</div>
 {% endblock content %}

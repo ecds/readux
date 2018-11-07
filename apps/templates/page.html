@@ -2,13 +2,6 @@
 {% load static i18n %}
 {% block extra_css %}
 <link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
-<style type="text/css">
-  #viewer {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-  }
- </style>
 {% endblock extra_css %}
 {% block content %}
 <div id='viewer'></div>
@@ -21,7 +14,9 @@
       "id": "viewer",
       "layout": "1x1",
       "data": [
-        { "manifestUri": "http://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest", "location": "Harvard University"}
+        {
+          "manifestUri": "http://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest", "location": "Emory University"
+        }
       ],
       'windowSettings' : {
         "overlay" : true,
@@ -39,7 +34,7 @@
         annotationLayer: true,
         annotationCreation: true,
         annotationState: 'annoOncreateOn',
-        canvasID: 'http://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/fedora:emory:pchdn'
+        canvasID: 'http://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}'
       }],
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });

@@ -1,0 +1,87 @@
+{% load static i18n %}<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}Readux{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+    {% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/css/uikit.min.css" />
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+    
+    {% endblock %}
+    {% block extra_css %}{% endblock extra_css %}
+
+  </head>
+
+  <body>
+
+    <div>
+      <nav class='uk-navbar-container uk-margin' uk-navbar>
+        <div class='uk-navbar-left'>
+        <a class='uk-navbar-item uk-logo' href="{% url 'home' %}">Readux</a>
+          <ul class='uk-navbar-nav'>
+            <li>
+              <a class="{% if url_name == 'about' %} active{% endif %}" href="{% url 'about' %}">About</a>
+            </li>
+            <!-- {% if request.user.is_authenticated %}
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
+              </li>
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+              </li>
+            {% else %}
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+              </li>
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+              </li>
+            {% endif %} -->
+          </ul>
+      </nav>
+
+    </div>
+
+
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+          {% endfor %}
+      {% endif %}
+
+      {% block content %}
+        <div class="uk-container">
+          <p>Use this document as a way to quick start any new project.</p>
+        </div>
+      {% endblock content %}
+
+
+    {% block modal %}{% endblock modal %}
+
+    {% block javascript %}
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit-icons.min.js"></script>
+      <script src="{% static 'js/project.js' %}"></script>
+    {% endblock javascript %}
+    {% block extra_javascript %}{% endblock extra_javascript %}
+    {% csrf_token%}
+  </body>
+</html>
+ 

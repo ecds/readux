@@ -8,23 +8,18 @@ class CollectionAdmin(admin.ModelAdmin):
 
     list_display = [
         'id',
-        'depth',
         'label',
-        'type',
         'updated_at',
         'created_at',
     ]
 
     search_fields = [
         'id',
-        'depth',
-        'context',
         'identification',
-        'type',
         'label',
-        'description',
+        'summary',
         'attribution',
     ]
 
     list_per_page = 25
-    readonly_fields = ['children']
+    # readonly_fields = ['children']

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="uk-container">
+<h1 class='uk-heading-primary'>{{ collection.label }}</h1>
+<ul>
+{% for volume in collection.manifest_set.all %}
+<li>
+<a class="nav-link" href="{% url 'volume' collection.pid volume.pid %}">
+  {{ volume.label }}
+</a>
+</li>
+{% endfor %}
+</ul>
+</div>
+{% endblock content %}

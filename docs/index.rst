@@ -1,20 +1,22 @@
 .. Readux documentation master file, created by
-   sphinx-quickstart on Wed May 21 13:25:09 2014.
+   sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
+
+Welcome to Readux's documentation!
+====================================================================
 
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   deploynotes
-   architecture
-   codedocs
-   Version History <changelog>
-   devnotes
+   install
+   deploy
+   docker_ec2
+   tests
 
-.. include:: ../README.rst
+
 
 Indices and tables
 ==================
@@ -22,4 +24,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

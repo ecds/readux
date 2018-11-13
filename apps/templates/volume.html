@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="uk-container">
+<h1 class='uk-heading-primary'>{{ volume.label }}</h1>
+<div class="uk-child-width-1-2@s uk-child-width-1-3@m" uk-grid="masonry: true">
+    {% for page in volume.canvas_set.all %}
+      <div class="uk-flex uk-flex-center uk-flex-middle">
+      <a href="{% url 'page' volume.collection.pid volume.pid page.pid %}">
+          <div class='uk-inline uk-box-shadow-small uk-box-shadow-hover-large'>
+            <img src="{{ page.thumbnail }}" alt="Thumbnail for {{page.label }} of {{ volume.label }}" />
+            <div class='uk-overlay uk-overlay-default uk-position-bottom'>
+              <p>
+                {{ page.label }}
+              </p>
+            </div>
+          </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock content %}

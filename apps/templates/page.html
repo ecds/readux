@@ -51,12 +51,12 @@
       'windowSettings' : {
         "overlay" : true,
         "canvasControls": {
-        "annotations" : {
-          "annotationLayer" : true,
-          "annotationCreation" : true,
-          "annotationState" : 'off',
-          "annotationRefresh" : false
-          }
+        // "annotations" : {
+        //   "annotationLayer" : true,
+        //   "annotationCreation" : true,
+        //   "annotationState" : 'on',
+        //   "annotationRefresh" : false
+        //   }
         }
       },
       "windowObjects": [{
@@ -64,8 +64,7 @@
         annotationLayer: true,
         annotationCreation: true,
         annotationState: 'annoOncreateOn',
-        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}',
-        viewType: "BookView"
+        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}'
       }],
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });

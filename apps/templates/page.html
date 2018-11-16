@@ -3,9 +3,39 @@
 {% block extra_css %}
 <link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
 {% endblock extra_css %}
+
 {% block content %}
-<div id='viewer'></div>
+<h1 class='uk-text-truncate'>
+  {{volume.label}}
+</h1>
+  <form class="uk-search uk-search-default">
+      <span uk-search-icon></span>
+      <input class="uk-search-input" type="search" placeholder="Search this volume...">
+  </form>
 {% endblock content %}
+{% block viewer %}
+  <div class='uk-flex-center' uk-grid>
+    <div class='uk-width-3-4'>
+      <div  id='viewer'></div>
+    </div>
+    <div class='uk-width-1-4'>
+      <div class='uk-padding'>
+        <b>Author:</b> {{ volume.author }}
+        <br />
+        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' volume.collection.pid %}">{{ volume.collection.label }}</a>
+        <br />
+        <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
+        <ul>
+          {% for note in volume.note_set.all %}
+          <li>
+            {{ note.label }}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock viewer %}
 {% block extra_javascript %}
 <script src="{% static 'mirador/mirador.js' %}"></script>
 <script type="text/javascript">
@@ -15,7 +45,7 @@
       "layout": "1x1",
       "data": [
         {
-          "manifestUri": "http://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest", "location": "Emory University"
+          "manifestUri": "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest", "location": "Emory University"
         }
       ],
       'windowSettings' : {
@@ -30,14 +60,16 @@
         }
       },
       "windowObjects": [{
-        loadedManifest: "http://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest",
+        loadedManifest: "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest",
         annotationLayer: true,
         annotationCreation: true,
         annotationState: 'annoOncreateOn',
-        canvasID: 'http://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}'
+        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}',
+        viewType: "BookView"
       }],
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });
   });
+  // UIkit.offcanvas(document.getElementById('offcanvas-flip')).show()
 </script>
 {% endblock extra_javascript %}

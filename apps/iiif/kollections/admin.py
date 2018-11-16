@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Collection
 
-# Register your models here.
+
+class KollectionAdmin(admin.ModelAdmin):
+    pass

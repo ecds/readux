@@ -5,7 +5,7 @@
 <ul>
 {% for volume in collection.manifest_set.all %}
 <li>
-<a class="nav-link" href="{% url 'volume' collection.pid volume.pid %}">
+<a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}
 </a>
 </li>

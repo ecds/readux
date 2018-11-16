@@ -13,7 +13,25 @@
 }
 
 #viewer {
-  width: 100%;
-  height: calc(100% - 80px);
+  width: 75%;
+  height: calc(100% - 280px);
   position: fixed;
+  bottom: 0;
+}
+
+.mirador-main-menu-bar,
+.manifest-info {
+  display: none;
+}
+
+.mirador-container .mirador-viewer {
+  top: 0 !important;
+}
+
+.content-container {
+  margin-top: 0 !important;
+}
+
+.uk-search-default {
+  width: 95% !important;
 }

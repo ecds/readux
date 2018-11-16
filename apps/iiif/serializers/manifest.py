@@ -7,14 +7,14 @@ import json
 V2
 {
   // Metadata about this canvas
-  "@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": 'http://example.org/iiif/%s/canvas/p1' % (obj.pid),
+  "@context": "https://iiif.io/api/presentation/2/context.json",
+  "@id": 'https://example.org/iiif/%s/canvas/p1' % (obj.pid),
   "@type": "sc:Canvas",
   "label": "p. 1",
   "height": 1000,
   "width": 750,
   "thumbnail" : {
-    "@id" : "http://example.org/iiif/book1/canvas/p1/thumb.jpg",
+    "@id" : "https://example.org/iiif/book1/canvas/p1/thumb.jpg",
     "@type": "dctypes:Image",
     "height": 200,
     "width": 150
@@ -28,7 +28,7 @@ V2
   "otherContent": [
     {
       // Reference to list of other Content resources, _not included directly_
-      "@id": "http://example.org/iiif/book1/list/p1",
+      "@id": "https://example.org/iiif/book1/list/p1",
       "@type": "sc:AnnotationList"
     }
   ]
@@ -58,7 +58,7 @@ V3
 
 class Serializer(JSONSerializer):
     """
-    Convert a queryset to GeoJSON, http://geojson.org/
+    Convert a queryset to GeoJSON, https://geojson.org/
     """
     def _init_options(self):
         super()._init_options()
@@ -77,18 +77,34 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
-              "@context": "http://iiif.io/api/presentation/2/context.json",
-              "@id": "http://example.org/iiif/%s/manifest" % (obj.pid),
+              "@context": "https://iiif.io/api/presentation/2/context.json",
+              "@id": "https://example.org/iiif/%s/manifest" % (obj.pid),
               "@type": "sc:Manifest",
               "label": obj.label,
+              "metadata": [{
+                "label": "Author",
+                "value": obj.author
+              },
+              {
+                "label": "Published",
+                "value": [{
+                    "@value": "%s : %s, %s" %(obj.published_city, obj.publisher, obj.published_date),
+                    "@language": "en"
+                  }
+                ]
+              },
+              {
+                "label": "Notes",
+                "value": [obj.note_set.values('label')[0]['label']]
+              }],
               "sequences": [
                 {
-                  "@id": "http://example.org/iiif/book1/sequence/normal",
+                  "@id": "https://example.org/iiif/book1/sequence/normal",
                   "@type": "sc:Sequence",
                   "label": "Current Page Order",
                   "viewingDirection": obj.viewingDirection,
                   "viewingHint": "paged",
-                  "startCanvas": "http://example.org/iiif/book1/canvas/p2",
+                  "startCanvas": "https://example.org/iiif/book1/canvas/p2",
                   "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
                 }
               ]

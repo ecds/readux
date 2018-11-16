@@ -17,7 +17,7 @@ if READ_DOT_ENV_FILE:
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = env.bool('DJANGO_DEBUG', False)
+DEBUG = True
 # Local time zone. Choices are
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
@@ -70,6 +70,10 @@ THIRD_PARTY_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
     'rest_framework',
 ]
 LOCAL_APPS = [
@@ -78,7 +82,7 @@ LOCAL_APPS = [
     'apps.iiif.canvases.apps.CanvasesConfig',
     'apps.iiif.kollections.apps.KollectionsConfig',
     'apps.iiif.manifests.apps.ManifestsConfig',
-    # 'apps.readux.annotations.apps.AnnotationsAppConfig',
+    'apps.readux.apps.ReaduxConfig',
     # 'apps.readux.collection.apps.CollectionAppConfig',
     # 'apps.readux.volumes.apps.VolumesAppConfig',
 ]
@@ -217,7 +221,8 @@ FIXTURE_DIRS = (
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -241,9 +246,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = 'readux.users.adapters.AccountAdapter'
+ACCOUNT_ADAPTER = 'apps.users.adapters.AccountAdapter'
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = 'readux.users.adapters.SocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.SocialAccountAdapter'
 
 
 # Translations

@@ -5,14 +5,14 @@ from django.core.serializers.json import Serializer as JSONSerializer
 V2
 {
   // Metadata about this canvas
-  "@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": "http://example.org/iiif/book1/canvas/p1",
+  "@context": "https://iiif.io/api/presentation/2/context.json",
+  "@id": "https://example.org/iiif/book1/canvas/p1",
   "@type": "sc:Canvas",
   "label": "p. 1",
   "height": 1000,
   "width": 750,
   "thumbnail" : {
-    "@id" : "http://example.org/iiif/book1/canvas/p1/thumb.jpg",
+    "@id" : "https://example.org/iiif/book1/canvas/p1/thumb.jpg",
     "@type": "dctypes:Image",
     "height": 200,
     "width": 150
@@ -26,7 +26,7 @@ V2
   "otherContent": [
     {
       // Reference to list of other Content resources, _not included directly_
-      "@id": "http://example.org/iiif/book1/list/p1",
+      "@id": "https://example.org/iiif/book1/list/p1",
       "@type": "sc:AnnotationList"
     }
   ]
@@ -56,7 +56,7 @@ V3
 
 class Serializer(JSONSerializer):
     """
-    Convert a queryset to GeoJSON, http://geojson.org/
+    Convert a queryset to GeoJSON, https://geojson.org/
     """
     def _init_options(self):
         super()._init_options()
@@ -82,7 +82,7 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
-                "@context": "http://iiif.io/api/presentation/2/context.json",
+                "@context": "https://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,
                 "@type": "sc:Canvas",
                 "label": obj.label,
@@ -90,23 +90,23 @@ class Serializer(JSONSerializer):
                 "width": obj.width,
                 "images": [
                   {
-                    "@context": "http://iiif.io/api/presentation/2/context.json",
-                    "@id": "http://example.org/iiif/book1/annotation/p0001-image",
+                    "@context": "https://iiif.io/api/presentation/2/context.json",
+                    "@id": "https://example.org/iiif/book1/annotation/p0001-image",
                     "@type": "oa:Annotation",
                     "motivation": "sc:painting",
                     "resource": {
-                      "@id": "http://loris.library.emory.edu/%s/full/full/0/default.jpg" % (obj.pid),
+                      "@id": "https://loris.library.emory.edu/%s/full/full/0/default.jpg" % (obj.pid),
                       "@type": "dctypes:Image",
                       "format": "image/jpeg",
                       "height": obj.height,
                       "width": obj.width,
                       "service": {
-                        "@context": "http://iiif.io/api/image/2/context.json",
+                        "@context": "https://iiif.io/api/image/2/context.json",
                         "@id": obj.service_id,
-                        "profile": "http://iiif.io/api/image/2/level2.json"
+                        "profile": "https://iiif.io/api/image/2/level2.json"
                       }
                     },
-                    "on": "http://example.org/iiif/book1/canvas/p1"
+                    "on": "https://example.org/iiif/book1/canvas/p1"
                   }
                 ],
                 "thumbnail" : {

@@ -153,3 +153,4 @@ venv
 mac-evn
 db.cnf
 postgres
+cert*

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="uk-container">
+<h1 class='uk-heading-hero uk-text-center'>Readux</h1>
+<h2 class='uk-heading-primary uk-text-center'>Read. Annotate. Publish.</h2>
+<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
 <ol>
   {% for collection in collections %}
   <li>
@@ -12,5 +14,4 @@
   </li>
   {% endfor %}
 </ol>
-</div>
 {% endblock content %}

@@ -10,7 +10,7 @@ def fetch_url(url, timeout=30, format='json', verbosity=1):
     """ Given a url, this function returns the data."""
     data = None
     try:
-        resp = requests.get(url, timeout=timeout)
+        resp = requests.get(url, timeout=timeout, verify=False)
     except requests.exceptions.Timeout as err:
         if (verbosity > 2):
             print('Connection timeoutout for {}'.format(url))

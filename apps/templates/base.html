@@ -34,7 +34,7 @@
             <li>
               <a class="{% if url_name == 'about' %} active{% endif %}" href="{% url 'about' %}">About</a>
             </li>
-            <!-- {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
@@ -46,14 +46,11 @@
             {% else %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
-              </li>
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
                 <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
               </li>
-            {% endif %} -->
+            {% endif %}
           </ul>
+        </div>
       </nav>
 
     </div>
@@ -65,14 +62,16 @@
           {% endfor %}
       {% endif %}
 
-      {% block content %}
-        <div class="uk-container">
-          <p>Use this document as a way to quick start any new project.</p>
-        </div>
-      {% endblock content %}
+      {% block modal %}{% endblock modal %}
+      
+      <div class="uk-container">
+        {% block content %}
+        <p>Use this document as a way to quick start any new project.</p>
+        {% endblock content %}
+      </div>
+      
+      {% block viewer %}{% endblock viewer %}
 
-
-    {% block modal %}{% endblock modal %}
 
     {% block javascript %}
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -10,13 +10,12 @@ urlpatterns = [
     url(r'^', include('apps.iiif.canvases.urls')),
     url(r'^', include('apps.iiif.manifests.urls')),
     url(r'^', include('apps.iiif.annotations.urls')),
-    url(r'^', include('apps.readux.urls')),
-    # url(r'^', include('readux.collection.urls')),
+    path('accounts/', include('allauth.urls')),# url(r'^', include('readux.collection.urls')),
     # url(r'^', include('readux.volumes.urls')),
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
-        "about/",
-        TemplateView.as_view(template_name="apps/templates/about.html"),
+        'about/',
+        TemplateView.as_view(template_name=str(settings.APPS_DIR.path('templates/pages/about.html'))),
         name="about",
     ),
     # Django Admin, use {% url 'admin:index' %}
@@ -26,8 +25,11 @@ urlpatterns = [
         "users/",
         include("apps.users.urls", namespace="users"),
     ),
-    path("accounts/", include("allauth.urls")),
+    # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+
+    url(r'^', include('apps.readux.urls')),
+
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )

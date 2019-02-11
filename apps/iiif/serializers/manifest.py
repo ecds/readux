@@ -95,7 +95,7 @@ class Serializer(JSONSerializer):
               },
               {
                 "label": "Notes",
-                "value": [obj.note_set.values('label')[0]['label']]
+                "value": obj.metadata
               }],
               "sequences": [
                 {

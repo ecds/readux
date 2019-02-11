@@ -23599,6 +23599,7 @@ $.Tile.prototype = {
 
         this.element = options.element;
         this.style = options.element.style;
+        this.charCount = options.element.innerText.length;
         this._init(options);
     };
 
@@ -23688,6 +23689,7 @@ $.Tile.prototype = {
             style.top = "";
             style.left = "";
             style.position = "";
+            style.fontSize = "";
 
             if (this.width !== null) {
                 style.width = "";
@@ -23722,27 +23724,32 @@ $.Tile.prototype = {
                 // this.size is used by overlays which don't get scaled in at
                 // least one direction when this.checkResize is set to false.
                 this.size = $.getElementSize(element);
-            }
-
-            var positionAndSize = this._getOverlayPositionAndSize(viewport);
-
-            var position = positionAndSize.position;
-            var size = this.size = positionAndSize.size;
-            var rotate = positionAndSize.rotate;
-
+              }
+              
+              var positionAndSize = this._getOverlayPositionAndSize(viewport);
+              
+              var position = positionAndSize.position;
+              var size = this.size = positionAndSize.size;
+              var rotate = positionAndSize.rotate;
+              
+              console.log(element.offsetWidth, size.x);
             // call the onDraw callback if it exists to allow one to overwrite
             // the drawing/positioning/sizing of the overlay
             if (this.onDraw) {
                 this.onDraw(position, size, this.element);
             } else {
+              console.log('fontsize', `${parseInt(element.style.fontSize.replace('px', '')) + (element.offsetWidth - size.x)}px`);
                 var style = this.style;
                 style.left = position.x + "px";
                 style.top = position.y + "px";
+                style.fontSize = `${size.y + (element.offsetWidth - size.x)}px`;
+                // style.fontSize = `${size.y}px`;
                 if (this.width !== null) {
                     style.width = size.x + "px";
                 }
                 if (this.height !== null) {
                     style.height = size.y + "px";
+                    // style.zIndex = 999999999999999999999999;
                 }
                 var transformOriginProp = $.getCssPropertyWithVendorPrefix(
                     'transformOrigin');
@@ -37323,8 +37330,10 @@ return /******/ (function(modules) { // webpackBootstrap
      * }
      */
     showViewer: function(params) {
+      console.log('params', params);
       var _this = this;
       var api = jQuery(_this.targetElement).qtip('api');
+      console.log('api', api);
       if (!api) { return; }
       if (params.shouldDisplayTooltip && !params.shouldDisplayTooltip(api)) {
         return;
@@ -38641,6 +38650,7 @@ return /******/ (function(modules) { // webpackBootstrap
       if (typeof annotation === 'object' && annotation.on) {
         for (var i = 0; i < strategies.length; i++) {
           if (strategies[i].isThisType(annotation)) {
+            console.log(strategies[i]);
             shapeArray = strategies[i].parseRegion(annotation, this);
             return shapeArray;
           }
@@ -40061,7 +40071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
     onMouseUp: function(event) {
       if (!this.overlay.disabled) {
-        event.stopPropagation();
+        // event.stopPropagation();
         //jQuery(this.overlay.viewer.canvas).css('cursor','default');
         // if (this.overlay.mode === 'deform' || this.overlay.mode === 'edit') {
         //   this.overlay.segment = null;
@@ -40079,7 +40089,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
     onMouseDrag: function(event) {
       if (!this.overlay.disabled) {
-        event.stopPropagation();
+        // event.stopPropagation();
         if (this.overlay.currentTool) {
           if (this.overlay.currentTool.name === 'Freehand' && this.overlay.mode === 'create') {
             //freehand create needs to use mouse position because bounds are not accurate until shape is finished
@@ -40340,8 +40350,12 @@ return /******/ (function(modules) { // webpackBootstrap
     // get the tool which controls given shape
     getTool:function(shape){
       for(var i=0;i<this.tools.length;i++){
-        if(shape.name.toString().indexOf(this.tools[i].idPrefix) !== -1){
-          return this.tools[i];
+        if (shape.name) {
+          if(shape.name.toString().indexOf(this.tools[i].idPrefix) !== -1){
+            return this.tools[i];
+          }
+        } else {
+          return this.tools[0];
         }
       }
     },
@@ -40430,23 +40444,48 @@ return /******/ (function(modules) { // webpackBootstrap
       var paperItems = [];
       var svgParser = new DOMParser();
       var svgDOM = svgParser.parseFromString(svg, "text/xml");
+      console.log('svg', svg)
       if (svgDOM.documentElement.nodeName == 'parsererror') {
         return; // if svg is not valid XML structure - backward compatibility.
       }
+      console.log('project', this.paperScope.project);
       var svgTag = this.paperScope.project.importSVG(svg);
+      console.log('svgTag', svgTag);
       // removes SVG tag which is the root object of comment SVG segment.
-      var body = svgTag.removeChildren()[0];
-      svgTag.remove();
-      if (body.className == 'Group') {
-        // removes group tag which wraps the set of objects of comment SVG segment.
-        var items = body.removeChildren();
-        for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
-          paperItems.push(this.replaceShape(items[itemIdx], annotation));
+      if (svgTag !== null) {
+        var body = svgTag.removeChildren()[0];
+        svgTag.remove();
+        if (body.className == 'Group') {
+          // removes group tag which wraps the set of objects of comment SVG segment.
+          var items = body.removeChildren();
+          for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
+            paperItems.push(this.replaceShape(items[itemIdx], annotation));
+          }
+          body.remove();
+        } else {
+          paperItems.push(this.replaceShape(body, annotation));
         }
-        body.remove();
       } else {
-        paperItems.push(this.replaceShape(body, annotation));
+        var dimensions = annotation.on[0].selector.default.value.split('=')[1].split(',');
+        var point = new this.paperScope.Point(parseInt(dimensions[0]), parseInt(dimensions[1]) + parseInt(dimensions[3]));
+        var textItem = new this.paperScope.PointText(point);
+        // var bounds = new this.paperScope.Rectangle({ point: point, size: [parseInt(dimensions[2], parseInt(dimensions[3]))]})
+        textItem.fillColor = 'red';
+        textItem.strokeColor = 'black';
+        textItem.content = annotation.resource.chars;
+        textItem.fontSize = parseInt(dimensions[3]);
+        textItem.fitBounds(textItem.bounds, true);
+        textItem.data.annotation = annotation;
+        // textItem.style = { width: '100%' };
+        console.log(textItem);
+        textItem.onMouseUp = function(event) {
+          event.stopPropagation();
+          alert('helo');
+        }
+        paperItems.push(textItem);
       }
+      
+      console.log('paperItems', paperItems);
       this.paperScope.view.update(true);
       return paperItems;
     },
@@ -41562,7 +41601,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
   $.ReaduxEndpoint.prototype = {
     init: function() {
+      console.log('this', this);
       var _this = this;
+      // _this.osd = options.osd;
       _this.windowID = this.windowID ? this.windowID : this.windowIDwindowID;
       
       // this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowID, function(event, canvasId) {
@@ -41589,6 +41630,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
     //Search endpoint for all annotations with a given URI in options
     search: function(options, successCallback, errorCallback) {
+
       var _this = this;
       console.log('search', _this);
       var volume = options.uri.split('/').reverse()[2];
@@ -41605,7 +41647,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
       //use options.uri
       jQuery.ajax({
-        url: '/iiif/annotations/' + volume + '/' + page,
+        url: '/iiif/v2/' + volume + '/list/' + page,
         type: 'GET',
         dataType: 'json',
         headers: { },
@@ -41616,11 +41658,17 @@ return /******/ (function(modules) { // webpackBootstrap
           if (typeof successCallback === "function") {
             // successCallback(data);
           } else {
-            jQuery.each(data, function(index, value) {
-            value.iiif_annotation.endpoint = _this;
-            _this.annotationsList.push(value.iiif_annotation);
+            // console.log(data);
+            jQuery.each(data.resources, function(index, value) {
+              // console.log('value', value);
+              if (value["@type"] !== 'cnt:ContentAsText') {                
+                value.endpoint = _this;
+                _this.annotationsList.push(value);
+              } else {
+              }
             });
             _this.dfd.resolve(true);
+            return _this.annotationsList;
           }
         },
         error: function() {
@@ -41669,7 +41717,7 @@ return /******/ (function(modules) { // webpackBootstrap
         headers: {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
         },
-        data: JSON.stringify({ "iiif_annotation": JSON.stringify(oaAnnotation) }),
+        data: JSON.stringify({ "oa_annotation": JSON.stringify(oaAnnotation) }),
         contentType: "application/json; charset=utf-8",
         success: function(data) {
           // if (typeof successCallback === "function") {
@@ -41689,16 +41737,16 @@ return /******/ (function(modules) { // webpackBootstrap
     //if successful, MUST return the OA rendering of the annotation
     create: function(oaAnnotation, successCallback, errorCallback) {
       var _this = this;
-      console.log(oaAnnotation);
+      var canvas = oaAnnotation.on[0].full.split('/').reverse()[0];
       
       jQuery.ajax({
-        url: '/iiif/annotations/create',
+        url: '/iiif/canvas/' + oaAnnotation +'/annotation/new',
         type: 'POST',
         dataType: 'json',
         headers: {
           'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
         },
-        data: JSON.stringify({ "iiif_annotation": JSON.stringify(oaAnnotation) }),
+        data: JSON.stringify({ "oa_annotation": JSON.stringify(oaAnnotation) }),
         contentType: "application/json; charset=utf-8",
         success: function(data) {
           console.log('data', data);
@@ -43213,7 +43261,8 @@ $.SimpleASEndpoint = function (options) {
           bottomPanelAvailable: this.bottomPanelAvailable,
           annoEndpointAvailable: this.annoEndpointAvailable,
           canvasControls: this.canvasControls,
-          annotationState : this.canvasControls.annotations.annotationState
+          annotationState : this.canvasControls.annotations.annotationState,
+          endpoint: this.endpoint
         });
       } else {
         this.focusModules.ImageView.updateImage(canvasID);
@@ -43367,6 +43416,7 @@ $.SimpleASEndpoint = function (options) {
           options.eventEmitter = _this.eventEmitter;
           _this.endpoint = new $[module](options);
         }
+        // console.log('_this', _this);
         _this.endpoint.search({ "uri" : _this.canvasID});
 
         dfd.done(function(loaded) {
@@ -45106,6 +45156,7 @@ $.SimpleASEndpoint = function (options) {
       var _this = this;
       this.horizontallyFlipped = false;
       this.originalDragHandler = null;
+      this.ocrAnnotations = [];
       if(this.vDirectionStatus == 'rtl'){
           this.imagesList =  this.imagesListRtl.concat();
        }
@@ -45556,7 +45607,7 @@ $.SimpleASEndpoint = function (options) {
             viewer.innerTracker.dragHandler = OpenSeadragon.delegate(viewer, function(event) {
               event.delta.x = -event.delta.x;
               _this.originalDragHandler(event);
-            });
+            });re
           }
           _this.horizontallyFlipped = true;
         }
@@ -45599,6 +45650,12 @@ $.SimpleASEndpoint = function (options) {
         return;
       }
 
+      if (_this.ocrAnnotations.length > 0) {
+        _this.ocrAnnotations.forEach(function(word) {
+          _this.osd.removeOverlay(word);
+        });
+      }
+
       imageResource.setStatus('requested');
       var bounds = imageResource.getGlobalBounds();
 
@@ -45625,6 +45682,120 @@ $.SimpleASEndpoint = function (options) {
             }
           };
           _this.osd.addHandler('tile-drawn', tileDrawnHandler);
+          var volume = _this.canvasID.split('/').reverse()[2];
+          var page = _this.canvasID.split('/').reverse()[0];
+          _this.selecting = false;
+          jQuery.ajax({
+            url: '/iiif/v2/' + volume + '/list/' + page,
+            type: 'GET',
+            dataType: 'json',
+            headers: { },
+            data: { },
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+              
+              console.log('%%%', _this);
+              jQuery.each(data.resources, function(index, value) {
+                // console.log('value', value);
+                if (value.resource["@type"] === 'cnt:ContentAsText') {
+                  var svgContainer = document.getElementById('ocr');
+                  jQuery(value.on[0].selector.item.value).appendTo(svgContainer);
+                  var loc = value.on[0].selector.default.value.split('=')[1].split(',').map(function(i) {return parseInt(i);});
+                  var ocrEl = document.getElementById(value['@id']);
+                  _this.ocrAnnotations.push(ocrEl);
+                  ocrEl.style.width = 'auto';
+                  console.log('auto width', ocrEl.offsetWidth);
+                  console.log('should width', loc[2]);
+                  ocrEl.style.letterSpacing = (ocrEl.offsetWidth) / (ocrEl.innerText.length + 1) + 'px';
+
+                  ocrEl.width = loc[2];
+
+                  console.log(loc)
+                  
+                  var word = _this.osd.addOverlay({
+                    element: ocrEl,
+                    location: new OpenSeadragon.Rect(loc[0], loc[1], loc[2], loc[3])
+                  });
+                  // _this.eventEmitter.subscribe(('SET_CURRENT_CANVAS_ID.' + _this.windowId), function(event, canvasID) {
+                  //   console.log('remove');
+                  //   _this.osd.removeOverlay(word);
+                  //   ocrEl.parentElement.removeChild(ocrEl)
+                  // });
+                  // Letter Spacing
+                  // el = document.getElementById('7d5853c9-0eed-42eb-9b89-9ec9fb3eb8d5')
+                  // el.style.letterSpacing = (el.parentElement.clientWidth - el.offsetWidth) / charCount
+                  // HIGHLIGHT
+                  // var div = document.createRange();
+                  // div.setStartBefore(document.getElementById("divid"));
+                  // div.setEndAfter(document.getElementById("divid")) ;
+                  // window.getSelection().addRange(div);
+ 
+                  // new OpenSeadragon.MouseTracker({
+                  //   element: word.element,
+                  //   enterHandler: function(event) {
+                  //     // Show tooltip
+                  //   },
+                  //   exitHandler: function(event) {
+                  //     // Hide tooltip
+                  //   }
+                  // }).setTracking(true);
+                  // _this.osd.navigator.addHandler('canvas-drag', function(e) {
+                  //   console.log(e);
+                  // });
+                  console.log('osd', _this);
+                  new OpenSeadragon.MouseTracker({
+                    element: ocrEl.id,
+                    dragEndHandler: function(e) {
+                        console.log('mousetracker', e);
+                        var selected = window.getSelection().getRangeAt(0);
+                        selected.cloneContents().querySelectorAll('*').forEach(e => console.log(e.id, e.innerText));
+                        _this.osd.setMouseNavEnabled(true);
+                        _this.osd.gestureSettingsMouse.clickToZoom = true;
+                        _this.osd.mouseNavEnabled = true;
+                        _this.osd.panVertical = true;
+                        _this.osd.panHorizontal = true; 
+                        _this.osd.removeAllHandlers()          },
+                    dragHandler: function(e) {
+                      console.log('drag', e);
+                      _this.osd.setMouseNavEnabled(false);
+                      _this.osd.gestureSettingsMouse.clickToZoom = false;
+                      _this.osd.mouseNavEnabled = false;
+                      _this.osd.panVertical = false;
+                      _this.osd.panHorizontal = false;
+                      selection = document.createRange();
+                      window.getSelection().removeAllRanges();
+                      selection.setStartBefore(e.eventSource.element);
+                      selection.setEndAfter(e.originalEvent.srcElement);
+                      window.getSelection().addRange(selection);
+                    },
+                    enterHandler: function() {
+                    }
+                }).setTracking(true);
+                  // word.element.onclick = function(event) {
+                  //     _this.selecting = true;
+                  //     // word.element.ondragover = function(event) {
+                  //       // }
+                  //       // console.log(word.element);
+                  //     }
+                  //     word.element.onmouseover = function(event) {
+                  //       if (_this.selecting) {
+                  //         console.log(event);
+                  //       event.target.parentElement.style['background'] = 'black';
+                  //       event.target.parentElement.firstElementChild.style['opacity'] = 1;
+                  //       event.target.parentElement.firstElementChild.style['fill'] = 'white';
+
+                  //     }
+                  //   }
+                    
+                  }
+                });
+            },
+            error: function() {
+              if (typeof errorCallback === "function") {
+                errorCallback();
+              }
+            }
+          });
         },
 
         error: function(event) {

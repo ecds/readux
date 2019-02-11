@@ -12,4 +12,4 @@ class Collection(models.Model):
     upload = models.FileField(upload_to='uploads/', null=True)
 
     def __str__(self):
-        return self.name
+        return self.label

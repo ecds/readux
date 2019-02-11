@@ -262,4 +262,6 @@ LANGUAGES = (
 SERIALIZATION_MODULES = {
     "canvas": "apps.iiif.serializers.canvas",
     "manifest": "apps.iiif.serializers.manifest",
+    "annotation": "apps.iiif.serializers.annotation",
+    "annotation_list": "apps.iiif.serializers.annotation_list",
 }

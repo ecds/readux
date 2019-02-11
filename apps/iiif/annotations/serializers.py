@@ -7,4 +7,4 @@ class AnnotationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Annotation
-        fields = ('iiif_annotation',)
+        fields = ('oa_annotation',)

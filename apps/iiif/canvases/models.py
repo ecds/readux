@@ -4,6 +4,8 @@ from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from ..manifests.models import Manifest
+from ..annotations.models import Annotation
+from django.apps import apps
 from . import services
 import uuid
 
@@ -33,6 +35,9 @@ class Canvas(models.Model):
     def thumbnail(self):
         return "%s/%s/full/200,250/0/default.jpg" % (settings.IIIF_IMAGE_SERVER_BASE, self.pid)
     
+    def __str__(self):
+        return str(self.uuid)
+    
     class Meta:
         ordering = ['position']
 
@@ -42,8 +47,33 @@ def set_dimensions(sender, instance, **kwargs):
       instance.width = instance.image_info['width']
       instance.height = instance.image_info['height']
 
+@receiver(signals.post_save, sender=Canvas)
+def add_ocr(sender, instance, **kwargs):
+    ocr = services.add_positional_ocr(instance)
+    # What comes back from fedora is 8-bit bytes
+    # https://stackoverflow.com/a/9562196
+    word_order = 1
+    if ocr is not None:
+        for word in ocr.decode('UTF-8-sig').strip().split('\r\n'):
+            if word == '':
+                continue
+            a = Annotation()
+            a.canvas = instance
+            print('&&&')
+            print(word)
+            a.x = int(word.split('\t')[0])
+            a.y = int(word.split('\t')[1])
+            a.w = int(word.split('\t')[2])
+            a.h = int(word.split('\t')[3])
+            a.resource_type = a.OCR
+            a.content = word.split('\t')[4]
+            a.order = word_order
+            a.save()
+            word_order += 1
+
 class Meta:
     # Translators: admin:skip
-    verbose_name = _('MANIFEST.NAME.LABEL')
+    verbose_name = 'canvas'
     # Translators: admin:skip
-    verbose_name_plural = _('MANIFEST.NAME.PLURAL')
+    verbose_name_plural = 'canvases'
+    app_label = 'canvas'

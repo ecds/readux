@@ -19,6 +19,6 @@ class ManifestDetail(View):
                     'manifest',
                     self.get_queryset(),
                     version=kwargs['version']
-                    )
                 )
             )
+        )

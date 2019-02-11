@@ -124,4 +124,4 @@ class Serializer(JSONSerializer):
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("geojson is a serialization-only serializer")
+        raise SerializerDoesNotExist("iiif.canvas is a serialization-only serializer")

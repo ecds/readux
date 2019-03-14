@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.iiif.manifests.models import Manifest
+
+
+class ManifestAdmin(admin.ModelAdmin):
+    list_display = ('uuid', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher', 'collection')
+    
+admin.site.register(Manifest, ManifestAdmin)

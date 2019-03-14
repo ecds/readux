@@ -1,6 +1,9 @@
 from django.contrib import admin
-from .models import Collection
+
+from apps.iiif.kollections.models import Collection
 
 
-class KollectionAdmin(admin.ModelAdmin):
-    pass
+class CollectionAdmin(admin.ModelAdmin):
+    list_display = ('uuid', 'pid', 'metadata', 'summary', 'label')
+    
+admin.site.register(Collection, CollectionAdmin)

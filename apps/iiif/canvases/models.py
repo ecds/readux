@@ -47,7 +47,7 @@ class Canvas(models.Model):
         return "%s/%s/full/200,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
     
     def __str__(self):
-        return str(self.uuid)
+        return str(self.pid)
     
     class Meta:
         ordering = ['position']

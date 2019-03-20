@@ -96,6 +96,7 @@ LOCAL_APPS = [
     'apps.iiif.kollections.apps.KollectionsConfig',
     'apps.iiif.manifests.apps.ManifestsConfig',
     'apps.readux.apps.ReaduxConfig',
+    'apps.cms.apps.CmsConfig'
     # 'apps.readux.collection.apps.CollectionAppConfig',
     # 'apps.readux.volumes.apps.VolumesAppConfig',
 ]

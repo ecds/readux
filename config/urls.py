@@ -7,6 +7,9 @@ from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
 urlpatterns = [
+    re_path(r'^cms/', include(wagtailadmin_urls)),
+    re_path(r'^documents/', include(wagtaildocs_urls)),
+    re_path(r'^pages/', include(wagtail_urls)),
     url(r'^', include('apps.iiif.canvases.urls')),
     url(r'^', include('apps.iiif.manifests.urls')),
     url(r'^', include('apps.iiif.annotations.urls')),

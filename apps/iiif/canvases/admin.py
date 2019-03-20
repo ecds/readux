@@ -14,7 +14,7 @@ class CanvasResource(resources.ModelResource):
     class Meta:
         model = Canvas
         import_id_fields = ['uuid']
-        fields = ('uuid', 'pid', 'position','height','width', 'IIIF_IMAGE_SERVER_BASE','manifestid')
+        fields = ('uuid', 'pid', 'position','height','width', 'IIIF_IMAGE_SERVER_BASE','manifestid', 'label', 'summary')
 
 class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CanvasResource

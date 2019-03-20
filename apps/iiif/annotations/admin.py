@@ -13,7 +13,7 @@ class AnnotationResource(resources.ModelResource):
         widget=ForeignKeyWidget(Canvas, 'pid'))
     class Meta:
         model = Annotation
-        fields = ('id', 'x','y','w','h','order','content','resource_type','motivation','format','canvas_link')
+        fields = ('id', 'x','y','w','h','order','content','resource_type','motivation','format','canvas_link', 'language')
 
 
 class AnnotationAdmin(ImportExportModelAdmin, admin.ModelAdmin):

@@ -100,7 +100,7 @@ class Annotation(models.Model):
     resource_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default=TEXT)
     motivation = models.CharField(max_length=50, choices=MOTIVATION_CHOICES, default=PAINTING)
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)
-    canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE)
+    canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE, null=True)
     language = models.CharField(max_length=10, default='en')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)

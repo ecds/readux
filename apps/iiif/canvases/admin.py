@@ -11,17 +11,27 @@ class CanvasResource(resources.ModelResource):
         column_name='manifest',
         attribute='manifest',
         widget=ForeignKeyWidget(Manifest, 'pid'))
+    IIIF_IMAGE_SERVER_BASElink = fields.Field(
+        column_name='IIIF_IMAGE_SERVER_BASE',
+        attribute='IIIF_IMAGE_SERVER_BASE',
+        widget=ForeignKeyWidget(IServer, 'IIIF_IMAGE_SERVER_BASE'))
     class Meta:
         model = Canvas
-        import_id_fields = ['uuid']
-        fields = ('uuid', 'pid', 'position','height','width', 'IIIF_IMAGE_SERVER_BASE','manifestid', 'label', 'summary')
+        fields = ('id', 'pid', 'position','height','width', 'IIIF_IMAGE_SERVER_BASElink','manifestid', 'label', 'summary')
 
 class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CanvasResource
     pass     
-    list_display = ('uuid', 'pid', 'height', 'width', 'position', 'manifest', 'label')
+    list_display = ('id', 'pid', 'height', 'width', 'position', 'manifest', 'label')
     
-class IServerAdmin(admin.ModelAdmin):
+class IServerResource(resources.ModelResource):
+    class Meta:
+        model = IServer
+        fields = ('id', 'IIIF_IMAGE_SERVER_BASE')
+
+class IServerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    resource_class = IServerResource
+    pass     
     list_display = ('IIIF_IMAGE_SERVER_BASE',)
     
 admin.site.register(Canvas, CanvasAdmin)

@@ -9,11 +9,11 @@ from apps.iiif.kollections.models import Collection
 class CollectionResource(resources.ModelResource):
     class Meta:
         model = Collection
-        fields = ('uuid', 'label','summary', 'pid','metadata', 'upload')
+        fields = ('id', 'label','summary', 'pid','metadata', 'upload')
 
 class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CollectionResource
     pass     
-    list_display = ('uuid', 'pid', 'metadata', 'summary', 'label')
+    list_display = ('id', 'pid', 'metadata', 'summary', 'label')
     
 admin.site.register(Collection, CollectionAdmin)

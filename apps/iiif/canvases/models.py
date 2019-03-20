@@ -13,14 +13,14 @@ def get_default_iiif_setting():
   return "%s" % (settings.IIIF_IMAGE_SERVER_BASE)
 
 class IServer(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     IIIF_IMAGE_SERVER_BASE = models.CharField(max_length=255, default=get_default_iiif_setting)
 
     def __str__(self):
         return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
 
 class Canvas(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     label = models.CharField(max_length=255)
     pid = models.CharField(max_length=255)
     summary = models.TextField(blank=True, null=True)

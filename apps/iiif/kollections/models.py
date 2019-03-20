@@ -4,7 +4,7 @@ from django.template.defaultfilters import slugify
 import uuid
 
 class Collection(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     label = models.CharField(max_length=255)
     summary = models.TextField()
     pid = models.CharField(max_length=255)

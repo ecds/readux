@@ -10,7 +10,7 @@ class ManifestResource(resources.ModelResource):
     collectionid = fields.Field(
         column_name='collection',
         attribute='collection',
-        widget=ForeignKeyWidget(Manifest, 'label'))
+        widget=ForeignKeyWidget(Collection, 'label'))
     class Meta:
         model = Manifest
         import_id_fields = ('id',)

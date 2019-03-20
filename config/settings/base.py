@@ -88,6 +88,8 @@ THIRD_PARTY_APPS = [
     'wagtail.core',
     'modelcluster',
     'taggit',
+    'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
+    'wagtailmenus',
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',
@@ -220,6 +222,8 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'wagtail.contrib.settings.context_processors.settings',
+                'wagtailmenus.context_processors.wagtailmenus',
             ],
         },
     },

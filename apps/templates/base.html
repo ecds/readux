@@ -1,4 +1,5 @@
 {% load static i18n %}<!DOCTYPE html>
+{% load menu_tags %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -18,7 +19,7 @@
     {% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/css/uikit.min.css" />
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
-    
+
     {% endblock %}
     {% block extra_css %}{% endblock extra_css %}
 
@@ -32,8 +33,8 @@
         <a class='uk-navbar-item uk-logo' href="{% url 'home' %}">Readux</a>
           <ul class='uk-navbar-nav'>
             <li>
-              <a class="{% if url_name == 'about' %} active{% endif %}" href="{% url 'about' %}">About</a>
-            </li>
+             {% main_menu %}
+           </li>
             {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
@@ -63,13 +64,13 @@
       {% endif %}
 
       {% block modal %}{% endblock modal %}
-      
+
       <div class="uk-container">
         {% block content %}
         <p>Use this document as a way to quick start any new project.</p>
         {% endblock content %}
       </div>
-      
+
       {% block viewer %}{% endblock viewer %}
 
 
@@ -83,4 +84,3 @@
     {% csrf_token%}
   </body>
 </html>
- 

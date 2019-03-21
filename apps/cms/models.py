@@ -17,3 +17,5 @@ class ContentPage(Page):
         FieldPanel('tagline', classname="full"),
         StreamFieldPanel('body'),
     ]
+
+    

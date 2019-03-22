@@ -75,6 +75,21 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
     'rest_framework',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
+    'modelcluster',
+    'taggit',
+    'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
+    'wagtailmenus',
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',
@@ -83,6 +98,7 @@ LOCAL_APPS = [
     'apps.iiif.kollections.apps.KollectionsConfig',
     'apps.iiif.manifests.apps.ManifestsConfig',
     'apps.readux.apps.ReaduxConfig',
+    'apps.cms.apps.CmsConfig'
     # 'apps.readux.collection.apps.CollectionAppConfig',
     # 'apps.readux.volumes.apps.VolumesAppConfig',
 ]
@@ -149,6 +165,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 # STATIC
@@ -204,6 +222,8 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'wagtail.contrib.settings.context_processors.settings',
+                'wagtailmenus.context_processors.wagtailmenus',
             ],
         },
     },
@@ -222,7 +242,7 @@ FIXTURE_DIRS = (
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -265,3 +285,5 @@ SERIALIZATION_MODULES = {
     "annotation": "apps.iiif.serializers.annotation",
     "annotation_list": "apps.iiif.serializers.annotation_list",
 }
+
+WAGTAIL_SITE_NAME = 'Readux'

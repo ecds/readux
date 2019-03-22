@@ -1,0 +1,10 @@
+{% load menu_tags %}
+{% if menu_items %}
+  <ul class="uk-navbar-nav">
+    {% for item in menu_items %}
+      <li>
+        <a href="{{ item.href }}">{{ item.text }}</a> {% if item.has_children_in_menu %}{% sub_menu item %}{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

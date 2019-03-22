@@ -6,5 +6,7 @@ urlpatterns = [
   path('', views.CollectionsList.as_view(), name='home' ),
   path('<collection>/', views.CollectionDetail.as_view(), name="collection" ),
   path('<collection>/<volume>', views.VolumeDetail.as_view(), name='volume' ),
-  path('<collection>/<volume>/<page>', views.PageDetail.as_view(), name='page' ),
+  # url for page altered to prevent conflict with Wagtail
+  # TODO: find another way to resolve this conflict
+  path('/<collection>/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),
 ]

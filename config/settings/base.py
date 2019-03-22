@@ -63,6 +63,7 @@ DJANGO_APPS = [
     # has to be included before django.contrib.admin
     'modeltranslation',
     'django.contrib.admin',
+    'import_export',
 ]
 THIRD_PARTY_APPS = [
     'corsheaders',

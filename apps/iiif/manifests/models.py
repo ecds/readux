@@ -8,7 +8,7 @@ class Manifest(models.Model):
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')
     )
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=True)
     pid = models.CharField(max_length=255)
     label = models.CharField(max_length=255)
     summary = models.TextField()

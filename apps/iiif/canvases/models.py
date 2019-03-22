@@ -9,15 +9,26 @@ from django.apps import apps
 from . import services
 import uuid
 
+def get_default_iiif_setting():
+  return "%s" % (settings.IIIF_IMAGE_SERVER_BASE)
+
+class IServer(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    IIIF_IMAGE_SERVER_BASE = models.CharField(max_length=255, default=get_default_iiif_setting)
+
+    def __str__(self):
+        return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
+
 class Canvas(models.Model):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     label = models.CharField(max_length=255)
     pid = models.CharField(max_length=255)
-    summary = models.TextField()
+    summary = models.TextField(blank=True, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.CASCADE)
     position = models.IntegerField()
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
+    IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
 
     @property
     def identifier(self):
@@ -25,7 +36,7 @@ class Canvas(models.Model):
 
     @property
     def service_id(self):
-      return "%s/%s" % (settings.IIIF_IMAGE_SERVER_BASE, self.pid)
+      return "%s/%s" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
     @property
     def image_info(self):
@@ -33,10 +44,10 @@ class Canvas(models.Model):
 
     @property
     def thumbnail(self):
-        return "%s/%s/full/200,250/0/default.jpg" % (settings.IIIF_IMAGE_SERVER_BASE, self.pid)
+        return "%s/%s/full/200,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
     
     def __str__(self):
-        return str(self.uuid)
+        return str(self.pid)
     
     class Meta:
         ordering = ['position']

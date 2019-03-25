@@ -8,9 +8,9 @@ from apps.iiif.kollections.models import Collection
 
 class ManifestResource(resources.ModelResource):
     collectionid = fields.Field(
-        column_name='collection',
-        attribute='collection',
-        widget=ForeignKeyWidget(Collection, 'label'))
+        column_name='collections',
+        attribute='collections',
+        widget=ManyToManyWidget(Collection, 'label'))
     class Meta:
         model = Manifest
         import_id_fields = ('id',)
@@ -20,7 +20,8 @@ class ManifestResource(resources.ModelResource):
 class ManifestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = ManifestResource
     pass     
-    list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher', 'collection')
+    filter_horizontal = ('collections',)
+    list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
     
 class NoteAdmin(admin.ModelAdmin):
     class Meta:

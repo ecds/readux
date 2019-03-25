@@ -3,7 +3,7 @@
 <div class="uk-container">
 <h1 class='uk-heading-primary'>{{ collection.label }}</h1>
 <ul>
-{% for volume in collection.manifest_set.all %}
+{% for volume in collection.manifests.all %}
 <li>
 <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}

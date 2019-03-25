@@ -22,8 +22,8 @@
     <div class='uk-width-1-4'>
       <div class='uk-padding'>
         <b>Author:</b> {{ volume.author }}
-        <br />
-        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' volume.collection.pid %}">{{ volume.collection.label }}</a>
+        <br />{% for col in volume.collections.all %}
+        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
         <br />
         <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
         <ul>

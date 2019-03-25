@@ -33,6 +33,20 @@
           </li>
           {% endfor %}
         </ul>
+        <br />
+        <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.collection.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.collection.pid volume.pid %}</a>
+        <br />
+        <b>Stable page URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'page' volume.collection.pid volume.pid page.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'page' volume.collection.pid volume.pid page.pid %}</a>
+        <br />
+        <b><script type="text/javascript">
+        var currentURL = window.location.href;
+        document.write(currentURL)
+        var _this = this;
+        if (_this.popStateEvent) {
+        var newURL = window.location.href;
+        };
+        document.write(newUrl)
+       </script></b>
       </div>
       <!-- start ocr el -->
       <div id='ocr' style='opacity: 0;'>

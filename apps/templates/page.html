@@ -22,8 +22,8 @@
     <div class='uk-width-1-4'>
       <div class='uk-padding'>
         <b>Author:</b> {{ volume.author }}
-        <br />
-        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' volume.collection.pid %}">{{ volume.collection.label }}</a>
+        <br />{% for col in collections.pid %}
+        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
         <br />
         <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
         <ul>
@@ -33,10 +33,10 @@
           </li>
           {% endfor %}
         </ul>
+        <br />{% for col in collections.pid %}
+        <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>
         <br />
-        <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.collection.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.collection.pid volume.pid %}</a>
-        <br />
-        <b>Stable page URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'page' volume.collection.pid volume.pid page.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'page' volume.collection.pid volume.pid page.pid %}</a>
+        <b>Stable page URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'page' col.pid volume.pid page.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'page' col.pid volume.pid page.pid %}</a>{% endfor %}
         <br />
         <b><script type="text/javascript">
         var currentURL = window.location.href;

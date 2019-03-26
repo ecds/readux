@@ -10,7 +10,7 @@ class ManifestResource(resources.ModelResource):
     collectionid = fields.Field(
         column_name='collections',
         attribute='collections',
-        widget=ManyToManyWidget(Collection, 'label'))
+        widget=ManyToManyWidget(Collection, field='label'))
     class Meta:
         model = Manifest
         import_id_fields = ('id',)

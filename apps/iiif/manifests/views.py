@@ -21,4 +21,4 @@ class ManifestDetail(View):
                     version=kwargs['version']
                 )
             )
-        )
+        , safe=False)

@@ -33,6 +33,10 @@
           </li>
           {% endfor %}
         </ul>
+        <br />{% for col in volume.collections.all %}
+        <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>
+        <br />{% endfor %}
+        <b>Stable page URL:</b> <span id="myLink"></span>
       </div>
       <!-- start ocr el -->
       <div id='ocr' style='opacity: 0;'>

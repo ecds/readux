@@ -2,14 +2,26 @@
 {% block content %}
 <div class="uk-container">
 <h1 class='uk-heading-primary'>{{ collection.label }}</h1>
-<ul>
+<h2>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}} in this collection</h2>
+<div class="uk-container">
 {% for volume in collection.manifests.all %}
-<li>
-<a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
+<div style="display:inline; float:left;">
+  <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
+    <img src="{{ volume.canvas_set.first.thumbnail }}"/>
+  </a>
+  </div>
+  <div style="display:inline; float:left">
+    <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}
 </a>
-</li>
+<p>Author: {{volume.author}}</p>
+<p>Date: {{volume.published_date}}</p>
+<p>Publisher: {{volume.publisher}}</p>
+<p>Publication City: {{volume.published_city}}</p>
+  </p>
+  </div>
+</div>
 {% endfor %}
-</ul>
+</div>
 </div>
 {% endblock content %}

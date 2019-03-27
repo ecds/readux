@@ -44,11 +44,16 @@ class Canvas(models.Model):
 
     @property
     def thumbnail(self):
-        return "%s/%s/full/200,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
-    
+        if self.height > self.width:
+            # portrait
+            return "%s/%s/full/200,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+        else:
+            # landscape
+            return "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
     def __str__(self):
         return str(self.pid)
-    
+
     class Meta:
         ordering = ['position']
 

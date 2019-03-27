@@ -15,7 +15,7 @@ class CollectionResource(resources.ModelResource):
 class ManifestInline(admin.TabularInline):
     model = Manifest.collections.through
     readonly_fields = ('manifest_label',)
-
+    
     def manifest_label(self, instance):
         return instance.manifest.label
     manifest_label.short_description = 'Manifest title'

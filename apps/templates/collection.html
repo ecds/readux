@@ -7,7 +7,7 @@
 {% for volume in collection.manifests.all %}
 <div style="display:inline; float:left;">
   <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
-    <img src="{{ volume.canvas_set.first.thumbnail }}"/>
+    <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
   </a>
   </div>
   <div style="display:inline; float:left">

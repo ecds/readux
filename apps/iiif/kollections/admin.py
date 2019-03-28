@@ -6,23 +6,28 @@ from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest, Note
 
-#class ManifestModelChoiceField(forms.ModelChoiceField()):
-#    def label_from_instance(self, obj):
+class ManifestModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
 #        """
 #        This method is used to convert objects into strings; it's used to
 #        generate the labels for the choices presented by this object. Subclasses
 #        can override this method to customize the display of the choices.
 #        """
 #        # Then return what you'd like to display
-        return "Manifest{0} - Manifest.label{1}".format(obj.pk, obj.label)
+        return "{} - {}".format(obj.pid, obj.name)
         
 #class MyForm(forms.ModelForm):
-#    manifest = ManifestModelChoiceField(
-#        queryset=Manifest.objects.select_related('manifests').all()
+#    collection = ManifestModelChoiceField(
+#        queryset=Manifest.collections.through.objects.all()
 #    )
 #
 #    class Meta:
-#        model = Manifest
+#        model = Manifest.collections.through
+#        fields = ['id']
+def formfield_for_manytomany(self, db_field, request, **kwargs):
+    if db_field.name == 'Manifest_collections':
+        return ManifestModelChoiceField(queryset=Manifest.collections.through.objects.all())
+    return super().formfield_for_foreignkey(db_field, request, **kwargs)
         
 class CollectionResource(resources.ModelResource):
     class Meta:
@@ -33,7 +38,7 @@ class ManifestInline(admin.TabularInline):
 #    form = MyForm
     model = Manifest.collections.through
     readonly_fields = ('manifest_label',)
-    
+
     def manifest_label(self, instance):
         return instance.manifest.label
     manifest_label.short_description = 'Manifest title'

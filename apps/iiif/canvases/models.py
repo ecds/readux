@@ -44,6 +44,10 @@ class Canvas(models.Model):
 
     @property
     def thumbnail(self):
+        return "%s/%s/full/200,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
+    @property
+    def thumbnail_crop_landscape(self):
         if self.height > self.width:
             # portrait
             return "%s/%s/full/200,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)

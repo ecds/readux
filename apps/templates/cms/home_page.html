@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{page.title}}</h1>
+<p class="lead">{{page.tagline}}</p>
+
+{% if page.featured_collection %}
+<h2>Featured Collection</h2>
+<a class="nav-link" href="{% url 'collection' page.featured_collection.pid %}">
+  {{ page.featured_collection.label }}
+</a>
+{% endif %}
+
+{% if page.featured_collection %}
+<h2>Featured Volume</h2>
+<a class="nav-link" href="{% url 'collection' page.featured_collection.pid %}">
+  {{ page.featured_volume.label }}
+</a>
+{% endif %}
+
+{% if page.content_display == 'Collections' %}
+<h2>All Collections</h2>
+<ol>
+  {% for collection in page.collections %}
+  <li>
+    <div>
+        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          {{ collection.label }}
+        </a>
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% endif %}
+
+{% if page.content_display == 'Volumes' %}
+<h2>All Volumes</h2>
+<ol>
+  {% for volume in page.volumes %}
+  <li>
+    <div>{% for col in volume.collections.all %}
+      <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
+    {{ volume.label }}
+  </a>
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% endif %}
+
+{% endblock %}

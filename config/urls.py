@@ -20,11 +20,11 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),# url(r'^', include('readux.collection.urls')),
     # url(r'^', include('readux.volumes.urls')),
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path(
-        'about/',
-        TemplateView.as_view(template_name=str(settings.APPS_DIR.path('templates/pages/about.html'))),
-        name="about",
-    ),
+    # path(
+    #     'about/',
+    #     TemplateView.as_view(template_name=str(settings.APPS_DIR.path('templates/pages/about.html'))),
+    #     name="about",
+    # ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
@@ -34,8 +34,10 @@ urlpatterns = [
     ),
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-
     url(r'^', include('apps.readux.urls')),
+    re_path(r'', include(wagtail_urls)),
+
+
 
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT

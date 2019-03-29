@@ -19,17 +19,19 @@
 
 {% if page.content_display == 'Collections' %}
 <h2>All Collections</h2>
-<ol>
+<ul>
   {% for collection in page.collections %}
   <li>
     <div>
+      <img src="media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}"/>
         <a class="nav-link" href="{% url 'collection' collection.pid %}">
           {{ collection.label }}
         </a>
+        {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
     </div>
   </li>
   {% endfor %}
-</ol>
+</ul>
 {% endif %}
 
 {% if page.content_display == 'Volumes' %}
@@ -38,9 +40,14 @@
   {% for volume in page.volumes %}
   <li>
     <div>{% for col in volume.collections.all %}
+      <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
+      </a>
+      <p>
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
     {{ volume.label }}
-  </a>
+  </a></p>
+  <p>{{volume.author}}</p>
     </div>
   </li>
   {% endfor %}

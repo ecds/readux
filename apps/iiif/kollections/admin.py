@@ -39,6 +39,7 @@ class ManifestInline(admin.TabularInline):
     model = Manifest.collections.through
     fields = ('manifest', 'manifest_pid')
 #    filter_horizontal = ('manifest',)
+    autocomplete_fields = ('manifest',)
     readonly_fields = ('manifest_pid',)
     verbose_name_plural = 'Manifests in this Collection'
 

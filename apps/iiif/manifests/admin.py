@@ -22,6 +22,7 @@ class ManifestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     pass     
     filter_horizontal = ('collections',)
     list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
+    search_fields = ('label','author','published_date')
     
 class NoteAdmin(admin.ModelAdmin):
     class Meta:

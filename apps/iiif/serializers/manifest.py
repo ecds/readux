@@ -88,7 +88,7 @@ class Serializer(JSONSerializer):
               {
                 "label": "Published",
                 "value": [{
-                    "@value": "%s : %s, %s" %(obj.published_city, obj.publisher, obj.published_date),
+                    "@value": "%s : %s, %s" % (obj.published_city, obj.publisher, obj.published_date),
                     "@language": "en"
                   }
                 ]

@@ -21,6 +21,8 @@ class Manifest(models.Model):
     pdf = models.URLField()
     metadata = JSONField(default=dict, blank=False)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     @property
     def note_list(self):

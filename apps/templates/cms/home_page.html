@@ -45,9 +45,11 @@
       </a>
       <p>
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
-    {{ volume.label }}
+
+      <p>{{ volume.label }}</p>
   </a></p>
   <p>{{volume.author}}</p>
+  <p>Added {{volume.created_at}}</p>
     </div>
   </li>
   {% endfor %}

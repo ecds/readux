@@ -54,5 +54,6 @@ class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CollectionResource
     pass     
     list_display = ('id', 'pid', 'metadata', 'summary', 'label')
+    search_fields = ('label','summary','pid')
     
 admin.site.register(Collection, CollectionAdmin)

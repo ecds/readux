@@ -31,7 +31,7 @@ class Manifest(models.Model):
       "%s : %s" % (published_city, publisher)
 
     def __str__(self):
-        return self.pid
+        return self.label
 
 class Note(models.Model):
     label = models.CharField(max_length=255)

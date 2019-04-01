@@ -8,6 +8,7 @@ class Collection(models.Model):
     label = models.CharField(max_length=255)
     summary = models.TextField()
     pid = models.CharField(max_length=255)
+    attribution = models.CharField(max_length=255, null=True, help_text="Repository holding the collection")
     metadata = JSONField(null=True)
     upload = models.FileField(upload_to='uploads/', null=True)
 

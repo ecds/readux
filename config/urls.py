@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^', include('apps.iiif.canvases.urls')),
     url(r'^', include('apps.iiif.manifests.urls')),
     url(r'^', include('apps.iiif.annotations.urls')),
+    url(r'^', include('apps.iiif.kollections.urls')),
     path('accounts/', include('allauth.urls')),# url(r'^', include('readux.collection.urls')),
     # url(r'^', include('readux.volumes.urls')),
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),

@@ -14,16 +14,16 @@ from apps.iiif.manifests.models import Manifest, Note
 #        can override this method to customize the display of the choices.
 #        """
 #        # Then return what you'd like to display
-#        return "%s : %s" % (self.manifest.pid, self.manifest.label)
+#       return "%s " % (self.manifest.label)
         
 #class MyForm(forms.ModelForm):
 #    collection = ManifestModelChoiceField(
-#        queryset=manifest_collection.manifest.objects.all()
+#        queryset=Manifest.objects.all()
 #    )
 #
 #    class Meta:
-#        model = manifest_collection
-#        fields = ['id']
+#        model = Manifest
+#        fields = ['label',]
 #def formfield_for_manytomany(self, db_field, request, **kwargs):
 #    if db_field.name == 'Manifest_collections':
 #        return ManifestModelChoiceField(queryset=Manifest.collections.through.objects.all())
@@ -37,12 +37,14 @@ class CollectionResource(resources.ModelResource):
 class ManifestInline(admin.TabularInline):
 #    form = MyForm
     model = Manifest.collections.through
-    filter_horizontal = ('pid',)
-    readonly_fields = ('manifest_label',)
+    fields = ('manifest', 'manifest_pid')
+#    filter_horizontal = ('manifest',)
+    readonly_fields = ('manifest_pid',)
+    verbose_name_plural = 'Manifests in this Collection'
 
-    def manifest_label(self, instance):
-        return instance.manifest.label
-    manifest_label.short_description = 'Manifest title'
+    def manifest_pid(self, instance):
+        return instance.manifest.pid
+    manifest_pid.short_description = 'Manifest Local ID'
 
 class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     inlines = [

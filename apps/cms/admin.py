@@ -2,8 +2,8 @@ from django.contrib import admin
 from apps.cms.models import ContentPage, HomePage
 
 class HomePageAdmin(admin.ModelAdmin):
-    search_fields = ('featured_volume', 'featured_collection')
-    autocomplete_fields = ('featured_volume', 'featured_collection')
+    search_fields = ('featured_volumes', 'featured_collections')
+    autocomplete_fields = ('featured_volumes', 'featured_collections')
     class Meta:
         model = HomePage
 

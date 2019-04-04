@@ -5,6 +5,7 @@ from ..iiif.manifests.models import Manifest
 
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField, StreamField
+#from wagtailautocomplete.edit_handlers import AutocompletePanel
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
@@ -45,8 +46,7 @@ class HomePage(Page):
     volumes = Manifest.objects.all
 
     content_panels = Page.content_panels + [
-        FieldPanel('tagline', classname="full"),
-        FieldPanel('content_display', classname="full"),
+#        AutocompletePanel('featured_volume', target_model='manifests.Manifest'),
         FieldPanel('featured_collections', widget=forms.CheckboxSelectMultiple, classname="full"),
         FieldPanel('featured_collections_sort_order', classname="full"),
         FieldPanel('featured_volumes', widget=forms.CheckboxSelectMultiple, classname="full"),

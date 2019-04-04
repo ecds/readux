@@ -39,6 +39,7 @@ class ManifestInline(admin.TabularInline):
     model = Manifest.collections.through
     fields = ('manifest', 'manifest_pid')
 #    filter_horizontal = ('manifest',)
+    autocomplete_fields = ('manifest',)
     readonly_fields = ('manifest_pid',)
     verbose_name_plural = 'Manifests in this Collection'
 
@@ -53,5 +54,6 @@ class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CollectionResource
     pass     
     list_display = ('id', 'pid', 'metadata', 'summary', 'label')
+    search_fields = ('label','summary','pid')
     
 admin.site.register(Collection, CollectionAdmin)

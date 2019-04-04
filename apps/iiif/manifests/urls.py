@@ -3,5 +3,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-  path('iiif/<version>/<pid>/manifest', views.ManifestDetail.as_view() ),
+  path('iiif/<version>/<pid>/manifest', views.ManifestDetail.as_view(), name="ManifestRender"),
 ]

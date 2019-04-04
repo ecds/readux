@@ -87,6 +87,7 @@ THIRD_PARTY_APPS = [
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
+    'wagtailautocomplete',
     'modelcluster',
     'taggit',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
@@ -285,6 +286,8 @@ SERIALIZATION_MODULES = {
     "manifest": "apps.iiif.serializers.manifest",
     "annotation": "apps.iiif.serializers.annotation",
     "annotation_list": "apps.iiif.serializers.annotation_list",
+    "kollection": "apps.iiif.serializers.kollection",
+    "collection_manifest": "apps.iiif.serializers.collection_manifest",
 }
 
 WAGTAIL_SITE_NAME = 'Readux'

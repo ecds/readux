@@ -1,6 +1,7 @@
 from django.db import models
 from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
+#from wagtailautocomplete.edit_handlers import AutocompletePanel
 import uuid
 
 class Manifest(models.Model):
@@ -22,7 +23,7 @@ class Manifest(models.Model):
     metadata = JSONField(default=dict, blank=False)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
-
+#    autocomplete_search_field = 'label'
 
     @property
     def note_list(self):
@@ -32,6 +33,9 @@ class Manifest(models.Model):
     def publisher_bib(self):
       "%s : %s" % (published_city, publisher)
 
+ #   def autocomplete_label(self):
+ #       return self.label
+        
     def __str__(self):
         return self.label
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.template.defaultfilters import slugify 
+from django.template.defaultfilters import slugify
 import uuid
 
 class Collection(models.Model):
@@ -11,6 +11,7 @@ class Collection(models.Model):
     attribution = models.CharField(max_length=255, null=True, help_text="Repository holding the collection. List multiple if the manifests are from multiple collections.")
     metadata = JSONField(null=True)
     upload = models.FileField(upload_to='uploads/', null=True)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return self.label

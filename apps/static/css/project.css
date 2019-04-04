@@ -69,3 +69,9 @@
     height: 100%;
 }
 /* end of Wagtail embedded objects */
+
+#id_featured_collections {
+  height:200px;
+  overflow:hidden;
+  overflow-y:scroll;
+}

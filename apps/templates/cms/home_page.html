@@ -11,7 +11,7 @@
   {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
   <li>
     <div>
-      <img src="media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}"/>
+      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/>
         <a class="nav-link" href="{% url 'collection' collection.pid %}">
           {{ collection.label }}
         </a>
@@ -51,7 +51,7 @@
   {% for collection in page.collections %}
   <li>
     <div>
-      <img src="media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}"/>
+      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}"/>
         <a class="nav-link" href="{% url 'collection' collection.pid %}">
           {{ collection.label }}
         </a>

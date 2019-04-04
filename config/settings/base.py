@@ -87,6 +87,7 @@ THIRD_PARTY_APPS = [
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
+    'wagtailautocomplete',
     'modelcluster',
     'taggit',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already

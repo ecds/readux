@@ -9,6 +9,7 @@ from django.views import defaults as default_views
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.core import urls as wagtail_urls
+from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_urls
 
 urlpatterns = [
     re_path(r'^cms/', include(wagtailadmin_urls)),
@@ -36,6 +37,7 @@ urlpatterns = [
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     url(r'^', include('apps.readux.urls')),
+    url(r'^admin/autocomplete/', include(autocomplete_admin_urls)),
     re_path(r'', include(wagtail_urls)),
 
 

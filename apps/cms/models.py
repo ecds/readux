@@ -5,7 +5,7 @@ from ..iiif.manifests.models import Manifest
 from wagtail.core.models import Page
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
-
+#from wagtailautocomplete.edit_handlers import AutocompletePanel
 from .blocks import BaseStreamBlock
 
 
@@ -34,4 +34,5 @@ class HomePage(Page):
         FieldPanel('content_display', classname="full"),
         FieldPanel('featured_collection', classname="full"),
         FieldPanel('featured_volume', classname="full"),
+#        AutocompletePanel('featured_volume', target_model='manifests.Manifest'),
     ]

@@ -9,9 +9,9 @@ from PIL import Image
 
 class Collection(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    label = models.CharField(max_length=255)
-    summary = models.TextField()
-    pid = models.CharField(max_length=255, help_text="Do not use -'s or spaces in the pid.")
+    label = models.CharField(max_length=255, help_text="Title of the collection.")
+    summary = models.TextField(help_text="Description of the collection.")
+    pid = models.CharField(max_length=255, help_text="Unique ID. Do not use -'s or spaces in the pid.")
     attribution = models.CharField(max_length=255, null=True, help_text="Repository holding the collection. List multiple if the manifests are from multiple collections.")
     metadata = JSONField(null=True)
     upload = models.FileField(upload_to='uploads/', null=True)

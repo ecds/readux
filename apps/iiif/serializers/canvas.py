@@ -91,11 +91,11 @@ class Serializer(JSONSerializer):
                 "images": [
                   {
                     "@context": "https://iiif.io/api/presentation/2/context.json",
-                    "@id": "https://example.org/iiif/book1/annotation/p0001-image",
+                    "@id": "%s" % (obj.anno_id),
                     "@type": "oa:Annotation",
                     "motivation": "sc:painting",
                     "resource": {
-                      "@id": "https://loris.library.emory.edu/%s/full/full/0/default.jpg" % (obj.pid),
+                      "@id": "%s/full/full/0/default.jpg" % (obj.service_id),
                       "@type": "dctypes:Image",
                       "format": "image/jpeg",
                       "height": obj.height,
@@ -106,7 +106,7 @@ class Serializer(JSONSerializer):
                         "profile": "https://iiif.io/api/image/2/level2.json"
                       }
                     },
-                    "on": "https://example.org/iiif/book1/canvas/p1"
+                    "on": obj.identifier,
                   }
                 ],
                 "thumbnail" : {

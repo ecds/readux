@@ -36,3 +36,11 @@ class CreateAnnotation(View):
         annotation.oa_annotation = oa_annotation
         annotation.save()
         return JsonResponse(oa_annotation, safe=False)
+        
+class StartingCanvas(View):
+    def get_queryset(self):
+        return Canvas.objects.filter(is_starting_page=True)
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), islist=True)), safe=False)
+

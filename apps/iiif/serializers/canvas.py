@@ -114,7 +114,11 @@ class Serializer(JSONSerializer):
                     "@type": "dctypes:Image",
                     "height": 250,
                     "width": 200
-                }
+                },
+                "otherContent" : [ 
+                  { "@id" : "%s/list/%s" % (obj.manifest.baseurl, obj.pid),
+                    "@type": "sc:AnnotationList" }
+                  ]
             }
             return data
 

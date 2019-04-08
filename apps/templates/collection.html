@@ -1,7 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="uk-container">
+<header class="page-header" id="page-bg">
+  <div class="container">
 <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}" style="width:100%;" />
+  </div>
+<div class="collection-image-info collasped">
+
+        <h3>{{ collection.collection_image_title }}</h3>
+        <div class="info"> {% if collection.collection_image_summary %}
+          <p>{{ collection.collection_image_summary }}</p> {% endif %}
+          <p class="small credit">{{ collection.collection_image_creator }}</p>
+        </div>
+  </div>
+</header>
 <h1 class='uk-heading-primary'>{{ collection.label }}</h1>
 <p>{{ collection.summary }}</p>
 <h2>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}} in this collection</h2>

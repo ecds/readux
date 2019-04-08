@@ -19,6 +19,9 @@ class Collection(models.Model):
     original = models.ImageField(upload_to='originals/', null=True, help_text="Upload the Original Image and the Thumbnail and Banner will be created automatically!")
     header = models.ImageField(upload_to='headers/', null=True, blank=True, help_text="You do not need to upload this file.")
     thumbnail = models.ImageField(upload_to='thumbnails/', null=True, blank=True, help_text="You do not need to upload this file.")
+    collection_image_title = models.CharField(max_length=255, null=True, blank=True, help_text="The title of the header/thumbnail image.")
+    collection_image_creator = models.CharField(max_length=255, null=True, blank=True, help_text="The artist or author of the header/thumbnail image source.")
+    collection_image_summary = models.CharField(max_length=255, null=True, blank=True, help_text="Any additional information to display about the header/thumbnail image source.")
     
     def __str__(self):
         return self.label

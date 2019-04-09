@@ -101,6 +101,23 @@ header#page-bg .collection-image-info {
     cursor: pointer;
 }
 
+header#page-bg .collection-label {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.62);
+    position: absolute;
+    bottom: 3%;
+    right: 35%;
+    padding: 0.7em 0.7em 0.3em 0.7em;
+    color: #DEDEDE;
+    max-width: 30%;
+    min-height: 25%;
+    max-height: 40%;
+}
+
+header#page-bg h1.collection-label {
+    font-size: 3em;
+}
+
 header#page-bg .collection-image-info:before {
     content: 'i';
     position: absolute;
@@ -146,3 +163,20 @@ header#page-bg .collection-image-info.collasped h3,
 header#page-bg .collection-image-info.collasped .info{
     display: none;
 }
+
+@media (max-width:1090px){
+header#page-bg h1.collection-label {
+    font-size: 2em;
+}
+}
+@media (max-width:745px){
+header#page-bg h1.collection-label {
+    font-size: 1.5em;
+}
+}
+@media (max-width:550px){
+header#page-bg h1.collection-label {
+    font-size: 1em;
+}
+}
+

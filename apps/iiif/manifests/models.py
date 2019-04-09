@@ -1,4 +1,5 @@
 from django.db import models
+import config.settings.local as settings
 from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
 #from wagtailautocomplete.edit_handlers import AutocompletePanel
@@ -23,6 +24,7 @@ class Manifest(models.Model):
     metadata = JSONField(default=dict, blank=False)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
+    #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")
 #    autocomplete_search_field = 'label'
 
     @property
@@ -33,6 +35,10 @@ class Manifest(models.Model):
     def publisher_bib(self):
       "%s : %s" % (published_city, publisher)
 
+    @property
+    def baseurl(self):
+        return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
+    
  #   def autocomplete_label(self):
  #       return self.label
 

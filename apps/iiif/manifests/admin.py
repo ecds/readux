@@ -4,6 +4,7 @@ from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
 from apps.iiif.manifests.models import Manifest, Note
+from apps.iiif.canvases.models import Canvas
 from apps.iiif.kollections.models import Collection
 
 class ManifestResource(resources.ModelResource):
@@ -23,6 +24,7 @@ class ManifestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     filter_horizontal = ('collections',)
     list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
     search_fields = ('label','author','published_date')
+
     
 class NoteAdmin(admin.ModelAdmin):
     class Meta:

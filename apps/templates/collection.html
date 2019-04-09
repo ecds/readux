@@ -1,17 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="uk-container">
-<img src="/media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}" style="width:100%;height:90px" />
+<header class="page-header" id="page-bg">
+  <div class="container">
+<img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}" style="width:100%;" />
+  </div>
+<div class="collection-image-info collasped">
+
+        <h3>{{ collection.collection_image_title }}</h3>
+        <div class="info"> {% if collection.collection_image_summary %}
+          <p>{{ collection.collection_image_summary }}</p> {% endif %}
+          <p class="small credit">{{ collection.collection_image_creator }}</p>
+        </div>
+  </div>
+</header>
 <h1 class='uk-heading-primary'>{{ collection.label }}</h1>
+<p>{{ collection.summary }}</p>
 <h2>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}} in this collection</h2>
 <div class="uk-container">
 {% for volume in collection.manifests.all %}
-<div style="display:inline; float:left;">
+<div class="collection-row" style="display:inline-block;"><div class="collection-image" style="display:inline; float:left;">
   <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
     <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
   </a>
   </div>
-  <div style="display:inline; float:left">
+  <div class="collection-info" style="display:inline; float:left; max-width:80%;">
     <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}
 </a>
@@ -20,8 +33,7 @@
 <p>Publisher: {{volume.publisher}}</p>
 <p>Publication City: {{volume.published_city}}</p>
   </p>
-  </div>
-</div>
+  </div></div>
 {% endfor %}
 </div>
 </div>

@@ -29,7 +29,7 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data =  {
-              "@id": "https://example.org/iiif/%s/manifest" % (obj.pid),
+              "@id": "https://readux.ecds.emory.edu/iiif/%s/manifest" % (obj.pid),
               "@type": "sc:Manifest",
               "label": obj.label,
             }

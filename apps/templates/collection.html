@@ -13,7 +13,7 @@
           <p class="small credit">{{ collection.collection_image_creator }}</p>
         </div>
   </div>
-<h1 class="collection-label">{{ collection.label }}</h1>
+<div class="collection-label"><h1><span>{{ collection.label }}</span></h1></div>
 </header>
 <p>{{ collection.summary }}</p>
 <h2>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}} in this collection</h2>

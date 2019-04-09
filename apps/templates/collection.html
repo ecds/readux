@@ -3,9 +3,19 @@
 <div class="uk-container">
 <img src="/media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}" style="width:100%;height:90px" />
 <h1 class='uk-heading-primary'>{{ collection.label }}</h1>
-<h2>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}} in this collection</h2>
+<h2>{{volumes|length}} volume{{volumes|length|pluralize}} in this collection</h2>
+
+{% include "snippets/sort_dropdown.html" %}
+
+{% if sort_url_params %}
+TRUE
+{% else %}
+FALSE
+{% endif %}
+
+
 <div class="uk-container">
-{% for volume in collection.manifests.all %}
+{% for volume in volumes %}
 <div style="display:inline; float:left;">
   <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
     <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>

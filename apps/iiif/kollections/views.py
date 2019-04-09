@@ -27,7 +27,7 @@ class ManifestsForCollection(View):
     def get_queryset(self):
         collection = Collection.objects.get(pid=self.kwargs['pid'])
         return Manifest.objects.filter(collections=collection)
-    
+
     def get(self, request, *args, **kwargs):
         return JsonResponse(
             json.loads(
@@ -42,10 +42,10 @@ class ManifestsForCollection(View):
         )
 
 class CollectionDetail(View):
-    
+
     def get_queryset(self):
         return Collection.objects.filter(pid=self.kwargs['pid'])
-    
+
     def get(self, request, *args, **kwargs):
         return JsonResponse(
             json.loads(

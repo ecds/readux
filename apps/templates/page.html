@@ -22,6 +22,8 @@
     <div class='uk-width-1-4'>
       <div class='uk-padding'>
         <b>Author:</b> {{ volume.author }}
+        <br />
+        <b>Publication Date:</b> {{ volume.published_date }}
         <br />{% for col in volume.collections.all %}
         <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
         <br />
@@ -41,6 +43,8 @@
         <b>Manifest URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}</a>
         <br />
         <b>Collection Manifest URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
+        <br />
+        <b>Download RIS file:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download</a>
         {% endfor %}
       </div>
       <!-- start ocr el -->

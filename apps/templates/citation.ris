@@ -1,0 +1,10 @@
+TY  - BOOK
+AU  - {{ volume.author }}
+PY  - {{ volume.published_date }}
+DA  - {{ volume.published_date }}
+CY  - {{ volume.published_city }}
+PB  - {{ volume.publisher }}
+DP  - Readux, Emory Center for Digital Scholarship
+AB  - {{ volume.summary }}
+T1  - {{ volume.label }}
+ER  - 

@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
 from django.core.serializers import serialize
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
 from .models import Collection
 from apps.iiif.manifests.models import Manifest
 import json
@@ -27,7 +29,7 @@ class ManifestsForCollection(View):
     def get_queryset(self):
         collection = Collection.objects.get(pid=self.kwargs['pid'])
         return Manifest.objects.filter(collections=collection)
-    
+
     def get(self, request, *args, **kwargs):
         return JsonResponse(
             json.loads(
@@ -42,10 +44,10 @@ class ManifestsForCollection(View):
         )
 
 class CollectionDetail(View):
-    
+
     def get_queryset(self):
         return Collection.objects.filter(pid=self.kwargs['pid'])
-    
+
     def get(self, request, *args, **kwargs):
         return JsonResponse(
             json.loads(
@@ -56,3 +58,12 @@ class CollectionDetail(View):
                 )
             )
         , safe=False)
+
+
+class CollectionSitemap(Sitemap):
+    # priority unknown
+    def items(self):
+        return Collection.objects.all()
+
+    def location(self, item):
+        return reverse('CollectionRender', kwargs={'version': 'v2', 'pid': item.pid})

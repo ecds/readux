@@ -41,7 +41,7 @@ class Manifest(models.Model):
     
  #   def autocomplete_label(self):
  #       return self.label
-        
+
     def __str__(self):
         return self.label
 

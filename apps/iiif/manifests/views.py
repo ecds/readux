@@ -35,9 +35,9 @@ class ManifestSitemap(Sitemap):
         return reverse('ManifestRender', kwargs={'version': 'v2', 'pid': item.pid})
 
 class ManifestRis(TemplateView):
-    content_type = 'application/x-research-info-systems'
+    content_type = 'application/x-research-info-systems; charset=UTF-8'
     template_name = "citation.ris"
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()

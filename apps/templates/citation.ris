@@ -4,7 +4,10 @@ PY  - {{ volume.published_date }}
 DA  - {{ volume.published_date }}
 CY  - {{ volume.published_city }}
 PB  - {{ volume.publisher }}
-DP  - Readux, Emory Center for Digital Scholarship
+DB  - Readux
+DP  - Emory Center for Digital Scholarship
 AB  - {{ volume.summary }}
-T1  - {{ volume.label }}
+T1  - {{ volume.label }}{% for col in volume.collections.all %}
+UR  - https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}{% endfor %}
+Y2  - {% now "F jS Y" %}
 ER  - 

@@ -14,7 +14,7 @@ class Collection(models.Model):
     pid = models.CharField(max_length=255, help_text="Unique ID. Do not use -'s or spaces in the pid.")
     attribution = models.CharField(max_length=255, null=True, help_text="Repository holding the collection. List multiple if the manifests are from multiple collections.")
     metadata = JSONField(null=True)
-    upload = models.FileField(upload_to='uploads/', null=True)
+    upload = models.FileField(upload_to='uploads/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     original = models.ImageField(upload_to='originals/', null=True, help_text="Upload the Original Image and the Thumbnail and Banner will be created automatically!")
     header = models.ImageField(upload_to='headers/', null=True, blank=True, help_text="You do not need to upload this file.")

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views import View
+from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
@@ -32,3 +33,12 @@ class ManifestSitemap(Sitemap):
 
     def location(self, item):
         return reverse('ManifestRender', kwargs={'version': 'v2', 'pid': item.pid})
+
+class ManifestRis(TemplateView):
+    content_type = 'application/x-research-info-systems; charset=UTF-8'
+    template_name = "citation.ris"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
+        return context

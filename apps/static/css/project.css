@@ -76,9 +76,19 @@
   overflow-y:scroll;
 }
 
+body .uk-container {
+    width: 90%;
+    max-width: 90%;
+}
+
 header.page-header {
     position: relative;
     z-index: 10;
+    width: 100%;
+}
+
+header.page-header .container img{
+    width: 100%;
 }
 
 
@@ -99,6 +109,41 @@ header#page-bg .collection-image-info {
     max-width: 300px;
     min-height: 10px;
     cursor: pointer;
+}
+
+/* 
+header#page-bg .collection-label {
+    display: block;
+    background: rgba(0, 0, 0, 0.62);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.7em 0.7em 0.3em 0.7em;
+    color: #DEDEDE;
+    max-width: 80%;
+    min-height: 25%;
+    max-height: 40%;
+}
+ */
+
+header#page-bg .collection-label h1 {
+    font-size: 3em;
+    color: #DEDEDE;
+    width:100%;
+    height:100%;
+    position: absolute;
+    top: 0;
+    left: 0px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+}
+
+header#page-bg .collection-label h1 span {
+    background-color: rgba(0, 0, 0, 0.62);
+    padding: 0.3em;
 }
 
 header#page-bg .collection-image-info:before {
@@ -146,3 +191,25 @@ header#page-bg .collection-image-info.collasped h3,
 header#page-bg .collection-image-info.collasped .info{
     display: none;
 }
+
+@media (max-width:1095px){
+header#page-bg .collection-label h1 {
+    font-size: 2em;
+}
+}
+@media (max-width:750px){
+header#page-bg .collection-label h1 {
+    font-size: 1.5em;
+}
+}
+@media (max-width:555px){
+header#page-bg .collection-label h1 {
+    font-size: 1em;
+}
+}
+@media (max-width:395px){
+header#page-bg .collection-label h1 {
+    font-size: 0.7em;
+}
+}
+

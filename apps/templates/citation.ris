@@ -1,13 +1,13 @@
 TY  - BOOK
-AU  - {{ volume.author }}
-PY  - {{ volume.published_date }}
-DA  - {{ volume.published_date }}
-CY  - {{ volume.published_city }}
-PB  - {{ volume.publisher }}
+AU  - {{ volume.author|safe }}
+PY  - {{ volume.published_date|safe }}
+DA  - {{ volume.published_date|safe }}
+CY  - {{ volume.published_city|safe }}
+PB  - {{ volume.publisher|safe }}
 DB  - Readux
 DP  - Emory Center for Digital Scholarship
-AB  - {{ volume.summary }}
-T1  - {{ volume.label }}{% for col in volume.collections.all %}
+AB  - {{ volume.summary|safe }}
+T1  - {{ volume.label|safe }}{% for col in volume.collections.all %}
 UR  - https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}{% endfor %}
 Y2  - {% now "F jS Y" %}
 ER  - 

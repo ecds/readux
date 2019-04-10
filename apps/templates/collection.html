@@ -16,9 +16,13 @@
 <div class="collection-label"><h1><span>{{ collection.label }}</span></h1></div>
 </header>
 <p>{{ collection.summary }}</p>
-<h2>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}} in this collection</h2>
+<h2>{{volumes|length}} volume{{volumes|length|pluralize}} in this collection</h2>
+
+{% include "snippets/sort_dropdown.html" %}
+<!--TODO: include ascending/descending sort feature-->
+
 <div class="uk-container">
-{% for volume in collection.manifests.all %}
+{% for volume in volumes %}
 <div class="collection-row" style="display:inline-block;"><div class="collection-image" style="display:inline; float:left;">
   <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
     <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>

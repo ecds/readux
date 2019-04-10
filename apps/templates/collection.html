@@ -6,13 +6,7 @@
 <h2>{{volumes|length}} volume{{volumes|length|pluralize}} in this collection</h2>
 
 {% include "snippets/sort_dropdown.html" %}
-
-{% if sort_url_params %}
-TRUE
-{% else %}
-FALSE
-{% endif %}
-
+<!--TODO: include ascending/descending sort feature-->
 
 <div class="uk-container">
 {% for volume in volumes %}

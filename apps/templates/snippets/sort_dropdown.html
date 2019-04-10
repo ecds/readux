@@ -1,6 +1,9 @@
 {# sort dropdown; based on eultheme pagination dropdown #}
 {# uses selectize javascript plug-in for interactivity #}
 {# expects current sort as *sort*, sort options as *sort_options*, and any additional url arguments as *sort_url_params* #}
+{% load static i18n %}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="{% static 'js/selectize.js' %}"></script>
 <footer class="pagination pagination-dropdown"> {# cheating: borrowing styles from eultheme pagination dropdown #}
     <section>
         <h2 class="h4">Sort</h2>
@@ -12,6 +15,7 @@
                     </option>
                 {% endfor %}
             </select>
+            <p>
     </section>
 </footer>
 <script type="text/javascript">

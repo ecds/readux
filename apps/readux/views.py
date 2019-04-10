@@ -31,7 +31,7 @@ class CollectionDetail(TemplateView):
         elif sort == 'author':
             q = q.order_by('author')
         elif sort == 'date published':
-            q = q.order_by('date_published')
+            q = q.order_by('published_date')
         elif sort == 'date added':
             q = q.order_by('-created_at')
 

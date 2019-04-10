@@ -41,7 +41,7 @@
         <b>Collection Manifest URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
         <br />
         <br />
-        <b>Download RIS file:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download</a>
+        <b>Export Citation:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download RIS file</a>
         <br />
         <br />
         <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>

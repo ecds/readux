@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load readux_templatetags %}
 
 {% block content %}
@@ -31,7 +32,7 @@
   <li>
     <div>{% for col in volume.collections.all %}
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
-        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
       </a>
       <p>
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
@@ -71,7 +72,7 @@
   <li>
     <div>{% for col in volume.collections.all %}
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
-        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
       </a>
       <p>
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}

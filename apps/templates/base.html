@@ -13,8 +13,10 @@
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
     {% elif volume.label %}
     <meta property="og:title" content="{{ volume.label|safe }}" />
+    {% for page in volume.canvas_set.all %}
     <meta property="og:image" content="{{ page.social_media }}" />
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+    {% endfor %}
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />

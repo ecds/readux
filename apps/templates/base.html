@@ -26,18 +26,16 @@
     <meta property="og:description" content="{{ volume.summary }}" />
     <meta property="og:type" content="Volume in web database" />
     <!-- {% for page in volume.canvas_set.all %}{% if forloop.last %} -->
-<!-- 
     <meta property="og:image" content="{{ page.social_media }}" />
- -->
-<!-- 
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
- -->
+
     <script>
     var link = document.createElement('meta');
     link.setAttribute('property', 'og:url');
     link.content = window.location.href;
     document.getElementsByTagName('head')[0].appendChild(link);
     </script>
+<!-- 
     <script>
     var link = document.createElement('meta');
     link.setAttribute('property', 'og:image');
@@ -58,6 +56,7 @@
     link.content = linkstrip3;
     document.getElementsByTagName('head')[0].appendChild(link);
     </script>
+ -->
 
     <!-- 
 {% for col in volume.collections.all %}

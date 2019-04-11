@@ -25,21 +25,46 @@
     <meta property="og:title" content="{{ volume.label|safe }}" />
     <meta property="og:description" content="{{ volume.summary }}" />
     <meta property="og:type" content="Volume in web database" />
-    {% for page in volume.canvas_set.all %}{% if forloop.last %}
-    <meta property="og:image" content="{{ page.social_media }}" />
-    <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+    <!-- {% for page in volume.canvas_set.all %}{% if forloop.last %} -->
 <!-- 
+    <meta property="og:image" content="{{ page.social_media }}" />
+ -->
+<!-- 
+    <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+ -->
     <script>
     var link = document.createElement('meta');
     link.setAttribute('property', 'og:url');
-    link.content = jQuery(this).attr('canvasID');
+    link.content = window.location.href;
     document.getElementsByTagName('head')[0].appendChild(link);
     </script>
- -->
-    {% for col in volume.collections.all %}
+    <script>
+    var link = document.createElement('meta');
+    link.setAttribute('property', 'og:image');
+    thething = window.location.pathname.split('/page/');
+    linkstrip = "{{ page.social_media }}"
+    linkstrip2 = linkstrip.split('iiif/');
+    linkstrip3 = linkstrip2[0] + "iiif/" + thething[1] + "/full/full/0/default.jpg"
+    link.content = linkstrip3;
+    document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+    <script>
+    var link = document.createElement('meta');
+    link.setAttribute('property', 'og:image:secure_url');
+    thething = window.location.pathname.split('/page/');
+    linkstrip = "{{ page.social_media }}"
+    linkstrip2 = linkstrip.split('iiif/');
+    linkstrip3 = linkstrip2[0] + "iiif/" + thething[1] + "/full/full/0/default.jpg"
+    link.content = linkstrip3;
+    document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+
+    <!-- 
+{% for col in volume.collections.all %}
     <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{% url 'page' col.pid volume.pid page.pid %}" />
     {% endfor %}
-    {% endif %}{% endfor %}
+ -->
+    <!-- {% endif %}{% endfor %} -->
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />

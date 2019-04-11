@@ -41,6 +41,9 @@
         <b>Collection Manifest URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
         <br />
         <br />
+        <b>View PDF:</b> <a href="{{volume.pdf}}" target="_blank">Click to view volume PDF</a>
+        <br />
+        <br />
         <b>Export Citation:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download RIS file</a>
         <br />
         <br />
@@ -52,7 +55,7 @@
       </div>
       <!-- start ocr el -->
       <div id='ocr' style='opacity: 0;'>
-      
+
   </div>
       <!-- end ocr el -->
     </div>
@@ -102,7 +105,7 @@
     // osd.addHandler('animation', function(e) {console.log(e)})
   });
 
-  
+
 (function($) {
 
   $.OcrLayer = function(options) {

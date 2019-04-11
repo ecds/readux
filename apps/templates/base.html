@@ -8,6 +8,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    {% if collection.label %}
+    <meta property="og:title" content="Readux collection: {{ collection.label }}" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
+    {% elif volume.label %}
+    <meta property="og:title" content="{{ volume.label|safe }}" />
+    <meta property="og:image" content="{{ page.social_media }}" />
+    <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+    {% else %}
+    <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />
+    {% endif %}
+    <meta name="twitter:image:alt" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>

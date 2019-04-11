@@ -52,6 +52,10 @@ class Canvas(models.Model):
         return "%s/%s/full/200,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
     @property
+    def social_media(self):
+        return "%s/%s/full/600,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
+    @property
     def startingpage(self):
         if self.is_starting_page is True:
             return "%s/iiif/%s/" % (settings.HOSTNAME, self.manifest.pid)

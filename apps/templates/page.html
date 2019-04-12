@@ -46,12 +46,16 @@
         <br />
         <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>
         <br />
-        <b>Stable page URL:</b> <span id="myLink"></span>
+        <b>Stable page URL:</b> <span class="link" id="myLink"></span>
         <br />
-        <b><a id="myLink" href="">CLICK</a><b>
-        <br />
+<!-- 
+        <p id="test"></p>
+        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
+        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
+ -->
         {% endfor %}
       </div>
+
       <!-- start ocr el -->
       <div id='ocr' style='opacity: 0;'>
       

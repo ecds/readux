@@ -26,15 +26,18 @@
     <meta property="og:description" content="{{ volume.summary }}" />
     <meta property="og:type" content="Volume in web database" />
     <!-- {% for page in volume.canvas_set.all %}{% if forloop.last %} -->
-    <meta property="og:image" content="{{ page.social_media }}" />
-    <meta property="og:image:secure_url" content="{{ page.social_media }}" />
-
+    <meta property="og:image" id="myMeta" content="" />
+    <meta property="og:image:secure_url" id="myMeta2" content="" />
+    <meta id="myContent1" content="{{ page.IIIF_IMAGE_SERVER_BASE }}" />
+    <meta id="myContent2" content="{{ page.IIIF_IMAGE_SERVER_BASE }}" />
+<!-- 
     <script>
     var link = document.createElement('meta');
     link.setAttribute('property', 'og:url');
     link.content = window.location.href;
     document.getElementsByTagName('head')[0].appendChild(link);
     </script>
+ -->
 <!-- 
     <script>
     var link = document.createElement('meta');
@@ -58,11 +61,11 @@
     </script>
  -->
 
-    <!-- 
-{% for col in volume.collections.all %}
-    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}{% url 'page' col.pid volume.pid page.pid %}" />
+    {% for col in volume.collections.all %}
+    <meta property="og:url"  id="myMeta3" content="" />
+    <meta id="myContent3" content="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" />
     {% endfor %}
- -->
+
     <!-- {% endif %}{% endfor %} -->
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />

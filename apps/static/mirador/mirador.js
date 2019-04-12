@@ -41642,6 +41642,15 @@ return /******/ (function(modules) { // webpackBootstrap
       } else {
         history.pushState(history.sate, '', page.replace(/:/g, '%3A'));
         console.log('push', page);
+        var el = document.getElementById("myMeta");
+        var content1  = document.getElementById("myContent1");
+        document.getElementById("myMeta").content=content1.content + '/' + page + '/full/600,/0/default.jpg';
+        var el2 = document.getElementById("myMeta2");
+        var content2  = document.getElementById("myContent2");
+        document.getElementById("myMeta2").content=content2.content + '/' + page + '/full/600,/0/default.jpg';
+        var el3 = document.getElementById("myMeta3");
+        var content3  = document.getElementById("myContent3");
+        document.getElementById("myMeta3").content=content3.content + '/page/' + page;
       }
       this.annotationsList = [];
 

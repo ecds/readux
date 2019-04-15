@@ -1,0 +1,21 @@
+[{
+  "model": "canvases.iserver",
+  "pk": "02ac58b2-2c62-4f67-807e-7927ff191ace",
+  "fields": {
+      "IIIF_IMAGE_SERVER_BASE": "https://loris.library.emory.edu"
+  }
+},
+{
+  "model": "canvases.canvas",
+  "pk": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+  "fields": {
+      "label": "",
+      "pid": "15210893.5622.emory.edu$95",
+      "summary": null,
+      "manifest": "464d82f6-6ae5-4503-9afc-8e3cdd92a3f1",
+      "position": 96,
+      "height": 3608,
+      "width": 1976,
+      "IIIF_IMAGE_SERVER_BASE": "02ac58b2-2c62-4f67-807e-7927ff191ace"
+  }
+}]

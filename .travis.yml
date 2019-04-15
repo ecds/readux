@@ -9,6 +9,7 @@ services: postgresql
 
 before_install:
   - export DATABASE_URL=postgres://postgres@localhost:5432/travisci
+  - cp config/settings/local.dst config/settings/local.py
 # command to install dependencies
 install:
   - pip install -r requirements/local.txt

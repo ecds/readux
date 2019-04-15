@@ -31,7 +31,7 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
-              "@context": "https://iiif.io/api/presentation/2/context.json",
+              "@context": "http://iiif.io/api/presentation/2/context.json",
               "@id": "https://readux.ecds.emory.edu/iiif/v2/%s/collection" % (obj.pid),
               "@type": "sc:Collection",
               "label": obj.label,

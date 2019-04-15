@@ -11,6 +11,7 @@ mypy==0.641  # https://github.com/python/mypy
 pytest==3.9.3  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.1  # https://github.com/Frozenball/pytest-sugar
 requests
+iiif-prezi # https://github.com/iiif-prezi/iiif-prezi
 
 # Code quality
 # ------------------------------------------------------------------------------

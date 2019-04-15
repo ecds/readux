@@ -53,13 +53,33 @@ python manage.py migrate
 python manage.py loaddata apps/fixtures/dump.json
 ~~~
 
+### Running local development server
+
+Run the development under https. Note: this is generate a self-signed certificate. There are ways tell your browser to trust these certs, but that is beyond the scope of this README.
+
+~~~bash
+python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
+~~~
+
+### Running the tests
+
+Readux uses Django's default test framework.
+
+~~~bash
+python manage.py test
+~~~
+
 ## Contribute
 
 We use the [Git-Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model. Pull requests should be made against the develop branch.
 
+### Code of conduct
+
+[Code of Conduct](CODE_OF_CONDUCT.md)
+
 ## Tech/framework used
 
-![Build with Cookiecutter Django][https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg](https://github.com/pydanny/cookiecutter-django/)
+[![Build with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg)](https://github.com/pydanny/cookiecutter-django/)
 
 [Mirador](http://projectmirador.org/) for displaying and annotating [IIIF](http://iiif.io) images.
 

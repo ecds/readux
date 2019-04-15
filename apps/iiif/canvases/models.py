@@ -29,6 +29,7 @@ class Canvas(models.Model):
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
+    is_starting_page = models.BooleanField(default=False)
 
     @property
     def identifier(self):
@@ -39,12 +40,25 @@ class Canvas(models.Model):
       return "%s/%s" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
     @property
+    def anno_id(self):
+      return "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.manifest.pid, self.pid)
+
+    @property
     def image_info(self):
         return services.get_canvas_info(self)
 
     @property
     def thumbnail(self):
         return "%s/%s/full/200,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
+    @property
+    def social_media(self):
+        return "%s/%s/full/600,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
+    @property
+    def startingpage(self):
+        if self.is_starting_page is True:
+            return "%s/iiif/%s/" % (settings.HOSTNAME, self.manifest.pid)
 
     @property
     def thumbnail_crop_landscape(self):

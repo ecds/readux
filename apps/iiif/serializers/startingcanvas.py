@@ -1,14 +1,12 @@
 from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
-from django.core.serializers import serialize
-import json
 
 """
 V2
 {
   // Metadata about this canvas
   "@context": "https://iiif.io/api/presentation/2/context.json",
-  "@id": 'https://example.org/iiif/%s/canvas/p1' % (obj.pid),
+  "@id": "https://example.org/iiif/book1/canvas/p1",
   "@type": "sc:Canvas",
   "label": "p. 1",
   "height": 1000,
@@ -63,53 +61,32 @@ class Serializer(JSONSerializer):
     def _init_options(self):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
+        self.islist = self.json_kwargs.pop('islist', False)
 
     def start_serialization(self):
         self._init_options()
-        self.stream.write('')
+        if (self.islist):
+          self.stream.write('[')
+        else:
+          self.stream.write('')
 
     def end_serialization(self):
-        self.stream.write('')
+        if (self.islist):
+          self.stream.write(']')
+        else:
+          self.stream.write('')
 
     def start_object(self, obj):
         super().start_object(obj)
 
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
-            data = {
-              "@context": "https://iiif.io/api/presentation/2/context.json",
-              "@id": "%s/manifest" % (obj.baseurl),
-              "@type": "sc:Manifest",
-              "label": obj.label,
-              "metadata": [{
-                "label": "Author",
-                "value": obj.author
-              },
-              {
-                "label": "Published",
-                "value": [{
-                    "@value": "%s : %s, %s" % (obj.published_city, obj.publisher, obj.published_date),
-                    "@language": "en"
-                  }
-                ]
-              },
-              {
-                "label": "Notes",
-                "value": obj.metadata
-              }],
-              "sequences": [
-                {
-                  "@id": "%s/sequence/normal" % (obj.baseurl),
-                  "@type": "sc:Sequence",
-                  "label": "Current Page Order",
-                  "viewingDirection": obj.viewingDirection,
-                  "viewingHint": "paged",
-                  "startCanvas": json.loads(serialize('startingcanvas', obj.canvas_set.all().exclude(is_starting_page=False), islist=True)),
-                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
+            if obj.startingpage != None:
+                data = {
+                    "startCanvas": "%scanvas/%s" % (obj.startingpage, obj.pid),
                 }
-              ]
-            }
-            return data
+                return data
+                
 
     def handle_field(self, obj, field):
         super().handle_field(obj, field)
@@ -117,4 +94,4 @@ class Serializer(JSONSerializer):
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("geojson is a serialization-only serializer")
+        raise SerializerDoesNotExist("iiif.canvas is a serialization-only serializer")

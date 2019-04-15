@@ -75,3 +75,141 @@
   overflow:hidden;
   overflow-y:scroll;
 }
+
+body .uk-container {
+    width: 90%;
+    max-width: 90%;
+}
+
+header.page-header {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+header.page-header .container img{
+    width: 100%;
+}
+
+
+header#page-bg .collection-image-info {
+    float: right;
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.62);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 1em 1.5em 5px 3.5em;
+    font-size: 12px;
+    color: #DEDEDE;
+    z-index: 100;
+    -webkit-transition: bottom 0.6s ease, right 0.6s ease, background-color 0.6s ease, opacity 0.6s ease;
+    -moz-transition: bottom 0.6s ease, right 0.6s ease, background-color 0.6s ease, opacity 0.6s ease;
+    transition: bottom 0.6s ease, right 0.6s ease, background-color 0.6s ease, opacity 0.6s ease;
+    max-width: 300px;
+    min-height: 10px;
+    cursor: pointer;
+}
+
+/* 
+header#page-bg .collection-label {
+    display: block;
+    background: rgba(0, 0, 0, 0.62);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.7em 0.7em 0.3em 0.7em;
+    color: #DEDEDE;
+    max-width: 80%;
+    min-height: 25%;
+    max-height: 40%;
+}
+ */
+
+header#page-bg .collection-label h1 {
+    font-size: 3em;
+    color: #DEDEDE;
+    width:100%;
+    height:100%;
+    position: absolute;
+    top: 0;
+    left: 0px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+}
+
+header#page-bg .collection-label h1 span {
+    background-color: rgba(0, 0, 0, 0.62);
+    padding: 0.3em;
+}
+
+header#page-bg .collection-image-info:before {
+    content: 'i';
+    position: absolute;
+    border: 1px solid;
+    width: 20px;
+    text-align: center;
+    top: 0;
+    left: 0;
+    margin: 10px 10px;
+    height: 20px;
+    font-family: serif;
+}
+
+header#page-bg .collection-image-info h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #DEDEDE;
+}
+header#page-bg .collection-image-info p {
+    width: 100%;
+    color: #DEDEDE;
+    text-align: left;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+header#page-bg .collection-image-info p.credit {
+    font-size: 0.9em;
+}
+
+header#page-bg .collection-image-info.collasped{
+    padding: 1.5em 1.75em;
+    background-color: rgba(22, 22, 22, 0.33);
+    opacity: 0.8;
+}
+
+header#page-bg .collection-image-info.collasped:hover{
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.62);
+}
+
+header#page-bg .collection-image-info.collasped h3,
+header#page-bg .collection-image-info.collasped .info{
+    display: none;
+}
+
+@media (max-width:1095px){
+header#page-bg .collection-label h1 {
+    font-size: 2em;
+}
+}
+@media (max-width:750px){
+header#page-bg .collection-label h1 {
+    font-size: 1.5em;
+}
+}
+@media (max-width:555px){
+header#page-bg .collection-label h1 {
+    font-size: 1em;
+}
+}
+@media (max-width:395px){
+header#page-bg .collection-label h1 {
+    font-size: 0.7em;
+}
+}
+

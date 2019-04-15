@@ -32,7 +32,7 @@ class Serializer(JSONSerializer):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
               "@context": "https://iiif.io/api/presentation/2/context.json",
-              "@id": "https://example.org/iiif/v2/%s/collection" % (obj.pid),
+              "@id": "https://readux.ecds.emory.edu/iiif/v2/%s/collection" % (obj.pid),
               "@type": "sc:Collection",
               "label": obj.label,
               "viewingHint": "top",

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load readux_templatetags %}
 
 {% block content %}
@@ -11,7 +12,7 @@
   {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
   <li>
     <div>
-      <img src="media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}"/>
+      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/>
         <a class="nav-link" href="{% url 'collection' collection.pid %}">
           {{ collection.label }}
         </a>
@@ -29,7 +30,7 @@
   <li>
     <div>{% for col in volume.collections.all %}
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
-        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
       </a>
       <p>
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
@@ -51,7 +52,7 @@
   {% for collection in page.collections %}
   <li>
     <div>
-      <img src="media/{{collection.upload}}" alt="Banner image for collection {{collection.label}}"/>
+      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}"/>
         <a class="nav-link" href="{% url 'collection' collection.pid %}">
           {{ collection.label }}
         </a>
@@ -69,7 +70,7 @@
   <li>
     <div>{% for col in volume.collections.all %}
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
-        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
       </a>
       <p>
       <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}

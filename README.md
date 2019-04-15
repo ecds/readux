@@ -16,6 +16,10 @@ Administrators can organize digitized books into collections, facilitating user 
 
 ...
 
+### Build status
+
+[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
+
 ## Installation (development)
 
 ### Requirements

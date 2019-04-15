@@ -1,6 +1,6 @@
 ### local items to be ignored
 db.sqlite3
-readux/localsettings.py
+local.py
 docs/_build
 parser.out
 parsetab.py
@@ -118,12 +118,11 @@ sitemedia/plugins/annotator/scss/node_modules
 static/plugins/annotator/scss/node_modules
 
 # Local Junk
-.vscode/
 .DS_Store
 local.py
 venv
-db.cnf
-mydatabase
+cert*
+
 # Sphinx documentation
 docs/_build/
 postgres
@@ -135,22 +134,12 @@ assets/collect/*
 assets/upload/*
 !assets/upload/index.html
 
-.DS_Store
-seekrets.json
 *_dev
 
 # profiler
 *.profile
-
 # dev json
 dev_*.json
 
-# Local Junk
-.vscode/
-.DS_Store
-localsettings.py
-venv
-mac-evn
-db.cnf
-postgres
-cert*
+# Presentation Validator
+presentation-validator/

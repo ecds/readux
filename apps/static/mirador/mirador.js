@@ -41882,6 +41882,15 @@ return /******/ (function(modules) { // webpackBootstrap
         // navigation, we need to update the location and history with the new
         // canvas id.
         history.pushState(history.state, '', page.replace(/:/g, '%3A'));
+        var el = document.getElementById("myMeta");
+        var content1  = document.getElementById("myContent1");
+        document.getElementById("myMeta").content=content1.content + '/' + page + '/full/600,/0/default.jpg';
+        var el2 = document.getElementById("myMeta2");
+        var content2  = document.getElementById("myContent2");
+        document.getElementById("myMeta2").content=content2.content + '/' + page + '/full/600,/0/default.jpg';
+        var el3 = document.getElementById("myMeta3");
+        var content3  = document.getElementById("myContent3");
+        document.getElementById("myMeta3").content=content3.content + '/page/' + page;
       }
       this.annotationsList = [];
 
@@ -47901,6 +47910,9 @@ return /******/ (function(modules) { // webpackBootstrap
           // Under firefox $.show() used under display:none iframe does not change the display.
           // This is workaround for https://github.com/IIIF/mirador/issues/929
           jQuery(this).css('display', 'block');
+          // grabs the url onload to display on the page
+        var canvasID = window.location.href;
+        document.getElementById("mySpan").innerHTML=canvasID;
         });
       });
 
@@ -47913,6 +47925,8 @@ return /******/ (function(modules) { // webpackBootstrap
       _this.element.find('.thumbnail-image').on('click', function () {
         var canvasID = jQuery(this).attr('data-image-id');
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
+        // grabs the changed url when you click a thumbnail and updates the myLink variable to change the page url
+        document.getElementById("mySpan").innerHTML=canvasID;
       });
     },
 

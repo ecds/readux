@@ -1,0 +1,20 @@
+[{
+  "model": "manifests.manifest",
+  "pk": "464d82f6-6ae5-4503-9afc-8e3cdd92a3f1",
+  "fields": {
+      "pid": "readux:st7r6",
+      "label": " Descrizione del Palazzo Apostolico Vaticano ",
+      "summary": "The online edition of this book in the public domain, i.e., not protected by copyright, has been produced by the Emory University Digital Library Publications Program. Woodruff Special Collections copy has autograph: Leonardo Trissino, Roma 1828. Bookseller's advertisement: 7 p. at end. \"Indice\": p. 507-524. \"Errata Corrige\": p. 525. Edition: Revista edizione accresciuta / ... Gioacchino Portocarrero ... opera postuma d' Agostino Taja ...",
+      "author": "Taja, Agostino Maria.; Portocarrero, Gioacchino.",
+      "published_city": "In Roma",
+      "published_date": "1750",
+      "publisher": "Appresso Niccol\u00f2, e Marco Pagliarini ...",
+      "pdf": "https://readux.ecds.emory.edu/books/readux:st7r6/pdf/",
+      "metadata": "[{}]",
+      "viewingDirection": "left-to-right",
+      "created_at": "2019-04-01T14:41:06.798Z",
+      "collections": [
+          "1971fe1e-714f-40f1-9d35-ee0f7a301230"
+      ]
+  }
+}]

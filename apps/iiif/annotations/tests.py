@@ -1,17 +1,26 @@
 from django.test import TestCase
+from django.conf import settings
+from django.core.checks import Warning
 from .views import AnnotationListCreate
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import APIClient
 from rest_framework.test import APITestCase
+import requests
 import json
+from os import killpg, path, setsid
+import signal
+import subprocess
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class AnnotationTests(APITestCase):
     factory = APIRequestFactory()
-    fixtures = ['annotations.json']
+    fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
 
     valid_annotation = {
-        'iiif_annotation': '''{
+        'oa_annotation': '''{
             "on": [{
                 "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0007",
                 "@type": "oa:SpecificResource",
@@ -55,6 +64,7 @@ class AnnotationTests(APITestCase):
         response.render()
         assert response.status_code == 201
 
+    # TODO this should fail?
     def test_get_annotations_for_page(self):
         view = AnnotationListCreate.as_view()
         request = self.factory.get(
@@ -62,3 +72,23 @@ class AnnotationTests(APITestCase):
         response = view(request)
         response.render()
         assert response.status_code == 200
+
+    def test_validate_iiif(self):
+        iiif_validator = path.abspath(path.join(
+            str(settings.ROOT_DIR.path()),
+            'presentation-validator',
+            'iiif-presentation-validator.py')
+        )
+        if (not path.isfile(iiif_validator)):
+            command = 'python presentation-validator/iiif-presentation-validator.py'
+            process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, preexec_fn=setsid
+            )
+            killpg(process.pid, signal.SIGTERM)
+        else:
+            return Warning(
+                'IIIF Presentation Validator not found.',
+                hint='Check README',
+                id='R001'
+            )        

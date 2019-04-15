@@ -26,9 +26,8 @@ class IIIFV2Detail(View):
 
 class CreateAnnotation(View):
     def post(self, request, *args, **kwargs):
-        # new_annotation = Annotation()
-        # new_annotation.canvas = self.get_queryset()
-        payload = json.loads(request.body)
+        print(request.body.decode('utf-8'))
+        payload = json.loads(request.body.decode('utf-8'))
         oa_annotation = json.loads(payload['oa_annotation'])
         canvas = Canvas.objects.get(pid=oa_annotation['on'][0]['full'].split('/')[-1])
         annotation = Annotation()

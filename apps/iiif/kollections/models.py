@@ -126,3 +126,14 @@ class Collection(models.Model):
 #         header_io.close()
 #                 
 #         return True
+    upload = models.FileField(upload_to='uploads/', null=True)
+    created_at = models.DateTimeField()
+    
+    def __str__(self):
+        return self.label
+    
+    def save(self, *args, **kwargs):
+        ''' On create, set create time '''
+        if not self.id:
+            self.created_at = timezone.now()
+        return super(User, self).save(*args, **kwargs)

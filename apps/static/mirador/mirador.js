@@ -1,5 +1,5 @@
 //! mirador 2.6.1
-//! Built on 2018-11-07
+//! Built on 2019-04-12
 /*! jQuery v3.3.1 | (c) JS Foundation and other contributors | jquery.org/license */
 !function(e,t){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error("jQuery requires a window with a document");return t(e)}:t(e)}("undefined"!=typeof window?window:this,function(e,t){"use strict";var n=[],r=e.document,i=Object.getPrototypeOf,o=n.slice,a=n.concat,s=n.push,u=n.indexOf,l={},c=l.toString,f=l.hasOwnProperty,p=f.toString,d=p.call(Object),h={},g=function e(t){return"function"==typeof t&&"number"!=typeof t.nodeType},y=function e(t){return null!=t&&t===t.window},v={type:!0,src:!0,noModule:!0};function m(e,t,n){var i,o=(t=t||r).createElement("script");if(o.text=e,n)for(i in v)n[i]&&(o[i]=n[i]);t.head.appendChild(o).parentNode.removeChild(o)}function x(e){return null==e?e+"":"object"==typeof e||"function"==typeof e?l[c.call(e)]||"object":typeof e}var b="3.3.1",w=function(e,t){return new w.fn.init(e,t)},T=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;w.fn=w.prototype={jquery:"3.3.1",constructor:w,length:0,toArray:function(){return o.call(this)},get:function(e){return null==e?o.call(this):e<0?this[e+this.length]:this[e]},pushStack:function(e){var t=w.merge(this.constructor(),e);return t.prevObject=this,t},each:function(e){return w.each(this,e)},map:function(e){return this.pushStack(w.map(this,function(t,n){return e.call(t,n,t)}))},slice:function(){return this.pushStack(o.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(e){var t=this.length,n=+e+(e<0?t:0);return this.pushStack(n>=0&&n<t?[this[n]]:[])},end:function(){return this.prevObject||this.constructor()},push:s,sort:n.sort,splice:n.splice},w.extend=w.fn.extend=function(){var e,t,n,r,i,o,a=arguments[0]||{},s=1,u=arguments.length,l=!1;for("boolean"==typeof a&&(l=a,a=arguments[s]||{},s++),"object"==typeof a||g(a)||(a={}),s===u&&(a=this,s--);s<u;s++)if(null!=(e=arguments[s]))for(t in e)n=a[t],a!==(r=e[t])&&(l&&r&&(w.isPlainObject(r)||(i=Array.isArray(r)))?(i?(i=!1,o=n&&Array.isArray(n)?n:[]):o=n&&w.isPlainObject(n)?n:{},a[t]=w.extend(l,o,r)):void 0!==r&&(a[t]=r));return a},w.extend({expando:"jQuery"+("3.3.1"+Math.random()).replace(/\D/g,""),isReady:!0,error:function(e){throw new Error(e)},noop:function(){},isPlainObject:function(e){var t,n;return!(!e||"[object Object]"!==c.call(e))&&(!(t=i(e))||"function"==typeof(n=f.call(t,"constructor")&&t.constructor)&&p.call(n)===d)},isEmptyObject:function(e){var t;for(t in e)return!1;return!0},globalEval:function(e){m(e)},each:function(e,t){var n,r=0;if(C(e)){for(n=e.length;r<n;r++)if(!1===t.call(e[r],r,e[r]))break}else for(r in e)if(!1===t.call(e[r],r,e[r]))break;return e},trim:function(e){return null==e?"":(e+"").replace(T,"")},makeArray:function(e,t){var n=t||[];return null!=e&&(C(Object(e))?w.merge(n,"string"==typeof e?[e]:e):s.call(n,e)),n},inArray:function(e,t,n){return null==t?-1:u.call(t,e,n)},merge:function(e,t){for(var n=+t.length,r=0,i=e.length;r<n;r++)e[i++]=t[r];return e.length=i,e},grep:function(e,t,n){for(var r,i=[],o=0,a=e.length,s=!n;o<a;o++)(r=!t(e[o],o))!==s&&i.push(e[o]);return i},map:function(e,t,n){var r,i,o=0,s=[];if(C(e))for(r=e.length;o<r;o++)null!=(i=t(e[o],o,n))&&s.push(i);else for(o in e)null!=(i=t(e[o],o,n))&&s.push(i);return a.apply([],s)},guid:1,support:h}),"function"==typeof Symbol&&(w.fn[Symbol.iterator]=n[Symbol.iterator]),w.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "),function(e,t){l["[object "+t+"]"]=t.toLowerCase()});function C(e){var t=!!e&&"length"in e&&e.length,n=x(e);return!g(e)&&!y(e)&&("array"===n||0===t||"number"==typeof t&&t>0&&t-1 in e)}var E=function(e){var t,n,r,i,o,a,s,u,l,c,f,p,d,h,g,y,v,m,x,b="sizzle"+1*new Date,w=e.document,T=0,C=0,E=ae(),k=ae(),S=ae(),D=function(e,t){return e===t&&(f=!0),0},N={}.hasOwnProperty,A=[],j=A.pop,q=A.push,L=A.push,H=A.slice,O=function(e,t){for(var n=0,r=e.length;n<r;n++)if(e[n]===t)return n;return-1},P="checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",M="[\\x20\\t\\r\\n\\f]",R="(?:\\\\.|[\\w-]|[^\0-\\xa0])+",I="\\["+M+"*("+R+")(?:"+M+"*([*^$|!~]?=)"+M+"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|("+R+"))|)"+M+"*\\]",W=":("+R+")(?:\\((('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|((?:\\\\.|[^\\\\()[\\]]|"+I+")*)|.*)\\)|)",$=new RegExp(M+"+","g"),B=new RegExp("^"+M+"+|((?:^|[^\\\\])(?:\\\\.)*)"+M+"+$","g"),F=new RegExp("^"+M+"*,"+M+"*"),_=new RegExp("^"+M+"*([>+~]|"+M+")"+M+"*"),z=new RegExp("="+M+"*([^\\]'\"]*?)"+M+"*\\]","g"),X=new RegExp(W),U=new RegExp("^"+R+"$"),V={ID:new RegExp("^#("+R+")"),CLASS:new RegExp("^\\.("+R+")"),TAG:new RegExp("^("+R+"|[*])"),ATTR:new RegExp("^"+I),PSEUDO:new RegExp("^"+W),CHILD:new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\("+M+"*(even|odd|(([+-]|)(\\d*)n|)"+M+"*(?:([+-]|)"+M+"*(\\d+)|))"+M+"*\\)|)","i"),bool:new RegExp("^(?:"+P+")$","i"),needsContext:new RegExp("^"+M+"*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\("+M+"*((?:-\\d)?\\d*)"+M+"*\\)|)(?=[^-]|$)","i")},G=/^(?:input|select|textarea|button)$/i,Y=/^h\d$/i,Q=/^[^{]+\{\s*\[native \w/,J=/^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,K=/[+~]/,Z=new RegExp("\\\\([\\da-f]{1,6}"+M+"?|("+M+")|.)","ig"),ee=function(e,t,n){var r="0x"+t-65536;return r!==r||n?t:r<0?String.fromCharCode(r+65536):String.fromCharCode(r>>10|55296,1023&r|56320)},te=/([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g,ne=function(e,t){return t?"\0"===e?"\ufffd":e.slice(0,-1)+"\\"+e.charCodeAt(e.length-1).toString(16)+" ":"\\"+e},re=function(){p()},ie=me(function(e){return!0===e.disabled&&("form"in e||"label"in e)},{dir:"parentNode",next:"legend"});try{L.apply(A=H.call(w.childNodes),w.childNodes),A[w.childNodes.length].nodeType}catch(e){L={apply:A.length?function(e,t){q.apply(e,H.call(t))}:function(e,t){var n=e.length,r=0;while(e[n++]=t[r++]);e.length=n-1}}}function oe(e,t,r,i){var o,s,l,c,f,h,v,m=t&&t.ownerDocument,T=t?t.nodeType:9;if(r=r||[],"string"!=typeof e||!e||1!==T&&9!==T&&11!==T)return r;if(!i&&((t?t.ownerDocument||t:w)!==d&&p(t),t=t||d,g)){if(11!==T&&(f=J.exec(e)))if(o=f[1]){if(9===T){if(!(l=t.getElementById(o)))return r;if(l.id===o)return r.push(l),r}else if(m&&(l=m.getElementById(o))&&x(t,l)&&l.id===o)return r.push(l),r}else{if(f[2])return L.apply(r,t.getElementsByTagName(e)),r;if((o=f[3])&&n.getElementsByClassName&&t.getElementsByClassName)return L.apply(r,t.getElementsByClassName(o)),r}if(n.qsa&&!S[e+" "]&&(!y||!y.test(e))){if(1!==T)m=t,v=e;else if("object"!==t.nodeName.toLowerCase()){(c=t.getAttribute("id"))?c=c.replace(te,ne):t.setAttribute("id",c=b),s=(h=a(e)).length;while(s--)h[s]="#"+c+" "+ve(h[s]);v=h.join(","),m=K.test(e)&&ge(t.parentNode)||t}if(v)try{return L.apply(r,m.querySelectorAll(v)),r}catch(e){}finally{c===b&&t.removeAttribute("id")}}}return u(e.replace(B,"$1"),t,r,i)}function ae(){var e=[];function t(n,i){return e.push(n+" ")>r.cacheLength&&delete t[e.shift()],t[n+" "]=i}return t}function se(e){return e[b]=!0,e}function ue(e){var t=d.createElement("fieldset");try{return!!e(t)}catch(e){return!1}finally{t.parentNode&&t.parentNode.removeChild(t),t=null}}function le(e,t){var n=e.split("|"),i=n.length;while(i--)r.attrHandle[n[i]]=t}function ce(e,t){var n=t&&e,r=n&&1===e.nodeType&&1===t.nodeType&&e.sourceIndex-t.sourceIndex;if(r)return r;if(n)while(n=n.nextSibling)if(n===t)return-1;return e?1:-1}function fe(e){return function(t){return"input"===t.nodeName.toLowerCase()&&t.type===e}}function pe(e){return function(t){var n=t.nodeName.toLowerCase();return("input"===n||"button"===n)&&t.type===e}}function de(e){return function(t){return"form"in t?t.parentNode&&!1===t.disabled?"label"in t?"label"in t.parentNode?t.parentNode.disabled===e:t.disabled===e:t.isDisabled===e||t.isDisabled!==!e&&ie(t)===e:t.disabled===e:"label"in t&&t.disabled===e}}function he(e){return se(function(t){return t=+t,se(function(n,r){var i,o=e([],n.length,t),a=o.length;while(a--)n[i=o[a]]&&(n[i]=!(r[i]=n[i]))})})}function ge(e){return e&&"undefined"!=typeof e.getElementsByTagName&&e}n=oe.support={},o=oe.isXML=function(e){var t=e&&(e.ownerDocument||e).documentElement;return!!t&&"HTML"!==t.nodeName},p=oe.setDocument=function(e){var t,i,a=e?e.ownerDocument||e:w;return a!==d&&9===a.nodeType&&a.documentElement?(d=a,h=d.documentElement,g=!o(d),w!==d&&(i=d.defaultView)&&i.top!==i&&(i.addEventListener?i.addEventListener("unload",re,!1):i.attachEvent&&i.attachEvent("onunload",re)),n.attributes=ue(function(e){return e.className="i",!e.getAttribute("className")}),n.getElementsByTagName=ue(function(e){return e.appendChild(d.createComment("")),!e.getElementsByTagName("*").length}),n.getElementsByClassName=Q.test(d.getElementsByClassName),n.getById=ue(function(e){return h.appendChild(e).id=b,!d.getElementsByName||!d.getElementsByName(b).length}),n.getById?(r.filter.ID=function(e){var t=e.replace(Z,ee);return function(e){return e.getAttribute("id")===t}},r.find.ID=function(e,t){if("undefined"!=typeof t.getElementById&&g){var n=t.getElementById(e);return n?[n]:[]}}):(r.filter.ID=function(e){var t=e.replace(Z,ee);return function(e){var n="undefined"!=typeof e.getAttributeNode&&e.getAttributeNode("id");return n&&n.value===t}},r.find.ID=function(e,t){if("undefined"!=typeof t.getElementById&&g){var n,r,i,o=t.getElementById(e);if(o){if((n=o.getAttributeNode("id"))&&n.value===e)return[o];i=t.getElementsByName(e),r=0;while(o=i[r++])if((n=o.getAttributeNode("id"))&&n.value===e)return[o]}return[]}}),r.find.TAG=n.getElementsByTagName?function(e,t){return"undefined"!=typeof t.getElementsByTagName?t.getElementsByTagName(e):n.qsa?t.querySelectorAll(e):void 0}:function(e,t){var n,r=[],i=0,o=t.getElementsByTagName(e);if("*"===e){while(n=o[i++])1===n.nodeType&&r.push(n);return r}return o},r.find.CLASS=n.getElementsByClassName&&function(e,t){if("undefined"!=typeof t.getElementsByClassName&&g)return t.getElementsByClassName(e)},v=[],y=[],(n.qsa=Q.test(d.querySelectorAll))&&(ue(function(e){h.appendChild(e).innerHTML="<a id='"+b+"'></a><select id='"+b+"-\r\\' msallowcapture=''><option selected=''></option></select>",e.querySelectorAll("[msallowcapture^='']").length&&y.push("[*^$]="+M+"*(?:''|\"\")"),e.querySelectorAll("[selected]").length||y.push("\\["+M+"*(?:value|"+P+")"),e.querySelectorAll("[id~="+b+"-]").length||y.push("~="),e.querySelectorAll(":checked").length||y.push(":checked"),e.querySelectorAll("a#"+b+"+*").length||y.push(".#.+[+~]")}),ue(function(e){e.innerHTML="<a href='' disabled='disabled'></a><select disabled='disabled'><option/></select>";var t=d.createElement("input");t.setAttribute("type","hidden"),e.appendChild(t).setAttribute("name","D"),e.querySelectorAll("[name=d]").length&&y.push("name"+M+"*[*^$|!~]?="),2!==e.querySelectorAll(":enabled").length&&y.push(":enabled",":disabled"),h.appendChild(e).disabled=!0,2!==e.querySelectorAll(":disabled").length&&y.push(":enabled",":disabled"),e.querySelectorAll("*,:x"),y.push(",.*:")})),(n.matchesSelector=Q.test(m=h.matches||h.webkitMatchesSelector||h.mozMatchesSelector||h.oMatchesSelector||h.msMatchesSelector))&&ue(function(e){n.disconnectedMatch=m.call(e,"*"),m.call(e,"[s!='']:x"),v.push("!=",W)}),y=y.length&&new RegExp(y.join("|")),v=v.length&&new RegExp(v.join("|")),t=Q.test(h.compareDocumentPosition),x=t||Q.test(h.contains)?function(e,t){var n=9===e.nodeType?e.documentElement:e,r=t&&t.parentNode;return e===r||!(!r||1!==r.nodeType||!(n.contains?n.contains(r):e.compareDocumentPosition&&16&e.compareDocumentPosition(r)))}:function(e,t){if(t)while(t=t.parentNode)if(t===e)return!0;return!1},D=t?function(e,t){if(e===t)return f=!0,0;var r=!e.compareDocumentPosition-!t.compareDocumentPosition;return r||(1&(r=(e.ownerDocument||e)===(t.ownerDocument||t)?e.compareDocumentPosition(t):1)||!n.sortDetached&&t.compareDocumentPosition(e)===r?e===d||e.ownerDocument===w&&x(w,e)?-1:t===d||t.ownerDocument===w&&x(w,t)?1:c?O(c,e)-O(c,t):0:4&r?-1:1)}:function(e,t){if(e===t)return f=!0,0;var n,r=0,i=e.parentNode,o=t.parentNode,a=[e],s=[t];if(!i||!o)return e===d?-1:t===d?1:i?-1:o?1:c?O(c,e)-O(c,t):0;if(i===o)return ce(e,t);n=e;while(n=n.parentNode)a.unshift(n);n=t;while(n=n.parentNode)s.unshift(n);while(a[r]===s[r])r++;return r?ce(a[r],s[r]):a[r]===w?-1:s[r]===w?1:0},d):d},oe.matches=function(e,t){return oe(e,null,null,t)},oe.matchesSelector=function(e,t){if((e.ownerDocument||e)!==d&&p(e),t=t.replace(z,"='$1']"),n.matchesSelector&&g&&!S[t+" "]&&(!v||!v.test(t))&&(!y||!y.test(t)))try{var r=m.call(e,t);if(r||n.disconnectedMatch||e.document&&11!==e.document.nodeType)return r}catch(e){}return oe(t,d,null,[e]).length>0},oe.contains=function(e,t){return(e.ownerDocument||e)!==d&&p(e),x(e,t)},oe.attr=function(e,t){(e.ownerDocument||e)!==d&&p(e);var i=r.attrHandle[t.toLowerCase()],o=i&&N.call(r.attrHandle,t.toLowerCase())?i(e,t,!g):void 0;return void 0!==o?o:n.attributes||!g?e.getAttribute(t):(o=e.getAttributeNode(t))&&o.specified?o.value:null},oe.escape=function(e){return(e+"").replace(te,ne)},oe.error=function(e){throw new Error("Syntax error, unrecognized expression: "+e)},oe.uniqueSort=function(e){var t,r=[],i=0,o=0;if(f=!n.detectDuplicates,c=!n.sortStable&&e.slice(0),e.sort(D),f){while(t=e[o++])t===e[o]&&(i=r.push(o));while(i--)e.splice(r[i],1)}return c=null,e},i=oe.getText=function(e){var t,n="",r=0,o=e.nodeType;if(o){if(1===o||9===o||11===o){if("string"==typeof e.textContent)return e.textContent;for(e=e.firstChild;e;e=e.nextSibling)n+=i(e)}else if(3===o||4===o)return e.nodeValue}else while(t=e[r++])n+=i(t);return n},(r=oe.selectors={cacheLength:50,createPseudo:se,match:V,attrHandle:{},find:{},relative:{">":{dir:"parentNode",first:!0}," ":{dir:"parentNode"},"+":{dir:"previousSibling",first:!0},"~":{dir:"previousSibling"}},preFilter:{ATTR:function(e){return e[1]=e[1].replace(Z,ee),e[3]=(e[3]||e[4]||e[5]||"").replace(Z,ee),"~="===e[2]&&(e[3]=" "+e[3]+" "),e.slice(0,4)},CHILD:function(e){return e[1]=e[1].toLowerCase(),"nth"===e[1].slice(0,3)?(e[3]||oe.error(e[0]),e[4]=+(e[4]?e[5]+(e[6]||1):2*("even"===e[3]||"odd"===e[3])),e[5]=+(e[7]+e[8]||"odd"===e[3])):e[3]&&oe.error(e[0]),e},PSEUDO:function(e){var t,n=!e[6]&&e[2];return V.CHILD.test(e[0])?null:(e[3]?e[2]=e[4]||e[5]||"":n&&X.test(n)&&(t=a(n,!0))&&(t=n.indexOf(")",n.length-t)-n.length)&&(e[0]=e[0].slice(0,t),e[2]=n.slice(0,t)),e.slice(0,3))}},filter:{TAG:function(e){var t=e.replace(Z,ee).toLowerCase();return"*"===e?function(){return!0}:function(e){return e.nodeName&&e.nodeName.toLowerCase()===t}},CLASS:function(e){var t=E[e+" "];return t||(t=new RegExp("(^|"+M+")"+e+"("+M+"|$)"))&&E(e,function(e){return t.test("string"==typeof e.className&&e.className||"undefined"!=typeof e.getAttribute&&e.getAttribute("class")||"")})},ATTR:function(e,t,n){return function(r){var i=oe.attr(r,e);return null==i?"!="===t:!t||(i+="","="===t?i===n:"!="===t?i!==n:"^="===t?n&&0===i.indexOf(n):"*="===t?n&&i.indexOf(n)>-1:"$="===t?n&&i.slice(-n.length)===n:"~="===t?(" "+i.replace($," ")+" ").indexOf(n)>-1:"|="===t&&(i===n||i.slice(0,n.length+1)===n+"-"))}},CHILD:function(e,t,n,r,i){var o="nth"!==e.slice(0,3),a="last"!==e.slice(-4),s="of-type"===t;return 1===r&&0===i?function(e){return!!e.parentNode}:function(t,n,u){var l,c,f,p,d,h,g=o!==a?"nextSibling":"previousSibling",y=t.parentNode,v=s&&t.nodeName.toLowerCase(),m=!u&&!s,x=!1;if(y){if(o){while(g){p=t;while(p=p[g])if(s?p.nodeName.toLowerCase()===v:1===p.nodeType)return!1;h=g="only"===e&&!h&&"nextSibling"}return!0}if(h=[a?y.firstChild:y.lastChild],a&&m){x=(d=(l=(c=(f=(p=y)[b]||(p[b]={}))[p.uniqueID]||(f[p.uniqueID]={}))[e]||[])[0]===T&&l[1])&&l[2],p=d&&y.childNodes[d];while(p=++d&&p&&p[g]||(x=d=0)||h.pop())if(1===p.nodeType&&++x&&p===t){c[e]=[T,d,x];break}}else if(m&&(x=d=(l=(c=(f=(p=t)[b]||(p[b]={}))[p.uniqueID]||(f[p.uniqueID]={}))[e]||[])[0]===T&&l[1]),!1===x)while(p=++d&&p&&p[g]||(x=d=0)||h.pop())if((s?p.nodeName.toLowerCase()===v:1===p.nodeType)&&++x&&(m&&((c=(f=p[b]||(p[b]={}))[p.uniqueID]||(f[p.uniqueID]={}))[e]=[T,x]),p===t))break;return(x-=i)===r||x%r==0&&x/r>=0}}},PSEUDO:function(e,t){var n,i=r.pseudos[e]||r.setFilters[e.toLowerCase()]||oe.error("unsupported pseudo: "+e);return i[b]?i(t):i.length>1?(n=[e,e,"",t],r.setFilters.hasOwnProperty(e.toLowerCase())?se(function(e,n){var r,o=i(e,t),a=o.length;while(a--)e[r=O(e,o[a])]=!(n[r]=o[a])}):function(e){return i(e,0,n)}):i}},pseudos:{not:se(function(e){var t=[],n=[],r=s(e.replace(B,"$1"));return r[b]?se(function(e,t,n,i){var o,a=r(e,null,i,[]),s=e.length;while(s--)(o=a[s])&&(e[s]=!(t[s]=o))}):function(e,i,o){return t[0]=e,r(t,null,o,n),t[0]=null,!n.pop()}}),has:se(function(e){return function(t){return oe(e,t).length>0}}),contains:se(function(e){return e=e.replace(Z,ee),function(t){return(t.textContent||t.innerText||i(t)).indexOf(e)>-1}}),lang:se(function(e){return U.test(e||"")||oe.error("unsupported lang: "+e),e=e.replace(Z,ee).toLowerCase(),function(t){var n;do{if(n=g?t.lang:t.getAttribute("xml:lang")||t.getAttribute("lang"))return(n=n.toLowerCase())===e||0===n.indexOf(e+"-")}while((t=t.parentNode)&&1===t.nodeType);return!1}}),target:function(t){var n=e.location&&e.location.hash;return n&&n.slice(1)===t.id},root:function(e){return e===h},focus:function(e){return e===d.activeElement&&(!d.hasFocus||d.hasFocus())&&!!(e.type||e.href||~e.tabIndex)},enabled:de(!1),disabled:de(!0),checked:function(e){var t=e.nodeName.toLowerCase();return"input"===t&&!!e.checked||"option"===t&&!!e.selected},selected:function(e){return e.parentNode&&e.parentNode.selectedIndex,!0===e.selected},empty:function(e){for(e=e.firstChild;e;e=e.nextSibling)if(e.nodeType<6)return!1;return!0},parent:function(e){return!r.pseudos.empty(e)},header:function(e){return Y.test(e.nodeName)},input:function(e){return G.test(e.nodeName)},button:function(e){var t=e.nodeName.toLowerCase();return"input"===t&&"button"===e.type||"button"===t},text:function(e){var t;return"input"===e.nodeName.toLowerCase()&&"text"===e.type&&(null==(t=e.getAttribute("type"))||"text"===t.toLowerCase())},first:he(function(){return[0]}),last:he(function(e,t){return[t-1]}),eq:he(function(e,t,n){return[n<0?n+t:n]}),even:he(function(e,t){for(var n=0;n<t;n+=2)e.push(n);return e}),odd:he(function(e,t){for(var n=1;n<t;n+=2)e.push(n);return e}),lt:he(function(e,t,n){for(var r=n<0?n+t:n;--r>=0;)e.push(r);return e}),gt:he(function(e,t,n){for(var r=n<0?n+t:n;++r<t;)e.push(r);return e})}}).pseudos.nth=r.pseudos.eq;for(t in{radio:!0,checkbox:!0,file:!0,password:!0,image:!0})r.pseudos[t]=fe(t);for(t in{submit:!0,reset:!0})r.pseudos[t]=pe(t);function ye(){}ye.prototype=r.filters=r.pseudos,r.setFilters=new ye,a=oe.tokenize=function(e,t){var n,i,o,a,s,u,l,c=k[e+" "];if(c)return t?0:c.slice(0);s=e,u=[],l=r.preFilter;while(s){n&&!(i=F.exec(s))||(i&&(s=s.slice(i[0].length)||s),u.push(o=[])),n=!1,(i=_.exec(s))&&(n=i.shift(),o.push({value:n,type:i[0].replace(B," ")}),s=s.slice(n.length));for(a in r.filter)!(i=V[a].exec(s))||l[a]&&!(i=l[a](i))||(n=i.shift(),o.push({value:n,type:a,matches:i}),s=s.slice(n.length));if(!n)break}return t?s.length:s?oe.error(e):k(e,u).slice(0)};function ve(e){for(var t=0,n=e.length,r="";t<n;t++)r+=e[t].value;return r}function me(e,t,n){var r=t.dir,i=t.next,o=i||r,a=n&&"parentNode"===o,s=C++;return t.first?function(t,n,i){while(t=t[r])if(1===t.nodeType||a)return e(t,n,i);return!1}:function(t,n,u){var l,c,f,p=[T,s];if(u){while(t=t[r])if((1===t.nodeType||a)&&e(t,n,u))return!0}else while(t=t[r])if(1===t.nodeType||a)if(f=t[b]||(t[b]={}),c=f[t.uniqueID]||(f[t.uniqueID]={}),i&&i===t.nodeName.toLowerCase())t=t[r]||t;else{if((l=c[o])&&l[0]===T&&l[1]===s)return p[2]=l[2];if(c[o]=p,p[2]=e(t,n,u))return!0}return!1}}function xe(e){return e.length>1?function(t,n,r){var i=e.length;while(i--)if(!e[i](t,n,r))return!1;return!0}:e[0]}function be(e,t,n){for(var r=0,i=t.length;r<i;r++)oe(e,t[r],n);return n}function we(e,t,n,r,i){for(var o,a=[],s=0,u=e.length,l=null!=t;s<u;s++)(o=e[s])&&(n&&!n(o,r,i)||(a.push(o),l&&t.push(s)));return a}function Te(e,t,n,r,i,o){return r&&!r[b]&&(r=Te(r)),i&&!i[b]&&(i=Te(i,o)),se(function(o,a,s,u){var l,c,f,p=[],d=[],h=a.length,g=o||be(t||"*",s.nodeType?[s]:s,[]),y=!e||!o&&t?g:we(g,p,e,s,u),v=n?i||(o?e:h||r)?[]:a:y;if(n&&n(y,v,s,u),r){l=we(v,d),r(l,[],s,u),c=l.length;while(c--)(f=l[c])&&(v[d[c]]=!(y[d[c]]=f))}if(o){if(i||e){if(i){l=[],c=v.length;while(c--)(f=v[c])&&l.push(y[c]=f);i(null,v=[],l,u)}c=v.length;while(c--)(f=v[c])&&(l=i?O(o,f):p[c])>-1&&(o[l]=!(a[l]=f))}}else v=we(v===a?v.splice(h,v.length):v),i?i(null,a,v,u):L.apply(a,v)})}function Ce(e){for(var t,n,i,o=e.length,a=r.relative[e[0].type],s=a||r.relative[" "],u=a?1:0,c=me(function(e){return e===t},s,!0),f=me(function(e){return O(t,e)>-1},s,!0),p=[function(e,n,r){var i=!a&&(r||n!==l)||((t=n).nodeType?c(e,n,r):f(e,n,r));return t=null,i}];u<o;u++)if(n=r.relative[e[u].type])p=[me(xe(p),n)];else{if((n=r.filter[e[u].type].apply(null,e[u].matches))[b]){for(i=++u;i<o;i++)if(r.relative[e[i].type])break;return Te(u>1&&xe(p),u>1&&ve(e.slice(0,u-1).concat({value:" "===e[u-2].type?"*":""})).replace(B,"$1"),n,u<i&&Ce(e.slice(u,i)),i<o&&Ce(e=e.slice(i)),i<o&&ve(e))}p.push(n)}return xe(p)}function Ee(e,t){var n=t.length>0,i=e.length>0,o=function(o,a,s,u,c){var f,h,y,v=0,m="0",x=o&&[],b=[],w=l,C=o||i&&r.find.TAG("*",c),E=T+=null==w?1:Math.random()||.1,k=C.length;for(c&&(l=a===d||a||c);m!==k&&null!=(f=C[m]);m++){if(i&&f){h=0,a||f.ownerDocument===d||(p(f),s=!g);while(y=e[h++])if(y(f,a||d,s)){u.push(f);break}c&&(T=E)}n&&((f=!y&&f)&&v--,o&&x.push(f))}if(v+=m,n&&m!==v){h=0;while(y=t[h++])y(x,b,a,s);if(o){if(v>0)while(m--)x[m]||b[m]||(b[m]=j.call(u));b=we(b)}L.apply(u,b),c&&!o&&b.length>0&&v+t.length>1&&oe.uniqueSort(u)}return c&&(T=E,l=w),x};return n?se(o):o}return s=oe.compile=function(e,t){var n,r=[],i=[],o=S[e+" "];if(!o){t||(t=a(e)),n=t.length;while(n--)(o=Ce(t[n]))[b]?r.push(o):i.push(o);(o=S(e,Ee(i,r))).selector=e}return o},u=oe.select=function(e,t,n,i){var o,u,l,c,f,p="function"==typeof e&&e,d=!i&&a(e=p.selector||e);if(n=n||[],1===d.length){if((u=d[0]=d[0].slice(0)).length>2&&"ID"===(l=u[0]).type&&9===t.nodeType&&g&&r.relative[u[1].type]){if(!(t=(r.find.ID(l.matches[0].replace(Z,ee),t)||[])[0]))return n;p&&(t=t.parentNode),e=e.slice(u.shift().value.length)}o=V.needsContext.test(e)?0:u.length;while(o--){if(l=u[o],r.relative[c=l.type])break;if((f=r.find[c])&&(i=f(l.matches[0].replace(Z,ee),K.test(u[0].type)&&ge(t.parentNode)||t))){if(u.splice(o,1),!(e=i.length&&ve(u)))return L.apply(n,i),n;break}}}return(p||s(e,d))(i,t,!g,n,!t||K.test(e)&&ge(t.parentNode)||t),n},n.sortStable=b.split("").sort(D).join("")===b,n.detectDuplicates=!!f,p(),n.sortDetached=ue(function(e){return 1&e.compareDocumentPosition(d.createElement("fieldset"))}),ue(function(e){return e.innerHTML="<a href='#'></a>","#"===e.firstChild.getAttribute("href")})||le("type|href|height|width",function(e,t,n){if(!n)return e.getAttribute(t,"type"===t.toLowerCase()?1:2)}),n.attributes&&ue(function(e){return e.innerHTML="<input/>",e.firstChild.setAttribute("value",""),""===e.firstChild.getAttribute("value")})||le("value",function(e,t,n){if(!n&&"input"===e.nodeName.toLowerCase())return e.defaultValue}),ue(function(e){return null==e.getAttribute("disabled")})||le(P,function(e,t,n){var r;if(!n)return!0===e[t]?t.toLowerCase():(r=e.getAttributeNode(t))&&r.specified?r.value:null}),oe}(e);w.find=E,w.expr=E.selectors,w.expr[":"]=w.expr.pseudos,w.uniqueSort=w.unique=E.uniqueSort,w.text=E.getText,w.isXMLDoc=E.isXML,w.contains=E.contains,w.escapeSelector=E.escape;var k=function(e,t,n){var r=[],i=void 0!==n;while((e=e[t])&&9!==e.nodeType)if(1===e.nodeType){if(i&&w(e).is(n))break;r.push(e)}return r},S=function(e,t){for(var n=[];e;e=e.nextSibling)1===e.nodeType&&e!==t&&n.push(e);return n},D=w.expr.match.needsContext;function N(e,t){return e.nodeName&&e.nodeName.toLowerCase()===t.toLowerCase()}var A=/^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i;function j(e,t,n){return g(t)?w.grep(e,function(e,r){return!!t.call(e,r,e)!==n}):t.nodeType?w.grep(e,function(e){return e===t!==n}):"string"!=typeof t?w.grep(e,function(e){return u.call(t,e)>-1!==n}):w.filter(t,e,n)}w.filter=function(e,t,n){var r=t[0];return n&&(e=":not("+e+")"),1===t.length&&1===r.nodeType?w.find.matchesSelector(r,e)?[r]:[]:w.find.matches(e,w.grep(t,function(e){return 1===e.nodeType}))},w.fn.extend({find:function(e){var t,n,r=this.length,i=this;if("string"!=typeof e)return this.pushStack(w(e).filter(function(){for(t=0;t<r;t++)if(w.contains(i[t],this))return!0}));for(n=this.pushStack([]),t=0;t<r;t++)w.find(e,i[t],n);return r>1?w.uniqueSort(n):n},filter:function(e){return this.pushStack(j(this,e||[],!1))},not:function(e){return this.pushStack(j(this,e||[],!0))},is:function(e){return!!j(this,"string"==typeof e&&D.test(e)?w(e):e||[],!1).length}});var q,L=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/;(w.fn.init=function(e,t,n){var i,o;if(!e)return this;if(n=n||q,"string"==typeof e){if(!(i="<"===e[0]&&">"===e[e.length-1]&&e.length>=3?[null,e,null]:L.exec(e))||!i[1]&&t)return!t||t.jquery?(t||n).find(e):this.constructor(t).find(e);if(i[1]){if(t=t instanceof w?t[0]:t,w.merge(this,w.parseHTML(i[1],t&&t.nodeType?t.ownerDocument||t:r,!0)),A.test(i[1])&&w.isPlainObject(t))for(i in t)g(this[i])?this[i](t[i]):this.attr(i,t[i]);return this}return(o=r.getElementById(i[2]))&&(this[0]=o,this.length=1),this}return e.nodeType?(this[0]=e,this.length=1,this):g(e)?void 0!==n.ready?n.ready(e):e(w):w.makeArray(e,this)}).prototype=w.fn,q=w(r);var H=/^(?:parents|prev(?:Until|All))/,O={children:!0,contents:!0,next:!0,prev:!0};w.fn.extend({has:function(e){var t=w(e,this),n=t.length;return this.filter(function(){for(var e=0;e<n;e++)if(w.contains(this,t[e]))return!0})},closest:function(e,t){var n,r=0,i=this.length,o=[],a="string"!=typeof e&&w(e);if(!D.test(e))for(;r<i;r++)for(n=this[r];n&&n!==t;n=n.parentNode)if(n.nodeType<11&&(a?a.index(n)>-1:1===n.nodeType&&w.find.matchesSelector(n,e))){o.push(n);break}return this.pushStack(o.length>1?w.uniqueSort(o):o)},index:function(e){return e?"string"==typeof e?u.call(w(e),this[0]):u.call(this,e.jquery?e[0]:e):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(e,t){return this.pushStack(w.uniqueSort(w.merge(this.get(),w(e,t))))},addBack:function(e){return this.add(null==e?this.prevObject:this.prevObject.filter(e))}});function P(e,t){while((e=e[t])&&1!==e.nodeType);return e}w.each({parent:function(e){var t=e.parentNode;return t&&11!==t.nodeType?t:null},parents:function(e){return k(e,"parentNode")},parentsUntil:function(e,t,n){return k(e,"parentNode",n)},next:function(e){return P(e,"nextSibling")},prev:function(e){return P(e,"previousSibling")},nextAll:function(e){return k(e,"nextSibling")},prevAll:function(e){return k(e,"previousSibling")},nextUntil:function(e,t,n){return k(e,"nextSibling",n)},prevUntil:function(e,t,n){return k(e,"previousSibling",n)},siblings:function(e){return S((e.parentNode||{}).firstChild,e)},children:function(e){return S(e.firstChild)},contents:function(e){return N(e,"iframe")?e.contentDocument:(N(e,"template")&&(e=e.content||e),w.merge([],e.childNodes))}},function(e,t){w.fn[e]=function(n,r){var i=w.map(this,t,n);return"Until"!==e.slice(-5)&&(r=n),r&&"string"==typeof r&&(i=w.filter(r,i)),this.length>1&&(O[e]||w.uniqueSort(i),H.test(e)&&i.reverse()),this.pushStack(i)}});var M=/[^\x20\t\r\n\f]+/g;function R(e){var t={};return w.each(e.match(M)||[],function(e,n){t[n]=!0}),t}w.Callbacks=function(e){e="string"==typeof e?R(e):w.extend({},e);var t,n,r,i,o=[],a=[],s=-1,u=function(){for(i=i||e.once,r=t=!0;a.length;s=-1){n=a.shift();while(++s<o.length)!1===o[s].apply(n[0],n[1])&&e.stopOnFalse&&(s=o.length,n=!1)}e.memory||(n=!1),t=!1,i&&(o=n?[]:"")},l={add:function(){return o&&(n&&!t&&(s=o.length-1,a.push(n)),function t(n){w.each(n,function(n,r){g(r)?e.unique&&l.has(r)||o.push(r):r&&r.length&&"string"!==x(r)&&t(r)})}(arguments),n&&!t&&u()),this},remove:function(){return w.each(arguments,function(e,t){var n;while((n=w.inArray(t,o,n))>-1)o.splice(n,1),n<=s&&s--}),this},has:function(e){return e?w.inArray(e,o)>-1:o.length>0},empty:function(){return o&&(o=[]),this},disable:function(){return i=a=[],o=n="",this},disabled:function(){return!o},lock:function(){return i=a=[],n||t||(o=n=""),this},locked:function(){return!!i},fireWith:function(e,n){return i||(n=[e,(n=n||[]).slice?n.slice():n],a.push(n),t||u()),this},fire:function(){return l.fireWith(this,arguments),this},fired:function(){return!!r}};return l};function I(e){return e}function W(e){throw e}function $(e,t,n,r){var i;try{e&&g(i=e.promise)?i.call(e).done(t).fail(n):e&&g(i=e.then)?i.call(e,t,n):t.apply(void 0,[e].slice(r))}catch(e){n.apply(void 0,[e])}}w.extend({Deferred:function(t){var n=[["notify","progress",w.Callbacks("memory"),w.Callbacks("memory"),2],["resolve","done",w.Callbacks("once memory"),w.Callbacks("once memory"),0,"resolved"],["reject","fail",w.Callbacks("once memory"),w.Callbacks("once memory"),1,"rejected"]],r="pending",i={state:function(){return r},always:function(){return o.done(arguments).fail(arguments),this},"catch":function(e){return i.then(null,e)},pipe:function(){var e=arguments;return w.Deferred(function(t){w.each(n,function(n,r){var i=g(e[r[4]])&&e[r[4]];o[r[1]](function(){var e=i&&i.apply(this,arguments);e&&g(e.promise)?e.promise().progress(t.notify).done(t.resolve).fail(t.reject):t[r[0]+"With"](this,i?[e]:arguments)})}),e=null}).promise()},then:function(t,r,i){var o=0;function a(t,n,r,i){return function(){var s=this,u=arguments,l=function(){var e,l;if(!(t<o)){if((e=r.apply(s,u))===n.promise())throw new TypeError("Thenable self-resolution");l=e&&("object"==typeof e||"function"==typeof e)&&e.then,g(l)?i?l.call(e,a(o,n,I,i),a(o,n,W,i)):(o++,l.call(e,a(o,n,I,i),a(o,n,W,i),a(o,n,I,n.notifyWith))):(r!==I&&(s=void 0,u=[e]),(i||n.resolveWith)(s,u))}},c=i?l:function(){try{l()}catch(e){w.Deferred.exceptionHook&&w.Deferred.exceptionHook(e,c.stackTrace),t+1>=o&&(r!==W&&(s=void 0,u=[e]),n.rejectWith(s,u))}};t?c():(w.Deferred.getStackHook&&(c.stackTrace=w.Deferred.getStackHook()),e.setTimeout(c))}}return w.Deferred(function(e){n[0][3].add(a(0,e,g(i)?i:I,e.notifyWith)),n[1][3].add(a(0,e,g(t)?t:I)),n[2][3].add(a(0,e,g(r)?r:W))}).promise()},promise:function(e){return null!=e?w.extend(e,i):i}},o={};return w.each(n,function(e,t){var a=t[2],s=t[5];i[t[1]]=a.add,s&&a.add(function(){r=s},n[3-e][2].disable,n[3-e][3].disable,n[0][2].lock,n[0][3].lock),a.add(t[3].fire),o[t[0]]=function(){return o[t[0]+"With"](this===o?void 0:this,arguments),this},o[t[0]+"With"]=a.fireWith}),i.promise(o),t&&t.call(o,o),o},when:function(e){var t=arguments.length,n=t,r=Array(n),i=o.call(arguments),a=w.Deferred(),s=function(e){return function(n){r[e]=this,i[e]=arguments.length>1?o.call(arguments):n,--t||a.resolveWith(r,i)}};if(t<=1&&($(e,a.done(s(n)).resolve,a.reject,!t),"pending"===a.state()||g(i[n]&&i[n].then)))return a.then();while(n--)$(i[n],s(n),a.reject);return a.promise()}});var B=/^(Eval|Internal|Range|Reference|Syntax|Type|URI)Error$/;w.Deferred.exceptionHook=function(t,n){e.console&&e.console.warn&&t&&B.test(t.name)&&e.console.warn("jQuery.Deferred exception: "+t.message,t.stack,n)},w.readyException=function(t){e.setTimeout(function(){throw t})};var F=w.Deferred();w.fn.ready=function(e){return F.then(e)["catch"](function(e){w.readyException(e)}),this},w.extend({isReady:!1,readyWait:1,ready:function(e){(!0===e?--w.readyWait:w.isReady)||(w.isReady=!0,!0!==e&&--w.readyWait>0||F.resolveWith(r,[w]))}}),w.ready.then=F.then;function _(){r.removeEventListener("DOMContentLoaded",_),e.removeEventListener("load",_),w.ready()}"complete"===r.readyState||"loading"!==r.readyState&&!r.documentElement.doScroll?e.setTimeout(w.ready):(r.addEventListener("DOMContentLoaded",_),e.addEventListener("load",_));var z=function(e,t,n,r,i,o,a){var s=0,u=e.length,l=null==n;if("object"===x(n)){i=!0;for(s in n)z(e,t,s,n[s],!0,o,a)}else if(void 0!==r&&(i=!0,g(r)||(a=!0),l&&(a?(t.call(e,r),t=null):(l=t,t=function(e,t,n){return l.call(w(e),n)})),t))for(;s<u;s++)t(e[s],n,a?r:r.call(e[s],s,t(e[s],n)));return i?e:l?t.call(e):u?t(e[0],n):o},X=/^-ms-/,U=/-([a-z])/g;function V(e,t){return t.toUpperCase()}function G(e){return e.replace(X,"ms-").replace(U,V)}var Y=function(e){return 1===e.nodeType||9===e.nodeType||!+e.nodeType};function Q(){this.expando=w.expando+Q.uid++}Q.uid=1,Q.prototype={cache:function(e){var t=e[this.expando];return t||(t={},Y(e)&&(e.nodeType?e[this.expando]=t:Object.defineProperty(e,this.expando,{value:t,configurable:!0}))),t},set:function(e,t,n){var r,i=this.cache(e);if("string"==typeof t)i[G(t)]=n;else for(r in t)i[G(r)]=t[r];return i},get:function(e,t){return void 0===t?this.cache(e):e[this.expando]&&e[this.expando][G(t)]},access:function(e,t,n){return void 0===t||t&&"string"==typeof t&&void 0===n?this.get(e,t):(this.set(e,t,n),void 0!==n?n:t)},remove:function(e,t){var n,r=e[this.expando];if(void 0!==r){if(void 0!==t){n=(t=Array.isArray(t)?t.map(G):(t=G(t))in r?[t]:t.match(M)||[]).length;while(n--)delete r[t[n]]}(void 0===t||w.isEmptyObject(r))&&(e.nodeType?e[this.expando]=void 0:delete e[this.expando])}},hasData:function(e){var t=e[this.expando];return void 0!==t&&!w.isEmptyObject(t)}};var J=new Q,K=new Q,Z=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,ee=/[A-Z]/g;function te(e){return"true"===e||"false"!==e&&("null"===e?null:e===+e+""?+e:Z.test(e)?JSON.parse(e):e)}function ne(e,t,n){var r;if(void 0===n&&1===e.nodeType)if(r="data-"+t.replace(ee,"-$&").toLowerCase(),"string"==typeof(n=e.getAttribute(r))){try{n=te(n)}catch(e){}K.set(e,t,n)}else n=void 0;return n}w.extend({hasData:function(e){return K.hasData(e)||J.hasData(e)},data:function(e,t,n){return K.access(e,t,n)},removeData:function(e,t){K.remove(e,t)},_data:function(e,t,n){return J.access(e,t,n)},_removeData:function(e,t){J.remove(e,t)}}),w.fn.extend({data:function(e,t){var n,r,i,o=this[0],a=o&&o.attributes;if(void 0===e){if(this.length&&(i=K.get(o),1===o.nodeType&&!J.get(o,"hasDataAttrs"))){n=a.length;while(n--)a[n]&&0===(r=a[n].name).indexOf("data-")&&(r=G(r.slice(5)),ne(o,r,i[r]));J.set(o,"hasDataAttrs",!0)}return i}return"object"==typeof e?this.each(function(){K.set(this,e)}):z(this,function(t){var n;if(o&&void 0===t){if(void 0!==(n=K.get(o,e)))return n;if(void 0!==(n=ne(o,e)))return n}else this.each(function(){K.set(this,e,t)})},null,t,arguments.length>1,null,!0)},removeData:function(e){return this.each(function(){K.remove(this,e)})}}),w.extend({queue:function(e,t,n){var r;if(e)return t=(t||"fx")+"queue",r=J.get(e,t),n&&(!r||Array.isArray(n)?r=J.access(e,t,w.makeArray(n)):r.push(n)),r||[]},dequeue:function(e,t){t=t||"fx";var n=w.queue(e,t),r=n.length,i=n.shift(),o=w._queueHooks(e,t),a=function(){w.dequeue(e,t)};"inprogress"===i&&(i=n.shift(),r--),i&&("fx"===t&&n.unshift("inprogress"),delete o.stop,i.call(e,a,o)),!r&&o&&o.empty.fire()},_queueHooks:function(e,t){var n=t+"queueHooks";return J.get(e,n)||J.access(e,n,{empty:w.Callbacks("once memory").add(function(){J.remove(e,[t+"queue",n])})})}}),w.fn.extend({queue:function(e,t){var n=2;return"string"!=typeof e&&(t=e,e="fx",n--),arguments.length<n?w.queue(this[0],e):void 0===t?this:this.each(function(){var n=w.queue(this,e,t);w._queueHooks(this,e),"fx"===e&&"inprogress"!==n[0]&&w.dequeue(this,e)})},dequeue:function(e){return this.each(function(){w.dequeue(this,e)})},clearQueue:function(e){return this.queue(e||"fx",[])},promise:function(e,t){var n,r=1,i=w.Deferred(),o=this,a=this.length,s=function(){--r||i.resolveWith(o,[o])};"string"!=typeof e&&(t=e,e=void 0),e=e||"fx";while(a--)(n=J.get(o[a],e+"queueHooks"))&&n.empty&&(r++,n.empty.add(s));return s(),i.promise(t)}});var re=/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,ie=new RegExp("^(?:([+-])=|)("+re+")([a-z%]*)$","i"),oe=["Top","Right","Bottom","Left"],ae=function(e,t){return"none"===(e=t||e).style.display||""===e.style.display&&w.contains(e.ownerDocument,e)&&"none"===w.css(e,"display")},se=function(e,t,n,r){var i,o,a={};for(o in t)a[o]=e.style[o],e.style[o]=t[o];i=n.apply(e,r||[]);for(o in t)e.style[o]=a[o];return i};function ue(e,t,n,r){var i,o,a=20,s=r?function(){return r.cur()}:function(){return w.css(e,t,"")},u=s(),l=n&&n[3]||(w.cssNumber[t]?"":"px"),c=(w.cssNumber[t]||"px"!==l&&+u)&&ie.exec(w.css(e,t));if(c&&c[3]!==l){u/=2,l=l||c[3],c=+u||1;while(a--)w.style(e,t,c+l),(1-o)*(1-(o=s()/u||.5))<=0&&(a=0),c/=o;c*=2,w.style(e,t,c+l),n=n||[]}return n&&(c=+c||+u||0,i=n[1]?c+(n[1]+1)*n[2]:+n[2],r&&(r.unit=l,r.start=c,r.end=i)),i}var le={};function ce(e){var t,n=e.ownerDocument,r=e.nodeName,i=le[r];return i||(t=n.body.appendChild(n.createElement(r)),i=w.css(t,"display"),t.parentNode.removeChild(t),"none"===i&&(i="block"),le[r]=i,i)}function fe(e,t){for(var n,r,i=[],o=0,a=e.length;o<a;o++)(r=e[o]).style&&(n=r.style.display,t?("none"===n&&(i[o]=J.get(r,"display")||null,i[o]||(r.style.display="")),""===r.style.display&&ae(r)&&(i[o]=ce(r))):"none"!==n&&(i[o]="none",J.set(r,"display",n)));for(o=0;o<a;o++)null!=i[o]&&(e[o].style.display=i[o]);return e}w.fn.extend({show:function(){return fe(this,!0)},hide:function(){return fe(this)},toggle:function(e){return"boolean"==typeof e?e?this.show():this.hide():this.each(function(){ae(this)?w(this).show():w(this).hide()})}});var pe=/^(?:checkbox|radio)$/i,de=/<([a-z][^\/\0>\x20\t\r\n\f]+)/i,he=/^$|^module$|\/(?:java|ecma)script/i,ge={option:[1,"<select multiple='multiple'>","</select>"],thead:[1,"<table>","</table>"],col:[2,"<table><colgroup>","</colgroup></table>"],tr:[2,"<table><tbody>","</tbody></table>"],td:[3,"<table><tbody><tr>","</tr></tbody></table>"],_default:[0,"",""]};ge.optgroup=ge.option,ge.tbody=ge.tfoot=ge.colgroup=ge.caption=ge.thead,ge.th=ge.td;function ye(e,t){var n;return n="undefined"!=typeof e.getElementsByTagName?e.getElementsByTagName(t||"*"):"undefined"!=typeof e.querySelectorAll?e.querySelectorAll(t||"*"):[],void 0===t||t&&N(e,t)?w.merge([e],n):n}function ve(e,t){for(var n=0,r=e.length;n<r;n++)J.set(e[n],"globalEval",!t||J.get(t[n],"globalEval"))}var me=/<|&#?\w+;/;function xe(e,t,n,r,i){for(var o,a,s,u,l,c,f=t.createDocumentFragment(),p=[],d=0,h=e.length;d<h;d++)if((o=e[d])||0===o)if("object"===x(o))w.merge(p,o.nodeType?[o]:o);else if(me.test(o)){a=a||f.appendChild(t.createElement("div")),s=(de.exec(o)||["",""])[1].toLowerCase(),u=ge[s]||ge._default,a.innerHTML=u[1]+w.htmlPrefilter(o)+u[2],c=u[0];while(c--)a=a.lastChild;w.merge(p,a.childNodes),(a=f.firstChild).textContent=""}else p.push(t.createTextNode(o));f.textContent="",d=0;while(o=p[d++])if(r&&w.inArray(o,r)>-1)i&&i.push(o);else if(l=w.contains(o.ownerDocument,o),a=ye(f.appendChild(o),"script"),l&&ve(a),n){c=0;while(o=a[c++])he.test(o.type||"")&&n.push(o)}return f}!function(){var e=r.createDocumentFragment().appendChild(r.createElement("div")),t=r.createElement("input");t.setAttribute("type","radio"),t.setAttribute("checked","checked"),t.setAttribute("name","t"),e.appendChild(t),h.checkClone=e.cloneNode(!0).cloneNode(!0).lastChild.checked,e.innerHTML="<textarea>x</textarea>",h.noCloneChecked=!!e.cloneNode(!0).lastChild.defaultValue}();var be=r.documentElement,we=/^key/,Te=/^(?:mouse|pointer|contextmenu|drag|drop)|click/,Ce=/^([^.]*)(?:\.(.+)|)/;function Ee(){return!0}function ke(){return!1}function Se(){try{return r.activeElement}catch(e){}}function De(e,t,n,r,i,o){var a,s;if("object"==typeof t){"string"!=typeof n&&(r=r||n,n=void 0);for(s in t)De(e,s,n,r,t[s],o);return e}if(null==r&&null==i?(i=n,r=n=void 0):null==i&&("string"==typeof n?(i=r,r=void 0):(i=r,r=n,n=void 0)),!1===i)i=ke;else if(!i)return e;return 1===o&&(a=i,(i=function(e){return w().off(e),a.apply(this,arguments)}).guid=a.guid||(a.guid=w.guid++)),e.each(function(){w.event.add(this,t,i,r,n)})}w.event={global:{},add:function(e,t,n,r,i){var o,a,s,u,l,c,f,p,d,h,g,y=J.get(e);if(y){n.handler&&(n=(o=n).handler,i=o.selector),i&&w.find.matchesSelector(be,i),n.guid||(n.guid=w.guid++),(u=y.events)||(u=y.events={}),(a=y.handle)||(a=y.handle=function(t){return"undefined"!=typeof w&&w.event.triggered!==t.type?w.event.dispatch.apply(e,arguments):void 0}),l=(t=(t||"").match(M)||[""]).length;while(l--)d=g=(s=Ce.exec(t[l])||[])[1],h=(s[2]||"").split(".").sort(),d&&(f=w.event.special[d]||{},d=(i?f.delegateType:f.bindType)||d,f=w.event.special[d]||{},c=w.extend({type:d,origType:g,data:r,handler:n,guid:n.guid,selector:i,needsContext:i&&w.expr.match.needsContext.test(i),namespace:h.join(".")},o),(p=u[d])||((p=u[d]=[]).delegateCount=0,f.setup&&!1!==f.setup.call(e,r,h,a)||e.addEventListener&&e.addEventListener(d,a)),f.add&&(f.add.call(e,c),c.handler.guid||(c.handler.guid=n.guid)),i?p.splice(p.delegateCount++,0,c):p.push(c),w.event.global[d]=!0)}},remove:function(e,t,n,r,i){var o,a,s,u,l,c,f,p,d,h,g,y=J.hasData(e)&&J.get(e);if(y&&(u=y.events)){l=(t=(t||"").match(M)||[""]).length;while(l--)if(s=Ce.exec(t[l])||[],d=g=s[1],h=(s[2]||"").split(".").sort(),d){f=w.event.special[d]||{},p=u[d=(r?f.delegateType:f.bindType)||d]||[],s=s[2]&&new RegExp("(^|\\.)"+h.join("\\.(?:.*\\.|)")+"(\\.|$)"),a=o=p.length;while(o--)c=p[o],!i&&g!==c.origType||n&&n.guid!==c.guid||s&&!s.test(c.namespace)||r&&r!==c.selector&&("**"!==r||!c.selector)||(p.splice(o,1),c.selector&&p.delegateCount--,f.remove&&f.remove.call(e,c));a&&!p.length&&(f.teardown&&!1!==f.teardown.call(e,h,y.handle)||w.removeEvent(e,d,y.handle),delete u[d])}else for(d in u)w.event.remove(e,d+t[l],n,r,!0);w.isEmptyObject(u)&&J.remove(e,"handle events")}},dispatch:function(e){var t=w.event.fix(e),n,r,i,o,a,s,u=new Array(arguments.length),l=(J.get(this,"events")||{})[t.type]||[],c=w.event.special[t.type]||{};for(u[0]=t,n=1;n<arguments.length;n++)u[n]=arguments[n];if(t.delegateTarget=this,!c.preDispatch||!1!==c.preDispatch.call(this,t)){s=w.event.handlers.call(this,t,l),n=0;while((o=s[n++])&&!t.isPropagationStopped()){t.currentTarget=o.elem,r=0;while((a=o.handlers[r++])&&!t.isImmediatePropagationStopped())t.rnamespace&&!t.rnamespace.test(a.namespace)||(t.handleObj=a,t.data=a.data,void 0!==(i=((w.event.special[a.origType]||{}).handle||a.handler).apply(o.elem,u))&&!1===(t.result=i)&&(t.preventDefault(),t.stopPropagation()))}return c.postDispatch&&c.postDispatch.call(this,t),t.result}},handlers:function(e,t){var n,r,i,o,a,s=[],u=t.delegateCount,l=e.target;if(u&&l.nodeType&&!("click"===e.type&&e.button>=1))for(;l!==this;l=l.parentNode||this)if(1===l.nodeType&&("click"!==e.type||!0!==l.disabled)){for(o=[],a={},n=0;n<u;n++)void 0===a[i=(r=t[n]).selector+" "]&&(a[i]=r.needsContext?w(i,this).index(l)>-1:w.find(i,this,null,[l]).length),a[i]&&o.push(r);o.length&&s.push({elem:l,handlers:o})}return l=this,u<t.length&&s.push({elem:l,handlers:t.slice(u)}),s},addProp:function(e,t){Object.defineProperty(w.Event.prototype,e,{enumerable:!0,configurable:!0,get:g(t)?function(){if(this.originalEvent)return t(this.originalEvent)}:function(){if(this.originalEvent)return this.originalEvent[e]},set:function(t){Object.defineProperty(this,e,{enumerable:!0,configurable:!0,writable:!0,value:t})}})},fix:function(e){return e[w.expando]?e:new w.Event(e)},special:{load:{noBubble:!0},focus:{trigger:function(){if(this!==Se()&&this.focus)return this.focus(),!1},delegateType:"focusin"},blur:{trigger:function(){if(this===Se()&&this.blur)return this.blur(),!1},delegateType:"focusout"},click:{trigger:function(){if("checkbox"===this.type&&this.click&&N(this,"input"))return this.click(),!1},_default:function(e){return N(e.target,"a")}},beforeunload:{postDispatch:function(e){void 0!==e.result&&e.originalEvent&&(e.originalEvent.returnValue=e.result)}}}},w.removeEvent=function(e,t,n){e.removeEventListener&&e.removeEventListener(t,n)},w.Event=function(e,t){if(!(this instanceof w.Event))return new w.Event(e,t);e&&e.type?(this.originalEvent=e,this.type=e.type,this.isDefaultPrevented=e.defaultPrevented||void 0===e.defaultPrevented&&!1===e.returnValue?Ee:ke,this.target=e.target&&3===e.target.nodeType?e.target.parentNode:e.target,this.currentTarget=e.currentTarget,this.relatedTarget=e.relatedTarget):this.type=e,t&&w.extend(this,t),this.timeStamp=e&&e.timeStamp||Date.now(),this[w.expando]=!0},w.Event.prototype={constructor:w.Event,isDefaultPrevented:ke,isPropagationStopped:ke,isImmediatePropagationStopped:ke,isSimulated:!1,preventDefault:function(){var e=this.originalEvent;this.isDefaultPrevented=Ee,e&&!this.isSimulated&&e.preventDefault()},stopPropagation:function(){var e=this.originalEvent;this.isPropagationStopped=Ee,e&&!this.isSimulated&&e.stopPropagation()},stopImmediatePropagation:function(){var e=this.originalEvent;this.isImmediatePropagationStopped=Ee,e&&!this.isSimulated&&e.stopImmediatePropagation(),this.stopPropagation()}},w.each({altKey:!0,bubbles:!0,cancelable:!0,changedTouches:!0,ctrlKey:!0,detail:!0,eventPhase:!0,metaKey:!0,pageX:!0,pageY:!0,shiftKey:!0,view:!0,"char":!0,charCode:!0,key:!0,keyCode:!0,button:!0,buttons:!0,clientX:!0,clientY:!0,offsetX:!0,offsetY:!0,pointerId:!0,pointerType:!0,screenX:!0,screenY:!0,targetTouches:!0,toElement:!0,touches:!0,which:function(e){var t=e.button;return null==e.which&&we.test(e.type)?null!=e.charCode?e.charCode:e.keyCode:!e.which&&void 0!==t&&Te.test(e.type)?1&t?1:2&t?3:4&t?2:0:e.which}},w.event.addProp),w.each({mouseenter:"mouseover",mouseleave:"mouseout",pointerenter:"pointerover",pointerleave:"pointerout"},function(e,t){w.event.special[e]={delegateType:t,bindType:t,handle:function(e){var n,r=this,i=e.relatedTarget,o=e.handleObj;return i&&(i===r||w.contains(r,i))||(e.type=o.origType,n=o.handler.apply(this,arguments),e.type=t),n}}}),w.fn.extend({on:function(e,t,n,r){return De(this,e,t,n,r)},one:function(e,t,n,r){return De(this,e,t,n,r,1)},off:function(e,t,n){var r,i;if(e&&e.preventDefault&&e.handleObj)return r=e.handleObj,w(e.delegateTarget).off(r.namespace?r.origType+"."+r.namespace:r.origType,r.selector,r.handler),this;if("object"==typeof e){for(i in e)this.off(i,t,e[i]);return this}return!1!==t&&"function"!=typeof t||(n=t,t=void 0),!1===n&&(n=ke),this.each(function(){w.event.remove(this,e,n,t)})}});var Ne=/<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,Ae=/<script|<style|<link/i,je=/checked\s*(?:[^=]|=\s*.checked.)/i,qe=/^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;function Le(e,t){return N(e,"table")&&N(11!==t.nodeType?t:t.firstChild,"tr")?w(e).children("tbody")[0]||e:e}function He(e){return e.type=(null!==e.getAttribute("type"))+"/"+e.type,e}function Oe(e){return"true/"===(e.type||"").slice(0,5)?e.type=e.type.slice(5):e.removeAttribute("type"),e}function Pe(e,t){var n,r,i,o,a,s,u,l;if(1===t.nodeType){if(J.hasData(e)&&(o=J.access(e),a=J.set(t,o),l=o.events)){delete a.handle,a.events={};for(i in l)for(n=0,r=l[i].length;n<r;n++)w.event.add(t,i,l[i][n])}K.hasData(e)&&(s=K.access(e),u=w.extend({},s),K.set(t,u))}}function Me(e,t){var n=t.nodeName.toLowerCase();"input"===n&&pe.test(e.type)?t.checked=e.checked:"input"!==n&&"textarea"!==n||(t.defaultValue=e.defaultValue)}function Re(e,t,n,r){t=a.apply([],t);var i,o,s,u,l,c,f=0,p=e.length,d=p-1,y=t[0],v=g(y);if(v||p>1&&"string"==typeof y&&!h.checkClone&&je.test(y))return e.each(function(i){var o=e.eq(i);v&&(t[0]=y.call(this,i,o.html())),Re(o,t,n,r)});if(p&&(i=xe(t,e[0].ownerDocument,!1,e,r),o=i.firstChild,1===i.childNodes.length&&(i=o),o||r)){for(u=(s=w.map(ye(i,"script"),He)).length;f<p;f++)l=i,f!==d&&(l=w.clone(l,!0,!0),u&&w.merge(s,ye(l,"script"))),n.call(e[f],l,f);if(u)for(c=s[s.length-1].ownerDocument,w.map(s,Oe),f=0;f<u;f++)l=s[f],he.test(l.type||"")&&!J.access(l,"globalEval")&&w.contains(c,l)&&(l.src&&"module"!==(l.type||"").toLowerCase()?w._evalUrl&&w._evalUrl(l.src):m(l.textContent.replace(qe,""),c,l))}return e}function Ie(e,t,n){for(var r,i=t?w.filter(t,e):e,o=0;null!=(r=i[o]);o++)n||1!==r.nodeType||w.cleanData(ye(r)),r.parentNode&&(n&&w.contains(r.ownerDocument,r)&&ve(ye(r,"script")),r.parentNode.removeChild(r));return e}w.extend({htmlPrefilter:function(e){return e.replace(Ne,"<$1></$2>")},clone:function(e,t,n){var r,i,o,a,s=e.cloneNode(!0),u=w.contains(e.ownerDocument,e);if(!(h.noCloneChecked||1!==e.nodeType&&11!==e.nodeType||w.isXMLDoc(e)))for(a=ye(s),r=0,i=(o=ye(e)).length;r<i;r++)Me(o[r],a[r]);if(t)if(n)for(o=o||ye(e),a=a||ye(s),r=0,i=o.length;r<i;r++)Pe(o[r],a[r]);else Pe(e,s);return(a=ye(s,"script")).length>0&&ve(a,!u&&ye(e,"script")),s},cleanData:function(e){for(var t,n,r,i=w.event.special,o=0;void 0!==(n=e[o]);o++)if(Y(n)){if(t=n[J.expando]){if(t.events)for(r in t.events)i[r]?w.event.remove(n,r):w.removeEvent(n,r,t.handle);n[J.expando]=void 0}n[K.expando]&&(n[K.expando]=void 0)}}}),w.fn.extend({detach:function(e){return Ie(this,e,!0)},remove:function(e){return Ie(this,e)},text:function(e){return z(this,function(e){return void 0===e?w.text(this):this.empty().each(function(){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||(this.textContent=e)})},null,e,arguments.length)},append:function(){return Re(this,arguments,function(e){1!==this.nodeType&&11!==this.nodeType&&9!==this.nodeType||Le(this,e).appendChild(e)})},prepend:function(){return Re(this,arguments,function(e){if(1===this.nodeType||11===this.nodeType||9===this.nodeType){var t=Le(this,e);t.insertBefore(e,t.firstChild)}})},before:function(){return Re(this,arguments,function(e){this.parentNode&&this.parentNode.insertBefore(e,this)})},after:function(){return Re(this,arguments,function(e){this.parentNode&&this.parentNode.insertBefore(e,this.nextSibling)})},empty:function(){for(var e,t=0;null!=(e=this[t]);t++)1===e.nodeType&&(w.cleanData(ye(e,!1)),e.textContent="");return this},clone:function(e,t){return e=null!=e&&e,t=null==t?e:t,this.map(function(){return w.clone(this,e,t)})},html:function(e){return z(this,function(e){var t=this[0]||{},n=0,r=this.length;if(void 0===e&&1===t.nodeType)return t.innerHTML;if("string"==typeof e&&!Ae.test(e)&&!ge[(de.exec(e)||["",""])[1].toLowerCase()]){e=w.htmlPrefilter(e);try{for(;n<r;n++)1===(t=this[n]||{}).nodeType&&(w.cleanData(ye(t,!1)),t.innerHTML=e);t=0}catch(e){}}t&&this.empty().append(e)},null,e,arguments.length)},replaceWith:function(){var e=[];return Re(this,arguments,function(t){var n=this.parentNode;w.inArray(this,e)<0&&(w.cleanData(ye(this)),n&&n.replaceChild(t,this))},e)}}),w.each({appendTo:"append",prependTo:"prepend",insertBefore:"before",insertAfter:"after",replaceAll:"replaceWith"},function(e,t){w.fn[e]=function(e){for(var n,r=[],i=w(e),o=i.length-1,a=0;a<=o;a++)n=a===o?this:this.clone(!0),w(i[a])[t](n),s.apply(r,n.get());return this.pushStack(r)}});var We=new RegExp("^("+re+")(?!px)[a-z%]+$","i"),$e=function(t){var n=t.ownerDocument.defaultView;return n&&n.opener||(n=e),n.getComputedStyle(t)},Be=new RegExp(oe.join("|"),"i");!function(){function t(){if(c){l.style.cssText="position:absolute;left:-11111px;width:60px;margin-top:1px;padding:0;border:0",c.style.cssText="position:relative;display:block;box-sizing:border-box;overflow:scroll;margin:auto;border:1px;padding:1px;width:60%;top:1%",be.appendChild(l).appendChild(c);var t=e.getComputedStyle(c);i="1%"!==t.top,u=12===n(t.marginLeft),c.style.right="60%",s=36===n(t.right),o=36===n(t.width),c.style.position="absolute",a=36===c.offsetWidth||"absolute",be.removeChild(l),c=null}}function n(e){return Math.round(parseFloat(e))}var i,o,a,s,u,l=r.createElement("div"),c=r.createElement("div");c.style&&(c.style.backgroundClip="content-box",c.cloneNode(!0).style.backgroundClip="",h.clearCloneStyle="content-box"===c.style.backgroundClip,w.extend(h,{boxSizingReliable:function(){return t(),o},pixelBoxStyles:function(){return t(),s},pixelPosition:function(){return t(),i},reliableMarginLeft:function(){return t(),u},scrollboxSize:function(){return t(),a}}))}();function Fe(e,t,n){var r,i,o,a,s=e.style;return(n=n||$e(e))&&(""!==(a=n.getPropertyValue(t)||n[t])||w.contains(e.ownerDocument,e)||(a=w.style(e,t)),!h.pixelBoxStyles()&&We.test(a)&&Be.test(t)&&(r=s.width,i=s.minWidth,o=s.maxWidth,s.minWidth=s.maxWidth=s.width=a,a=n.width,s.width=r,s.minWidth=i,s.maxWidth=o)),void 0!==a?a+"":a}function _e(e,t){return{get:function(){if(!e())return(this.get=t).apply(this,arguments);delete this.get}}}var ze=/^(none|table(?!-c[ea]).+)/,Xe=/^--/,Ue={position:"absolute",visibility:"hidden",display:"block"},Ve={letterSpacing:"0",fontWeight:"400"},Ge=["Webkit","Moz","ms"],Ye=r.createElement("div").style;function Qe(e){if(e in Ye)return e;var t=e[0].toUpperCase()+e.slice(1),n=Ge.length;while(n--)if((e=Ge[n]+t)in Ye)return e}function Je(e){var t=w.cssProps[e];return t||(t=w.cssProps[e]=Qe(e)||e),t}function Ke(e,t,n){var r=ie.exec(t);return r?Math.max(0,r[2]-(n||0))+(r[3]||"px"):t}function Ze(e,t,n,r,i,o){var a="width"===t?1:0,s=0,u=0;if(n===(r?"border":"content"))return 0;for(;a<4;a+=2)"margin"===n&&(u+=w.css(e,n+oe[a],!0,i)),r?("content"===n&&(u-=w.css(e,"padding"+oe[a],!0,i)),"margin"!==n&&(u-=w.css(e,"border"+oe[a]+"Width",!0,i))):(u+=w.css(e,"padding"+oe[a],!0,i),"padding"!==n?u+=w.css(e,"border"+oe[a]+"Width",!0,i):s+=w.css(e,"border"+oe[a]+"Width",!0,i));return!r&&o>=0&&(u+=Math.max(0,Math.ceil(e["offset"+t[0].toUpperCase()+t.slice(1)]-o-u-s-.5))),u}function et(e,t,n){var r=$e(e),i=Fe(e,t,r),o="border-box"===w.css(e,"boxSizing",!1,r),a=o;if(We.test(i)){if(!n)return i;i="auto"}return a=a&&(h.boxSizingReliable()||i===e.style[t]),("auto"===i||!parseFloat(i)&&"inline"===w.css(e,"display",!1,r))&&(i=e["offset"+t[0].toUpperCase()+t.slice(1)],a=!0),(i=parseFloat(i)||0)+Ze(e,t,n||(o?"border":"content"),a,r,i)+"px"}w.extend({cssHooks:{opacity:{get:function(e,t){if(t){var n=Fe(e,"opacity");return""===n?"1":n}}}},cssNumber:{animationIterationCount:!0,columnCount:!0,fillOpacity:!0,flexGrow:!0,flexShrink:!0,fontWeight:!0,lineHeight:!0,opacity:!0,order:!0,orphans:!0,widows:!0,zIndex:!0,zoom:!0},cssProps:{},style:function(e,t,n,r){if(e&&3!==e.nodeType&&8!==e.nodeType&&e.style){var i,o,a,s=G(t),u=Xe.test(t),l=e.style;if(u||(t=Je(s)),a=w.cssHooks[t]||w.cssHooks[s],void 0===n)return a&&"get"in a&&void 0!==(i=a.get(e,!1,r))?i:l[t];"string"==(o=typeof n)&&(i=ie.exec(n))&&i[1]&&(n=ue(e,t,i),o="number"),null!=n&&n===n&&("number"===o&&(n+=i&&i[3]||(w.cssNumber[s]?"":"px")),h.clearCloneStyle||""!==n||0!==t.indexOf("background")||(l[t]="inherit"),a&&"set"in a&&void 0===(n=a.set(e,n,r))||(u?l.setProperty(t,n):l[t]=n))}},css:function(e,t,n,r){var i,o,a,s=G(t);return Xe.test(t)||(t=Je(s)),(a=w.cssHooks[t]||w.cssHooks[s])&&"get"in a&&(i=a.get(e,!0,n)),void 0===i&&(i=Fe(e,t,r)),"normal"===i&&t in Ve&&(i=Ve[t]),""===n||n?(o=parseFloat(i),!0===n||isFinite(o)?o||0:i):i}}),w.each(["height","width"],function(e,t){w.cssHooks[t]={get:function(e,n,r){if(n)return!ze.test(w.css(e,"display"))||e.getClientRects().length&&e.getBoundingClientRect().width?et(e,t,r):se(e,Ue,function(){return et(e,t,r)})},set:function(e,n,r){var i,o=$e(e),a="border-box"===w.css(e,"boxSizing",!1,o),s=r&&Ze(e,t,r,a,o);return a&&h.scrollboxSize()===o.position&&(s-=Math.ceil(e["offset"+t[0].toUpperCase()+t.slice(1)]-parseFloat(o[t])-Ze(e,t,"border",!1,o)-.5)),s&&(i=ie.exec(n))&&"px"!==(i[3]||"px")&&(e.style[t]=n,n=w.css(e,t)),Ke(e,n,s)}}}),w.cssHooks.marginLeft=_e(h.reliableMarginLeft,function(e,t){if(t)return(parseFloat(Fe(e,"marginLeft"))||e.getBoundingClientRect().left-se(e,{marginLeft:0},function(){return e.getBoundingClientRect().left}))+"px"}),w.each({margin:"",padding:"",border:"Width"},function(e,t){w.cssHooks[e+t]={expand:function(n){for(var r=0,i={},o="string"==typeof n?n.split(" "):[n];r<4;r++)i[e+oe[r]+t]=o[r]||o[r-2]||o[0];return i}},"margin"!==e&&(w.cssHooks[e+t].set=Ke)}),w.fn.extend({css:function(e,t){return z(this,function(e,t,n){var r,i,o={},a=0;if(Array.isArray(t)){for(r=$e(e),i=t.length;a<i;a++)o[t[a]]=w.css(e,t[a],!1,r);return o}return void 0!==n?w.style(e,t,n):w.css(e,t)},e,t,arguments.length>1)}});function tt(e,t,n,r,i){return new tt.prototype.init(e,t,n,r,i)}w.Tween=tt,tt.prototype={constructor:tt,init:function(e,t,n,r,i,o){this.elem=e,this.prop=n,this.easing=i||w.easing._default,this.options=t,this.start=this.now=this.cur(),this.end=r,this.unit=o||(w.cssNumber[n]?"":"px")},cur:function(){var e=tt.propHooks[this.prop];return e&&e.get?e.get(this):tt.propHooks._default.get(this)},run:function(e){var t,n=tt.propHooks[this.prop];return this.options.duration?this.pos=t=w.easing[this.easing](e,this.options.duration*e,0,1,this.options.duration):this.pos=t=e,this.now=(this.end-this.start)*t+this.start,this.options.step&&this.options.step.call(this.elem,this.now,this),n&&n.set?n.set(this):tt.propHooks._default.set(this),this}},tt.prototype.init.prototype=tt.prototype,tt.propHooks={_default:{get:function(e){var t;return 1!==e.elem.nodeType||null!=e.elem[e.prop]&&null==e.elem.style[e.prop]?e.elem[e.prop]:(t=w.css(e.elem,e.prop,""))&&"auto"!==t?t:0},set:function(e){w.fx.step[e.prop]?w.fx.step[e.prop](e):1!==e.elem.nodeType||null==e.elem.style[w.cssProps[e.prop]]&&!w.cssHooks[e.prop]?e.elem[e.prop]=e.now:w.style(e.elem,e.prop,e.now+e.unit)}}},tt.propHooks.scrollTop=tt.propHooks.scrollLeft={set:function(e){e.elem.nodeType&&e.elem.parentNode&&(e.elem[e.prop]=e.now)}},w.easing={linear:function(e){return e},swing:function(e){return.5-Math.cos(e*Math.PI)/2},_default:"swing"},w.fx=tt.prototype.init,w.fx.step={};var nt,rt,it=/^(?:toggle|show|hide)$/,ot=/queueHooks$/;function at(){rt&&(!1===r.hidden&&e.requestAnimationFrame?e.requestAnimationFrame(at):e.setTimeout(at,w.fx.interval),w.fx.tick())}function st(){return e.setTimeout(function(){nt=void 0}),nt=Date.now()}function ut(e,t){var n,r=0,i={height:e};for(t=t?1:0;r<4;r+=2-t)i["margin"+(n=oe[r])]=i["padding"+n]=e;return t&&(i.opacity=i.width=e),i}function lt(e,t,n){for(var r,i=(pt.tweeners[t]||[]).concat(pt.tweeners["*"]),o=0,a=i.length;o<a;o++)if(r=i[o].call(n,t,e))return r}function ct(e,t,n){var r,i,o,a,s,u,l,c,f="width"in t||"height"in t,p=this,d={},h=e.style,g=e.nodeType&&ae(e),y=J.get(e,"fxshow");n.queue||(null==(a=w._queueHooks(e,"fx")).unqueued&&(a.unqueued=0,s=a.empty.fire,a.empty.fire=function(){a.unqueued||s()}),a.unqueued++,p.always(function(){p.always(function(){a.unqueued--,w.queue(e,"fx").length||a.empty.fire()})}));for(r in t)if(i=t[r],it.test(i)){if(delete t[r],o=o||"toggle"===i,i===(g?"hide":"show")){if("show"!==i||!y||void 0===y[r])continue;g=!0}d[r]=y&&y[r]||w.style(e,r)}if((u=!w.isEmptyObject(t))||!w.isEmptyObject(d)){f&&1===e.nodeType&&(n.overflow=[h.overflow,h.overflowX,h.overflowY],null==(l=y&&y.display)&&(l=J.get(e,"display")),"none"===(c=w.css(e,"display"))&&(l?c=l:(fe([e],!0),l=e.style.display||l,c=w.css(e,"display"),fe([e]))),("inline"===c||"inline-block"===c&&null!=l)&&"none"===w.css(e,"float")&&(u||(p.done(function(){h.display=l}),null==l&&(c=h.display,l="none"===c?"":c)),h.display="inline-block")),n.overflow&&(h.overflow="hidden",p.always(function(){h.overflow=n.overflow[0],h.overflowX=n.overflow[1],h.overflowY=n.overflow[2]})),u=!1;for(r in d)u||(y?"hidden"in y&&(g=y.hidden):y=J.access(e,"fxshow",{display:l}),o&&(y.hidden=!g),g&&fe([e],!0),p.done(function(){g||fe([e]),J.remove(e,"fxshow");for(r in d)w.style(e,r,d[r])})),u=lt(g?y[r]:0,r,p),r in y||(y[r]=u.start,g&&(u.end=u.start,u.start=0))}}function ft(e,t){var n,r,i,o,a;for(n in e)if(r=G(n),i=t[r],o=e[n],Array.isArray(o)&&(i=o[1],o=e[n]=o[0]),n!==r&&(e[r]=o,delete e[n]),(a=w.cssHooks[r])&&"expand"in a){o=a.expand(o),delete e[r];for(n in o)n in e||(e[n]=o[n],t[n]=i)}else t[r]=i}function pt(e,t,n){var r,i,o=0,a=pt.prefilters.length,s=w.Deferred().always(function(){delete u.elem}),u=function(){if(i)return!1;for(var t=nt||st(),n=Math.max(0,l.startTime+l.duration-t),r=1-(n/l.duration||0),o=0,a=l.tweens.length;o<a;o++)l.tweens[o].run(r);return s.notifyWith(e,[l,r,n]),r<1&&a?n:(a||s.notifyWith(e,[l,1,0]),s.resolveWith(e,[l]),!1)},l=s.promise({elem:e,props:w.extend({},t),opts:w.extend(!0,{specialEasing:{},easing:w.easing._default},n),originalProperties:t,originalOptions:n,startTime:nt||st(),duration:n.duration,tweens:[],createTween:function(t,n){var r=w.Tween(e,l.opts,t,n,l.opts.specialEasing[t]||l.opts.easing);return l.tweens.push(r),r},stop:function(t){var n=0,r=t?l.tweens.length:0;if(i)return this;for(i=!0;n<r;n++)l.tweens[n].run(1);return t?(s.notifyWith(e,[l,1,0]),s.resolveWith(e,[l,t])):s.rejectWith(e,[l,t]),this}}),c=l.props;for(ft(c,l.opts.specialEasing);o<a;o++)if(r=pt.prefilters[o].call(l,e,c,l.opts))return g(r.stop)&&(w._queueHooks(l.elem,l.opts.queue).stop=r.stop.bind(r)),r;return w.map(c,lt,l),g(l.opts.start)&&l.opts.start.call(e,l),l.progress(l.opts.progress).done(l.opts.done,l.opts.complete).fail(l.opts.fail).always(l.opts.always),w.fx.timer(w.extend(u,{elem:e,anim:l,queue:l.opts.queue})),l}w.Animation=w.extend(pt,{tweeners:{"*":[function(e,t){var n=this.createTween(e,t);return ue(n.elem,e,ie.exec(t),n),n}]},tweener:function(e,t){g(e)?(t=e,e=["*"]):e=e.match(M);for(var n,r=0,i=e.length;r<i;r++)n=e[r],pt.tweeners[n]=pt.tweeners[n]||[],pt.tweeners[n].unshift(t)},prefilters:[ct],prefilter:function(e,t){t?pt.prefilters.unshift(e):pt.prefilters.push(e)}}),w.speed=function(e,t,n){var r=e&&"object"==typeof e?w.extend({},e):{complete:n||!n&&t||g(e)&&e,duration:e,easing:n&&t||t&&!g(t)&&t};return w.fx.off?r.duration=0:"number"!=typeof r.duration&&(r.duration in w.fx.speeds?r.duration=w.fx.speeds[r.duration]:r.duration=w.fx.speeds._default),null!=r.queue&&!0!==r.queue||(r.queue="fx"),r.old=r.complete,r.complete=function(){g(r.old)&&r.old.call(this),r.queue&&w.dequeue(this,r.queue)},r},w.fn.extend({fadeTo:function(e,t,n,r){return this.filter(ae).css("opacity",0).show().end().animate({opacity:t},e,n,r)},animate:function(e,t,n,r){var i=w.isEmptyObject(e),o=w.speed(t,n,r),a=function(){var t=pt(this,w.extend({},e),o);(i||J.get(this,"finish"))&&t.stop(!0)};return a.finish=a,i||!1===o.queue?this.each(a):this.queue(o.queue,a)},stop:function(e,t,n){var r=function(e){var t=e.stop;delete e.stop,t(n)};return"string"!=typeof e&&(n=t,t=e,e=void 0),t&&!1!==e&&this.queue(e||"fx",[]),this.each(function(){var t=!0,i=null!=e&&e+"queueHooks",o=w.timers,a=J.get(this);if(i)a[i]&&a[i].stop&&r(a[i]);else for(i in a)a[i]&&a[i].stop&&ot.test(i)&&r(a[i]);for(i=o.length;i--;)o[i].elem!==this||null!=e&&o[i].queue!==e||(o[i].anim.stop(n),t=!1,o.splice(i,1));!t&&n||w.dequeue(this,e)})},finish:function(e){return!1!==e&&(e=e||"fx"),this.each(function(){var t,n=J.get(this),r=n[e+"queue"],i=n[e+"queueHooks"],o=w.timers,a=r?r.length:0;for(n.finish=!0,w.queue(this,e,[]),i&&i.stop&&i.stop.call(this,!0),t=o.length;t--;)o[t].elem===this&&o[t].queue===e&&(o[t].anim.stop(!0),o.splice(t,1));for(t=0;t<a;t++)r[t]&&r[t].finish&&r[t].finish.call(this);delete n.finish})}}),w.each(["toggle","show","hide"],function(e,t){var n=w.fn[t];w.fn[t]=function(e,r,i){return null==e||"boolean"==typeof e?n.apply(this,arguments):this.animate(ut(t,!0),e,r,i)}}),w.each({slideDown:ut("show"),slideUp:ut("hide"),slideToggle:ut("toggle"),fadeIn:{opacity:"show"},fadeOut:{opacity:"hide"},fadeToggle:{opacity:"toggle"}},function(e,t){w.fn[e]=function(e,n,r){return this.animate(t,e,n,r)}}),w.timers=[],w.fx.tick=function(){var e,t=0,n=w.timers;for(nt=Date.now();t<n.length;t++)(e=n[t])()||n[t]!==e||n.splice(t--,1);n.length||w.fx.stop(),nt=void 0},w.fx.timer=function(e){w.timers.push(e),w.fx.start()},w.fx.interval=13,w.fx.start=function(){rt||(rt=!0,at())},w.fx.stop=function(){rt=null},w.fx.speeds={slow:600,fast:200,_default:400},w.fn.delay=function(t,n){return t=w.fx?w.fx.speeds[t]||t:t,n=n||"fx",this.queue(n,function(n,r){var i=e.setTimeout(n,t);r.stop=function(){e.clearTimeout(i)}})},function(){var e=r.createElement("input"),t=r.createElement("select").appendChild(r.createElement("option"));e.type="checkbox",h.checkOn=""!==e.value,h.optSelected=t.selected,(e=r.createElement("input")).value="t",e.type="radio",h.radioValue="t"===e.value}();var dt,ht=w.expr.attrHandle;w.fn.extend({attr:function(e,t){return z(this,w.attr,e,t,arguments.length>1)},removeAttr:function(e){return this.each(function(){w.removeAttr(this,e)})}}),w.extend({attr:function(e,t,n){var r,i,o=e.nodeType;if(3!==o&&8!==o&&2!==o)return"undefined"==typeof e.getAttribute?w.prop(e,t,n):(1===o&&w.isXMLDoc(e)||(i=w.attrHooks[t.toLowerCase()]||(w.expr.match.bool.test(t)?dt:void 0)),void 0!==n?null===n?void w.removeAttr(e,t):i&&"set"in i&&void 0!==(r=i.set(e,n,t))?r:(e.setAttribute(t,n+""),n):i&&"get"in i&&null!==(r=i.get(e,t))?r:null==(r=w.find.attr(e,t))?void 0:r)},attrHooks:{type:{set:function(e,t){if(!h.radioValue&&"radio"===t&&N(e,"input")){var n=e.value;return e.setAttribute("type",t),n&&(e.value=n),t}}}},removeAttr:function(e,t){var n,r=0,i=t&&t.match(M);if(i&&1===e.nodeType)while(n=i[r++])e.removeAttribute(n)}}),dt={set:function(e,t,n){return!1===t?w.removeAttr(e,n):e.setAttribute(n,n),n}},w.each(w.expr.match.bool.source.match(/\w+/g),function(e,t){var n=ht[t]||w.find.attr;ht[t]=function(e,t,r){var i,o,a=t.toLowerCase();return r||(o=ht[a],ht[a]=i,i=null!=n(e,t,r)?a:null,ht[a]=o),i}});var gt=/^(?:input|select|textarea|button)$/i,yt=/^(?:a|area)$/i;w.fn.extend({prop:function(e,t){return z(this,w.prop,e,t,arguments.length>1)},removeProp:function(e){return this.each(function(){delete this[w.propFix[e]||e]})}}),w.extend({prop:function(e,t,n){var r,i,o=e.nodeType;if(3!==o&&8!==o&&2!==o)return 1===o&&w.isXMLDoc(e)||(t=w.propFix[t]||t,i=w.propHooks[t]),void 0!==n?i&&"set"in i&&void 0!==(r=i.set(e,n,t))?r:e[t]=n:i&&"get"in i&&null!==(r=i.get(e,t))?r:e[t]},propHooks:{tabIndex:{get:function(e){var t=w.find.attr(e,"tabindex");return t?parseInt(t,10):gt.test(e.nodeName)||yt.test(e.nodeName)&&e.href?0:-1}}},propFix:{"for":"htmlFor","class":"className"}}),h.optSelected||(w.propHooks.selected={get:function(e){var t=e.parentNode;return t&&t.parentNode&&t.parentNode.selectedIndex,null},set:function(e){var t=e.parentNode;t&&(t.selectedIndex,t.parentNode&&t.parentNode.selectedIndex)}}),w.each(["tabIndex","readOnly","maxLength","cellSpacing","cellPadding","rowSpan","colSpan","useMap","frameBorder","contentEditable"],function(){w.propFix[this.toLowerCase()]=this});function vt(e){return(e.match(M)||[]).join(" ")}function mt(e){return e.getAttribute&&e.getAttribute("class")||""}function xt(e){return Array.isArray(e)?e:"string"==typeof e?e.match(M)||[]:[]}w.fn.extend({addClass:function(e){var t,n,r,i,o,a,s,u=0;if(g(e))return this.each(function(t){w(this).addClass(e.call(this,t,mt(this)))});if((t=xt(e)).length)while(n=this[u++])if(i=mt(n),r=1===n.nodeType&&" "+vt(i)+" "){a=0;while(o=t[a++])r.indexOf(" "+o+" ")<0&&(r+=o+" ");i!==(s=vt(r))&&n.setAttribute("class",s)}return this},removeClass:function(e){var t,n,r,i,o,a,s,u=0;if(g(e))return this.each(function(t){w(this).removeClass(e.call(this,t,mt(this)))});if(!arguments.length)return this.attr("class","");if((t=xt(e)).length)while(n=this[u++])if(i=mt(n),r=1===n.nodeType&&" "+vt(i)+" "){a=0;while(o=t[a++])while(r.indexOf(" "+o+" ")>-1)r=r.replace(" "+o+" "," ");i!==(s=vt(r))&&n.setAttribute("class",s)}return this},toggleClass:function(e,t){var n=typeof e,r="string"===n||Array.isArray(e);return"boolean"==typeof t&&r?t?this.addClass(e):this.removeClass(e):g(e)?this.each(function(n){w(this).toggleClass(e.call(this,n,mt(this),t),t)}):this.each(function(){var t,i,o,a;if(r){i=0,o=w(this),a=xt(e);while(t=a[i++])o.hasClass(t)?o.removeClass(t):o.addClass(t)}else void 0!==e&&"boolean"!==n||((t=mt(this))&&J.set(this,"__className__",t),this.setAttribute&&this.setAttribute("class",t||!1===e?"":J.get(this,"__className__")||""))})},hasClass:function(e){var t,n,r=0;t=" "+e+" ";while(n=this[r++])if(1===n.nodeType&&(" "+vt(mt(n))+" ").indexOf(t)>-1)return!0;return!1}});var bt=/\r/g;w.fn.extend({val:function(e){var t,n,r,i=this[0];{if(arguments.length)return r=g(e),this.each(function(n){var i;1===this.nodeType&&(null==(i=r?e.call(this,n,w(this).val()):e)?i="":"number"==typeof i?i+="":Array.isArray(i)&&(i=w.map(i,function(e){return null==e?"":e+""})),(t=w.valHooks[this.type]||w.valHooks[this.nodeName.toLowerCase()])&&"set"in t&&void 0!==t.set(this,i,"value")||(this.value=i))});if(i)return(t=w.valHooks[i.type]||w.valHooks[i.nodeName.toLowerCase()])&&"get"in t&&void 0!==(n=t.get(i,"value"))?n:"string"==typeof(n=i.value)?n.replace(bt,""):null==n?"":n}}}),w.extend({valHooks:{option:{get:function(e){var t=w.find.attr(e,"value");return null!=t?t:vt(w.text(e))}},select:{get:function(e){var t,n,r,i=e.options,o=e.selectedIndex,a="select-one"===e.type,s=a?null:[],u=a?o+1:i.length;for(r=o<0?u:a?o:0;r<u;r++)if(((n=i[r]).selected||r===o)&&!n.disabled&&(!n.parentNode.disabled||!N(n.parentNode,"optgroup"))){if(t=w(n).val(),a)return t;s.push(t)}return s},set:function(e,t){var n,r,i=e.options,o=w.makeArray(t),a=i.length;while(a--)((r=i[a]).selected=w.inArray(w.valHooks.option.get(r),o)>-1)&&(n=!0);return n||(e.selectedIndex=-1),o}}}}),w.each(["radio","checkbox"],function(){w.valHooks[this]={set:function(e,t){if(Array.isArray(t))return e.checked=w.inArray(w(e).val(),t)>-1}},h.checkOn||(w.valHooks[this].get=function(e){return null===e.getAttribute("value")?"on":e.value})}),h.focusin="onfocusin"in e;var wt=/^(?:focusinfocus|focusoutblur)$/,Tt=function(e){e.stopPropagation()};w.extend(w.event,{trigger:function(t,n,i,o){var a,s,u,l,c,p,d,h,v=[i||r],m=f.call(t,"type")?t.type:t,x=f.call(t,"namespace")?t.namespace.split("."):[];if(s=h=u=i=i||r,3!==i.nodeType&&8!==i.nodeType&&!wt.test(m+w.event.triggered)&&(m.indexOf(".")>-1&&(m=(x=m.split(".")).shift(),x.sort()),c=m.indexOf(":")<0&&"on"+m,t=t[w.expando]?t:new w.Event(m,"object"==typeof t&&t),t.isTrigger=o?2:3,t.namespace=x.join("."),t.rnamespace=t.namespace?new RegExp("(^|\\.)"+x.join("\\.(?:.*\\.|)")+"(\\.|$)"):null,t.result=void 0,t.target||(t.target=i),n=null==n?[t]:w.makeArray(n,[t]),d=w.event.special[m]||{},o||!d.trigger||!1!==d.trigger.apply(i,n))){if(!o&&!d.noBubble&&!y(i)){for(l=d.delegateType||m,wt.test(l+m)||(s=s.parentNode);s;s=s.parentNode)v.push(s),u=s;u===(i.ownerDocument||r)&&v.push(u.defaultView||u.parentWindow||e)}a=0;while((s=v[a++])&&!t.isPropagationStopped())h=s,t.type=a>1?l:d.bindType||m,(p=(J.get(s,"events")||{})[t.type]&&J.get(s,"handle"))&&p.apply(s,n),(p=c&&s[c])&&p.apply&&Y(s)&&(t.result=p.apply(s,n),!1===t.result&&t.preventDefault());return t.type=m,o||t.isDefaultPrevented()||d._default&&!1!==d._default.apply(v.pop(),n)||!Y(i)||c&&g(i[m])&&!y(i)&&((u=i[c])&&(i[c]=null),w.event.triggered=m,t.isPropagationStopped()&&h.addEventListener(m,Tt),i[m](),t.isPropagationStopped()&&h.removeEventListener(m,Tt),w.event.triggered=void 0,u&&(i[c]=u)),t.result}},simulate:function(e,t,n){var r=w.extend(new w.Event,n,{type:e,isSimulated:!0});w.event.trigger(r,null,t)}}),w.fn.extend({trigger:function(e,t){return this.each(function(){w.event.trigger(e,t,this)})},triggerHandler:function(e,t){var n=this[0];if(n)return w.event.trigger(e,t,n,!0)}}),h.focusin||w.each({focus:"focusin",blur:"focusout"},function(e,t){var n=function(e){w.event.simulate(t,e.target,w.event.fix(e))};w.event.special[t]={setup:function(){var r=this.ownerDocument||this,i=J.access(r,t);i||r.addEventListener(e,n,!0),J.access(r,t,(i||0)+1)},teardown:function(){var r=this.ownerDocument||this,i=J.access(r,t)-1;i?J.access(r,t,i):(r.removeEventListener(e,n,!0),J.remove(r,t))}}});var Ct=e.location,Et=Date.now(),kt=/\?/;w.parseXML=function(t){var n;if(!t||"string"!=typeof t)return null;try{n=(new e.DOMParser).parseFromString(t,"text/xml")}catch(e){n=void 0}return n&&!n.getElementsByTagName("parsererror").length||w.error("Invalid XML: "+t),n};var St=/\[\]$/,Dt=/\r?\n/g,Nt=/^(?:submit|button|image|reset|file)$/i,At=/^(?:input|select|textarea|keygen)/i;function jt(e,t,n,r){var i;if(Array.isArray(t))w.each(t,function(t,i){n||St.test(e)?r(e,i):jt(e+"["+("object"==typeof i&&null!=i?t:"")+"]",i,n,r)});else if(n||"object"!==x(t))r(e,t);else for(i in t)jt(e+"["+i+"]",t[i],n,r)}w.param=function(e,t){var n,r=[],i=function(e,t){var n=g(t)?t():t;r[r.length]=encodeURIComponent(e)+"="+encodeURIComponent(null==n?"":n)};if(Array.isArray(e)||e.jquery&&!w.isPlainObject(e))w.each(e,function(){i(this.name,this.value)});else for(n in e)jt(n,e[n],t,i);return r.join("&")},w.fn.extend({serialize:function(){return w.param(this.serializeArray())},serializeArray:function(){return this.map(function(){var e=w.prop(this,"elements");return e?w.makeArray(e):this}).filter(function(){var e=this.type;return this.name&&!w(this).is(":disabled")&&At.test(this.nodeName)&&!Nt.test(e)&&(this.checked||!pe.test(e))}).map(function(e,t){var n=w(this).val();return null==n?null:Array.isArray(n)?w.map(n,function(e){return{name:t.name,value:e.replace(Dt,"\r\n")}}):{name:t.name,value:n.replace(Dt,"\r\n")}}).get()}});var qt=/%20/g,Lt=/#.*$/,Ht=/([?&])_=[^&]*/,Ot=/^(.*?):[ \t]*([^\r\n]*)$/gm,Pt=/^(?:about|app|app-storage|.+-extension|file|res|widget):$/,Mt=/^(?:GET|HEAD)$/,Rt=/^\/\//,It={},Wt={},$t="*/".concat("*"),Bt=r.createElement("a");Bt.href=Ct.href;function Ft(e){return function(t,n){"string"!=typeof t&&(n=t,t="*");var r,i=0,o=t.toLowerCase().match(M)||[];if(g(n))while(r=o[i++])"+"===r[0]?(r=r.slice(1)||"*",(e[r]=e[r]||[]).unshift(n)):(e[r]=e[r]||[]).push(n)}}function _t(e,t,n,r){var i={},o=e===Wt;function a(s){var u;return i[s]=!0,w.each(e[s]||[],function(e,s){var l=s(t,n,r);return"string"!=typeof l||o||i[l]?o?!(u=l):void 0:(t.dataTypes.unshift(l),a(l),!1)}),u}return a(t.dataTypes[0])||!i["*"]&&a("*")}function zt(e,t){var n,r,i=w.ajaxSettings.flatOptions||{};for(n in t)void 0!==t[n]&&((i[n]?e:r||(r={}))[n]=t[n]);return r&&w.extend(!0,e,r),e}function Xt(e,t,n){var r,i,o,a,s=e.contents,u=e.dataTypes;while("*"===u[0])u.shift(),void 0===r&&(r=e.mimeType||t.getResponseHeader("Content-Type"));if(r)for(i in s)if(s[i]&&s[i].test(r)){u.unshift(i);break}if(u[0]in n)o=u[0];else{for(i in n){if(!u[0]||e.converters[i+" "+u[0]]){o=i;break}a||(a=i)}o=o||a}if(o)return o!==u[0]&&u.unshift(o),n[o]}function Ut(e,t,n,r){var i,o,a,s,u,l={},c=e.dataTypes.slice();if(c[1])for(a in e.converters)l[a.toLowerCase()]=e.converters[a];o=c.shift();while(o)if(e.responseFields[o]&&(n[e.responseFields[o]]=t),!u&&r&&e.dataFilter&&(t=e.dataFilter(t,e.dataType)),u=o,o=c.shift())if("*"===o)o=u;else if("*"!==u&&u!==o){if(!(a=l[u+" "+o]||l["* "+o]))for(i in l)if((s=i.split(" "))[1]===o&&(a=l[u+" "+s[0]]||l["* "+s[0]])){!0===a?a=l[i]:!0!==l[i]&&(o=s[0],c.unshift(s[1]));break}if(!0!==a)if(a&&e["throws"])t=a(t);else try{t=a(t)}catch(e){return{state:"parsererror",error:a?e:"No conversion from "+u+" to "+o}}}return{state:"success",data:t}}w.extend({active:0,lastModified:{},etag:{},ajaxSettings:{url:Ct.href,type:"GET",isLocal:Pt.test(Ct.protocol),global:!0,processData:!0,async:!0,contentType:"application/x-www-form-urlencoded; charset=UTF-8",accepts:{"*":$t,text:"text/plain",html:"text/html",xml:"application/xml, text/xml",json:"application/json, text/javascript"},contents:{xml:/\bxml\b/,html:/\bhtml/,json:/\bjson\b/},responseFields:{xml:"responseXML",text:"responseText",json:"responseJSON"},converters:{"* text":String,"text html":!0,"text json":JSON.parse,"text xml":w.parseXML},flatOptions:{url:!0,context:!0}},ajaxSetup:function(e,t){return t?zt(zt(e,w.ajaxSettings),t):zt(w.ajaxSettings,e)},ajaxPrefilter:Ft(It),ajaxTransport:Ft(Wt),ajax:function(t,n){"object"==typeof t&&(n=t,t=void 0),n=n||{};var i,o,a,s,u,l,c,f,p,d,h=w.ajaxSetup({},n),g=h.context||h,y=h.context&&(g.nodeType||g.jquery)?w(g):w.event,v=w.Deferred(),m=w.Callbacks("once memory"),x=h.statusCode||{},b={},T={},C="canceled",E={readyState:0,getResponseHeader:function(e){var t;if(c){if(!s){s={};while(t=Ot.exec(a))s[t[1].toLowerCase()]=t[2]}t=s[e.toLowerCase()]}return null==t?null:t},getAllResponseHeaders:function(){return c?a:null},setRequestHeader:function(e,t){return null==c&&(e=T[e.toLowerCase()]=T[e.toLowerCase()]||e,b[e]=t),this},overrideMimeType:function(e){return null==c&&(h.mimeType=e),this},statusCode:function(e){var t;if(e)if(c)E.always(e[E.status]);else for(t in e)x[t]=[x[t],e[t]];return this},abort:function(e){var t=e||C;return i&&i.abort(t),k(0,t),this}};if(v.promise(E),h.url=((t||h.url||Ct.href)+"").replace(Rt,Ct.protocol+"//"),h.type=n.method||n.type||h.method||h.type,h.dataTypes=(h.dataType||"*").toLowerCase().match(M)||[""],null==h.crossDomain){l=r.createElement("a");try{l.href=h.url,l.href=l.href,h.crossDomain=Bt.protocol+"//"+Bt.host!=l.protocol+"//"+l.host}catch(e){h.crossDomain=!0}}if(h.data&&h.processData&&"string"!=typeof h.data&&(h.data=w.param(h.data,h.traditional)),_t(It,h,n,E),c)return E;(f=w.event&&h.global)&&0==w.active++&&w.event.trigger("ajaxStart"),h.type=h.type.toUpperCase(),h.hasContent=!Mt.test(h.type),o=h.url.replace(Lt,""),h.hasContent?h.data&&h.processData&&0===(h.contentType||"").indexOf("application/x-www-form-urlencoded")&&(h.data=h.data.replace(qt,"+")):(d=h.url.slice(o.length),h.data&&(h.processData||"string"==typeof h.data)&&(o+=(kt.test(o)?"&":"?")+h.data,delete h.data),!1===h.cache&&(o=o.replace(Ht,"$1"),d=(kt.test(o)?"&":"?")+"_="+Et+++d),h.url=o+d),h.ifModified&&(w.lastModified[o]&&E.setRequestHeader("If-Modified-Since",w.lastModified[o]),w.etag[o]&&E.setRequestHeader("If-None-Match",w.etag[o])),(h.data&&h.hasContent&&!1!==h.contentType||n.contentType)&&E.setRequestHeader("Content-Type",h.contentType),E.setRequestHeader("Accept",h.dataTypes[0]&&h.accepts[h.dataTypes[0]]?h.accepts[h.dataTypes[0]]+("*"!==h.dataTypes[0]?", "+$t+"; q=0.01":""):h.accepts["*"]);for(p in h.headers)E.setRequestHeader(p,h.headers[p]);if(h.beforeSend&&(!1===h.beforeSend.call(g,E,h)||c))return E.abort();if(C="abort",m.add(h.complete),E.done(h.success),E.fail(h.error),i=_t(Wt,h,n,E)){if(E.readyState=1,f&&y.trigger("ajaxSend",[E,h]),c)return E;h.async&&h.timeout>0&&(u=e.setTimeout(function(){E.abort("timeout")},h.timeout));try{c=!1,i.send(b,k)}catch(e){if(c)throw e;k(-1,e)}}else k(-1,"No Transport");function k(t,n,r,s){var l,p,d,b,T,C=n;c||(c=!0,u&&e.clearTimeout(u),i=void 0,a=s||"",E.readyState=t>0?4:0,l=t>=200&&t<300||304===t,r&&(b=Xt(h,E,r)),b=Ut(h,b,E,l),l?(h.ifModified&&((T=E.getResponseHeader("Last-Modified"))&&(w.lastModified[o]=T),(T=E.getResponseHeader("etag"))&&(w.etag[o]=T)),204===t||"HEAD"===h.type?C="nocontent":304===t?C="notmodified":(C=b.state,p=b.data,l=!(d=b.error))):(d=C,!t&&C||(C="error",t<0&&(t=0))),E.status=t,E.statusText=(n||C)+"",l?v.resolveWith(g,[p,C,E]):v.rejectWith(g,[E,C,d]),E.statusCode(x),x=void 0,f&&y.trigger(l?"ajaxSuccess":"ajaxError",[E,h,l?p:d]),m.fireWith(g,[E,C]),f&&(y.trigger("ajaxComplete",[E,h]),--w.active||w.event.trigger("ajaxStop")))}return E},getJSON:function(e,t,n){return w.get(e,t,n,"json")},getScript:function(e,t){return w.get(e,void 0,t,"script")}}),w.each(["get","post"],function(e,t){w[t]=function(e,n,r,i){return g(n)&&(i=i||r,r=n,n=void 0),w.ajax(w.extend({url:e,type:t,dataType:i,data:n,success:r},w.isPlainObject(e)&&e))}}),w._evalUrl=function(e){return w.ajax({url:e,type:"GET",dataType:"script",cache:!0,async:!1,global:!1,"throws":!0})},w.fn.extend({wrapAll:function(e){var t;return this[0]&&(g(e)&&(e=e.call(this[0])),t=w(e,this[0].ownerDocument).eq(0).clone(!0),this[0].parentNode&&t.insertBefore(this[0]),t.map(function(){var e=this;while(e.firstElementChild)e=e.firstElementChild;return e}).append(this)),this},wrapInner:function(e){return g(e)?this.each(function(t){w(this).wrapInner(e.call(this,t))}):this.each(function(){var t=w(this),n=t.contents();n.length?n.wrapAll(e):t.append(e)})},wrap:function(e){var t=g(e);return this.each(function(n){w(this).wrapAll(t?e.call(this,n):e)})},unwrap:function(e){return this.parent(e).not("body").each(function(){w(this).replaceWith(this.childNodes)}),this}}),w.expr.pseudos.hidden=function(e){return!w.expr.pseudos.visible(e)},w.expr.pseudos.visible=function(e){return!!(e.offsetWidth||e.offsetHeight||e.getClientRects().length)},w.ajaxSettings.xhr=function(){try{return new e.XMLHttpRequest}catch(e){}};var Vt={0:200,1223:204},Gt=w.ajaxSettings.xhr();h.cors=!!Gt&&"withCredentials"in Gt,h.ajax=Gt=!!Gt,w.ajaxTransport(function(t){var n,r;if(h.cors||Gt&&!t.crossDomain)return{send:function(i,o){var a,s=t.xhr();if(s.open(t.type,t.url,t.async,t.username,t.password),t.xhrFields)for(a in t.xhrFields)s[a]=t.xhrFields[a];t.mimeType&&s.overrideMimeType&&s.overrideMimeType(t.mimeType),t.crossDomain||i["X-Requested-With"]||(i["X-Requested-With"]="XMLHttpRequest");for(a in i)s.setRequestHeader(a,i[a]);n=function(e){return function(){n&&(n=r=s.onload=s.onerror=s.onabort=s.ontimeout=s.onreadystatechange=null,"abort"===e?s.abort():"error"===e?"number"!=typeof s.status?o(0,"error"):o(s.status,s.statusText):o(Vt[s.status]||s.status,s.statusText,"text"!==(s.responseType||"text")||"string"!=typeof s.responseText?{binary:s.response}:{text:s.responseText},s.getAllResponseHeaders()))}},s.onload=n(),r=s.onerror=s.ontimeout=n("error"),void 0!==s.onabort?s.onabort=r:s.onreadystatechange=function(){4===s.readyState&&e.setTimeout(function(){n&&r()})},n=n("abort");try{s.send(t.hasContent&&t.data||null)}catch(e){if(n)throw e}},abort:function(){n&&n()}}}),w.ajaxPrefilter(function(e){e.crossDomain&&(e.contents.script=!1)}),w.ajaxSetup({accepts:{script:"text/javascript, application/javascript, application/ecmascript, application/x-ecmascript"},contents:{script:/\b(?:java|ecma)script\b/},converters:{"text script":function(e){return w.globalEval(e),e}}}),w.ajaxPrefilter("script",function(e){void 0===e.cache&&(e.cache=!1),e.crossDomain&&(e.type="GET")}),w.ajaxTransport("script",function(e){if(e.crossDomain){var t,n;return{send:function(i,o){t=w("<script>").prop({charset:e.scriptCharset,src:e.url}).on("load error",n=function(e){t.remove(),n=null,e&&o("error"===e.type?404:200,e.type)}),r.head.appendChild(t[0])},abort:function(){n&&n()}}}});var Yt=[],Qt=/(=)\?(?=&|$)|\?\?/;w.ajaxSetup({jsonp:"callback",jsonpCallback:function(){var e=Yt.pop()||w.expando+"_"+Et++;return this[e]=!0,e}}),w.ajaxPrefilter("json jsonp",function(t,n,r){var i,o,a,s=!1!==t.jsonp&&(Qt.test(t.url)?"url":"string"==typeof t.data&&0===(t.contentType||"").indexOf("application/x-www-form-urlencoded")&&Qt.test(t.data)&&"data");if(s||"jsonp"===t.dataTypes[0])return i=t.jsonpCallback=g(t.jsonpCallback)?t.jsonpCallback():t.jsonpCallback,s?t[s]=t[s].replace(Qt,"$1"+i):!1!==t.jsonp&&(t.url+=(kt.test(t.url)?"&":"?")+t.jsonp+"="+i),t.converters["script json"]=function(){return a||w.error(i+" was not called"),a[0]},t.dataTypes[0]="json",o=e[i],e[i]=function(){a=arguments},r.always(function(){void 0===o?w(e).removeProp(i):e[i]=o,t[i]&&(t.jsonpCallback=n.jsonpCallback,Yt.push(i)),a&&g(o)&&o(a[0]),a=o=void 0}),"script"}),h.createHTMLDocument=function(){var e=r.implementation.createHTMLDocument("").body;return e.innerHTML="<form></form><form></form>",2===e.childNodes.length}(),w.parseHTML=function(e,t,n){if("string"!=typeof e)return[];"boolean"==typeof t&&(n=t,t=!1);var i,o,a;return t||(h.createHTMLDocument?((i=(t=r.implementation.createHTMLDocument("")).createElement("base")).href=r.location.href,t.head.appendChild(i)):t=r),o=A.exec(e),a=!n&&[],o?[t.createElement(o[1])]:(o=xe([e],t,a),a&&a.length&&w(a).remove(),w.merge([],o.childNodes))},w.fn.load=function(e,t,n){var r,i,o,a=this,s=e.indexOf(" ");return s>-1&&(r=vt(e.slice(s)),e=e.slice(0,s)),g(t)?(n=t,t=void 0):t&&"object"==typeof t&&(i="POST"),a.length>0&&w.ajax({url:e,type:i||"GET",dataType:"html",data:t}).done(function(e){o=arguments,a.html(r?w("<div>").append(w.parseHTML(e)).find(r):e)}).always(n&&function(e,t){a.each(function(){n.apply(this,o||[e.responseText,t,e])})}),this},w.each(["ajaxStart","ajaxStop","ajaxComplete","ajaxError","ajaxSuccess","ajaxSend"],function(e,t){w.fn[t]=function(e){return this.on(t,e)}}),w.expr.pseudos.animated=function(e){return w.grep(w.timers,function(t){return e===t.elem}).length},w.offset={setOffset:function(e,t,n){var r,i,o,a,s,u,l,c=w.css(e,"position"),f=w(e),p={};"static"===c&&(e.style.position="relative"),s=f.offset(),o=w.css(e,"top"),u=w.css(e,"left"),(l=("absolute"===c||"fixed"===c)&&(o+u).indexOf("auto")>-1)?(a=(r=f.position()).top,i=r.left):(a=parseFloat(o)||0,i=parseFloat(u)||0),g(t)&&(t=t.call(e,n,w.extend({},s))),null!=t.top&&(p.top=t.top-s.top+a),null!=t.left&&(p.left=t.left-s.left+i),"using"in t?t.using.call(e,p):f.css(p)}},w.fn.extend({offset:function(e){if(arguments.length)return void 0===e?this:this.each(function(t){w.offset.setOffset(this,e,t)});var t,n,r=this[0];if(r)return r.getClientRects().length?(t=r.getBoundingClientRect(),n=r.ownerDocument.defaultView,{top:t.top+n.pageYOffset,left:t.left+n.pageXOffset}):{top:0,left:0}},position:function(){if(this[0]){var e,t,n,r=this[0],i={top:0,left:0};if("fixed"===w.css(r,"position"))t=r.getBoundingClientRect();else{t=this.offset(),n=r.ownerDocument,e=r.offsetParent||n.documentElement;while(e&&(e===n.body||e===n.documentElement)&&"static"===w.css(e,"position"))e=e.parentNode;e&&e!==r&&1===e.nodeType&&((i=w(e).offset()).top+=w.css(e,"borderTopWidth",!0),i.left+=w.css(e,"borderLeftWidth",!0))}return{top:t.top-i.top-w.css(r,"marginTop",!0),left:t.left-i.left-w.css(r,"marginLeft",!0)}}},offsetParent:function(){return this.map(function(){var e=this.offsetParent;while(e&&"static"===w.css(e,"position"))e=e.offsetParent;return e||be})}}),w.each({scrollLeft:"pageXOffset",scrollTop:"pageYOffset"},function(e,t){var n="pageYOffset"===t;w.fn[e]=function(r){return z(this,function(e,r,i){var o;if(y(e)?o=e:9===e.nodeType&&(o=e.defaultView),void 0===i)return o?o[t]:e[r];o?o.scrollTo(n?o.pageXOffset:i,n?i:o.pageYOffset):e[r]=i},e,r,arguments.length)}}),w.each(["top","left"],function(e,t){w.cssHooks[t]=_e(h.pixelPosition,function(e,n){if(n)return n=Fe(e,t),We.test(n)?w(e).position()[t]+"px":n})}),w.each({Height:"height",Width:"width"},function(e,t){w.each({padding:"inner"+e,content:t,"":"outer"+e},function(n,r){w.fn[r]=function(i,o){var a=arguments.length&&(n||"boolean"!=typeof i),s=n||(!0===i||!0===o?"margin":"border");return z(this,function(t,n,i){var o;return y(t)?0===r.indexOf("outer")?t["inner"+e]:t.document.documentElement["client"+e]:9===t.nodeType?(o=t.documentElement,Math.max(t.body["scroll"+e],o["scroll"+e],t.body["offset"+e],o["offset"+e],o["client"+e])):void 0===i?w.css(t,n,s):w.style(t,n,i,s)},t,a?i:void 0,a)}})}),w.each("blur focus focusin focusout resize scroll click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup contextmenu".split(" "),function(e,t){w.fn[t]=function(e,n){return arguments.length>0?this.on(t,null,e,n):this.trigger(t)}}),w.fn.extend({hover:function(e,t){return this.mouseenter(e).mouseleave(t||e)}}),w.fn.extend({bind:function(e,t,n){return this.on(e,null,t,n)},unbind:function(e,t){return this.off(e,null,t)},delegate:function(e,t,n,r){return this.on(t,e,n,r)},undelegate:function(e,t,n){return 1===arguments.length?this.off(e,"**"):this.off(t,e||"**",n)}}),w.proxy=function(e,t){var n,r,i;if("string"==typeof t&&(n=e[t],t=e,e=n),g(e))return r=o.call(arguments,2),i=function(){return e.apply(t||this,r.concat(o.call(arguments)))},i.guid=e.guid=e.guid||w.guid++,i},w.holdReady=function(e){e?w.readyWait++:w.ready(!0)},w.isArray=Array.isArray,w.parseJSON=JSON.parse,w.nodeName=N,w.isFunction=g,w.isWindow=y,w.camelCase=G,w.type=x,w.now=Date.now,w.isNumeric=function(e){var t=w.type(e);return("number"===t||"string"===t)&&!isNaN(e-parseFloat(e))},"function"==typeof define&&define.amd&&define("jquery",[],function(){return w});var Jt=e.jQuery,Kt=e.$;return w.noConflict=function(t){return e.$===w&&(e.$=Kt),t&&e.jQuery===w&&(e.jQuery=Jt),w},t||(e.jQuery=e.$=w),w});
 
@@ -23724,32 +23724,28 @@ $.Tile.prototype = {
                 // this.size is used by overlays which don't get scaled in at
                 // least one direction when this.checkResize is set to false.
                 this.size = $.getElementSize(element);
-              }
-              
-              var positionAndSize = this._getOverlayPositionAndSize(viewport);
-              
-              var position = positionAndSize.position;
-              var size = this.size = positionAndSize.size;
-              var rotate = positionAndSize.rotate;
-              
-              console.log(element.offsetWidth, size.x);
+            }
+
+            var positionAndSize = this._getOverlayPositionAndSize(viewport);
+
+            var position = positionAndSize.position;
+            var size = this.size = positionAndSize.size;
+            var rotate = positionAndSize.rotate;
+
             // call the onDraw callback if it exists to allow one to overwrite
             // the drawing/positioning/sizing of the overlay
             if (this.onDraw) {
                 this.onDraw(position, size, this.element);
             } else {
-              console.log('fontsize', `${parseInt(element.style.fontSize.replace('px', '')) + (element.offsetWidth - size.x)}px`);
                 var style = this.style;
                 style.left = position.x + "px";
                 style.top = position.y + "px";
                 style.fontSize = `${size.y + (element.offsetWidth - size.x)}px`;
-                // style.fontSize = `${size.y}px`;
                 if (this.width !== null) {
                     style.width = size.x + "px";
                 }
                 if (this.height !== null) {
                     style.height = size.y + "px";
-                    // style.zIndex = 999999999999999999999999;
                 }
                 var transformOriginProp = $.getCssPropertyWithVendorPrefix(
                     'transformOrigin');
@@ -29110,30 +29106,30 @@ escape:"esc",plus:"+",mod:/Mac|iPod|iPhone|iPad/.test(navigator.platform)?"meta"
 this._directMap={};return this};e.prototype.stopCallback=function(a,b){return-1<(" "+b.className+" ").indexOf(" mousetrap ")||C(b,this.target)?!1:"INPUT"==b.tagName||"SELECT"==b.tagName||"TEXTAREA"==b.tagName||b.isContentEditable};e.prototype.handleKey=function(){return this._handleKey.apply(this,arguments)};e.addKeycodes=function(a){for(var b in a)a.hasOwnProperty(b)&&(m[b]=a[b]);n=null};e.init=function(){var a=e(t),b;for(b in a)"_"!==b.charAt(0)&&(e[b]=function(b){return function(){return a[b].apply(a,
 arguments)}}(b))};e.init();p.Mousetrap=e;"undefined"!==typeof module&&module.exports&&(module.exports=e);"function"===typeof define&&define.amd&&define(function(){return e})}})("undefined"!==typeof window?window:null,"undefined"!==typeof window?document:null);
 
-var Isfahan = function(configObject) {
+var Isfahan = function (configObject) {
   var _this = this,
 
-  containerSize = function(containerId) {
-    return [document.getElementById(containerId).offsetWidth,
-      document.getElementById(containerId).offsetHeight]
-  },
-  containerId = configObject.containerId,
-  pad = d3_layout_cellPadNull,
-  round = Math.round,
-  padding = configObject.padding,
-  hierarchy = d3.layout.hierarchy(),
-  layoutDescription = configObject.layoutDescription;
+    containerSize = function (containerId) {
+      return [document.getElementById(containerId).offsetWidth,
+        document.getElementById(containerId).offsetHeight];
+    },
+    containerId = configObject.containerId,
+    pad = d3_layout_cellPadNull,
+    round = Math.round,
+    padding = configObject.padding,
+    hierarchy = d3.layout.hierarchy(),
+    layoutDescription = configObject.layoutDescription;
 
   function calculateLayout(node) {
     var children = node.children;
 
     if (children && children.length) {
       var rect = pad(node),
-      type = node.type,
-      group = [],
-      remaining = children.slice(), // copy-on-write
-      child,
-      n;
+        type = node.type,
+        group = [],
+        remaining = children.slice(), // copy-on-write
+        child,
+        n;
 
       while ((n = remaining.length) > 0) {
         group.push(child = remaining[n - 1]);
@@ -29141,9 +29137,9 @@ var Isfahan = function(configObject) {
       }
 
       position(group, node.type, rect);
-      children.forEach(function(child, index) {
-        child.address = node.address.concat("." + child.type + (index + 1));
-      })
+      children.forEach(function (child, index) {
+        child.address = node.address.concat('.' + child.type + (index + 1));
+      });
       children.forEach(calculateLayout);
     }
   }
@@ -29153,34 +29149,33 @@ var Isfahan = function(configObject) {
     // console.log('%c\n'+' parent ' + groupType + ' rect is: ', 'background: #222; color: #EFEFEF; font-family: helvetica neue; font-size:20px; padding: 0 7px 3px 0;');
     // console.log(rect);
     var i = -1,
-    row = (groupType === "row") ? false : true, // for ternary statements later, specifies whether that particular child is a row or not. Allows easy, centralised description of the parameter calculations that can be switched from row to column.
-    n = group.length,
-    x = rect.x,
-    y = rect.y,
-    o;
+      row = (groupType === "row") ? false : true, // for ternary statements later, specifies whether that particular child is a row or not. Allows easy, centralised description of the parameter calculations that can be switched from row to column.
+      n = group.length,
+      x = rect.x,
+      y = rect.y,
+      o;
     var offset = 0;
     while (++i < n) {
-      o = group[n-(i+1)],
+      o = group[n - (i + 1)],
       d = divisor(o, row, rect, group, n),
       o.id = typeof o.id !== 'undefined' ? o.id : genUuid(),
-      o.x = row ?  x : x + offset,
+      o.x = row ? x : x + offset,
       o.y = row ? y + offset : y,
-      o.dx = row ? rect.dx : rect.dx/d,
-      o.dy = row ? rect.dy/d : rect.dy,
+      o.dx = row ? rect.dx : rect.dx / d,
+      o.dy = row ? rect.dy / d : rect.dy,
       offset += row ? o.dy : o.dx;
       // console.log({x:o.x, y: o.y, width:o.dx, height: o.dy});
     }
   }
 
   function divisor(node, row, rect, group, n) {
-
     var old = false,
-    dimension = row ? 'dy' : 'dx',
-    total = rect[dimension],
-    divisor;
+      dimension = row ? 'dy' : 'dx',
+      total = rect[dimension],
+      divisor;
     // if not already set, divide equally.
-    group.forEach(function(item) {
-      if (!item[dimension] === undefined) { 
+    group.forEach(function (item) {
+      if (!item[dimension] === undefined) {
         old = true;
       }
     });
@@ -29188,57 +29183,56 @@ var Isfahan = function(configObject) {
     if (old) {
       console.log('preserved');
       var sum = group.reduce(
-        function(previousValue, currentValue, index, array) {
-        return previousValue[dimension] + currentValue[dimension];
-      });
+        function (previousValue, currentValue, index, array) {
+          return previousValue[dimension] + currentValue[dimension];
+        });
       console.log('sum: ' + sum);
-      
-      divisor = (node[dimension]/sum)*total;
-      console.log("divisor: "+divisor);
+
+      divisor = (node[dimension] / sum) * total;
+      console.log('divisor: ' + divisor);
       return divisor;
-    } else {
-      return n;
     }
+    return n;
   }
 
   function isfahan(configObject) {
     var nodes = hierarchy(configObject.layoutDescription),
-    root = nodes[0];
-    size = (function(containerSelector) {
+      root = nodes[0];
+    size = (function (containerSelector) {
       var width = jQuery(containerSelector).width();
       var height = jQuery(containerSelector).height();
 
       return [width, height];
-    })(configObject.containerSelector);
+    }(configObject.containerSelector));
     root.x = 0;
     root.y = 0;
     root.dx = containerSize(containerId)[0];
     root.dy = containerSize(containerId)[1];
-    root.address = root.type + "1";
+    root.address = root.type + '1';
     root.id = root.id || genUuid();
 
     calculateLayout(root);
     isfahan.padding(padding);
-    nodes = nodes.map(function(node) {
+    nodes = nodes.map(function (node) {
       return merge(node, pad(node));
     });
 
     return nodes;
-  } 
+  }
 
-  isfahan.size = function(x) {
+  isfahan.size = function (x) {
     if (!arguments.length) return containerSize;
     containerSize = x;
     return isfahan;
   };
 
-  isfahan.round = function(x) {
+  isfahan.round = function (x) {
     if (!arguments.length) return round != Number;
     round = x ? Math.round : Number;
     return isfahan;
   };
 
-  isfahan.padding = function(x) {
+  isfahan.padding = function (x) {
     if (!arguments.length) return padding;
 
     function padFunction(node) {
@@ -29246,7 +29240,7 @@ var Isfahan = function(configObject) {
       console.log(p);
       return p == null
       ? d3_layout_cellPadNull(node)
-      : d3_layout_cellPad(node, typeof p === "number" ? [p, p, p, p] : p);
+      : d3_layout_cellPad(node, typeof p === 'number' ? [p, p, p, p] : p);
     }
 
     function padConstant(node) {
@@ -29255,57 +29249,53 @@ var Isfahan = function(configObject) {
 
     var type;
     pad = (padding = x) == null ? d3_layout_cellPadNull
-    : (type = typeof x) === "function" ? padFunction
-    : type === "number" ? (x = [x, x, x, x], padConstant)
+    : (type = typeof x) === 'function' ? padFunction
+    : type === 'number' ? (x = [x, x, x, x], padConstant)
     : padConstant;
     return isfahan;
   };
 
   function genUuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0,
+        v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
 
   function d3_layout_cellPadNull(node) {
-    return {x: node.x, y: node.y, dx: node.dx, dy: node.dy};
+    return { x: node.x, y: node.y, dx: node.dx, dy: node.dy };
   }
 
   function d3_layout_cellPad(node, padding) {
     var x = node.x + padding[3],
-    y = node.y + padding[0],
-    dx = node.dx - padding[1] - padding[3],
-    dy = node.dy - padding[0] - padding[2];
+      y = node.y + padding[0],
+      dx = node.dx - padding[1] - padding[3],
+      dy = node.dy - padding[0] - padding[2];
     if (dx < 0) { x += dx / 2; dx = 0; }
     if (dy < 0) { y += dy / 2; dy = 0; }
-    return {x: x, y: y, dx: dx, dy: dy};
+    return { x: x, y: y, dx: dx, dy: dy };
   }
-  
-  function merge(target, source) {
 
+  function merge(target, source) {
     /* Merges two (or more) objects,
        giving the last one precedence */
 
-    if ( typeof target !== 'object' ) {
+    if (typeof target !== 'object') {
       target = {};
     }
 
     for (var property in source) {
+      if (source.hasOwnProperty(property)) {
+        var sourceProperty = source[property];
 
-      if ( source.hasOwnProperty(property) ) {
-
-        var sourceProperty = source[ property ];
-
-        if ( typeof sourceProperty === 'object' ) {
-          target[ property ] = util.merge( target[ property ], sourceProperty );
+        if (typeof sourceProperty === 'object') {
+          target[property] = util.merge(target[property], sourceProperty);
           continue;
         }
 
-        target[ property ] = sourceProperty;
-
+        target[property] = sourceProperty;
       }
-
     }
 
     for (var a = 2, l = arguments.length; a < l; a++) {
@@ -29313,7 +29303,7 @@ var Isfahan = function(configObject) {
     }
 
     return target;
-  };
+  }
 
   // return d3.rebind(isfahan, hierarchy,"sort", "children", "value");
   return isfahan(configObject);
@@ -32082,8 +32072,61 @@ o.emit.apply(o,[t].concat(n))}),i.backendConnector.on("loaded",function(t){i.cac
 })(jQuery);
 
 /*! modernizr 3.3.1 (Custom Build) | MIT *
- * https://modernizr.com/download/?-cssfilters-printshiv-setclasses !*/
-!function(e,t,n){function r(e,t){return typeof e===t}function o(){var e,t,n,o,i,a,s;for(var l in E)if(E.hasOwnProperty(l)){if(e=[],t=E[l],t.name&&(e.push(t.name.toLowerCase()),t.options&&t.options.aliases&&t.options.aliases.length))for(n=0;n<t.options.aliases.length;n++)e.push(t.options.aliases[n].toLowerCase());for(o=r(t.fn,"function")?t.fn():t.fn,i=0;i<e.length;i++)a=e[i],s=a.split("."),1===s.length?Modernizr[s[0]]=o:(!Modernizr[s[0]]||Modernizr[s[0]]instanceof Boolean||(Modernizr[s[0]]=new Boolean(Modernizr[s[0]])),Modernizr[s[0]][s[1]]=o),y.push((o?"":"no-")+s.join("-"))}}function i(e){var t=C.className,n=Modernizr._config.classPrefix||"";if(b&&(t=t.baseVal),Modernizr._config.enableJSClass){var r=new RegExp("(^|\\s)"+n+"no-js(\\s|$)");t=t.replace(r,"$1"+n+"js$2")}Modernizr._config.enableClasses&&(t+=" "+n+e.join(" "+n),b?C.className.baseVal=t:C.className=t)}function a(){return"function"!=typeof t.createElement?t.createElement(arguments[0]):b?t.createElementNS.call(t,"http://www.w3.org/2000/svg",arguments[0]):t.createElement.apply(t,arguments)}function s(e,t){return!!~(""+e).indexOf(t)}function l(e){return e.replace(/([a-z])-([a-z])/g,function(e,t,n){return t+n.toUpperCase()}).replace(/^-/,"")}function u(e,t){return function(){return e.apply(t,arguments)}}function c(e,t,n){var o;for(var i in e)if(e[i]in t)return n===!1?e[i]:(o=t[e[i]],r(o,"function")?u(o,n||t):o);return!1}function f(e){return e.replace(/([A-Z])/g,function(e,t){return"-"+t.toLowerCase()}).replace(/^ms-/,"-ms-")}function d(){var e=t.body;return e||(e=a(b?"svg":"body"),e.fake=!0),e}function p(e,n,r,o){var i,s,l,u,c="modernizr",f=a("div"),p=d();if(parseInt(r,10))for(;r--;)l=a("div"),l.id=o?o[r]:c+(r+1),f.appendChild(l);return i=a("style"),i.type="text/css",i.id="s"+c,(p.fake?p:f).appendChild(i),p.appendChild(f),i.styleSheet?i.styleSheet.cssText=e:i.appendChild(t.createTextNode(e)),f.id=c,p.fake&&(p.style.background="",p.style.overflow="hidden",u=C.style.overflow,C.style.overflow="hidden",C.appendChild(p)),s=n(f,e),p.fake?(p.parentNode.removeChild(p),C.style.overflow=u,C.offsetHeight):f.parentNode.removeChild(f),!!s}function m(t,r){var o=t.length;if("CSS"in e&&"supports"in e.CSS){for(;o--;)if(e.CSS.supports(f(t[o]),r))return!0;return!1}if("CSSSupportsRule"in e){for(var i=[];o--;)i.push("("+f(t[o])+":"+r+")");return i=i.join(" or "),p("@supports ("+i+") { #modernizr { position: absolute; } }",function(e){return"absolute"==getComputedStyle(e,null).position})}return n}function h(e,t,o,i){function u(){f&&(delete z.style,delete z.modElem)}if(i=r(i,"undefined")?!1:i,!r(o,"undefined")){var c=m(e,o);if(!r(c,"undefined"))return c}for(var f,d,p,h,v,g=["modernizr","tspan","samp"];!z.style&&g.length;)f=!0,z.modElem=a(g.shift()),z.style=z.modElem.style;for(p=e.length,d=0;p>d;d++)if(h=e[d],v=z.style[h],s(h,"-")&&(h=l(h)),z.style[h]!==n){if(i||r(o,"undefined"))return u(),"pfx"==t?h:!0;try{z.style[h]=o}catch(y){}if(z.style[h]!=v)return u(),"pfx"==t?h:!0}return u(),!1}function v(e,t,n,o,i){var a=e.charAt(0).toUpperCase()+e.slice(1),s=(e+" "+T.join(a+" ")+a).split(" ");return r(t,"string")||r(t,"undefined")?h(s,t,o,i):(s=(e+" "+j.join(a+" ")+a).split(" "),c(s,t,n))}function g(e,t,r){return v(e,n,n,t,r)}var y=[],E=[],S={_version:"3.3.1",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,t){var n=this;setTimeout(function(){t(n[e])},0)},addTest:function(e,t,n){E.push({name:e,fn:t,options:n})},addAsyncTest:function(e){E.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=S,Modernizr=new Modernizr;var C=t.documentElement,b="svg"===C.nodeName.toLowerCase(),x=S._config.usePrefixes?" -webkit- -moz- -o- -ms- ".split(" "):["",""];S._prefixes=x;var w="CSS"in e&&"supports"in e.CSS,_="supportsCSS"in e;Modernizr.addTest("supports",w||_);b||!function(e,t){function n(e,t){var n=e.createElement("p"),r=e.getElementsByTagName("head")[0]||e.documentElement;return n.innerHTML="x<style>"+t+"</style>",r.insertBefore(n.lastChild,r.firstChild)}function r(){var e=w.elements;return"string"==typeof e?e.split(" "):e}function o(e,t){var n=w.elements;"string"!=typeof n&&(n=n.join(" ")),"string"!=typeof e&&(e=e.join(" ")),w.elements=n+" "+e,u(t)}function i(e){var t=x[e[C]];return t||(t={},b++,e[C]=b,x[b]=t),t}function a(e,n,r){if(n||(n=t),v)return n.createElement(e);r||(r=i(n));var o;return o=r.cache[e]?r.cache[e].cloneNode():S.test(e)?(r.cache[e]=r.createElem(e)).cloneNode():r.createElem(e),!o.canHaveChildren||E.test(e)||o.tagUrn?o:r.frag.appendChild(o)}function s(e,n){if(e||(e=t),v)return e.createDocumentFragment();n=n||i(e);for(var o=n.frag.cloneNode(),a=0,s=r(),l=s.length;l>a;a++)o.createElement(s[a]);return o}function l(e,t){t.cache||(t.cache={},t.createElem=e.createElement,t.createFrag=e.createDocumentFragment,t.frag=t.createFrag()),e.createElement=function(n){return w.shivMethods?a(n,e,t):t.createElem(n)},e.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+r().join().replace(/[\w\-:]+/g,function(e){return t.createElem(e),t.frag.createElement(e),'c("'+e+'")'})+");return n}")(w,t.frag)}function u(e){e||(e=t);var r=i(e);return!w.shivCSS||h||r.hasCSS||(r.hasCSS=!!n(e,"article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}")),v||l(e,r),e}function c(e){for(var t,n=e.getElementsByTagName("*"),o=n.length,i=RegExp("^(?:"+r().join("|")+")$","i"),a=[];o--;)t=n[o],i.test(t.nodeName)&&a.push(t.applyElement(f(t)));return a}function f(e){for(var t,n=e.attributes,r=n.length,o=e.ownerDocument.createElement(N+":"+e.nodeName);r--;)t=n[r],t.specified&&o.setAttribute(t.nodeName,t.nodeValue);return o.style.cssText=e.style.cssText,o}function d(e){for(var t,n=e.split("{"),o=n.length,i=RegExp("(^|[\\s,>+~])("+r().join("|")+")(?=[[\\s,>+~#.:]|$)","gi"),a="$1"+N+"\\:$2";o--;)t=n[o]=n[o].split("}"),t[t.length-1]=t[t.length-1].replace(i,a),n[o]=t.join("}");return n.join("{")}function p(e){for(var t=e.length;t--;)e[t].removeNode()}function m(e){function t(){clearTimeout(a._removeSheetTimer),r&&r.removeNode(!0),r=null}var r,o,a=i(e),s=e.namespaces,l=e.parentWindow;return!T||e.printShived?e:("undefined"==typeof s[N]&&s.add(N),l.attachEvent("onbeforeprint",function(){t();for(var i,a,s,l=e.styleSheets,u=[],f=l.length,p=Array(f);f--;)p[f]=l[f];for(;s=p.pop();)if(!s.disabled&&_.test(s.media)){try{i=s.imports,a=i.length}catch(m){a=0}for(f=0;a>f;f++)p.push(i[f]);try{u.push(s.cssText)}catch(m){}}u=d(u.reverse().join("")),o=c(e),r=n(e,u)}),l.attachEvent("onafterprint",function(){p(o),clearTimeout(a._removeSheetTimer),a._removeSheetTimer=setTimeout(t,500)}),e.printShived=!0,e)}var h,v,g="3.7.3",y=e.html5||{},E=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,S=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,C="_html5shiv",b=0,x={};!function(){try{var e=t.createElement("a");e.innerHTML="<xyz></xyz>",h="hidden"in e,v=1==e.childNodes.length||function(){t.createElement("a");var e=t.createDocumentFragment();return"undefined"==typeof e.cloneNode||"undefined"==typeof e.createDocumentFragment||"undefined"==typeof e.createElement}()}catch(n){h=!0,v=!0}}();var w={elements:y.elements||"abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output picture progress section summary template time video",version:g,shivCSS:y.shivCSS!==!1,supportsUnknownElements:v,shivMethods:y.shivMethods!==!1,type:"default",shivDocument:u,createElement:a,createDocumentFragment:s,addElements:o};e.html5=w,u(t);var _=/^$|\b(?:all|print)\b/,N="html5shiv",T=!v&&function(){var n=t.documentElement;return!("undefined"==typeof t.namespaces||"undefined"==typeof t.parentWindow||"undefined"==typeof n.applyElement||"undefined"==typeof n.removeNode||"undefined"==typeof e.attachEvent)}();w.type+=" print",w.shivPrint=m,m(t),"object"==typeof module&&module.exports&&(module.exports=w)}("undefined"!=typeof e?e:this,t);var N="Moz O ms Webkit",T=S._config.usePrefixes?N.split(" "):[];S._cssomPrefixes=T;var j=S._config.usePrefixes?N.toLowerCase().split(" "):[];S._domPrefixes=j;var k={elem:a("modernizr")};Modernizr._q.push(function(){delete k.elem});var z={style:k.elem.style};Modernizr._q.unshift(function(){delete z.style}),S.testAllProps=v,S.testAllProps=g,Modernizr.addTest("cssfilters",function(){if(Modernizr.supports)return g("filter","blur(2px)");var e=a("a");return e.style.cssText=x.join("filter:blur(2px); "),!!e.style.length&&(t.documentMode===n||t.documentMode>9)}),o(),i(y),delete S.addTest,delete S.addAsyncTest;for(var P=0;P<Modernizr._q.length;P++)Modernizr._q[P]();e.Modernizr=Modernizr}(window,document);
+ * https://modernizr.com/download/?-cssfilters-printshiv-setclasses ! */
+!(function (e, t, n) {
+  function r(e, t) { return typeof e === t; } function o() {
+    var e,
+      t,
+      n,
+      o,
+      i,
+      a,
+      s; for (var l in E) if (E.hasOwnProperty(l)) { if (e = [], t = E[l], t.name && (e.push(t.name.toLowerCase()), t.options && t.options.aliases && t.options.aliases.length)) for (n = 0; n < t.options.aliases.length; n++)e.push(t.options.aliases[n].toLowerCase()); for (o = r(t.fn, 'function') ? t.fn() : t.fn, i = 0; i < e.length; i++)a = e[i], s = a.split('.'), s.length === 1 ? Modernizr[s[0]] = o : (!Modernizr[s[0]] || Modernizr[s[0]] instanceof Boolean || (Modernizr[s[0]] = new Boolean(Modernizr[s[0]])), Modernizr[s[0]][s[1]] = o), y.push((o ? '' : 'no-') + s.join('-')); }
+  } function i(e) {
+    var t = C.className,
+      n = Modernizr._config.classPrefix || ''; if (b && (t = t.baseVal), Modernizr._config.enableJSClass) { var r = new RegExp('(^|\\s)' + n + 'no-js(\\s|$)'); t = t.replace(r, '$1' + n + 'js$2'); }Modernizr._config.enableClasses && (t += ' ' + n + e.join(' ' + n), b ? C.className.baseVal = t : C.className = t);
+  } function a() { return typeof t.createElement !== 'function' ? t.createElement(arguments[0]) : b ? t.createElementNS.call(t, 'http://www.w3.org/2000/svg', arguments[0]) : t.createElement.apply(t, arguments); } function s(e, t) { return !!~('' + e).indexOf(t); } function l(e) { return e.replace(/([a-z])-([a-z])/g, function (e, t, n) { return t + n.toUpperCase(); }).replace(/^-/, ''); } function u(e, t) { return function () { return e.apply(t, arguments); }; } function c(e, t, n) { var o; for (var i in e) if (e[i] in t) return n === !1 ? e[i] : (o = t[e[i]], r(o, 'function') ? u(o, n || t) : o); return !1; } function f(e) { return e.replace(/([A-Z])/g, function (e, t) { return '-' + t.toLowerCase(); }).replace(/^ms-/, '-ms-'); } function d() { var e = t.body; return e || (e = a(b ? 'svg' : 'body'), e.fake = !0), e; } function p(e, n, r, o) {
+    var i,
+      s,
+      l,
+      u,
+      c = 'modernizr',
+      f = a('div'),
+      p = d(); if (parseInt(r, 10)) for (;r--;)l = a('div'), l.id = o ? o[r] : c + (r + 1), f.appendChild(l); return i = a('style'), i.type = 'text/css', i.id = 's' + c, (p.fake ? p : f).appendChild(i), p.appendChild(f), i.styleSheet ? i.styleSheet.cssText = e : i.appendChild(t.createTextNode(e)), f.id = c, p.fake && (p.style.background = '', p.style.overflow = 'hidden', u = C.style.overflow, C.style.overflow = 'hidden', C.appendChild(p)), s = n(f, e), p.fake ? (p.parentNode.removeChild(p), C.style.overflow = u, C.offsetHeight) : f.parentNode.removeChild(f), !!s;
+  } function m(t, r) { var o = t.length; if ('CSS' in e && 'supports' in e.CSS) { for (;o--;) if (e.CSS.supports(f(t[o]), r)) return !0; return !1; } if ('CSSSupportsRule' in e) { for (var i = []; o--;)i.push('(' + f(t[o]) + ':' + r + ')'); return i = i.join(' or '), p('@supports (' + i + ') { #modernizr { position: absolute; } }', function (e) { return getComputedStyle(e, null).position == 'absolute'; }); } return n; } function h(e, t, o, i) { function u() { f && (delete z.style, delete z.modElem); } if (i = r(i, 'undefined') ? !1 : i, !r(o, 'undefined')) { var c = m(e, o); if (!r(c, 'undefined')) return c; } for (var f, d, p, h, v, g = ['modernizr', 'tspan', 'samp']; !z.style && g.length;)f = !0, z.modElem = a(g.shift()), z.style = z.modElem.style; for (p = e.length, d = 0; p > d; d++) if (h = e[d], v = z.style[h], s(h, '-') && (h = l(h)), z.style[h] !== n) { if (i || r(o, 'undefined')) return u(), t == 'pfx' ? h : !0; try { z.style[h] = o; } catch (y) {} if (z.style[h] != v) return u(), t == 'pfx' ? h : !0; } return u(), !1; } function v(e, t, n, o, i) {
+    var a = e.charAt(0).toUpperCase() + e.slice(1),
+      s = (e + ' ' + T.join(a + ' ') + a).split(' '); return r(t, 'string') || r(t, 'undefined') ? h(s, t, o, i) : (s = (e + ' ' + j.join(a + ' ') + a).split(' '), c(s, t, n));
+  } function g(e, t, r) { return v(e, n, n, t, r); } var y = [],
+    E = [],
+    S = { _version: '3.3.1', _config: { classPrefix: '', enableClasses: !0, enableJSClass: !0, usePrefixes: !0 }, _q: [], on: function (e, t) { var n = this; setTimeout(function () { t(n[e]); }, 0); }, addTest: function (e, t, n) { E.push({ name: e, fn: t, options: n }); }, addAsyncTest: function (e) { E.push({ name: null, fn: e }); } },
+    Modernizr = function () {}; Modernizr.prototype = S, Modernizr = new Modernizr(); var C = t.documentElement,
+      b = C.nodeName.toLowerCase() === 'svg',
+      x = S._config.usePrefixes ? ' -webkit- -moz- -o- -ms- '.split(' ') : ['', '']; S._prefixes = x; var w = 'CSS' in e && 'supports' in e.CSS,
+        _ = 'supportsCSS' in e; Modernizr.addTest('supports', w || _); b || !(function (e, t) {
+          function n(e, t) {
+            var n = e.createElement('p'),
+              r = e.getElementsByTagName('head')[0] || e.documentElement; return n.innerHTML = 'x<style>' + t + '</style>', r.insertBefore(n.lastChild, r.firstChild);
+          } function r() { var e = w.elements; return typeof e === 'string' ? e.split(' ') : e; } function o(e, t) { var n = w.elements; typeof n !== 'string' && (n = n.join(' ')), typeof e !== 'string' && (e = e.join(' ')), w.elements = n + ' ' + e, u(t); } function i(e) { var t = x[e[C]]; return t || (t = {}, b++, e[C] = b, x[b] = t), t; } function a(e, n, r) { if (n || (n = t), v) return n.createElement(e); r || (r = i(n)); var o; return o = r.cache[e] ? r.cache[e].cloneNode() : S.test(e) ? (r.cache[e] = r.createElem(e)).cloneNode() : r.createElem(e), !o.canHaveChildren || E.test(e) || o.tagUrn ? o : r.frag.appendChild(o); } function s(e, n) { if (e || (e = t), v) return e.createDocumentFragment(); n = n || i(e); for (var o = n.frag.cloneNode(), a = 0, s = r(), l = s.length; l > a; a++)o.createElement(s[a]); return o; } function l(e, t) { t.cache || (t.cache = {}, t.createElem = e.createElement, t.createFrag = e.createDocumentFragment, t.frag = t.createFrag()), e.createElement = function (n) { return w.shivMethods ? a(n, e, t) : t.createElem(n); }, e.createDocumentFragment = Function('h,f', 'return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&(' + r().join().replace(/[\w\-:]+/g, function (e) { return t.createElem(e), t.frag.createElement(e), 'c("' + e + '")'; }) + ');return n}')(w, t.frag); } function u(e) { e || (e = t); var r = i(e); return !w.shivCSS || h || r.hasCSS || (r.hasCSS = !!n(e, 'article,aside,dialog,figcaption,figure,footer,header,hgroup,main,nav,section{display:block}mark{background:#FF0;color:#000}template{display:none}')), v || l(e, r), e; } function c(e) { for (var t, n = e.getElementsByTagName('*'), o = n.length, i = RegExp('^(?:' + r().join('|') + ')$', 'i'), a = []; o--;)t = n[o], i.test(t.nodeName) && a.push(t.applyElement(f(t))); return a; } function f(e) { for (var t, n = e.attributes, r = n.length, o = e.ownerDocument.createElement(N + ':' + e.nodeName); r--;)t = n[r], t.specified && o.setAttribute(t.nodeName, t.nodeValue); return o.style.cssText = e.style.cssText, o; } function d(e) { for (var t, n = e.split('{'), o = n.length, i = RegExp('(^|[\\s,>+~])(' + r().join('|') + ')(?=[[\\s,>+~#.:]|$)', 'gi'), a = '$1' + N + '\\:$2'; o--;)t = n[o] = n[o].split('}'), t[t.length - 1] = t[t.length - 1].replace(i, a), n[o] = t.join('}'); return n.join('{'); } function p(e) { for (var t = e.length; t--;)e[t].removeNode(); } function m(e) {
+            function t() { clearTimeout(a._removeSheetTimer), r && r.removeNode(!0), r = null; } var r,
+              o,
+              a = i(e),
+              s = e.namespaces,
+              l = e.parentWindow; return !T || e.printShived ? e : (typeof s[N] === 'undefined' && s.add(N), l.attachEvent('onbeforeprint', function () { t(); for (var i, a, s, l = e.styleSheets, u = [], f = l.length, p = Array(f); f--;)p[f] = l[f]; for (;s = p.pop();) if (!s.disabled && _.test(s.media)) { try { i = s.imports, a = i.length; } catch (m) { a = 0; } for (f = 0; a > f; f++)p.push(i[f]); try { u.push(s.cssText); } catch (m) {} }u = d(u.reverse().join('')), o = c(e), r = n(e, u); }), l.attachEvent('onafterprint', function () { p(o), clearTimeout(a._removeSheetTimer), a._removeSheetTimer = setTimeout(t, 500); }), e.printShived = !0, e);
+          } var h,
+            v,
+            g = '3.7.3',
+            y = e.html5 || {},
+            E = /^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,
+            S = /^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,
+            C = '_html5shiv',
+            b = 0,
+            x = {}; !(function () { try { var e = t.createElement('a'); e.innerHTML = '<xyz></xyz>', h = 'hidden' in e, v = e.childNodes.length == 1 || (function () { t.createElement('a'); var e = t.createDocumentFragment(); return typeof e.cloneNode === 'undefined' || typeof e.createDocumentFragment === 'undefined' || typeof e.createElement === 'undefined'; }()); } catch (n) { h = !0, v = !0; } }()); var w = { elements: y.elements || 'abbr article aside audio bdi canvas data datalist details dialog figcaption figure footer header hgroup main mark meter nav output picture progress section summary template time video', version: g, shivCSS: y.shivCSS !== !1, supportsUnknownElements: v, shivMethods: y.shivMethods !== !1, type: 'default', shivDocument: u, createElement: a, createDocumentFragment: s, addElements: o }; e.html5 = w, u(t); var _ = /^$|\b(?:all|print)\b/,
+              N = 'html5shiv',
+              T = !v && (function () { var n = t.documentElement; return !(typeof t.namespaces === 'undefined' || typeof t.parentWindow === 'undefined' || typeof n.applyElement === 'undefined' || typeof n.removeNode === 'undefined' || typeof e.attachEvent === 'undefined'); }()); w.type += ' print', w.shivPrint = m, m(t), typeof module === 'object' && module.exports && (module.exports = w);
+        }(typeof e !== 'undefined' ? e : this, t)); var N = 'Moz O ms Webkit',
+          T = S._config.usePrefixes ? N.split(' ') : []; S._cssomPrefixes = T; var j = S._config.usePrefixes ? N.toLowerCase().split(' ') : []; S._domPrefixes = j; var k = { elem: a('modernizr') }; Modernizr._q.push(function () { delete k.elem; }); var z = { style: k.elem.style }; Modernizr._q.unshift(function () { delete z.style; }), S.testAllProps = v, S.testAllProps = g, Modernizr.addTest('cssfilters', function () { if (Modernizr.supports) return g('filter', 'blur(2px)'); var e = a('a'); return e.style.cssText = x.join('filter:blur(2px); '), !!e.style.length && (t.documentMode === n || t.documentMode > 9); }), o(), i(y), delete S.addTest, delete S.addAsyncTest; for (var P = 0; P < Modernizr._q.length; P++)Modernizr._q[P](); e.Modernizr = Modernizr;
+}(window, document));
+
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.sanitizeHtml=f()}})(function(){var define,module,exports;return function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}({1:[function(require,module,exports){var htmlparser=require("htmlparser2");var extend=require("xtend");var quoteRegexp=require("regexp-quote");function each(obj,cb){if(obj)Object.keys(obj).forEach(function(key){cb(obj[key],key)})}function has(obj,key){return{}.hasOwnProperty.call(obj,key)}module.exports=sanitizeHtml;function sanitizeHtml(html,options,_recursing){var result="";function Frame(tag,attribs){var that=this;this.tag=tag;this.attribs=attribs||{};this.tagPosition=result.length;this.text="";this.updateParentNodeText=function(){if(stack.length){var parentFrame=stack[stack.length-1];parentFrame.text+=that.text}}}if(!options){options=sanitizeHtml.defaults;options.parser=htmlParserDefaults}else{options=extend(sanitizeHtml.defaults,options);if(options.parser){options.parser=extend(htmlParserDefaults,options.parser)}else{options.parser=htmlParserDefaults}}var nonTextTagsArray=options.nonTextTags||["script","style","textarea"];var allowedAttributesMap;var allowedAttributesGlobMap;if(options.allowedAttributes){allowedAttributesMap={};allowedAttributesGlobMap={};each(options.allowedAttributes,function(attributes,tag){allowedAttributesMap[tag]=[];var globRegex=[];attributes.forEach(function(name){if(name.indexOf("*")>=0){globRegex.push(quoteRegexp(name).replace(/\\\*/g,".*"))}else{allowedAttributesMap[tag].push(name)}});allowedAttributesGlobMap[tag]=new RegExp("^("+globRegex.join("|")+")$")})}var allowedClassesMap={};each(options.allowedClasses,function(classes,tag){if(allowedAttributesMap){if(!has(allowedAttributesMap,tag)){allowedAttributesMap[tag]=[]}allowedAttributesMap[tag].push("class")}allowedClassesMap[tag]=classes});var transformTagsMap={};var transformTagsAll;each(options.transformTags,function(transform,tag){var transFun;if(typeof transform==="function"){transFun=transform}else if(typeof transform==="string"){transFun=sanitizeHtml.simpleTransform(transform)}if(tag==="*"){transformTagsAll=transFun}else{transformTagsMap[tag]=transFun}});var depth=0;var stack=[];var skipMap={};var transformMap={};var skipText=false;var skipTextDepth=0;var parser=new htmlparser.Parser({onopentag:function(name,attribs){if(skipText){skipTextDepth++;return}var frame=new Frame(name,attribs);stack.push(frame);var skip=false;var hasText=frame.text?true:false;var transformedTag;if(has(transformTagsMap,name)){transformedTag=transformTagsMap[name](name,attribs);frame.attribs=attribs=transformedTag.attribs;if(transformedTag.text!==undefined){frame.innerText=transformedTag.text}if(name!==transformedTag.tagName){frame.name=name=transformedTag.tagName;transformMap[depth]=transformedTag.tagName}}if(transformTagsAll){transformedTag=transformTagsAll(name,attribs);frame.attribs=attribs=transformedTag.attribs;if(name!==transformedTag.tagName){frame.name=name=transformedTag.tagName;transformMap[depth]=transformedTag.tagName}}if(options.allowedTags&&options.allowedTags.indexOf(name)===-1){skip=true;if(nonTextTagsArray.indexOf(name)!==-1){skipText=true;skipTextDepth=1}skipMap[depth]=true}depth++;if(skip){return}result+="<"+name;if(!allowedAttributesMap||has(allowedAttributesMap,name)||allowedAttributesMap["*"]){each(attribs,function(value,a){if(!allowedAttributesMap||has(allowedAttributesMap,name)&&allowedAttributesMap[name].indexOf(a)!==-1||allowedAttributesMap["*"]&&allowedAttributesMap["*"].indexOf(a)!==-1||has(allowedAttributesGlobMap,name)&&allowedAttributesGlobMap[name].test(a)||allowedAttributesGlobMap["*"]&&allowedAttributesGlobMap["*"].test(a)){if(a==="href"||a==="src"){if(naughtyHref(name,value)){delete frame.attribs[a];return}}if(a==="class"){value=filterClasses(value,allowedClassesMap[name]);if(!value.length){delete frame.attribs[a];return}}result+=" "+a;if(value.length){result+='="'+escapeHtml(value)+'"'}}else{delete frame.attribs[a]}})}if(options.selfClosing.indexOf(name)!==-1){result+=" />"}else{result+=">";if(frame.innerText&&!hasText&&!options.textFilter){result+=frame.innerText}}},ontext:function(text){if(skipText){return}var lastFrame=stack[stack.length-1];var tag;if(lastFrame){tag=lastFrame.tag;text=lastFrame.innerText!==undefined?lastFrame.innerText:text}if(tag==="script"||tag==="style"){result+=text}else{var escaped=escapeHtml(text);if(options.textFilter){result+=options.textFilter(escaped)}else{result+=escaped}}if(stack.length){var frame=stack[stack.length-1];frame.text+=text}},onclosetag:function(name){if(skipText){skipTextDepth--;if(!skipTextDepth){skipText=false}else{return}}var frame=stack.pop();if(!frame){return}skipText=false;depth--;if(skipMap[depth]){delete skipMap[depth];frame.updateParentNodeText();return}if(transformMap[depth]){name=transformMap[depth];delete transformMap[depth]}if(options.exclusiveFilter&&options.exclusiveFilter(frame)){result=result.substr(0,frame.tagPosition);return}frame.updateParentNodeText();if(options.selfClosing.indexOf(name)!==-1){return}result+="</"+name+">"}},options.parser);parser.write(html);parser.end();return result;function escapeHtml(s){if(typeof s!=="string"){s=s+""}return s.replace(/\&/g,"&amp;").replace(/</g,"&lt;").replace(/\>/g,"&gt;").replace(/\"/g,"&quot;")}function naughtyHref(name,href){href=href.replace(/[\x00-\x20]+/g,"");href=href.replace(/<\!\-\-.*?\-\-\>/g,"");var matches=href.match(/^([a-zA-Z]+)\:/);if(!matches){return false}var scheme=matches[1].toLowerCase();if(has(options.allowedSchemesByTag,name)){return options.allowedSchemesByTag[name].indexOf(scheme)===-1}return!options.allowedSchemes||options.allowedSchemes.indexOf(scheme)===-1}function filterClasses(classes,allowed){if(!allowed){return classes}classes=classes.split(/\s+/);return classes.filter(function(clss){return allowed.indexOf(clss)!==-1}).join(" ")}}var htmlParserDefaults={decodeEntities:true};sanitizeHtml.defaults={allowedTags:["h3","h4","h5","h6","blockquote","p","a","ul","ol","nl","li","b","i","strong","em","strike","code","hr","br","div","table","thead","caption","tbody","tr","th","td","pre"],allowedAttributes:{a:["href","name","target"],img:["src"]},selfClosing:["img","br","hr","area","base","basefont","input","link","meta"],allowedSchemes:["http","https","ftp","mailto"],allowedSchemesByTag:{}};sanitizeHtml.simpleTransform=function(newTagName,newAttribs,merge){merge=merge===undefined?true:merge;newAttribs=newAttribs||{};return function(tagName,attribs){var attrib;if(merge){for(attrib in newAttribs){attribs[attrib]=newAttribs[attrib]}}else{attribs=newAttribs}return{tagName:newTagName,attribs:attribs}}}},{htmlparser2:36,"regexp-quote":59,xtend:60}],2:[function(require,module,exports){},{}],3:[function(require,module,exports){(function(global){"use strict";var base64=require("base64-js");var ieee754=require("ieee754");var isArray=require("isarray");exports.Buffer=Buffer;exports.SlowBuffer=SlowBuffer;exports.INSPECT_MAX_BYTES=50;Buffer.TYPED_ARRAY_SUPPORT=global.TYPED_ARRAY_SUPPORT!==undefined?global.TYPED_ARRAY_SUPPORT:typedArraySupport();exports.kMaxLength=kMaxLength();function typedArraySupport(){try{var arr=new Uint8Array(1);arr.__proto__={__proto__:Uint8Array.prototype,foo:function(){return 42}};return arr.foo()===42&&typeof arr.subarray==="function"&&arr.subarray(1,1).byteLength===0}catch(e){return false}}function kMaxLength(){return Buffer.TYPED_ARRAY_SUPPORT?2147483647:1073741823}function createBuffer(that,length){if(kMaxLength()<length){throw new RangeError("Invalid typed array length")}if(Buffer.TYPED_ARRAY_SUPPORT){that=new Uint8Array(length);that.__proto__=Buffer.prototype}else{if(that===null){that=new Buffer(length)}that.length=length}return that}function Buffer(arg,encodingOrOffset,length){if(!Buffer.TYPED_ARRAY_SUPPORT&&!(this instanceof Buffer)){return new Buffer(arg,encodingOrOffset,length)}if(typeof arg==="number"){if(typeof encodingOrOffset==="string"){throw new Error("If encoding is specified then the first argument must be a string")}return allocUnsafe(this,arg)}return from(this,arg,encodingOrOffset,length)}Buffer.poolSize=8192;Buffer._augment=function(arr){arr.__proto__=Buffer.prototype;return arr};function from(that,value,encodingOrOffset,length){if(typeof value==="number"){throw new TypeError('"value" argument must not be a number')}if(typeof ArrayBuffer!=="undefined"&&value instanceof ArrayBuffer){return fromArrayBuffer(that,value,encodingOrOffset,length)}if(typeof value==="string"){return fromString(that,value,encodingOrOffset)}return fromObject(that,value)}Buffer.from=function(value,encodingOrOffset,length){return from(null,value,encodingOrOffset,length)};if(Buffer.TYPED_ARRAY_SUPPORT){Buffer.prototype.__proto__=Uint8Array.prototype;Buffer.__proto__=Uint8Array;if(typeof Symbol!=="undefined"&&Symbol.species&&Buffer[Symbol.species]===Buffer){Object.defineProperty(Buffer,Symbol.species,{value:null,configurable:true})}}function assertSize(size){if(typeof size!=="number"){throw new TypeError('"size" argument must be a number')}else if(size<0){throw new RangeError('"size" argument must not be negative')}}function alloc(that,size,fill,encoding){assertSize(size);if(size<=0){return createBuffer(that,size)}if(fill!==undefined){return typeof encoding==="string"?createBuffer(that,size).fill(fill,encoding):createBuffer(that,size).fill(fill)}return createBuffer(that,size)}Buffer.alloc=function(size,fill,encoding){return alloc(null,size,fill,encoding)};function allocUnsafe(that,size){assertSize(size);that=createBuffer(that,size<0?0:checked(size)|0);if(!Buffer.TYPED_ARRAY_SUPPORT){for(var i=0;i<size;++i){that[i]=0}}return that}Buffer.allocUnsafe=function(size){return allocUnsafe(null,size)};Buffer.allocUnsafeSlow=function(size){return allocUnsafe(null,size)};function fromString(that,string,encoding){if(typeof encoding!=="string"||encoding===""){encoding="utf8"}if(!Buffer.isEncoding(encoding)){throw new TypeError('"encoding" must be a valid string encoding')}var length=byteLength(string,encoding)|0;that=createBuffer(that,length);var actual=that.write(string,encoding);if(actual!==length){that=that.slice(0,actual)}return that}function fromArrayLike(that,array){var length=array.length<0?0:checked(array.length)|0;that=createBuffer(that,length);for(var i=0;i<length;i+=1){that[i]=array[i]&255}return that}function fromArrayBuffer(that,array,byteOffset,length){array.byteLength;if(byteOffset<0||array.byteLength<byteOffset){throw new RangeError("'offset' is out of bounds")}if(array.byteLength<byteOffset+(length||0)){throw new RangeError("'length' is out of bounds")}if(byteOffset===undefined&&length===undefined){array=new Uint8Array(array)}else if(length===undefined){array=new Uint8Array(array,byteOffset)}else{array=new Uint8Array(array,byteOffset,length)}if(Buffer.TYPED_ARRAY_SUPPORT){that=array;that.__proto__=Buffer.prototype}else{that=fromArrayLike(that,array)}return that}function fromObject(that,obj){if(Buffer.isBuffer(obj)){var len=checked(obj.length)|0;that=createBuffer(that,len);if(that.length===0){return that}obj.copy(that,0,0,len);return that}if(obj){if(typeof ArrayBuffer!=="undefined"&&obj.buffer instanceof ArrayBuffer||"length"in obj){if(typeof obj.length!=="number"||isnan(obj.length)){return createBuffer(that,0)}return fromArrayLike(that,obj)}if(obj.type==="Buffer"&&isArray(obj.data)){return fromArrayLike(that,obj.data)}}throw new TypeError("First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.")}function checked(length){if(length>=kMaxLength()){throw new RangeError("Attempt to allocate Buffer larger than maximum "+"size: 0x"+kMaxLength().toString(16)+" bytes")}return length|0}function SlowBuffer(length){if(+length!=length){length=0}return Buffer.alloc(+length)}Buffer.isBuffer=function isBuffer(b){return!!(b!=null&&b._isBuffer)};Buffer.compare=function compare(a,b){if(!Buffer.isBuffer(a)||!Buffer.isBuffer(b)){throw new TypeError("Arguments must be Buffers")}if(a===b)return 0;var x=a.length;var y=b.length;for(var i=0,len=Math.min(x,y);i<len;++i){if(a[i]!==b[i]){x=a[i];y=b[i];break}}if(x<y)return-1;if(y<x)return 1;return 0};Buffer.isEncoding=function isEncoding(encoding){switch(String(encoding).toLowerCase()){case"hex":case"utf8":case"utf-8":case"ascii":case"latin1":case"binary":case"base64":case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return true;default:return false}};Buffer.concat=function concat(list,length){if(!isArray(list)){throw new TypeError('"list" argument must be an Array of Buffers')}if(list.length===0){return Buffer.alloc(0)}var i;if(length===undefined){length=0;for(i=0;i<list.length;++i){length+=list[i].length}}var buffer=Buffer.allocUnsafe(length);var pos=0;for(i=0;i<list.length;++i){var buf=list[i];if(!Buffer.isBuffer(buf)){throw new TypeError('"list" argument must be an Array of Buffers')}buf.copy(buffer,pos);pos+=buf.length}return buffer};function byteLength(string,encoding){if(Buffer.isBuffer(string)){return string.length}if(typeof ArrayBuffer!=="undefined"&&typeof ArrayBuffer.isView==="function"&&(ArrayBuffer.isView(string)||string instanceof ArrayBuffer)){return string.byteLength}if(typeof string!=="string"){string=""+string}var len=string.length;if(len===0)return 0;var loweredCase=false;for(;;){switch(encoding){case"ascii":case"latin1":case"binary":return len;case"utf8":case"utf-8":case undefined:return utf8ToBytes(string).length;case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return len*2;case"hex":return len>>>1;case"base64":return base64ToBytes(string).length;default:if(loweredCase)return utf8ToBytes(string).length;encoding=(""+encoding).toLowerCase();loweredCase=true}}}Buffer.byteLength=byteLength;function slowToString(encoding,start,end){var loweredCase=false;if(start===undefined||start<0){start=0}if(start>this.length){return""}if(end===undefined||end>this.length){end=this.length}if(end<=0){return""}end>>>=0;start>>>=0;if(end<=start){return""}if(!encoding)encoding="utf8";while(true){switch(encoding){case"hex":return hexSlice(this,start,end);case"utf8":case"utf-8":return utf8Slice(this,start,end);case"ascii":return asciiSlice(this,start,end);case"latin1":case"binary":return latin1Slice(this,start,end);case"base64":return base64Slice(this,start,end);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return utf16leSlice(this,start,end);default:if(loweredCase)throw new TypeError("Unknown encoding: "+encoding);encoding=(encoding+"").toLowerCase();loweredCase=true}}}Buffer.prototype._isBuffer=true;function swap(b,n,m){var i=b[n];b[n]=b[m];b[m]=i}Buffer.prototype.swap16=function swap16(){var len=this.length;if(len%2!==0){throw new RangeError("Buffer size must be a multiple of 16-bits")}for(var i=0;i<len;i+=2){swap(this,i,i+1)}return this};Buffer.prototype.swap32=function swap32(){var len=this.length;if(len%4!==0){throw new RangeError("Buffer size must be a multiple of 32-bits")}for(var i=0;i<len;i+=4){swap(this,i,i+3);swap(this,i+1,i+2)}return this};Buffer.prototype.swap64=function swap64(){var len=this.length;if(len%8!==0){throw new RangeError("Buffer size must be a multiple of 64-bits")}for(var i=0;i<len;i+=8){swap(this,i,i+7);swap(this,i+1,i+6);swap(this,i+2,i+5);swap(this,i+3,i+4)}return this};Buffer.prototype.toString=function toString(){var length=this.length|0;if(length===0)return"";if(arguments.length===0)return utf8Slice(this,0,length);return slowToString.apply(this,arguments)};Buffer.prototype.equals=function equals(b){if(!Buffer.isBuffer(b))throw new TypeError("Argument must be a Buffer");if(this===b)return true;return Buffer.compare(this,b)===0};Buffer.prototype.inspect=function inspect(){var str="";var max=exports.INSPECT_MAX_BYTES;if(this.length>0){str=this.toString("hex",0,max).match(/.{2}/g).join(" ");if(this.length>max)str+=" ... "}return"<Buffer "+str+">"};Buffer.prototype.compare=function compare(target,start,end,thisStart,thisEnd){if(!Buffer.isBuffer(target)){throw new TypeError("Argument must be a Buffer")}if(start===undefined){start=0}if(end===undefined){end=target?target.length:0}if(thisStart===undefined){thisStart=0}if(thisEnd===undefined){thisEnd=this.length}if(start<0||end>target.length||thisStart<0||thisEnd>this.length){throw new RangeError("out of range index")}if(thisStart>=thisEnd&&start>=end){return 0}if(thisStart>=thisEnd){return-1}if(start>=end){return 1}start>>>=0;end>>>=0;thisStart>>>=0;thisEnd>>>=0;if(this===target)return 0;var x=thisEnd-thisStart;var y=end-start;var len=Math.min(x,y);var thisCopy=this.slice(thisStart,thisEnd);var targetCopy=target.slice(start,end);for(var i=0;i<len;++i){if(thisCopy[i]!==targetCopy[i]){x=thisCopy[i];y=targetCopy[i];break}}if(x<y)return-1;if(y<x)return 1;return 0};function bidirectionalIndexOf(buffer,val,byteOffset,encoding,dir){if(buffer.length===0)return-1;if(typeof byteOffset==="string"){encoding=byteOffset;byteOffset=0}else if(byteOffset>2147483647){byteOffset=2147483647}else if(byteOffset<-2147483648){byteOffset=-2147483648}byteOffset=+byteOffset;if(isNaN(byteOffset)){byteOffset=dir?0:buffer.length-1}if(byteOffset<0)byteOffset=buffer.length+byteOffset;if(byteOffset>=buffer.length){if(dir)return-1;else byteOffset=buffer.length-1}else if(byteOffset<0){if(dir)byteOffset=0;else return-1}if(typeof val==="string"){val=Buffer.from(val,encoding)}if(Buffer.isBuffer(val)){if(val.length===0){return-1}return arrayIndexOf(buffer,val,byteOffset,encoding,dir)}else if(typeof val==="number"){val=val&255;if(Buffer.TYPED_ARRAY_SUPPORT&&typeof Uint8Array.prototype.indexOf==="function"){if(dir){return Uint8Array.prototype.indexOf.call(buffer,val,byteOffset)}else{return Uint8Array.prototype.lastIndexOf.call(buffer,val,byteOffset)}}return arrayIndexOf(buffer,[val],byteOffset,encoding,dir)}throw new TypeError("val must be string, number or Buffer")}function arrayIndexOf(arr,val,byteOffset,encoding,dir){var indexSize=1;var arrLength=arr.length;var valLength=val.length;if(encoding!==undefined){encoding=String(encoding).toLowerCase();if(encoding==="ucs2"||encoding==="ucs-2"||encoding==="utf16le"||encoding==="utf-16le"){if(arr.length<2||val.length<2){return-1}indexSize=2;arrLength/=2;valLength/=2;byteOffset/=2}}function read(buf,i){if(indexSize===1){return buf[i]}else{return buf.readUInt16BE(i*indexSize)}}var i;if(dir){var foundIndex=-1;for(i=byteOffset;i<arrLength;i++){if(read(arr,i)===read(val,foundIndex===-1?0:i-foundIndex)){if(foundIndex===-1)foundIndex=i;if(i-foundIndex+1===valLength)return foundIndex*indexSize}else{if(foundIndex!==-1)i-=i-foundIndex;foundIndex=-1}}}else{if(byteOffset+valLength>arrLength)byteOffset=arrLength-valLength;for(i=byteOffset;i>=0;i--){var found=true;for(var j=0;j<valLength;j++){if(read(arr,i+j)!==read(val,j)){found=false;break}}if(found)return i}}return-1}Buffer.prototype.includes=function includes(val,byteOffset,encoding){return this.indexOf(val,byteOffset,encoding)!==-1};Buffer.prototype.indexOf=function indexOf(val,byteOffset,encoding){return bidirectionalIndexOf(this,val,byteOffset,encoding,true)};Buffer.prototype.lastIndexOf=function lastIndexOf(val,byteOffset,encoding){return bidirectionalIndexOf(this,val,byteOffset,encoding,false)};function hexWrite(buf,string,offset,length){offset=Number(offset)||0;var remaining=buf.length-offset;if(!length){length=remaining}else{length=Number(length);if(length>remaining){length=remaining}}var strLen=string.length;if(strLen%2!==0)throw new TypeError("Invalid hex string");if(length>strLen/2){length=strLen/2}for(var i=0;i<length;++i){var parsed=parseInt(string.substr(i*2,2),16);if(isNaN(parsed))return i;buf[offset+i]=parsed}return i}function utf8Write(buf,string,offset,length){return blitBuffer(utf8ToBytes(string,buf.length-offset),buf,offset,length)}function asciiWrite(buf,string,offset,length){return blitBuffer(asciiToBytes(string),buf,offset,length)}function latin1Write(buf,string,offset,length){return asciiWrite(buf,string,offset,length)}function base64Write(buf,string,offset,length){return blitBuffer(base64ToBytes(string),buf,offset,length)}function ucs2Write(buf,string,offset,length){return blitBuffer(utf16leToBytes(string,buf.length-offset),buf,offset,length)}Buffer.prototype.write=function write(string,offset,length,encoding){if(offset===undefined){encoding="utf8";length=this.length;offset=0}else if(length===undefined&&typeof offset==="string"){encoding=offset;length=this.length;offset=0}else if(isFinite(offset)){offset=offset|0;if(isFinite(length)){length=length|0;if(encoding===undefined)encoding="utf8"}else{encoding=length;length=undefined}}else{throw new Error("Buffer.write(string, encoding, offset[, length]) is no longer supported")}var remaining=this.length-offset;if(length===undefined||length>remaining)length=remaining;if(string.length>0&&(length<0||offset<0)||offset>this.length){throw new RangeError("Attempt to write outside buffer bounds")}if(!encoding)encoding="utf8";var loweredCase=false;for(;;){switch(encoding){case"hex":return hexWrite(this,string,offset,length);case"utf8":case"utf-8":return utf8Write(this,string,offset,length);case"ascii":return asciiWrite(this,string,offset,length);case"latin1":case"binary":return latin1Write(this,string,offset,length);case"base64":return base64Write(this,string,offset,length);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return ucs2Write(this,string,offset,length);default:if(loweredCase)throw new TypeError("Unknown encoding: "+encoding);encoding=(""+encoding).toLowerCase();loweredCase=true}}};Buffer.prototype.toJSON=function toJSON(){return{type:"Buffer",data:Array.prototype.slice.call(this._arr||this,0)}};function base64Slice(buf,start,end){if(start===0&&end===buf.length){return base64.fromByteArray(buf)}else{return base64.fromByteArray(buf.slice(start,end))}}function utf8Slice(buf,start,end){end=Math.min(buf.length,end);var res=[];var i=start;while(i<end){var firstByte=buf[i];var codePoint=null;var bytesPerSequence=firstByte>239?4:firstByte>223?3:firstByte>191?2:1;if(i+bytesPerSequence<=end){var secondByte,thirdByte,fourthByte,tempCodePoint;switch(bytesPerSequence){case 1:if(firstByte<128){codePoint=firstByte}break;case 2:secondByte=buf[i+1];if((secondByte&192)===128){tempCodePoint=(firstByte&31)<<6|secondByte&63;if(tempCodePoint>127){codePoint=tempCodePoint}}break;case 3:secondByte=buf[i+1];thirdByte=buf[i+2];if((secondByte&192)===128&&(thirdByte&192)===128){tempCodePoint=(firstByte&15)<<12|(secondByte&63)<<6|thirdByte&63;if(tempCodePoint>2047&&(tempCodePoint<55296||tempCodePoint>57343)){codePoint=tempCodePoint}}break;case 4:secondByte=buf[i+1];thirdByte=buf[i+2];fourthByte=buf[i+3];if((secondByte&192)===128&&(thirdByte&192)===128&&(fourthByte&192)===128){tempCodePoint=(firstByte&15)<<18|(secondByte&63)<<12|(thirdByte&63)<<6|fourthByte&63;if(tempCodePoint>65535&&tempCodePoint<1114112){codePoint=tempCodePoint}}}}if(codePoint===null){codePoint=65533;bytesPerSequence=1}else if(codePoint>65535){codePoint-=65536;res.push(codePoint>>>10&1023|55296);codePoint=56320|codePoint&1023}res.push(codePoint);i+=bytesPerSequence}return decodeCodePointsArray(res)}var MAX_ARGUMENTS_LENGTH=4096;function decodeCodePointsArray(codePoints){var len=codePoints.length;if(len<=MAX_ARGUMENTS_LENGTH){return String.fromCharCode.apply(String,codePoints)}var res="";var i=0;while(i<len){res+=String.fromCharCode.apply(String,codePoints.slice(i,i+=MAX_ARGUMENTS_LENGTH))}return res}function asciiSlice(buf,start,end){var ret="";end=Math.min(buf.length,end);for(var i=start;i<end;++i){ret+=String.fromCharCode(buf[i]&127)}return ret}function latin1Slice(buf,start,end){var ret="";end=Math.min(buf.length,end);for(var i=start;i<end;++i){ret+=String.fromCharCode(buf[i])}return ret}function hexSlice(buf,start,end){var len=buf.length;if(!start||start<0)start=0;if(!end||end<0||end>len)end=len;var out="";for(var i=start;i<end;++i){out+=toHex(buf[i])}return out}function utf16leSlice(buf,start,end){var bytes=buf.slice(start,end);var res="";for(var i=0;i<bytes.length;i+=2){res+=String.fromCharCode(bytes[i]+bytes[i+1]*256)}return res}Buffer.prototype.slice=function slice(start,end){var len=this.length;start=~~start;end=end===undefined?len:~~end;if(start<0){start+=len;if(start<0)start=0}else if(start>len){start=len}if(end<0){end+=len;if(end<0)end=0}else if(end>len){end=len}if(end<start)end=start;var newBuf;if(Buffer.TYPED_ARRAY_SUPPORT){newBuf=this.subarray(start,end);newBuf.__proto__=Buffer.prototype}else{var sliceLen=end-start;newBuf=new Buffer(sliceLen,undefined);for(var i=0;i<sliceLen;++i){newBuf[i]=this[i+start]}}return newBuf};function checkOffset(offset,ext,length){if(offset%1!==0||offset<0)throw new RangeError("offset is not uint");if(offset+ext>length)throw new RangeError("Trying to access beyond buffer length")}Buffer.prototype.readUIntLE=function readUIntLE(offset,byteLength,noAssert){offset=offset|0;byteLength=byteLength|0;if(!noAssert)checkOffset(offset,byteLength,this.length);var val=this[offset];var mul=1;var i=0;while(++i<byteLength&&(mul*=256)){val+=this[offset+i]*mul}return val};Buffer.prototype.readUIntBE=function readUIntBE(offset,byteLength,noAssert){offset=offset|0;byteLength=byteLength|0;if(!noAssert){checkOffset(offset,byteLength,this.length)}var val=this[offset+--byteLength];var mul=1;while(byteLength>0&&(mul*=256)){val+=this[offset+--byteLength]*mul}return val};Buffer.prototype.readUInt8=function readUInt8(offset,noAssert){if(!noAssert)checkOffset(offset,1,this.length);return this[offset]};Buffer.prototype.readUInt16LE=function readUInt16LE(offset,noAssert){if(!noAssert)checkOffset(offset,2,this.length);return this[offset]|this[offset+1]<<8};Buffer.prototype.readUInt16BE=function readUInt16BE(offset,noAssert){if(!noAssert)checkOffset(offset,2,this.length);return this[offset]<<8|this[offset+1]};Buffer.prototype.readUInt32LE=function readUInt32LE(offset,noAssert){if(!noAssert)checkOffset(offset,4,this.length);return(this[offset]|this[offset+1]<<8|this[offset+2]<<16)+this[offset+3]*16777216};Buffer.prototype.readUInt32BE=function readUInt32BE(offset,noAssert){if(!noAssert)checkOffset(offset,4,this.length);return this[offset]*16777216+(this[offset+1]<<16|this[offset+2]<<8|this[offset+3])};Buffer.prototype.readIntLE=function readIntLE(offset,byteLength,noAssert){offset=offset|0;byteLength=byteLength|0;if(!noAssert)checkOffset(offset,byteLength,this.length);var val=this[offset];var mul=1;var i=0;while(++i<byteLength&&(mul*=256)){val+=this[offset+i]*mul}mul*=128;if(val>=mul)val-=Math.pow(2,8*byteLength);return val};Buffer.prototype.readIntBE=function readIntBE(offset,byteLength,noAssert){offset=offset|0;byteLength=byteLength|0;if(!noAssert)checkOffset(offset,byteLength,this.length);var i=byteLength;var mul=1;var val=this[offset+--i];while(i>0&&(mul*=256)){val+=this[offset+--i]*mul}mul*=128;if(val>=mul)val-=Math.pow(2,8*byteLength);return val};Buffer.prototype.readInt8=function readInt8(offset,noAssert){if(!noAssert)checkOffset(offset,1,this.length);if(!(this[offset]&128))return this[offset];return(255-this[offset]+1)*-1};Buffer.prototype.readInt16LE=function readInt16LE(offset,noAssert){if(!noAssert)checkOffset(offset,2,this.length);var val=this[offset]|this[offset+1]<<8;return val&32768?val|4294901760:val};Buffer.prototype.readInt16BE=function readInt16BE(offset,noAssert){if(!noAssert)checkOffset(offset,2,this.length);var val=this[offset+1]|this[offset]<<8;return val&32768?val|4294901760:val};Buffer.prototype.readInt32LE=function readInt32LE(offset,noAssert){if(!noAssert)checkOffset(offset,4,this.length);return this[offset]|this[offset+1]<<8|this[offset+2]<<16|this[offset+3]<<24};Buffer.prototype.readInt32BE=function readInt32BE(offset,noAssert){if(!noAssert)checkOffset(offset,4,this.length);return this[offset]<<24|this[offset+1]<<16|this[offset+2]<<8|this[offset+3]};Buffer.prototype.readFloatLE=function readFloatLE(offset,noAssert){if(!noAssert)checkOffset(offset,4,this.length);return ieee754.read(this,offset,true,23,4)};Buffer.prototype.readFloatBE=function readFloatBE(offset,noAssert){if(!noAssert)checkOffset(offset,4,this.length);return ieee754.read(this,offset,false,23,4)};Buffer.prototype.readDoubleLE=function readDoubleLE(offset,noAssert){if(!noAssert)checkOffset(offset,8,this.length);return ieee754.read(this,offset,true,52,8)};Buffer.prototype.readDoubleBE=function readDoubleBE(offset,noAssert){if(!noAssert)checkOffset(offset,8,this.length);return ieee754.read(this,offset,false,52,8)};function checkInt(buf,value,offset,ext,max,min){if(!Buffer.isBuffer(buf))throw new TypeError('"buffer" argument must be a Buffer instance');if(value>max||value<min)throw new RangeError('"value" argument is out of bounds');if(offset+ext>buf.length)throw new RangeError("Index out of range")}Buffer.prototype.writeUIntLE=function writeUIntLE(value,offset,byteLength,noAssert){value=+value;offset=offset|0;byteLength=byteLength|0;if(!noAssert){var maxBytes=Math.pow(2,8*byteLength)-1;checkInt(this,value,offset,byteLength,maxBytes,0)}var mul=1;var i=0;this[offset]=value&255;while(++i<byteLength&&(mul*=256)){this[offset+i]=value/mul&255}return offset+byteLength};Buffer.prototype.writeUIntBE=function writeUIntBE(value,offset,byteLength,noAssert){value=+value;offset=offset|0;byteLength=byteLength|0;if(!noAssert){var maxBytes=Math.pow(2,8*byteLength)-1;checkInt(this,value,offset,byteLength,maxBytes,0)}var i=byteLength-1;var mul=1;this[offset+i]=value&255;while(--i>=0&&(mul*=256)){this[offset+i]=value/mul&255}return offset+byteLength};Buffer.prototype.writeUInt8=function writeUInt8(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,1,255,0);if(!Buffer.TYPED_ARRAY_SUPPORT)value=Math.floor(value);this[offset]=value&255;return offset+1};function objectWriteUInt16(buf,value,offset,littleEndian){if(value<0)value=65535+value+1;for(var i=0,j=Math.min(buf.length-offset,2);i<j;++i){buf[offset+i]=(value&255<<8*(littleEndian?i:1-i))>>>(littleEndian?i:1-i)*8}}Buffer.prototype.writeUInt16LE=function writeUInt16LE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,2,65535,0);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value&255;this[offset+1]=value>>>8}else{objectWriteUInt16(this,value,offset,true)}return offset+2};Buffer.prototype.writeUInt16BE=function writeUInt16BE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,2,65535,0);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value>>>8;this[offset+1]=value&255}else{objectWriteUInt16(this,value,offset,false)}return offset+2};function objectWriteUInt32(buf,value,offset,littleEndian){if(value<0)value=4294967295+value+1;for(var i=0,j=Math.min(buf.length-offset,4);i<j;++i){buf[offset+i]=value>>>(littleEndian?i:3-i)*8&255}}Buffer.prototype.writeUInt32LE=function writeUInt32LE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,4,4294967295,0);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset+3]=value>>>24;this[offset+2]=value>>>16;this[offset+1]=value>>>8;this[offset]=value&255}else{objectWriteUInt32(this,value,offset,true)}return offset+4};Buffer.prototype.writeUInt32BE=function writeUInt32BE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,4,4294967295,0);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value>>>24;this[offset+1]=value>>>16;this[offset+2]=value>>>8;this[offset+3]=value&255}else{objectWriteUInt32(this,value,offset,false)}return offset+4};Buffer.prototype.writeIntLE=function writeIntLE(value,offset,byteLength,noAssert){value=+value;offset=offset|0;
 if(!noAssert){var limit=Math.pow(2,8*byteLength-1);checkInt(this,value,offset,byteLength,limit-1,-limit)}var i=0;var mul=1;var sub=0;this[offset]=value&255;while(++i<byteLength&&(mul*=256)){if(value<0&&sub===0&&this[offset+i-1]!==0){sub=1}this[offset+i]=(value/mul>>0)-sub&255}return offset+byteLength};Buffer.prototype.writeIntBE=function writeIntBE(value,offset,byteLength,noAssert){value=+value;offset=offset|0;if(!noAssert){var limit=Math.pow(2,8*byteLength-1);checkInt(this,value,offset,byteLength,limit-1,-limit)}var i=byteLength-1;var mul=1;var sub=0;this[offset+i]=value&255;while(--i>=0&&(mul*=256)){if(value<0&&sub===0&&this[offset+i+1]!==0){sub=1}this[offset+i]=(value/mul>>0)-sub&255}return offset+byteLength};Buffer.prototype.writeInt8=function writeInt8(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,1,127,-128);if(!Buffer.TYPED_ARRAY_SUPPORT)value=Math.floor(value);if(value<0)value=255+value+1;this[offset]=value&255;return offset+1};Buffer.prototype.writeInt16LE=function writeInt16LE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,2,32767,-32768);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value&255;this[offset+1]=value>>>8}else{objectWriteUInt16(this,value,offset,true)}return offset+2};Buffer.prototype.writeInt16BE=function writeInt16BE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,2,32767,-32768);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value>>>8;this[offset+1]=value&255}else{objectWriteUInt16(this,value,offset,false)}return offset+2};Buffer.prototype.writeInt32LE=function writeInt32LE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,4,2147483647,-2147483648);if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value&255;this[offset+1]=value>>>8;this[offset+2]=value>>>16;this[offset+3]=value>>>24}else{objectWriteUInt32(this,value,offset,true)}return offset+4};Buffer.prototype.writeInt32BE=function writeInt32BE(value,offset,noAssert){value=+value;offset=offset|0;if(!noAssert)checkInt(this,value,offset,4,2147483647,-2147483648);if(value<0)value=4294967295+value+1;if(Buffer.TYPED_ARRAY_SUPPORT){this[offset]=value>>>24;this[offset+1]=value>>>16;this[offset+2]=value>>>8;this[offset+3]=value&255}else{objectWriteUInt32(this,value,offset,false)}return offset+4};function checkIEEE754(buf,value,offset,ext,max,min){if(offset+ext>buf.length)throw new RangeError("Index out of range");if(offset<0)throw new RangeError("Index out of range")}function writeFloat(buf,value,offset,littleEndian,noAssert){if(!noAssert){checkIEEE754(buf,value,offset,4,3.4028234663852886e38,-3.4028234663852886e38)}ieee754.write(buf,value,offset,littleEndian,23,4);return offset+4}Buffer.prototype.writeFloatLE=function writeFloatLE(value,offset,noAssert){return writeFloat(this,value,offset,true,noAssert)};Buffer.prototype.writeFloatBE=function writeFloatBE(value,offset,noAssert){return writeFloat(this,value,offset,false,noAssert)};function writeDouble(buf,value,offset,littleEndian,noAssert){if(!noAssert){checkIEEE754(buf,value,offset,8,1.7976931348623157e308,-1.7976931348623157e308)}ieee754.write(buf,value,offset,littleEndian,52,8);return offset+8}Buffer.prototype.writeDoubleLE=function writeDoubleLE(value,offset,noAssert){return writeDouble(this,value,offset,true,noAssert)};Buffer.prototype.writeDoubleBE=function writeDoubleBE(value,offset,noAssert){return writeDouble(this,value,offset,false,noAssert)};Buffer.prototype.copy=function copy(target,targetStart,start,end){if(!start)start=0;if(!end&&end!==0)end=this.length;if(targetStart>=target.length)targetStart=target.length;if(!targetStart)targetStart=0;if(end>0&&end<start)end=start;if(end===start)return 0;if(target.length===0||this.length===0)return 0;if(targetStart<0){throw new RangeError("targetStart out of bounds")}if(start<0||start>=this.length)throw new RangeError("sourceStart out of bounds");if(end<0)throw new RangeError("sourceEnd out of bounds");if(end>this.length)end=this.length;if(target.length-targetStart<end-start){end=target.length-targetStart+start}var len=end-start;var i;if(this===target&&start<targetStart&&targetStart<end){for(i=len-1;i>=0;--i){target[i+targetStart]=this[i+start]}}else if(len<1e3||!Buffer.TYPED_ARRAY_SUPPORT){for(i=0;i<len;++i){target[i+targetStart]=this[i+start]}}else{Uint8Array.prototype.set.call(target,this.subarray(start,start+len),targetStart)}return len};Buffer.prototype.fill=function fill(val,start,end,encoding){if(typeof val==="string"){if(typeof start==="string"){encoding=start;start=0;end=this.length}else if(typeof end==="string"){encoding=end;end=this.length}if(val.length===1){var code=val.charCodeAt(0);if(code<256){val=code}}if(encoding!==undefined&&typeof encoding!=="string"){throw new TypeError("encoding must be a string")}if(typeof encoding==="string"&&!Buffer.isEncoding(encoding)){throw new TypeError("Unknown encoding: "+encoding)}}else if(typeof val==="number"){val=val&255}if(start<0||this.length<start||this.length<end){throw new RangeError("Out of range index")}if(end<=start){return this}start=start>>>0;end=end===undefined?this.length:end>>>0;if(!val)val=0;var i;if(typeof val==="number"){for(i=start;i<end;++i){this[i]=val}}else{var bytes=Buffer.isBuffer(val)?val:utf8ToBytes(new Buffer(val,encoding).toString());var len=bytes.length;for(i=0;i<end-start;++i){this[i+start]=bytes[i%len]}}return this};var INVALID_BASE64_RE=/[^+\/0-9A-Za-z-_]/g;function base64clean(str){str=stringtrim(str).replace(INVALID_BASE64_RE,"");if(str.length<2)return"";while(str.length%4!==0){str=str+"="}return str}function stringtrim(str){if(str.trim)return str.trim();return str.replace(/^\s+|\s+$/g,"")}function toHex(n){if(n<16)return"0"+n.toString(16);return n.toString(16)}function utf8ToBytes(string,units){units=units||Infinity;var codePoint;var length=string.length;var leadSurrogate=null;var bytes=[];for(var i=0;i<length;++i){codePoint=string.charCodeAt(i);if(codePoint>55295&&codePoint<57344){if(!leadSurrogate){if(codePoint>56319){if((units-=3)>-1)bytes.push(239,191,189);continue}else if(i+1===length){if((units-=3)>-1)bytes.push(239,191,189);continue}leadSurrogate=codePoint;continue}if(codePoint<56320){if((units-=3)>-1)bytes.push(239,191,189);leadSurrogate=codePoint;continue}codePoint=(leadSurrogate-55296<<10|codePoint-56320)+65536}else if(leadSurrogate){if((units-=3)>-1)bytes.push(239,191,189)}leadSurrogate=null;if(codePoint<128){if((units-=1)<0)break;bytes.push(codePoint)}else if(codePoint<2048){if((units-=2)<0)break;bytes.push(codePoint>>6|192,codePoint&63|128)}else if(codePoint<65536){if((units-=3)<0)break;bytes.push(codePoint>>12|224,codePoint>>6&63|128,codePoint&63|128)}else if(codePoint<1114112){if((units-=4)<0)break;bytes.push(codePoint>>18|240,codePoint>>12&63|128,codePoint>>6&63|128,codePoint&63|128)}else{throw new Error("Invalid code point")}}return bytes}function asciiToBytes(str){var byteArray=[];for(var i=0;i<str.length;++i){byteArray.push(str.charCodeAt(i)&255)}return byteArray}function utf16leToBytes(str,units){var c,hi,lo;var byteArray=[];for(var i=0;i<str.length;++i){if((units-=2)<0)break;c=str.charCodeAt(i);hi=c>>8;lo=c%256;byteArray.push(lo);byteArray.push(hi)}return byteArray}function base64ToBytes(str){return base64.toByteArray(base64clean(str))}function blitBuffer(src,dst,offset,length){for(var i=0;i<length;++i){if(i+offset>=dst.length||i>=src.length)break;dst[i+offset]=src[i]}return i}function isnan(val){return val!==val}}).call(this,typeof global!=="undefined"?global:typeof self!=="undefined"?self:typeof window!=="undefined"?window:{})},{"base64-js":4,ieee754:5,isarray:6}],4:[function(require,module,exports){"use strict";exports.toByteArray=toByteArray;exports.fromByteArray=fromByteArray;var lookup=[];var revLookup=[];var Arr=typeof Uint8Array!=="undefined"?Uint8Array:Array;function init(){var code="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";for(var i=0,len=code.length;i<len;++i){lookup[i]=code[i];revLookup[code.charCodeAt(i)]=i}revLookup["-".charCodeAt(0)]=62;revLookup["_".charCodeAt(0)]=63}init();function toByteArray(b64){var i,j,l,tmp,placeHolders,arr;var len=b64.length;if(len%4>0){throw new Error("Invalid string. Length must be a multiple of 4")}placeHolders=b64[len-2]==="="?2:b64[len-1]==="="?1:0;arr=new Arr(len*3/4-placeHolders);l=placeHolders>0?len-4:len;var L=0;for(i=0,j=0;i<l;i+=4,j+=3){tmp=revLookup[b64.charCodeAt(i)]<<18|revLookup[b64.charCodeAt(i+1)]<<12|revLookup[b64.charCodeAt(i+2)]<<6|revLookup[b64.charCodeAt(i+3)];arr[L++]=tmp>>16&255;arr[L++]=tmp>>8&255;arr[L++]=tmp&255}if(placeHolders===2){tmp=revLookup[b64.charCodeAt(i)]<<2|revLookup[b64.charCodeAt(i+1)]>>4;arr[L++]=tmp&255}else if(placeHolders===1){tmp=revLookup[b64.charCodeAt(i)]<<10|revLookup[b64.charCodeAt(i+1)]<<4|revLookup[b64.charCodeAt(i+2)]>>2;arr[L++]=tmp>>8&255;arr[L++]=tmp&255}return arr}function tripletToBase64(num){return lookup[num>>18&63]+lookup[num>>12&63]+lookup[num>>6&63]+lookup[num&63]}function encodeChunk(uint8,start,end){var tmp;var output=[];for(var i=start;i<end;i+=3){tmp=(uint8[i]<<16)+(uint8[i+1]<<8)+uint8[i+2];output.push(tripletToBase64(tmp))}return output.join("")}function fromByteArray(uint8){var tmp;var len=uint8.length;var extraBytes=len%3;var output="";var parts=[];var maxChunkLength=16383;for(var i=0,len2=len-extraBytes;i<len2;i+=maxChunkLength){parts.push(encodeChunk(uint8,i,i+maxChunkLength>len2?len2:i+maxChunkLength))}if(extraBytes===1){tmp=uint8[len-1];output+=lookup[tmp>>2];output+=lookup[tmp<<4&63];output+="=="}else if(extraBytes===2){tmp=(uint8[len-2]<<8)+uint8[len-1];output+=lookup[tmp>>10];output+=lookup[tmp>>4&63];output+=lookup[tmp<<2&63];output+="="}parts.push(output);return parts.join("")}},{}],5:[function(require,module,exports){exports.read=function(buffer,offset,isLE,mLen,nBytes){var e,m;var eLen=nBytes*8-mLen-1;var eMax=(1<<eLen)-1;var eBias=eMax>>1;var nBits=-7;var i=isLE?nBytes-1:0;var d=isLE?-1:1;var s=buffer[offset+i];i+=d;e=s&(1<<-nBits)-1;s>>=-nBits;nBits+=eLen;for(;nBits>0;e=e*256+buffer[offset+i],i+=d,nBits-=8){}m=e&(1<<-nBits)-1;e>>=-nBits;nBits+=mLen;for(;nBits>0;m=m*256+buffer[offset+i],i+=d,nBits-=8){}if(e===0){e=1-eBias}else if(e===eMax){return m?NaN:(s?-1:1)*Infinity}else{m=m+Math.pow(2,mLen);e=e-eBias}return(s?-1:1)*m*Math.pow(2,e-mLen)};exports.write=function(buffer,value,offset,isLE,mLen,nBytes){var e,m,c;var eLen=nBytes*8-mLen-1;var eMax=(1<<eLen)-1;var eBias=eMax>>1;var rt=mLen===23?Math.pow(2,-24)-Math.pow(2,-77):0;var i=isLE?0:nBytes-1;var d=isLE?1:-1;var s=value<0||value===0&&1/value<0?1:0;value=Math.abs(value);if(isNaN(value)||value===Infinity){m=isNaN(value)?1:0;e=eMax}else{e=Math.floor(Math.log(value)/Math.LN2);if(value*(c=Math.pow(2,-e))<1){e--;c*=2}if(e+eBias>=1){value+=rt/c}else{value+=rt*Math.pow(2,1-eBias)}if(value*c>=2){e++;c/=2}if(e+eBias>=eMax){m=0;e=eMax}else if(e+eBias>=1){m=(value*c-1)*Math.pow(2,mLen);e=e+eBias}else{m=value*Math.pow(2,eBias-1)*Math.pow(2,mLen);e=0}}for(;mLen>=8;buffer[offset+i]=m&255,i+=d,m/=256,mLen-=8){}e=e<<mLen|m;eLen+=mLen;for(;eLen>0;buffer[offset+i]=e&255,i+=d,e/=256,eLen-=8){}buffer[offset+i-d]|=s*128}},{}],6:[function(require,module,exports){var toString={}.toString;module.exports=Array.isArray||function(arr){return toString.call(arr)=="[object Array]"}},{}],7:[function(require,module,exports){function EventEmitter(){this._events=this._events||{};this._maxListeners=this._maxListeners||undefined}module.exports=EventEmitter;EventEmitter.EventEmitter=EventEmitter;EventEmitter.prototype._events=undefined;EventEmitter.prototype._maxListeners=undefined;EventEmitter.defaultMaxListeners=10;EventEmitter.prototype.setMaxListeners=function(n){if(!isNumber(n)||n<0||isNaN(n))throw TypeError("n must be a positive number");this._maxListeners=n;return this};EventEmitter.prototype.emit=function(type){var er,handler,len,args,i,listeners;if(!this._events)this._events={};if(type==="error"){if(!this._events.error||isObject(this._events.error)&&!this._events.error.length){er=arguments[1];if(er instanceof Error){throw er}else{var err=new Error('Uncaught, unspecified "error" event. ('+er+")");err.context=er;throw err}}}handler=this._events[type];if(isUndefined(handler))return false;if(isFunction(handler)){switch(arguments.length){case 1:handler.call(this);break;case 2:handler.call(this,arguments[1]);break;case 3:handler.call(this,arguments[1],arguments[2]);break;default:args=Array.prototype.slice.call(arguments,1);handler.apply(this,args)}}else if(isObject(handler)){args=Array.prototype.slice.call(arguments,1);listeners=handler.slice();len=listeners.length;for(i=0;i<len;i++)listeners[i].apply(this,args)}return true};EventEmitter.prototype.addListener=function(type,listener){var m;if(!isFunction(listener))throw TypeError("listener must be a function");if(!this._events)this._events={};if(this._events.newListener)this.emit("newListener",type,isFunction(listener.listener)?listener.listener:listener);if(!this._events[type])this._events[type]=listener;else if(isObject(this._events[type]))this._events[type].push(listener);else this._events[type]=[this._events[type],listener];if(isObject(this._events[type])&&!this._events[type].warned){if(!isUndefined(this._maxListeners)){m=this._maxListeners}else{m=EventEmitter.defaultMaxListeners}if(m&&m>0&&this._events[type].length>m){this._events[type].warned=true;console.error("(node) warning: possible EventEmitter memory "+"leak detected. %d listeners added. "+"Use emitter.setMaxListeners() to increase limit.",this._events[type].length);if(typeof console.trace==="function"){console.trace()}}}return this};EventEmitter.prototype.on=EventEmitter.prototype.addListener;EventEmitter.prototype.once=function(type,listener){if(!isFunction(listener))throw TypeError("listener must be a function");var fired=false;function g(){this.removeListener(type,g);if(!fired){fired=true;listener.apply(this,arguments)}}g.listener=listener;this.on(type,g);return this};EventEmitter.prototype.removeListener=function(type,listener){var list,position,length,i;if(!isFunction(listener))throw TypeError("listener must be a function");if(!this._events||!this._events[type])return this;list=this._events[type];length=list.length;position=-1;if(list===listener||isFunction(list.listener)&&list.listener===listener){delete this._events[type];if(this._events.removeListener)this.emit("removeListener",type,listener)}else if(isObject(list)){for(i=length;i-- >0;){if(list[i]===listener||list[i].listener&&list[i].listener===listener){position=i;break}}if(position<0)return this;if(list.length===1){list.length=0;delete this._events[type]}else{list.splice(position,1)}if(this._events.removeListener)this.emit("removeListener",type,listener)}return this};EventEmitter.prototype.removeAllListeners=function(type){var key,listeners;if(!this._events)return this;if(!this._events.removeListener){if(arguments.length===0)this._events={};else if(this._events[type])delete this._events[type];return this}if(arguments.length===0){for(key in this._events){if(key==="removeListener")continue;this.removeAllListeners(key)}this.removeAllListeners("removeListener");this._events={};return this}listeners=this._events[type];if(isFunction(listeners)){this.removeListener(type,listeners)}else if(listeners){while(listeners.length)this.removeListener(type,listeners[listeners.length-1])}delete this._events[type];return this};EventEmitter.prototype.listeners=function(type){var ret;if(!this._events||!this._events[type])ret=[];else if(isFunction(this._events[type]))ret=[this._events[type]];else ret=this._events[type].slice();return ret};EventEmitter.prototype.listenerCount=function(type){if(this._events){var evlistener=this._events[type];if(isFunction(evlistener))return 1;else if(evlistener)return evlistener.length}return 0};EventEmitter.listenerCount=function(emitter,type){return emitter.listenerCount(type)};function isFunction(arg){return typeof arg==="function"}function isNumber(arg){return typeof arg==="number"}function isObject(arg){return typeof arg==="object"&&arg!==null}function isUndefined(arg){return arg===void 0}},{}],8:[function(require,module,exports){if(typeof Object.create==="function"){module.exports=function inherits(ctor,superCtor){ctor.super_=superCtor;ctor.prototype=Object.create(superCtor.prototype,{constructor:{value:ctor,enumerable:false,writable:true,configurable:true}})}}else{module.exports=function inherits(ctor,superCtor){ctor.super_=superCtor;var TempCtor=function(){};TempCtor.prototype=superCtor.prototype;ctor.prototype=new TempCtor;ctor.prototype.constructor=ctor}}},{}],9:[function(require,module,exports){module.exports=function(obj){return obj!=null&&(isBuffer(obj)||isSlowBuffer(obj)||!!obj._isBuffer)};function isBuffer(obj){return!!obj.constructor&&typeof obj.constructor.isBuffer==="function"&&obj.constructor.isBuffer(obj)}function isSlowBuffer(obj){return typeof obj.readFloatLE==="function"&&typeof obj.slice==="function"&&isBuffer(obj.slice(0,0))}},{}],10:[function(require,module,exports){var process=module.exports={};var cachedSetTimeout;var cachedClearTimeout;function defaultSetTimout(){throw new Error("setTimeout has not been defined")}function defaultClearTimeout(){throw new Error("clearTimeout has not been defined")}(function(){try{if(typeof setTimeout==="function"){cachedSetTimeout=setTimeout}else{cachedSetTimeout=defaultSetTimout}}catch(e){cachedSetTimeout=defaultSetTimout}try{if(typeof clearTimeout==="function"){cachedClearTimeout=clearTimeout}else{cachedClearTimeout=defaultClearTimeout}}catch(e){cachedClearTimeout=defaultClearTimeout}})();function runTimeout(fun){if(cachedSetTimeout===setTimeout){return setTimeout(fun,0)}if((cachedSetTimeout===defaultSetTimout||!cachedSetTimeout)&&setTimeout){cachedSetTimeout=setTimeout;return setTimeout(fun,0)}try{return cachedSetTimeout(fun,0)}catch(e){try{return cachedSetTimeout.call(null,fun,0)}catch(e){return cachedSetTimeout.call(this,fun,0)}}}function runClearTimeout(marker){if(cachedClearTimeout===clearTimeout){return clearTimeout(marker)}if((cachedClearTimeout===defaultClearTimeout||!cachedClearTimeout)&&clearTimeout){cachedClearTimeout=clearTimeout;return clearTimeout(marker)}try{return cachedClearTimeout(marker)}catch(e){try{return cachedClearTimeout.call(null,marker)}catch(e){return cachedClearTimeout.call(this,marker)}}}var queue=[];var draining=false;var currentQueue;var queueIndex=-1;function cleanUpNextTick(){if(!draining||!currentQueue){return}draining=false;if(currentQueue.length){queue=currentQueue.concat(queue)}else{queueIndex=-1}if(queue.length){drainQueue()}}function drainQueue(){if(draining){return}var timeout=runTimeout(cleanUpNextTick);draining=true;var len=queue.length;while(len){currentQueue=queue;queue=[];while(++queueIndex<len){if(currentQueue){currentQueue[queueIndex].run()}}queueIndex=-1;len=queue.length}currentQueue=null;draining=false;runClearTimeout(timeout)}process.nextTick=function(fun){var args=new Array(arguments.length-1);if(arguments.length>1){for(var i=1;i<arguments.length;i++){args[i-1]=arguments[i]}}queue.push(new Item(fun,args));if(queue.length===1&&!draining){runTimeout(drainQueue)}};function Item(fun,array){this.fun=fun;this.array=array}Item.prototype.run=function(){this.fun.apply(null,this.array)};process.title="browser";process.browser=true;process.env={};process.argv=[];process.version="";process.versions={};function noop(){}process.on=noop;process.addListener=noop;process.once=noop;process.off=noop;process.removeListener=noop;process.removeAllListeners=noop;process.emit=noop;process.binding=function(name){throw new Error("process.binding is not supported")};process.cwd=function(){return"/"};process.chdir=function(dir){throw new Error("process.chdir is not supported")};process.umask=function(){return 0}},{}],11:[function(require,module,exports){module.exports=require("./lib/_stream_duplex.js")},{"./lib/_stream_duplex.js":12}],12:[function(require,module,exports){"use strict";var objectKeys=Object.keys||function(obj){var keys=[];for(var key in obj){keys.push(key)}return keys};module.exports=Duplex;var processNextTick=require("process-nextick-args");var util=require("core-util-is");util.inherits=require("inherits");var Readable=require("./_stream_readable");var Writable=require("./_stream_writable");util.inherits(Duplex,Readable);var keys=objectKeys(Writable.prototype);for(var v=0;v<keys.length;v++){var method=keys[v];if(!Duplex.prototype[method])Duplex.prototype[method]=Writable.prototype[method]}function Duplex(options){if(!(this instanceof Duplex))return new Duplex(options);Readable.call(this,options);Writable.call(this,options);if(options&&options.readable===false)this.readable=false;if(options&&options.writable===false)this.writable=false;this.allowHalfOpen=true;if(options&&options.allowHalfOpen===false)this.allowHalfOpen=false;this.once("end",onend)}function onend(){if(this.allowHalfOpen||this._writableState.ended)return;processNextTick(onEndNT,this)}function onEndNT(self){self.end()}function forEach(xs,f){for(var i=0,l=xs.length;i<l;i++){f(xs[i],i)}}},{"./_stream_readable":14,"./_stream_writable":16,"core-util-is":19,inherits:8,"process-nextick-args":21}],13:[function(require,module,exports){"use strict";module.exports=PassThrough;var Transform=require("./_stream_transform");var util=require("core-util-is");util.inherits=require("inherits");util.inherits(PassThrough,Transform);function PassThrough(options){if(!(this instanceof PassThrough))return new PassThrough(options);Transform.call(this,options)}PassThrough.prototype._transform=function(chunk,encoding,cb){cb(null,chunk)}},{"./_stream_transform":15,"core-util-is":19,inherits:8}],14:[function(require,module,exports){(function(process){"use strict";module.exports=Readable;var processNextTick=require("process-nextick-args");var isArray=require("isarray");Readable.ReadableState=ReadableState;var EE=require("events").EventEmitter;var EElistenerCount=function(emitter,type){return emitter.listeners(type).length};var Stream;(function(){try{Stream=require("st"+"ream")}catch(_){}finally{if(!Stream)Stream=require("events").EventEmitter}})();var Buffer=require("buffer").Buffer;var bufferShim=require("buffer-shims");var util=require("core-util-is");util.inherits=require("inherits");var debugUtil=require("util");var debug=void 0;if(debugUtil&&debugUtil.debuglog){debug=debugUtil.debuglog("stream")}else{debug=function(){}}var BufferList=require("./internal/streams/BufferList");var StringDecoder;util.inherits(Readable,Stream);function prependListener(emitter,event,fn){if(typeof emitter.prependListener==="function"){return emitter.prependListener(event,fn)}else{if(!emitter._events||!emitter._events[event])emitter.on(event,fn);else if(isArray(emitter._events[event]))emitter._events[event].unshift(fn);else emitter._events[event]=[fn,emitter._events[event]]}}var Duplex;function ReadableState(options,stream){Duplex=Duplex||require("./_stream_duplex");options=options||{};this.objectMode=!!options.objectMode;if(stream instanceof Duplex)this.objectMode=this.objectMode||!!options.readableObjectMode;var hwm=options.highWaterMark;var defaultHwm=this.objectMode?16:16*1024;this.highWaterMark=hwm||hwm===0?hwm:defaultHwm;this.highWaterMark=~~this.highWaterMark;this.buffer=new BufferList;this.length=0;this.pipes=null;this.pipesCount=0;this.flowing=null;this.ended=false;this.endEmitted=false;this.reading=false;this.sync=true;this.needReadable=false;this.emittedReadable=false;this.readableListening=false;this.resumeScheduled=false;this.defaultEncoding=options.defaultEncoding||"utf8";this.ranOut=false;this.awaitDrain=0;this.readingMore=false;this.decoder=null;this.encoding=null;if(options.encoding){if(!StringDecoder)StringDecoder=require("string_decoder/").StringDecoder;this.decoder=new StringDecoder(options.encoding);this.encoding=options.encoding}}var Duplex;function Readable(options){Duplex=Duplex||require("./_stream_duplex");if(!(this instanceof Readable))return new Readable(options);this._readableState=new ReadableState(options,this);this.readable=true;if(options&&typeof options.read==="function")this._read=options.read;Stream.call(this)}Readable.prototype.push=function(chunk,encoding){var state=this._readableState;if(!state.objectMode&&typeof chunk==="string"){encoding=encoding||state.defaultEncoding;if(encoding!==state.encoding){chunk=bufferShim.from(chunk,encoding);encoding=""}}return readableAddChunk(this,state,chunk,encoding,false)};Readable.prototype.unshift=function(chunk){var state=this._readableState;return readableAddChunk(this,state,chunk,"",true)};Readable.prototype.isPaused=function(){return this._readableState.flowing===false};function readableAddChunk(stream,state,chunk,encoding,addToFront){var er=chunkInvalid(state,chunk);if(er){stream.emit("error",er)}else if(chunk===null){state.reading=false;onEofChunk(stream,state)}else if(state.objectMode||chunk&&chunk.length>0){if(state.ended&&!addToFront){var e=new Error("stream.push() after EOF");stream.emit("error",e)}else if(state.endEmitted&&addToFront){var _e=new Error("stream.unshift() after end event");stream.emit("error",_e)}else{var skipAdd;if(state.decoder&&!addToFront&&!encoding){chunk=state.decoder.write(chunk);skipAdd=!state.objectMode&&chunk.length===0}if(!addToFront)state.reading=false;if(!skipAdd){if(state.flowing&&state.length===0&&!state.sync){stream.emit("data",chunk);stream.read(0)}else{state.length+=state.objectMode?1:chunk.length;if(addToFront)state.buffer.unshift(chunk);else state.buffer.push(chunk);if(state.needReadable)emitReadable(stream)}}maybeReadMore(stream,state)}}else if(!addToFront){state.reading=false}return needMoreData(state)}function needMoreData(state){return!state.ended&&(state.needReadable||state.length<state.highWaterMark||state.length===0)}Readable.prototype.setEncoding=function(enc){if(!StringDecoder)StringDecoder=require("string_decoder/").StringDecoder;this._readableState.decoder=new StringDecoder(enc);this._readableState.encoding=enc;return this};var MAX_HWM=8388608;function computeNewHighWaterMark(n){if(n>=MAX_HWM){n=MAX_HWM}else{n--;n|=n>>>1;n|=n>>>2;n|=n>>>4;n|=n>>>8;n|=n>>>16;n++}return n}function howMuchToRead(n,state){if(n<=0||state.length===0&&state.ended)return 0;if(state.objectMode)return 1;if(n!==n){if(state.flowing&&state.length)return state.buffer.head.data.length;else return state.length}if(n>state.highWaterMark)state.highWaterMark=computeNewHighWaterMark(n);if(n<=state.length)return n;if(!state.ended){state.needReadable=true;return 0}return state.length}Readable.prototype.read=function(n){debug("read",n);n=parseInt(n,10);var state=this._readableState;var nOrig=n;if(n!==0)state.emittedReadable=false;if(n===0&&state.needReadable&&(state.length>=state.highWaterMark||state.ended)){debug("read: emitReadable",state.length,state.ended);if(state.length===0&&state.ended)endReadable(this);else emitReadable(this);return null}n=howMuchToRead(n,state);if(n===0&&state.ended){if(state.length===0)endReadable(this);return null}var doRead=state.needReadable;debug("need readable",doRead);if(state.length===0||state.length-n<state.highWaterMark){doRead=true;debug("length less than watermark",doRead)}if(state.ended||state.reading){doRead=false;debug("reading or ended",doRead)}else if(doRead){debug("do read");state.reading=true;state.sync=true;if(state.length===0)state.needReadable=true;this._read(state.highWaterMark);state.sync=false;if(!state.reading)n=howMuchToRead(nOrig,state)}var ret;if(n>0)ret=fromList(n,state);else ret=null;if(ret===null){state.needReadable=true;n=0}else{state.length-=n}if(state.length===0){if(!state.ended)state.needReadable=true;if(nOrig!==n&&state.ended)endReadable(this)}if(ret!==null)this.emit("data",ret);return ret};function chunkInvalid(state,chunk){var er=null;if(!Buffer.isBuffer(chunk)&&typeof chunk!=="string"&&chunk!==null&&chunk!==undefined&&!state.objectMode){er=new TypeError("Invalid non-string/buffer chunk")}return er}function onEofChunk(stream,state){if(state.ended)return;if(state.decoder){var chunk=state.decoder.end();if(chunk&&chunk.length){state.buffer.push(chunk);state.length+=state.objectMode?1:chunk.length}}state.ended=true;emitReadable(stream)}function emitReadable(stream){var state=stream._readableState;state.needReadable=false;if(!state.emittedReadable){debug("emitReadable",state.flowing);state.emittedReadable=true;if(state.sync)processNextTick(emitReadable_,stream);else emitReadable_(stream)}}function emitReadable_(stream){debug("emit readable");stream.emit("readable");flow(stream)}function maybeReadMore(stream,state){if(!state.readingMore){state.readingMore=true;processNextTick(maybeReadMore_,stream,state)}}function maybeReadMore_(stream,state){var len=state.length;while(!state.reading&&!state.flowing&&!state.ended&&state.length<state.highWaterMark){debug("maybeReadMore read 0");stream.read(0);if(len===state.length)break;else len=state.length}state.readingMore=false}Readable.prototype._read=function(n){this.emit("error",new Error("not implemented"))};Readable.prototype.pipe=function(dest,pipeOpts){var src=this;var state=this._readableState;switch(state.pipesCount){case 0:state.pipes=dest;break;case 1:state.pipes=[state.pipes,dest];break;default:state.pipes.push(dest);break}state.pipesCount+=1;debug("pipe count=%d opts=%j",state.pipesCount,pipeOpts);var doEnd=(!pipeOpts||pipeOpts.end!==false)&&dest!==process.stdout&&dest!==process.stderr;var endFn=doEnd?onend:cleanup;if(state.endEmitted)processNextTick(endFn);else src.once("end",endFn);dest.on("unpipe",onunpipe);function onunpipe(readable){debug("onunpipe");if(readable===src){cleanup()}}function onend(){debug("onend");dest.end()}var ondrain=pipeOnDrain(src);dest.on("drain",ondrain);var cleanedUp=false;function cleanup(){debug("cleanup");dest.removeListener("close",onclose);dest.removeListener("finish",onfinish);dest.removeListener("drain",ondrain);dest.removeListener("error",onerror);dest.removeListener("unpipe",onunpipe);src.removeListener("end",onend);src.removeListener("end",cleanup);src.removeListener("data",ondata);cleanedUp=true;if(state.awaitDrain&&(!dest._writableState||dest._writableState.needDrain))ondrain()}var increasedAwaitDrain=false;src.on("data",ondata);function ondata(chunk){debug("ondata");increasedAwaitDrain=false;var ret=dest.write(chunk);if(false===ret&&!increasedAwaitDrain){if((state.pipesCount===1&&state.pipes===dest||state.pipesCount>1&&indexOf(state.pipes,dest)!==-1)&&!cleanedUp){debug("false write response, pause",src._readableState.awaitDrain);src._readableState.awaitDrain++;increasedAwaitDrain=true}src.pause()}}function onerror(er){debug("onerror",er);unpipe();dest.removeListener("error",onerror);if(EElistenerCount(dest,"error")===0)dest.emit("error",er)}prependListener(dest,"error",onerror);function onclose(){dest.removeListener("finish",onfinish);unpipe()}dest.once("close",onclose);function onfinish(){debug("onfinish");dest.removeListener("close",onclose);unpipe()}dest.once("finish",onfinish);function unpipe(){debug("unpipe");src.unpipe(dest)}dest.emit("pipe",src);if(!state.flowing){debug("pipe resume");src.resume()}return dest};function pipeOnDrain(src){return function(){var state=src._readableState;debug("pipeOnDrain",state.awaitDrain);if(state.awaitDrain)state.awaitDrain--;if(state.awaitDrain===0&&EElistenerCount(src,"data")){state.flowing=true;flow(src)}}}Readable.prototype.unpipe=function(dest){var state=this._readableState;if(state.pipesCount===0)return this;if(state.pipesCount===1){if(dest&&dest!==state.pipes)return this;if(!dest)dest=state.pipes;state.pipes=null;state.pipesCount=0;state.flowing=false;if(dest)dest.emit("unpipe",this);return this}if(!dest){var dests=state.pipes;var len=state.pipesCount;state.pipes=null;state.pipesCount=0;state.flowing=false;for(var _i=0;_i<len;_i++){dests[_i].emit("unpipe",this)}return this}var i=indexOf(state.pipes,dest);if(i===-1)return this;state.pipes.splice(i,1);state.pipesCount-=1;if(state.pipesCount===1)state.pipes=state.pipes[0];dest.emit("unpipe",this);return this};Readable.prototype.on=function(ev,fn){var res=Stream.prototype.on.call(this,ev,fn);
 if(ev==="data"){if(this._readableState.flowing!==false)this.resume()}else if(ev==="readable"){var state=this._readableState;if(!state.endEmitted&&!state.readableListening){state.readableListening=state.needReadable=true;state.emittedReadable=false;if(!state.reading){processNextTick(nReadingNextTick,this)}else if(state.length){emitReadable(this,state)}}}return res};Readable.prototype.addListener=Readable.prototype.on;function nReadingNextTick(self){debug("readable nexttick read 0");self.read(0)}Readable.prototype.resume=function(){var state=this._readableState;if(!state.flowing){debug("resume");state.flowing=true;resume(this,state)}return this};function resume(stream,state){if(!state.resumeScheduled){state.resumeScheduled=true;processNextTick(resume_,stream,state)}}function resume_(stream,state){if(!state.reading){debug("resume read 0");stream.read(0)}state.resumeScheduled=false;state.awaitDrain=0;stream.emit("resume");flow(stream);if(state.flowing&&!state.reading)stream.read(0)}Readable.prototype.pause=function(){debug("call pause flowing=%j",this._readableState.flowing);if(false!==this._readableState.flowing){debug("pause");this._readableState.flowing=false;this.emit("pause")}return this};function flow(stream){var state=stream._readableState;debug("flow",state.flowing);while(state.flowing&&stream.read()!==null){}}Readable.prototype.wrap=function(stream){var state=this._readableState;var paused=false;var self=this;stream.on("end",function(){debug("wrapped end");if(state.decoder&&!state.ended){var chunk=state.decoder.end();if(chunk&&chunk.length)self.push(chunk)}self.push(null)});stream.on("data",function(chunk){debug("wrapped data");if(state.decoder)chunk=state.decoder.write(chunk);if(state.objectMode&&(chunk===null||chunk===undefined))return;else if(!state.objectMode&&(!chunk||!chunk.length))return;var ret=self.push(chunk);if(!ret){paused=true;stream.pause()}});for(var i in stream){if(this[i]===undefined&&typeof stream[i]==="function"){this[i]=function(method){return function(){return stream[method].apply(stream,arguments)}}(i)}}var events=["error","close","destroy","pause","resume"];forEach(events,function(ev){stream.on(ev,self.emit.bind(self,ev))});self._read=function(n){debug("wrapped _read",n);if(paused){paused=false;stream.resume()}};return self};Readable._fromList=fromList;function fromList(n,state){if(state.length===0)return null;var ret;if(state.objectMode)ret=state.buffer.shift();else if(!n||n>=state.length){if(state.decoder)ret=state.buffer.join("");else if(state.buffer.length===1)ret=state.buffer.head.data;else ret=state.buffer.concat(state.length);state.buffer.clear()}else{ret=fromListPartial(n,state.buffer,state.decoder)}return ret}function fromListPartial(n,list,hasStrings){var ret;if(n<list.head.data.length){ret=list.head.data.slice(0,n);list.head.data=list.head.data.slice(n)}else if(n===list.head.data.length){ret=list.shift()}else{ret=hasStrings?copyFromBufferString(n,list):copyFromBuffer(n,list)}return ret}function copyFromBufferString(n,list){var p=list.head;var c=1;var ret=p.data;n-=ret.length;while(p=p.next){var str=p.data;var nb=n>str.length?str.length:n;if(nb===str.length)ret+=str;else ret+=str.slice(0,n);n-=nb;if(n===0){if(nb===str.length){++c;if(p.next)list.head=p.next;else list.head=list.tail=null}else{list.head=p;p.data=str.slice(nb)}break}++c}list.length-=c;return ret}function copyFromBuffer(n,list){var ret=bufferShim.allocUnsafe(n);var p=list.head;var c=1;p.data.copy(ret);n-=p.data.length;while(p=p.next){var buf=p.data;var nb=n>buf.length?buf.length:n;buf.copy(ret,ret.length-n,0,nb);n-=nb;if(n===0){if(nb===buf.length){++c;if(p.next)list.head=p.next;else list.head=list.tail=null}else{list.head=p;p.data=buf.slice(nb)}break}++c}list.length-=c;return ret}function endReadable(stream){var state=stream._readableState;if(state.length>0)throw new Error('"endReadable()" called on non-empty stream');if(!state.endEmitted){state.ended=true;processNextTick(endReadableNT,state,stream)}}function endReadableNT(state,stream){if(!state.endEmitted&&state.length===0){state.endEmitted=true;stream.readable=false;stream.emit("end")}}function forEach(xs,f){for(var i=0,l=xs.length;i<l;i++){f(xs[i],i)}}function indexOf(xs,x){for(var i=0,l=xs.length;i<l;i++){if(xs[i]===x)return i}return-1}}).call(this,require("_process"))},{"./_stream_duplex":12,"./internal/streams/BufferList":17,_process:10,buffer:3,"buffer-shims":18,"core-util-is":19,events:7,inherits:8,isarray:20,"process-nextick-args":21,"string_decoder/":28,util:2}],15:[function(require,module,exports){"use strict";module.exports=Transform;var Duplex=require("./_stream_duplex");var util=require("core-util-is");util.inherits=require("inherits");util.inherits(Transform,Duplex);function TransformState(stream){this.afterTransform=function(er,data){return afterTransform(stream,er,data)};this.needTransform=false;this.transforming=false;this.writecb=null;this.writechunk=null;this.writeencoding=null}function afterTransform(stream,er,data){var ts=stream._transformState;ts.transforming=false;var cb=ts.writecb;if(!cb)return stream.emit("error",new Error("no writecb in Transform class"));ts.writechunk=null;ts.writecb=null;if(data!==null&&data!==undefined)stream.push(data);cb(er);var rs=stream._readableState;rs.reading=false;if(rs.needReadable||rs.length<rs.highWaterMark){stream._read(rs.highWaterMark)}}function Transform(options){if(!(this instanceof Transform))return new Transform(options);Duplex.call(this,options);this._transformState=new TransformState(this);var stream=this;this._readableState.needReadable=true;this._readableState.sync=false;if(options){if(typeof options.transform==="function")this._transform=options.transform;if(typeof options.flush==="function")this._flush=options.flush}this.once("prefinish",function(){if(typeof this._flush==="function")this._flush(function(er){done(stream,er)});else done(stream)})}Transform.prototype.push=function(chunk,encoding){this._transformState.needTransform=false;return Duplex.prototype.push.call(this,chunk,encoding)};Transform.prototype._transform=function(chunk,encoding,cb){throw new Error("Not implemented")};Transform.prototype._write=function(chunk,encoding,cb){var ts=this._transformState;ts.writecb=cb;ts.writechunk=chunk;ts.writeencoding=encoding;if(!ts.transforming){var rs=this._readableState;if(ts.needTransform||rs.needReadable||rs.length<rs.highWaterMark)this._read(rs.highWaterMark)}};Transform.prototype._read=function(n){var ts=this._transformState;if(ts.writechunk!==null&&ts.writecb&&!ts.transforming){ts.transforming=true;this._transform(ts.writechunk,ts.writeencoding,ts.afterTransform)}else{ts.needTransform=true}};function done(stream,er){if(er)return stream.emit("error",er);var ws=stream._writableState;var ts=stream._transformState;if(ws.length)throw new Error("Calling transform done when ws.length != 0");if(ts.transforming)throw new Error("Calling transform done when still transforming");return stream.push(null)}},{"./_stream_duplex":12,"core-util-is":19,inherits:8}],16:[function(require,module,exports){(function(process){"use strict";module.exports=Writable;var processNextTick=require("process-nextick-args");var asyncWrite=!process.browser&&["v0.10","v0.9."].indexOf(process.version.slice(0,5))>-1?setImmediate:processNextTick;Writable.WritableState=WritableState;var util=require("core-util-is");util.inherits=require("inherits");var internalUtil={deprecate:require("util-deprecate")};var Stream;(function(){try{Stream=require("st"+"ream")}catch(_){}finally{if(!Stream)Stream=require("events").EventEmitter}})();var Buffer=require("buffer").Buffer;var bufferShim=require("buffer-shims");util.inherits(Writable,Stream);function nop(){}function WriteReq(chunk,encoding,cb){this.chunk=chunk;this.encoding=encoding;this.callback=cb;this.next=null}var Duplex;function WritableState(options,stream){Duplex=Duplex||require("./_stream_duplex");options=options||{};this.objectMode=!!options.objectMode;if(stream instanceof Duplex)this.objectMode=this.objectMode||!!options.writableObjectMode;var hwm=options.highWaterMark;var defaultHwm=this.objectMode?16:16*1024;this.highWaterMark=hwm||hwm===0?hwm:defaultHwm;this.highWaterMark=~~this.highWaterMark;this.needDrain=false;this.ending=false;this.ended=false;this.finished=false;var noDecode=options.decodeStrings===false;this.decodeStrings=!noDecode;this.defaultEncoding=options.defaultEncoding||"utf8";this.length=0;this.writing=false;this.corked=0;this.sync=true;this.bufferProcessing=false;this.onwrite=function(er){onwrite(stream,er)};this.writecb=null;this.writelen=0;this.bufferedRequest=null;this.lastBufferedRequest=null;this.pendingcb=0;this.prefinished=false;this.errorEmitted=false;this.bufferedRequestCount=0;this.corkedRequestsFree=new CorkedRequest(this)}WritableState.prototype.getBuffer=function writableStateGetBuffer(){var current=this.bufferedRequest;var out=[];while(current){out.push(current);current=current.next}return out};(function(){try{Object.defineProperty(WritableState.prototype,"buffer",{get:internalUtil.deprecate(function(){return this.getBuffer()},"_writableState.buffer is deprecated. Use _writableState.getBuffer "+"instead.")})}catch(_){}})();var Duplex;function Writable(options){Duplex=Duplex||require("./_stream_duplex");if(!(this instanceof Writable)&&!(this instanceof Duplex))return new Writable(options);this._writableState=new WritableState(options,this);this.writable=true;if(options){if(typeof options.write==="function")this._write=options.write;if(typeof options.writev==="function")this._writev=options.writev}Stream.call(this)}Writable.prototype.pipe=function(){this.emit("error",new Error("Cannot pipe, not readable"))};function writeAfterEnd(stream,cb){var er=new Error("write after end");stream.emit("error",er);processNextTick(cb,er)}function validChunk(stream,state,chunk,cb){var valid=true;var er=false;if(chunk===null){er=new TypeError("May not write null values to stream")}else if(!Buffer.isBuffer(chunk)&&typeof chunk!=="string"&&chunk!==undefined&&!state.objectMode){er=new TypeError("Invalid non-string/buffer chunk")}if(er){stream.emit("error",er);processNextTick(cb,er);valid=false}return valid}Writable.prototype.write=function(chunk,encoding,cb){var state=this._writableState;var ret=false;if(typeof encoding==="function"){cb=encoding;encoding=null}if(Buffer.isBuffer(chunk))encoding="buffer";else if(!encoding)encoding=state.defaultEncoding;if(typeof cb!=="function")cb=nop;if(state.ended)writeAfterEnd(this,cb);else if(validChunk(this,state,chunk,cb)){state.pendingcb++;ret=writeOrBuffer(this,state,chunk,encoding,cb)}return ret};Writable.prototype.cork=function(){var state=this._writableState;state.corked++};Writable.prototype.uncork=function(){var state=this._writableState;if(state.corked){state.corked--;if(!state.writing&&!state.corked&&!state.finished&&!state.bufferProcessing&&state.bufferedRequest)clearBuffer(this,state)}};Writable.prototype.setDefaultEncoding=function setDefaultEncoding(encoding){if(typeof encoding==="string")encoding=encoding.toLowerCase();if(!(["hex","utf8","utf-8","ascii","binary","base64","ucs2","ucs-2","utf16le","utf-16le","raw"].indexOf((encoding+"").toLowerCase())>-1))throw new TypeError("Unknown encoding: "+encoding);this._writableState.defaultEncoding=encoding;return this};function decodeChunk(state,chunk,encoding){if(!state.objectMode&&state.decodeStrings!==false&&typeof chunk==="string"){chunk=bufferShim.from(chunk,encoding)}return chunk}function writeOrBuffer(stream,state,chunk,encoding,cb){chunk=decodeChunk(state,chunk,encoding);if(Buffer.isBuffer(chunk))encoding="buffer";var len=state.objectMode?1:chunk.length;state.length+=len;var ret=state.length<state.highWaterMark;if(!ret)state.needDrain=true;if(state.writing||state.corked){var last=state.lastBufferedRequest;state.lastBufferedRequest=new WriteReq(chunk,encoding,cb);if(last){last.next=state.lastBufferedRequest}else{state.bufferedRequest=state.lastBufferedRequest}state.bufferedRequestCount+=1}else{doWrite(stream,state,false,len,chunk,encoding,cb)}return ret}function doWrite(stream,state,writev,len,chunk,encoding,cb){state.writelen=len;state.writecb=cb;state.writing=true;state.sync=true;if(writev)stream._writev(chunk,state.onwrite);else stream._write(chunk,encoding,state.onwrite);state.sync=false}function onwriteError(stream,state,sync,er,cb){--state.pendingcb;if(sync)processNextTick(cb,er);else cb(er);stream._writableState.errorEmitted=true;stream.emit("error",er)}function onwriteStateUpdate(state){state.writing=false;state.writecb=null;state.length-=state.writelen;state.writelen=0}function onwrite(stream,er){var state=stream._writableState;var sync=state.sync;var cb=state.writecb;onwriteStateUpdate(state);if(er)onwriteError(stream,state,sync,er,cb);else{var finished=needFinish(state);if(!finished&&!state.corked&&!state.bufferProcessing&&state.bufferedRequest){clearBuffer(stream,state)}if(sync){asyncWrite(afterWrite,stream,state,finished,cb)}else{afterWrite(stream,state,finished,cb)}}}function afterWrite(stream,state,finished,cb){if(!finished)onwriteDrain(stream,state);state.pendingcb--;cb();finishMaybe(stream,state)}function onwriteDrain(stream,state){if(state.length===0&&state.needDrain){state.needDrain=false;stream.emit("drain")}}function clearBuffer(stream,state){state.bufferProcessing=true;var entry=state.bufferedRequest;if(stream._writev&&entry&&entry.next){var l=state.bufferedRequestCount;var buffer=new Array(l);var holder=state.corkedRequestsFree;holder.entry=entry;var count=0;while(entry){buffer[count]=entry;entry=entry.next;count+=1}doWrite(stream,state,true,state.length,buffer,"",holder.finish);state.pendingcb++;state.lastBufferedRequest=null;if(holder.next){state.corkedRequestsFree=holder.next;holder.next=null}else{state.corkedRequestsFree=new CorkedRequest(state)}}else{while(entry){var chunk=entry.chunk;var encoding=entry.encoding;var cb=entry.callback;var len=state.objectMode?1:chunk.length;doWrite(stream,state,false,len,chunk,encoding,cb);entry=entry.next;if(state.writing){break}}if(entry===null)state.lastBufferedRequest=null}state.bufferedRequestCount=0;state.bufferedRequest=entry;state.bufferProcessing=false}Writable.prototype._write=function(chunk,encoding,cb){cb(new Error("not implemented"))};Writable.prototype._writev=null;Writable.prototype.end=function(chunk,encoding,cb){var state=this._writableState;if(typeof chunk==="function"){cb=chunk;chunk=null;encoding=null}else if(typeof encoding==="function"){cb=encoding;encoding=null}if(chunk!==null&&chunk!==undefined)this.write(chunk,encoding);if(state.corked){state.corked=1;this.uncork()}if(!state.ending&&!state.finished)endWritable(this,state,cb)};function needFinish(state){return state.ending&&state.length===0&&state.bufferedRequest===null&&!state.finished&&!state.writing}function prefinish(stream,state){if(!state.prefinished){state.prefinished=true;stream.emit("prefinish")}}function finishMaybe(stream,state){var need=needFinish(state);if(need){if(state.pendingcb===0){prefinish(stream,state);state.finished=true;stream.emit("finish")}else{prefinish(stream,state)}}return need}function endWritable(stream,state,cb){state.ending=true;finishMaybe(stream,state);if(cb){if(state.finished)processNextTick(cb);else stream.once("finish",cb)}state.ended=true;stream.writable=false}function CorkedRequest(state){var _this=this;this.next=null;this.entry=null;this.finish=function(err){var entry=_this.entry;_this.entry=null;while(entry){var cb=entry.callback;state.pendingcb--;cb(err);entry=entry.next}if(state.corkedRequestsFree){state.corkedRequestsFree.next=_this}else{state.corkedRequestsFree=_this}}}}).call(this,require("_process"))},{"./_stream_duplex":12,_process:10,buffer:3,"buffer-shims":18,"core-util-is":19,events:7,inherits:8,"process-nextick-args":21,"util-deprecate":22}],17:[function(require,module,exports){"use strict";var Buffer=require("buffer").Buffer;var bufferShim=require("buffer-shims");module.exports=BufferList;function BufferList(){this.head=null;this.tail=null;this.length=0}BufferList.prototype.push=function(v){var entry={data:v,next:null};if(this.length>0)this.tail.next=entry;else this.head=entry;this.tail=entry;++this.length};BufferList.prototype.unshift=function(v){var entry={data:v,next:this.head};if(this.length===0)this.tail=entry;this.head=entry;++this.length};BufferList.prototype.shift=function(){if(this.length===0)return;var ret=this.head.data;if(this.length===1)this.head=this.tail=null;else this.head=this.head.next;--this.length;return ret};BufferList.prototype.clear=function(){this.head=this.tail=null;this.length=0};BufferList.prototype.join=function(s){if(this.length===0)return"";var p=this.head;var ret=""+p.data;while(p=p.next){ret+=s+p.data}return ret};BufferList.prototype.concat=function(n){if(this.length===0)return bufferShim.alloc(0);if(this.length===1)return this.head.data;var ret=bufferShim.allocUnsafe(n>>>0);var p=this.head;var i=0;while(p){p.data.copy(ret,i);i+=p.data.length;p=p.next}return ret}},{buffer:3,"buffer-shims":18}],18:[function(require,module,exports){(function(global){"use strict";var buffer=require("buffer");var Buffer=buffer.Buffer;var SlowBuffer=buffer.SlowBuffer;var MAX_LEN=buffer.kMaxLength||2147483647;exports.alloc=function alloc(size,fill,encoding){if(typeof Buffer.alloc==="function"){return Buffer.alloc(size,fill,encoding)}if(typeof encoding==="number"){throw new TypeError("encoding must not be number")}if(typeof size!=="number"){throw new TypeError("size must be a number")}if(size>MAX_LEN){throw new RangeError("size is too large")}var enc=encoding;var _fill=fill;if(_fill===undefined){enc=undefined;_fill=0}var buf=new Buffer(size);if(typeof _fill==="string"){var fillBuf=new Buffer(_fill,enc);var flen=fillBuf.length;var i=-1;while(++i<size){buf[i]=fillBuf[i%flen]}}else{buf.fill(_fill)}return buf};exports.allocUnsafe=function allocUnsafe(size){if(typeof Buffer.allocUnsafe==="function"){return Buffer.allocUnsafe(size)}if(typeof size!=="number"){throw new TypeError("size must be a number")}if(size>MAX_LEN){throw new RangeError("size is too large")}return new Buffer(size)};exports.from=function from(value,encodingOrOffset,length){if(typeof Buffer.from==="function"&&(!global.Uint8Array||Uint8Array.from!==Buffer.from)){return Buffer.from(value,encodingOrOffset,length)}if(typeof value==="number"){throw new TypeError('"value" argument must not be a number')}if(typeof value==="string"){return new Buffer(value,encodingOrOffset)}if(typeof ArrayBuffer!=="undefined"&&value instanceof ArrayBuffer){var offset=encodingOrOffset;if(arguments.length===1){return new Buffer(value)}if(typeof offset==="undefined"){offset=0}var len=length;if(typeof len==="undefined"){len=value.byteLength-offset}if(offset>=value.byteLength){throw new RangeError("'offset' is out of bounds")}if(len>value.byteLength-offset){throw new RangeError("'length' is out of bounds")}return new Buffer(value.slice(offset,offset+len))}if(Buffer.isBuffer(value)){var out=new Buffer(value.length);value.copy(out,0,0,value.length);return out}if(value){if(Array.isArray(value)||typeof ArrayBuffer!=="undefined"&&value.buffer instanceof ArrayBuffer||"length"in value){return new Buffer(value)}if(value.type==="Buffer"&&Array.isArray(value.data)){return new Buffer(value.data)}}throw new TypeError("First argument must be a string, Buffer, "+"ArrayBuffer, Array, or array-like object.")};exports.allocUnsafeSlow=function allocUnsafeSlow(size){if(typeof Buffer.allocUnsafeSlow==="function"){return Buffer.allocUnsafeSlow(size)}if(typeof size!=="number"){throw new TypeError("size must be a number")}if(size>=MAX_LEN){throw new RangeError("size is too large")}return new SlowBuffer(size)}}).call(this,typeof global!=="undefined"?global:typeof self!=="undefined"?self:typeof window!=="undefined"?window:{})},{buffer:3}],19:[function(require,module,exports){(function(Buffer){function isArray(arg){if(Array.isArray){return Array.isArray(arg)}return objectToString(arg)==="[object Array]"}exports.isArray=isArray;function isBoolean(arg){return typeof arg==="boolean"}exports.isBoolean=isBoolean;function isNull(arg){return arg===null}exports.isNull=isNull;function isNullOrUndefined(arg){return arg==null}exports.isNullOrUndefined=isNullOrUndefined;function isNumber(arg){return typeof arg==="number"}exports.isNumber=isNumber;function isString(arg){return typeof arg==="string"}exports.isString=isString;function isSymbol(arg){return typeof arg==="symbol"}exports.isSymbol=isSymbol;function isUndefined(arg){return arg===void 0}exports.isUndefined=isUndefined;function isRegExp(re){return objectToString(re)==="[object RegExp]"}exports.isRegExp=isRegExp;function isObject(arg){return typeof arg==="object"&&arg!==null}exports.isObject=isObject;function isDate(d){return objectToString(d)==="[object Date]"}exports.isDate=isDate;function isError(e){return objectToString(e)==="[object Error]"||e instanceof Error}exports.isError=isError;function isFunction(arg){return typeof arg==="function"}exports.isFunction=isFunction;function isPrimitive(arg){return arg===null||typeof arg==="boolean"||typeof arg==="number"||typeof arg==="string"||typeof arg==="symbol"||typeof arg==="undefined"}exports.isPrimitive=isPrimitive;exports.isBuffer=Buffer.isBuffer;function objectToString(o){return Object.prototype.toString.call(o)}}).call(this,{isBuffer:require("../../../../insert-module-globals/node_modules/is-buffer/index.js")})},{"../../../../insert-module-globals/node_modules/is-buffer/index.js":9}],20:[function(require,module,exports){arguments[4][6][0].apply(exports,arguments)},{dup:6}],21:[function(require,module,exports){(function(process){"use strict";if(!process.version||process.version.indexOf("v0.")===0||process.version.indexOf("v1.")===0&&process.version.indexOf("v1.8.")!==0){module.exports=nextTick}else{module.exports=process.nextTick}function nextTick(fn,arg1,arg2,arg3){if(typeof fn!=="function"){throw new TypeError('"callback" argument must be a function')}var len=arguments.length;var args,i;switch(len){case 0:case 1:return process.nextTick(fn);case 2:return process.nextTick(function afterTickOne(){fn.call(null,arg1)});case 3:return process.nextTick(function afterTickTwo(){fn.call(null,arg1,arg2)});case 4:return process.nextTick(function afterTickThree(){fn.call(null,arg1,arg2,arg3)});default:args=new Array(len-1);i=0;while(i<args.length){args[i++]=arguments[i]}return process.nextTick(function afterTick(){fn.apply(null,args)})}}}).call(this,require("_process"))},{_process:10}],22:[function(require,module,exports){(function(global){module.exports=deprecate;function deprecate(fn,msg){if(config("noDeprecation")){return fn}var warned=false;function deprecated(){if(!warned){if(config("throwDeprecation")){throw new Error(msg)}else if(config("traceDeprecation")){console.trace(msg)}else{console.warn(msg)}warned=true}return fn.apply(this,arguments)}return deprecated}function config(name){try{if(!global.localStorage)return false}catch(_){return false}var val=global.localStorage[name];if(null==val)return false;return String(val).toLowerCase()==="true"}}).call(this,typeof global!=="undefined"?global:typeof self!=="undefined"?self:typeof window!=="undefined"?window:{})},{}],23:[function(require,module,exports){module.exports=require("./lib/_stream_passthrough.js")},{"./lib/_stream_passthrough.js":13}],24:[function(require,module,exports){(function(process){var Stream=function(){try{return require("st"+"ream")}catch(_){}}();exports=module.exports=require("./lib/_stream_readable.js");exports.Stream=Stream||exports;exports.Readable=exports;exports.Writable=require("./lib/_stream_writable.js");exports.Duplex=require("./lib/_stream_duplex.js");exports.Transform=require("./lib/_stream_transform.js");exports.PassThrough=require("./lib/_stream_passthrough.js");if(!process.browser&&process.env.READABLE_STREAM==="disable"&&Stream){module.exports=Stream}}).call(this,require("_process"))},{"./lib/_stream_duplex.js":12,"./lib/_stream_passthrough.js":13,"./lib/_stream_readable.js":14,"./lib/_stream_transform.js":15,"./lib/_stream_writable.js":16,_process:10}],25:[function(require,module,exports){module.exports=require("./lib/_stream_transform.js")},{"./lib/_stream_transform.js":15}],26:[function(require,module,exports){module.exports=require("./lib/_stream_writable.js")},{"./lib/_stream_writable.js":16}],27:[function(require,module,exports){module.exports=Stream;var EE=require("events").EventEmitter;var inherits=require("inherits");inherits(Stream,EE);Stream.Readable=require("readable-stream/readable.js");Stream.Writable=require("readable-stream/writable.js");Stream.Duplex=require("readable-stream/duplex.js");Stream.Transform=require("readable-stream/transform.js");Stream.PassThrough=require("readable-stream/passthrough.js");Stream.Stream=Stream;function Stream(){EE.call(this)}Stream.prototype.pipe=function(dest,options){var source=this;function ondata(chunk){if(dest.writable){if(false===dest.write(chunk)&&source.pause){source.pause()}}}source.on("data",ondata);function ondrain(){if(source.readable&&source.resume){source.resume()}}dest.on("drain",ondrain);if(!dest._isStdio&&(!options||options.end!==false)){source.on("end",onend);source.on("close",onclose)}var didOnEnd=false;function onend(){if(didOnEnd)return;didOnEnd=true;dest.end()}function onclose(){if(didOnEnd)return;didOnEnd=true;if(typeof dest.destroy==="function")dest.destroy()}function onerror(er){cleanup();if(EE.listenerCount(this,"error")===0){throw er}}source.on("error",onerror);dest.on("error",onerror);function cleanup(){source.removeListener("data",ondata);dest.removeListener("drain",ondrain);source.removeListener("end",onend);source.removeListener("close",onclose);source.removeListener("error",onerror);dest.removeListener("error",onerror);source.removeListener("end",cleanup);source.removeListener("close",cleanup);dest.removeListener("close",cleanup)}source.on("end",cleanup);source.on("close",cleanup);dest.on("close",cleanup);dest.emit("pipe",source);return dest}},{events:7,inherits:8,"readable-stream/duplex.js":11,"readable-stream/passthrough.js":23,"readable-stream/readable.js":24,"readable-stream/transform.js":25,"readable-stream/writable.js":26}],28:[function(require,module,exports){var Buffer=require("buffer").Buffer;var isBufferEncoding=Buffer.isEncoding||function(encoding){switch(encoding&&encoding.toLowerCase()){case"hex":case"utf8":case"utf-8":case"ascii":case"binary":case"base64":case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":case"raw":return true;default:return false}};function assertEncoding(encoding){if(encoding&&!isBufferEncoding(encoding)){throw new Error("Unknown encoding: "+encoding)}}var StringDecoder=exports.StringDecoder=function(encoding){this.encoding=(encoding||"utf8").toLowerCase().replace(/[-_]/,"");assertEncoding(encoding);switch(this.encoding){case"utf8":this.surrogateSize=3;break;case"ucs2":case"utf16le":this.surrogateSize=2;this.detectIncompleteChar=utf16DetectIncompleteChar;break;case"base64":this.surrogateSize=3;this.detectIncompleteChar=base64DetectIncompleteChar;break;default:this.write=passThroughWrite;return}this.charBuffer=new Buffer(6);this.charReceived=0;this.charLength=0};StringDecoder.prototype.write=function(buffer){var charStr="";while(this.charLength){var available=buffer.length>=this.charLength-this.charReceived?this.charLength-this.charReceived:buffer.length;buffer.copy(this.charBuffer,this.charReceived,0,available);this.charReceived+=available;if(this.charReceived<this.charLength){return""}buffer=buffer.slice(available,buffer.length);charStr=this.charBuffer.slice(0,this.charLength).toString(this.encoding);var charCode=charStr.charCodeAt(charStr.length-1);if(charCode>=55296&&charCode<=56319){this.charLength+=this.surrogateSize;charStr="";continue}this.charReceived=this.charLength=0;if(buffer.length===0){return charStr}break}this.detectIncompleteChar(buffer);var end=buffer.length;if(this.charLength){buffer.copy(this.charBuffer,0,buffer.length-this.charReceived,end);end-=this.charReceived}charStr+=buffer.toString(this.encoding,0,end);var end=charStr.length-1;var charCode=charStr.charCodeAt(end);if(charCode>=55296&&charCode<=56319){var size=this.surrogateSize;this.charLength+=size;this.charReceived+=size;this.charBuffer.copy(this.charBuffer,size,0,size);buffer.copy(this.charBuffer,0,0,size);return charStr.substring(0,end)}return charStr};StringDecoder.prototype.detectIncompleteChar=function(buffer){var i=buffer.length>=3?3:buffer.length;for(;i>0;i--){var c=buffer[buffer.length-i];if(i==1&&c>>5==6){this.charLength=2;break}if(i<=2&&c>>4==14){this.charLength=3;break}if(i<=3&&c>>3==30){this.charLength=4;break}}this.charReceived=i};StringDecoder.prototype.end=function(buffer){var res="";if(buffer&&buffer.length)res=this.write(buffer);if(this.charReceived){var cr=this.charReceived;var buf=this.charBuffer;var enc=this.encoding;res+=buf.slice(0,cr).toString(enc)}return res};function passThroughWrite(buffer){return buffer.toString(this.encoding)}function utf16DetectIncompleteChar(buffer){this.charReceived=buffer.length%2;this.charLength=this.charReceived?2:0}function base64DetectIncompleteChar(buffer){this.charReceived=buffer.length%3;this.charLength=this.charReceived?3:0}},{buffer:3}],29:[function(require,module,exports){module.exports=CollectingHandler;function CollectingHandler(cbs){this._cbs=cbs||{};this.events=[]}var EVENTS=require("./").EVENTS;Object.keys(EVENTS).forEach(function(name){if(EVENTS[name]===0){name="on"+name;CollectingHandler.prototype[name]=function(){this.events.push([name]);if(this._cbs[name])this._cbs[name]()}}else if(EVENTS[name]===1){name="on"+name;CollectingHandler.prototype[name]=function(a){this.events.push([name,a]);if(this._cbs[name])this._cbs[name](a)}}else if(EVENTS[name]===2){name="on"+name;CollectingHandler.prototype[name]=function(a,b){this.events.push([name,a,b]);if(this._cbs[name])this._cbs[name](a,b)}}else{throw Error("wrong number of arguments")}});CollectingHandler.prototype.onreset=function(){this.events=[];if(this._cbs.onreset)this._cbs.onreset()};CollectingHandler.prototype.restart=function(){if(this._cbs.onreset)this._cbs.onreset();for(var i=0,len=this.events.length;i<len;i++){if(this._cbs[this.events[i][0]]){var num=this.events[i].length;if(num===1){this._cbs[this.events[i][0]]()}else if(num===2){this._cbs[this.events[i][0]](this.events[i][1])}else{this._cbs[this.events[i][0]](this.events[i][1],this.events[i][2])}}}}},{"./":36}],30:[function(require,module,exports){var index=require("./index.js"),DomHandler=index.DomHandler,DomUtils=index.DomUtils;function FeedHandler(callback,options){this.init(callback,options)}require("inherits")(FeedHandler,DomHandler);FeedHandler.prototype.init=DomHandler;function getElements(what,where){return DomUtils.getElementsByTagName(what,where,true)}function getOneElement(what,where){return DomUtils.getElementsByTagName(what,where,true,1)[0]}function fetch(what,where,recurse){return DomUtils.getText(DomUtils.getElementsByTagName(what,where,recurse,1)).trim()}function addConditionally(obj,prop,what,where,recurse){var tmp=fetch(what,where,recurse);if(tmp)obj[prop]=tmp}var isValidFeed=function(value){return value==="rss"||value==="feed"||value==="rdf:RDF"};FeedHandler.prototype.onend=function(){var feed={},feedRoot=getOneElement(isValidFeed,this.dom),tmp,childs;if(feedRoot){if(feedRoot.name==="feed"){childs=feedRoot.children;feed.type="atom";addConditionally(feed,"id","id",childs);addConditionally(feed,"title","title",childs);if((tmp=getOneElement("link",childs))&&(tmp=tmp.attribs)&&(tmp=tmp.href))feed.link=tmp;addConditionally(feed,"description","subtitle",childs);if(tmp=fetch("updated",childs))feed.updated=new Date(tmp);addConditionally(feed,"author","email",childs,true);feed.items=getElements("entry",childs).map(function(item){var entry={},tmp;item=item.children;addConditionally(entry,"id","id",item);addConditionally(entry,"title","title",item);if((tmp=getOneElement("link",item))&&(tmp=tmp.attribs)&&(tmp=tmp.href))entry.link=tmp;if(tmp=fetch("summary",item)||fetch("content",item))entry.description=tmp;
@@ -33777,7 +33820,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /*! Select2 4.0.5 | https://github.com/select2/select2/blob/master/LICENSE.md */!function(a){"function"==typeof define&&define.amd?define(["jquery"],a):"object"==typeof module&&module.exports?module.exports=function(b,c){return void 0===c&&(c="undefined"!=typeof window?require("jquery"):require("jquery")(b)),a(c),c}:a(jQuery)}(function(a){var b=function(){if(a&&a.fn&&a.fn.select2&&a.fn.select2.amd)var b=a.fn.select2.amd;var b;return function(){if(!b||!b.requirejs){b?c=b:b={};var a,c,d;!function(b){function e(a,b){return v.call(a,b)}function f(a,b){var c,d,e,f,g,h,i,j,k,l,m,n,o=b&&b.split("/"),p=t.map,q=p&&p["*"]||{};if(a){for(a=a.split("/"),g=a.length-1,t.nodeIdCompat&&x.test(a[g])&&(a[g]=a[g].replace(x,"")),"."===a[0].charAt(0)&&o&&(n=o.slice(0,o.length-1),a=n.concat(a)),k=0;k<a.length;k++)if("."===(m=a[k]))a.splice(k,1),k-=1;else if(".."===m){if(0===k||1===k&&".."===a[2]||".."===a[k-1])continue;k>0&&(a.splice(k-1,2),k-=2)}a=a.join("/")}if((o||q)&&p){for(c=a.split("/"),k=c.length;k>0;k-=1){if(d=c.slice(0,k).join("/"),o)for(l=o.length;l>0;l-=1)if((e=p[o.slice(0,l).join("/")])&&(e=e[d])){f=e,h=k;break}if(f)break;!i&&q&&q[d]&&(i=q[d],j=k)}!f&&i&&(f=i,h=j),f&&(c.splice(0,h,f),a=c.join("/"))}return a}function g(a,c){return function(){var d=w.call(arguments,0);return"string"!=typeof d[0]&&1===d.length&&d.push(null),o.apply(b,d.concat([a,c]))}}function h(a){return function(b){return f(b,a)}}function i(a){return function(b){r[a]=b}}function j(a){if(e(s,a)){var c=s[a];delete s[a],u[a]=!0,n.apply(b,c)}if(!e(r,a)&&!e(u,a))throw new Error("No "+a);return r[a]}function k(a){var b,c=a?a.indexOf("!"):-1;return c>-1&&(b=a.substring(0,c),a=a.substring(c+1,a.length)),[b,a]}function l(a){return a?k(a):[]}function m(a){return function(){return t&&t.config&&t.config[a]||{}}}var n,o,p,q,r={},s={},t={},u={},v=Object.prototype.hasOwnProperty,w=[].slice,x=/\.js$/;p=function(a,b){var c,d=k(a),e=d[0],g=b[1];return a=d[1],e&&(e=f(e,g),c=j(e)),e?a=c&&c.normalize?c.normalize(a,h(g)):f(a,g):(a=f(a,g),d=k(a),e=d[0],a=d[1],e&&(c=j(e))),{f:e?e+"!"+a:a,n:a,pr:e,p:c}},q={require:function(a){return g(a)},exports:function(a){var b=r[a];return void 0!==b?b:r[a]={}},module:function(a){return{id:a,uri:"",exports:r[a],config:m(a)}}},n=function(a,c,d,f){var h,k,m,n,o,t,v,w=[],x=typeof d;if(f=f||a,t=l(f),"undefined"===x||"function"===x){for(c=!c.length&&d.length?["require","exports","module"]:c,o=0;o<c.length;o+=1)if(n=p(c[o],t),"require"===(k=n.f))w[o]=q.require(a);else if("exports"===k)w[o]=q.exports(a),v=!0;else if("module"===k)h=w[o]=q.module(a);else if(e(r,k)||e(s,k)||e(u,k))w[o]=j(k);else{if(!n.p)throw new Error(a+" missing "+k);n.p.load(n.n,g(f,!0),i(k),{}),w[o]=r[k]}m=d?d.apply(r[a],w):void 0,a&&(h&&h.exports!==b&&h.exports!==r[a]?r[a]=h.exports:m===b&&v||(r[a]=m))}else a&&(r[a]=d)},a=c=o=function(a,c,d,e,f){if("string"==typeof a)return q[a]?q[a](c):j(p(a,l(c)).f);if(!a.splice){if(t=a,t.deps&&o(t.deps,t.callback),!c)return;c.splice?(a=c,c=d,d=null):a=b}return c=c||function(){},"function"==typeof d&&(d=e,e=f),e?n(b,a,c,d):setTimeout(function(){n(b,a,c,d)},4),o},o.config=function(a){return o(a)},a._defined=r,d=function(a,b,c){if("string"!=typeof a)throw new Error("See almond README: incorrect module build, no module name");b.splice||(c=b,b=[]),e(r,a)||e(s,a)||(s[a]=[a,b,c])},d.amd={jQuery:!0}}(),b.requirejs=a,b.require=c,b.define=d}}(),b.define("almond",function(){}),b.define("jquery",[],function(){var b=a||$;return null==b&&console&&console.error&&console.error("Select2: An instance of jQuery or a jQuery-compatible library was not found. Make sure that you are including jQuery before Select2 on your web page."),b}),b.define("select2/utils",["jquery"],function(a){function b(a){var b=a.prototype,c=[];for(var d in b){"function"==typeof b[d]&&("constructor"!==d&&c.push(d))}return c}var c={};c.Extend=function(a,b){function c(){this.constructor=a}var d={}.hasOwnProperty;for(var e in b)d.call(b,e)&&(a[e]=b[e]);return c.prototype=b.prototype,a.prototype=new c,a.__super__=b.prototype,a},c.Decorate=function(a,c){function d(){var b=Array.prototype.unshift,d=c.prototype.constructor.length,e=a.prototype.constructor;d>0&&(b.call(arguments,a.prototype.constructor),e=c.prototype.constructor),e.apply(this,arguments)}function e(){this.constructor=d}var f=b(c),g=b(a);c.displayName=a.displayName,d.prototype=new e;for(var h=0;h<g.length;h++){var i=g[h];d.prototype[i]=a.prototype[i]}for(var j=(function(a){var b=function(){};a in d.prototype&&(b=d.prototype[a]);var e=c.prototype[a];return function(){return Array.prototype.unshift.call(arguments,b),e.apply(this,arguments)}}),k=0;k<f.length;k++){var l=f[k];d.prototype[l]=j(l)}return d};var d=function(){this.listeners={}};return d.prototype.on=function(a,b){this.listeners=this.listeners||{},a in this.listeners?this.listeners[a].push(b):this.listeners[a]=[b]},d.prototype.trigger=function(a){var b=Array.prototype.slice,c=b.call(arguments,1);this.listeners=this.listeners||{},null==c&&(c=[]),0===c.length&&c.push({}),c[0]._type=a,a in this.listeners&&this.invoke(this.listeners[a],b.call(arguments,1)),"*"in this.listeners&&this.invoke(this.listeners["*"],arguments)},d.prototype.invoke=function(a,b){for(var c=0,d=a.length;c<d;c++)a[c].apply(this,b)},c.Observable=d,c.generateChars=function(a){for(var b="",c=0;c<a;c++){b+=Math.floor(36*Math.random()).toString(36)}return b},c.bind=function(a,b){return function(){a.apply(b,arguments)}},c._convertData=function(a){for(var b in a){var c=b.split("-"),d=a;if(1!==c.length){for(var e=0;e<c.length;e++){var f=c[e];f=f.substring(0,1).toLowerCase()+f.substring(1),f in d||(d[f]={}),e==c.length-1&&(d[f]=a[b]),d=d[f]}delete a[b]}}return a},c.hasScroll=function(b,c){var d=a(c),e=c.style.overflowX,f=c.style.overflowY;return(e!==f||"hidden"!==f&&"visible"!==f)&&("scroll"===e||"scroll"===f||(d.innerHeight()<c.scrollHeight||d.innerWidth()<c.scrollWidth))},c.escapeMarkup=function(a){var b={"\\":"&#92;","&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","/":"&#47;"};return"string"!=typeof a?a:String(a).replace(/[&<>"'\/\\]/g,function(a){return b[a]})},c.appendMany=function(b,c){if("1.7"===a.fn.jquery.substr(0,3)){var d=a();a.map(c,function(a){d=d.add(a)}),c=d}b.append(c)},c}),b.define("select2/results",["jquery","./utils"],function(a,b){function c(a,b,d){this.$element=a,this.data=d,this.options=b,c.__super__.constructor.call(this)}return b.Extend(c,b.Observable),c.prototype.render=function(){var b=a('<ul class="select2-results__options" role="tree"></ul>');return this.options.get("multiple")&&b.attr("aria-multiselectable","true"),this.$results=b,b},c.prototype.clear=function(){this.$results.empty()},c.prototype.displayMessage=function(b){var c=this.options.get("escapeMarkup");this.clear(),this.hideLoading();var d=a('<li role="treeitem" aria-live="assertive" class="select2-results__option"></li>'),e=this.options.get("translations").get(b.message);d.append(c(e(b.args))),d[0].className+=" select2-results__message",this.$results.append(d)},c.prototype.hideMessages=function(){this.$results.find(".select2-results__message").remove()},c.prototype.append=function(a){this.hideLoading();var b=[];if(null==a.results||0===a.results.length)return void(0===this.$results.children().length&&this.trigger("results:message",{message:"noResults"}));a.results=this.sort(a.results);for(var c=0;c<a.results.length;c++){var d=a.results[c],e=this.option(d);b.push(e)}this.$results.append(b)},c.prototype.position=function(a,b){b.find(".select2-results").append(a)},c.prototype.sort=function(a){return this.options.get("sorter")(a)},c.prototype.highlightFirstItem=function(){var a=this.$results.find(".select2-results__option[aria-selected]"),b=a.filter("[aria-selected=true]");b.length>0?b.first().trigger("mouseenter"):a.first().trigger("mouseenter"),this.ensureHighlightVisible()},c.prototype.setClasses=function(){var b=this;this.data.current(function(c){var d=a.map(c,function(a){return a.id.toString()});b.$results.find(".select2-results__option[aria-selected]").each(function(){var b=a(this),c=a.data(this,"data"),e=""+c.id;null!=c.element&&c.element.selected||null==c.element&&a.inArray(e,d)>-1?b.attr("aria-selected","true"):b.attr("aria-selected","false")})})},c.prototype.showLoading=function(a){this.hideLoading();var b=this.options.get("translations").get("searching"),c={disabled:!0,loading:!0,text:b(a)},d=this.option(c);d.className+=" loading-results",this.$results.prepend(d)},c.prototype.hideLoading=function(){this.$results.find(".loading-results").remove()},c.prototype.option=function(b){var c=document.createElement("li");c.className="select2-results__option";var d={role:"treeitem","aria-selected":"false"};b.disabled&&(delete d["aria-selected"],d["aria-disabled"]="true"),null==b.id&&delete d["aria-selected"],null!=b._resultId&&(c.id=b._resultId),b.title&&(c.title=b.title),b.children&&(d.role="group",d["aria-label"]=b.text,delete d["aria-selected"]);for(var e in d){var f=d[e];c.setAttribute(e,f)}if(b.children){var g=a(c),h=document.createElement("strong");h.className="select2-results__group";a(h);this.template(b,h);for(var i=[],j=0;j<b.children.length;j++){var k=b.children[j],l=this.option(k);i.push(l)}var m=a("<ul></ul>",{class:"select2-results__options select2-results__options--nested"});m.append(i),g.append(h),g.append(m)}else this.template(b,c);return a.data(c,"data",b),c},c.prototype.bind=function(b,c){var d=this,e=b.id+"-results";this.$results.attr("id",e),b.on("results:all",function(a){d.clear(),d.append(a.data),b.isOpen()&&(d.setClasses(),d.highlightFirstItem())}),b.on("results:append",function(a){d.append(a.data),b.isOpen()&&d.setClasses()}),b.on("query",function(a){d.hideMessages(),d.showLoading(a)}),b.on("select",function(){b.isOpen()&&(d.setClasses(),d.highlightFirstItem())}),b.on("unselect",function(){b.isOpen()&&(d.setClasses(),d.highlightFirstItem())}),b.on("open",function(){d.$results.attr("aria-expanded","true"),d.$results.attr("aria-hidden","false"),d.setClasses(),d.ensureHighlightVisible()}),b.on("close",function(){d.$results.attr("aria-expanded","false"),d.$results.attr("aria-hidden","true"),d.$results.removeAttr("aria-activedescendant")}),b.on("results:toggle",function(){var a=d.getHighlightedResults();0!==a.length&&a.trigger("mouseup")}),b.on("results:select",function(){var a=d.getHighlightedResults();if(0!==a.length){var b=a.data("data");"true"==a.attr("aria-selected")?d.trigger("close",{}):d.trigger("select",{data:b})}}),b.on("results:previous",function(){var a=d.getHighlightedResults(),b=d.$results.find("[aria-selected]"),c=b.index(a);if(0!==c){var e=c-1;0===a.length&&(e=0);var f=b.eq(e);f.trigger("mouseenter");var g=d.$results.offset().top,h=f.offset().top,i=d.$results.scrollTop()+(h-g);0===e?d.$results.scrollTop(0):h-g<0&&d.$results.scrollTop(i)}}),b.on("results:next",function(){var a=d.getHighlightedResults(),b=d.$results.find("[aria-selected]"),c=b.index(a),e=c+1;if(!(e>=b.length)){var f=b.eq(e);f.trigger("mouseenter");var g=d.$results.offset().top+d.$results.outerHeight(!1),h=f.offset().top+f.outerHeight(!1),i=d.$results.scrollTop()+h-g;0===e?d.$results.scrollTop(0):h>g&&d.$results.scrollTop(i)}}),b.on("results:focus",function(a){a.element.addClass("select2-results__option--highlighted")}),b.on("results:message",function(a){d.displayMessage(a)}),a.fn.mousewheel&&this.$results.on("mousewheel",function(a){var b=d.$results.scrollTop(),c=d.$results.get(0).scrollHeight-b+a.deltaY,e=a.deltaY>0&&b-a.deltaY<=0,f=a.deltaY<0&&c<=d.$results.height();e?(d.$results.scrollTop(0),a.preventDefault(),a.stopPropagation()):f&&(d.$results.scrollTop(d.$results.get(0).scrollHeight-d.$results.height()),a.preventDefault(),a.stopPropagation())}),this.$results.on("mouseup",".select2-results__option[aria-selected]",function(b){var c=a(this),e=c.data("data");if("true"===c.attr("aria-selected"))return void(d.options.get("multiple")?d.trigger("unselect",{originalEvent:b,data:e}):d.trigger("close",{}));d.trigger("select",{originalEvent:b,data:e})}),this.$results.on("mouseenter",".select2-results__option[aria-selected]",function(b){var c=a(this).data("data");d.getHighlightedResults().removeClass("select2-results__option--highlighted"),d.trigger("results:focus",{data:c,element:a(this)})})},c.prototype.getHighlightedResults=function(){return this.$results.find(".select2-results__option--highlighted")},c.prototype.destroy=function(){this.$results.remove()},c.prototype.ensureHighlightVisible=function(){var a=this.getHighlightedResults();if(0!==a.length){var b=this.$results.find("[aria-selected]"),c=b.index(a),d=this.$results.offset().top,e=a.offset().top,f=this.$results.scrollTop()+(e-d),g=e-d;f-=2*a.outerHeight(!1),c<=2?this.$results.scrollTop(0):(g>this.$results.outerHeight()||g<0)&&this.$results.scrollTop(f)}},c.prototype.template=function(b,c){var d=this.options.get("templateResult"),e=this.options.get("escapeMarkup"),f=d(b,c);null==f?c.style.display="none":"string"==typeof f?c.innerHTML=e(f):a(c).append(f)},c}),b.define("select2/keys",[],function(){return{BACKSPACE:8,TAB:9,ENTER:13,SHIFT:16,CTRL:17,ALT:18,ESC:27,SPACE:32,PAGE_UP:33,PAGE_DOWN:34,END:35,HOME:36,LEFT:37,UP:38,RIGHT:39,DOWN:40,DELETE:46}}),b.define("select2/selection/base",["jquery","../utils","../keys"],function(a,b,c){function d(a,b){this.$element=a,this.options=b,d.__super__.constructor.call(this)}return b.Extend(d,b.Observable),d.prototype.render=function(){var b=a('<span class="select2-selection" role="combobox"  aria-haspopup="true" aria-expanded="false"></span>');return this._tabindex=0,null!=this.$element.data("old-tabindex")?this._tabindex=this.$element.data("old-tabindex"):null!=this.$element.attr("tabindex")&&(this._tabindex=this.$element.attr("tabindex")),b.attr("title",this.$element.attr("title")),b.attr("tabindex",this._tabindex),this.$selection=b,b},d.prototype.bind=function(a,b){var d=this,e=(a.id,a.id+"-results");this.container=a,this.$selection.on("focus",function(a){d.trigger("focus",a)}),this.$selection.on("blur",function(a){d._handleBlur(a)}),this.$selection.on("keydown",function(a){d.trigger("keypress",a),a.which===c.SPACE&&a.preventDefault()}),a.on("results:focus",function(a){d.$selection.attr("aria-activedescendant",a.data._resultId)}),a.on("selection:update",function(a){d.update(a.data)}),a.on("open",function(){d.$selection.attr("aria-expanded","true"),d.$selection.attr("aria-owns",e),d._attachCloseHandler(a)}),a.on("close",function(){d.$selection.attr("aria-expanded","false"),d.$selection.removeAttr("aria-activedescendant"),d.$selection.removeAttr("aria-owns"),d.$selection.focus(),d._detachCloseHandler(a)}),a.on("enable",function(){d.$selection.attr("tabindex",d._tabindex)}),a.on("disable",function(){d.$selection.attr("tabindex","-1")})},d.prototype._handleBlur=function(b){var c=this;window.setTimeout(function(){document.activeElement==c.$selection[0]||a.contains(c.$selection[0],document.activeElement)||c.trigger("blur",b)},1)},d.prototype._attachCloseHandler=function(b){a(document.body).on("mousedown.select2."+b.id,function(b){var c=a(b.target),d=c.closest(".select2");a(".select2.select2-container--open").each(function(){var b=a(this);this!=d[0]&&b.data("element").select2("close")})})},d.prototype._detachCloseHandler=function(b){a(document.body).off("mousedown.select2."+b.id)},d.prototype.position=function(a,b){b.find(".selection").append(a)},d.prototype.destroy=function(){this._detachCloseHandler(this.container)},d.prototype.update=function(a){throw new Error("The `update` method must be defined in child classes.")},d}),b.define("select2/selection/single",["jquery","./base","../utils","../keys"],function(a,b,c,d){function e(){e.__super__.constructor.apply(this,arguments)}return c.Extend(e,b),e.prototype.render=function(){var a=e.__super__.render.call(this);return a.addClass("select2-selection--single"),a.html('<span class="select2-selection__rendered"></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span>'),a},e.prototype.bind=function(a,b){var c=this;e.__super__.bind.apply(this,arguments);var d=a.id+"-container";this.$selection.find(".select2-selection__rendered").attr("id",d),this.$selection.attr("aria-labelledby",d),this.$selection.on("mousedown",function(a){1===a.which&&c.trigger("toggle",{originalEvent:a})}),this.$selection.on("focus",function(a){}),this.$selection.on("blur",function(a){}),a.on("focus",function(b){a.isOpen()||c.$selection.focus()}),a.on("selection:update",function(a){c.update(a.data)})},e.prototype.clear=function(){this.$selection.find(".select2-selection__rendered").empty()},e.prototype.display=function(a,b){var c=this.options.get("templateSelection");return this.options.get("escapeMarkup")(c(a,b))},e.prototype.selectionContainer=function(){return a("<span></span>")},e.prototype.update=function(a){if(0===a.length)return void this.clear();var b=a[0],c=this.$selection.find(".select2-selection__rendered"),d=this.display(b,c);c.empty().append(d),c.prop("title",b.title||b.text)},e}),b.define("select2/selection/multiple",["jquery","./base","../utils"],function(a,b,c){function d(a,b){d.__super__.constructor.apply(this,arguments)}return c.Extend(d,b),d.prototype.render=function(){var a=d.__super__.render.call(this);return a.addClass("select2-selection--multiple"),a.html('<ul class="select2-selection__rendered"></ul>'),a},d.prototype.bind=function(b,c){var e=this;d.__super__.bind.apply(this,arguments),this.$selection.on("click",function(a){e.trigger("toggle",{originalEvent:a})}),this.$selection.on("click",".select2-selection__choice__remove",function(b){if(!e.options.get("disabled")){var c=a(this),d=c.parent(),f=d.data("data");e.trigger("unselect",{originalEvent:b,data:f})}})},d.prototype.clear=function(){this.$selection.find(".select2-selection__rendered").empty()},d.prototype.display=function(a,b){var c=this.options.get("templateSelection");return this.options.get("escapeMarkup")(c(a,b))},d.prototype.selectionContainer=function(){return a('<li class="select2-selection__choice"><span class="select2-selection__choice__remove" role="presentation">&times;</span></li>')},d.prototype.update=function(a){if(this.clear(),0!==a.length){for(var b=[],d=0;d<a.length;d++){var e=a[d],f=this.selectionContainer(),g=this.display(e,f);f.append(g),f.prop("title",e.title||e.text),f.data("data",e),b.push(f)}var h=this.$selection.find(".select2-selection__rendered");c.appendMany(h,b)}},d}),b.define("select2/selection/placeholder",["../utils"],function(a){function b(a,b,c){this.placeholder=this.normalizePlaceholder(c.get("placeholder")),a.call(this,b,c)}return b.prototype.normalizePlaceholder=function(a,b){return"string"==typeof b&&(b={id:"",text:b}),b},b.prototype.createPlaceholder=function(a,b){var c=this.selectionContainer();return c.html(this.display(b)),c.addClass("select2-selection__placeholder").removeClass("select2-selection__choice"),c},b.prototype.update=function(a,b){var c=1==b.length&&b[0].id!=this.placeholder.id;if(b.length>1||c)return a.call(this,b);this.clear();var d=this.createPlaceholder(this.placeholder);this.$selection.find(".select2-selection__rendered").append(d)},b}),b.define("select2/selection/allowClear",["jquery","../keys"],function(a,b){function c(){}return c.prototype.bind=function(a,b,c){var d=this;a.call(this,b,c),null==this.placeholder&&this.options.get("debug")&&window.console&&console.error&&console.error("Select2: The `allowClear` option should be used in combination with the `placeholder` option."),this.$selection.on("mousedown",".select2-selection__clear",function(a){d._handleClear(a)}),b.on("keypress",function(a){d._handleKeyboardClear(a,b)})},c.prototype._handleClear=function(a,b){if(!this.options.get("disabled")){var c=this.$selection.find(".select2-selection__clear");if(0!==c.length){b.stopPropagation();for(var d=c.data("data"),e=0;e<d.length;e++){var f={data:d[e]};if(this.trigger("unselect",f),f.prevented)return}this.$element.val(this.placeholder.id).trigger("change"),this.trigger("toggle",{})}}},c.prototype._handleKeyboardClear=function(a,c,d){d.isOpen()||c.which!=b.DELETE&&c.which!=b.BACKSPACE||this._handleClear(c)},c.prototype.update=function(b,c){if(b.call(this,c),!(this.$selection.find(".select2-selection__placeholder").length>0||0===c.length)){var d=a('<span class="select2-selection__clear">&times;</span>');d.data("data",c),this.$selection.find(".select2-selection__rendered").prepend(d)}},c}),b.define("select2/selection/search",["jquery","../utils","../keys"],function(a,b,c){function d(a,b,c){a.call(this,b,c)}return d.prototype.render=function(b){var c=a('<li class="select2-search select2-search--inline"><input class="select2-search__field" type="search" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" role="textbox" aria-autocomplete="list" /></li>');this.$searchContainer=c,this.$search=c.find("input");var d=b.call(this);return this._transferTabIndex(),d},d.prototype.bind=function(a,b,d){var e=this;a.call(this,b,d),b.on("open",function(){e.$search.trigger("focus")}),b.on("close",function(){e.$search.val(""),e.$search.removeAttr("aria-activedescendant"),e.$search.trigger("focus")}),b.on("enable",function(){e.$search.prop("disabled",!1),e._transferTabIndex()}),b.on("disable",function(){e.$search.prop("disabled",!0)}),b.on("focus",function(a){e.$search.trigger("focus")}),b.on("results:focus",function(a){e.$search.attr("aria-activedescendant",a.id)}),this.$selection.on("focusin",".select2-search--inline",function(a){e.trigger("focus",a)}),this.$selection.on("focusout",".select2-search--inline",function(a){e._handleBlur(a)}),this.$selection.on("keydown",".select2-search--inline",function(a){if(a.stopPropagation(),e.trigger("keypress",a),e._keyUpPrevented=a.isDefaultPrevented(),a.which===c.BACKSPACE&&""===e.$search.val()){var b=e.$searchContainer.prev(".select2-selection__choice");if(b.length>0){var d=b.data("data");e.searchRemoveChoice(d),a.preventDefault()}}});var f=document.documentMode,g=f&&f<=11;this.$selection.on("input.searchcheck",".select2-search--inline",function(a){if(g)return void e.$selection.off("input.search input.searchcheck");e.$selection.off("keyup.search")}),this.$selection.on("keyup.search input.search",".select2-search--inline",function(a){if(g&&"input"===a.type)return void e.$selection.off("input.search input.searchcheck");var b=a.which;b!=c.SHIFT&&b!=c.CTRL&&b!=c.ALT&&b!=c.TAB&&e.handleSearch(a)})},d.prototype._transferTabIndex=function(a){this.$search.attr("tabindex",this.$selection.attr("tabindex")),this.$selection.attr("tabindex","-1")},d.prototype.createPlaceholder=function(a,b){this.$search.attr("placeholder",b.text)},d.prototype.update=function(a,b){var c=this.$search[0]==document.activeElement;this.$search.attr("placeholder",""),a.call(this,b),this.$selection.find(".select2-selection__rendered").append(this.$searchContainer),this.resizeSearch(),c&&this.$search.focus()},d.prototype.handleSearch=function(){if(this.resizeSearch(),!this._keyUpPrevented){var a=this.$search.val();this.trigger("query",{term:a})}this._keyUpPrevented=!1},d.prototype.searchRemoveChoice=function(a,b){this.trigger("unselect",{data:b}),this.$search.val(b.text),this.handleSearch()},d.prototype.resizeSearch=function(){this.$search.css("width","25px");var a="";if(""!==this.$search.attr("placeholder"))a=this.$selection.find(".select2-selection__rendered").innerWidth();else{a=.75*(this.$search.val().length+1)+"em"}this.$search.css("width",a)},d}),b.define("select2/selection/eventRelay",["jquery"],function(a){function b(){}return b.prototype.bind=function(b,c,d){var e=this,f=["open","opening","close","closing","select","selecting","unselect","unselecting"],g=["opening","closing","selecting","unselecting"];b.call(this,c,d),c.on("*",function(b,c){if(-1!==a.inArray(b,f)){c=c||{};var d=a.Event("select2:"+b,{params:c});e.$element.trigger(d),-1!==a.inArray(b,g)&&(c.prevented=d.isDefaultPrevented())}})},b}),b.define("select2/translation",["jquery","require"],function(a,b){function c(a){this.dict=a||{}}return c.prototype.all=function(){return this.dict},c.prototype.get=function(a){return this.dict[a]},c.prototype.extend=function(b){this.dict=a.extend({},b.all(),this.dict)},c._cache={},c.loadPath=function(a){if(!(a in c._cache)){var d=b(a);c._cache[a]=d}return new c(c._cache[a])},c}),b.define("select2/diacritics",[],function(){return{"Ⓐ":"A","Ａ":"A","À":"A","Á":"A","Â":"A","Ầ":"A","Ấ":"A","Ẫ":"A","Ẩ":"A","Ã":"A","Ā":"A","Ă":"A","Ằ":"A","Ắ":"A","Ẵ":"A","Ẳ":"A","Ȧ":"A","Ǡ":"A","Ä":"A","Ǟ":"A","Ả":"A","Å":"A","Ǻ":"A","Ǎ":"A","Ȁ":"A","Ȃ":"A","Ạ":"A","Ậ":"A","Ặ":"A","Ḁ":"A","Ą":"A","Ⱥ":"A","Ɐ":"A","Ꜳ":"AA","Æ":"AE","Ǽ":"AE","Ǣ":"AE","Ꜵ":"AO","Ꜷ":"AU","Ꜹ":"AV","Ꜻ":"AV","Ꜽ":"AY","Ⓑ":"B","Ｂ":"B","Ḃ":"B","Ḅ":"B","Ḇ":"B","Ƀ":"B","Ƃ":"B","Ɓ":"B","Ⓒ":"C","Ｃ":"C","Ć":"C","Ĉ":"C","Ċ":"C","Č":"C","Ç":"C","Ḉ":"C","Ƈ":"C","Ȼ":"C","Ꜿ":"C","Ⓓ":"D","Ｄ":"D","Ḋ":"D","Ď":"D","Ḍ":"D","Ḑ":"D","Ḓ":"D","Ḏ":"D","Đ":"D","Ƌ":"D","Ɗ":"D","Ɖ":"D","Ꝺ":"D","Ǳ":"DZ","Ǆ":"DZ","ǲ":"Dz","ǅ":"Dz","Ⓔ":"E","Ｅ":"E","È":"E","É":"E","Ê":"E","Ề":"E","Ế":"E","Ễ":"E","Ể":"E","Ẽ":"E","Ē":"E","Ḕ":"E","Ḗ":"E","Ĕ":"E","Ė":"E","Ë":"E","Ẻ":"E","Ě":"E","Ȅ":"E","Ȇ":"E","Ẹ":"E","Ệ":"E","Ȩ":"E","Ḝ":"E","Ę":"E","Ḙ":"E","Ḛ":"E","Ɛ":"E","Ǝ":"E","Ⓕ":"F","Ｆ":"F","Ḟ":"F","Ƒ":"F","Ꝼ":"F","Ⓖ":"G","Ｇ":"G","Ǵ":"G","Ĝ":"G","Ḡ":"G","Ğ":"G","Ġ":"G","Ǧ":"G","Ģ":"G","Ǥ":"G","Ɠ":"G","Ꞡ":"G","Ᵹ":"G","Ꝿ":"G","Ⓗ":"H","Ｈ":"H","Ĥ":"H","Ḣ":"H","Ḧ":"H","Ȟ":"H","Ḥ":"H","Ḩ":"H","Ḫ":"H","Ħ":"H","Ⱨ":"H","Ⱶ":"H","Ɥ":"H","Ⓘ":"I","Ｉ":"I","Ì":"I","Í":"I","Î":"I","Ĩ":"I","Ī":"I","Ĭ":"I","İ":"I","Ï":"I","Ḯ":"I","Ỉ":"I","Ǐ":"I","Ȉ":"I","Ȋ":"I","Ị":"I","Į":"I","Ḭ":"I","Ɨ":"I","Ⓙ":"J","Ｊ":"J","Ĵ":"J","Ɉ":"J","Ⓚ":"K","Ｋ":"K","Ḱ":"K","Ǩ":"K","Ḳ":"K","Ķ":"K","Ḵ":"K","Ƙ":"K","Ⱪ":"K","Ꝁ":"K","Ꝃ":"K","Ꝅ":"K","Ꞣ":"K","Ⓛ":"L","Ｌ":"L","Ŀ":"L","Ĺ":"L","Ľ":"L","Ḷ":"L","Ḹ":"L","Ļ":"L","Ḽ":"L","Ḻ":"L","Ł":"L","Ƚ":"L","Ɫ":"L","Ⱡ":"L","Ꝉ":"L","Ꝇ":"L","Ꞁ":"L","Ǉ":"LJ","ǈ":"Lj","Ⓜ":"M","Ｍ":"M","Ḿ":"M","Ṁ":"M","Ṃ":"M","Ɱ":"M","Ɯ":"M","Ⓝ":"N","Ｎ":"N","Ǹ":"N","Ń":"N","Ñ":"N","Ṅ":"N","Ň":"N","Ṇ":"N","Ņ":"N","Ṋ":"N","Ṉ":"N","Ƞ":"N","Ɲ":"N","Ꞑ":"N","Ꞥ":"N","Ǌ":"NJ","ǋ":"Nj","Ⓞ":"O","Ｏ":"O","Ò":"O","Ó":"O","Ô":"O","Ồ":"O","Ố":"O","Ỗ":"O","Ổ":"O","Õ":"O","Ṍ":"O","Ȭ":"O","Ṏ":"O","Ō":"O","Ṑ":"O","Ṓ":"O","Ŏ":"O","Ȯ":"O","Ȱ":"O","Ö":"O","Ȫ":"O","Ỏ":"O","Ő":"O","Ǒ":"O","Ȍ":"O","Ȏ":"O","Ơ":"O","Ờ":"O","Ớ":"O","Ỡ":"O","Ở":"O","Ợ":"O","Ọ":"O","Ộ":"O","Ǫ":"O","Ǭ":"O","Ø":"O","Ǿ":"O","Ɔ":"O","Ɵ":"O","Ꝋ":"O","Ꝍ":"O","Ƣ":"OI","Ꝏ":"OO","Ȣ":"OU","Ⓟ":"P","Ｐ":"P","Ṕ":"P","Ṗ":"P","Ƥ":"P","Ᵽ":"P","Ꝑ":"P","Ꝓ":"P","Ꝕ":"P","Ⓠ":"Q","Ｑ":"Q","Ꝗ":"Q","Ꝙ":"Q","Ɋ":"Q","Ⓡ":"R","Ｒ":"R","Ŕ":"R","Ṙ":"R","Ř":"R","Ȑ":"R","Ȓ":"R","Ṛ":"R","Ṝ":"R","Ŗ":"R","Ṟ":"R","Ɍ":"R","Ɽ":"R","Ꝛ":"R","Ꞧ":"R","Ꞃ":"R","Ⓢ":"S","Ｓ":"S","ẞ":"S","Ś":"S","Ṥ":"S","Ŝ":"S","Ṡ":"S","Š":"S","Ṧ":"S","Ṣ":"S","Ṩ":"S","Ș":"S","Ş":"S","Ȿ":"S","Ꞩ":"S","Ꞅ":"S","Ⓣ":"T","Ｔ":"T","Ṫ":"T","Ť":"T","Ṭ":"T","Ț":"T","Ţ":"T","Ṱ":"T","Ṯ":"T","Ŧ":"T","Ƭ":"T","Ʈ":"T","Ⱦ":"T","Ꞇ":"T","Ꜩ":"TZ","Ⓤ":"U","Ｕ":"U","Ù":"U","Ú":"U","Û":"U","Ũ":"U","Ṹ":"U","Ū":"U","Ṻ":"U","Ŭ":"U","Ü":"U","Ǜ":"U","Ǘ":"U","Ǖ":"U","Ǚ":"U","Ủ":"U","Ů":"U","Ű":"U","Ǔ":"U","Ȕ":"U","Ȗ":"U","Ư":"U","Ừ":"U","Ứ":"U","Ữ":"U","Ử":"U","Ự":"U","Ụ":"U","Ṳ":"U","Ų":"U","Ṷ":"U","Ṵ":"U","Ʉ":"U","Ⓥ":"V","Ｖ":"V","Ṽ":"V","Ṿ":"V","Ʋ":"V","Ꝟ":"V","Ʌ":"V","Ꝡ":"VY","Ⓦ":"W","Ｗ":"W","Ẁ":"W","Ẃ":"W","Ŵ":"W","Ẇ":"W","Ẅ":"W","Ẉ":"W","Ⱳ":"W","Ⓧ":"X","Ｘ":"X","Ẋ":"X","Ẍ":"X","Ⓨ":"Y","Ｙ":"Y","Ỳ":"Y","Ý":"Y","Ŷ":"Y","Ỹ":"Y","Ȳ":"Y","Ẏ":"Y","Ÿ":"Y","Ỷ":"Y","Ỵ":"Y","Ƴ":"Y","Ɏ":"Y","Ỿ":"Y","Ⓩ":"Z","Ｚ":"Z","Ź":"Z","Ẑ":"Z","Ż":"Z","Ž":"Z","Ẓ":"Z","Ẕ":"Z","Ƶ":"Z","Ȥ":"Z","Ɀ":"Z","Ⱬ":"Z","Ꝣ":"Z","ⓐ":"a","ａ":"a","ẚ":"a","à":"a","á":"a","â":"a","ầ":"a","ấ":"a","ẫ":"a","ẩ":"a","ã":"a","ā":"a","ă":"a","ằ":"a","ắ":"a","ẵ":"a","ẳ":"a","ȧ":"a","ǡ":"a","ä":"a","ǟ":"a","ả":"a","å":"a","ǻ":"a","ǎ":"a","ȁ":"a","ȃ":"a","ạ":"a","ậ":"a","ặ":"a","ḁ":"a","ą":"a","ⱥ":"a","ɐ":"a","ꜳ":"aa","æ":"ae","ǽ":"ae","ǣ":"ae","ꜵ":"ao","ꜷ":"au","ꜹ":"av","ꜻ":"av","ꜽ":"ay","ⓑ":"b","ｂ":"b","ḃ":"b","ḅ":"b","ḇ":"b","ƀ":"b","ƃ":"b","ɓ":"b","ⓒ":"c","ｃ":"c","ć":"c","ĉ":"c","ċ":"c","č":"c","ç":"c","ḉ":"c","ƈ":"c","ȼ":"c","ꜿ":"c","ↄ":"c","ⓓ":"d","ｄ":"d","ḋ":"d","ď":"d","ḍ":"d","ḑ":"d","ḓ":"d","ḏ":"d","đ":"d","ƌ":"d","ɖ":"d","ɗ":"d","ꝺ":"d","ǳ":"dz","ǆ":"dz","ⓔ":"e","ｅ":"e","è":"e","é":"e","ê":"e","ề":"e","ế":"e","ễ":"e","ể":"e","ẽ":"e","ē":"e","ḕ":"e","ḗ":"e","ĕ":"e","ė":"e","ë":"e","ẻ":"e","ě":"e","ȅ":"e","ȇ":"e","ẹ":"e","ệ":"e","ȩ":"e","ḝ":"e","ę":"e","ḙ":"e","ḛ":"e","ɇ":"e","ɛ":"e","ǝ":"e","ⓕ":"f","ｆ":"f","ḟ":"f","ƒ":"f","ꝼ":"f","ⓖ":"g","ｇ":"g","ǵ":"g","ĝ":"g","ḡ":"g","ğ":"g","ġ":"g","ǧ":"g","ģ":"g","ǥ":"g","ɠ":"g","ꞡ":"g","ᵹ":"g","ꝿ":"g","ⓗ":"h","ｈ":"h","ĥ":"h","ḣ":"h","ḧ":"h","ȟ":"h","ḥ":"h","ḩ":"h","ḫ":"h","ẖ":"h","ħ":"h","ⱨ":"h","ⱶ":"h","ɥ":"h","ƕ":"hv","ⓘ":"i","ｉ":"i","ì":"i","í":"i","î":"i","ĩ":"i","ī":"i","ĭ":"i","ï":"i","ḯ":"i","ỉ":"i","ǐ":"i","ȉ":"i","ȋ":"i","ị":"i","į":"i","ḭ":"i","ɨ":"i","ı":"i","ⓙ":"j","ｊ":"j","ĵ":"j","ǰ":"j","ɉ":"j","ⓚ":"k","ｋ":"k","ḱ":"k","ǩ":"k","ḳ":"k","ķ":"k","ḵ":"k","ƙ":"k","ⱪ":"k","ꝁ":"k","ꝃ":"k","ꝅ":"k","ꞣ":"k","ⓛ":"l","ｌ":"l","ŀ":"l","ĺ":"l","ľ":"l","ḷ":"l","ḹ":"l","ļ":"l","ḽ":"l","ḻ":"l","ſ":"l","ł":"l","ƚ":"l","ɫ":"l","ⱡ":"l","ꝉ":"l","ꞁ":"l","ꝇ":"l","ǉ":"lj","ⓜ":"m","ｍ":"m","ḿ":"m","ṁ":"m","ṃ":"m","ɱ":"m","ɯ":"m","ⓝ":"n","ｎ":"n","ǹ":"n","ń":"n","ñ":"n","ṅ":"n","ň":"n","ṇ":"n","ņ":"n","ṋ":"n","ṉ":"n","ƞ":"n","ɲ":"n","ŉ":"n","ꞑ":"n","ꞥ":"n","ǌ":"nj","ⓞ":"o","ｏ":"o","ò":"o","ó":"o","ô":"o","ồ":"o","ố":"o","ỗ":"o","ổ":"o","õ":"o","ṍ":"o","ȭ":"o","ṏ":"o","ō":"o","ṑ":"o","ṓ":"o","ŏ":"o","ȯ":"o","ȱ":"o","ö":"o","ȫ":"o","ỏ":"o","ő":"o","ǒ":"o","ȍ":"o","ȏ":"o","ơ":"o","ờ":"o","ớ":"o","ỡ":"o","ở":"o","ợ":"o","ọ":"o","ộ":"o","ǫ":"o","ǭ":"o","ø":"o","ǿ":"o","ɔ":"o","ꝋ":"o","ꝍ":"o","ɵ":"o","ƣ":"oi","ȣ":"ou","ꝏ":"oo","ⓟ":"p","ｐ":"p","ṕ":"p","ṗ":"p","ƥ":"p","ᵽ":"p","ꝑ":"p","ꝓ":"p","ꝕ":"p","ⓠ":"q","ｑ":"q","ɋ":"q","ꝗ":"q","ꝙ":"q","ⓡ":"r","ｒ":"r","ŕ":"r","ṙ":"r","ř":"r","ȑ":"r","ȓ":"r","ṛ":"r","ṝ":"r","ŗ":"r","ṟ":"r","ɍ":"r","ɽ":"r","ꝛ":"r","ꞧ":"r","ꞃ":"r","ⓢ":"s","ｓ":"s","ß":"s","ś":"s","ṥ":"s","ŝ":"s","ṡ":"s","š":"s","ṧ":"s","ṣ":"s","ṩ":"s","ș":"s","ş":"s","ȿ":"s","ꞩ":"s","ꞅ":"s","ẛ":"s","ⓣ":"t","ｔ":"t","ṫ":"t","ẗ":"t","ť":"t","ṭ":"t","ț":"t","ţ":"t","ṱ":"t","ṯ":"t","ŧ":"t","ƭ":"t","ʈ":"t","ⱦ":"t","ꞇ":"t","ꜩ":"tz","ⓤ":"u","ｕ":"u","ù":"u","ú":"u","û":"u","ũ":"u","ṹ":"u","ū":"u","ṻ":"u","ŭ":"u","ü":"u","ǜ":"u","ǘ":"u","ǖ":"u","ǚ":"u","ủ":"u","ů":"u","ű":"u","ǔ":"u","ȕ":"u","ȗ":"u","ư":"u","ừ":"u","ứ":"u","ữ":"u","ử":"u","ự":"u","ụ":"u","ṳ":"u","ų":"u","ṷ":"u","ṵ":"u","ʉ":"u","ⓥ":"v","ｖ":"v","ṽ":"v","ṿ":"v","ʋ":"v","ꝟ":"v","ʌ":"v","ꝡ":"vy","ⓦ":"w","ｗ":"w","ẁ":"w","ẃ":"w","ŵ":"w","ẇ":"w","ẅ":"w","ẘ":"w","ẉ":"w","ⱳ":"w","ⓧ":"x","ｘ":"x","ẋ":"x","ẍ":"x","ⓨ":"y","ｙ":"y","ỳ":"y","ý":"y","ŷ":"y","ỹ":"y","ȳ":"y","ẏ":"y","ÿ":"y","ỷ":"y","ẙ":"y","ỵ":"y","ƴ":"y","ɏ":"y","ỿ":"y","ⓩ":"z","ｚ":"z","ź":"z","ẑ":"z","ż":"z","ž":"z","ẓ":"z","ẕ":"z","ƶ":"z","ȥ":"z","ɀ":"z","ⱬ":"z","ꝣ":"z","Ά":"Α","Έ":"Ε","Ή":"Η","Ί":"Ι","Ϊ":"Ι","Ό":"Ο","Ύ":"Υ","Ϋ":"Υ","Ώ":"Ω","ά":"α","έ":"ε","ή":"η","ί":"ι","ϊ":"ι","ΐ":"ι","ό":"ο","ύ":"υ","ϋ":"υ","ΰ":"υ","ω":"ω","ς":"σ"}}),b.define("select2/data/base",["../utils"],function(a){function b(a,c){b.__super__.constructor.call(this)}return a.Extend(b,a.Observable),b.prototype.current=function(a){throw new Error("The `current` method must be defined in child classes.")},b.prototype.query=function(a,b){throw new Error("The `query` method must be defined in child classes.")},b.prototype.bind=function(a,b){},b.prototype.destroy=function(){},b.prototype.generateResultId=function(b,c){var d=b.id+"-result-";return d+=a.generateChars(4),null!=c.id?d+="-"+c.id.toString():d+="-"+a.generateChars(4),d},b}),b.define("select2/data/select",["./base","../utils","jquery"],function(a,b,c){function d(a,b){this.$element=a,this.options=b,d.__super__.constructor.call(this)}return b.Extend(d,a),d.prototype.current=function(a){var b=[],d=this;this.$element.find(":selected").each(function(){var a=c(this),e=d.item(a);b.push(e)}),a(b)},d.prototype.select=function(a){var b=this;if(a.selected=!0,c(a.element).is("option"))return a.element.selected=!0,void this.$element.trigger("change");if(this.$element.prop("multiple"))this.current(function(d){var e=[];a=[a],a.push.apply(a,d);for(var f=0;f<a.length;f++){var g=a[f].id;-1===c.inArray(g,e)&&e.push(g)}b.$element.val(e),b.$element.trigger("change")});else{var d=a.id;this.$element.val(d),this.$element.trigger("change")}},d.prototype.unselect=function(a){var b=this;if(this.$element.prop("multiple")){if(a.selected=!1,c(a.element).is("option"))return a.element.selected=!1,void this.$element.trigger("change");this.current(function(d){for(var e=[],f=0;f<d.length;f++){var g=d[f].id;g!==a.id&&-1===c.inArray(g,e)&&e.push(g)}b.$element.val(e),b.$element.trigger("change")})}},d.prototype.bind=function(a,b){var c=this;this.container=a,a.on("select",function(a){c.select(a.data)}),a.on("unselect",function(a){c.unselect(a.data)})},d.prototype.destroy=function(){this.$element.find("*").each(function(){c.removeData(this,"data")})},d.prototype.query=function(a,b){var d=[],e=this;this.$element.children().each(function(){var b=c(this);if(b.is("option")||b.is("optgroup")){var f=e.item(b),g=e.matches(a,f);null!==g&&d.push(g)}}),b({results:d})},d.prototype.addOptions=function(a){b.appendMany(this.$element,a)},d.prototype.option=function(a){var b;a.children?(b=document.createElement("optgroup"),b.label=a.text):(b=document.createElement("option"),void 0!==b.textContent?b.textContent=a.text:b.innerText=a.text),void 0!==a.id&&(b.value=a.id),a.disabled&&(b.disabled=!0),a.selected&&(b.selected=!0),a.title&&(b.title=a.title);var d=c(b),e=this._normalizeItem(a);return e.element=b,c.data(b,"data",e),d},d.prototype.item=function(a){var b={};if(null!=(b=c.data(a[0],"data")))return b;if(a.is("option"))b={id:a.val(),text:a.text(),disabled:a.prop("disabled"),selected:a.prop("selected"),title:a.prop("title")};else if(a.is("optgroup")){b={text:a.prop("label"),children:[],title:a.prop("title")};for(var d=a.children("option"),e=[],f=0;f<d.length;f++){var g=c(d[f]),h=this.item(g);e.push(h)}b.children=e}return b=this._normalizeItem(b),b.element=a[0],c.data(a[0],"data",b),b},d.prototype._normalizeItem=function(a){c.isPlainObject(a)||(a={id:a,text:a}),a=c.extend({},{text:""},a);var b={selected:!1,disabled:!1};return null!=a.id&&(a.id=a.id.toString()),null!=a.text&&(a.text=a.text.toString()),null==a._resultId&&a.id&&null!=this.container&&(a._resultId=this.generateResultId(this.container,a)),c.extend({},b,a)},d.prototype.matches=function(a,b){return this.options.get("matcher")(a,b)},d}),b.define("select2/data/array",["./select","../utils","jquery"],function(a,b,c){function d(a,b){var c=b.get("data")||[];d.__super__.constructor.call(this,a,b),this.addOptions(this.convertToOptions(c))}return b.Extend(d,a),d.prototype.select=function(a){var b=this.$element.find("option").filter(function(b,c){return c.value==a.id.toString()});0===b.length&&(b=this.option(a),this.addOptions(b)),d.__super__.select.call(this,a)},d.prototype.convertToOptions=function(a){function d(a){return function(){return c(this).val()==a.id}}for(var e=this,f=this.$element.find("option"),g=f.map(function(){return e.item(c(this)).id}).get(),h=[],i=0;i<a.length;i++){var j=this._normalizeItem(a[i]);if(c.inArray(j.id,g)>=0){var k=f.filter(d(j)),l=this.item(k),m=c.extend(!0,{},j,l),n=this.option(m);k.replaceWith(n)}else{var o=this.option(j);if(j.children){var p=this.convertToOptions(j.children);b.appendMany(o,p)}h.push(o)}}return h},d}),b.define("select2/data/ajax",["./array","../utils","jquery"],function(a,b,c){function d(a,b){this.ajaxOptions=this._applyDefaults(b.get("ajax")),null!=this.ajaxOptions.processResults&&(this.processResults=this.ajaxOptions.processResults),d.__super__.constructor.call(this,a,b)}return b.Extend(d,a),d.prototype._applyDefaults=function(a){var b={data:function(a){return c.extend({},a,{q:a.term})},transport:function(a,b,d){var e=c.ajax(a);return e.then(b),e.fail(d),e}};return c.extend({},b,a,!0)},d.prototype.processResults=function(a){return a},d.prototype.query=function(a,b){function d(){var d=f.transport(f,function(d){var f=e.processResults(d,a);e.options.get("debug")&&window.console&&console.error&&(f&&f.results&&c.isArray(f.results)||console.error("Select2: The AJAX results did not return an array in the `results` key of the response.")),b(f)},function(){d.status&&"0"===d.status||e.trigger("results:message",{message:"errorLoading"})});e._request=d}var e=this;null!=this._request&&(c.isFunction(this._request.abort)&&this._request.abort(),this._request=null);var f=c.extend({type:"GET"},this.ajaxOptions);"function"==typeof f.url&&(f.url=f.url.call(this.$element,a)),"function"==typeof f.data&&(f.data=f.data.call(this.$element,a)),this.ajaxOptions.delay&&null!=a.term?(this._queryTimeout&&window.clearTimeout(this._queryTimeout),this._queryTimeout=window.setTimeout(d,this.ajaxOptions.delay)):d()},d}),b.define("select2/data/tags",["jquery"],function(a){function b(b,c,d){var e=d.get("tags"),f=d.get("createTag");void 0!==f&&(this.createTag=f);var g=d.get("insertTag");if(void 0!==g&&(this.insertTag=g),b.call(this,c,d),a.isArray(e))for(var h=0;h<e.length;h++){var i=e[h],j=this._normalizeItem(i),k=this.option(j);this.$element.append(k)}}return b.prototype.query=function(a,b,c){function d(a,f){for(var g=a.results,h=0;h<g.length;h++){var i=g[h],j=null!=i.children&&!d({results:i.children},!0);if((i.text||"").toUpperCase()===(b.term||"").toUpperCase()||j)return!f&&(a.data=g,void c(a))}if(f)return!0;var k=e.createTag(b);if(null!=k){var l=e.option(k);l.attr("data-select2-tag",!0),e.addOptions([l]),e.insertTag(g,k)}a.results=g,c(a)}var e=this;if(this._removeOldTags(),null==b.term||null!=b.page)return void a.call(this,b,c);a.call(this,b,d)},b.prototype.createTag=function(b,c){var d=a.trim(c.term);return""===d?null:{id:d,text:d}},b.prototype.insertTag=function(a,b,c){b.unshift(c)},b.prototype._removeOldTags=function(b){this._lastTag;this.$element.find("option[data-select2-tag]").each(function(){this.selected||a(this).remove()})},b}),b.define("select2/data/tokenizer",["jquery"],function(a){function b(a,b,c){var d=c.get("tokenizer");void 0!==d&&(this.tokenizer=d),a.call(this,b,c)}return b.prototype.bind=function(a,b,c){a.call(this,b,c),this.$search=b.dropdown.$search||b.selection.$search||c.find(".select2-search__field")},b.prototype.query=function(b,c,d){function e(b){var c=g._normalizeItem(b);if(!g.$element.find("option").filter(function(){return a(this).val()===c.id}).length){var d=g.option(c);d.attr("data-select2-tag",!0),g._removeOldTags(),g.addOptions([d])}f(c)}function f(a){g.trigger("select",{data:a})}var g=this;c.term=c.term||"";var h=this.tokenizer(c,this.options,e);h.term!==c.term&&(this.$search.length&&(this.$search.val(h.term),this.$search.focus()),c.term=h.term),b.call(this,c,d)},b.prototype.tokenizer=function(b,c,d,e){for(var f=d.get("tokenSeparators")||[],g=c.term,h=0,i=this.createTag||function(a){return{id:a.term,text:a.term}};h<g.length;){var j=g[h];if(-1!==a.inArray(j,f)){var k=g.substr(0,h),l=a.extend({},c,{term:k}),m=i(l);null!=m?(e(m),g=g.substr(h+1)||"",h=0):h++}else h++}return{term:g}},b}),b.define("select2/data/minimumInputLength",[],function(){function a(a,b,c){this.minimumInputLength=c.get("minimumInputLength"),a.call(this,b,c)}return a.prototype.query=function(a,b,c){if(b.term=b.term||"",b.term.length<this.minimumInputLength)return void this.trigger("results:message",{message:"inputTooShort",args:{minimum:this.minimumInputLength,input:b.term,params:b}});a.call(this,b,c)},a}),b.define("select2/data/maximumInputLength",[],function(){function a(a,b,c){this.maximumInputLength=c.get("maximumInputLength"),a.call(this,b,c)}return a.prototype.query=function(a,b,c){if(b.term=b.term||"",this.maximumInputLength>0&&b.term.length>this.maximumInputLength)return void this.trigger("results:message",{message:"inputTooLong",args:{maximum:this.maximumInputLength,input:b.term,params:b}});a.call(this,b,c)},a}),b.define("select2/data/maximumSelectionLength",[],function(){function a(a,b,c){this.maximumSelectionLength=c.get("maximumSelectionLength"),a.call(this,b,c)}return a.prototype.query=function(a,b,c){var d=this;this.current(function(e){var f=null!=e?e.length:0;if(d.maximumSelectionLength>0&&f>=d.maximumSelectionLength)return void d.trigger("results:message",{message:"maximumSelected",args:{maximum:d.maximumSelectionLength}});a.call(d,b,c)})},a}),b.define("select2/dropdown",["jquery","./utils"],function(a,b){function c(a,b){this.$element=a,this.options=b,c.__super__.constructor.call(this)}return b.Extend(c,b.Observable),c.prototype.render=function(){var b=a('<span class="select2-dropdown"><span class="select2-results"></span></span>');return b.attr("dir",this.options.get("dir")),this.$dropdown=b,b},c.prototype.bind=function(){},c.prototype.position=function(a,b){},c.prototype.destroy=function(){this.$dropdown.remove()},c}),b.define("select2/dropdown/search",["jquery","../utils"],function(a,b){function c(){}return c.prototype.render=function(b){var c=b.call(this),d=a('<span class="select2-search select2-search--dropdown"><input class="select2-search__field" type="search" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" role="textbox" /></span>');return this.$searchContainer=d,this.$search=d.find("input"),c.prepend(d),c},c.prototype.bind=function(b,c,d){var e=this;b.call(this,c,d),this.$search.on("keydown",function(a){e.trigger("keypress",a),e._keyUpPrevented=a.isDefaultPrevented()}),this.$search.on("input",function(b){a(this).off("keyup")}),this.$search.on("keyup input",function(a){e.handleSearch(a)}),c.on("open",function(){e.$search.attr("tabindex",0),e.$search.focus(),window.setTimeout(function(){e.$search.focus()},0)}),c.on("close",function(){e.$search.attr("tabindex",-1),e.$search.val("")}),c.on("focus",function(){c.isOpen()||e.$search.focus()}),c.on("results:all",function(a){if(null==a.query.term||""===a.query.term){e.showSearch(a)?e.$searchContainer.removeClass("select2-search--hide"):e.$searchContainer.addClass("select2-search--hide")}})},c.prototype.handleSearch=function(a){if(!this._keyUpPrevented){var b=this.$search.val();this.trigger("query",{term:b})}this._keyUpPrevented=!1},c.prototype.showSearch=function(a,b){return!0},c}),b.define("select2/dropdown/hidePlaceholder",[],function(){function a(a,b,c,d){this.placeholder=this.normalizePlaceholder(c.get("placeholder")),a.call(this,b,c,d)}return a.prototype.append=function(a,b){b.results=this.removePlaceholder(b.results),a.call(this,b)},a.prototype.normalizePlaceholder=function(a,b){return"string"==typeof b&&(b={id:"",text:b}),b},a.prototype.removePlaceholder=function(a,b){for(var c=b.slice(0),d=b.length-1;d>=0;d--){var e=b[d];this.placeholder.id===e.id&&c.splice(d,1)}return c},a}),b.define("select2/dropdown/infiniteScroll",["jquery"],function(a){function b(a,b,c,d){this.lastParams={},a.call(this,b,c,d),this.$loadingMore=this.createLoadingMore(),this.loading=!1}return b.prototype.append=function(a,b){this.$loadingMore.remove(),this.loading=!1,a.call(this,b),this.showLoadingMore(b)&&this.$results.append(this.$loadingMore)},b.prototype.bind=function(b,c,d){var e=this;b.call(this,c,d),c.on("query",function(a){e.lastParams=a,e.loading=!0}),c.on("query:append",function(a){e.lastParams=a,e.loading=!0}),this.$results.on("scroll",function(){var b=a.contains(document.documentElement,e.$loadingMore[0]);if(!e.loading&&b){e.$results.offset().top+e.$results.outerHeight(!1)+50>=e.$loadingMore.offset().top+e.$loadingMore.outerHeight(!1)&&e.loadMore()}})},b.prototype.loadMore=function(){this.loading=!0;var b=a.extend({},{page:1},this.lastParams);b.page++,this.trigger("query:append",b)},b.prototype.showLoadingMore=function(a,b){return b.pagination&&b.pagination.more},b.prototype.createLoadingMore=function(){var b=a('<li class="select2-results__option select2-results__option--load-more"role="treeitem" aria-disabled="true"></li>'),c=this.options.get("translations").get("loadingMore");return b.html(c(this.lastParams)),b},b}),b.define("select2/dropdown/attachBody",["jquery","../utils"],function(a,b){function c(b,c,d){this.$dropdownParent=d.get("dropdownParent")||a(document.body),b.call(this,c,d)}return c.prototype.bind=function(a,b,c){var d=this,e=!1;a.call(this,b,c),b.on("open",function(){d._showDropdown(),d._attachPositioningHandler(b),e||(e=!0,b.on("results:all",function(){d._positionDropdown(),d._resizeDropdown()}),b.on("results:append",function(){d._positionDropdown(),d._resizeDropdown()}))}),b.on("close",function(){d._hideDropdown(),d._detachPositioningHandler(b)}),this.$dropdownContainer.on("mousedown",function(a){a.stopPropagation()})},c.prototype.destroy=function(a){a.call(this),this.$dropdownContainer.remove()},c.prototype.position=function(a,b,c){b.attr("class",c.attr("class")),b.removeClass("select2"),b.addClass("select2-container--open"),b.css({position:"absolute",top:-999999}),this.$container=c},c.prototype.render=function(b){var c=a("<span></span>"),d=b.call(this);return c.append(d),this.$dropdownContainer=c,c},c.prototype._hideDropdown=function(a){this.$dropdownContainer.detach()},c.prototype._attachPositioningHandler=function(c,d){var e=this,f="scroll.select2."+d.id,g="resize.select2."+d.id,h="orientationchange.select2."+d.id,i=this.$container.parents().filter(b.hasScroll);i.each(function(){a(this).data("select2-scroll-position",{x:a(this).scrollLeft(),y:a(this).scrollTop()})}),i.on(f,function(b){var c=a(this).data("select2-scroll-position");a(this).scrollTop(c.y)}),a(window).on(f+" "+g+" "+h,function(a){e._positionDropdown(),e._resizeDropdown()})},c.prototype._detachPositioningHandler=function(c,d){var e="scroll.select2."+d.id,f="resize.select2."+d.id,g="orientationchange.select2."+d.id;this.$container.parents().filter(b.hasScroll).off(e),a(window).off(e+" "+f+" "+g)},c.prototype._positionDropdown=function(){var b=a(window),c=this.$dropdown.hasClass("select2-dropdown--above"),d=this.$dropdown.hasClass("select2-dropdown--below"),e=null,f=this.$container.offset();f.bottom=f.top+this.$container.outerHeight(!1);var g={height:this.$container.outerHeight(!1)};g.top=f.top,g.bottom=f.top+g.height;var h={height:this.$dropdown.outerHeight(!1)},i={top:b.scrollTop(),bottom:b.scrollTop()+b.height()},j=i.top<f.top-h.height,k=i.bottom>f.bottom+h.height,l={left:f.left,top:g.bottom},m=this.$dropdownParent;"static"===m.css("position")&&(m=m.offsetParent());var n=m.offset();l.top-=n.top,l.left-=n.left,c||d||(e="below"),k||!j||c?!j&&k&&c&&(e="below"):e="above",("above"==e||c&&"below"!==e)&&(l.top=g.top-n.top-h.height),null!=e&&(this.$dropdown.removeClass("select2-dropdown--below select2-dropdown--above").addClass("select2-dropdown--"+e),this.$container.removeClass("select2-container--below select2-container--above").addClass("select2-container--"+e)),this.$dropdownContainer.css(l)},c.prototype._resizeDropdown=function(){var a={width:this.$container.outerWidth(!1)+"px"};this.options.get("dropdownAutoWidth")&&(a.minWidth=a.width,a.position="relative",a.width="auto"),this.$dropdown.css(a)},c.prototype._showDropdown=function(a){this.$dropdownContainer.appendTo(this.$dropdownParent),this._positionDropdown(),this._resizeDropdown()},c}),b.define("select2/dropdown/minimumResultsForSearch",[],function(){function a(b){for(var c=0,d=0;d<b.length;d++){var e=b[d];e.children?c+=a(e.children):c++}return c}function b(a,b,c,d){this.minimumResultsForSearch=c.get("minimumResultsForSearch"),this.minimumResultsForSearch<0&&(this.minimumResultsForSearch=1/0),a.call(this,b,c,d)}return b.prototype.showSearch=function(b,c){return!(a(c.data.results)<this.minimumResultsForSearch)&&b.call(this,c)},b}),b.define("select2/dropdown/selectOnClose",[],function(){function a(){}return a.prototype.bind=function(a,b,c){var d=this;a.call(this,b,c),b.on("close",function(a){d._handleSelectOnClose(a)})},a.prototype._handleSelectOnClose=function(a,b){if(b&&null!=b.originalSelect2Event){var c=b.originalSelect2Event;if("select"===c._type||"unselect"===c._type)return}var d=this.getHighlightedResults();if(!(d.length<1)){var e=d.data("data");null!=e.element&&e.element.selected||null==e.element&&e.selected||this.trigger("select",{data:e})}},a}),b.define("select2/dropdown/closeOnSelect",[],function(){function a(){}return a.prototype.bind=function(a,b,c){var d=this;a.call(this,b,c),b.on("select",function(a){d._selectTriggered(a)}),b.on("unselect",function(a){d._selectTriggered(a)})},a.prototype._selectTriggered=function(a,b){var c=b.originalEvent;c&&c.ctrlKey||this.trigger("close",{originalEvent:c,originalSelect2Event:b})},a}),b.define("select2/i18n/en",[],function(){return{errorLoading:function(){return"The results could not be loaded."},inputTooLong:function(a){var b=a.input.length-a.maximum,c="Please delete "+b+" character";return 1!=b&&(c+="s"),c},inputTooShort:function(a){return"Please enter "+(a.minimum-a.input.length)+" or more characters"},loadingMore:function(){return"Loading more results…"},maximumSelected:function(a){var b="You can only select "+a.maximum+" item";return 1!=a.maximum&&(b+="s"),b},noResults:function(){return"No results found"},searching:function(){return"Searching…"}}}),b.define("select2/defaults",["jquery","require","./results","./selection/single","./selection/multiple","./selection/placeholder","./selection/allowClear","./selection/search","./selection/eventRelay","./utils","./translation","./diacritics","./data/select","./data/array","./data/ajax","./data/tags","./data/tokenizer","./data/minimumInputLength","./data/maximumInputLength","./data/maximumSelectionLength","./dropdown","./dropdown/search","./dropdown/hidePlaceholder","./dropdown/infiniteScroll","./dropdown/attachBody","./dropdown/minimumResultsForSearch","./dropdown/selectOnClose","./dropdown/closeOnSelect","./i18n/en"],function(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C){function D(){this.reset()}return D.prototype.apply=function(l){if(l=a.extend(!0,{},this.defaults,l),null==l.dataAdapter){if(null!=l.ajax?l.dataAdapter=o:null!=l.data?l.dataAdapter=n:l.dataAdapter=m,l.minimumInputLength>0&&(l.dataAdapter=j.Decorate(l.dataAdapter,r)),l.maximumInputLength>0&&(l.dataAdapter=j.Decorate(l.dataAdapter,s)),l.maximumSelectionLength>0&&(l.dataAdapter=j.Decorate(l.dataAdapter,t)),l.tags&&(l.dataAdapter=j.Decorate(l.dataAdapter,p)),null==l.tokenSeparators&&null==l.tokenizer||(l.dataAdapter=j.Decorate(l.dataAdapter,q)),null!=l.query){var C=b(l.amdBase+"compat/query");l.dataAdapter=j.Decorate(l.dataAdapter,C)}if(null!=l.initSelection){var D=b(l.amdBase+"compat/initSelection");l.dataAdapter=j.Decorate(l.dataAdapter,D)}}if(null==l.resultsAdapter&&(l.resultsAdapter=c,null!=l.ajax&&(l.resultsAdapter=j.Decorate(l.resultsAdapter,x)),null!=l.placeholder&&(l.resultsAdapter=j.Decorate(l.resultsAdapter,w)),l.selectOnClose&&(l.resultsAdapter=j.Decorate(l.resultsAdapter,A))),null==l.dropdownAdapter){if(l.multiple)l.dropdownAdapter=u;else{var E=j.Decorate(u,v);l.dropdownAdapter=E}if(0!==l.minimumResultsForSearch&&(l.dropdownAdapter=j.Decorate(l.dropdownAdapter,z)),l.closeOnSelect&&(l.dropdownAdapter=j.Decorate(l.dropdownAdapter,B)),null!=l.dropdownCssClass||null!=l.dropdownCss||null!=l.adaptDropdownCssClass){var F=b(l.amdBase+"compat/dropdownCss");l.dropdownAdapter=j.Decorate(l.dropdownAdapter,F)}l.dropdownAdapter=j.Decorate(l.dropdownAdapter,y)}if(null==l.selectionAdapter){if(l.multiple?l.selectionAdapter=e:l.selectionAdapter=d,null!=l.placeholder&&(l.selectionAdapter=j.Decorate(l.selectionAdapter,f)),l.allowClear&&(l.selectionAdapter=j.Decorate(l.selectionAdapter,g)),l.multiple&&(l.selectionAdapter=j.Decorate(l.selectionAdapter,h)),null!=l.containerCssClass||null!=l.containerCss||null!=l.adaptContainerCssClass){var G=b(l.amdBase+"compat/containerCss");l.selectionAdapter=j.Decorate(l.selectionAdapter,G)}l.selectionAdapter=j.Decorate(l.selectionAdapter,i)}if("string"==typeof l.language)if(l.language.indexOf("-")>0){var H=l.language.split("-"),I=H[0];l.language=[l.language,I]}else l.language=[l.language];if(a.isArray(l.language)){var J=new k;l.language.push("en");for(var K=l.language,L=0;L<K.length;L++){var M=K[L],N={};try{N=k.loadPath(M)}catch(a){try{M=this.defaults.amdLanguageBase+M,N=k.loadPath(M)}catch(a){l.debug&&window.console&&console.warn&&console.warn('Select2: The language file for "'+M+'" could not be automatically loaded. A fallback will be used instead.');continue}}J.extend(N)}l.translations=J}else{var O=k.loadPath(this.defaults.amdLanguageBase+"en"),P=new k(l.language);P.extend(O),l.translations=P}return l},D.prototype.reset=function(){function b(a){function b(a){return l[a]||a}return a.replace(/[^\u0000-\u007E]/g,b)}function c(d,e){if(""===a.trim(d.term))return e;if(e.children&&e.children.length>0){for(var f=a.extend(!0,{},e),g=e.children.length-1;g>=0;g--){null==c(d,e.children[g])&&f.children.splice(g,1)}return f.children.length>0?f:c(d,f)}var h=b(e.text).toUpperCase(),i=b(d.term).toUpperCase();return h.indexOf(i)>-1?e:null}this.defaults={amdBase:"./",amdLanguageBase:"./i18n/",closeOnSelect:!0,debug:!1,dropdownAutoWidth:!1,escapeMarkup:j.escapeMarkup,language:C,matcher:c,minimumInputLength:0,maximumInputLength:0,maximumSelectionLength:0,minimumResultsForSearch:0,selectOnClose:!1,sorter:function(a){return a},templateResult:function(a){return a.text},templateSelection:function(a){return a.text},theme:"default",width:"resolve"}},D.prototype.set=function(b,c){var d=a.camelCase(b),e={};e[d]=c;var f=j._convertData(e);a.extend(this.defaults,f)},new D}),b.define("select2/options",["require","jquery","./defaults","./utils"],function(a,b,c,d){function e(b,e){if(this.options=b,null!=e&&this.fromElement(e),this.options=c.apply(this.options),e&&e.is("input")){var f=a(this.get("amdBase")+"compat/inputData");this.options.dataAdapter=d.Decorate(this.options.dataAdapter,f)}}return e.prototype.fromElement=function(a){var c=["select2"];null==this.options.multiple&&(this.options.multiple=a.prop("multiple")),null==this.options.disabled&&(this.options.disabled=a.prop("disabled")),null==this.options.language&&(a.prop("lang")?this.options.language=a.prop("lang").toLowerCase():a.closest("[lang]").prop("lang")&&(this.options.language=a.closest("[lang]").prop("lang"))),null==this.options.dir&&(a.prop("dir")?this.options.dir=a.prop("dir"):a.closest("[dir]").prop("dir")?this.options.dir=a.closest("[dir]").prop("dir"):this.options.dir="ltr"),a.prop("disabled",this.options.disabled),a.prop("multiple",this.options.multiple),a.data("select2Tags")&&(this.options.debug&&window.console&&console.warn&&console.warn('Select2: The `data-select2-tags` attribute has been changed to use the `data-data` and `data-tags="true"` attributes and will be removed in future versions of Select2.'),a.data("data",a.data("select2Tags")),a.data("tags",!0)),a.data("ajaxUrl")&&(this.options.debug&&window.console&&console.warn&&console.warn("Select2: The `data-ajax-url` attribute has been changed to `data-ajax--url` and support for the old attribute will be removed in future versions of Select2."),a.attr("ajax--url",a.data("ajaxUrl")),a.data("ajax--url",a.data("ajaxUrl")));var e={};e=b.fn.jquery&&"1."==b.fn.jquery.substr(0,2)&&a[0].dataset?b.extend(!0,{},a[0].dataset,a.data()):a.data();var f=b.extend(!0,{},e);f=d._convertData(f);for(var g in f)b.inArray(g,c)>-1||(b.isPlainObject(this.options[g])?b.extend(this.options[g],f[g]):this.options[g]=f[g]);return this},e.prototype.get=function(a){return this.options[a]},e.prototype.set=function(a,b){this.options[a]=b},e}),b.define("select2/core",["jquery","./options","./utils","./keys"],function(a,b,c,d){var e=function(a,c){null!=a.data("select2")&&a.data("select2").destroy(),this.$element=a,this.id=this._generateId(a),c=c||{},this.options=new b(c,a),e.__super__.constructor.call(this);var d=a.attr("tabindex")||0;a.data("old-tabindex",d),a.attr("tabindex","-1");var f=this.options.get("dataAdapter");this.dataAdapter=new f(a,this.options);var g=this.render();this._placeContainer(g);var h=this.options.get("selectionAdapter");this.selection=new h(a,this.options),this.$selection=this.selection.render(),this.selection.position(this.$selection,g);var i=this.options.get("dropdownAdapter");this.dropdown=new i(a,this.options),this.$dropdown=this.dropdown.render(),this.dropdown.position(this.$dropdown,g);var j=this.options.get("resultsAdapter");this.results=new j(a,this.options,this.dataAdapter),this.$results=this.results.render(),this.results.position(this.$results,this.$dropdown);var k=this;this._bindAdapters(),this._registerDomEvents(),this._registerDataEvents(),this._registerSelectionEvents(),this._registerDropdownEvents(),this._registerResultsEvents(),this._registerEvents(),this.dataAdapter.current(function(a){k.trigger("selection:update",{data:a})}),a.addClass("select2-hidden-accessible"),a.attr("aria-hidden","true"),this._syncAttributes(),a.data("select2",this)};return c.Extend(e,c.Observable),e.prototype._generateId=function(a){var b="";return b=null!=a.attr("id")?a.attr("id"):null!=a.attr("name")?a.attr("name")+"-"+c.generateChars(2):c.generateChars(4),b=b.replace(/(:|\.|\[|\]|,)/g,""),b="select2-"+b},e.prototype._placeContainer=function(a){a.insertAfter(this.$element);var b=this._resolveWidth(this.$element,this.options.get("width"));null!=b&&a.css("width",b)},e.prototype._resolveWidth=function(a,b){var c=/^width:(([-+]?([0-9]*\.)?[0-9]+)(px|em|ex|%|in|cm|mm|pt|pc))/i;if("resolve"==b){var d=this._resolveWidth(a,"style");return null!=d?d:this._resolveWidth(a,"element")}if("element"==b){var e=a.outerWidth(!1);return e<=0?"auto":e+"px"}if("style"==b){var f=a.attr("style");if("string"!=typeof f)return null;for(var g=f.split(";"),h=0,i=g.length;h<i;h+=1){var j=g[h].replace(/\s/g,""),k=j.match(c);if(null!==k&&k.length>=1)return k[1]}return null}return b},e.prototype._bindAdapters=function(){this.dataAdapter.bind(this,this.$container),this.selection.bind(this,this.$container),this.dropdown.bind(this,this.$container),this.results.bind(this,this.$container)},e.prototype._registerDomEvents=function(){var b=this;this.$element.on("change.select2",function(){b.dataAdapter.current(function(a){b.trigger("selection:update",{data:a})})}),this.$element.on("focus.select2",function(a){b.trigger("focus",a)}),this._syncA=c.bind(this._syncAttributes,this),this._syncS=c.bind(this._syncSubtree,this),this.$element[0].attachEvent&&this.$element[0].attachEvent("onpropertychange",this._syncA);var d=window.MutationObserver||window.WebKitMutationObserver||window.MozMutationObserver;null!=d?(this._observer=new d(function(c){a.each(c,b._syncA),a.each(c,b._syncS)}),this._observer.observe(this.$element[0],{attributes:!0,childList:!0,subtree:!1})):this.$element[0].addEventListener&&(this.$element[0].addEventListener("DOMAttrModified",b._syncA,!1),this.$element[0].addEventListener("DOMNodeInserted",b._syncS,!1),this.$element[0].addEventListener("DOMNodeRemoved",b._syncS,!1))},e.prototype._registerDataEvents=function(){var a=this;this.dataAdapter.on("*",function(b,c){a.trigger(b,c)})},e.prototype._registerSelectionEvents=function(){var b=this,c=["toggle","focus"];this.selection.on("toggle",function(){b.toggleDropdown()}),this.selection.on("focus",function(a){b.focus(a)}),this.selection.on("*",function(d,e){-1===a.inArray(d,c)&&b.trigger(d,e)})},e.prototype._registerDropdownEvents=function(){var a=this;this.dropdown.on("*",function(b,c){a.trigger(b,c)})},e.prototype._registerResultsEvents=function(){var a=this;this.results.on("*",function(b,c){a.trigger(b,c)})},e.prototype._registerEvents=function(){var a=this;this.on("open",function(){a.$container.addClass("select2-container--open")}),this.on("close",function(){a.$container.removeClass("select2-container--open")}),this.on("enable",function(){a.$container.removeClass("select2-container--disabled")}),this.on("disable",function(){a.$container.addClass("select2-container--disabled")}),this.on("blur",function(){a.$container.removeClass("select2-container--focus")}),this.on("query",function(b){a.isOpen()||a.trigger("open",{}),this.dataAdapter.query(b,function(c){a.trigger("results:all",{data:c,query:b})})}),this.on("query:append",function(b){this.dataAdapter.query(b,function(c){a.trigger("results:append",{data:c,query:b})})}),this.on("keypress",function(b){var c=b.which;a.isOpen()?c===d.ESC||c===d.TAB||c===d.UP&&b.altKey?(a.close(),b.preventDefault()):c===d.ENTER?(a.trigger("results:select",{}),b.preventDefault()):c===d.SPACE&&b.ctrlKey?(a.trigger("results:toggle",{}),b.preventDefault()):c===d.UP?(a.trigger("results:previous",{}),b.preventDefault()):c===d.DOWN&&(a.trigger("results:next",{}),b.preventDefault()):(c===d.ENTER||c===d.SPACE||c===d.DOWN&&b.altKey)&&(a.open(),b.preventDefault())})},e.prototype._syncAttributes=function(){this.options.set("disabled",this.$element.prop("disabled")),this.options.get("disabled")?(this.isOpen()&&this.close(),this.trigger("disable",{})):this.trigger("enable",{})},e.prototype._syncSubtree=function(a,b){var c=!1,d=this;if(!a||!a.target||"OPTION"===a.target.nodeName||"OPTGROUP"===a.target.nodeName){if(b)if(b.addedNodes&&b.addedNodes.length>0)for(var e=0;e<b.addedNodes.length;e++){var f=b.addedNodes[e];f.selected&&(c=!0)}else b.removedNodes&&b.removedNodes.length>0&&(c=!0);else c=!0;c&&this.dataAdapter.current(function(a){d.trigger("selection:update",{data:a})})}},e.prototype.trigger=function(a,b){var c=e.__super__.trigger,d={open:"opening",close:"closing",select:"selecting",unselect:"unselecting"};if(void 0===b&&(b={}),a in d){var f=d[a],g={prevented:!1,name:a,args:b};if(c.call(this,f,g),g.prevented)return void(b.prevented=!0)}c.call(this,a,b)},e.prototype.toggleDropdown=function(){this.options.get("disabled")||(this.isOpen()?this.close():this.open())},e.prototype.open=function(){this.isOpen()||this.trigger("query",{})},e.prototype.close=function(){this.isOpen()&&this.trigger("close",{})},e.prototype.isOpen=function(){return this.$container.hasClass("select2-container--open")},e.prototype.hasFocus=function(){return this.$container.hasClass("select2-container--focus")},e.prototype.focus=function(a){this.hasFocus()||(this.$container.addClass("select2-container--focus"),this.trigger("focus",{}))},e.prototype.enable=function(a){this.options.get("debug")&&window.console&&console.warn&&console.warn('Select2: The `select2("enable")` method has been deprecated and will be removed in later Select2 versions. Use $element.prop("disabled") instead.'),null!=a&&0!==a.length||(a=[!0]);var b=!a[0];this.$element.prop("disabled",b)},e.prototype.data=function(){this.options.get("debug")&&arguments.length>0&&window.console&&console.warn&&console.warn('Select2: Data can no longer be set using `select2("data")`. You should consider setting the value instead using `$element.val()`.');var a=[];return this.dataAdapter.current(function(b){a=b}),a},e.prototype.val=function(b){if(this.options.get("debug")&&window.console&&console.warn&&console.warn('Select2: The `select2("val")` method has been deprecated and will be removed in later Select2 versions. Use $element.val() instead.'),null==b||0===b.length)return this.$element.val();var c=b[0];a.isArray(c)&&(c=a.map(c,function(a){return a.toString()})),this.$element.val(c).trigger("change")},e.prototype.destroy=function(){this.$container.remove(),this.$element[0].detachEvent&&this.$element[0].detachEvent("onpropertychange",this._syncA),null!=this._observer?(this._observer.disconnect(),this._observer=null):this.$element[0].removeEventListener&&(this.$element[0].removeEventListener("DOMAttrModified",this._syncA,!1),this.$element[0].removeEventListener("DOMNodeInserted",this._syncS,!1),this.$element[0].removeEventListener("DOMNodeRemoved",this._syncS,!1)),this._syncA=null,this._syncS=null,this.$element.off(".select2"),this.$element.attr("tabindex",this.$element.data("old-tabindex")),this.$element.removeClass("select2-hidden-accessible"),this.$element.attr("aria-hidden","false"),this.$element.removeData("select2"),this.dataAdapter.destroy(),this.selection.destroy(),this.dropdown.destroy(),this.results.destroy(),this.dataAdapter=null,this.selection=null,this.dropdown=null,this.results=null},e.prototype.render=function(){var b=a('<span class="select2 select2-container"><span class="selection"></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>');return b.attr("dir",this.options.get("dir")),this.$container=b,this.$container.addClass("select2-container--"+this.options.get("theme")),b.data("element",this.$element),b},e}),b.define("select2/compat/utils",["jquery"],function(a){function b(b,c,d){var e,f,g=[];e=a.trim(b.attr("class")),e&&(e=""+e,a(e.split(/\s+/)).each(function(){0===this.indexOf("select2-")&&g.push(this)})),e=a.trim(c.attr("class")),e&&(e=""+e,a(e.split(/\s+/)).each(function(){0!==this.indexOf("select2-")&&null!=(f=d(this))&&g.push(f)})),b.attr("class",g.join(" "))}return{syncCssClasses:b}}),b.define("select2/compat/containerCss",["jquery","./utils"],function(a,b){function c(a){return null}function d(){}return d.prototype.render=function(d){var e=d.call(this),f=this.options.get("containerCssClass")||"";a.isFunction(f)&&(f=f(this.$element));var g=this.options.get("adaptContainerCssClass");if(g=g||c,-1!==f.indexOf(":all:")){f=f.replace(":all:","");var h=g;g=function(a){var b=h(a);return null!=b?b+" "+a:a}}var i=this.options.get("containerCss")||{};return a.isFunction(i)&&(i=i(this.$element)),b.syncCssClasses(e,this.$element,g),e.css(i),e.addClass(f),e},d}),b.define("select2/compat/dropdownCss",["jquery","./utils"],function(a,b){function c(a){return null}function d(){}return d.prototype.render=function(d){var e=d.call(this),f=this.options.get("dropdownCssClass")||"";a.isFunction(f)&&(f=f(this.$element));var g=this.options.get("adaptDropdownCssClass");if(g=g||c,-1!==f.indexOf(":all:")){f=f.replace(":all:","");var h=g;g=function(a){var b=h(a);return null!=b?b+" "+a:a}}var i=this.options.get("dropdownCss")||{};return a.isFunction(i)&&(i=i(this.$element)),b.syncCssClasses(e,this.$element,g),e.css(i),e.addClass(f),e},d}),b.define("select2/compat/initSelection",["jquery"],function(a){function b(a,b,c){c.get("debug")&&window.console&&console.warn&&console.warn("Select2: The `initSelection` option has been deprecated in favor of a custom data adapter that overrides the `current` method. This method is now called multiple times instead of a single time when the instance is initialized. Support will be removed for the `initSelection` option in future versions of Select2"),this.initSelection=c.get("initSelection"),this._isInitialized=!1,a.call(this,b,c)}return b.prototype.current=function(b,c){var d=this;if(this._isInitialized)return void b.call(this,c);this.initSelection.call(null,this.$element,function(b){d._isInitialized=!0,a.isArray(b)||(b=[b]),c(b)})},b}),b.define("select2/compat/inputData",["jquery"],function(a){function b(a,b,c){this._currentData=[],this._valueSeparator=c.get("valueSeparator")||",","hidden"===b.prop("type")&&c.get("debug")&&console&&console.warn&&console.warn("Select2: Using a hidden input with Select2 is no longer supported and may stop working in the future. It is recommended to use a `<select>` element instead."),a.call(this,b,c)}return b.prototype.current=function(b,c){function d(b,c){var e=[];return b.selected||-1!==a.inArray(b.id,c)?(b.selected=!0,e.push(b)):b.selected=!1,b.children&&e.push.apply(e,d(b.children,c)),e}for(var e=[],f=0;f<this._currentData.length;f++){var g=this._currentData[f];e.push.apply(e,d(g,this.$element.val().split(this._valueSeparator)))}c(e)},b.prototype.select=function(b,c){if(this.options.get("multiple")){var d=this.$element.val();d+=this._valueSeparator+c.id,this.$element.val(d),this.$element.trigger("change")}else this.current(function(b){a.map(b,function(a){a.selected=!1})}),this.$element.val(c.id),this.$element.trigger("change")},b.prototype.unselect=function(a,b){var c=this;b.selected=!1,this.current(function(a){for(var d=[],e=0;e<a.length;e++){var f=a[e];b.id!=f.id&&d.push(f.id)}c.$element.val(d.join(c._valueSeparator)),c.$element.trigger("change")})},b.prototype.query=function(a,b,c){for(var d=[],e=0;e<this._currentData.length;e++){var f=this._currentData[e],g=this.matches(b,f);null!==g&&d.push(g)}c({results:d})},b.prototype.addOptions=function(b,c){var d=a.map(c,function(b){return a.data(b[0],"data")});this._currentData.push.apply(this._currentData,d)},b}),b.define("select2/compat/matcher",["jquery"],function(a){function b(b){function c(c,d){var e=a.extend(!0,{},d);if(null==c.term||""===a.trim(c.term))return e;if(d.children){for(var f=d.children.length-1;f>=0;f--){var g=d.children[f];b(c.term,g.text,g)||e.children.splice(f,1)}if(e.children.length>0)return e}return b(c.term,d.text,d)?e:null}return c}return b}),b.define("select2/compat/query",[],function(){function a(a,b,c){c.get("debug")&&window.console&&console.warn&&console.warn("Select2: The `query` option has been deprecated in favor of a custom data adapter that overrides the `query` method. Support will be removed for the `query` option in future versions of Select2."),a.call(this,b,c)}return a.prototype.query=function(a,b,c){b.callback=c,this.options.get("query").call(null,b)},a}),b.define("select2/dropdown/attachContainer",[],function(){function a(a,b,c){a.call(this,b,c)}return a.prototype.position=function(a,b,c){c.find(".dropdown-wrapper").append(b),b.addClass("select2-dropdown--below"),c.addClass("select2-container--below")},a}),b.define("select2/dropdown/stopPropagation",[],function(){function a(){}return a.prototype.bind=function(a,b,c){a.call(this,b,c);var d=["blur","change","click","dblclick","focus","focusin","focusout","input","keydown","keyup","keypress","mousedown","mouseenter","mouseleave","mousemove","mouseover","mouseup","search","touchend","touchstart"];this.$dropdown.on(d.join(" "),function(a){a.stopPropagation()})},a}),b.define("select2/selection/stopPropagation",[],function(){function a(){}return a.prototype.bind=function(a,b,c){a.call(this,b,c);var d=["blur","change","click","dblclick","focus","focusin","focusout","input","keydown","keyup","keypress","mousedown","mouseenter","mouseleave","mousemove","mouseover","mouseup","search","touchend","touchstart"];this.$selection.on(d.join(" "),function(a){a.stopPropagation()})},a}),function(c){"function"==typeof b.define&&b.define.amd?b.define("jquery-mousewheel",["jquery"],c):"object"==typeof exports?module.exports=c:c(a)}(function(a){function b(b){var g=b||window.event,h=i.call(arguments,1),j=0,l=0,m=0,n=0,o=0,p=0;if(b=a.event.fix(g),b.type="mousewheel","detail"in g&&(m=-1*g.detail),"wheelDelta"in g&&(m=g.wheelDelta),"wheelDeltaY"in g&&(m=g.wheelDeltaY),"wheelDeltaX"in g&&(l=-1*g.wheelDeltaX),"axis"in g&&g.axis===g.HORIZONTAL_AXIS&&(l=-1*m,m=0),j=0===m?l:m,"deltaY"in g&&(m=-1*g.deltaY,j=m),"deltaX"in g&&(l=g.deltaX,0===m&&(j=-1*l)),0!==m||0!==l){if(1===g.deltaMode){var q=a.data(this,"mousewheel-line-height");j*=q,m*=q,l*=q}else if(2===g.deltaMode){var r=a.data(this,"mousewheel-page-height");j*=r,m*=r,l*=r}if(n=Math.max(Math.abs(m),Math.abs(l)),(!f||n<f)&&(f=n,d(g,n)&&(f/=40)),d(g,n)&&(j/=40,l/=40,m/=40),j=Math[j>=1?"floor":"ceil"](j/f),l=Math[l>=1?"floor":"ceil"](l/f),m=Math[m>=1?"floor":"ceil"](m/f),k.settings.normalizeOffset&&this.getBoundingClientRect){var s=this.getBoundingClientRect();o=b.clientX-s.left,p=b.clientY-s.top}return b.deltaX=l,b.deltaY=m,b.deltaFactor=f,b.offsetX=o,b.offsetY=p,b.deltaMode=0,h.unshift(b,j,l,m),e&&clearTimeout(e),e=setTimeout(c,200),(a.event.dispatch||a.event.handle).apply(this,h)}}function c(){f=null}function d(a,b){return k.settings.adjustOldDeltas&&"mousewheel"===a.type&&b%120==0}var e,f,g=["wheel","mousewheel","DOMMouseScroll","MozMousePixelScroll"],h="onwheel"in document||document.documentMode>=9?["wheel"]:["mousewheel","DomMouseScroll","MozMousePixelScroll"],i=Array.prototype.slice;if(a.event.fixHooks)for(var j=g.length;j;)a.event.fixHooks[g[--j]]=a.event.mouseHooks;var k=a.event.special.mousewheel={version:"3.1.12",setup:function(){if(this.addEventListener)for(var c=h.length;c;)this.addEventListener(h[--c],b,!1);else this.onmousewheel=b;a.data(this,"mousewheel-line-height",k.getLineHeight(this)),a.data(this,"mousewheel-page-height",k.getPageHeight(this))},teardown:function(){if(this.removeEventListener)for(var c=h.length;c;)this.removeEventListener(h[--c],b,!1);else this.onmousewheel=null;a.removeData(this,"mousewheel-line-height"),a.removeData(this,"mousewheel-page-height")},getLineHeight:function(b){var c=a(b),d=c["offsetParent"in a.fn?"offsetParent":"parent"]();return d.length||(d=a("body")),parseInt(d.css("fontSize"),10)||parseInt(c.css("fontSize"),10)||16},getPageHeight:function(b){return a(b).height()},settings:{adjustOldDeltas:!0,normalizeOffset:!0}};a.fn.extend({mousewheel:function(a){return a?this.bind("mousewheel",a):this.trigger("mousewheel")},unmousewheel:function(a){return this.unbind("mousewheel",a)}})}),b.define("jquery.select2",["jquery","jquery-mousewheel","./select2/core","./select2/defaults"],function(a,b,c,d){if(null==a.fn.select2){var e=["open","close","destroy"];a.fn.select2=function(b){if("object"==typeof(b=b||{}))return this.each(function(){var d=a.extend(!0,{},b);new c(a(this),d)}),this;if("string"==typeof b){var d,f=Array.prototype.slice.call(arguments,1);return this.each(function(){var c=a(this).data("select2");null==c&&window.console&&console.error&&console.error("The select2('"+b+"') method was called on an element that is not using Select2."),d=c[b].apply(c,f)}),a.inArray(b,e)>-1?this:d}throw new Error("Invalid arguments for Select2: "+b)}}return null==a.fn.select2.defaults&&(a.fn.select2.defaults=d),c}),{define:b.define,require:b.require}}(),c=b.require("jquery.select2");return a.fn.select2.amd=b,c});
 // This file defines the global Mirador constructor function.
 // This is the entry point to Mirador and is intentionally sparse.
-(function(global) {
+(function (global) {
   function checkContainer(containerId) {
     var container = jQuery('#' + containerId);
     if (!container.hasClass('mirador-container')) {
@@ -33789,134 +33832,130 @@ return /******/ (function(modules) { // webpackBootstrap
 
   function Mirador(config) {
     if (this instanceof Mirador) {
-        checkContainer(config.id);
+      checkContainer(config.id);
 
         // initialize the event emitter for this mirador instance
-        this.eventEmitter = new Mirador.EventEmitter();
+      this.eventEmitter = new Mirador.EventEmitter();
 
         // pass the config through the save and restore process,
         // returning the config that will, in fact, populate the application
-        this.saveController = new Mirador.SaveController(jQuery.extend(true, {}, config, {'eventEmitter': this.eventEmitter}));
+      this.saveController = new Mirador.SaveController(jQuery.extend(true, {}, config, { eventEmitter: this.eventEmitter }));
 
         // initialize the application
-        this.viewer = new Mirador.Viewer({
-            'state': this.saveController,
-            'eventEmitter': this.eventEmitter
-        });
-        return this;
-    } else {
-        return new Mirador(config);
+      this.viewer = new Mirador.Viewer({
+        state: this.saveController,
+        eventEmitter: this.eventEmitter
+      });
+      return this;
     }
+    return new Mirador(config);
   }
   global.Mirador = global.Mirador || Mirador;
-})(window);
+}(window));
 
-(function($) {
-
-  $.Handlebars = (function() {
+(function ($) {
+  $.Handlebars = (function () {
     return Handlebars.create();
-  })();
-
+  }());
 }(Mirador));
 
-(function($) {
-
+(function ($) {
   /**
    * Default values for settings
    */
   $.DEFAULT_SETTINGS = {
 
-    'workspaceType': 'singleObject',
+    workspaceType: 'singleObject',
 
-    'saveSession' : false,  //whether or not to store session to local storage
+    saveSession: false,  // whether or not to store session to local storage
 
-    'workspaces' : {
-      'singleObject': {
-        'label': 'Single Object',
-        'addNew': false,
-        'move': false,
-        'iconClass': 'image'
+    workspaces: {
+      singleObject: {
+        label: 'Single Object',
+        addNew: false,
+        move: false,
+        iconClass: 'image'
       },
-      'compare': {
-        'label': 'Compare',
-        'iconClass': 'columns'
+      compare: {
+        label: 'Compare',
+        iconClass: 'columns'
       },
-      'bookReading': {
-        'defaultWindowOptions': {
+      bookReading: {
+        defaultWindowOptions: {
         },
-        'label': 'Book Reading',
-        'addNew': true,
-        'move': false,
-        'iconClass': 'book'
+        label: 'Book Reading',
+        addNew: true,
+        move: false,
+        iconClass: 'book'
       }
     },
 
-    'manifests' : [],
-    'data' : [],
+    manifests: [],
+    data: [],
 
-    'layout': '1x1',
+    layout: '1x1',
 
-    'openManifestsPage' : false, //defaults to false, whether or not Mirador should display the manifests page,
-                                //only valid if no windowObjects have been initialized
-                                //if there are multiple slots, it will be bound to the first slot and the selected manifest will open in that slot
+    openManifestsPage: false, // defaults to false, whether or not Mirador should display the manifests page,
+                                // only valid if no windowObjects have been initialized
+                                // if there are multiple slots, it will be bound to the first slot and the selected manifest will open in that slot
 
     // whether or not to preserve the order of the manifests, as provided in the configuration, in the manifest listing page
-    'preserveManifestOrder' : false,
+    preserveManifestOrder: false,
 
-    //default window settings, but can be changed in Mirador configuration on initialization
-    'windowSettings' : {
-      "availableViews" : ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'], //any subset removes others
-      "viewType" : 'ImageView', //one of [_'ThumbnailsView'_, 'ImageView', 'ScrollView', 'BookView'] - if using availableViews, must be in subset
-      "bottomPanel" : true, //whether or not to make the bottom panel available in this window
-      "bottomPanelVisible" : true, //whether or not to make the bottom panel visible in this window on load. This setting is dependent on bottomPanel being true
-      "sidePanel" : true, //whether or not to make the side panel available in this window
-      //control what is available in the side panel. if "sidePanel" is false, these options won't be applied
-      "sidePanelOptions" : {
-        "toc" : true,
-        "annotations" : false,
-        "tocTabAvailable": true,
-        "layersTabAvailable": false,
-        "searchTabAvailable": false,
-        "annotationTabAvailable": false
+    // default window settings, but can be changed in Mirador configuration on initialization
+    windowSettings: {
+      availableViews: ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'], // any subset removes others
+      viewType: 'ImageView', // one of [_'ThumbnailsView'_, 'ImageView', 'ScrollView', 'BookView'] - if using availableViews, must be in subset
+      bottomPanel: true, // whether or not to make the bottom panel available in this window
+      bottomPanelVisible: true, // whether or not to make the bottom panel visible in this window on load. This setting is dependent on bottomPanel being true
+      sidePanel: true, // whether or not to make the side panel available in this window
+      // control what is available in the side panel. if "sidePanel" is false, these options won't be applied
+      sidePanelOptions: {
+        toc: true,
+        annotations: false,
+        tocTabAvailable: true,
+        layersTabAvailable: false,
+        searchTabAvailable: false,
+        annotationTabAvailable: false
       },
-      "sidePanelVisible" : true, //whether or not to make the side panel visible in this window on load. This setting is dependent on sidePanel being true
-      "overlay" : true, //whether or not to make the metadata overlay available/visible in this window
-      "canvasControls": { // The types of controls available to be displayed on a canvas
-        "annotations" : {
-          "annotationLayer" : true, //whether or not to make annotation layer available in this window
-          "annotationCreation" : true, /*whether or not to make annotation creation available in this window,
+      sidePanelVisible: true, // whether or not to make the side panel visible in this window on load. This setting is dependent on sidePanel being true
+      overlay: true, // whether or not to make the metadata overlay available/visible in this window
+      canvasControls: { // The types of controls available to be displayed on a canvas
+        annotations: {
+          annotationLayer: true, // whether or not to make annotation layer available in this window
+          annotationCreation: true, /* whether or not to make annotation creation available in this window,
                        only valid if annotationLayer is set to True and an annotationEndpoint is defined.
-                       This setting does NOT affect whether or not a user can edit an individual annotation that has already been created.*/
-          "annotationState" : 'off', //[_'off'_, 'on'] whether or not to turn on the annotation layer on window load
-          "annotationRefresh" : false, //whether or not to display the refresh icon for annotations
+                       This setting does NOT affect whether or not a user can edit an individual annotation that has already been created. */
+          annotationState: 'off', // [_'off'_, 'on'] whether or not to turn on the annotation layer on window load
+          annotationRefresh: false // whether or not to display the refresh icon for annotations
         },
-        "imageManipulation" : {
-          "manipulationLayer" : true,
-          "controls" : {
-            "rotate" : true,
-            "brightness" : true,
-            "contrast" : true,
-            "saturate" : true,
-            "grayscale" : true,
-            "invert" : true,
-            "mirror" : false
+        imageManipulation: {
+          manipulationLayer: true,
+          controls: {
+            rotate: true,
+            brightness: true,
+            contrast: true,
+            saturate: true,
+            grayscale: true,
+            invert: true,
+            mirror: false
           }
         }
       },
-      "fullScreen" : true, //whether or not to make the window's fullScreen button visible to user
-      "displayLayout" : true, //whether or not to display all layout options, removing individual menu options is separate
-      //control individual menu items in layout menu. if "displayLayout" is false, these options won't be applied
-      "layoutOptions" : {
-        "newObject" : true,
-        "close" : true,
-        "slotRight" : true,
-        "slotLeft" : true,
-        "slotAbove" : true,
-        "slotBelow" : true,
+      fullScreen: true, // whether or not to make the window's fullScreen button visible to user
+      displayLayout: true, // whether or not to display all layout options, removing individual menu options is separate
+      // control individual menu items in layout menu. if "displayLayout" is false, these options won't be applied
+      layoutOptions: {
+        newObject: true,
+        close: true,
+        slotRight: true,
+        slotLeft: true,
+        slotAbove: true,
+        slotBelow: true
       }
     },
 
-    'windowObjects' : [
+    windowObjects: [
       /* Using the same settings listed in `windowSettings`, change the settings for a specific window
        * Structured as an array of objects
        * A few additional settings only available in `windowObjecs`
@@ -33929,73 +33968,73 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // Control for whether or not to auto hide controls on the OSD canvas and specific durations in milliseconds
     // durations assume `autoHideControls` is true
-    'autoHideControls': true,
-    'fadeDuration': 400,
-    'timeoutDuration': 3000,
+    autoHideControls: true,
+    fadeDuration: 400,
+    timeoutDuration: 3000,
 
-    'availableAnnotationModes': [
+    availableAnnotationModes: [
 
     ],
 
-    'availableAnnotationDrawingTools': [
-       'Rectangle', 'Ellipse', 'Freehand', 'Polygon', 'Pin'
+    availableAnnotationDrawingTools: [
+      'Rectangle', 'Ellipse', 'Freehand', 'Polygon', 'Pin', 'TextOverlay'
     ],
-    'availableAnnotationStylePickers':[
-        'StrokeColor','FillColor','StrokeType'
+    availableAnnotationStylePickers: [
+      'StrokeColor', 'FillColor', 'StrokeType'
     ],
-    'drawingToolsSettings': {
+    drawingToolsSettings: {
       // Additional tool settings.
       /**
        *'Pin': {
        *},
-       **/
-      //'selectedColor': 'red',
-      'doubleClickReactionTime': 300,
-      'strokeColor': 'deepSkyBlue',
-      'fillColor': 'deepSkyBlue',
-      'fillColorAlpha': 0.0,
-      'shapeHandleSize':10,
-      'fixedShapeSize':10,
-      'newlyCreatedShapeStrokeWidthFactor':5,
-      'hoverColor':'yellow'
+       * */
+      // 'selectedColor': 'red',
+      doubleClickReactionTime: 300,
+      strokeColor: 'deepSkyBlue',
+      fillColor: 'deepSkyBlue',
+      fillColorAlpha: 0.0,
+      shapeHandleSize: 10,
+      fixedShapeSize: 10,
+      newlyCreatedShapeStrokeWidthFactor: 5,
+      hoverColor: 'yellow'
     },
 
-    'availableExternalCommentsPanel': false,
-    'shapeHandleSize':10,
+    availableExternalCommentsPanel: false,
+    shapeHandleSize: 10,
 
 
-    'availableCanvasTools': [
+    availableCanvasTools: [
 
     ],
 
     // main (top) menu
-    //we don't actually take the height into account for the mirador-viewer div, so don't use for now
-    'mainMenuSettings': {
-      'show': true,
-      'buttons' : {
-        'bookmark' : false,
-        'layout' : true,
-        'options' : false,
-        'fullScreenViewer': true
+    // we don't actually take the height into account for the mirador-viewer div, so don't use for now
+    mainMenuSettings: {
+      show: true,
+      buttons: {
+        bookmark: false,
+        layout: true,
+        options: false,
+        fullScreenViewer: true
       }
-      //'height': 25,
-      //'width': '100%'
+      // 'height': 25,
+      // 'width': '100%'
     },
 
-    'workspacePanelSettings': {
-      'maxRows': 5,
-      'maxColumns': 5,
-      'preserveWindows': true
+    workspacePanelSettings: {
+      maxRows: 5,
+      maxColumns: 5,
+      preserveWindows: true
     },
 
-    //true or false.  controls display of "Add new object from URL" on manifest listing page
-    'showAddFromURLBox' : true,
+    // true or false.  controls display of "Add new object from URL" on manifest listing page
+    showAddFromURLBox: true,
 
-    'buildPath' : 'build/mirador/',
+    buildPath: '/static/mirador/',
 
-    'i18nPath' : 'locales/',
+    i18nPath: 'locales/',
 
-    'imagesPath' : 'images/',
+    imagesPath: 'images/',
 
     /**
      *  Annotation backend that have instance-specific configuration data as a hash, e.g.:
@@ -34008,76 +34047,75 @@ return /******/ (function(modules) { // webpackBootstrap
      *    'APIKey': '23983hf98j3f9283jf2983fj'
      *  }
      *  }
-     **/
-    'annotationEndpoint': {},
+     * */
+    annotationEndpoint: {},
 
-    'annotationBodyEditor': {
-      'module': 'TinyMCEAnnotationBodyEditor',
-      'options': {
+    annotationBodyEditor: {
+      module: 'TinyMCEAnnotationBodyEditor',
+      options: {
         config: {
-          plugins: "image link media directionality",
-          toolbar: "bold italic | bullist numlist | link image media | removeformat | ltr rtl",
+          plugins: 'image link media directionality',
+          toolbar: 'bold italic | bullist numlist | link image media | removeformat | ltr rtl',
           tags: []
         }
       }
     },
 
-    'jsonStorageEndpoint': {
-      'name': 'JSONBlob API Endpoint',
-      'module': 'JSONBlobAPI',
-      'options': {
-        'ssl': true,
-        'port': '443',
-        'host': 'jsonblob.com'
+    jsonStorageEndpoint: {
+      name: 'JSONBlob API Endpoint',
+      module: 'JSONBlobAPI',
+      options: {
+        ssl: true,
+        port: '443',
+        host: 'jsonblob.com'
       }
     },
 
-    'manifestsPanel': {
-      'name': 'Classic Mirador Manifests Panel',
-      'module': 'ManifestsPanel',
-      'options': {
+    manifestsPanel: {
+      name: 'Classic Mirador Manifests Panel',
+      module: 'ManifestsPanel',
+      options: {
       }
     },
-    
-    'sharingEndpoint': {
-      'url': '',
-      'storeId': 123,
-      'APIKey': '23983hf98j3f9283jf2983fj'
+
+    sharingEndpoint: {
+      url: '',
+      storeId: 123,
+      APIKey: '23983hf98j3f9283jf2983fj'
     },
 
     // linked image views configuration
-    'lockController' : {
-      'lockProfile' : 'lazyZoom',
-      'notifyMaxMin' : true
+    lockController: {
+      lockProfile: 'lazyZoom',
+      notifyMaxMin: true
     }
   };
-
 }(Mirador));
-(function($) {
 
-  $.Viewer = function(options) {
+(function ($) {
+  $.Viewer = function (options) {
     jQuery.extend(true, this, {
-      id:                     null,
-      data:                   null,
-      element:                null,
-      canvas:                 null,
-      workspaceType:          null,
-      layout:                 null,
-      workspace:              null,
-      mainMenu:               null,
-      workspaceAutoSave:      null,
-      windowSize:             {},
-      resizeRatio:            {},
+      id: null,
+      data: null,
+      element: null,
+      canvas: null,
+      workspaceType: null,
+      layout: null,
+      workspace: null,
+      mainMenu: null,
+      workspaceAutoSave: null,
+      windowSize: {},
+      resizeRatio: {},
       currentWorkspaceVisible: true,
-      state:                  null,
-      eventEmitter:           null,
-      overlayStates:          {
-        'workspacePanelVisible': false,
-        'manifestsPanelVisible': false,
-        'optionsPanelVisible': false,
-        'bookmarkPanelVisible': false
+      state: null,
+      eventEmitter: null,
+      overlayStates: {
+        workspacePanelVisible: false,
+        manifestsPanelVisible: false,
+        optionsPanelVisible: false,
+        bookmarkPanelVisible: false
       },
-      manifests:             []
+      manifests: []
     }, options);
 
     this.id = this.state.getStateProperty('id');
@@ -34095,7 +34133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   $.Viewer.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this;
 
       // i18next options
@@ -34104,17 +34142,17 @@ return /******/ (function(modules) { // webpackBootstrap
         load: 'unspecific',
         debug: false,
         backend: {
-          loadPath: _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('i18nPath')+'{{lng}}/{{ns}}.json'
+          loadPath: _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('i18nPath') + '{{lng}}/{{ns}}.json'
         }
       };
 
       // set the language from configuration
       var configuredLanguage = _this.state.getStateProperty('language');
-      if(configuredLanguage){
+      if (configuredLanguage) {
         i18nextOptions.lng = configuredLanguage;
       }
 
-      //initialize i18next
+      // initialize i18next
       i18next.use(i18nextXHRBackend).use(i18nextBrowserLanguageDetector).init(
         i18nextOptions,
         _this.setupViewer.bind(_this)
@@ -34122,22 +34160,22 @@ return /******/ (function(modules) { // webpackBootstrap
       // because this is a callback, we need to bind "_this" to explicitly retain the calling context of this function (the viewer object instance));
     },
 
-    setupViewer: function() {
+    setupViewer: function () {
       var _this = this;
-      //add background and positioning information on the root element that is provided in config
+      // add background and positioning information on the root element that is provided in config
       var backgroundImage = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'debut_dark.png';
-      this.element.css('background-color', '#333').css('background-image','url('+backgroundImage+')').css('background-position','left top')
-      .css('background-repeat','repeat');
+      this.element.css('background-color', '#333').css('background-image', 'url(' + backgroundImage + ')').css('background-position', 'left top')
+      .css('background-repeat', 'repeat');
 
-      //register $.Handlebars helper
-      $.Handlebars.registerHelper('t', function(i18n_key) {
+      // register $.Handlebars helper
+      $.Handlebars.registerHelper('t', function (i18n_key) {
         var result = i18next.t(i18n_key);
         return new $.Handlebars.SafeString(result);
       });
 
-      //check all buttons in mainMenu.  If they are all set to false, then don't show mainMenu
+      // check all buttons in mainMenu.  If they are all set to false, then don't show mainMenu
       var showMainMenu = false;
-      jQuery.each(this.state.getStateProperty('mainMenuSettings').buttons, function(key, value) {
+      jQuery.each(this.state.getStateProperty('mainMenuSettings').buttons, function (key, value) {
         if (value) { showMainMenu = true; }
       });
       // but, mainMenu should be displayed if we have userButtons and/or userLogo defined
@@ -34148,8 +34186,8 @@ return /******/ (function(modules) { // webpackBootstrap
         showMainMenu = true;
       }
 
-      //even if all these buttons are available, developer can override and set show to false,
-      //in which case, don't show mainMenu at all
+      // even if all these buttons are available, developer can override and set show to false,
+      // in which case, don't show mainMenu at all
       if (this.state.getStateProperty('mainMenuSettings').show === false) {
         showMainMenu = false;
       }
@@ -34166,7 +34204,7 @@ return /******/ (function(modules) { // webpackBootstrap
       .appendTo(this.element);
 
       if (!showMainMenu) {
-        this.canvas.css("top", "0px");
+        this.canvas.css('top', '0px');
       }
 
       // add workspace configuration
@@ -34185,7 +34223,7 @@ return /******/ (function(modules) { // webpackBootstrap
       });
 
       this.manifestsPanel = new $[this.state.getStateProperty('manifestsPanel').module](jQuery.extend({}, this.state.getStateProperty('manifestsPanel').options, { appendTo: this.element.find('.mirador-viewer'), state: this.state, eventEmitter: this.eventEmitter }));
-      //only instatiate bookmarkPanel if we need it
+      // only instatiate bookmarkPanel if we need it
       if (showMainMenu && this.state.getStateProperty('mainMenuSettings').buttons.bookmark) {
         this.bookmarkPanel = new $.BookmarkPanel({ appendTo: this.element.find('.mirador-viewer'), state: this.state, eventEmitter: this.eventEmitter });
       }
@@ -34203,42 +34241,42 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
       // check that windows are loading first to set state of slot?
-      _this.eventEmitter.subscribe('manifestReceived', function(event, newManifest) {
+      _this.eventEmitter.subscribe('manifestReceived', function (event, newManifest) {
         if (_this.state.getStateProperty('windowObjects')) {
-          var check = jQuery.grep(_this.state.getStateProperty('windowObjects'), function(object, index) {
+          var check = jQuery.grep(_this.state.getStateProperty('windowObjects'), function (object, index) {
             return object.loadedManifest === newManifest.uri;
           });
-          jQuery.each(check, function(index, config) {
+          jQuery.each(check, function (index, config) {
             _this.loadManifestFromConfig(config);
           });
         }
       });
 
-      _this.eventEmitter.subscribe('TOGGLE_WORKSPACE_PANEL', function(event) {
+      _this.eventEmitter.subscribe('TOGGLE_WORKSPACE_PANEL', function (event) {
         _this.toggleWorkspacePanel();
       });
 
-      _this.eventEmitter.subscribe('TOGGLE_BOOKMARK_PANEL', function(event) {
+      _this.eventEmitter.subscribe('TOGGLE_BOOKMARK_PANEL', function (event) {
         _this.toggleBookmarkPanel();
       });
 
-      _this.eventEmitter.subscribe('TOGGLE_FULLSCREEN', function(event) {
+      _this.eventEmitter.subscribe('TOGGLE_FULLSCREEN', function (event) {
         if ($.fullscreenElement()) {
           $.exitFullscreen();
-          //enable any window-specific fullscreen buttons
+          // enable any window-specific fullscreen buttons
           _this.eventEmitter.publish('ENABLE_WINDOW_FULLSCREEN');
         } else {
           $.enterFullscreen(_this.element[0]);
-          //disable any window-specific fullscreen buttons
+          // disable any window-specific fullscreen buttons
           _this.eventEmitter.publish('DISABLE_WINDOW_FULLSCREEN');
         }
       });
 
-      jQuery(document).on("webkitfullscreenchange mozfullscreenchange fullscreenchange", function() {
+      jQuery(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', function () {
         _this.eventEmitter.publish('MAINMENU_FULLSCREEN_BUTTON');
         // in case the user clicked ESC instead of clicking on the toggle fullscreen button, reenable the window fullscreen button
         if (!$.fullscreenElement()) {
@@ -34246,37 +34284,36 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       });
 
-      _this.eventEmitter.subscribe('TOGGLE_LOAD_WINDOW', function(event) {
+      _this.eventEmitter.subscribe('TOGGLE_LOAD_WINDOW', function (event) {
         _this.toggleLoadWindow();
       });
 
-      _this.eventEmitter.subscribe('ADD_MANIFEST_FROM_URL', function(event, url, location) {
+      _this.eventEmitter.subscribe('ADD_MANIFEST_FROM_URL', function (event, url, location) {
         _this.addManifestFromUrl(url, location);
       });
 
-      _this.eventEmitter.subscribe('TOGGLE_OVERLAYS_FALSE', function(event) {
-        jQuery.each(_this.overlayStates, function(oState, value) {
+      _this.eventEmitter.subscribe('TOGGLE_OVERLAYS_FALSE', function (event) {
+        jQuery.each(_this.overlayStates, function (oState, value) {
           // toggles the other top-level panels closed and focuses the
           // workspace. For instance, after selecting an object from the
           // manifestPanel.
-          _this.set(oState, false, {parent: 'overlayStates'});
+          _this.set(oState, false, { parent: 'overlayStates' });
         });
       });
-
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
     },
 
-    get: function(prop, parent) {
+    get: function (prop, parent) {
       if (parent) {
         return this[parent][prop];
       }
       return this[prop];
     },
 
-    set: function(prop, value, options) {
+    set: function (prop, value, options) {
       var _this = this;
       if (options) {
         this[options.parent][prop] = value;
@@ -34287,34 +34324,34 @@ return /******/ (function(modules) { // webpackBootstrap
     },
 
     // Sets state of overlays that layer over the UI state
-    toggleOverlay: function(state) {
+    toggleOverlay: function (state) {
       var _this = this;
       // first confirm all others are off
-      jQuery.each(this.overlayStates, function(oState, value) {
+      jQuery.each(this.overlayStates, function (oState, value) {
         if (state !== oState) {
-          _this.set(oState, false, {parent: 'overlayStates'});
+          _this.set(oState, false, { parent: 'overlayStates' });
         }
       });
       var currentState = this.get(state, 'overlayStates');
-      this.set(state, !currentState, {parent: 'overlayStates'});
+      this.set(state, !currentState, { parent: 'overlayStates' });
     },
 
-    toggleLoadWindow: function() {
+    toggleLoadWindow: function () {
       this.toggleOverlay('manifestsPanelVisible');
     },
 
-    toggleWorkspacePanel: function() {
+    toggleWorkspacePanel: function () {
       this.toggleOverlay('workspacePanelVisible');
     },
 
-    toggleBookmarkPanel: function() {
+    toggleBookmarkPanel: function () {
       this.toggleOverlay('bookmarkPanelVisible');
     },
 
-    getManifestsData: function() {
+    getManifestsData: function () {
       var _this = this;
 
-      _this.data.forEach(function(manifest) {
+      _this.data.forEach(function (manifest) {
         if (manifest.hasOwnProperty('manifestContent')) {
           var content = manifest.manifestContent;
           _this.addManifestFromUrl(content['@id'], manifest.location ? manifest.location : '', content);
@@ -34331,7 +34368,7 @@ return /******/ (function(modules) { // webpackBootstrap
       });
     },
 
-    hasWidgets: function(collection) {
+    hasWidgets: function (collection) {
       return (
         typeof collection.widgets !== 'undefined' &&
         collection.widgets &&
@@ -34340,64 +34377,60 @@ return /******/ (function(modules) { // webpackBootstrap
       );
     },
 
-    addManifestFromUrl: function(url, location, content) {
+    addManifestFromUrl: function (url, location, content) {
       var _this = this,
         manifest;
 
       if (!_this.state.getStateProperty('manifests')[url]) {
         manifest = new $.Manifest(url, location, content);
         _this.eventEmitter.publish('manifestQueued', manifest, location);
-        manifest.request.done(function() {
+        manifest.request.done(function () {
           _this.eventEmitter.publish('manifestReceived', manifest);
         });
       }
     },
-    
-    addCollectionFromUrl: function(url, location, content) {
+
+    addCollectionFromUrl: function (url, location, content) {
       var _this = this,
         collection;
       if (!_this.state.getStateProperty('manifests')[url]) {
         collection = new $.Collection(url, location, content);
         _this.eventEmitter.publish('manifestQueued', collection, location);
-        collection.request.done(function() {
+        collection.request.done(function () {
           _this.eventEmitter.publish('collectionReceived', [collection, url, null]);
         });
       }
     },
 
-    loadManifestFromConfig: function(options) {
+    loadManifestFromConfig: function (options) {
       var _this = this;
 
-      //make a copy of options and pass that so we don't get a circular reference
+      // make a copy of options and pass that so we don't get a circular reference
       var windowConfig = jQuery.extend(true, {}, options);
-      //delete this old set of options (because they will be replaced by the actions from ADD_WINDOW)
+      // delete this old set of options (because they will be replaced by the actions from ADD_WINDOW)
       _this.eventEmitter.publish('DELETE_FROM_CONFIG', options);
 
       _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
     }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.Workspace = function(options) {
-
+(function ($) {
+  $.Workspace = function (options) {
     jQuery.extend(true, this, {
       workspaceSlotCls: 'slot',
-      focusedSlot:      null,
-      slots:            [],
-      windows:          [],
-      appendTo:         null,
-      layoutDescription:    null,
-      state:            null,
-      eventEmitter:     null
+      focusedSlot: null,
+      slots: [],
+      windows: [],
+      appendTo: null,
+      layoutDescription: null,
+      state: null,
+      eventEmitter: null
     }, options);
 
     var uid = $.genUUID();
-    this.element  = this.element || jQuery('<div class="workspace-container" id="workspace-'+uid+'">');
+    this.element = this.element || jQuery('<div class="workspace-container" id="workspace-' + uid + '">');
     this.init();
-
   };
 
   $.Workspace.prototype = {
@@ -34415,14 +34448,14 @@ return /******/ (function(modules) { // webpackBootstrap
       this.listenForActions();
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      _this.eventEmitter.subscribe('resizeMirador', function(event) {
+      _this.eventEmitter.subscribe('resizeMirador', function (event) {
         _this.calculateLayout();
       });
 
-      _this.eventEmitter.subscribe('manifestQueued', function(event, manifestPromise) {
+      _this.eventEmitter.subscribe('manifestQueued', function (event, manifestPromise) {
         // Trawl windowObjects preemptively for slotAddresses and
         // notify those slots to display a "loading" state.
         // Similar to the operation of the manifestLoadStatusIndicator
@@ -34430,73 +34463,73 @@ return /******/ (function(modules) { // webpackBootstrap
         var targetSlot;
 
         if (_this.state.getStateProperty('windowObjects')) {
-          var check = _this.state.getStateProperty('windowObjects').forEach(function(windowConfig, index) {
+          var check = _this.state.getStateProperty('windowObjects').forEach(function (windowConfig, index) {
             // windowConfig.slotAddress will give the slot;
             // change the state on that slot to be "loading"
             if (windowConfig.slotAddress) {
               targetSlot = _this.getSlotFromAddress(windowConfig.slotAddress);
             } else {
-              targetSlot = _this.focusedSlot || _this.slots.filter(function(slot) {
-                return slot.hasOwnProperty('window') ? true : false;
+              targetSlot = _this.focusedSlot || _this.slots.filter(function (slot) {
+                return !!slot.hasOwnProperty('window');
               })[0];
             }
           });
         }
       });
 
-      _this.eventEmitter.subscribe('REMOVE_WINDOW', function(event, windowId){
+      _this.eventEmitter.subscribe('REMOVE_WINDOW', function (event, windowId) {
         _this.removeWindow(windowId);
       });
 
-      _this.eventEmitter.subscribe('REMOVE_NODE', function(event, node){
+      _this.eventEmitter.subscribe('REMOVE_NODE', function (event, node) {
         _this.removeNode(node);
       });
 
-      _this.eventEmitter.subscribe('ADD_SLOT_ITEM', function(event, slot){
+      _this.eventEmitter.subscribe('ADD_SLOT_ITEM', function (event, slot) {
         _this.addItem(slot);
       });
 
-      _this.eventEmitter.subscribe('ADD_WINDOW', function(event, windowConfig) {
+      _this.eventEmitter.subscribe('ADD_WINDOW', function (event, windowConfig) {
         _this.addWindow(windowConfig);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_RIGHT', function(event, slot) {
+      _this.eventEmitter.subscribe('SPLIT_RIGHT', function (event, slot) {
         _this.splitRight(slot);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_LEFT', function(event, slot) {
+      _this.eventEmitter.subscribe('SPLIT_LEFT', function (event, slot) {
         _this.splitLeft(slot);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_DOWN', function(event, slot) {
+      _this.eventEmitter.subscribe('SPLIT_DOWN', function (event, slot) {
         _this.splitDown(slot);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_UP', function(event, slot) {
+      _this.eventEmitter.subscribe('SPLIT_UP', function (event, slot) {
         _this.splitUp(slot);
       });
 
-      _this.eventEmitter.subscribe('RESET_WORKSPACE_LAYOUT', function(event, options) {
+      _this.eventEmitter.subscribe('RESET_WORKSPACE_LAYOUT', function (event, options) {
         _this.resetLayout(options.layoutDescription);
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      d3.select(window).on('resize', function(event) {
+      d3.select(window).on('resize', function (event) {
         _this.calculateLayout();
       });
     },
 
-    get: function(prop, parent) {
+    get: function (prop, parent) {
       if (parent) {
         return this[parent][prop];
       }
       return this[prop];
     },
 
-    set: function(prop, value, options) {
+    set: function (prop, value, options) {
       var _this = this;
       if (options) {
         this[options.parent][prop] = value;
@@ -34506,9 +34539,9 @@ return /******/ (function(modules) { // webpackBootstrap
       _this.eventEmitter.publish(prop + '.set', value);
     },
 
-    calculateLayout: function(resetting) {
+    calculateLayout: function (resetting) {
       var _this = this,
-          layout;
+        layout;
 
       _this.layout = layout = new Isfahan({
         containerId: _this.element.attr('id'),
@@ -34517,18 +34550,18 @@ return /******/ (function(modules) { // webpackBootstrap
         padding: 3
       });
 
-      var data = layout.filter( function(d) {
+      var data = layout.filter(function (d) {
         return !d.children;
       });
 
       // Data Join.
-      var divs = d3.select("#" + _this.element.attr('id')).selectAll(".layout-slot")
-            .data(data, function(d) { return d.id; });
+      var divs = d3.select('#' + _this.element.attr('id')).selectAll('.layout-slot')
+            .data(data, function (d) { return d.id; });
 
       // Implicitly updates the existing elements.
       // Must come before the enter function.
-      divs.call(cell).each(function(d) {
-        _this.slots.forEach(function(slot) {
+      divs.call(cell).each(function (d) {
+        _this.slots.forEach(function (slot) {
           if (slot.slotID === d.id) {
             slot.layoutAddress = d.address;
           }
@@ -34536,12 +34569,12 @@ return /******/ (function(modules) { // webpackBootstrap
       });
 
       // Enter
-      divs.enter().append("div")
-        .attr("class", "layout-slot")
-        .attr("data-layout-slot-id", function(d) { return d.id; })
+      divs.enter().append('div')
+        .attr('class', 'layout-slot')
+        .attr('data-layout-slot-id', function (d) { return d.id; })
         .call(cell)
-        .each(function(d) {
-          var appendTo = _this.element.children('div').filter('[data-layout-slot-id="'+ d.id+'"]')[0];
+        .each(function (d) {
+          var appendTo = _this.element.children('div').filter('[data-layout-slot-id="' + d.id + '"]')[0];
           _this.slots.push(new $.Slot({
             slotID: d.id,
             layoutAddress: d.address,
@@ -34554,15 +34587,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
       // Exit
       divs.exit()
-        .remove("div")
-        .each(function(d) {
-          var slotMap = _this.slots.reduce(function(map, temp_slot) {
-            if (d.id === temp_slot.slotID) {
-              map[d.id] = temp_slot;
-            }
-            return map;
-          }, {}),
-              slot = slotMap[d.id];
+        .remove('div')
+        .each(function (d) {
+          var slotMap = _this.slots.reduce(function (map, temp_slot) {
+              if (d.id === temp_slot.slotID) {
+                map[d.id] = temp_slot;
+              }
+              return map;
+            }, {}),
+            slot = slotMap[d.id];
 
           if (slot && slot.window && !resetting) {
             _this.eventEmitter.publish('REMOVE_WINDOW', slot.window.id);
@@ -34575,16 +34608,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
       function cell() {
         this
-          .style("left", function(d) { return d.x + "px"; })
-          .style("top", function(d) { return d.y + "px"; })
-          .style("width", function(d) { return Math.max(0, d.dx ) + "px"; })
-          .style("height", function(d) { return Math.max(0, d.dy ) + "px"; });
+          .style('left', function (d) { return d.x + 'px'; })
+          .style('top', function (d) { return d.y + 'px'; })
+          .style('width', function (d) { return Math.max(0, d.dx) + 'px'; })
+          .style('height', function (d) { return Math.max(0, d.dy) + 'px'; });
       }
 
-      var root = jQuery.grep(_this.layout, function(node) { return !node.parent;})[0];
+      var root = jQuery.grep(_this.layout, function (node) { return !node.parent; })[0];
 
-      _this.eventEmitter.publish("layoutChanged", root);
-      _this.eventEmitter.publish('slotsUpdated', {slots: _this.slots});
+      _this.eventEmitter.publish('layoutChanged', root);
+      _this.eventEmitter.publish('slotsUpdated', { slots: _this.slots });
 
       if (_this.slots.length <= 1) {
         _this.eventEmitter.publish('HIDE_REMOVE_SLOT');
@@ -34593,16 +34626,16 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    split: function(targetSlot, direction) {
+    split: function (targetSlot, direction) {
       var _this = this,
-          node = jQuery.grep(_this.layout, function(node) { return node.id === targetSlot.slotID; })[0];
+        node = jQuery.grep(_this.layout, function (node) { return node.id === targetSlot.slotID; })[0];
       nodeIndex = node.parent ? node.parent.children.indexOf(node) : 0,
       nodeIsNotRoot = node.parent;
 
       function addSibling(node, indexDifference) {
         if (nodeIsNotRoot) {
           var siblingIndex = nodeIndex + indexDifference,
-              newSibling = _this.newNode(node.type, node);
+            newSibling = _this.newNode(node.type, node);
 
           node.parent.children.splice(siblingIndex, 0, newSibling);
           _this.layout.push(newSibling);
@@ -34687,47 +34720,46 @@ return /******/ (function(modules) { // webpackBootstrap
       // it back through the layout code will
       // recalculate everything else needed for
       // the redraw.
-      var root = jQuery.grep(_this.layout, function(node) { return !node.parent;})[0];
+      var root = jQuery.grep(_this.layout, function (node) { return !node.parent; })[0];
       _this.layoutDescription = root;
       _this.calculateLayout();
-
     },
 
-    splitRight: function(targetSlot) {
+    splitRight: function (targetSlot) {
       var _this = this;
       _this.split(targetSlot, 'r');
     },
 
-    splitLeft: function(targetSlot) {
+    splitLeft: function (targetSlot) {
       var _this = this;
       _this.split(targetSlot, 'l');
     },
 
-    splitUp: function(targetSlot) {
+    splitUp: function (targetSlot) {
       var _this = this;
       _this.split(targetSlot, 'u');
     },
 
-    splitDown: function(targetSlot) {
+    splitDown: function (targetSlot) {
       var _this = this;
       _this.split(targetSlot, 'd');
     },
 
-    removeNode: function(targetSlot) {
+    removeNode: function (targetSlot) {
       // de-mutate the tree structure.
       var _this = this,
-          node = jQuery.grep(_this.layout, function(node) { return node.id === targetSlot.slotID; })[0],
-          nodeIndex = node.parent.children.indexOf(node),
-          parentIndex,
-          remainingNode,
-          root = jQuery.grep(_this.layout, function(node) { return !node.parent;})[0];
+        node = jQuery.grep(_this.layout, function (node) { return node.id === targetSlot.slotID; })[0],
+        nodeIndex = node.parent.children.indexOf(node),
+        parentIndex,
+        remainingNode,
+        root = jQuery.grep(_this.layout, function (node) { return !node.parent; })[0];
 
       if (node.parent.children.length === 2) {
         // de-mutate the tree without destroying
         // the children of the remaining node,
         // which in this case means changing their
         // IDs.
-        node.parent.children.splice(nodeIndex,1);
+        node.parent.children.splice(nodeIndex, 1);
         remainingNode = node.parent.children[0];
 
         remainingNode.parent.id = remainingNode.id;
@@ -34740,46 +34772,45 @@ return /******/ (function(modules) { // webpackBootstrap
         node.parent.children.splice(nodeIndex, 1);
       }
 
-      //delete targetSlot;
+      // delete targetSlot;
       _this.layoutDescription = root;
       _this.calculateLayout();
-      _this.eventEmitter.publish('slotRemoved',targetSlot);
+      _this.eventEmitter.publish('slotRemoved', targetSlot);
     },
 
-    newNode: function(type, parent) {
+    newNode: function (type, parent) {
       if (typeof parent === 'undefined') {
         return {
           type: type,
           id: $.genUUID()
         };
-      } else {
-        return {
-          type: type,
-          id: $.genUUID(),
-          parent: parent
-        };
       }
+      return {
+        type: type,
+        id: $.genUUID(),
+        parent: parent
+      };
     },
 
-    getSlotFromAddress: function(address) {
+    getSlotFromAddress: function (address) {
       var _this = this;
-      return _this.slots.filter(function(slot) {
+      return _this.slots.filter(function (slot) {
         return slot.layoutAddress === address;
       })[0];
     },
 
-    resetLayout: function(layoutDescription) {
+    resetLayout: function (layoutDescription) {
       this.layoutDescription = layoutDescription;
       this.calculateLayout(true);
       this.placeWindows();
     },
 
-    placeWindows: function() {
+    placeWindows: function () {
       // take the windows array and place
       // as many windows into places as can
       // fit.
       var _this = this,
-          deletedWindows;
+        deletedWindows;
 
       if (_this.windows.length > _this.slots.length) {
         // This issues the REMOVE_WINDOW action for
@@ -34790,13 +34821,13 @@ return /******/ (function(modules) { // webpackBootstrap
         // non-destructive. The actual state mutation will
         // be handled in the action callback, since only
         // actions should be allowed to mutate global state.
-        _this.windows.slice(0, _this.windows.length -_this.slots.length)
-          .forEach(function(removedWindow){
+        _this.windows.slice(0, _this.windows.length - _this.slots.length)
+          .forEach(function (removedWindow) {
             _this.eventEmitter.publish('REMOVE_WINDOW', removedWindow.id);
           });
       }
 
-      _this.windows.forEach(function(window) {
+      _this.windows.forEach(function (window) {
         var slot = _this.getAvailableSlot();
         slot.window = window;
 
@@ -34811,34 +34842,34 @@ return /******/ (function(modules) { // webpackBootstrap
       });
     },
 
-    getAvailableSlot: function() {
-      return this.slots.filter(function(slot) {
+    getAvailableSlot: function () {
+      return this.slots.filter(function (slot) {
         return !slot.window;
       })[0];
     },
 
-    clearSlot: function(slotId) {
+    clearSlot: function (slotId) {
       if (this.slots[slotId].windowElement) {
         this.slots[slotId].windowElement.remove();
       }
       this.slots[slotId].window = null;
     },
 
-    addItem: function(slot) {
+    addItem: function (slot) {
       var _this = this;
       this.focusedSlot = slot;
       _this.eventEmitter.publish('TOGGLE_LOAD_WINDOW');
     },
 
-    addWindow: function(windowConfig) {
+    addWindow: function (windowConfig) {
       // Windows can be added from a config,
       // from a saved state, (in both those cases they are in the form of "windowObjects")
       // from the workspace windows list after a grid layout change,
       // from the manifests panel in image mode,
       // or from the manifests panel in thumbnail mode.
       var _this = this,
-          newWindow,
-          targetSlot;
+        newWindow,
+        targetSlot;
 
       // toggles the other top-level panels closed and focuses the
       // workspace. For instance, after selecting an object from the
@@ -34862,12 +34893,12 @@ return /******/ (function(modules) { // webpackBootstrap
       windowConfig.slotAddress = targetSlot.layoutAddress;
       windowConfig.id = windowConfig.id || $.genUUID();
 
-      _this.eventEmitter.publish("windowSlotAdded", {id: windowConfig.id, slotAddress: windowConfig.slotAddress});
+      _this.eventEmitter.publish('windowSlotAdded', { id: windowConfig.id, slotAddress: windowConfig.slotAddress });
 
-      //extend the windowConfig with the default settings
+      // extend the windowConfig with the default settings
       var mergedConfig = jQuery.extend(true, {}, _this.state.getStateProperty('windowSettings'), windowConfig);
 
-      //"rename" some keys in the merged object to align settings parameters with window parameters
+      // "rename" some keys in the merged object to align settings parameters with window parameters
       if (mergedConfig.hasOwnProperty('loadedManifest')) {
         mergedConfig.manifest = _this.state.getStateProperty('manifests')[mergedConfig.loadedManifest];
         delete mergedConfig.loadedManifest;
@@ -34899,25 +34930,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
       targetSlot.window = newWindow;
 
-      _this.eventEmitter.publish("windowAdded", {id: windowConfig.id, slotAddress: windowConfig.slotAddress});
+      _this.eventEmitter.publish('windowAdded', { id: windowConfig.id, slotAddress: windowConfig.slotAddress });
+    },
 
-  },
+    removeWindow: function (windowId) {
+      var _this = this;
 
-  removeWindow: function(windowId) {
-    var _this = this;
-
-    _this.windows = _this.windows.filter(function(window) {
-      return window.id !== windowId;
-    });
-    _this.eventEmitter.publish('windowRemoved', windowId);
-  }
-};
+      _this.windows = _this.windows.filter(function (window) {
+        return window.id !== windowId;
+      });
+      _this.eventEmitter.publish('windowRemoved', windowId);
+    }
+  };
 }(Mirador));
 
-(function($) {
-
-  $.BookmarkPanel = function(options) {
-
+(function ($) {
+  $.BookmarkPanel = function (options) {
     jQuery.extend(true, this, {
       element: null,
       appendTo: null,
@@ -34926,806 +34954,794 @@ return /******/ (function(modules) { // webpackBootstrap
     }, options);
 
     this.init();
-
   };
 
   $.BookmarkPanel.prototype = {
     init: function () {
       this.element = jQuery(this.template()).appendTo(this.appendTo);
       var jsonStorageEndpoint = this.state.getStateProperty('jsonStorageEndpoint'),
-      saveModule = jsonStorageEndpoint.module,
-      saveOptions = jsonStorageEndpoint.options;
+        saveModule = jsonStorageEndpoint.module,
+        saveOptions = jsonStorageEndpoint.options;
       this.storageModule = new $[saveModule](saveOptions);
 
       this.bindEvents();
       this.listenForActions();
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
-      _this.eventEmitter.subscribe('bookmarkPanelVisible.set', function(_, stateValue) {
+      _this.eventEmitter.subscribe('bookmarkPanelVisible.set', function (_, stateValue) {
         _this.onPanelVisible(_, stateValue);
       });
-      _this.eventEmitter.subscribe('saveControllerConfigUpdated', function() {
+      _this.eventEmitter.subscribe('saveControllerConfigUpdated', function () {
         _this.onConfigUpdated();
       });
     },
 
-    onPanelVisible: function(_, stateValue) {
+    onPanelVisible: function (_, stateValue) {
       var _this = this;
       if (stateValue) { _this.show(); return; }
       _this.hide();
     },
 
-    onConfigUpdated: function() {
+    onConfigUpdated: function () {
       var _this = this;
       _this.storageModule.save(_this.state.cleanup(_this.state.currentConfig))
-      .then(function(blobId) {
-        var bookmarkURL = window.location.href.replace(window.location.hash, '') + "?json="+blobId;
+      .then(function (blobId) {
+        var bookmarkURL = window.location.href.replace(window.location.hash, '') + '?json=' + blobId;
         _this.element.find('#share-url').val(bookmarkURL).focus().select();
       });
     },
 
-    hide: function() {
-      jQuery(this.element).hide({effect: "slide", direction: "up", duration: 300, easing: "swing"});
+    hide: function () {
+      jQuery(this.element).hide({ effect: 'slide', direction: 'up', duration: 300, easing: 'swing' });
     },
 
-    show: function() {
-      jQuery(this.element).show({effect: "slide", direction: "up", duration: 300, easing: "swing"});
+    show: function () {
+      jQuery(this.element).show({ effect: 'slide', direction: 'up', duration: 300, easing: 'swing' });
     },
 
     template: $.Handlebars.compile([
-       '<div id="bookmark-panel">',
-         '<h3>{{t "bookmarkTitle"}}</h3>',
-         '<span>',
-         '{{t "url"}}: <input id="share-url" type="text"></input>',
-         '<a href="javascript:;" class="mirador-btn mirador-icon-copy" data-clipboard-target="share-url"><i class="fa fa-files-o fa-lg"></i></a>',
-         '</span>',
-       '</div>'
+      '<div id="bookmark-panel">',
+      '<h3>{{t "bookmarkTitle"}}</h3>',
+      '<span>',
+      '{{t "url"}}: <input id="share-url" type="text"></input>',
+      '<a href="javascript:;" class="mirador-btn mirador-icon-copy" data-clipboard-target="share-url"><i class="fa fa-files-o fa-lg"></i></a>',
+      '</span>',
+      '</div>'
     ].join(''))
   };
-
 }(Mirador));
 
-(function($) {
+(function ($) {
+  $.CollectionTreeManifestsPanel = function (options) {
+    jQuery.extend(true, this, {
+      element: null,
+      listItems: null,
+      appendTo: null,
+      manifestListItems: [],
+      manifestListElement: null,
+      manifestLoadStatusIndicator: null,
+      treeElement: null, // The container element around the collection tree
+      expectedThings: [], // A list of manifest URIs expected for the current collection "folder"
+      preloadedManifests: [], // A list of manifest URIs loaded in through the data attribute
+      userManifests: [], // A list of manifest URIs loaded in through the "Load Object from URL" form
+      nodeManifests: {}, // Maps node IDs to a list of manifest URIs its collection holds
+      nodeCollections: {}, // Maps node IDs to a list of collection URIs its collection holds
+      nodeIdToUri: {}, // Maps node IDs to their respective URIs
+      uriToNodeId: {}, // Maps URIs to a list of node IDs that represent it (Inverse of nodeIdToUri)
+      nodeChildren: {}, // Maps node IDs to a list of children node IDs
+      unexpandedNodes: {}, // A set of node ID => true entries that contains all node IDs pending expansion (i.e. may have more content)
+      topCollectionsUris: {}, // A set of URIs already placed at the top level of the collection tree
+      treeQueue: [], // A list that holds event triggers before the tree is ready; will be removed when ready
+      resultsWidth: 0,
+      state: null,
+      eventEmitter: null
+    }, options);
 
-    $.CollectionTreeManifestsPanel = function(options) {
+    var _this = this;
+    _this.init();
+  };
 
-        jQuery.extend(true, this, {
-            element:                    null,
-            listItems:                  null,
-            appendTo:                   null,
-            manifestListItems:          [],
-            manifestListElement:        null,
-            manifestLoadStatusIndicator: null,
-            treeElement:                null, //The container element around the collection tree
-            expectedThings:             [], //A list of manifest URIs expected for the current collection "folder"
-            preloadedManifests:         [], //A list of manifest URIs loaded in through the data attribute
-            userManifests:              [], //A list of manifest URIs loaded in through the "Load Object from URL" form
-            nodeManifests:              {}, //Maps node IDs to a list of manifest URIs its collection holds
-            nodeCollections:            {}, //Maps node IDs to a list of collection URIs its collection holds
-            nodeIdToUri:                {}, //Maps node IDs to their respective URIs
-            uriToNodeId:                {}, //Maps URIs to a list of node IDs that represent it (Inverse of nodeIdToUri)
-            nodeChildren:               {}, //Maps node IDs to a list of children node IDs
-            unexpandedNodes:            {}, //A set of node ID => true entries that contains all node IDs pending expansion (i.e. may have more content)
-            topCollectionsUris:         {}, //A set of URIs already placed at the top level of the collection tree
-            treeQueue:                  [], //A list that holds event triggers before the tree is ready; will be removed when ready
-            resultsWidth:               0,
-            state:                      null,
-            eventEmitter:               null
-        }, options);
+  $.CollectionTreeManifestsPanel.prototype = {
 
-        var _this = this;
-        _this.init();
-        
-    };
+    init: function () {
+      var _this = this;
+      this.element = jQuery(this.template({
+        showURLBox: this.state.getStateProperty('showAddFromURLBox')
+      })).appendTo(this.appendTo);
+      this.manifestListElement = this.element.find('ul');
 
-    $.CollectionTreeManifestsPanel.prototype = {
-
-        init: function() {
-            var _this = this;
-            this.element = jQuery(this.template({
-                showURLBox : this.state.getStateProperty('showAddFromURLBox')
-            })).appendTo(this.appendTo);
-            this.manifestListElement = this.element.find('ul');
-            
             // Populate the preloads folder with manifests in the configuration
-            jQuery.each(this.state.currentConfig.data, function(_, v) {
-              if (v.hasOwnProperty('manifestUri')) {
-                _this.preloadedManifests.push(v.manifestUri);
-              }
-            });
+      jQuery.each(this.state.currentConfig.data, function (_, v) {
+        if (v.hasOwnProperty('manifestUri')) {
+          _this.preloadedManifests.push(v.manifestUri);
+        }
+      });
             // Expect these preloads by default
-            this.expectedThings = this.preloadedManifests;
+      this.expectedThings = this.preloadedManifests;
             // Create the collection tree
-            this.treeElement = jQuery('#collection-tree').jstree({
-              core: {
+      this.treeElement = jQuery('#collection-tree').jstree({
+        core: {
                 // Seed the tree with the two basic "folders"
-                data: [
-                  {
-                    id: 'preload',
-                    text: i18next.t('preloadedManifests'),
-                    icon: 'fa fa-suitcase',
-                    state: {
-                      selected: true
-                    },
-                    children: []
-                  }, 
-                  {
-                    id: 'user',
-                    text: i18next.t('myManifests'),
-                    icon: 'fa fa-user',
-                    children: []
-                  }
-                ],
+          data: [
+            {
+              id: 'preload',
+              text: i18next.t('preloadedManifests'),
+              icon: 'fa fa-suitcase',
+              state: {
+                selected: true
+              },
+              children: []
+            },
+            {
+              id: 'user',
+              text: i18next.t('myManifests'),
+              icon: 'fa fa-user',
+              children: []
+            }
+          ],
                 // Tune looks
-                themes: {
-                  dots: false
-                },
-                check_callback: true, // IMPORTANT: This line allows code to edit the tree later
-                multiple: false // IMPORTANT: This prevents multiple nodes from being selected
-              }
+          themes: {
+            dots: false
+          },
+          check_callback: true, // IMPORTANT: This line allows code to edit the tree later
+          multiple: false // IMPORTANT: This prevents multiple nodes from being selected
+        }
             // Hook up event for when a node is selected
-            }).on('select_node.jstree', function(event, data) {
-              _this.changeNode(data.node);
+      }).on('select_node.jstree', function (event, data) {
+        _this.changeNode(data.node);
             // Hook up event for when a node is expanded (> clicked)
-            }).on('open_node.jstree', function(event, data) {
-              _this.expandNode(data.node);
+      }).on('open_node.jstree', function (event, data) {
+        _this.expandNode(data.node);
             // Hook up "ready" event to handle backlogged collection loads
-            }).on('ready.jstree', function() {
+      }).on('ready.jstree', function () {
               // Cache the backlog and remove the original; this signals to other methods that it's OK to manipulate the tree
-              var theQueue = _this.treeQueue.slice(0);
-              delete _this.treeQueue;
+        var theQueue = _this.treeQueue.slice(0);
+        delete _this.treeQueue;
               // Process the backlog
-              jQuery.each(theQueue, function(_, v) {
-                if (v.length == 4) { // When a collection is loaded successfully, the logged entry is 4 elements long
-                  _this.onCollectionReceived.apply(_this, v);
-                } else { // When a collection fails to load, the logged entry is 3 elements long
-                  _this.onCollectionNotReceived.apply(_this, v);
-                }
-              });
-            });
-            
-            //this code gives us the max width of the results area, used to determine how many preview images to show
-            //cloning the element and adjusting the display and visibility means it won't break the normal flow
-            var clone = this.element.clone().css("visibility","hidden").css("display", "block").appendTo(this.appendTo);
-            this.resultsWidth = clone.find('.member-select-results').outerWidth();
-            this.controlsHeight = clone.find('.manifest-panel-controls').outerHeight();
-            this.paddingListElement = this.controlsHeight;
-            this.manifestListElement.css("padding-bottom", this.paddingListElement);
-            clone.remove();
-            
+        jQuery.each(theQueue, function (_, v) {
+          if (v.length == 4) { // When a collection is loaded successfully, the logged entry is 4 elements long
+            _this.onCollectionReceived.apply(_this, v);
+          } else { // When a collection fails to load, the logged entry is 3 elements long
+            _this.onCollectionNotReceived.apply(_this, v);
+          }
+        });
+      });
+
+            // this code gives us the max width of the results area, used to determine how many preview images to show
+            // cloning the element and adjusting the display and visibility means it won't break the normal flow
+      var clone = this.element.clone().css('visibility', 'hidden').css('display', 'block').appendTo(this.appendTo);
+      this.resultsWidth = clone.find('.member-select-results').outerWidth();
+      this.controlsHeight = clone.find('.manifest-panel-controls').outerHeight();
+      this.paddingListElement = this.controlsHeight;
+      this.manifestListElement.css('padding-bottom', this.paddingListElement);
+      clone.remove();
+
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
             //   manifests: this.parent.manifests,
             //   appendTo: this.element.find('.member-select-results')
             // });
-            this.bindEvents();
-            this.listenForActions();
-        },
+      this.bindEvents();
+      this.listenForActions();
+    },
 
-        listenForActions: function() {
-          var _this = this;
+    listenForActions: function () {
+      var _this = this;
 
           // handle subscribed events
           // When the manifest selection panel is brought up or hidden
-          _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(_, stateValue) {
-            _this.onPanelVisible(_, stateValue);
-          });
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (_, stateValue) {
+        _this.onPanelVisible(_, stateValue);
+      });
 
           // When a manifest is received
-          _this.eventEmitter.subscribe('manifestReceived', function(event, newManifest) {
-            _this.onManifestReceived(event, newManifest);
-          });
-          
-          // When a collection is received
-          _this.eventEmitter.subscribe('collectionReceived', function(event, newCollection, parentUri, parentNodeId) {
-            _this.onCollectionReceived(event, newCollection, parentUri, parentNodeId);
-          });
-          
-          // When a collection failed to load
-          _this.eventEmitter.subscribe('collectionNotReceived', function(event, parentUri, parentNodeId) {
-            _this.onCollectionNotReceived(event, parentUri, parentNodeId);
-          });
-          
-          // When Mirador gets an explicit request to load a manifest from a URL
-          _this.eventEmitter.subscribe('ADD_MANIFEST_FROM_URL', function(event, url) {
-            // Add it if it has not been loaded before
-            if (_this.userManifests.indexOf(url) == -1) {
-              _this.userManifests.push(url);
-            }
-            // Shift to the "User-Loaded Manifests" folder
-            _this.treeElement.jstree('deselect_all');
-            _this.treeElement.jstree('select_node', 'user');
-          });
-          
-          // When Mirador gets an explicit request to load a collection from a URL
-          _this.eventEmitter.subscribe('ADD_COLLECTION_FROM_URL', function(event, url, source) {
-            _this.addCollectionFromUrl(url, null, true);
-          });
-          
-          // When Mirador gets a request to load an object (manifest or collection) from a URL (e.g. the "Add object from URL" form)
-          _this.eventEmitter.subscribe('ADD_OBJECT_FROM_URL', function(event, url, source) {
-            _this.addObjectFromUrl(url, source, true);
-          });
-        },
+      _this.eventEmitter.subscribe('manifestReceived', function (event, newManifest) {
+        _this.onManifestReceived(event, newManifest);
+      });
 
-        bindEvents: function() {
-            var _this = this;
+          // When a collection is received
+      _this.eventEmitter.subscribe('collectionReceived', function (event, newCollection, parentUri, parentNodeId) {
+        _this.onCollectionReceived(event, newCollection, parentUri, parentNodeId);
+      });
+
+          // When a collection failed to load
+      _this.eventEmitter.subscribe('collectionNotReceived', function (event, parentUri, parentNodeId) {
+        _this.onCollectionNotReceived(event, parentUri, parentNodeId);
+      });
+
+          // When Mirador gets an explicit request to load a manifest from a URL
+      _this.eventEmitter.subscribe('ADD_MANIFEST_FROM_URL', function (event, url) {
+            // Add it if it has not been loaded before
+        if (_this.userManifests.indexOf(url) == -1) {
+          _this.userManifests.push(url);
+        }
+            // Shift to the "User-Loaded Manifests" folder
+        _this.treeElement.jstree('deselect_all');
+        _this.treeElement.jstree('select_node', 'user');
+      });
+
+          // When Mirador gets an explicit request to load a collection from a URL
+      _this.eventEmitter.subscribe('ADD_COLLECTION_FROM_URL', function (event, url, source) {
+        _this.addCollectionFromUrl(url, null, true);
+      });
+
+          // When Mirador gets a request to load an object (manifest or collection) from a URL (e.g. the "Add object from URL" form)
+      _this.eventEmitter.subscribe('ADD_OBJECT_FROM_URL', function (event, url, source) {
+        _this.addObjectFromUrl(url, source, true);
+      });
+    },
+
+    bindEvents: function () {
+      var _this = this;
 
             // handle interface events
-            this.element.find('form#url-load-form').on('submit', function(event) {
-              event.preventDefault();
-              _this.addObjectUrl(jQuery(this).find('input').val());
-            });
+      this.element.find('form#url-load-form').on('submit', function (event) {
+        event.preventDefault();
+        _this.addObjectUrl(jQuery(this).find('input').val());
+      });
 
-            this.element.find('.remove-object-option').on('click', function(event) {
-              _this.togglePanel(event);
-            });
+      this.element.find('.remove-object-option').on('click', function (event) {
+        _this.togglePanel(event);
+      });
 
             // Filter manifests based on user input
-            this.element.find('#manifest-search').on('keyup input', function(event) {
-              _this.filterManifests(this.value);
-            });
+      this.element.find('#manifest-search').on('keyup input', function (event) {
+        _this.filterManifests(this.value);
+      });
 
-            this.element.find('#manifest-search-form').on('submit', function(event) {
-              event.preventDefault();
-            });
+      this.element.find('#manifest-search-form').on('submit', function (event) {
+        event.preventDefault();
+      });
 
-            jQuery(window).resize($.throttle(function() {
-              _this.resizePanel();
-            }, 50, true));
-        },
-        
-        hide: function() {
-            var _this = this;
-            jQuery(this.element).hide({effect: "fade", duration: 160, easing: "easeOutCubic"});
-        },
+      jQuery(window).resize($.throttle(function () {
+        _this.resizePanel();
+      }, 50, true));
+    },
 
-        show: function() {
-            var _this = this;
-            jQuery(this.element).show({effect: "fade", duration: 160, easing: "easeInCubic"});
-        },
-        
+    hide: function () {
+      var _this = this;
+      jQuery(this.element).hide({ effect: 'fade', duration: 160, easing: 'easeOutCubic' });
+    },
+
+    show: function () {
+      var _this = this;
+      jQuery(this.element).show({ effect: 'fade', duration: 160, easing: 'easeInCubic' });
+    },
+
         // Send explicit request for adding a manifest from a URL
-        addManifestUrl: function(url) {
-          var _this = this;
-          _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, "(Added from URL)"]);
-        },
-        
-        // Send explicit request for adding a manifest or collection from a URL
-        addObjectUrl: function(url) {
-          var _this = this;
-          _this.eventEmitter.publish('ADD_OBJECT_FROM_URL', [url, "(Added from URL)"]);
-        },
-        
-        togglePanel: function(event) {
-          var _this = this;
-          _this.eventEmitter.publish('TOGGLE_LOAD_WINDOW');
-        },
-        
-        filterManifests: function(value) {
-          var _this = this;
-          if (value.length > 0) {
-             _this.element.find('.items-listing li').show().filter(function() {
-                return jQuery(this).text().toLowerCase().indexOf(value.toLowerCase()) === -1;
-             }).hide();
-          } else {
-             _this.element.find('.items-listing li').show();
-          }
-        },
+    addManifestUrl: function (url) {
+      var _this = this;
+      _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, '(Added from URL)']);
+    },
 
-        resizePanel: function() {
-          var _this = this;
-          var clone = _this.element.clone().css("visibility","hidden").css("display", "block").appendTo(_this.appendTo);
-          _this.resultsWidth = clone.find('.member-select-results').outerWidth();
-          clone.remove();
-          _this.eventEmitter.publish("manifestPanelWidthChanged", _this.resultsWidth);
-        },
-        
-        onPanelVisible: function(_, stateValue) {
-          var _this = this;
-          if (stateValue) { _this.show(); return; }
-           _this.hide();
-        },
+        // Send explicit request for adding a manifest or collection from a URL
+    addObjectUrl: function (url) {
+      var _this = this;
+      _this.eventEmitter.publish('ADD_OBJECT_FROM_URL', [url, '(Added from URL)']);
+    },
+
+    togglePanel: function (event) {
+      var _this = this;
+      _this.eventEmitter.publish('TOGGLE_LOAD_WINDOW');
+    },
+
+    filterManifests: function (value) {
+      var _this = this;
+      if (value.length > 0) {
+        _this.element.find('.items-listing li').show().filter(function () {
+          return jQuery(this).text().toLowerCase().indexOf(value.toLowerCase()) === -1;
+        }).hide();
+      } else {
+        _this.element.find('.items-listing li').show();
+      }
+    },
+
+    resizePanel: function () {
+      var _this = this;
+      var clone = _this.element.clone().css('visibility', 'hidden').css('display', 'block').appendTo(_this.appendTo);
+      _this.resultsWidth = clone.find('.member-select-results').outerWidth();
+      clone.remove();
+      _this.eventEmitter.publish('manifestPanelWidthChanged', _this.resultsWidth);
+    },
+
+    onPanelVisible: function (_, stateValue) {
+      var _this = this;
+      if (stateValue) { _this.show(); return; }
+      _this.hide();
+    },
 
         // Handler for when manifest data is loaded for the first time
-        onManifestReceived: function(event, newManifest) {
-          var _this = this;
+    onManifestReceived: function (event, newManifest) {
+      var _this = this;
           // Show a manifest list item only if the currently selected "folder" expects it
-          if (_this.expectedThings.indexOf(newManifest.uri) != -1) {
-            _this.manifestListItems.push(new $.ManifestListItem({ 
-              manifest: newManifest, 
-              resultsWidth: _this.resultsWidth, 
-              state: _this.state,
-              eventEmitter: _this.eventEmitter,
-              forcedIndex: _this.expectedThings.indexOf(newManifest.uri),
-              appendTo: _this.manifestListElement }));
-            _this.element.find('#manifest-search').keyup();
-          }
-        },
-        
+      if (_this.expectedThings.indexOf(newManifest.uri) != -1) {
+        _this.manifestListItems.push(new $.ManifestListItem({
+          manifest: newManifest,
+          resultsWidth: _this.resultsWidth,
+          state: _this.state,
+          eventEmitter: _this.eventEmitter,
+          forcedIndex: _this.expectedThings.indexOf(newManifest.uri),
+          appendTo: _this.manifestListElement }));
+        _this.element.find('#manifest-search').keyup();
+      }
+    },
+
         // Handler for when collection data is loaded for the first time
-        onCollectionReceived: function(event, newCollection, uri, parentNodeId) {
+    onCollectionReceived: function (event, newCollection, uri, parentNodeId) {
           // If the tree isn't ready, hold it and move on
-          if (typeof this.treeQueue !== 'undefined') {
-            this.treeQueue.push([event, newCollection, uri, parentNodeId]);
-            return;
-          }
+      if (typeof this.treeQueue !== 'undefined') {
+        this.treeQueue.push([event, newCollection, uri, parentNodeId]);
+        return;
+      }
           // Update nodes if the target isn't top; create new node if the target is top
-          if (parentNodeId) {
-            this.updateCollectionNode(parentNodeId, newCollection);
-          } else {
-            this.addCollectionNode(parentNodeId, newCollection);
-          }
-        },
-        
+      if (parentNodeId) {
+        this.updateCollectionNode(parentNodeId, newCollection);
+      } else {
+        this.addCollectionNode(parentNodeId, newCollection);
+      }
+    },
+
         // Handler for when collection data is loaded for the first time and failed
-        onCollectionNotReceived: function(event, uri, parentNodeId) {
+    onCollectionNotReceived: function (event, uri, parentNodeId) {
           // If the tree isn't ready, hold it and move on
-          if (typeof this.treeQueue !== 'undefined') {
-            this.treeQueue.push([event, uri, parentNodeId]);
-            return;
-          }
+      if (typeof this.treeQueue !== 'undefined') {
+        this.treeQueue.push([event, uri, parentNodeId]);
+        return;
+      }
           // Mark the child node belonging to this as a fail
-          var _this = this;
-          jQuery.each(this.uriToNodeId[uri], function(_, nodeId) {
-            _this.treeElement.jstree('set_icon', nodeId, 'fa fa-ban'); // Set icon to (/)
-            _this.treeElement.jstree('disable_node', nodeId); // Don't let the user click it
-          });
-        },
-        
+      var _this = this;
+      jQuery.each(this.uriToNodeId[uri], function (_, nodeId) {
+        _this.treeElement.jstree('set_icon', nodeId, 'fa fa-ban'); // Set icon to (/)
+        _this.treeElement.jstree('disable_node', nodeId); // Don't let the user click it
+      });
+    },
+
         // Clean out the list of manifest items on the right side
-        clearManifestItems: function() {
-          this.manifestListItems = [];
-          this.manifestListElement.html('');
-        },
-        
+    clearManifestItems: function () {
+      this.manifestListItems = [];
+      this.manifestListElement.html('');
+    },
+
         // Set up 2-way correspondence between node IDs and URIs
-        registerNodeIdUriPair: function(nodeId, uri) {
+    registerNodeIdUriPair: function (nodeId, uri) {
           // Map node ID to URI
-          this.nodeIdToUri[nodeId] = uri;
-          if (this.uriToNodeId[uri]) {
-            this.uriToNodeId[uri].push(nodeId); // Existing URI => new node ID
-          } else {
-            this.uriToNodeId[uri] = [nodeId]; // New URI => new node ID
-          }
-        },
-        
+      this.nodeIdToUri[nodeId] = uri;
+      if (this.uriToNodeId[uri]) {
+        this.uriToNodeId[uri].push(nodeId); // Existing URI => new node ID
+      } else {
+        this.uriToNodeId[uri] = [nodeId]; // New URI => new node ID
+      }
+    },
+
         // Handler for selecting a new node
-        changeNode: function(node) {
-          var _this = this;
+    changeNode: function (node) {
+      var _this = this;
           // Clean out manifest items on the right side
-          this.clearManifestItems();
+      this.clearManifestItems();
           // Listen in on manifests in the "folder" or collection it represents
-          switch (node.id) {
-            case 'preload': _this.expectedThings = _this.preloadedManifests; break;
-            case 'user': _this.expectedThings = _this.userManifests; break;
-            default: _this.expectedThings = _this.nodeManifests[node.id]; break;
-          }
+      switch (node.id) {
+        case 'preload': _this.expectedThings = _this.preloadedManifests; break;
+        case 'user': _this.expectedThings = _this.userManifests; break;
+        default: _this.expectedThings = _this.nodeManifests[node.id]; break;
+      }
           // Populate and refresh the manifests listings
-          jQuery.each(_this.expectedThings, function(_, expectedThing) {
-            _this.addManifestFromUrl(expectedThing);
-          });
-          this.element.find('#manifest-search').keyup();
-          
-        },
-        
+      jQuery.each(_this.expectedThings, function (_, expectedThing) {
+        _this.addManifestFromUrl(expectedThing);
+      });
+      this.element.find('#manifest-search').keyup();
+    },
+
         // Handler for expanding a node (> clicked)
-        expandNode: function(node) {
-          var _this = this;
+    expandNode: function (node) {
+      var _this = this;
           // Update its children by loading their stated URIs
-          jQuery.each(_this.nodeCollections[node.id], function(_, uri) {
-            _this.updateCollectionFromUrl(uri, node.id);
-          });
-        },
-        
+      jQuery.each(_this.nodeCollections[node.id], function (_, uri) {
+        _this.updateCollectionFromUrl(uri, node.id);
+      });
+    },
+
         // Helper for loading a manifest or collection from a URL
-        addObjectFromUrl: function(url, source) {
-          var _this = this,
-            object = _this.state.getStateProperty('manifests')[url]; // Attempt to get from cache
+    addObjectFromUrl: function (url, source) {
+      var _this = this,
+        object = _this.state.getStateProperty('manifests')[url]; // Attempt to get from cache
           // Cache hit
-          if (object) {
+      if (object) {
             // Fire off the correct event if its cache entry is loaded
-            if (object.jsonLd) {
-              switch (object.jsonLd['@type']) {
-                case 'sc:Collection':
-                  _this.eventEmitter.publish('ADD_COLLECTION_FROM_URL', [url, source]);
-                break;
-                case 'sc:Manifest':
-                  _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, source]);
-                break;
-              }
-            }
+        if (object.jsonLd) {
+          switch (object.jsonLd['@type']) {
+            case 'sc:Collection':
+              _this.eventEmitter.publish('ADD_COLLECTION_FROM_URL', [url, source]);
+              break;
+            case 'sc:Manifest':
+              _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, source]);
+              break;
           }
+        }
+      }
           // Cache miss
-          else {
+      else {
             // Get the manifest or collection with AJAX
-            jQuery.ajax({
-              url: url,
-              dataType: 'json',
-              type: 'GET',
+        jQuery.ajax({
+          url: url,
+          dataType: 'json',
+          type: 'GET',
               // Fire off the correct event once it finishes loading
-              success: function(data) {
-                switch (data['@type']) {
-                  case 'sc:Collection':
-                    object = new $.Collection(url, source, data);
-                    _this.eventEmitter.publish('manifestQueued', object, '');
-                    _this.eventEmitter.publish('ADD_COLLECTION_FROM_URL', [url, source]);
-                  break;
-                  case 'sc:Manifest':
-                    object = new $.Manifest(url, source, data);
-                    _this.eventEmitter.publish('manifestQueued', object, ''); // Use the state manager's manifest caching to store collections too
-                    _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, source]);
-                  break;
-                }
-              }
-            });
-          }
-        },
-        
-        // Helper for loading a manifest from a URL
-        addManifestFromUrl: function(url) {
-          var _this = this,
-            manifest;
-          // Cache hit: Show the manifest panel item if it is loaded
-          if (_this.state.getStateProperty('manifests')[url]) {
-            manifest = _this.state.getStateProperty('manifests')[url];
-            if (manifest.jsonLd) {
-              _this.manifestListItems.push(new $.ManifestListItem({ 
-                manifest: manifest, 
-                resultsWidth: _this.resultsWidth, 
-                state: _this.state,
-                eventEmitter: _this.eventEmitter,
-                forcedIndex: _this.expectedThings.indexOf(url),
-                appendTo: _this.manifestListElement }));
+          success: function (data) {
+            switch (data['@type']) {
+              case 'sc:Collection':
+                object = new $.Collection(url, source, data);
+                _this.eventEmitter.publish('manifestQueued', object, '');
+                _this.eventEmitter.publish('ADD_COLLECTION_FROM_URL', [url, source]);
+                break;
+              case 'sc:Manifest':
+                object = new $.Manifest(url, source, data);
+                _this.eventEmitter.publish('manifestQueued', object, ''); // Use the state manager's manifest caching to store collections too
+                _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, source]);
+                break;
             }
           }
+        });
+      }
+    },
+
+        // Helper for loading a manifest from a URL
+    addManifestFromUrl: function (url) {
+      var _this = this,
+        manifest;
+          // Cache hit: Show the manifest panel item if it is loaded
+      if (_this.state.getStateProperty('manifests')[url]) {
+        manifest = _this.state.getStateProperty('manifests')[url];
+        if (manifest.jsonLd) {
+          _this.manifestListItems.push(new $.ManifestListItem({
+            manifest: manifest,
+            resultsWidth: _this.resultsWidth,
+            state: _this.state,
+            eventEmitter: _this.eventEmitter,
+            forcedIndex: _this.expectedThings.indexOf(url),
+            appendTo: _this.manifestListElement }));
+        }
+      }
           // Cache miss: Queue the loading and defer the received event until it is done
-          else {
-            manifest = new $.Manifest(url, '');
-            _this.eventEmitter.publish('manifestQueued', manifest, '');
-            manifest.request.done(function() {
-              _this.eventEmitter.publish('manifestReceived', manifest);
-            });
-          }
-        },
-        
+      else {
+        manifest = new $.Manifest(url, '');
+        _this.eventEmitter.publish('manifestQueued', manifest, '');
+        manifest.request.done(function () {
+          _this.eventEmitter.publish('manifestReceived', manifest);
+        });
+      }
+    },
+
         // Helper for loading a manifest from a URL as a child node of some other node (null = top level)
         // Optionally, jump to that new child node if jumpToIt is specified as true
-        addCollectionFromUrl: function(url, nodeId, jumpToIt) {
-          var _this = this,
-            collection;
+    addCollectionFromUrl: function (url, nodeId, jumpToIt) {
+      var _this = this,
+        collection;
           // Is it adding to the top level?
-          if (!nodeId) {
+      if (!nodeId) {
             // Pass if it is already loaded
-            if (_this.topCollectionsUris[url]) {
-              return;
-            }
+        if (_this.topCollectionsUris[url]) {
+          return;
+        }
             // Otherwise, make note of it
-            else {
-              _this.topCollectionsUris[url] = true;
-            }
-          }
+
+        _this.topCollectionsUris[url] = true;
+      }
           // Cache hit: Add the node right away if it is loaded
-          if (typeof _this.state.getStateProperty('manifests')[url] !== 'undefined') {
-            collection = _this.state.getStateProperty('manifests')[url];
-            if (collection.jsonLd) {
-              var newNode = _this.addCollectionNode(nodeId, collection);
+      if (typeof _this.state.getStateProperty('manifests')[url] !== 'undefined') {
+        collection = _this.state.getStateProperty('manifests')[url];
+        if (collection.jsonLd) {
+          var newNode = _this.addCollectionNode(nodeId, collection);
               // Also jump to the node if specified
-              if (jumpToIt) {
-                _this.treeElement.jstree('deselect_all');
-                _this.treeElement.jstree('select_node', newNode);
+          if (jumpToIt) {
+            _this.treeElement.jstree('deselect_all');
+            _this.treeElement.jstree('select_node', newNode);
                 // Expand the node if it has children
-                if (collection.getCollectionUris().length > 0) {
-                  _this.treeElement.jstree('open_node', newNode);
-                }
-              }
+            if (collection.getCollectionUris().length > 0) {
+              _this.treeElement.jstree('open_node', newNode);
             }
           }
+        }
+      }
           // Cache miss: Queue the loading and defer the received event until it is done or failed
-          else {
-            collection = new $.Collection(url, '');
-            _this.eventEmitter.publish('manifestQueued', collection, ''); // Use the state manager's manifest caching to store collections too
-            collection.request.done(function() {
-              _this.eventEmitter.publish('collectionReceived', [collection, url, nodeId ? nodeId : null]);
-            });
-            collection.request.fail(function() {
-              _this.eventEmitter.publish('collectionNotReceived', [url, nodeId ? nodeId : null]);
-            });
-          }
-        },
-        
+      else {
+        collection = new $.Collection(url, '');
+        _this.eventEmitter.publish('manifestQueued', collection, ''); // Use the state manager's manifest caching to store collections too
+        collection.request.done(function () {
+          _this.eventEmitter.publish('collectionReceived', [collection, url, nodeId || null]);
+        });
+        collection.request.fail(function () {
+          _this.eventEmitter.publish('collectionNotReceived', [url, nodeId || null]);
+        });
+      }
+    },
+
         // Helper for updating a subnode of nodeId corresponding to the specified URL
-        updateCollectionFromUrl: function(url, nodeId) {
-          var _this = this,
-            collection;
+    updateCollectionFromUrl: function (url, nodeId) {
+      var _this = this,
+        collection;
           // Cache hit: Get the collection object and update right away
-          if (typeof _this.state.getStateProperty('manifests')[url] !== 'undefined') {
-            collection = _this.state.getStateProperty('manifests')[url];
-            if (collection.jsonLd) {
-              _this.updateCollectionNode(nodeId, collection);
-            }
-          }
+      if (typeof _this.state.getStateProperty('manifests')[url] !== 'undefined') {
+        collection = _this.state.getStateProperty('manifests')[url];
+        if (collection.jsonLd) {
+          _this.updateCollectionNode(nodeId, collection);
+        }
+      }
           // Cache miss: Queue the loading and defer the received event until it is done or failed
-          else {
-            collection = new $.Collection(url, '');
-            _this.eventEmitter.publish('manifestQueued', collection, ''); // Use the state manager's manifest caching to store collections too
-            collection.request.done(function() {
-              _this.eventEmitter.publish('collectionReceived', [collection, url, nodeId ? nodeId : null]);
-            });
-            collection.request.fail(function() {
-              _this.eventEmitter.publish('collectionNotReceived', [url, nodeId ? nodeId : null]);
-            });
-          }
-        },
-        
+      else {
+        collection = new $.Collection(url, '');
+        _this.eventEmitter.publish('manifestQueued', collection, ''); // Use the state manager's manifest caching to store collections too
+        collection.request.done(function () {
+          _this.eventEmitter.publish('collectionReceived', [collection, url, nodeId || null]);
+        });
+        collection.request.fail(function () {
+          _this.eventEmitter.publish('collectionNotReceived', [url, nodeId || null]);
+        });
+      }
+    },
+
         // Helper for loading a Collection object as a child of nodeId
         // Optionally, skip seeding subnodes under this collection if unexpanded is specified; this marks it as "still loading"
-        addCollectionNode: function(nodeId, collection, unexpanded) {
-          var _this = this,
-              subcollectionBlocks = collection.getCollectionBlocks();
+    addCollectionNode: function (nodeId, collection, unexpanded) {
+      var _this = this,
+        subcollectionBlocks = collection.getCollectionBlocks();
           // Add the new node
-          var newNodeId = _this.treeElement.jstree('create_node', nodeId ? nodeId : null, {
-            text: collection.jsonLd.label,
-            icon: unexpanded ? 'fa fa-spinner fa-pulse' : 'fa fa-folder', // Unexpanded = still loading, expanded = loaded
+      var newNodeId = _this.treeElement.jstree('create_node', nodeId || null, {
+        text: collection.jsonLd.label,
+        icon: unexpanded ? 'fa fa-spinner fa-pulse' : 'fa fa-folder', // Unexpanded = still loading, expanded = loaded
+        children: []
+      }, 'last');
+          // Don't let nodes that are still loading be selected
+      if (unexpanded) {
+        _this.treeElement.jstree('disable_node', newNodeId);
+      }
+          // Register the new node's apparent contents
+      _this.registerNodeIdUriPair(newNodeId, collection.jsonLd['@id']);
+      _this.nodeCollections[newNodeId] = collection.getCollectionUris();
+      _this.nodeManifests[newNodeId] = collection.getManifestUris();
+      _this.nodeChildren[newNodeId] = [];
+          // Add subcollections if unexpanded is not specified
+      if (!unexpanded) {
+        jQuery.each(subcollectionBlocks, function (i, v) {
+              // Create the subnode
+          var nid = _this.treeElement.jstree('create_node', newNodeId, {
+            text: v.label,
+            icon: 'fa fa-spinner fa-pulse',
             children: []
           }, 'last');
-          // Don't let nodes that are still loading be selected
-          if (unexpanded) {
-            _this.treeElement.jstree('disable_node', newNodeId);
-          }
-          // Register the new node's apparent contents
-          _this.registerNodeIdUriPair(newNodeId, collection.jsonLd['@id']);
-          _this.nodeCollections[newNodeId] = collection.getCollectionUris();
-          _this.nodeManifests[newNodeId] = collection.getManifestUris();
-          _this.nodeChildren[newNodeId] = [];
-          // Add subcollections if unexpanded is not specified
-          if (!unexpanded) {
-            jQuery.each(subcollectionBlocks, function(i, v) {
-              // Create the subnode
-              var nid = _this.treeElement.jstree('create_node', newNodeId, {
-                text: v.label,
-                icon: 'fa fa-spinner fa-pulse',
-                children: []
-              }, 'last');
               // Register the subnode's apparent contents
-              _this.registerNodeIdUriPair(nid, v['@id']);
-              _this.unexpandedNodes[nid] = true;
-              _this.nodeChildren[newNodeId].push(nid);
+          _this.registerNodeIdUriPair(nid, v['@id']);
+          _this.unexpandedNodes[nid] = true;
+          _this.nodeChildren[newNodeId].push(nid);
               // Don't let it be selected yet
-              _this.treeElement.jstree('disable_node', nid);
-            });
-          }
+          _this.treeElement.jstree('disable_node', nid);
+        });
+      }
           // If unexpanded is specified, mark this node as requiring expansion later
-          else {
-            _this.unexpandedNodes[newNodeId] = true;
-          }
+      else {
+        _this.unexpandedNodes[newNodeId] = true;
+      }
           // Return newly created node ID for future reference
-          return newNodeId;
-        },
-        
+      return newNodeId;
+    },
+
         // Helper for updating a subnode of nodeId corresponding to the specified URL
-        updateCollectionNode: function(nodeId, collection) {
-          var _this = this,
-              atId = collection.uri,
-              collectionBlocks = collection.getCollectionBlocks(),
-              collectionUris = collection.getCollectionUris(),
-              manifestUris = collection.getManifestUris();
+    updateCollectionNode: function (nodeId, collection) {
+      var _this = this,
+        atId = collection.uri,
+        collectionBlocks = collection.getCollectionBlocks(),
+        collectionUris = collection.getCollectionUris(),
+        manifestUris = collection.getManifestUris();
           // Find the right node to update that corresponds to the collection's URI
-          jQuery.each(_this.nodeChildren[nodeId], function(_, n) {
-            if (_this.nodeIdToUri[n] == atId && _this.unexpandedNodes[n]) {
+      jQuery.each(_this.nodeChildren[nodeId], function (_, n) {
+        if (_this.nodeIdToUri[n] == atId && _this.unexpandedNodes[n]) {
               // Register the node's contents
-              _this.nodeCollections[n] = collectionUris;
-              _this.nodeManifests[n] = manifestUris;
-              _this.nodeChildren[n] = [];
+          _this.nodeCollections[n] = collectionUris;
+          _this.nodeManifests[n] = manifestUris;
+          _this.nodeChildren[n] = [];
               // Add children under the node if it has any subcollections, but don't expand them yet
-              jQuery.each(collectionBlocks, function(i, v) {
-                var nn = _this.addCollectionNode(n, new $.Collection(v['@id'], null, v), true);
-                _this.nodeChildren[n].push(nn);
-                _this.unexpandedNodes[nn] = true;
-              });
-              // This node is already expanded, unmark it
-              delete _this.unexpandedNodes[n];
-              // Change its icon to a folder and allow it to be selected
-              _this.treeElement.jstree('set_icon', n, 'fa fa-folder');
-              _this.treeElement.jstree('enable_node', n);
-            }
+          jQuery.each(collectionBlocks, function (i, v) {
+            var nn = _this.addCollectionNode(n, new $.Collection(v['@id'], null, v), true);
+            _this.nodeChildren[n].push(nn);
+            _this.unexpandedNodes[nn] = true;
           });
-          
-        },
+              // This node is already expanded, unmark it
+          delete _this.unexpandedNodes[n];
+              // Change its icon to a folder and allow it to be selected
+          _this.treeElement.jstree('set_icon', n, 'fa fa-folder');
+          _this.treeElement.jstree('enable_node', n);
+        }
+      });
+    },
 
-        template: $.Handlebars.compile([
-          '<div id="manifest-select-menu">',
-          '<div class="container">',
-            '<div class="manifest-panel-controls">',
-              '<a class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i>{{t "close"}}</a>',
-              '<div id="load-controls">',
-                '{{#if showURLBox}}',
-                  '<form action="" id="url-load-form">',
-                    '<label for="url-loader">{{t "addNewObject"}}:</label>',
-                    '<input type="text" id="url-loader" name="url-load" placeholder="https://...">',
-                    '<input type="submit" value="{{t "load"}}">',
-                  '</form>',
-                '{{/if}}',
-                '<form action="" id="manifest-search-form">',
-                  '<label for="manifest-search">{{t "filterObjects"}}:</label>',
-                  '<input id="manifest-search" type="text" name="manifest-filter">',
-                '</form>',
-              '</div>',
-            '</div>',
-              '<div id="collection-tree">',
-              '</div>',
-              '<div class="member-select-results">',
-                '<ul class="items-listing">',
-                '</ul>',
-              '</div>',
-          '</div>',
-          '</div>'
-        ].join(''))
-    };
-
+    template: $.Handlebars.compile([
+      '<div id="manifest-select-menu">',
+      '<div class="container">',
+      '<div class="manifest-panel-controls">',
+      '<a class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i>{{t "close"}}</a>',
+      '<div id="load-controls">',
+      '{{#if showURLBox}}',
+      '<form action="" id="url-load-form">',
+      '<label for="url-loader">{{t "addNewObject"}}:</label>',
+      '<input type="text" id="url-loader" name="url-load" placeholder="https://...">',
+      '<input type="submit" value="{{t "load"}}">',
+      '</form>',
+      '{{/if}}',
+      '<form action="" id="manifest-search-form">',
+      '<label for="manifest-search">{{t "filterObjects"}}:</label>',
+      '<input id="manifest-search" type="text" name="manifest-filter">',
+      '</form>',
+      '</div>',
+      '</div>',
+      '<div id="collection-tree">',
+      '</div>',
+      '<div class="member-select-results">',
+      '<ul class="items-listing">',
+      '</ul>',
+      '</div>',
+      '</div>',
+      '</div>'
+    ].join(''))
+  };
 }(Mirador));
 
 
-(function($) {
+(function ($) {
+  $.MainMenu = function (options) {
+    jQuery.extend(true, this, {
+      element: null,
+      mainMenuHeight: null,
+      mainMenuWidth: null,
+      windowOptionsMenu: null,
+      loadWindow: null,
+      clearLocalStorage: '',
+      viewerCls: 'mirador-viewer',
+      mainMenuBarCls: 'mirador-main-menu-bar',
+      mainMenuCls: 'mirador-main-menu',
+      windowOptionsMenuCls: 'mirador-window-options-menu',
+      clearLocalStorageCls: 'clear-local-storage',
+      clearLocalStorageDialogCls: 'mirador-main-menu-clear-local-storage',
+      collectionsListingCls: 'mirador-listing-collections',
+      state: null,
+      eventEmitter: null
+    }, options);
 
-    $.MainMenu = function(options) {
+    this.element = this.element || jQuery('<div/>');
 
-        jQuery.extend(true, this, {
-            element:                    null,
-            mainMenuHeight:             null,
-            mainMenuWidth:              null,
-            windowOptionsMenu:          null,
-            loadWindow:                 null,
-            clearLocalStorage:          '',
-            viewerCls:                  'mirador-viewer',
-            mainMenuBarCls:             'mirador-main-menu-bar',
-            mainMenuCls:                'mirador-main-menu',
-            windowOptionsMenuCls:       'mirador-window-options-menu',
-            clearLocalStorageCls:       'clear-local-storage',
-            clearLocalStorageDialogCls: 'mirador-main-menu-clear-local-storage',
-            collectionsListingCls:      'mirador-listing-collections',
-            state:                      null,
-            eventEmitter:               null
-        }, options);
-
-        this.element  = this.element || jQuery('<div/>');
-
-        this.init();
-
-    };
+    this.init();
+  };
 
 
-    $.MainMenu.prototype = {
+  $.MainMenu.prototype = {
 
-        init: function() {
-            //this.mainMenuHeight = this.parent.mainMenuSettings.height;
-            //this.mainMenuWidth = this.parent.mainMenuSettings.width;
-            this.element
+    init: function () {
+            // this.mainMenuHeight = this.parent.mainMenuSettings.height;
+            // this.mainMenuWidth = this.parent.mainMenuSettings.width;
+      this.element
             .addClass(this.mainMenuBarCls)
-            //.height(this.mainMenuHeight)
-            //.width(this.mainMenuWidth)
+            // .height(this.mainMenuHeight)
+            // .width(this.mainMenuWidth)
             .appendTo(this.appendTo);
 
-            this.element.append(this.template({
-                mainMenuCls: this.mainMenuCls,
-                showBookmark : this.state.getStateProperty('mainMenuSettings').buttons.bookmark,
-                showLayout : this.state.getStateProperty('mainMenuSettings').buttons.layout,
-                showOptions: this.state.getStateProperty('mainMenuSettings').buttons.options,
-                showFullScreenViewer : this.state.getStateProperty('mainMenuSettings').buttons.fullScreenViewer,
-                userButtons: this.state.getStateProperty('mainMenuSettings').userButtons,
-                userLogo:    this.state.getStateProperty('mainMenuSettings').userLogo
-            }));
+      this.element.append(this.template({
+        mainMenuCls: this.mainMenuCls,
+        showBookmark: this.state.getStateProperty('mainMenuSettings').buttons.bookmark,
+        showLayout: this.state.getStateProperty('mainMenuSettings').buttons.layout,
+        showOptions: this.state.getStateProperty('mainMenuSettings').buttons.options,
+        showFullScreenViewer: this.state.getStateProperty('mainMenuSettings').buttons.fullScreenViewer,
+        userButtons: this.state.getStateProperty('mainMenuSettings').userButtons,
+        userLogo: this.state.getStateProperty('mainMenuSettings').userLogo
+      }));
 
-            this.element.find('.mainmenu-button').each(function() {
-              jQuery(this).qtip({
-                content: {
-                  text: jQuery(this).attr('title'),
-                },
-                position: {
-                  my: 'top center',
-                  at: 'bottom center'
-                },
-                style: {
-                  classes: 'qtip-dark qtip-shadow qtip-rounded'
-                },
-              });
-            });
+      this.element.find('.mainmenu-button').each(function () {
+        jQuery(this).qtip({
+          content: {
+            text: jQuery(this).attr('title')
+          },
+          position: {
+            my: 'top center',
+            at: 'bottom center'
+          },
+          style: {
+            classes: 'qtip-dark qtip-shadow qtip-rounded'
+          }
+        });
+      });
 
-            this.listenForActions();
-            this.bindEvents();
-        },
+      this.listenForActions();
+      this.bindEvents();
+    },
 
-        listenForActions: function() {
-          var _this = this;
+    listenForActions: function () {
+      var _this = this;
 
-          _this.eventEmitter.subscribe('MAINMENU_FULLSCREEN_BUTTON', function(event) {
-            var fullScreenButton = _this.element.find('.fullscreen-viewer span');
-            if (fullScreenButton.hasClass('fa-expand')) {
-              fullScreenButton.removeClass('fa-expand').addClass('fa-compress');
-            } else {
-              fullScreenButton.removeClass('fa-compress').addClass('fa-expand');
-            }
-          });
-        },
+      _this.eventEmitter.subscribe('MAINMENU_FULLSCREEN_BUTTON', function (event) {
+        var fullScreenButton = _this.element.find('.fullscreen-viewer span');
+        if (fullScreenButton.hasClass('fa-expand')) {
+          fullScreenButton.removeClass('fa-expand').addClass('fa-compress');
+        } else {
+          fullScreenButton.removeClass('fa-compress').addClass('fa-expand');
+        }
+      });
+    },
 
-        bindEvents: function() {
-            var _this = this;
-            //change 'change-layout' to mouseover events rather than click?
-            this.element.find('.change-layout').on('click', function() { 
-              _this.eventEmitter.publish('TOGGLE_WORKSPACE_PANEL');
-              //remove active class from other buttons
-              _this.element.find('.bookmark-workspace').removeClass('active');
-              if (jQuery(this).hasClass('active')) {
-                jQuery(this).removeClass('active');
-              } else {
-                jQuery(this).addClass('active');
-              }
-            });
+    bindEvents: function () {
+      var _this = this;
+            // change 'change-layout' to mouseover events rather than click?
+      this.element.find('.change-layout').on('click', function () {
+        _this.eventEmitter.publish('TOGGLE_WORKSPACE_PANEL');
+              // remove active class from other buttons
+        _this.element.find('.bookmark-workspace').removeClass('active');
+        if (jQuery(this).hasClass('active')) {
+          jQuery(this).removeClass('active');
+        } else {
+          jQuery(this).addClass('active');
+        }
+      });
 
-            this.element.find('.bookmark-workspace').on('click', function() { 
-              _this.eventEmitter.publish('TOGGLE_BOOKMARK_PANEL');
-              //remove active class from other buttons
-              _this.element.find('.change-layout').removeClass('active');
-              if (jQuery(this).hasClass('active')) {
-                jQuery(this).removeClass('active');
-              } else {
-                jQuery(this).addClass('active');
-              }
-            });
+      this.element.find('.bookmark-workspace').on('click', function () {
+        _this.eventEmitter.publish('TOGGLE_BOOKMARK_PANEL');
+              // remove active class from other buttons
+        _this.element.find('.change-layout').removeClass('active');
+        if (jQuery(this).hasClass('active')) {
+          jQuery(this).removeClass('active');
+        } else {
+          jQuery(this).addClass('active');
+        }
+      });
 
             // when options are implemented, this will need to do something
-            this.element.find('.window-options').on('click', function() { });
-            this.element.find('.fullscreen-viewer').on('click', function() {
-              _this.eventEmitter.publish('TOGGLE_FULLSCREEN');
-            });
-        },
+      this.element.find('.window-options').on('click', function () { });
+      this.element.find('.fullscreen-viewer').on('click', function () {
+        _this.eventEmitter.publish('TOGGLE_FULLSCREEN');
+      });
+    },
 
-        template: $.Handlebars.compile([
-        '{{#if userLogo}}',
-          '<ul class="user-logo {{mainMenuCls}}">',
-            '{{userlogo userLogo}}',
-          '</ul>',
-        '{{/if}}',
-        '<ul class="{{mainMenuCls}}">',
-        '{{#if showBookmark}}',
-          '<li>',
-            '<a href="javascript:;" class="bookmark-workspace mainmenu-button" title="{{t "bookmarkTooltip"}}" aria-label="{{t "bookmarkTooltip"}}">',
-              '<span class="fa fa-bookmark fa-lg fa-fw"></span> {{t "bookmark"}}',
-            '</a>',
-          '</li>',
-        '{{/if}}',
-        /*'{{#if showOptions}}',
+    template: $.Handlebars.compile([
+      '{{#if userLogo}}',
+      '<ul class="user-logo {{mainMenuCls}}">',
+      '{{userlogo userLogo}}',
+      '</ul>',
+      '{{/if}}',
+      '<ul class="{{mainMenuCls}}">',
+      '{{#if showBookmark}}',
+      '<li>',
+      '<a href="javascript:;" class="bookmark-workspace mainmenu-button" title="{{t "bookmarkTooltip"}}" aria-label="{{t "bookmarkTooltip"}}">',
+      '<span class="fa fa-bookmark fa-lg fa-fw"></span> {{t "bookmark"}}',
+      '</a>',
+      '</li>',
+      '{{/if}}',
+        /* '{{#if showOptions}}',
           '<li>',
             '<a href="javascript:;" class="window-options" title="Window Options">',
               '<span class=""></span>Options',
             '</a>',
           '</li>',
-        '{{/if}}',*/
-        '{{#if showLayout}}',
-          '<li>',
-            '<a href="javascript:;" class="change-layout mainmenu-button" title="{{t "changeLayoutTooltip"}}" aria-label="{{t "changeLayoutTooltip"}}">',
-              '<span class="fa fa-th-large fa-lg fa-fw"></span> {{t "changeLayout"}}',
-            '</a>',
-          '</li>',
-        '{{/if}}',
-        '{{#if showFullScreenViewer}}',
-          '<li>',
-            '<a href="javascript:;" class="fullscreen-viewer mainmenu-button" title="{{t "fullScreenTooltip"}}" aria-label="{{t "fullScreenTooltip"}}">',
-              '<span class="fa fa-expand fa-lg fa-fw"></span> {{t "fullScreen"}}',
-            '</a>',
-          '</li>',
-        '{{/if}}',
-        '</ul>',
-        '{{#if userButtons}}',
-          '{{userbtns userButtons}}',
-        '{{/if}}'
-        ].join(''))
-    };
+        '{{/if}}', */
+      '{{#if showLayout}}',
+      '<li>',
+      '<a href="javascript:;" class="change-layout mainmenu-button" title="{{t "changeLayoutTooltip"}}" aria-label="{{t "changeLayoutTooltip"}}">',
+      '<span class="fa fa-th-large fa-lg fa-fw"></span> {{t "changeLayout"}}',
+      '</a>',
+      '</li>',
+      '{{/if}}',
+      '{{#if showFullScreenViewer}}',
+      '<li>',
+      '<a href="javascript:;" class="fullscreen-viewer mainmenu-button" title="{{t "fullScreenTooltip"}}" aria-label="{{t "fullScreenTooltip"}}">',
+      '<span class="fa fa-expand fa-lg fa-fw"></span> {{t "fullScreen"}}',
+      '</a>',
+      '</li>',
+      '{{/if}}',
+      '</ul>',
+      '{{#if userButtons}}',
+      '{{userbtns userButtons}}',
+      '{{/if}}'
+    ].join(''))
+  };
 
     /* Helper methods for processing userButtons provided in configuration */
 
@@ -35757,125 +35773,119 @@ return /******/ (function(modules) { // webpackBootstrap
      *                                                  *
      * NOTE: sublist dropdown functionality is not yet  *
      *       implemented                                *
-     ****************************************************/
-    var processUserButtons = function (btns) {
-        var output = [];
-        var btn;
-        var btns_len = btns.length;
+     *************************************************** */
+  var processUserButtons = function (btns) {
+    var output = [];
+    var btn;
+    var btns_len = btns.length;
 
-        for (var i = 0; i < btns_len; i++){
-            output.push(processUserBtn(btns[i]));
-        }
-        return output;
-    };
+    for (var i = 0; i < btns_len; i++) {
+      output.push(processUserBtn(btns[i]));
+    }
+    return output;
+  };
 
-    var processUserBtn = function (btn) {
-        var $li = jQuery('<li>');
-        var $a = jQuery('<a>');
-        var $sub_ul;
+  var processUserBtn = function (btn) {
+    var $li = jQuery('<li>');
+    var $a = jQuery('<a>');
+    var $sub_ul;
 
-        try {
+    try {
             /* Enclosing <li> for button */
-            if (btn.li_attributes){
-                $li.attr(btn.li_attributes);
-            }
+      if (btn.li_attributes) {
+        $li.attr(btn.li_attributes);
+      }
 
             /* Link for button. */
-            if (!btn.label) {
-                throw "userButtons must have labels";
-            }
+      if (!btn.label) {
+        throw 'userButtons must have labels';
+      }
 
-            $a.text(btn.label);
+      $a.text(btn.label);
 
-            if (btn.iconClass) {
-                $a.prepend('<span class="' + btn.iconClass + '"></span> ');
-            }
+      if (btn.iconClass) {
+        $a.prepend('<span class="' + btn.iconClass + '"></span> ');
+      }
 
-            if (btn.attributes){
-                $a.attr(btn.attributes);
-            }
+      if (btn.attributes) {
+        $a.attr(btn.attributes);
+      }
 
-            $li.append($a);
+      $li.append($a);
 
             /* Sublist if present */
-            if (btn.sublist) {
-                $sub_ul = jQuery('<ul>');
-                if (btn.ul_attributes){
-                    $sub_ul.attr(btn.ul_attributes);
-                }
+      if (btn.sublist) {
+        $sub_ul = jQuery('<ul>');
+        if (btn.ul_attributes) {
+          $sub_ul.attr(btn.ul_attributes);
+        }
                 /* Recurse! */
-                $sub_ul.append(processUserButtons(btn.sublist));
+        $sub_ul.append(processUserButtons(btn.sublist));
 
-                $li.append($sub_ul);
-            }
+        $li.append($sub_ul);
+      }
 
-            return $li;
-        }
-        catch (err) {
-            console && console.log && console.log(err);
-            return jQuery();
-        }
-    };
+      return $li;
+    } catch (err) {
+      console && console.log && console.log(err);
+      return jQuery();
+    }
+  };
 
-    $.Handlebars.registerHelper('userbtns', function (userButtons) {
-        return new $.Handlebars.SafeString(
-            jQuery('<ul class="user-buttons ' + this.mainMenuCls +'"></ul>').append(processUserButtons(userButtons)).get(0).outerHTML
+  $.Handlebars.registerHelper('userbtns', function (userButtons) {
+    return new $.Handlebars.SafeString(
+            jQuery('<ul class="user-buttons ' + this.mainMenuCls + '"></ul>').append(processUserButtons(userButtons)).get(0).outerHTML
         );
-    });
+  });
 
-    $.Handlebars.registerHelper('userlogo', function (userLogo) {
-        return new $.Handlebars.SafeString(
+  $.Handlebars.registerHelper('userlogo', function (userLogo) {
+    return new $.Handlebars.SafeString(
             processUserBtn(userLogo).get(0).outerHTML
         );
-    });
-
+  });
 }(Mirador));
 
-(function($) {
-
-  $.ManifestListItem = function(options) {
-
+(function ($) {
+  $.ManifestListItem = function (options) {
     jQuery.extend(true, this, {
-      element:                    null,
-      appendTo:                   null,
-      manifest:                   null,
-      loadStatus:                 null,
-      thumbHeight:                80,
-      urlHeight:                  150,
-      resultsWidth:               0,  // based on screen width
-      maxPreviewImagesWidth:      0,
-      repoWidth:                  80,
-      metadataWidth:              450,
-      margin:                     15,
-      remainingWidth:             20,
-      imagesTotalWidth:           0,
-      tplData:                    null,
-      allImages:                  [],
-      remaining:                  0,
-      forcedIndex:                null,
-      state:                      null,
-      eventEmitter:               null
+      element: null,
+      appendTo: null,
+      manifest: null,
+      loadStatus: null,
+      thumbHeight: 80,
+      urlHeight: 150,
+      resultsWidth: 0,  // based on screen width
+      maxPreviewImagesWidth: 0,
+      repoWidth: 80,
+      metadataWidth: 450,
+      margin: 15,
+      remainingWidth: 20,
+      imagesTotalWidth: 0,
+      tplData: null,
+      allImages: [],
+      remaining: 0,
+      forcedIndex: null,
+      state: null,
+      eventEmitter: null
     }, options);
 
     this.init();
-
   };
 
   $.ManifestListItem.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this;
-      //need a better way of calculating this because JS can't get width and margin of hidden elements, so must manually set that info
-      //ultimately use 95% of space available, since sometimes it still displays too many images
+      // need a better way of calculating this because JS can't get width and margin of hidden elements, so must manually set that info
+      // ultimately use 95% of space available, since sometimes it still displays too many images
       this.maxPreviewImagesWidth = this.resultsWidth - (this.repoWidth + this.margin + this.metadataWidth + this.margin + this.remainingWidth);
       this.maxPreviewImagesWidth = this.maxPreviewImagesWidth * 0.95;
 
-      $.Handlebars.registerHelper('pluralize', function(count, singular, plural) {
+      $.Handlebars.registerHelper('pluralize', function (count, singular, plural) {
         if (count === 1) {
           return singular;
-        } else {
-          return plural;
         }
+        return plural;
       });
 
       this.fetchTplData(this.manifestId);
@@ -35888,17 +35898,17 @@ return /******/ (function(modules) { // webpackBootstrap
           this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo).hide().fadeIn('slow');
         } else {
           var liList = _this.appendTo.find('li');
-          jQuery.each(liList, function(index, item) {
-              var prev = parseFloat(jQuery(item).attr('data-index-number'));
-              var next = parseFloat(jQuery(liList[index+1]).attr('data-index-number'));
-              var current = _this.tplData.index;
-              if (current <= prev && (next > current || isNaN(next)) ) {
-                _this.element = jQuery(_this.template(_this.tplData)).insertBefore(jQuery(item)).hide().fadeIn('slow');
-                return false;
-              } else if (current > prev && (current < next || isNaN(next))) {
-                _this.element = jQuery(_this.template(_this.tplData)).insertAfter(jQuery(item)).hide().fadeIn('slow');
-                return false;
-              }
+          jQuery.each(liList, function (index, item) {
+            var prev = parseFloat(jQuery(item).attr('data-index-number'));
+            var next = parseFloat(jQuery(liList[index + 1]).attr('data-index-number'));
+            var current = _this.tplData.index;
+            if (current <= prev && (next > current || isNaN(next))) {
+              _this.element = jQuery(_this.template(_this.tplData)).insertBefore(jQuery(item)).hide().fadeIn('slow');
+              return false;
+            } else if (current > prev && (current < next || isNaN(next))) {
+              _this.element = jQuery(_this.template(_this.tplData)).insertAfter(jQuery(item)).hide().fadeIn('slow');
+              return false;
+            }
           });
         }
       } else {
@@ -35909,10 +35919,10 @@ return /******/ (function(modules) { // webpackBootstrap
       this.listenForActions();
     },
 
-    fetchTplData: function() {
+    fetchTplData: function () {
       var _this = this,
-      location = _this.manifest.location,
-      manifest = _this.manifest.jsonLd;
+        location = _this.manifest.location,
+        manifest = _this.manifest.jsonLd;
 
       this.tplData = {
         label: $.JsonLd.getTextValue(manifest.label),
@@ -35922,25 +35932,23 @@ return /******/ (function(modules) { // webpackBootstrap
         index: _this.state.getManifestIndex(manifest['@id'])
       };
 
-      this.tplData.repoImage = (function() {
+      this.tplData.repoImage = (function () {
         var repo = _this.tplData.repository;
         if (manifest.logo) {
-          if (typeof manifest.logo === "string")
-            return manifest.logo;
-          if (typeof manifest.logo['@id'] !== 'undefined')
-            return manifest.logo['@id'];
+          if (typeof manifest.logo === 'string') { return manifest.logo; }
+          if (typeof manifest.logo['@id'] !== 'undefined') { return manifest.logo['@id']; }
         }
         return '';
-      })();
+      }());
 
-      for ( var i=0; i < manifest.sequences[0].canvases.length; i++) {
+      for (var i = 0; i < manifest.sequences[0].canvases.length; i++) {
         var canvas = manifest.sequences[0].canvases[i];
         if (canvas.width === 0) {
           continue;
         }
 
-        var aspectRatio = canvas.height/canvas.width,
-        width = (_this.thumbHeight/aspectRatio);
+        var aspectRatio = canvas.height / canvas.width,
+          width = (_this.thumbHeight / aspectRatio);
         url = _this.manifest.getThumbnailForCanvas(canvas, width);
 
         _this.allImages.push({
@@ -35952,7 +35960,7 @@ return /******/ (function(modules) { // webpackBootstrap
         });
       }
 
-      jQuery.each(_this.allImages, function(index, value) {
+      jQuery.each(_this.allImages, function (index, value) {
         var width = value.width;
 
         _this.imagesTotalWidth += (width + _this.margin);
@@ -35967,36 +35975,35 @@ return /******/ (function(modules) { // webpackBootstrap
         _this.tplData.images.push(value);
       });
 
-      _this.remaining = this.tplData.remaining = (function() {
+      _this.remaining = this.tplData.remaining = (function () {
         var remaining = _this.allImages.length - _this.tplData.images.length;
         if (remaining > 0) {
           return remaining;
         }
-      })();
+      }());
+    },
+
+    render: function () {
 
     },
 
-    render: function() {
-
-    },
-
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      _this.eventEmitter.subscribe('manifestPanelWidthChanged', function(event, newWidth){
+      _this.eventEmitter.subscribe('manifestPanelWidthChanged', function (event, newWidth) {
         _this.updateDisplay(newWidth);
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      this.element.find('img').on('load', function() {
-        //if img width is not equal to the width in the html, change height
+      this.element.find('img').on('load', function () {
+        // if img width is not equal to the width in the html, change height
         jQuery(this).hide().fadeIn(600);
       });
 
-      this.element.on('click', function() {
+      this.element.on('click', function () {
         var windowConfig = {
           manifest: _this.manifest,
           canvasID: null,
@@ -36005,309 +36012,301 @@ return /******/ (function(modules) { // webpackBootstrap
         _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
       });
 
-      this.element.find('.preview-image').on('click', function(e) {
+      this.element.find('.preview-image').on('click', function (e) {
         e.stopPropagation();
         var windowConfig = {
           manifest: _this.manifest,
           canvasID: jQuery(this).attr('data-image-id'),
-          viewType: _this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
+          viewType: _this.state.getStateProperty('windowSettings').viewType // get the view type from settings rather than always defaulting to ImageView
         };
         _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
       });
     },
 
-    updateDisplay: function(newWidth) {
-        var _this = this,
+    updateDisplay: function (newWidth) {
+      var _this = this,
         newMaxPreviewWidth = newWidth - (_this.repoWidth + _this.margin + _this.metadataWidth + _this.margin + _this.remainingWidth);
-        newMaxPreviewWidth = newMaxPreviewWidth * 0.95;
-        var image = null;
+      newMaxPreviewWidth *= 0.95;
+      var image = null;
 
-        //width of browser window has been made smaller
-        if (newMaxPreviewWidth < _this.maxPreviewImagesWidth ) {
-          while (_this.imagesTotalWidth >= newMaxPreviewWidth) {
-            image = _this.tplData.images.pop();
+        // width of browser window has been made smaller
+      if (newMaxPreviewWidth < _this.maxPreviewImagesWidth) {
+        while (_this.imagesTotalWidth >= newMaxPreviewWidth) {
+          image = _this.tplData.images.pop();
 
-            if (image) {
-              _this.imagesTotalWidth -= (image.width + _this.margin);
+          if (image) {
+            _this.imagesTotalWidth -= (image.width + _this.margin);
 
-              //remove image from dom
-              _this.element.find('img[data-image-id="'+image.id+'"]').remove();
-            } else {
+              // remove image from dom
+            _this.element.find('img[data-image-id="' + image.id + '"]').remove();
+          } else {
+            break;
+          }
+        }
+          // check if need to add ellipsis
+        if (_this.remaining === 0 && _this.allImages.length - _this.tplData.images.length > 0) {
+          _this.element.find('.preview-images').after('<i class="fa fa fa-ellipsis-h remaining"></i>');
+        }
+        _this.remaining = _this.allImages.length - _this.tplData.images.length;
+      } else if (newMaxPreviewWidth > _this.maxPreviewImagesWidth) {
+          // width of browser window has been made larger
+        var currentLastImage = _this.tplData.images[_this.tplData.images.length - 1],
+          index = currentLastImage ? currentLastImage.index + 1 : 0;
+
+        image = _this.allImages[index];
+
+        if (image) {
+          while (_this.imagesTotalWidth + image.width + _this.margin < newMaxPreviewWidth) {
+            _this.tplData.images.push(image);
+            _this.imagesTotalWidth += (image.width + _this.margin);
+
+              // add image to dom
+            _this.element.find('.preview-images').append('<img src="' + image.url + '" width="' + image.width + '" height="' + image.height + '" class="preview-image flash" data-image-id="' + image.id + '">');
+
+              // get next image
+            index++;
+            image = _this.allImages[index];
+            if (!image) {
               break;
             }
           }
-          //check if need to add ellipsis
-          if (_this.remaining === 0 && _this.allImages.length - _this.tplData.images.length > 0) {
-              _this.element.find('.preview-images').after('<i class="fa fa fa-ellipsis-h remaining"></i>');
-          }
-          _this.remaining = _this.allImages.length - _this.tplData.images.length;
-
-        } else if (newMaxPreviewWidth > _this.maxPreviewImagesWidth) {
-          //width of browser window has been made larger
-          var currentLastImage = _this.tplData.images[_this.tplData.images.length-1],
-            index = currentLastImage ? currentLastImage.index+1 : 0;
-
-          image = _this.allImages[index];
-
-          if (image) {
-            while (_this.imagesTotalWidth + image.width + _this.margin < newMaxPreviewWidth) {
-              _this.tplData.images.push(image);
-              _this.imagesTotalWidth += (image.width + _this.margin);
-
-              //add image to dom
-              _this.element.find('.preview-images').append('<img src="'+image.url+'" width="'+image.width+'" height="'+image.height+'" class="preview-image flash" data-image-id="'+image.id+'">');
-
-              //get next image
-              index++;
-              image = _this.allImages[index];
-              if (!image) {
-                break;
-              }
-            }
-            //check if need to remove ellipsis
+            // check if need to remove ellipsis
           if (_this.remaining > 0 && _this.allImages.length - _this.tplData.images.length === 0) {
             _this.element.find('.remaining').remove();
           }
           _this.remaining = _this.allImages.length - _this.tplData.images.length;
-          }
         }
-        _this.maxPreviewImagesWidth = newMaxPreviewWidth;
-        _this.eventEmitter.publish('manifestListItemRendered');
+      }
+      _this.maxPreviewImagesWidth = newMaxPreviewWidth;
+      _this.eventEmitter.publish('manifestListItemRendered');
     },
 
-    hide: function() {
+    hide: function () {
       var _this = this;
     },
 
-    show: function() {
+    show: function () {
       var _this = this;
     },
 
     template: $.Handlebars.compile([
       '<li data-index-number={{index}}>',
       '<div class="repo-image">',
-        '{{#if repoImage}}',
-        '<img src="{{repoImage}}" alt="repoImg">',
-        '{{else}}',
-        '<span class="default-logo"></span>',
-        '{{/if}}',
+      '{{#if repoImage}}',
+      '<img src="{{repoImage}}" alt="repoImg">',
+      '{{else}}',
+      '<span class="default-logo"></span>',
+      '{{/if}}',
       '</div>',
       '<div class="select-metadata">',
-        '<div class="manifest-title">',
-          '<h3 title="{{{label}}}">{{{label}}}</h3>',
-        '</div>',
-        '<div class="item-info">',
-          '<div class="item-info-row">',
-            '{{#if repository}}',
-              '<div class="repo-label">{{repository}}</div>',
-            '{{/if}}',
-            '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
-          '</div>',
-        '</div>',
+      '<div class="manifest-title">',
+      '<h3 title="{{{label}}}">{{{label}}}</h3>',
+      '</div>',
+      '<div class="item-info">',
+      '<div class="item-info-row">',
+      '{{#if repository}}',
+      '<div class="repo-label">{{repository}}</div>',
+      '{{/if}}',
+      '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+      '</div>',
+      '</div>',
       '</div>',
       '<div class="preview-thumb">',
-        '<div class="preview-images">',
-        '{{#each images}}',
-          '<img src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash" data-image-id="{{id}}">',
-        '{{/each}}',
-        '</div>',
-        '{{#if remaining}}',
-          '<i class="fa fa fa-ellipsis-h remaining"></i>',
-        '{{/if}}',
+      '<div class="preview-images">',
+      '{{#each images}}',
+      '<img src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash" data-image-id="{{id}}">',
+      '{{/each}}',
+      '</div>',
+      '{{#if remaining}}',
+      '<i class="fa fa fa-ellipsis-h remaining"></i>',
+      '{{/if}}',
       '</div>',
       '</li>'
     ].join(''))
   };
-
 }(Mirador));
 
-(function($) {
+(function ($) {
+  $.ManifestsPanel = function (options) {
+    jQuery.extend(true, this, {
+      element: null,
+      listItems: null,
+      appendTo: null,
+      manifestListItems: [],
+      manifestListElement: null,
+      manifestLoadStatusIndicator: null,
+      resultsWidth: 0,
+      state: null,
+      eventEmitter: null
+    }, options);
 
-    $.ManifestsPanel = function(options) {
+    var _this = this;
+    _this.init();
+  };
 
-        jQuery.extend(true, this, {
-            element:                    null,
-            listItems:                  null,
-            appendTo:                   null,
-            manifestListItems:          [],
-            manifestListElement:        null,
-            manifestLoadStatusIndicator: null,
-            resultsWidth:               0,
-            state:                      null,
-            eventEmitter:               null
-        }, options);
+  $.ManifestsPanel.prototype = {
 
-        var _this = this;
-        _this.init();
-        
-    };
+    init: function () {
+      this.element = jQuery(this.template({
+        showURLBox: this.state.getStateProperty('showAddFromURLBox')
+      })).appendTo(this.appendTo);
+      this.manifestListElement = this.element.find('ul');
 
-    $.ManifestsPanel.prototype = {
+            // this code gives us the max width of the results area, used to determine how many preview images to show
+            // cloning the element and adjusting the display and visibility means it won't break the normal flow
+      var clone = this.element.clone().css('visibility', 'hidden').css('display', 'block').appendTo(this.appendTo);
+      this.resultsWidth = clone.find('.select-results').outerWidth();
+      this.controlsHeight = clone.find('.manifest-panel-controls').outerHeight();
+      this.paddingListElement = this.controlsHeight;
+      this.manifestListElement.css('padding-bottom', this.paddingListElement);
+      clone.remove();
 
-        init: function() {
-            this.element = jQuery(this.template({
-                showURLBox : this.state.getStateProperty('showAddFromURLBox')
-            })).appendTo(this.appendTo);
-            this.manifestListElement = this.element.find('ul');
-            
-            //this code gives us the max width of the results area, used to determine how many preview images to show
-            //cloning the element and adjusting the display and visibility means it won't break the normal flow
-            var clone = this.element.clone().css("visibility","hidden").css("display", "block").appendTo(this.appendTo);
-            this.resultsWidth = clone.find('.select-results').outerWidth();
-            this.controlsHeight = clone.find('.manifest-panel-controls').outerHeight();
-            this.paddingListElement = this.controlsHeight;
-            this.manifestListElement.css("padding-bottom", this.paddingListElement);
-            clone.remove();
-            
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
             //   manifests: this.parent.manifests,
             //   appendTo: this.element.find('.select-results')
             // });
-            this.bindEvents();
-            this.listenForActions();
-        },
+      this.bindEvents();
+      this.listenForActions();
+    },
 
-        listenForActions: function() {
-          var _this = this;
+    listenForActions: function () {
+      var _this = this;
 
           // handle subscribed events
-          _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(_, stateValue) {
-            _this.onPanelVisible(_, stateValue);
-          });
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (_, stateValue) {
+        _this.onPanelVisible(_, stateValue);
+      });
 
-          _this.eventEmitter.subscribe('manifestReceived', function(event, newManifest) {
-            _this.onManifestReceived(event, newManifest);
-          });
-          
-          _this.eventEmitter.subscribe('collectionReceived', function(event, newCollection) {
-            _this.onCollectionReceived(event, newCollection);
-          });
-        },
+      _this.eventEmitter.subscribe('manifestReceived', function (event, newManifest) {
+        _this.onManifestReceived(event, newManifest);
+      });
 
-        bindEvents: function() {
-            var _this = this;
+      _this.eventEmitter.subscribe('collectionReceived', function (event, newCollection) {
+        _this.onCollectionReceived(event, newCollection);
+      });
+    },
+
+    bindEvents: function () {
+      var _this = this;
 
             // handle interface events
-            this.element.find('form#url-load-form').on('submit', function(event) {
-              event.preventDefault();
-              _this.addManifestUrl(jQuery(this).find('input').val());
-            });
+      this.element.find('form#url-load-form').on('submit', function (event) {
+        event.preventDefault();
+        _this.addManifestUrl(jQuery(this).find('input').val());
+      });
 
-            this.element.find('.remove-object-option').on('click', function(event) {
-              _this.togglePanel(event);
-            });
+      this.element.find('.remove-object-option').on('click', function (event) {
+        _this.togglePanel(event);
+      });
 
             // Filter manifests based on user input
-            this.element.find('#manifest-search').on('keyup input', function(event) {
-              _this.filterManifests(this.value);
-            });
+      this.element.find('#manifest-search').on('keyup input', function (event) {
+        _this.filterManifests(this.value);
+      });
 
-            this.element.find('#manifest-search-form').on('submit', function(event) {
-              event.preventDefault();
-            });
+      this.element.find('#manifest-search-form').on('submit', function (event) {
+        event.preventDefault();
+      });
 
-            jQuery(window).resize($.throttle(function() {
-              _this.resizePanel();
-            }, 50, true));
-        },
-        
-        hide: function() {
-            var _this = this;
-            jQuery(this.element).hide({effect: "fade", duration: 160, easing: "easeOutCubic"});
-        },
+      jQuery(window).resize($.throttle(function () {
+        _this.resizePanel();
+      }, 50, true));
+    },
 
-        show: function() {
-            var _this = this;
-            jQuery(this.element).show({effect: "fade", duration: 160, easing: "easeInCubic"});
-        },
-        
-        addManifestUrl: function(url) {
-          var _this = this;
-          _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, "(Added from URL)"]);
-        },
-        
-        togglePanel: function(event) {
-          var _this = this;
-          _this.eventEmitter.publish('TOGGLE_LOAD_WINDOW');
-        },
-        
-        filterManifests: function(value) {
-          var _this = this;
-          if (value.length > 0) {
-             _this.element.find('.items-listing li').show().filter(function() {
-                return jQuery(this).text().toLowerCase().indexOf(value.toLowerCase()) === -1;
-             }).hide();
-          } else {
-             _this.element.find('.items-listing li').show();
-          }
-        },
+    hide: function () {
+      var _this = this;
+      jQuery(this.element).hide({ effect: 'fade', duration: 160, easing: 'easeOutCubic' });
+    },
 
-        resizePanel: function() {
-          var _this = this;
-          var clone = _this.element.clone().css("visibility","hidden").css("display", "block").appendTo(_this.appendTo);
-          _this.resultsWidth = clone.find('.select-results').outerWidth();
-          clone.remove();
-          _this.eventEmitter.publish("manifestPanelWidthChanged", _this.resultsWidth);
-        },
-        
-        onPanelVisible: function(_, stateValue) {
-          var _this = this;
-          if (stateValue) { _this.show(); return; }
-           _this.hide();
-        },
+    show: function () {
+      var _this = this;
+      jQuery(this.element).show({ effect: 'fade', duration: 160, easing: 'easeInCubic' });
+    },
 
-        onManifestReceived: function(event, newManifest) {
-          var _this = this;
-          _this.manifestListItems.push(new $.ManifestListItem({ 
-            manifest: newManifest, 
-            resultsWidth: _this.resultsWidth, 
-            state: _this.state,
-            eventEmitter: _this.eventEmitter,
-            appendTo: _this.manifestListElement }));
-          _this.element.find('#manifest-search').keyup();
-        },
-        
-        onCollectionReceived: function(event, newCollection) {
-          var _this = this;
-          jQuery.each(newCollection.getManifestUris(), function(_, v) {
-            _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [v, newCollection.location]);
-          });
-        },
+    addManifestUrl: function (url) {
+      var _this = this;
+      _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, '(Added from URL)']);
+    },
 
-        template: $.Handlebars.compile([
-          '<div id="manifest-select-menu">',
-          '<div class="container">',
-            '<div class="manifest-panel-controls">',
-              '<a class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i>{{t "close"}}</a>',
-              '<div id="load-controls">',
-                '{{#if showURLBox}}',
-                  '<form action="" id="url-load-form">',
-                    '<label for="url-loader">{{t "addNewObject"}}:</label>',
-                    '<input type="text" id="url-loader" name="url-load" placeholder="https://...">',
-                    '<input type="submit" value="{{t "load"}}">',
-                  '</form>',
-                '{{/if}}',
-                '<form action="" id="manifest-search-form">',
-                  '<label for="manifest-search">{{t "filterObjects"}}:</label>',
-                  '<input id="manifest-search" type="text" name="manifest-filter">',
-                '</form>',
-              '</div>',
-            '</div>',
-              '<div class="select-results">',
-                '<ul class="items-listing">',
-                '</ul>',
-              '</div>',
-          '</div>',
-          '</div>'
-        ].join(''))
-    };
+    togglePanel: function (event) {
+      var _this = this;
+      _this.eventEmitter.publish('TOGGLE_LOAD_WINDOW');
+    },
 
+    filterManifests: function (value) {
+      var _this = this;
+      if (value.length > 0) {
+        _this.element.find('.items-listing li').show().filter(function () {
+          return jQuery(this).text().toLowerCase().indexOf(value.toLowerCase()) === -1;
+        }).hide();
+      } else {
+        _this.element.find('.items-listing li').show();
+      }
+    },
+
+    resizePanel: function () {
+      var _this = this;
+      var clone = _this.element.clone().css('visibility', 'hidden').css('display', 'block').appendTo(_this.appendTo);
+      _this.resultsWidth = clone.find('.select-results').outerWidth();
+      clone.remove();
+      _this.eventEmitter.publish('manifestPanelWidthChanged', _this.resultsWidth);
+    },
+
+    onPanelVisible: function (_, stateValue) {
+      var _this = this;
+      if (stateValue) { _this.show(); return; }
+      _this.hide();
+    },
+
+    onManifestReceived: function (event, newManifest) {
+      var _this = this;
+      _this.manifestListItems.push(new $.ManifestListItem({
+        manifest: newManifest,
+        resultsWidth: _this.resultsWidth,
+        state: _this.state,
+        eventEmitter: _this.eventEmitter,
+        appendTo: _this.manifestListElement }));
+      _this.element.find('#manifest-search').keyup();
+    },
+
+    onCollectionReceived: function (event, newCollection) {
+      var _this = this;
+      jQuery.each(newCollection.getManifestUris(), function (_, v) {
+        _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [v, newCollection.location]);
+      });
+    },
+
+    template: $.Handlebars.compile([
+      '<div id="manifest-select-menu">',
+      '<div class="container">',
+      '<div class="manifest-panel-controls">',
+      '<a class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i>{{t "close"}}</a>',
+      '<div id="load-controls">',
+      '{{#if showURLBox}}',
+      '<form action="" id="url-load-form">',
+      '<label for="url-loader">{{t "addNewObject"}}:</label>',
+      '<input type="text" id="url-loader" name="url-load" placeholder="https://...">',
+      '<input type="submit" value="{{t "load"}}">',
+      '</form>',
+      '{{/if}}',
+      '<form action="" id="manifest-search-form">',
+      '<label for="manifest-search">{{t "filterObjects"}}:</label>',
+      '<input id="manifest-search" type="text" name="manifest-filter">',
+      '</form>',
+      '</div>',
+      '</div>',
+      '<div class="select-results">',
+      '<ul class="items-listing">',
+      '</ul>',
+      '</div>',
+      '</div>',
+      '</div>'
+    ].join(''))
+  };
 }(Mirador));
 
-(function($) {
-
-  $.WorkspacePanel = function(options) {
-
+(function ($) {
+  $.WorkspacePanel = function (options) {
     jQuery.extend(true, this, {
       element: null,
       appendTo: null,
@@ -36317,69 +36316,68 @@ return /******/ (function(modules) { // webpackBootstrap
     }, options);
 
     this.init();
-
   };
 
   $.WorkspacePanel.prototype = {
     init: function () {
       var _this = this,
-      templateData = {
-        rows: $.layoutDescriptionFromGridString(_this.state.getStateProperty('workspacePanelSettings').maxColumns + 'x' + _this.state.getStateProperty('workspacePanelSettings').maxRows).children.map(function(column, rowIndex) {
-          column.columns = column.children.map(function(row, columnIndex) {
-            row.gridString = (rowIndex+1) + 'x' + (columnIndex+1);
-            return row;
-          });
-          return column;
-        })
-      };
+        templateData = {
+          rows: $.layoutDescriptionFromGridString(_this.state.getStateProperty('workspacePanelSettings').maxColumns + 'x' + _this.state.getStateProperty('workspacePanelSettings').maxRows).children.map(function (column, rowIndex) {
+            column.columns = column.children.map(function (row, columnIndex) {
+              row.gridString = (rowIndex + 1) + 'x' + (columnIndex + 1);
+              return row;
+            });
+            return column;
+          })
+        };
 
       this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
       var backgroundImage = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'debut_dark.png';
-      this.element.css('background-image','url('+backgroundImage+')').css('background-repeat','repeat');
-      
+      this.element.css('background-image', 'url(' + backgroundImage + ')').css('background-repeat', 'repeat');
+
       this.bindEvents();
       this.listenForActions();
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
-      _this.eventEmitter.subscribe('workspacePanelVisible.set', function(_, stateValue) {
+      _this.eventEmitter.subscribe('workspacePanelVisible.set', function (_, stateValue) {
         _this.onPanelVisible(_, stateValue);
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      _this.element.find('.grid-item').on('click', function() {
+      _this.element.find('.grid-item').on('click', function () {
         var gridString = jQuery(this).data('gridstring');
         _this.select(gridString);
       });
 
-      _this.element.find('.grid-item').on('mouseover', function() {
+      _this.element.find('.grid-item').on('mouseover', function () {
         var gridString = jQuery(this).data('gridstring');
         _this.hover(gridString);
       });
-      
-      _this.element.find('.select-grid').on('mouseout', function() {
+
+      _this.element.find('.select-grid').on('mouseout', function () {
         _this.reset();
       });
     },
 
-    select: function(gridString) {
+    select: function (gridString) {
       var _this = this;
       var layoutDescription = $.layoutDescriptionFromGridString(gridString);
-      _this.eventEmitter.publish('RESET_WORKSPACE_LAYOUT', {layoutDescription: layoutDescription});
+      _this.eventEmitter.publish('RESET_WORKSPACE_LAYOUT', { layoutDescription: layoutDescription });
       _this.eventEmitter.publish('TOGGLE_WORKSPACE_PANEL');
     },
 
-    hover: function(gridString) {
+    hover: function (gridString) {
       var _this = this,
-      highestRow = gridString.charAt(0),
-      highestColumn = gridString.charAt(2),
-      gridItems = _this.element.find('.grid-item');
+        highestRow = gridString.charAt(0),
+        highestColumn = gridString.charAt(2),
+        gridItems = _this.element.find('.grid-item');
       gridItems.removeClass('hovered');
-      gridItems.filter(function(index) {
+      gridItems.filter(function (index) {
         var gridString = jQuery(this).data('gridstring');
         var change = gridString.charAt(0) <= highestRow && gridString.charAt(2) <= highestColumn;
         return change;
@@ -36387,19 +36385,19 @@ return /******/ (function(modules) { // webpackBootstrap
       _this.element.find('.grid-instructions').hide();
       _this.element.find('.grid-text').text(gridString).show();
     },
-    
-    reset: function() {
+
+    reset: function () {
       var _this = this;
       _this.element.find('.grid-item').removeClass('hovered');
       _this.element.find('.grid-instructions').show();
       _this.element.find('.grid-text').hide();
     },
 
-    hide: function() {
-      jQuery(this.element).hide({effect: "fade", duration: 160, easing: "easeOutCubic"});
+    hide: function () {
+      jQuery(this.element).hide({ effect: 'fade', duration: 160, easing: 'easeOutCubic' });
     },
 
-    show: function() {
+    show: function () {
       var onComplete = function () {
         // Under firefox $.show() used under display:none iframe does not change the display.
         // This is workaround for https://github.com/IIIF/mirador/issues/929
@@ -36407,51 +36405,49 @@ return /******/ (function(modules) { // webpackBootstrap
       };
 
       jQuery(this.element).show({
-        effect: "fade", duration: 160, easing: "easeInCubic", complete: onComplete
+        effect: 'fade', duration: 160, easing: 'easeInCubic', complete: onComplete
       });
     },
 
-    onPanelVisible: function(_, stateValue) {
+    onPanelVisible: function (_, stateValue) {
       var _this = this;
       if (stateValue) { _this.show(); return; }
       _this.hide();
     },
 
     template: $.Handlebars.compile([
-                                 '<div id="workspace-select-menu">',
-                                 '<h1>{{t "changeLayout"}}</h1>',
-                                 '<h3 class="grid-text"></h3>',
-                                 '<h3 class="grid-instructions">{{t "selectGrid"}}</h3>',
-                                 '<div class="select-grid">',
-                                 '{{#each rows}}',
-                                 '<div class="grid-row">',
-                                   '{{#each columns}}',
-                                   '<a class="grid-item" data-gridString="{{gridString}}">',
-                                   '<div class="grid-icon"></div>',
-                                   '</a>',
-                                   '{{/each}}',
-                                 '</div>',
-                                 '{{/each}}',
-                                 '</div>',
+      '<div id="workspace-select-menu">',
+      '<h1>{{t "changeLayout"}}</h1>',
+      '<h3 class="grid-text"></h3>',
+      '<h3 class="grid-instructions">{{t "selectGrid"}}</h3>',
+      '<div class="select-grid">',
+      '{{#each rows}}',
+      '<div class="grid-row">',
+      '{{#each columns}}',
+      '<a class="grid-item" data-gridString="{{gridString}}">',
+      '<div class="grid-icon"></div>',
+      '</a>',
+      '{{/each}}',
+      '</div>',
+      '{{/each}}',
+      '</div>',
                                  // '<div class="preview-container">',
                                  // '</div>',
-                                 '</div>'
+      '</div>'
     ].join(''))
   };
-
 }(Mirador));
 
 
-(function($){
-
+(function ($) {
   // This is an analogue of the Manifest utility class, but for collections
-  $.Collection = function(collectionUri, location, collectionContent) {
+  $.Collection = function (collectionUri, location, collectionContent) {
     if (collectionContent) {
       jQuery.extend(true, this, {
-          jsonLd: null,
-          location: location,
-          uri: collectionUri,
-          request: null
+        jsonLd: null,
+        location: location,
+        uri: collectionUri,
+        request: null
       });
       this.initFromCollectionContent(collectionContent);
     } else {
@@ -36467,7 +36463,7 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.Collection.prototype = {
-    init: function(collectionUri) {
+    init: function (collectionUri) {
       var _this = this;
       this.request = jQuery.ajax({
         url: collectionUri,
@@ -36475,21 +36471,21 @@ return /******/ (function(modules) { // webpackBootstrap
         async: true
       });
 
-      this.request.done(function(jsonLd) {
+      this.request.done(function (jsonLd) {
         _this.jsonLd = jsonLd;
       });
     },
     initFromCollectionContent: function (collectionContent) {
       var _this = this;
       this.request = jQuery.Deferred();
-      this.request.done(function(jsonLd) {
+      this.request.done(function (jsonLd) {
         _this.jsonLd = jsonLd;
       });
       _this.request.resolve(collectionContent); // resolve immediately
     },
-    
+
     // Get the IIIF API version of this collection
-    getVersion: function() {
+    getVersion: function () {
       var versionMap = {
         'http://www.shared-canvas.org/ns/context.json': '1', // is this valid?
         'http://iiif.io/api/presentation/1/context.json': '1',
@@ -36498,18 +36494,18 @@ return /******/ (function(modules) { // webpackBootstrap
       };
       return versionMap[this.jsonLd['@context']];
     },
-    
+
     // Return a list of sub-manifest URIs contained in this collection
-    getManifestUris: function() {
+    getManifestUris: function () {
       // "manifests" key present
       if (this.jsonLd.manifests) {
-        return jQuery.map(this.jsonLd.manifests, function(v, _) {
+        return jQuery.map(this.jsonLd.manifests, function (v, _) {
           return v['@id'];
         });
       }
       // "members" key present, sift-out non-manifests
       if (this.jsonLd.members) {
-        return jQuery.map(this.jsonLd.members, function(v, _) {
+        return jQuery.map(this.jsonLd.members, function (v, _) {
           if (v['@type'] === 'sc:Manifest') {
             return v['@id'];
           }
@@ -36518,16 +36514,16 @@ return /******/ (function(modules) { // webpackBootstrap
       // Neither present
       return [];
     },
-    
+
     // Return a list of sub-manifest JSON blocks contained in this collection
-    getManifestBlocks: function() {
+    getManifestBlocks: function () {
       // "manifests" key present
       if (this.jsonLd.manifests) {
         return this.jsonLd.manifests;
       }
       // "members" key present, sift-out non-manifests
       if (this.jsonLd.members) {
-        return jQuery.map(this.jsonLd.members, function(v, _) {
+        return jQuery.map(this.jsonLd.members, function (v, _) {
           if (v['@type'] === 'sc:Manifest') {
             return v;
           }
@@ -36536,18 +36532,18 @@ return /******/ (function(modules) { // webpackBootstrap
       // Neither present
       return [];
     },
-    
+
     // Return a list of sub-collection URIs contained in this collection
-    getCollectionUris: function() {
+    getCollectionUris: function () {
       // "collections" key present
       if (this.jsonLd.collections) {
-        return jQuery.map(this.jsonLd.collections, function(v, _) {
+        return jQuery.map(this.jsonLd.collections, function (v, _) {
           return v['@id'];
         });
       }
       // "members" key present, sift-out non-collections
       if (this.jsonLd.members) {
-        return jQuery.map(this.jsonLd.members, function(v, _) {
+        return jQuery.map(this.jsonLd.members, function (v, _) {
           if (v['@type'] === 'sc:Collection') {
             return v['@id'];
           }
@@ -36556,16 +36552,16 @@ return /******/ (function(modules) { // webpackBootstrap
       // Neither present
       return [];
     },
-    
+
     // Return a list of sub-collection JSON blocks contained in this collection
-    getCollectionBlocks: function() {
+    getCollectionBlocks: function () {
       // "collections" key present
       if (this.jsonLd.collections) {
         return this.jsonLd.collections;
       }
       // "members" key present, sift out non-collections
       if (this.jsonLd.members) {
-        return jQuery.map(this.jsonLd.members, function(v, _) {
+        return jQuery.map(this.jsonLd.members, function (v, _) {
           if (v['@type'] === 'sc:Collection') {
             return v;
           }
@@ -36575,12 +36571,10 @@ return /******/ (function(modules) { // webpackBootstrap
       return [];
     }
   };
-
 }(Mirador));
 
-(function($){
-
-  $.Manifest = function(manifestUri, location, manifestContent) {
+(function ($) {
+  $.Manifest = function (manifestUri, location, manifestContent) {
     if (manifestContent) {
       jQuery.extend(true, this, {
         jsonLd: null,
@@ -36611,7 +36605,7 @@ return /******/ (function(modules) { // webpackBootstrap
         jsonLd: null,
         location: location,
         uri: manifestUri,
-        request: null,
+        request: null
       });
 
       this.initFromInfoJson(manifestUri);
@@ -36628,7 +36622,7 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.Manifest.prototype = {
-    init: function(manifestUri) {
+    init: function (manifestUri) {
       var _this = this;
       this.request = jQuery.ajax({
         url: manifestUri,
@@ -36636,44 +36630,44 @@ return /******/ (function(modules) { // webpackBootstrap
         async: true
       });
 
-      this.request.done(function(jsonLd) {
+      this.request.done(function (jsonLd) {
         _this.jsonLd = jsonLd;
       });
     },
-    buildCanvasMap: function() {
+    buildCanvasMap: function () {
       var _this = this;
       this.canvasMap = {};
 
       if (this.getCanvases()) {
-        this.getCanvases().forEach(function(canvas) {
+        this.getCanvases().forEach(function (canvas) {
           _this.canvasMap[canvas['@id']] = canvas;
         });
       }
     },
-    initFromInfoJson: function(infoJsonUrl) {
+    initFromInfoJson: function (infoJsonUrl) {
       var _this = this;
       this.request = jQuery.ajax({
         url: infoJsonUrl,
         dataType: 'json',
         async: true
       });
-      this.request.done(function(jsonLd) {
+      this.request.done(function (jsonLd) {
         _this.jsonLd = _this.generateInfoWrapper(jsonLd);
       });
     },
     initFromManifestContent: function (manifestContent) {
       var _this = this;
       this.request = jQuery.Deferred();
-      this.request.done(function(jsonLd) {
+      this.request.done(function (jsonLd) {
         _this.jsonLd = jsonLd;
       });
       _this.request.resolve(manifestContent); // resolve immediately
     },
-    getThumbnailForCanvas : function(canvas, width) {
-      var version = "1.1",
-      compliance = -1,
-      service,
-      thumbnailUrl;
+    getThumbnailForCanvas: function (canvas, width) {
+      var version = '1.1',
+        compliance = -1,
+        service,
+        thumbnailUrl;
 
       // Ensure width is an integer...
       width = parseInt(width, 10);
@@ -36681,30 +36675,30 @@ return /******/ (function(modules) { // webpackBootstrap
       // Respecting the Model...
       if (canvas.hasOwnProperty('thumbnail')) {
         // use the thumbnail image, prefer via a service
-        if (typeof(canvas.thumbnail) == 'string') {
+        if (typeof (canvas.thumbnail) === 'string') {
           thumbnailUrl = canvas.thumbnail;
         } else if (canvas.thumbnail.hasOwnProperty('service')) {
-            service = canvas.thumbnail.service;
-            if(service.hasOwnProperty('profile')) {
-               compliance = $.Iiif.getComplianceLevelFromProfile(service.profile);
-            }
-            if(compliance === 0){
+          service = canvas.thumbnail.service;
+          if (service.hasOwnProperty('profile')) {
+            compliance = $.Iiif.getComplianceLevelFromProfile(service.profile);
+          }
+          if (compliance === 0) {
                 // don't change existing behaviour unless compliance is explicitly 0
-                thumbnailUrl = canvas.thumbnail['@id'];
-            } else {
+            thumbnailUrl = canvas.thumbnail['@id'];
+          } else {
                 // Get the IIIF Image API via the @context
-                if (service.hasOwnProperty('@context')) {
-                    version = $.Iiif.getVersionFromContext(service['@context']);
-                }
-                thumbnailUrl = $.Iiif.makeUriWithWidth(service['@id'], width, version);
+            if (service.hasOwnProperty('@context')) {
+              version = $.Iiif.getVersionFromContext(service['@context']);
             }
+            thumbnailUrl = $.Iiif.makeUriWithWidth(service['@id'], width, version);
+          }
         } else {
           thumbnailUrl = canvas.thumbnail['@id'];
         }
       } else {
         // No thumbnail, use main image
         var resource = canvas.images[0].resource;
-        service = resource['default'] ? resource['default'].service : resource.service;
+        service = resource.default ? resource.default.service : resource.service;
         if (service.hasOwnProperty('@context')) {
           version = $.Iiif.getVersionFromContext(service['@context']);
         }
@@ -36712,7 +36706,7 @@ return /******/ (function(modules) { // webpackBootstrap
       }
       return thumbnailUrl;
     },
-    getVersion: function() {
+    getVersion: function () {
       var versionMap = {
         'http://www.shared-canvas.org/ns/context.json': '1', // is this valid?
         'http://iiif.io/api/presentation/1/context.json': '1',
@@ -36721,16 +36715,16 @@ return /******/ (function(modules) { // webpackBootstrap
       };
       return versionMap[this.jsonLd['@context']];
     },
-    getCanvases : function() {
+    getCanvases: function () {
       var _this = this;
       return _this.jsonLd.sequences && _this.jsonLd.sequences[0].canvases;
     },
-    getAnnotationsListUrls: function(canvasId) {
+    getAnnotationsListUrls: function (canvasId) {
       var _this = this;
-      var canvas = jQuery.grep(_this.getCanvases(), function(canvas, index) {
-        return canvas['@id'] === canvasId;
-      })[0],
-      annotationsListUrls = [];
+      var canvas = jQuery.grep(_this.getCanvases(), function (canvas, index) {
+          return canvas['@id'] === canvasId;
+        })[0],
+        annotationsListUrls = [];
 
       if (canvas && canvas.otherContent) {
         for (var i = 0; i < canvas.otherContent.length; i++) {
@@ -36739,11 +36733,11 @@ return /******/ (function(modules) { // webpackBootstrap
       }
       return annotationsListUrls;
     },
-    getStructures: function() {
+    getStructures: function () {
       var _this = this;
       return _this.jsonLd.structures;
     },
-    generateInfoWrapper: function(infoJson) {
+    generateInfoWrapper: function (infoJson) {
       // Takes in info.json and creates the
       // dummy manifest wrapper around it
       // that will allow it to behave like a
@@ -36752,10 +36746,10 @@ return /******/ (function(modules) { // webpackBootstrap
       // of the image will be used as the
       // label, and so on, of the manifest.
       var dummyManifest = {
-        '@context': "http://www.shared-canvas.org/ns/context.json",
+        '@context': 'http://www.shared-canvas.org/ns/context.json',
         '@id': infoJson['@id'],
         '@type': 'sc:Manifest',
-        label: infoJson['@id'].split('/')[infoJson['@id'].split('/').length -1],
+        label: infoJson['@id'].split('/')[infoJson['@id'].split('/').length - 1],
         sequences: [
           {
             '@id': infoJson['@id'] + '/sequence/1',
@@ -36770,17 +36764,17 @@ return /******/ (function(modules) { // webpackBootstrap
                   {
                     '@id': infoJson['@id'] + '/sequence/1/canvas/1/image/1',
                     '@type': 'sc:image',
-                    'motivation': 'sc:painting',
+                    motivation: 'sc:painting',
                     resource: {
                       '@id': infoJson,
-                      '@type': "dctypes:Image",
-                      format: "image/jpeg",
+                      '@type': 'dctypes:Image',
+                      format: 'image/jpeg',
                       height: infoJson.height,
                       width: infoJson.width,
                       service: {
                         '@id': infoJson['@id'],
                         '@context': infoJson['@context'],
-                        'profile': infoJson.profile
+                        profile: infoJson.profile
                       }
                     }
                   }
@@ -36793,29 +36787,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
       return dummyManifest;
     },
-    getSearchWithinService: function(){
+    getSearchWithinService: function () {
       var _this = this;
       var serviceProperty = _this.jsonLd.service;
       var service = [];
-      if (serviceProperty === undefined){
+      if (serviceProperty === undefined) {
         service = null;
-      }
-      else if (serviceProperty.constructor === Array){
-        for (var i = 0; i < serviceProperty.length; i++){
-          //TODO: should we be filtering search by context
-          if (serviceProperty[i]["@context"] === "http://iiif.io/api/search/0/context.json" ||
-            serviceProperty[i]["@context"] === "http://iiif.io/api/search/1/context.json") {
-            //returns the first service object with the correct context
+      } else if (serviceProperty.constructor === Array) {
+        for (var i = 0; i < serviceProperty.length; i++) {
+          // TODO: should we be filtering search by context
+          if (serviceProperty[i]['@context'] === 'http://iiif.io/api/search/0/context.json' ||
+            serviceProperty[i]['@context'] === 'http://iiif.io/api/search/1/context.json') {
+            // returns the first service object with the correct context
             service.push(serviceProperty[i]);
           }
         }
-      }
-      else if (_this.jsonLd.service["@context"] === "http://iiif.io/api/search/0/context.json" ||
-        serviceProperty["@context"] === "http://iiif.io/api/search/1/context.json"){
+      } else if (_this.jsonLd.service['@context'] === 'http://iiif.io/api/search/0/context.json' ||
+        serviceProperty['@context'] === 'http://iiif.io/api/search/1/context.json') {
         service.push(_this.jsonLd.service);
-      }
-      else {
-        //no service object with the right context is found
+      } else {
+        // no service object with the right context is found
         service = null;
       }
       return service;
@@ -36826,99 +36817,96 @@ return /******/ (function(modules) { // webpackBootstrap
      * @param  {[type]} canvasId ID of desired canvas
      * @return {[type]}          string
      */
-    getCanvasLabel: function(canvasId) {
-      console.assert(canvasId && canvasId !== '', "No canvasId was specified.");
+    getCanvasLabel: function (canvasId) {
+      console.assert(canvasId && canvasId !== '', 'No canvasId was specified.');
       if (this.canvasMap && canvasId.indexOf('#') >= 0) {
         var canvas = this.canvasMap[canvasId.split('#')[0]];
         return canvas ? canvas.label : undefined;
       }
     },
-    getViewingDirection : function() {
+    getViewingDirection: function () {
       var _this = this;
       return _this.jsonLd.viewingDirection || _this.jsonLd.sequences[0].viewingDirection;
-
     }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.AnnotationUtils = function(){
+(function ($) {
+  $.AnnotationUtils = function () {
 
   };
 
-  function PaperItem(item){
+  function PaperItem(item) {
     this.item = item;
   }
 
-  PaperItem.prototype  = {
-    getItem:function(){
+  PaperItem.prototype = {
+    getItem: function () {
       return this.item;
     },
-    translateByXY: function(x,y){
-      this.item.position.x +=x;
-      this.item.position.y +=y;
+    translateByXY: function (x, y) {
+      this.item.position.x += x;
+      this.item.position.y += y;
     },
 
-    translateByPoint:function(point){
+    translateByPoint: function (point) {
       this.item.position = this.item.position.add(point);
     },
 
-    setOnMouseDownListener:function(callback){
+    setOnMouseDownListener: function (callback) {
       this.mouseDown = callback;
     },
 
-    onMouseDown:function(){
-      this.mouseDown.call(this,this.item);
+    onMouseDown: function () {
+      this.mouseDown.call(this, this.item);
     },
 
-    remove:function(){
+    remove: function () {
       this.item.remove();
     },
 
-    rotate:function(angle,pivot){
-      pivot?this.item.rotate(angle,pivot):this.item.rotate(angle);
+    rotate: function (angle, pivot) {
+      pivot ? this.item.rotate(angle, pivot) : this.item.rotate(angle);
     },
 
-    setPosition:function(point){
+    setPosition: function (point) {
       this.item.position = point;
     },
 
-    getWidth:function(){
+    getWidth: function () {
       return this.item.width;
     },
 
-    getHeight:function(){
+    getHeight: function () {
       return this.item.height;
     },
 
-    addData:function(key,data){
+    addData: function (key, data) {
       this.item.data[key] = data;
     },
 
-    getData: function(key){
+    getData: function (key) {
       return this.item.data[key];
     },
 
-    resize:function(size){
+    resize: function (size) {
       this.item.size = size;
     }
   };
 
-  function Group(paperScope,opts){
+  function Group(paperScope, opts) {
     var item = new paperScope.Group(opts);
-    PaperItem.call(this,item);
+    PaperItem.call(this, item);
   }
 
-  Group.prototype = Object.create(PaperItem.prototype,{});
+  Group.prototype = Object.create(PaperItem.prototype, {});
   Group.constructor = Group;
 
-  var Icon = function(paperScope,opts){
+  var Icon = function (paperScope, opts) {
     this.paperScope = paperScope;
     var item = new paperScope.Raster(opts);
-    PaperItem.call(this,item);
-    if(opts && opts.onLoad){
+    PaperItem.call(this, item);
+    if (opts && opts.onLoad) {
       this.item.onLoad = opts.onLoad;
     }
   };
@@ -36928,55 +36916,55 @@ return /******/ (function(modules) { // webpackBootstrap
   Icon.constructor = Icon;
 
 
-  function PointText(paperScope,opts) {
+  function PointText(paperScope, opts) {
     var text = new paperScope.PointText(opts);
-    PaperItem.call(this,text);
+    PaperItem.call(this, text);
   }
 
   PointText.prototype = Object.create(PaperItem.prototype);
 
-  PointText.prototype.resize = function(newSize){
+  PointText.prototype.resize = function (newSize) {
     this.item.fontSize = newSize;
   };
 
   PointText.constructor = PointText;
 
-  function PointTextIcon(paperScope,opts){
+  function PointTextIcon(paperScope, opts) {
     this.paperScope = paperScope;
     opts.justification = 'center';
     opts.font = 'FontAwesome';
     this.content = opts.content;
-    PointText.call(this,paperScope,opts);
+    PointText.call(this, paperScope, opts);
 
-    this.rasterMask.addData('self',this);
+    this.rasterMask.addData('self', this);
   }
 
   PointTextIcon.prototype = Object.create(PointText.prototype, {});
 
-  PointTextIcon.prototype.setPosition = function(point){
+  PointTextIcon.prototype.setPosition = function (point) {
     this.rasterMask.setPosition(point);
-    PointText.prototype.setPosition.call(this,point);
+    PointText.prototype.setPosition.call(this, point);
   };
 
-  PointTextIcon.prototype.rotate = function(angle,pivot){
-    this.rasterMask.rotate(angle,pivot);
-    PointText.prototype.rotate.call(this,angle,pivot);
+  PointTextIcon.prototype.rotate = function (angle, pivot) {
+    this.rasterMask.rotate(angle, pivot);
+    PointText.prototype.rotate.call(this, angle, pivot);
   };
   PointTextIcon.prototype.translateByPoint = function (point) {
     this.rasterMask.translateByPoint(point);
-    PointText.prototype.translateByPoint.call(this,point);
+    PointText.prototype.translateByPoint.call(this, point);
   };
-  PointTextIcon.prototype.translateByXY = function (x,y){
-    this.rasterMask.translateByXY(x,y);
-    PointText.prototype.translateByXY.call(this,x,y);
+  PointTextIcon.prototype.translateByXY = function (x, y) {
+    this.rasterMask.translateByXY(x, y);
+    PointText.prototype.translateByXY.call(this, x, y);
   };
   PointTextIcon.prototype.remove = function () {
     this.rasterMask.remove();
     PointText.prototype.remove.call(this);
   };
   PointTextIcon.prototype.resize = function (size) {
-    this.rasterMask.resize(new this.paperScope.Size(size,size));
-    PointText.prototype.resize.call(this,size);
+    this.rasterMask.resize(new this.paperScope.Size(size, size));
+    PointText.prototype.resize.call(this, size);
   };
 
   PointTextIcon.prototype.getMask = function () {
@@ -36985,16 +36973,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
   PointTextIcon.prototype.constructor = PointTextIcon;
 
-  function DeleteActionIcon(paperScope,opts){
+  function DeleteActionIcon(paperScope, opts) {
     this.paperScope = paperScope;
     opts.fillColor = opts.fillColor || 'black';
     opts.fontSize = opts.size || (24 * 1 / paperScope.view.zoom);
     opts.content = '\uf014';
-    this.rasterMask = new Icon(paperScope,{
-      name: opts.name.replace('delete','Delete_mask'),
-      size: new paperScope.Size(opts.fontSize ,opts.fontSize)
+    this.rasterMask = new Icon(paperScope, {
+      name: opts.name.replace('delete', 'Delete_mask'),
+      size: new paperScope.Size(opts.fontSize, opts.fontSize)
     });
-    PointTextIcon.call(this,paperScope,opts);
+    PointTextIcon.call(this, paperScope, opts);
   }
 
   DeleteActionIcon.prototype = Object.create(PointTextIcon.prototype, {});
@@ -37006,17 +36994,17 @@ return /******/ (function(modules) { // webpackBootstrap
     };
   };
 
-  function RotationIcon(paperScope,opts){
+  function RotationIcon(paperScope, opts) {
     this.paperScope = paperScope;
     opts.justification = 'center';
     opts.fillColor = opts.fillColor || 'black';
     opts.fontSize = opts.size || (16 * 1 / paperScope.view.zoom);
     opts.content = '\uf01e';
-    this.rasterMask = new Icon(paperScope,{
-      name: opts.name.replace('rotation','Rotation_mask'),
-      size: new paperScope.Size(opts.fontSize ,opts.fontSize)
+    this.rasterMask = new Icon(paperScope, {
+      name: opts.name.replace('rotation', 'Rotation_mask'),
+      size: new paperScope.Size(opts.fontSize, opts.fontSize)
     });
-    PointTextIcon.call(this,paperScope,opts);
+    PointTextIcon.call(this, paperScope, opts);
   }
 
   RotationIcon.prototype = Object.create(PointTextIcon.prototype, {});
@@ -37029,21 +37017,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
   $.AnnotationUtils.prototype = {
-    Icon:Icon,
-    PointText:PointText,
-    DeleteActionIcon:DeleteActionIcon,
-    RotationIcon:RotationIcon,
-    Group:Group
+    Icon: Icon,
+    PointText: PointText,
+    DeleteActionIcon: DeleteActionIcon,
+    RotationIcon: RotationIcon,
+    Group: Group
   };
-
 }(Mirador));
-(function($) {
 
-  $.AnnotationTooltip = function(options) {
+(function ($) {
+  $.AnnotationTooltip = function (options) {
     jQuery.extend(this, {
       targetElement: null,
       annotations: [],
-      windowId: "",
+      windowId: '',
       eventEmitter: null
     }, options);
 
@@ -37052,7 +37039,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   $.AnnotationTooltip.prototype = {
 
-    init: function() {
+    init: function () {
       this.editor = $[this.state.currentConfig.annotationBodyEditor.module];
       this.editorOptions = this.state.currentConfig.annotationBodyEditor.options;
 
@@ -37069,13 +37056,13 @@ return /******/ (function(modules) { // webpackBootstrap
      *   onCancel: () => void
      * }
      */
-    showEditor: function(params) {
+    showEditor: function (params) {
       var _this = this;
       if (_this.activeEditor) { return; }
 
       var editorContainer = _this.editorTemplate({
-        id : jQuery.isEmptyObject(params.annotation) ? "" : params.annotation['@id'],
-        windowId : _this.windowId
+        id: jQuery.isEmptyObject(params.annotation) ? '' : params.annotation['@id'],
+        windowId: _this.windowId
       });
       var selector = '#annotation-editor-' + _this.windowId;
 
@@ -37106,30 +37093,29 @@ return /******/ (function(modules) { // webpackBootstrap
           event: false
         },
         events: {
-          render: function(event, api) {
+          render: function (event, api) {
             _this.eventEmitter.publish('disableTooltips.' + _this.windowId);
 
             api.elements.tooltip.draggable();
 
-            jQuery(selector).on("submit", function(event) {
+            jQuery(selector).on('submit', function (event) {
               event.preventDefault();
               jQuery(selector + ' a.save').click();
             });
 
-            jQuery(selector + ' a.cancel').on("click", function(event) {
+            jQuery(selector + ' a.cancel').on('click', function (event) {
               event.preventDefault();
 
-              var cancelCallback = function(){
+              var cancelCallback = function () {
                 api.destroy();
               };
 
-              _this.eventEmitter.publish('onAnnotationCreatedCanceled.'+_this.windowId,[cancelCallback,!_this.activeEditor.isDirty()]);
-
+              _this.eventEmitter.publish('onAnnotationCreatedCanceled.' + _this.windowId, [cancelCallback, !_this.activeEditor.isDirty()]);
             });
 
-            jQuery(selector + ' a.save').on("click", function(event) {
+            jQuery(selector + ' a.save').on('click', function (event) {
               event.preventDefault();
-              if(!params.onSaveClickCheck()){
+              if (!params.onSaveClickCheck()) {
                 return;
               }
               var annotation = _this.activeEditor.createAnnotation();
@@ -37161,7 +37147,7 @@ return /******/ (function(modules) { // webpackBootstrap
      *   onAnnotationSaved: (annotation) => void
      * }
      */
-    initializeViewerUpgradableToEditor: function(params) {
+    initializeViewerUpgradableToEditor: function (params) {
       var _this = this;
       _this.activeEditorTip = jQuery(_this.targetElement).qtip({
         overwrite: true,
@@ -37192,11 +37178,11 @@ return /******/ (function(modules) { // webpackBootstrap
           event: false
         },
         events: {
-          show: function(event, api) {
+          show: function (event, api) {
             if (params.onTooltipShown) { params.onTooltipShown(event, api); }
             api.cache.hidden = false;
           },
-          hidden: function(event, api) {
+          hidden: function (event, api) {
             if (params.onTooltipHidden) { params.onTooltipHidden(event, api); }
             _this.removeAllEvents(api, params);
             api.cache.hidden = true;
@@ -37215,107 +37201,106 @@ return /******/ (function(modules) { // webpackBootstrap
       api.cache.params = params;
     },
 
-    removeAllEvents: function(api, viewerParams) {
+    removeAllEvents: function (api, viewerParams) {
       var _this = this;
       var editorSelector = '#annotation-editor-' + _this.windowId;
       var viewerSelector = '#annotation-viewer-' + _this.windowId;
-      jQuery(viewerSelector + ' a.delete').off("click");
-      jQuery(viewerSelector + ' a.edit').off("click");
-      jQuery(editorSelector + ' a.save').off("click");
-      jQuery(editorSelector + ' a.cancel').off("click");
+      jQuery(viewerSelector + ' a.delete').off('click');
+      jQuery(viewerSelector + ' a.edit').off('click');
+      jQuery(editorSelector + ' a.save').off('click');
+      jQuery(editorSelector + ' a.cancel').off('click');
     },
 
-    addViewerEvents: function(api, viewerParams) {
+    addViewerEvents: function (api, viewerParams) {
       var _this = this;
       var selector = '#annotation-viewer-' + _this.windowId;
 
-      jQuery(selector + ' a.delete').on("click", function(event) {
+      jQuery(selector + ' a.delete').on('click', function (event) {
         event.preventDefault();
         var elem = this;
         new $.DialogBuilder(viewerParams.container).dialog({
           message: i18next.t('deleteAnnotation'),
           closeButton: false,
           buttons: {
-            'no': {
+            no: {
               label: i18next.t('no'),
               className: 'btn-default',
-              callback: function() {
-                return;
+              callback: function () {
+
               }
             },
-            'yes': {
+            yes: {
               label: i18next.t('yes'),
               className: 'btn-primary',
-              callback: function() {
+              callback: function () {
                 var display = jQuery(elem).parents('.annotation-display');
                 var id = display.attr('data-anno-id');
-                var callback = function(){
+                var callback = function () {
                   _this.removeAllEvents();
                   api.hide();
                   display.remove();
                 };
 
-                _this.eventEmitter.publish('onAnnotationDeleted.' + _this.windowId, [id,callback]);
+                _this.eventEmitter.publish('onAnnotationDeleted.' + _this.windowId, [id, callback]);
               }
             }
           }
         });
       });
 
-      jQuery(selector + ' a.edit').on("click", function(event) {
+      jQuery(selector + ' a.edit').on('click', function (event) {
         event.preventDefault();
         var display = jQuery(this).parents('.annotation-display');
         var id = display.attr('data-anno-id');
         var oaAnno = viewerParams.getAnnoFromRegion(id)[0];
         // Don't show built in editor if external is available
         if (!_this.state.getStateProperty('availableExternalCommentsPanel')) {
-           _this.freezeQtip(api, oaAnno, viewerParams);
-           _this.removeAllEvents(api, viewerParams);
-           _this.addEditorEvents(api, viewerParams);
+          _this.freezeQtip(api, oaAnno, viewerParams);
+          _this.removeAllEvents(api, viewerParams);
+          _this.addEditorEvents(api, viewerParams);
         } else {
-          _this.eventEmitter.publish('annotationInEditMode.' + _this.windowId,[oaAnno]);
+          _this.eventEmitter.publish('annotationInEditMode.' + _this.windowId, [oaAnno]);
           _this.removeAllEvents(viewerParams);
           api.destroy();
           jQuery(api.tooltip).remove();
         }
 
         _this.eventEmitter.publish('SET_ANNOTATION_EDITING.' + _this.windowId, {
-          "annotationId" : id,
-          "isEditable" : true,
-          "tooltip" : _this
+          annotationId: id,
+          isEditable: true,
+          tooltip: _this
         });
         _this.eventEmitter.publish('modeChange.' + _this.windowId, 'editingAnnotation');
       });
     },
 
-    addEditorEvents: function(api, viewerParams) {
+    addEditorEvents: function (api, viewerParams) {
       var _this = this;
       var selector = '#annotation-editor-' + _this.windowId;
 
-      jQuery(selector).on("submit", function(event) {
+      jQuery(selector).on('submit', function (event) {
         event.preventDefault();
         jQuery(selector + ' a.save').click();
       });
 
-      jQuery(selector + ' a.save').on("click", function(event) {
+      jQuery(selector + ' a.save').on('click', function (event) {
         event.preventDefault();
         var display = jQuery(this).parents('.annotation-editor');
         var id = display.attr('data-anno-id');
         var oaAnno = viewerParams.getAnnoFromRegion(id)[0];
 
         _this.activeEditor.updateAnnotation(oaAnno);
-        _this.eventEmitter.publish('annotationEditSave.'+_this.windowId,[oaAnno]);
+        _this.eventEmitter.publish('annotationEditSave.' + _this.windowId, [oaAnno]);
       });
 
-      jQuery(selector + ' a.cancel').on("click", function(event) {
+      jQuery(selector + ' a.cancel').on('click', function (event) {
         event.preventDefault();
         var display = jQuery(this).parents('.annotation-editor');
         var id = display.attr('data-anno-id');
         var oaAnno = viewerParams.getAnnoFromRegion(id)[0];
         _this.removeAllEvents();
         _this.unFreezeQtip(api, oaAnno, viewerParams);
-        _this.eventEmitter.publish('annotationEditCancel.' + _this.windowId,[id]);
-
+        _this.eventEmitter.publish('annotationEditCancel.' + _this.windowId, [id]);
       });
     },
 
@@ -37329,11 +37314,9 @@ return /******/ (function(modules) { // webpackBootstrap
      *   shouldDisplayTooltip: (api: QTipAPI) => boolean
      * }
      */
-    showViewer: function(params) {
-      console.log('params', params);
+    showViewer: function (params) {
       var _this = this;
       var api = jQuery(_this.targetElement).qtip('api');
-      console.log('api', api);
       if (!api) { return; }
       if (params.shouldDisplayTooltip && !params.shouldDisplayTooltip(api)) {
         return;
@@ -37366,32 +37349,31 @@ return /******/ (function(modules) { // webpackBootstrap
           api.cache.annotations = params.annotations;
           api.cache.hidden = false;
           _this.removeAllEvents();
-          _this.addViewerEvents(api,api.cache.params);
+          _this.addViewerEvents(api, api.cache.params);
         }
       }
     },
 
-    setTooltipContent: function(annotations) {
+    setTooltipContent: function (annotations) {
       var _this = this;
       var api = jQuery(this.targetElement).qtip('api');
       if (api) {
-        api.set({'content.text': this.getViewerContent(annotations)});
+        api.set({ 'content.text': this.getViewerContent(annotations) });
         _this.eventEmitter.publish('tooltipViewerSet.' + this.windowId);
       }
     },
 
-    getViewerContent: function(annotations) {
+    getViewerContent: function (annotations) {
       var annoText,
         tags = [],
         htmlAnnotations = [],
         id;
 
-      jQuery.each(annotations, function(index, annotation) {
-        console.log('annotations', annotation);
+      jQuery.each(annotations, function (index, annotation) {
         tags = [];
         if (jQuery.isArray(annotation.resource)) {
-          jQuery.each(annotation.resource, function(index, value) {
-            if (value['@type'] === "oa:Tag") {
+          jQuery.each(annotation.resource, function (index, value) {
+            if (value['@type'] === 'oa:Tag') {
               tags.push(value.chars);
             } else {
               annoText = value.chars;
@@ -37400,12 +37382,12 @@ return /******/ (function(modules) { // webpackBootstrap
         } else {
           annoText = annotation.resource.chars;
         }
-        var username = "";
+        var username = '';
         if (annotation.annotatedBy && annotation.annotatedBy.name) {
           username = annotation.annotatedBy.name;
         }
-        //if it is a manifest annotation, don't allow editing or deletion
-        //otherwise, check annotation in endpoint
+        // if it is a manifest annotation, don't allow editing or deletion
+        // otherwise, check annotation in endpoint
         var showUpdate = false;
         if (annotation.endpoint !== 'manifest') {
           showUpdate = annotation.endpoint.userAuthorize('update', annotation);
@@ -37415,52 +37397,52 @@ return /******/ (function(modules) { // webpackBootstrap
           showDelete = annotation.endpoint.userAuthorize('delete', annotation);
         }
         htmlAnnotations.push({
-          annoText : $.sanitizeHtml(annoText),
-          tags : tags,
-          id : annotation['@id'],
-          username : username,
-          showUpdate : showUpdate,
-          showDelete : showDelete
+          annoText: $.sanitizeHtml(annoText),
+          tags: tags,
+          id: annotation['@id'],
+          username: username,
+          showUpdate: showUpdate,
+          showDelete: showDelete
         });
       });
 
       var template = this.viewerTemplate({
-        annotations : htmlAnnotations,
-        windowId : this.windowId
+        annotations: htmlAnnotations,
+        windowId: this.windowId
       });
       return template;
-      //return combination of all of them
+      // return combination of all of them
     },
 
-    freezeQtip: function(api, oaAnno, viewerParams) {
+    freezeQtip: function (api, oaAnno, viewerParams) {
       var _this = this;
       if (this.inEditOrCreateMode) { throw 'AnnotationTooltip already in edit mode'; }
       this.inEditOrCreateMode = true;
       _this.eventEmitter.publish('disableRectTool.' + this.windowId);
       var editorContainer = this.editorTemplate({
-        id: jQuery.isEmptyObject(oaAnno) ? "" : oaAnno['@id'],
+        id: jQuery.isEmptyObject(oaAnno) ? '' : oaAnno['@id'],
         windowId: this.windowId
       });
       api.set({
         'content.text': editorContainer,
         'hide.event': false
       });
-      //add rich text editor
+      // add rich text editor
       this.activeEditor = new this.editor(
         jQuery.extend({}, this.editorOptions, {
           annotation: oaAnno,
           windowId: this.windowId
         }));
-      this.activeEditor.show('form#annotation-editor-'+this.windowId);
+      this.activeEditor.show('form#annotation-editor-' + this.windowId);
       _this.eventEmitter.publish('annotationEditorAvailable.' + this.windowId);
-      jQuery(api.elements.tooltip).removeClass("qtip-viewer");
+      jQuery(api.elements.tooltip).removeClass('qtip-viewer');
       api.elements.tooltip.draggable();
       if (viewerParams.onEnterEditMode) {
         viewerParams.onEnterEditMode(api, oaAnno);
       }
     },
 
-    unFreezeQtip: function(api, oaAnno, viewerParams) {
+    unFreezeQtip: function (api, oaAnno, viewerParams) {
       var _this = this;
       if (!this.inEditOrCreateMode) { throw 'AnnotationTooltip not in edit mode'; }
       this.inEditOrCreateMode = false;
@@ -37469,13 +37451,13 @@ return /******/ (function(modules) { // webpackBootstrap
         'content.text': this.getViewerContent([oaAnno]),
         'hide.event': 'mouseleave'
       }).hide();
-      jQuery(api.elements.tooltip).addClass("qtip-viewer");
+      jQuery(api.elements.tooltip).addClass('qtip-viewer');
       if (viewerParams.onExitEditMode) {
         viewerParams.onExitEditMode(api, oaAnno);
       }
     },
 
-    //when this is being used to edit an existing annotation, insert them into the inputs
+    // when this is being used to edit an existing annotation, insert them into the inputs
     editorTemplate: $.Handlebars.compile([
       '<form id="annotation-editor-{{windowId}}" class="annotation-editor annotation-tooltip" {{#if id}}data-anno-id="{{id}}"{{/if}}>',
       '<div>',
@@ -37493,8 +37475,8 @@ return /******/ (function(modules) { // webpackBootstrap
       '{{#each annotations}}',
       '<div class="annotation-display annotation-tooltip" data-anno-id="{{id}}">',
       '<div class="button-container">',
-        '{{#if showUpdate}}<a href="#edit" class="edit"><i class="fa fa-pencil-square-o fa-fw"></i>{{t "edit"}}</a>{{/if}}',
-        '{{#if showDelete}}<a href="#delete" class="delete"><i class="fa fa-trash-o fa-fw"></i>{{t "delete"}}</a>{{/if}}',
+      '{{#if showUpdate}}<a href="#edit" class="edit"><i class="fa fa-pencil-square-o fa-fw"></i>{{t "edit"}}</a>{{/if}}',
+      '{{#if showDelete}}<a href="#delete" class="delete"><i class="fa fa-trash-o fa-fw"></i>{{t "delete"}}</a>{{/if}}',
       '</div>',
       '<div class="text-viewer">',
       '{{#if username}}<p class="user">{{username}}:</p>{{/if}}',
@@ -37510,8 +37492,8 @@ return /******/ (function(modules) { // webpackBootstrap
       '</div>'
     ].join(''))
   };
-
 }(Mirador));
+
 /*
  * All Endpoints need to have at least the following:
  * annotationsList - current list of OA Annotations
@@ -37528,21 +37510,19 @@ return /******/ (function(modules) { // webpackBootstrap
  * getAnnotationInOA(endpointAnnotation)
  * getAnnotationInEndpoint(oaAnnotation)
  */
-(function($){
-
-  $.CatchEndpoint = function(options) {
-
+(function ($) {
+  $.CatchEndpoint = function (options) {
     jQuery.extend(this, {
-      token:     null,
-      prefix:    null,
-      params:    "",
-      dfd:       null,
-      context_id: "None",
-      collection_id: "None",
-      userid:    "test@mirador.org",
-      username:  "mirador-test",
-      annotationsList: [],        //OA list for Mirador use
-      annotationsListCatch: null,  //internal list for module use
+      token: null,
+      prefix: null,
+      params: '',
+      dfd: null,
+      context_id: 'None',
+      collection_id: 'None',
+      userid: 'test@mirador.org',
+      username: 'mirador-test',
+      annotationsList: [],        // OA list for Mirador use
+      annotationsListCatch: null,  // internal list for module use
       windowID: null,
       eventEmitter: null
     }, options);
@@ -37551,23 +37531,23 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.CatchEndpoint.prototype = {
-    //Set up some options for catch
-    init: function() {
+    // Set up some options for catch
+    init: function () {
       this.catchOptions = {
         user: {
           id: this.userid,
           name: this.username
         },
         permissions: {
-          'read':   [],
-          'update': [this.userid],
-          'delete': [this.userid],
-          'admin':  [this.userid]
+          read: [],
+          update: [this.userid],
+          delete: [this.userid],
+          admin: [this.userid]
         }
       };
     },
 
-    set: function(prop, value, options) {
+    set: function (prop, value, options) {
       if (options) {
         this[options.parent][prop] = value;
       } else {
@@ -37575,105 +37555,105 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    //Search endpoint for all annotations with a given URI
-    search: function(options, successCallback, errorCallback) {
+    // Search endpoint for all annotations with a given URI
+    search: function (options, successCallback, errorCallback) {
       var _this = this;
-      this.annotationsList = []; //clear out current list
+      this.annotationsList = []; // clear out current list
 
       jQuery.ajax({
-        url: this.prefix+"/search" + this.params,
+        url: this.prefix + '/search' + this.params,
         type: 'GET',
         dataType: 'json',
         headers: {
-          "x-annotator-auth-token": this.token
+          'x-annotator-auth-token': this.token
         },
         data: {
           uri: options.uri,
-          userid : options.userid ? options.userid : undefined,
-          username : options.username ? options.username : undefined,
-          text : options.text ? options.text : undefined,
-          tag : options.tag ? options.tag : undefined,
-          parentid : options.parentid ? options.parentid : undefined,
+          userid: options.userid ? options.userid : undefined,
+          username: options.username ? options.username : undefined,
+          text: options.text ? options.text : undefined,
+          tag: options.tag ? options.tag : undefined,
+          parentid: options.parentid ? options.parentid : undefined,
           contextId: _this.context_id,
           collectionId: _this.collection_id,
-          media: options.media ? options.media : "image",
+          media: options.media ? options.media : 'image',
           limit: options.limit ? options.limit : -1
         },
 
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          //check if a function has been passed in, otherwise, treat it as a normal search
-          if (typeof successCallback === "function") {
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          // check if a function has been passed in, otherwise, treat it as a normal search
+          if (typeof successCallback === 'function') {
             successCallback(data);
           } else {
             _this.annotationsListCatch = data.rows;
-            jQuery.each(_this.annotationsListCatch, function(index, value) {
+            jQuery.each(_this.annotationsListCatch, function (index, value) {
               _this.annotationsList.push(_this.getAnnotationInOA(value));
             });
             _this.dfd.resolve(true);
-            _this.eventEmitter.publish('catchAnnotationsLoaded.'+_this.windowID, _this.annotationsListCatch);
+            _this.eventEmitter.publish('catchAnnotationsLoaded.' + _this.windowID, _this.annotationsListCatch);
           }
         },
-        error: function() {
-          if (typeof errorCallback === "function") {
+        error: function () {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           } else {
-            console.log("There was an error searching this endpoint");
+            console.log('There was an error searching this endpoint');
           }
         }
 
       });
     },
 
-    deleteAnnotation: function(annotationID, successCallback, errorCallback) {
+    deleteAnnotation: function (annotationID, successCallback, errorCallback) {
       var _this = this;
       jQuery.ajax({
-       url: this.prefix+"/destroy/"+annotationID + this.params,
-       type: 'DELETE',
-       dataType: 'json',
-       headers: {
-         "x-annotator-auth-token": this.token
-       },
-       contentType: "application/json; charset=utf-8",
-       success: function(data) {
-        if (typeof successCallback === "function") {
-          successCallback();
+        url: this.prefix + '/destroy/' + annotationID + this.params,
+        type: 'DELETE',
+        dataType: 'json',
+        headers: {
+          'x-annotator-auth-token': this.token
+        },
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          if (typeof successCallback === 'function') {
+            successCallback();
+          }
+          _this.eventEmitter.publish('catchAnnotationDeleted.' + _this.windowID, annotationID);
+        },
+        error: function () {
+          if (typeof errorCallback === 'function') {
+            errorCallback();
+          }
         }
-        _this.eventEmitter.publish('catchAnnotationDeleted.'+_this.windowID, annotationID);
-      },
-      error: function() {
-        if (typeof errorCallback === "function") {
-          errorCallback();
-        }
-      }
 
-    });
+      });
     },
 
-    update: function(oaAnnotation, successCallback, errorCallback) {
+    update: function (oaAnnotation, successCallback, errorCallback) {
       var annotations = this.getAnnotationInEndpoint(oaAnnotation),
-      _this = this;
+        _this = this;
 
-      annotations.forEach(function(annotation) {
+      annotations.forEach(function (annotation) {
         var annotationID = annotation.id;
 
         jQuery.ajax({
-          url: _this.prefix+"/update/"+annotationID + _this.params,
+          url: _this.prefix + '/update/' + annotationID + _this.params,
           type: 'POST',
           dataType: 'json',
           headers: {
-            "x-annotator-auth-token": _this.token
+            'x-annotator-auth-token': _this.token
           },
           data: JSON.stringify(annotation),
-          contentType: "application/json; charset=utf-8",
-          success: function(data) {
-            if (typeof successCallback === "function") {
+          contentType: 'application/json; charset=utf-8',
+          success: function (data) {
+            if (typeof successCallback === 'function') {
               successCallback(_this.getAnnotationInOA(data));
             }
-            _this.eventEmitter.publish('catchAnnotationUpdated.'+_this.windowID, annotation);
+            _this.eventEmitter.publish('catchAnnotationUpdated.' + _this.windowID, annotation);
           },
-          error: function() {
-            if (typeof errorCallback === "function") {
+          error: function () {
+            if (typeof errorCallback === 'function') {
               errorCallback();
             }
           }
@@ -37681,166 +37661,169 @@ return /******/ (function(modules) { // webpackBootstrap
       });
     },
 
-    //takes OA Annotation, gets Endpoint Annotation, and saves
-    //if successful, MUST return the OA rendering of the annotation
-    create: function(oaAnnotation, successCallback, errorCallback) {
+    // takes OA Annotation, gets Endpoint Annotation, and saves
+    // if successful, MUST return the OA rendering of the annotation
+    create: function (oaAnnotation, successCallback, errorCallback) {
       var _this = this,
-      annotations = this.getAnnotationInEndpoint(oaAnnotation);
-      annotations.forEach(function(annotation) {
+        annotations = this.getAnnotationInEndpoint(oaAnnotation);
+      annotations.forEach(function (annotation) {
         _this.createCatchAnnotation(annotation, successCallback, errorCallback);
       });
     },
 
-    createCatchAnnotation: function(catchAnnotation, successCallback, errorCallback) {
+    createCatchAnnotation: function (catchAnnotation, successCallback, errorCallback) {
       var _this = this;
 
       jQuery.ajax({
-        url: this.prefix+"/create" + this.params,
+        url: this.prefix + '/create' + this.params,
         type: 'POST',
         dataType: 'json',
         headers: {
-          "x-annotator-auth-token": this.token
+          'x-annotator-auth-token': this.token
         },
         data: JSON.stringify(catchAnnotation),
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          if (typeof successCallback === "function") {
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          if (typeof successCallback === 'function') {
             successCallback(_this.getAnnotationInOA(data));
           }
-          _this.eventEmitter.publish('catchAnnotationCreated.'+_this.windowID, data);
+          _this.eventEmitter.publish('catchAnnotationCreated.' + _this.windowID, data);
         },
-        error: function() {
-          if (typeof errorCallback === "function") {
+        error: function () {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
 
-    userAuthorize: function(action, annotation) {
-      var token, tokens, _i, _len;
-      //if this is an instructor, they have access to student annotations
-      if (this.roles && (this.roles.indexOf('Instructor') !== -1 || this.roles.indexOf('Administrator') !== -1)){
-          return true;
+    userAuthorize: function (action, annotation) {
+      var token,
+        tokens,
+        _i,
+        _len;
+      // if this is an instructor, they have access to student annotations
+      if (this.roles && (this.roles.indexOf('Instructor') !== -1 || this.roles.indexOf('Administrator') !== -1)) {
+        return true;
       }
-      //otherwise check annotation permissions
+      // otherwise check annotation permissions
       if (annotation.permissions) {
         var permissionUserIds = annotation.permissions[action] || [];
-        //if no userids set for a permission, it is open to everyone
+        // if no userids set for a permission, it is open to everyone
         if (permissionUserIds.length === 0) {
           return true;
         }
-        //otherwise compare userid of annotation to current userid
+        // otherwise compare userid of annotation to current userid
         if (permissionUserIds.indexOf(this.userid) !== -1) {
           return true;
         }
         return false;
       } else if (annotation.user) {
-        //if no permissions, just check userids
+        // if no permissions, just check userids
         return this.userid === annotation.user.userid;
       }
-      //otherwise, just return true
+      // otherwise, just return true
       return true;
     },
 
-    //Convert Endpoint annotation to OA
-    getAnnotationInOA: function(annotation) {
+    // Convert Endpoint annotation to OA
+    getAnnotationInOA: function (annotation) {
       var id,
-      motivation = [],
-      resource = [],
-      on,
-      annotatedBy;
-      //convert annotation to OA format
+        motivation = [],
+        resource = [],
+        on,
+        annotatedBy;
+      // convert annotation to OA format
 
-      id = annotation.id;  //need to make URI
+      id = annotation.id;  // need to make URI
 
       if (annotation.tags.length > 0) {
-        motivation.push("oa:tagging");
-        jQuery.each(annotation.tags, function(index, value) {
+        motivation.push('oa:tagging');
+        jQuery.each(annotation.tags, function (index, value) {
           resource.push({
-            "@type":"oa:Tag",
-            "chars":value
+            '@type': 'oa:Tag',
+            chars: value
           });
         });
       }
-      if (annotation.parent && annotation.parent !== "0") {
-        motivation.push("oa:replying");
-        on = annotation.parent;  //need to make URI
+      if (annotation.parent && annotation.parent !== '0') {
+        motivation.push('oa:replying');
+        on = annotation.parent;  // need to make URI
       } else {
         var value;
-        motivation.push("oa:commenting");
+        motivation.push('oa:commenting');
         if (jQuery.isArray(annotation.rangePosition)) {
-          //dual strategy
-          on  = annotation.rangePosition;
+          // dual strategy
+          on = annotation.rangePosition;
         } else if (typeof annotation.rangePosition === 'object') {
-          //legacy strategy
-          value = "xywh="+annotation.rangePosition.x+","+annotation.rangePosition.y+","+annotation.rangePosition.width+","+annotation.rangePosition.height;
-          on = { "@type" : "oa:SpecificResource",
-            "full" : annotation.uri,
-            "selector": {
-                "@type": "oa:FragmentSelector",
-                "value": value
+          // legacy strategy
+          value = 'xywh=' + annotation.rangePosition.x + ',' + annotation.rangePosition.y + ',' + annotation.rangePosition.width + ',' + annotation.rangePosition.height;
+          on = { '@type': 'oa:SpecificResource',
+            full: annotation.uri,
+            selector: {
+              '@type': 'oa:FragmentSelector',
+              value: value
             }
           };
         } else {
-          //2.1 strategy
+          // 2.1 strategy
           value = annotation.rangePosition;
-          on = { "@type" : "oa:SpecificResource",
-            "full" : annotation.uri,
-            "selector": {
-              "@type": "oa:SvgSelector",
-              "value": value
+          on = { '@type': 'oa:SpecificResource',
+            full: annotation.uri,
+            selector: {
+              '@type': 'oa:SvgSelector',
+              value: value
             }
           };
         }
       }
-      resource.push( {
-        "@type" : "dctypes:Text",
-        "format" : "text/html",
-        "chars" : annotation.text
+      resource.push({
+        '@type': 'dctypes:Text',
+        format: 'text/html',
+        chars: annotation.text
       });
 
-      annotatedBy = { "@id" : annotation.user.id,
-        "name" : annotation.user.name};
+      annotatedBy = { '@id': annotation.user.id,
+        name: annotation.user.name };
 
-        var oaAnnotation = {
-          "@context" : "http://iiif.io/api/presentation/2/context.json",
-          "@id" : String(id),
-          "@type" : "oa:Annotation",
-          "motivation" : motivation,
-          "resource" : resource,
-          "on" : on,
-          "annotatedBy" : annotatedBy,
-          "annotatedAt" : annotation.created,
-          "serializedAt" : annotation.updated,
-          "permissions" : annotation.permissions,
-          "endpoint" : this
-        };
-        return oaAnnotation;
+      var oaAnnotation = {
+        '@context': 'http://iiif.io/api/presentation/2/context.json',
+        '@id': String(id),
+        '@type': 'oa:Annotation',
+        motivation: motivation,
+        resource: resource,
+        on: on,
+        annotatedBy: annotatedBy,
+        annotatedAt: annotation.created,
+        serializedAt: annotation.updated,
+        permissions: annotation.permissions,
+        endpoint: this
+      };
+      return oaAnnotation;
     },
 
     // Converts OA Annotation to endpoint format
-    getAnnotationInEndpoint: function(oaAnnotation) {
+    getAnnotationInEndpoint: function (oaAnnotation) {
       var _this = this,
-      uris = [];
-      oaAnnotation.on.forEach(function(value) {
+        uris = [];
+      oaAnnotation.on.forEach(function (value) {
         if (jQuery.inArray(value.full, uris) === -1) {
           uris.push(value.full);
         }
       });
       var annotations = [];
 
-      uris.forEach(function(uri) {
+      uris.forEach(function (uri) {
         var annotation = {},
-        tags = [],
-        text;
+          tags = [],
+          text;
 
-        if (oaAnnotation["@id"]) {
-          annotation.id = oaAnnotation["@id"];
+        if (oaAnnotation['@id']) {
+          annotation.id = oaAnnotation['@id'];
         }
 
-        annotation.media = "image";
-        jQuery.each(oaAnnotation.resource, function(index, value) {
+        annotation.media = 'image';
+        jQuery.each(oaAnnotation.resource, function (index, value) {
           if (value['@type'] === 'oa:Tag') {
             tags.push(value.chars);
           } else if (value['@type'] === 'dctypes:Text') {
@@ -37856,27 +37839,27 @@ return /******/ (function(modules) { // webpackBootstrap
         annotation.rangePosition = oaAnnotation.on;
 
         var coordsArray = [];
-        oaAnnotation.on.forEach(function(value) {
+        oaAnnotation.on.forEach(function (value) {
           var xywh = value.selector.default.value.split('=')[1].split(',');
-          coordsArray.push(xywh.map(function(i) {return parseInt(i);}));
+          coordsArray.push(xywh.map(function (i) { return parseInt(i); }));
         });
-        var left = coordsArray.map(function(i) {return i[0];});
-        var top = coordsArray.map(function(i) {return i[1];});
-        var right = coordsArray.map(function(i) {return i[0] + i[2];});
-        var bottom = coordsArray.map(function(i) {return i[1] + i[3];});
+        var left = coordsArray.map(function (i) { return i[0]; });
+        var top = coordsArray.map(function (i) { return i[1]; });
+        var right = coordsArray.map(function (i) { return i[0] + i[2]; });
+        var bottom = coordsArray.map(function (i) { return i[1] + i[3]; });
 
         var newRect = {
-          "x" : Math.min.apply(null, left),
-          "y" : Math.min.apply(null, top),
-          "width" : Math.max.apply(null, right) - Math.min.apply(null, left),
-          "height" : Math.max.apply(null, bottom) - Math.min.apply(null, top)
+          x: Math.min.apply(null, left),
+          y: Math.min.apply(null, top),
+          width: Math.max.apply(null, right) - Math.min.apply(null, left),
+          height: Math.max.apply(null, bottom) - Math.min.apply(null, top)
         };
 
         var canvas = _this.imagesList[$.getImageIndexById(_this.imagesList, uri)];
         var imageUrl = $.getThumbnailForCanvas(canvas, 300);
-        imageUrl = imageUrl.replace('full', newRect.x+','+newRect.y+','+newRect.width+','+newRect.height);
+        imageUrl = imageUrl.replace('full', newRect.x + ',' + newRect.y + ',' + newRect.width + ',' + newRect.height);
         annotation.thumb = imageUrl;
-        annotation.bounds = {"x":newRect.x, "y":newRect.y, "width":newRect.width, "height":newRect.height};
+        annotation.bounds = { x: newRect.x, y: newRect.y, width: newRect.width, height: newRect.height };
 
         annotation.updated = new Date().toISOString();
         if (oaAnnotation.annotatedAt) {
@@ -37895,13 +37878,12 @@ return /******/ (function(modules) { // webpackBootstrap
         annotation.permissions = _this.catchOptions.permissions;
         annotation.archived = false;
         annotation.ranges = [];
-        annotation.parent = "0";
+        annotation.parent = '0';
         annotations.push(annotation);
       });
       return annotations;
     }
   };
-
 }(Mirador));
 
 /*
@@ -37920,129 +37902,127 @@ return /******/ (function(modules) { // webpackBootstrap
  * getAnnotationInOA(endpointAnnotation)
  * getAnnotationInEndpoint(oaAnnotation)
  */
-(function($){
-
-  $.Endpoint = function(options) {
-
+(function ($) {
+  $.Endpoint = function (options) {
     jQuery.extend(this, {
-      dfd:             null,
-      annotationsList: [],        //OA list for Mirador use
-      windowID:        null,
-      eventEmitter:    null
+      dfd: null,
+      annotationsList: [],        // OA list for Mirador use
+      windowID: null,
+      eventEmitter: null
     }, options);
 
     this.init();
   };
 
   $.Endpoint.prototype = {
-    init: function() {
-      //whatever initialization your endpoint needs       
+    init: function () {
+      // whatever initialization your endpoint needs
     },
 
-    //Search endpoint for all annotations with a given URI in options
-    search: function(options, successCallback, errorCallback) {
+    // Search endpoint for all annotations with a given URI in options
+    search: function (options, successCallback, errorCallback) {
       var _this = this;
 
-      //use options.uri
+      // use options.uri
       jQuery.ajax({
         url: '',
         type: 'GET',
         dataType: 'json',
         headers: { },
         data: { },
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          //check if a function has been passed in, otherwise, treat it as a normal search
-          if (typeof successCallback === "function") {
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          // check if a function has been passed in, otherwise, treat it as a normal search
+          if (typeof successCallback === 'function') {
             successCallback(data);
           } else {
-            jQuery.each(data, function(index, value) {
+            jQuery.each(data, function (index, value) {
               _this.annotationsList.push(_this.getAnnotationInOA(value));
             });
             _this.dfd.resolve(true);
           }
         },
-        error: function() {
-          if (typeof errorCallback === "function") {
+        error: function () {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
-    
-    //Delete an annotation by endpoint identifier
-    deleteAnnotation: function(annotationID, successCallback, errorCallback) {
-      var _this = this;        
+
+    // Delete an annotation by endpoint identifier
+    deleteAnnotation: function (annotationID, successCallback, errorCallback) {
+      var _this = this;
       jQuery.ajax({
         url: '',
         type: 'DELETE',
         dataType: 'json',
         headers: { },
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          if (typeof successCallback === "function") {
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          if (typeof successCallback === 'function') {
             successCallback();
           }
         },
-        error: function() {
-          if (typeof errorCallback === "function") {
-            errorCallback();
-          }
-        }
-      });
-    },
-    
-    //Update an annotation given the OA version
-    update: function(oaAnnotation, successCallback, errorCallback) {
-      var annotation = this.getAnnotationInEndpoint(oaAnnotation),
-      _this = this;
-      
-      jQuery.ajax({
-        url: '',
-        type: 'POST',
-        dataType: 'json',
-        headers: { },
-        data: '',
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          if (typeof successCallback === "function") {
-            successCallback();
-          }
-        },
-        error: function() {
-          if (typeof errorCallback === "function") {
+        error: function () {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
 
-    //takes OA Annotation, gets Endpoint Annotation, and saves
-    //if successful, MUST return the OA rendering of the annotation
-    create: function(oaAnnotation, successCallback, errorCallback) {
-      var _this = this;
-      
+    // Update an annotation given the OA version
+    update: function (oaAnnotation, successCallback, errorCallback) {
+      var annotation = this.getAnnotationInEndpoint(oaAnnotation),
+        _this = this;
+
       jQuery.ajax({
         url: '',
         type: 'POST',
         dataType: 'json',
         headers: { },
         data: '',
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          if (typeof successCallback === "function") {
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          if (typeof successCallback === 'function') {
+            successCallback();
+          }
+        },
+        error: function () {
+          if (typeof errorCallback === 'function') {
+            errorCallback();
+          }
+        }
+      });
+    },
+
+    // takes OA Annotation, gets Endpoint Annotation, and saves
+    // if successful, MUST return the OA rendering of the annotation
+    create: function (oaAnnotation, successCallback, errorCallback) {
+      var _this = this;
+
+      jQuery.ajax({
+        url: '',
+        type: 'POST',
+        dataType: 'json',
+        headers: { },
+        data: '',
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+          if (typeof successCallback === 'function') {
             successCallback(_this.getAnnotationInOA(data));
           }
         },
-        error: function() {
-          if (typeof errorCallback === "function") {
+        error: function () {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
 
-    set: function(prop, value, options) {
+    set: function (prop, value, options) {
       if (options) {
         this[options.parent][prop] = value;
       } else {
@@ -38050,58 +38030,56 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    //Convert Endpoint annotation to OA
-    getAnnotationInOA: function(annotation) {
+    // Convert Endpoint annotation to OA
+    getAnnotationInOA: function (annotation) {
     },
 
     // Converts OA Annotation to endpoint format
-    getAnnotationInEndpoint: function(oaAnnotation) {
+    getAnnotationInEndpoint: function (oaAnnotation) {
     }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.LegacyOpenAnnotationStrategy = function(options) {
+(function ($) {
+  $.LegacyOpenAnnotationStrategy = function (options) {
     jQuery.extend(this, {
-      
+
     }, options);
     this.init();
   };
-  
+
   $.LegacyOpenAnnotationStrategy.prototype = {
-    init: function() {
-      
+    init: function () {
+
     },
-    
+
     // Check whether an annotation is supported under this formatting strategy
-    isThisType: function(annotation) {
+    isThisType: function (annotation) {
       if (annotation.on && typeof annotation.on === 'string') {
         return annotation.on.indexOf('xywh=') !== -1;
       }
       return false;
     },
-    
+
     // Build the selector into a bare annotation, given a Window and an OsdSvgOverlay
-    buildAnnotation: function(options) {
+    buildAnnotation: function (options) {
       var oaAnno = options.annotation,
-          win = options.window,
-          overlay = options.overlay,
-          bounds = overlay.draftPaths[0].bounds;
-      oaAnno.on = win.canvasID + "#xywh=" + Math.round(bounds.x) + "," + Math.round(bounds.y) + "," + Math.round(bounds.width) + "," + Math.round(bounds.height);
+        win = options.window,
+        overlay = options.overlay,
+        bounds = overlay.draftPaths[0].bounds;
+      oaAnno.on = win.canvasID + '#xywh=' + Math.round(bounds.x) + ',' + Math.round(bounds.y) + ',' + Math.round(bounds.width) + ',' + Math.round(bounds.height);
       return oaAnno;
     },
-    
+
     // Parse the annotation into the OsdRegionDrawTool instance (only if its format is supported by this strategy)
-    parseRegion: function(annotation, osdRegionDrawTool) {
+    parseRegion: function (annotation, osdRegionDrawTool) {
       if (this.isThisType(annotation)) {
         return osdRegionDrawTool.parseRectangle(annotation.on, annotation);
       }
-    },
+    }
   };
-  
 }(Mirador));
+
 /*
  * All Endpoints need to have at least the following:
  * annotationsList - current list of OA Annotations
@@ -38118,14 +38096,12 @@ return /******/ (function(modules) { // webpackBootstrap
  * getAnnotationInOA(endpointAnnotation)
  * getAnnotationInEndpoint(oaAnnotation)
  */
-(function($){
-
-  $.LocalStorageEndpoint = function(options) {
-
+(function ($) {
+  $.LocalStorageEndpoint = function (options) {
     jQuery.extend(this, {
-      token:     null,
-      prefix:    null,
-      dfd:       jQuery.Deferred(),
+      token: null,
+      prefix: null,
+      dfd: null,
       annotationsList: [],
       windowID: null,
       eventEmitter: null
@@ -38135,11 +38111,11 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.LocalStorageEndpoint.prototype = {
-    //Set up some options for catch
-    init: function() {
+    // Set up some options for catch
+    init: function () {
     },
 
-    set: function(prop, value, options) {
+    set: function (prop, value, options) {
       if (options) {
         this[options.parent][prop] = value;
       } else {
@@ -38147,204 +38123,201 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    //Search endpoint for all annotations with a given URI
-    search: function(options, successCallback, errorCallback) {
+    // Search endpoint for all annotations with a given URI
+    search: function (options, successCallback, errorCallback) {
       var _this = this;
-      this.annotationsList = []; //clear out current list
+      this.annotationsList = []; // clear out current list
 
       try {
         _this.annotationsList = _this.getAnnotationList(options.uri);
-        jQuery.each(_this.annotationsList, function(index, value) {
+        jQuery.each(_this.annotationsList, function (index, value) {
           value.endpoint = _this;
         });
-        if (typeof successCallback === "function") {
+        if (typeof successCallback === 'function') {
           successCallback(_this.annotationsList);
         } else {
           _this.dfd.resolve(true);
         }
       } catch (e) {
-        if (typeof errorCallback === "function") {
+        if (typeof errorCallback === 'function') {
           errorCallback();
         } else {
-          console.log("There was an error searching this endpoint");
+          console.log('There was an error searching this endpoint');
         }
       }
     },
 
-    deleteAnnotation: function(annotationID, successCallback, errorCallback) {
+    deleteAnnotation: function (annotationID, successCallback, errorCallback) {
       var _this = this,
-      keys = [];
-      jQuery.each(_this.annotationsList[0].on, function(index, value) {
+        keys = [];
+      jQuery.each(_this.annotationsList[0].on, function (index, value) {
         if (jQuery.inArray(value.full, keys) === -1) {
           keys.push(value.full);
         }
       });
 
       if (keys.length === 0) {
-        if (typeof errorCallback === "function") {
+        if (typeof errorCallback === 'function') {
           errorCallback();
         }
       }
-      jQuery.each(keys, function(index, key) {
+      jQuery.each(keys, function (index, key) {
         try {
-          //find the matching annotation in the array and update it
-          _this.annotationsList = jQuery.grep(_this.annotationsList, function(value, index) {
+          // find the matching annotation in the array and update it
+          _this.annotationsList = jQuery.grep(_this.annotationsList, function (value, index) {
             return value['@id'] !== annotationID;
           });
 
-          //remove endpoint reference before JSON.stringify
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // remove endpoint reference before JSON.stringify
+          jQuery.each(_this.annotationsList, function (index, value) {
             delete value.endpoint;
           });
 
           localStorage.setItem(key, JSON.stringify(_this.annotationsList));
 
-          //add endpoint reference after JSON.stringify
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // add endpoint reference after JSON.stringify
+          jQuery.each(_this.annotationsList, function (index, value) {
             value.endpoint = _this;
           });
 
-          if (typeof successCallback === "function") {
+          if (typeof successCallback === 'function') {
             successCallback();
           }
         } catch (e) {
-          if (typeof errorCallback === "function") {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
 
-    update: function(oaAnnotation, successCallback, errorCallback) {
+    update: function (oaAnnotation, successCallback, errorCallback) {
       var _this = this,
-      annotationID = oaAnnotation['@id'],
-      keys = [];
-      jQuery.each(oaAnnotation.on, function(index, value) {
+        annotationID = oaAnnotation['@id'],
+        keys = [];
+      jQuery.each(oaAnnotation.on, function (index, value) {
         if (jQuery.inArray(value.full, keys) === -1) {
           keys.push(value.full);
         }
       });
 
       if (keys.length === 0) {
-        if (typeof errorCallback === "function") {
+        if (typeof errorCallback === 'function') {
           errorCallback();
         }
       }
-      jQuery.each(keys, function(index, key) {
+      jQuery.each(keys, function (index, key) {
         try {
           if (_this.annotationsList.length === 0) {
             _this.annotationsList = _this.getAnnotationList(key);
           }
-          //find the matching annotation in the array and update it
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // find the matching annotation in the array and update it
+          jQuery.each(_this.annotationsList, function (index, value) {
             if (value['@id'] === annotationID) {
               _this.annotationsList[index] = oaAnnotation;
               return false;
             }
           });
 
-          //remove endpoint reference before JSON.stringify
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // remove endpoint reference before JSON.stringify
+          jQuery.each(_this.annotationsList, function (index, value) {
             delete value.endpoint;
           });
 
           localStorage.setItem(key, JSON.stringify(_this.annotationsList));
 
-          //add endpoint reference after JSON.stringify
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // add endpoint reference after JSON.stringify
+          jQuery.each(_this.annotationsList, function (index, value) {
             value.endpoint = _this;
           });
 
-          if (typeof successCallback === "function") {
+          if (typeof successCallback === 'function') {
             successCallback(oaAnnotation);
           }
         } catch (e) {
-          if (typeof errorCallback === "function") {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
 
-    //takes OA Annotation, gets Endpoint Annotation, and saves
-    //if successful, MUST return the OA rendering of the annotation
-    create: function(oaAnnotation, successCallback, errorCallback) {
+    // takes OA Annotation, gets Endpoint Annotation, and saves
+    // if successful, MUST return the OA rendering of the annotation
+    create: function (oaAnnotation, successCallback, errorCallback) {
       var _this = this,
-      keys = [];
-      jQuery.each(oaAnnotation.on, function(index, value) {
+        keys = [];
+      jQuery.each(oaAnnotation.on, function (index, value) {
         if (jQuery.inArray(value.full, keys) === -1) {
           keys.push(value.full);
         }
       });
 
       if (keys.length === 0) {
-        if (typeof errorCallback === "function") {
+        if (typeof errorCallback === 'function') {
           errorCallback();
         }
       }
-      jQuery.each(keys, function(index, key) {
+      jQuery.each(keys, function (index, key) {
         try {
           if (_this.annotationsList.length === 0) {
             _this.annotationsList = _this.getAnnotationList(key);
           }
-          oaAnnotation["@id"] = $.genUUID();
+          oaAnnotation['@id'] = $.genUUID();
           _this.annotationsList.push(oaAnnotation);
 
-          //remove endpoint reference before JSON.stringify
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // remove endpoint reference before JSON.stringify
+          jQuery.each(_this.annotationsList, function (index, value) {
             delete value.endpoint;
           });
 
           localStorage.setItem(key, JSON.stringify(_this.annotationsList));
 
-          //add endpoint reference after JSON.stringify
-          jQuery.each(_this.annotationsList, function(index, value) {
+          // add endpoint reference after JSON.stringify
+          jQuery.each(_this.annotationsList, function (index, value) {
             value.endpoint = _this;
           });
 
-          if (typeof successCallback === "function") {
+          if (typeof successCallback === 'function') {
             successCallback(oaAnnotation);
           }
         } catch (e) {
-          if (typeof errorCallback === "function") {
+          if (typeof errorCallback === 'function') {
             errorCallback();
           }
         }
       });
     },
 
-    getAnnotationList: function(key) {
+    getAnnotationList: function (key) {
       var data = localStorage.getItem(key);
       if (data) {
         return JSON.parse(data);
-      } else {
-        return [];
       }
+      return [];
     },
 
-    userAuthorize: function(action, annotation) {
+    userAuthorize: function (action, annotation) {
       return true;
     }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.Mirador21Strategy = function(options) {
+(function ($) {
+  $.Mirador21Strategy = function (options) {
     jQuery.extend(this, {
-      
+
     }, options);
     this.init();
   };
-  
+
   $.Mirador21Strategy.prototype = {
-    init: function() {
-      
+    init: function () {
+
     },
-    
+
     // Check whether an annotation is supported under this formatting strategy
-    isThisType: function(annotation) {
+    isThisType: function (annotation) {
       if (annotation.on && typeof annotation.on === 'object' &&
           annotation.on.selector && typeof annotation.on.selector === 'object' &&
           annotation.on.selector.value && typeof annotation.on.selector.value === 'string' &&
@@ -38353,40 +38326,39 @@ return /******/ (function(modules) { // webpackBootstrap
       }
       return false;
     },
-    
+
     // Build the selector into a bare annotation, given a Window and an OsdSvgOverlay
-    buildAnnotation: function(options) {
+    buildAnnotation: function (options) {
       var oaAnno = options.annotation,
-          win = options.window,
-          overlay = options.overlay,
-          svg = overlay.getSVGString(overlay.draftPaths);
+        win = options.window,
+        overlay = options.overlay,
+        svg = overlay.getSVGString(overlay.draftPaths);
       oaAnno.on = {
-          "@type": "oa:SpecificResource",
-          "full": win.canvasID,
-          "selector": {
-            "@type": "oa:SvgSelector",
-            "value": svg
-          },
-          "within": {
-            "@id": win.loadedManifest,
-            "@type": "sc:Manifest"
-          }
-        };
+        '@type': 'oa:SpecificResource',
+        full: win.canvasID,
+        selector: {
+          '@type': 'oa:SvgSelector',
+          value: svg
+        },
+        within: {
+          '@id': win.loadedManifest,
+          '@type': 'sc:Manifest'
+        }
+      };
       return oaAnno;
     },
-    
+
     // Parse the annotation into the OsdRegionDrawTool instance (only if its format is supported by this strategy)
-    parseRegion: function(annotation, osdRegionDrawTool) {
+    parseRegion: function (annotation, osdRegionDrawTool) {
       if (this.isThisType(annotation)) {
         return osdRegionDrawTool.svgOverlay.parseSVG(annotation.on.selector.value, annotation);
       }
-    },
+    }
   };
-  
 }(Mirador));
-(function($) {
 
-  $.MiradorDualStrategy = function(options) {
+(function ($) {
+  $.MiradorDualStrategy = function (options) {
     jQuery.extend(this, {
 
     }, options);
@@ -38394,12 +38366,12 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.MiradorDualStrategy.prototype = {
-    init: function() {
+    init: function () {
 
     },
 
     // Check whether an annotation is supported under this formatting strategy
-    isThisType: function(annotation) {
+    isThisType: function (annotation) {
       if (annotation.on && jQuery.isArray(annotation.on) && annotation.on.length > 0 && typeof annotation.on[0] === 'object' &&
           annotation.on[0].selector && typeof annotation.on[0].selector === 'object' &&
           annotation.on[0].selector['@type'] === 'oa:Choice' &&
@@ -38414,32 +38386,32 @@ return /******/ (function(modules) { // webpackBootstrap
     },
 
     // Build the selector into a bare annotation, given a Window and an OsdSvgOverlay
-    buildAnnotation: function(options) {
+    buildAnnotation: function (options) {
       var oaAnno = options.annotation,
-          win = options.window,
-          overlay = options.overlay;
+        win = options.window,
+        overlay = options.overlay;
       oaAnno.on = [];
-      jQuery.each(overlay.draftPaths, function(index, path) {
+      jQuery.each(overlay.draftPaths, function (index, path) {
         // getSVGString expects an array, so insert each path into a new array
         var svg = overlay.getSVGString([path]),
-        bounds = path.bounds;
+          bounds = path.bounds;
         oaAnno.on.push({
-          "@type": "oa:SpecificResource",
-          "full": win.canvasID,
-          "selector": {
-            "@type": "oa:Choice",
-            "default": {
-              "@type": "oa:FragmentSelector",
-              "value": "xywh=" + Math.round(bounds.x) + "," + Math.round(bounds.y) + "," + Math.round(bounds.width) + "," + Math.round(bounds.height)
+          '@type': 'oa:SpecificResource',
+          full: win.canvasID,
+          selector: {
+            '@type': 'oa:Choice',
+            default: {
+              '@type': 'oa:FragmentSelector',
+              value: 'xywh=' + Math.round(bounds.x) + ',' + Math.round(bounds.y) + ',' + Math.round(bounds.width) + ',' + Math.round(bounds.height)
             },
-            "item": {
-              "@type": "oa:SvgSelector",
-              "value": svg
+            item: {
+              '@type': 'oa:SvgSelector',
+              value: svg
             }
           },
-          "within": {
-            "@id": win.loadedManifest,
-            "@type": "sc:Manifest"
+          within: {
+            '@id': win.loadedManifest,
+            '@type': 'sc:Manifest'
           }
         });
       });
@@ -38447,35 +38419,33 @@ return /******/ (function(modules) { // webpackBootstrap
     },
 
     // Parse the annotation into the OsdRegionDrawTool instance (only if its format is supported by this strategy)
-    parseRegion: function(annotation, osdRegionDrawTool) {
+    parseRegion: function (annotation, osdRegionDrawTool) {
       if (this.isThisType(annotation)) {
         var regionArray = [];
-        jQuery.each(annotation.on, function(index, target) {
+        jQuery.each(annotation.on, function (index, target) {
           regionArray = regionArray.concat(osdRegionDrawTool.svgOverlay.parseSVG(target.selector.item.value, annotation));
         });
         return regionArray;
       }
-    },
+    }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.MiradorLegacyStrategy = function(options) {
+(function ($) {
+  $.MiradorLegacyStrategy = function (options) {
     jQuery.extend(this, {
-      
+
     }, options);
     this.init();
   };
-  
+
   $.MiradorLegacyStrategy.prototype = {
-    init: function() {
-      
+    init: function () {
+
     },
-    
+
     // Check whether an annotation is supported under this formatting strategy
-    isThisType: function(annotation) {
+    isThisType: function (annotation) {
       if (annotation.on && typeof annotation.on === 'object' &&
           annotation.on.selector && typeof annotation.on.selector === 'object' &&
           annotation.on.selector.value && typeof annotation.on.selector.value === 'string' &&
@@ -38484,35 +38454,66 @@ return /******/ (function(modules) { // webpackBootstrap
       }
       return false;
     },
-    
+
     // Build the selector into a bare annotation, given a Window and an OsdSvgOverlay
-    buildAnnotation: function(options) {
+    buildAnnotation: function (options) {
       var oaAnno = options.annotation,
-          win = options.window,
-          overlay = options.overlay,
-          bounds = overlay.draftPaths[0].bounds;
+        win = options.window,
+        overlay = options.overlay,
+        bounds = overlay.draftPaths[0].bounds;
       oaAnno.on = {
-        "@type": "oa:SpecificResource",
-        "full": win.canvasID,
-        "selector": {
-          "@type": "oa:FragmentSelector",
-          "value": "xywh=" + Math.round(bounds.x) + "," + Math.round(bounds.y) + "," + Math.round(bounds.width) + "," + Math.round(bounds.height)
+        '@type': 'oa:SpecificResource',
+        full: win.canvasID,
+        selector: {
+          '@type': 'oa:FragmentSelector',
+          value: 'xywh=' + Math.round(bounds.x) + ',' + Math.round(bounds.y) + ',' + Math.round(bounds.width) + ',' + Math.round(bounds.height)
         }
       };
       return oaAnno;
     },
-    
+
     // Parse the annotation into the OsdRegionDrawTool instance (only if its format is supported by this strategy)
-    parseRegion: function(annotation, osdRegionDrawTool) {
+    parseRegion: function (annotation, osdRegionDrawTool) {
       if (this.isThisType(annotation)) {
-        return osdRegionDrawTool.parseRectangle(annotation.on.full + "#" + annotation.on.selector.value, annotation);
+        return osdRegionDrawTool.parseRectangle(annotation.on.full + '#' + annotation.on.selector.value, annotation);
       }
-    },
+    }
   };
-  
 }(Mirador));
-(function($) {
-  $.OsdRegionDrawTool = function(options) {
+
+(function ($) {
+  $.MiradorOcrStrategy = function (options) {
+    jQuery.extend(this, {
+
+    }, options);
+    this.init();
+  };
+
+  $.MiradorOcrStrategy.prototype = {
+    init: function () {
+
+    },
+
+    // Check whether an annotation is supported under this formatting strategy
+    isThisType: function (annotation) {
+      // console.log('annotation stra', annotation);
+      if (annotation.resource['@type'] === 'cnt:ContentAsText') {
+        return annotation;
+      }
+      return false;
+    },
+
+    // Parse the annotation into the OsdRegionDrawTool instance (only if its format is supported by this strategy)
+    parseRegion: function (annotation) {
+      // console.log(annotation);
+      if (this.isThisType(annotation)) {
+        return [annotation];
+      }
+    }
+  };
+}(Mirador));
+(function ($) {
+  $.OsdRegionDrawTool = function (options) {
     jQuery.extend(this, {
       osdViewer: null,
       parent: null,
@@ -38529,17 +38530,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
   $.OsdRegionDrawTool.prototype = {
 
-    init: function() {
+    init: function () {
       this.svgOverlay = this.osdViewer.svgOverlay(this.osdViewer.id, this.windowId, this.state, this.eventEmitter);
       this.svgOverlay.show();
       this.svgOverlay.disable();
+      console.log('init', this.svgOverlay.currentTool)
 
       this.horizontallyFlipped = false;
 
       this.listenForActions();
     },
 
-    enterDisplayAnnotations: function() {
+    enterDisplayAnnotations: function () {
       this.svgOverlay.setMouseTool();
 
       // if a user selected the pointer mode but is still actively
@@ -38552,9 +38554,10 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    enterCreateAnnotation: function() {
+    enterCreateAnnotation: function () {
       // if a user selected went from pointer to a shape but is still actively
       // working on an annotation, don't re-render
+      var _this = this
       if (!this.svgOverlay.inEditOrCreateMode) {
         this.osdViewer.setMouseNavEnabled(false);
         this.svgOverlay.show();
@@ -38565,7 +38568,7 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    enterCreateShape: function() {
+    enterCreateShape: function () {
       if (!this.svgOverlay.inEditOrCreateMode) {
         this.osdViewer.setMouseNavEnabled(false);
         this.svgOverlay.show();
@@ -38575,13 +38578,13 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    enterEditAnnotation: function() {
+    enterEditAnnotation: function () {
       this.osdViewer.setMouseNavEnabled(false);
       this.svgOverlay.show();
       this.svgOverlay.enableEdit();
     },
 
-    enterDefault: function() {
+    enterDefault: function () {
       // Removing the Tool explicitly because otherwise mouse events keep
       // firing in default mode where they shouldn't.
       this.svgOverlay.removeMouseTool();
@@ -38589,7 +38592,7 @@ return /******/ (function(modules) { // webpackBootstrap
       this.exitEditMode(false);
     },
 
-    exitEditMode: function(showAnnotations) {
+    exitEditMode: function (showAnnotations) {
       this.osdViewer.setMouseNavEnabled(true);
       this.svgOverlay.disable();
       if (showAnnotations) {
@@ -38600,32 +38603,51 @@ return /******/ (function(modules) { // webpackBootstrap
     },
 
     render: function () {
-      if(this.parent.mode !== $.AnnotationsLayer.DISPLAY_ANNOTATIONS){
-        return ;
+      if (this.parent.mode !== $.AnnotationsLayer.DISPLAY_ANNOTATIONS) {
+        return;
       }
       this.svgOverlay.restoreEditedShapes();
       this.svgOverlay.paperScope.activate();
       this.svgOverlay.paperScope.project.clear();
       var _this = this;
+      // new Mirador.TextOverlay({
+        //   osd: _this.osd,
+        //   canvasID: _this.canvasID,
+        //   words: _this.ocrAnnotations,
+        //   eventEmitter: _this.eventEmitter,
+        //   state: _this.state,
+        //   windowId: _this.windowId
+        // });
       _this.annotationsToShapesMap = {};
       var strategies = [
         new $.Mirador21Strategy(),
         new $.LegacyOpenAnnotationStrategy(),
         new $.MiradorLegacyStrategy(),
-        new $.MiradorDualStrategy()
+        new $.MiradorDualStrategy(),
+        new $.MiradorOcrStrategy()
       ];
 
       for (var i = 0; i < this.list.length; i++) {
         var annotation = this.list[i];
         try {
           var shapeArray = this.prepareShapeArray(annotation, strategies);
-          if (shapeArray.length > 0) {
+          if (shapeArray.length > 0 && !shapeArray[0].hasOwnProperty('@context')) {
             _this.svgOverlay.restoreLastView(shapeArray);
             _this.annotationsToShapesMap[annotation['@id']] = shapeArray;
+            // console.log('shapeArray', shapeArray);
+          } else if (!shapeArray[0].hasOwnProperty('@context')) {
+            // var word = new Mirador.TextOverlay({
+            //     osd: this.osdViewer,
+            //     canvasID: _this.canvasID,
+            //     words: _this.ocrAnnotations,
+            //     eventEmitter: _this.eventEmitter,
+            //     state: _this.state,
+            //     windowId: _this.windowId
+            //   });
           } else {
-            console.log("ERROR couldn't find a strategy for " + annotation["@id"]);
+            // console.log("ERROR couldn't find a strategy for " + annotation['@id']);
           }
-        } catch(e) {
+        } catch (e) {
           console.log('ERROR OsdRegionDrawTool#render anno:', annotation, 'error:', e);
         }
       }
@@ -38646,12 +38668,12 @@ return /******/ (function(modules) { // webpackBootstrap
       _this.eventEmitter.publish('annotationsRendered.' + _this.windowId);
     },
 
-    prepareShapeArray: function(annotation, strategies) {
+    prepareShapeArray: function (annotation, strategies) {
       if (typeof annotation === 'object' && annotation.on) {
         for (var i = 0; i < strategies.length; i++) {
           if (strategies[i].isThisType(annotation)) {
-            console.log(strategies[i]);
             shapeArray = strategies[i].parseRegion(annotation, this);
+            // console.log(shapeArray);
             return shapeArray;
           }
         }
@@ -38659,19 +38681,19 @@ return /******/ (function(modules) { // webpackBootstrap
       return [];
     },
 
-    parseRectangle: function(rectString, annotation) {
+    parseRectangle: function (rectString, annotation) {
       var shapeArray = rectString.split('=')[1].split(','),
-      shape = {
-        'x': parseInt(shapeArray[0]),
-        'y': parseInt(shapeArray[1]),
-        'width': parseInt(shapeArray[2]),
-        'height': parseInt(shapeArray[3])
-      };
+        shape = {
+          x: parseInt(shapeArray[0]),
+          y: parseInt(shapeArray[1]),
+          width: parseInt(shapeArray[2]),
+          height: parseInt(shapeArray[3])
+        };
 
       return this.svgOverlay.createRectangle(shape, annotation);
     },
 
-    showTooltipsFromMousePosition: function(event, location, absoluteLocation) {
+    showTooltipsFromMousePosition: function (event, location, absoluteLocation) {
       var _this = this;
       var originWindow = this.state.getWindowObjectById(this.windowId);
       var currentCanvasModel = originWindow.canvases[originWindow.canvasID];
@@ -38694,30 +38716,28 @@ return /******/ (function(modules) { // webpackBootstrap
             var hoverWidth = shapeArray[idx].data.strokeWidth / this.svgOverlay.paperScope.view.zoom;
             if (shapeArray[idx].hitTest(location, hitOptions)) {
               annotations.push(shapeArray[idx].data.annotation);
-              if(shapeTool.onHover){
-                for(var k=0;k<shapeArray.length;k++){
-                  shapeTool.onHover(true,shapeArray[k],hoverWidth,hoverColor);
+              if (shapeTool.onHover) {
+                for (var k = 0; k < shapeArray.length; k++) {
+                  shapeTool.onHover(true, shapeArray[k], hoverWidth, hoverColor);
                 }
               }
               break;
-            }else{
-              if(shapeTool.onHover){
-                shapeTool.onHover(false,shapeArray[idx],hoverWidth);
-              }
+            } else if (shapeTool.onHover) {
+              shapeTool.onHover(false, shapeArray[idx], hoverWidth);
             }
           }
         }
       }
       this.svgOverlay.paperScope.view.draw();
-      //if (_this.svgOverlay.availableExternalCommentsPanel) {
+      // if (_this.svgOverlay.availableExternalCommentsPanel) {
      //   _this.eventEmitter.publish('annotationMousePosition.' + _this.windowId, [annotations]);
       //  return;
-      //}
+      // }
       _this.annoTooltip.showViewer({
         annotations: annotations,
         triggerEvent: event,
-        shouldDisplayTooltip: function(api) {
-          //track whether the cursor is within the tooltip (with the specified tolerance) and disables show/hide/update functionality.
+        shouldDisplayTooltip: function (api) {
+          // track whether the cursor is within the tooltip (with the specified tolerance) and disables show/hide/update functionality.
           if (api.elements.tooltip) {
             var cursorWithinTooltip = true;
             var leftSide = api.elements.tooltip.offset().left - _this.svgOverlay.hitOptions.tolerance;
@@ -38737,64 +38757,64 @@ return /******/ (function(modules) { // webpackBootstrap
       });
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      this._thisDestroy = function(){
+      this._thisDestroy = function () {
         _this.destroy();
       };
 
       _this.osdViewer.addHandler('close', this._thisDestroy);
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe('DESTROY_EVENTS.'+this.windowId, function(event) {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('DESTROY_EVENTS.' + this.windowId, function (event) {
         _this.destroy();
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('updateTooltips.' + _this.windowId, function(event, location, absoluteLocation) {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('updateTooltips.' + _this.windowId, function (event, location, absoluteLocation) {
         if (_this.annoTooltip && !_this.annoTooltip.inEditOrCreateMode) {
           _this.showTooltipsFromMousePosition(event, location, absoluteLocation);
         }
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('removeTooltips.' + _this.windowId, function() {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('removeTooltips.' + _this.windowId, function () {
         jQuery(_this.osdViewer.element).qtip('destroy', true);
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('disableTooltips.' + _this.windowId, function() {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('disableTooltips.' + _this.windowId, function () {
         if (_this.annoTooltip) {
           _this.annoTooltip.inEditOrCreateMode = true;
         }
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('enableTooltips.' + _this.windowId, function() {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('enableTooltips.' + _this.windowId, function () {
         if (_this.annoTooltip) {
           _this.annoTooltip.inEditOrCreateMode = false;
         }
         _this.svgOverlay.restoreDraftShapes();
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('SET_ANNOTATION_EDITING.' + _this.windowId, function(event, options) {
-        jQuery.each(_this.annotationsToShapesMap, function(key, paths) {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('SET_ANNOTATION_EDITING.' + _this.windowId, function (event, options) {
+        jQuery.each(_this.annotationsToShapesMap, function (key, paths) {
           // if we have a matching annotationId, pass the boolean value on for each path, otherwise, always pass false
           if (key === options.annotationId) {
             if (options.isEditable) {
-              _this.eventEmitter.publish('SET_OVERLAY_TOOLTIP.' + _this.windowId, {"tooltip" : options.tooltip, "visible" : true, "paths" : paths});
+              _this.eventEmitter.publish('SET_OVERLAY_TOOLTIP.' + _this.windowId, { tooltip: options.tooltip, visible: true, paths: paths });
             } else {
-              _this.eventEmitter.publish('SET_OVERLAY_TOOLTIP.' + _this.windowId, {"tooltip" : null, "visible" : false, "paths" : []});
+              _this.eventEmitter.publish('SET_OVERLAY_TOOLTIP.' + _this.windowId, { tooltip: null, visible: false, paths: [] });
             }
-            jQuery.each(paths, function(index, path) {
+            jQuery.each(paths, function (index, path) {
               path.data.editable = options.isEditable;
               if (options.isEditable) {
                 path.strokeWidth = (path.data.strokeWidth + 5) / _this.svgOverlay.paperScope.view.zoom;
               } else {
                 path.strokeWidth = path.data.strokeWidth / _this.svgOverlay.paperScope.view.zoom;
               }
-              //just in case, force the shape to be non hovered
+              // just in case, force the shape to be non hovered
               var tool = _this.svgOverlay.getTool(path);
               tool.onHover(false, path, path.strokeWidth);
             });
           } else {
-            jQuery.each(paths, function(index, path) {
+            jQuery.each(paths, function (index, path) {
               path.data.editable = false;
             });
           }
@@ -38806,28 +38826,28 @@ return /******/ (function(modules) { // webpackBootstrap
         _this.render();
       }));
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe("enableManipulation",function(event, tool){
-        if(tool === 'mirror') {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('enableManipulation', function (event, tool) {
+        if (tool === 'mirror') {
           _this.horizontallyFlipped = true;
         }
       }));
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe("disableManipulation",function(event, tool){
-        if(tool === 'mirror') {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('disableManipulation', function (event, tool) {
+        if (tool === 'mirror') {
           _this.horizontallyFlipped = false;
         }
       }));
     },
 
-    getAnnoFromRegion: function(regionId) {
-      return this.list.filter(function(annotation) {
+    getAnnoFromRegion: function (regionId) {
+      return this.list.filter(function (annotation) {
         return annotation['@id'] === regionId;
       });
     },
 
     destroy: function () {
       var _this = this;
-      this.eventsSubscriptions.forEach(function(event){
-        _this.eventEmitter.unsubscribe(event.name,event.handler);
+      this.eventsSubscriptions.forEach(function (event) {
+        _this.eventEmitter.unsubscribe(event.name, event.handler);
       });
       this.osdViewer.removeHandler('close', this._thisDestroy);
     }
@@ -38835,8 +38855,8 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 }(Mirador));
 
-(function($) {
-  $.Ellipse = function(options) {
+(function ($) {
+  $.Ellipse = function (options) {
     jQuery.extend(this, {
       name: 'Ellipse',
       logoClass: 'radio_button_unchecked',
@@ -38897,7 +38917,7 @@ return /******/ (function(modules) { // webpackBootstrap
         if (item.segments.length > 10) {
           item.removeSegment(10);
         }
-        item.smooth({from: -7, to: 1});
+        item.smooth({ from: -7, to: 1 });
         item.selected = selected;
         item.segments[2].selected = selected;
         var inHandle = item.segments[7].handleIn.clone();
@@ -38928,23 +38948,21 @@ return /******/ (function(modules) { // webpackBootstrap
             });
 
             item.data.deleteIcon.addData('parent', item);
-            item.data.deleteIcon.addData('pivot',item.segments[7].point);
+            item.data.deleteIcon.addData('pivot', item.segments[7].point);
             item.data.deleteIcon.addData('type', 'deleteIcon');
             item.data.deleteIcon.addData('self', item.data.deleteIcon);
 
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
             item.data.deleteIcon.setOnMouseDownListener(overlay);
-
           }
 
           if (!item.data.rotationIcon) {
-
             item.data.rotationIcon = new overlay.annotationUtils.RotationIcon(overlay.paperScope, {
               name: item.name + this.partOfPrefix + 'rotation',
               fillColor: item.selectedColor
             });
 
-            item.data.rotationIcon.addData('pivot',item.segments[3].point);
+            item.data.rotationIcon.addData('pivot', item.segments[3].point);
             item.data.rotationIcon.addData('type', 'rotationIcon');
             item.data.rotationIcon.addData('self', item.data.rotationIcon);
             item.data.rotationIcon.addData('parent', item);
@@ -38952,38 +38970,36 @@ return /******/ (function(modules) { // webpackBootstrap
             item.data.rotationIcon.setPosition(item.data.rotationIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
 
             item.data.rotationIcon.setOnMouseDownListener(overlay);
-
           }
 
           if (!item.data.group) {
-            item.data.group = new overlay.annotationUtils.Group(overlay.paperScope,[item,item.data.deleteIcon.getItem(),item.data.deleteIcon.getMask().getItem(),item.data.rotationIcon.getItem(),item.data.rotationIcon.getMask().getItem()]);
+            item.data.group = new overlay.annotationUtils.Group(overlay.paperScope, [item, item.data.deleteIcon.getItem(), item.data.deleteIcon.getMask().getItem(), item.data.rotationIcon.getItem(), item.data.rotationIcon.getMask().getItem()]);
           }
 
-          if(item.contains(item.data.deleteIcon.getItem().position)){
+          if (item.contains(item.data.deleteIcon.getItem().position)) {
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
-            item.data.deleteIcon.rotate(180,item.data.deleteIcon.getData('pivot'));
+            item.data.deleteIcon.rotate(180, item.data.deleteIcon.getData('pivot'));
             item.data.deleteIcon.rotate(180);
           }
 
-          if(item.contains(item.data.rotationIcon.getItem().position)){
+          if (item.contains(item.data.rotationIcon.getItem().position)) {
             item.data.rotationIcon.setPosition(item.data.rotationIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
-            item.data.rotationIcon.rotate(180,item.data.rotationIcon.getData('pivot'));
+            item.data.rotationIcon.rotate(180, item.data.rotationIcon.getData('pivot'));
             item.data.rotationIcon.rotate(180);
           }
-
         } else {
-          if(item.data.group){
+          if (item.data.group) {
             item.data.group.remove();
             item.data.group = null;
             overlay.paperScope.project.activeLayer.addChild(item);
           }
 
-          if(item.data.deleteIcon){
+          if (item.data.deleteIcon) {
             item.data.deleteIcon.remove();
             item.data.deleteIcon = null;
           }
 
-          if(item.data.rotationIcon){
+          if (item.data.rotationIcon) {
             item.data.rotationIcon.remove();
             item.data.rotationIcon = null;
           }
@@ -38993,30 +39009,29 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    onResize:function(item,overlay){
-      if(item._name.toString().indexOf(this.partOfPrefix)!== -1){
-        if(item._name.toString().indexOf('delete') !== -1){
+    onResize: function (item, overlay) {
+      if (item._name.toString().indexOf(this.partOfPrefix) !== -1) {
+        if (item._name.toString().indexOf('delete') !== -1) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.parent.data.rotation)));
 
-          if(item.data.parent.contains(item.position)){
-            item.data.self.rotate(180,item.data.self.getData('pivot'));
+          if (item.data.parent.contains(item.position)) {
+            item.data.self.rotate(180, item.data.self.getData('pivot'));
             item.data.self.rotate(180);
           }
 
-          item.data.self.resize(24 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(24 * 1 / overlay.paperScope.view.zoom);
         }
 
-        if(item._name.toString().indexOf('rotation') !== -1){
+        if (item._name.toString().indexOf('rotation') !== -1) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.parent.data.rotation)));
 
-          if(item.data.parent.contains(item.position)){
-            item.data.self.rotate(180,item.data.self.getData('pivot'));
+          if (item.data.parent.contains(item.position)) {
+            item.data.self.rotate(180, item.data.self.getData('pivot'));
             item.data.self.rotate(180);
           }
 
-          item.data.self.resize(16 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(16 * 1 / overlay.paperScope.view.zoom);
         }
-
       }
     },
 
@@ -39052,16 +39067,16 @@ return /******/ (function(modules) { // webpackBootstrap
       }
 
       overlay.path.data.rotationIcon.translateByXY(event.delta.x, event.delta.y);
-      overlay.path.data.deleteIcon.translateByXY(event.delta.x,event.delta.y);
+      overlay.path.data.deleteIcon.translateByXY(event.delta.x, event.delta.y);
     },
 
-    rotate:function(event,overlay){
+    rotate: function (event, overlay) {
       var center = overlay.path.position;
       var rotation = Math.atan2(event.point.y - center.y + event.delta.y, event.point.x - center.x + event.delta.x) - Math.atan2(event.point.y - center.y, event.point.x - center.x);
-      rotation = rotation * (180 / Math.PI);
+      rotation *= (180 / Math.PI);
 
 
-      overlay.path.data.group.rotate(rotation,overlay.path.position);
+      overlay.path.data.group.rotate(rotation, overlay.path.position);
 
       overlay.path.data.deleteIcon.rotate(-rotation);
       overlay.path.data.rotationIcon.rotate(-rotation);
@@ -39118,7 +39133,6 @@ return /******/ (function(modules) { // webpackBootstrap
           overlay.path.segments[8].point = overlay.path.segments[8].point.add(trTop);
         }
         if (moveBottomSize) {
-
           overlay.path.data.deleteIcon.translateByPoint(translationY);
 
           overlay.path.segments[7].point = overlay.path.segments[7].point.add(translationY);
@@ -39168,63 +39182,60 @@ return /******/ (function(modules) { // webpackBootstrap
         point = point.add(overlay.path.segments[2].handleOut);
         if (overlay.path.contains(point)) {
           overlay.path.segments[2].handleOut = overlay.path.segments[2].handleOut.rotate(180, overlay.path.segments[2]);
-          //overlay.path.data.rotationIcon.translateByPoint(overlay.path.segments[2].handleOut.multiply(2));
+          // overlay.path.data.rotationIcon.translateByPoint(overlay.path.segments[2].handleOut.multiply(2));
         }
 
-        if(overlay.path.contains(overlay.path.data.deleteIcon.getItem().position)){
-          overlay.path.data.deleteIcon.rotate(180,overlay.path.data.deleteIcon.getData('pivot'));
+        if (overlay.path.contains(overlay.path.data.deleteIcon.getItem().position)) {
+          overlay.path.data.deleteIcon.rotate(180, overlay.path.data.deleteIcon.getData('pivot'));
           overlay.path.data.deleteIcon.rotate(180);
         }
 
-        if(overlay.path.contains(overlay.path.data.rotationIcon.getItem().position)){
-          overlay.path.data.rotationIcon.rotate(180,overlay.path.data.rotationIcon.getData('pivot'));
+        if (overlay.path.contains(overlay.path.data.rotationIcon.getItem().position)) {
+          overlay.path.data.rotationIcon.rotate(180, overlay.path.data.rotationIcon.getData('pivot'));
           overlay.path.data.rotationIcon.rotate(180);
         }
 
         if (overlay.path.segments.length > 10) {
           overlay.path.removeSegment(10);
         }
-        overlay.path.smooth({from: -7, to: 1});
+        overlay.path.smooth({ from: -7, to: 1 });
       }
     },
 
-    onMouseMove: function(event, overlay) {
+    onMouseMove: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
-      if(hitResult && hitResult.item._name.toString().indexOf(this.idPrefix)!==-1){
-        if(!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !==-1){
-          this.setCursor(hitResult,overlay);
+      if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) !== -1) {
+        if (!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !== -1) {
+          this.setCursor(hitResult, overlay);
         }
       }
     },
 
 
-    setCursor:function(hitResult,overlay){
-
-      if(hitResult.type === 'stroke' || hitResult.type === 'handle-in' || hitResult.type === 'handle-out'){
-        jQuery(overlay.viewer.canvas).css('cursor','move');
+    setCursor: function (hitResult, overlay) {
+      if (hitResult.type === 'stroke' || hitResult.type === 'handle-in' || hitResult.type === 'handle-out') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'move');
         return;
       }
 
       // mouse over attached icon
-      if(hitResult.type === 'pixel'){
+      if (hitResult.type === 'pixel') {
         jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
         return;
       }
 
-      if(hitResult.segment){
-        jQuery(overlay.viewer.canvas).css('cursor','pointer');
+      if (hitResult.segment) {
+        jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
       }
-
     },
 
-    onMouseDown: function(event, overlay) {
+    onMouseDown: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
       if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) != -1) {
         if (overlay.mode != 'deform' && overlay.mode != 'translate' && overlay.mode != 'create') {
-
           if (hitResult.item._name.toString().indexOf(this.partOfPrefix) !== -1) {
             hitResult.item.data.self.onMouseDown();
-            if(overlay.mode === 'rotate'){
+            if (overlay.mode === 'rotate') {
               overlay.path = hitResult.item.data.self.getItem().data.parent;
             }
             return;
@@ -39270,14 +39281,14 @@ return /******/ (function(modules) { // webpackBootstrap
       overlay.path = this.createShape(event.point, overlay);
     },
 
-    onDoubleClick: function(event, overlay) {
+    onDoubleClick: function (event, overlay) {
       // Empty block.
     }
   };
 }(Mirador));
 
-(function($) {
-  $.Freehand = function(options) {
+(function ($) {
+  $.Freehand = function (options) {
     jQuery.extend(this, {
       name: 'Freehand',
       logoClass: 'gesture',
@@ -39289,10 +39300,10 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.Freehand.prototype = {
-    init: function() {
+    init: function () {
     },
 
-    createShape: function(initialPoint, overlay) {
+    createShape: function (initialPoint, overlay) {
       overlay.mode = 'create';
       var _this = this;
       var shape = new overlay.paperScope.Path({
@@ -39306,18 +39317,17 @@ return /******/ (function(modules) { // webpackBootstrap
       return shape;
     },
 
-    updateSelection: function(selected, item, overlay) {
+    updateSelection: function (selected, item, overlay) {
       if (item._name.toString().indexOf(this.idPrefix) !== -1) {
-
         item.selected = selected;
 
-        if(selected){
+        if (selected) {
           if (!item.data.deleteIcon) {
             item.data.deleteIcon = new overlay.annotationUtils.DeleteActionIcon(overlay.paperScope, {
               name: item.name + this.partOfPrefix + 'delete',
-              fillColor:item.selectedColor
+              fillColor: item.selectedColor
             });
-            item.data.deleteIcon.addData('pivot',new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(item)));
+            item.data.deleteIcon.addData('pivot', new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(item)));
             item.data.deleteIcon.addData('type', 'deleteIcon');
             item.data.deleteIcon.addData('self', item.data.deleteIcon);
             item.data.deleteIcon.addData('parent', item);
@@ -39325,37 +39335,33 @@ return /******/ (function(modules) { // webpackBootstrap
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
             item.data.deleteIcon.setOnMouseDownListener(overlay);
           }
-        }else{
-
-          if(item.data.deleteIcon){
-            item.data.deleteIcon.remove();
-            item.data.deleteIcon = null;
-          }
+        } else if (item.data.deleteIcon) {
+          item.data.deleteIcon.remove();
+          item.data.deleteIcon = null;
         }
       }
     },
 
-    onResize:function(item,overlay){
-      if(item._name.toString().indexOf(this.partOfPrefix)!== -1){
-        if(item._name.toString().indexOf('delete') !==-1){
-
+    onResize: function (item, overlay) {
+      if (item._name.toString().indexOf(this.partOfPrefix) !== -1) {
+        if (item._name.toString().indexOf('delete') !== -1) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
-          item.data.self.resize(24 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(24 * 1 / overlay.paperScope.view.zoom);
         }
       }
     },
 
 
-    getPivotPointForDeleteIcon:function(item){
+    getPivotPointForDeleteIcon: function (item) {
       var points = [];
 
-      for(var i=0;i<item.segments.length;i++){
+      for (var i = 0; i < item.segments.length; i++) {
         points.push(item.segments[i].point);
       }
 
       return {
-        x:this.getGeometricCenterOfPoints(points).x,
-        y:this.getLowestPoint(points).y
+        x: this.getGeometricCenterOfPoints(points).x,
+        y: this.getLowestPoint(points).y
       };
     },
 
@@ -39377,37 +39383,36 @@ return /******/ (function(modules) { // webpackBootstrap
     getGeometricCenterOfPoints: function (points) {
       var cx = 0;
       var cy = 0;
-      for(var i= 0;i<points.length;i++){
-        cx +=points[i].x;
-        cy +=points[i].y;
+      for (var i = 0; i < points.length; i++) {
+        cx += points[i].x;
+        cy += points[i].y;
       }
 
       return {
-        x:cx/points.length,
-        y:cy/points.length
+        x: cx / points.length,
+        y: cy / points.length
       };
     },
 
-    onHover:function(activate,shape,hoverWidth,hoverColor){
+    onHover: function (activate, shape, hoverWidth, hoverColor) {
       shape.strokeWidth = hoverWidth;
 
       // shape needs to have hovered styles
-      if(activate && !shape.data.hovered){
+      if (activate && !shape.data.hovered) {
         shape.data.nonHoverStrokeColor = shape.strokeColor.clone();
         shape.data.hovered = true;
         shape.strokeColor = hoverColor;
       }
       // shape is not longer hovered
-      if(!activate && shape.data.hovered){
+      if (!activate && shape.data.hovered) {
         shape.strokeColor = shape.data.nonHoverStrokeColor.clone();
         delete shape.data.nonHoverStrokeColor;
         delete shape.data.hovered;
       }
     },
 
-    onMouseUp: function(event, overlay) {
-
-      if(overlay.mode === 'create'){
+    onMouseUp: function (event, overlay) {
+      if (overlay.mode === 'create') {
         if (overlay.path) {
           overlay.path.simplify();
           overlay.onDrawFinish();
@@ -39415,7 +39420,7 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    onMouseDrag: function(event, overlay) {
+    onMouseDrag: function (event, overlay) {
       if (overlay.mode === 'deform') {
         if (overlay.segment) {
           overlay.segment.point.x += event.delta.x;
@@ -39423,9 +39428,8 @@ return /******/ (function(modules) { // webpackBootstrap
           overlay.path.smooth();
 
           var path = overlay.segment.path;
-          path.data.deleteIcon.addData('pivot',new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(path)));
+          path.data.deleteIcon.addData('pivot', new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(path)));
           path.data.deleteIcon.setPosition(path.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
-
         }
 
         return;
@@ -39445,45 +39449,44 @@ return /******/ (function(modules) { // webpackBootstrap
       if (overlay.mode === 'create') {
         overlay.path.add(event.point);
 
-        if(overlay.path.data.deleteIcon){
-          overlay.path.data.deleteIcon.addData('pivot',new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(overlay.path)));
+        if (overlay.path.data.deleteIcon) {
+          overlay.path.data.deleteIcon.addData('pivot', new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(overlay.path)));
           overlay.path.data.deleteIcon.setPosition(overlay.path.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
         }
-       }
+      }
     },
 
-    onMouseMove: function(event, overlay) {
+    onMouseMove: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
-      if(hitResult && hitResult.item._name.toString().indexOf(this.idPrefix)!==-1){
-        if(!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !==-1){
-          this.setCursor(hitResult,overlay);
+      if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) !== -1) {
+        if (!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !== -1) {
+          this.setCursor(hitResult, overlay);
         }
       }
     },
 
-    setCursor:function(hitResult,overlay){
-      if(hitResult.type === 'stroke'){
-        jQuery(overlay.viewer.canvas).css('cursor','move');
+    setCursor: function (hitResult, overlay) {
+      if (hitResult.type === 'stroke') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'move');
         return;
       }
-      if(hitResult.type === 'handle-in' || hitResult.type === 'handle-out'){
-        jQuery(overlay.viewer.canvas).css('cursor','pointer');
-        return;
-      }
-
-      // mouse over attached icon
-      if(hitResult.type === 'pixel'){
+      if (hitResult.type === 'handle-in' || hitResult.type === 'handle-out') {
         jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
         return;
       }
 
-      if(hitResult.segment){
-        jQuery(overlay.viewer.canvas).css('cursor','pointer');
+      // mouse over attached icon
+      if (hitResult.type === 'pixel') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
+        return;
       }
 
+      if (hitResult.segment) {
+        jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
+      }
     },
 
-    onMouseDown: function(event, overlay) {
+    onMouseDown: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
       if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) != -1) {
         if (hitResult.item._name.toString().indexOf(this.partOfPrefix) !== -1) {
@@ -39492,7 +39495,6 @@ return /******/ (function(modules) { // webpackBootstrap
         }
 
         if (overlay.mode !== 'create') {
-
           if (hitResult.type === 'stroke') {
             overlay.mode = 'translate';
             overlay.path = hitResult.item;
@@ -39501,12 +39503,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
           if (hitResult.type === 'segment' || hitResult.type === 'handle-out' || hitResult.type === 'handle-in') {
             // When shift is being pressed and segment point selected it deletes
-            if(event.modifiers.shift){
-              if(hitResult.item.segments.length > 2){
+            if (event.modifiers.shift) {
+              if (hitResult.item.segments.length > 2) {
                 hitResult.segment.remove();
                 return;
               }
-
             }
             overlay.mode = 'deform';
             overlay.segment = hitResult.segment;
@@ -39514,43 +39515,40 @@ return /******/ (function(modules) { // webpackBootstrap
             return;
           }
         }
-      } else {
-        if(overlay.mode !=='create'){
-          overlay.mode = '';
-        }
+      } else if (overlay.mode !== 'create') {
+        overlay.mode = '';
       }
 
 
       if (overlay.mode === '') {
         overlay.path = this.createShape(event.point, overlay);
-        return;
       }
     },
 
-    onDoubleClick: function(event, overlay) {
+    onDoubleClick: function (event, overlay) {
       // Empty block.
     }
   };
 }(Mirador));
 
-(function($) {
-  $.getTools = function(options) {
+(function ($) {
+  $.getTools = function (options) {
     if (this.svgOverlayTools) {
       return this.svgOverlayTools;
     }
     options.partOfPrefix = '_partOf';
-    this.svgOverlayTools = [new $.Rectangle(options), new $.Freehand(options), new $.Polygon(options), new $.Ellipse(options), new $.Pin(options)];
+    this.svgOverlayTools = [new $.Rectangle(options), new $.Freehand(options), new $.Polygon(options), new $.Ellipse(options), new $.Pin(options), new $.TextOverlay(options)];
     return this.svgOverlayTools;
   };
 
-  OpenSeadragon.Viewer.prototype.svgOverlay = function(osdViewerId, windowId, state, eventEmitter) {
+  OpenSeadragon.Viewer.prototype.svgOverlay = function (osdViewerId, windowId, state, eventEmitter) {
     return new $.Overlay(this, osdViewerId, windowId, state, eventEmitter);
   };
 
   // Wat? TODO:...
   var FILL_COLOR_ALPHA_WORKAROUND = 0.00001;
 
-  $.Overlay = function(viewer, osdViewerId, windowId, state, eventEmitter) {
+  $.Overlay = function (viewer, osdViewerId, windowId, state, eventEmitter) {
     var drawingToolsSettings = state.getStateProperty('drawingToolsSettings');
     this.drawingToolsSettings = drawingToolsSettings;
     var availableAnnotationDrawingTools = state.getStateProperty('availableAnnotationDrawingTools');
@@ -39575,8 +39573,8 @@ return /******/ (function(modules) { // webpackBootstrap
       strokeWidth: 1,
       fixedShapeSize: drawingToolsSettings.fixedShapeSize,
       selectedColor: drawingToolsSettings.selectedColor || '#004c66',
-      shapeHandleSize:drawingToolsSettings.shapeHandleSize,
-      partOfPrefix:'_partOf',
+      shapeHandleSize: drawingToolsSettings.shapeHandleSize,
+      partOfPrefix: '_partOf',
       hitOptions: {
         handles: true,
         stroke: true,
@@ -39596,7 +39594,7 @@ return /******/ (function(modules) { // webpackBootstrap
     this.viewer = viewer;
     this.canvas = document.createElement('canvas');
     // workaround to remove focus from editor
-    jQuery(this.canvas).attr('tabindex', '0').mousedown(function(){ jQuery(this).focus();});
+    jQuery(this.canvas).attr('tabindex', '0').mousedown(function () { jQuery(this).focus(); });
     this.canvas.id = 'draw_canvas_' + this.windowId;
     // Drawing of overlay border during development.
     // this.canvas.style.border = '1px solid yellow';
@@ -39616,7 +39614,7 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.Overlay.prototype = {
-    init: function() {
+    init: function () {
       // Initialization of Paper.js overlay.
       var _this = this;
       this.lastAngle = 0;
@@ -39626,7 +39624,7 @@ return /******/ (function(modules) { // webpackBootstrap
       this.paperScope.project.options.handleSize = _this.state.getStateProperty('shapeHandleSize');
       jQuery(_this.canvas).attr('keepalive', 'true');
       this.annotationUtils = new $.AnnotationUtils();
-      this.paperScope.view.onFrame = function(event) {
+      this.paperScope.view.onFrame = function (event) {
         if (_this.paperScope.snapPoint) {
           _this.paperScope.snapPoint.remove();
           _this.paperScope.snapPoint = null;
@@ -39659,7 +39657,7 @@ return /******/ (function(modules) { // webpackBootstrap
     /**
      * Adds a Tool that handles mouse events for the paperjs scope.
      */
-    setMouseTool: function() {
+    setMouseTool: function () {
       this.removeMouseTool();
       this.paperScope.activate();
 
@@ -39670,13 +39668,13 @@ return /******/ (function(modules) { // webpackBootstrap
       this.mouseTool.onMouseMove = this.onMouseMove;
       this.mouseTool.onMouseDown = this.onMouseDown;
       this.mouseTool.onDoubleClick = this.onDoubleClick;
-      this.mouseTool.onKeyDown = function(event){};
+      this.mouseTool.onKeyDown = function (event) {};
     },
 
     /**
      * Removes the mouse Tool from the paperjs scope.
      */
-    removeMouseTool: function() {
+    removeMouseTool: function () {
       if (this.mouseTool) {
         this.mouseTool.remove();
       }
@@ -39689,17 +39687,17 @@ return /******/ (function(modules) { // webpackBootstrap
         closeButton: false,
         className: 'mirador-dialog',
         buttons: {
-          'no': {
+          no: {
             label: i18next.t('no'),
             className: 'btn-default',
-            callback: function() {
-              return;
+            callback: function () {
+
             }
           },
-          'yes': {
+          yes: {
             label: i18next.t('yes'),
             className: 'btn-primary',
-            callback: function() {
+            callback: function () {
               _this.deleteShape(shape);
             }
           }
@@ -39707,13 +39705,13 @@ return /******/ (function(modules) { // webpackBootstrap
       });
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      this._thisResize = function(){
+      this._thisResize = function () {
         _this.resize();
       };
-      this._thisRotate = function(event) {
+      this._thisRotate = function (event) {
         _this.rotate(event);
         _this.resize();
       };
@@ -39721,22 +39719,22 @@ return /******/ (function(modules) { // webpackBootstrap
       this.viewer.addHandler('open', this._thisResize);
       this.viewer.addHandler('animation-finish', this._thisResize);
       this.viewer.addHandler('update-viewport', this._thisResize);
-      this.viewer.addHandler('resize',this._thisResize);
+      this.viewer.addHandler('resize', this._thisResize);
       this.viewer.addHandler('rotate', this._thisRotate);
-      this.viewer.addHandler('constrain',this._thisResize);
+      this.viewer.addHandler('constrain', this._thisResize);
 
-      this._thisDestroy = function(){
+      this._thisDestroy = function () {
         _this.destroy();
       };
 
-      this.viewer.addHandler('close',this._thisDestroy);
+      this.viewer.addHandler('close', this._thisDestroy);
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe('DESTROY_EVENTS.'+this.windowId, function(event) {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('DESTROY_EVENTS.' + this.windowId, function (event) {
         _this.destroy();
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('toggleDrawingTool.' + _this.windowId, function(event, tool) {
-        //qtip code should NOT be here
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('toggleDrawingTool.' + _this.windowId, function (event, tool) {
+        // qtip code should NOT be here
         if (_this.disabled) {
         //   jQuery('.qtip' + _this.windowId).qtip('hide');
           return;
@@ -39747,16 +39745,17 @@ return /******/ (function(modules) { // webpackBootstrap
         for (var i = 0; i < _this.tools.length; i++) {
           if (_this.tools[i].logoClass === tool) {
             _this.currentTool = _this.tools[i];
+            console.log('tool', _this.currentTool);
           }
         }
       }));
 
-      var _thisHandleDeleteShapeEvent = function(event,shape){
-        _this.handleDeleteShapeEvent(event,shape);
+      var _thisHandleDeleteShapeEvent = function (event, shape) {
+        _this.handleDeleteShapeEvent(event, shape);
       };
       this.eventsSubscriptions.push(_this.eventEmitter.subscribe('deleteShape.' + _this.windowId, _thisHandleDeleteShapeEvent));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('changeBorderColor.' + _this.windowId, function(event, color) {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('changeBorderColor.' + _this.windowId, function (event, color) {
         _this.strokeColor = color;
         if (_this.hoveredPath) {
           _this.hoveredPath.strokeColor = color;
@@ -39764,9 +39763,9 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('changeFillColor.' + _this.windowId, function(event, color, alpha) {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('changeFillColor.' + _this.windowId, function (event, color, alpha) {
         _this.fillColor = color;
-        if(alpha === 0){
+        if (alpha === 0) {
           alpha = FILL_COLOR_ALPHA_WORKAROUND;
         }
         _this.fillColorAlpha = alpha;
@@ -39801,44 +39800,44 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('annotationEditSave.'+_this.windowId,function(event,oaAnno){
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('annotationEditSave.' + _this.windowId, function (event, oaAnno) {
         var onAnnotationSaved = jQuery.Deferred();
         if (!_this.draftPaths.length) {
-            new $.DialogBuilder(_this.slotWindowElement).dialog({
-              message: i18next.t('editModalSaveAnnotationWithNoShapesMsg'),
-              closeButton: false,
-              className: 'mirador-dialog',
-              buttons: {
-                success: {
-                  label: i18next.t('editModalBtnSaveWithoutShapes'),
-                  className: 'btn-success',
-                  callback: function () {
-                    oaAnno.on = {
-                      "@type": "oa:SpecificResource",
-                      "full": _this.state.getWindowObjectById(_this.windowId).canvasID
-                    };
-                    //save to endpoint
-                    _this.eventEmitter.publish('annotationUpdated.' + _this.windowId, [oaAnno]);
-                    onAnnotationSaved.resolve();
-                  }
-                },
-                danger: {
-                  label: i18next.t('editModalBtnDeleteAnnotation'),
-                  className: 'btn-danger',
-                  callback: function () {
-                    _this.eventEmitter.publish('annotationDeleted.' + _this.windowId, [oaAnno['@id']]);
-                    onAnnotationSaved.resolve();
-                  }
-                },
-                main: {
-                  label: i18next.t('cancel'),
-                  className: 'btn-default',
-                  callback: function () {
-                    onAnnotationSaved.reject();
-                  }
+          new $.DialogBuilder(_this.slotWindowElement).dialog({
+            message: i18next.t('editModalSaveAnnotationWithNoShapesMsg'),
+            closeButton: false,
+            className: 'mirador-dialog',
+            buttons: {
+              success: {
+                label: i18next.t('editModalBtnSaveWithoutShapes'),
+                className: 'btn-success',
+                callback: function () {
+                  oaAnno.on = {
+                    '@type': 'oa:SpecificResource',
+                    full: _this.state.getWindowObjectById(_this.windowId).canvasID
+                  };
+                    // save to endpoint
+                  _this.eventEmitter.publish('annotationUpdated.' + _this.windowId, [oaAnno]);
+                  onAnnotationSaved.resolve();
+                }
+              },
+              danger: {
+                label: i18next.t('editModalBtnDeleteAnnotation'),
+                className: 'btn-danger',
+                callback: function () {
+                  _this.eventEmitter.publish('annotationDeleted.' + _this.windowId, [oaAnno['@id']]);
+                  onAnnotationSaved.resolve();
+                }
+              },
+              main: {
+                label: i18next.t('cancel'),
+                className: 'btn-default',
+                callback: function () {
+                  onAnnotationSaved.reject();
                 }
               }
-            });
+            }
+          });
         } else {
           var writeStrategy = new $.MiradorDualStrategy();
           writeStrategy.buildAnnotation({
@@ -39846,50 +39845,45 @@ return /******/ (function(modules) { // webpackBootstrap
             window: _this.state.getWindowObjectById(_this.windowId),
             overlay: _this
           });
-          //save to endpoint
+          // save to endpoint
           _this.eventEmitter.publish('annotationUpdated.' + _this.windowId, [oaAnno]);
           onAnnotationSaved.resolve();
         }
 
-        jQuery.when(onAnnotationSaved.promise()).then(function(){
-          _this.eventEmitter.publish('annotationEditSaveSuccessful.'+_this.windowId);
+        jQuery.when(onAnnotationSaved.promise()).then(function () {
+          _this.eventEmitter.publish('annotationEditSaveSuccessful.' + _this.windowId);
           _this.eventEmitter.publish('SET_ANNOTATION_EDITING.' + _this.windowId, {
-            "annotationId" : oaAnno['@id'],
-            "isEditable" : false,
-            "tooltip" : _this
+            annotationId: oaAnno['@id'],
+            isEditable: false,
+            tooltip: _this
           });
           // return to pointer mode
           _this.inEditOrCreateMode = false;
           _this.eventEmitter.publish('SET_STATE_MACHINE_POINTER.' + _this.windowId);
-
-        },function(){
+        }, function () {
           // confirmation rejected don't do anything
         });
-
-
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('annotationEditCancel.'+_this.windowId,function(event,id){
-
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('annotationEditCancel.' + _this.windowId, function (event, id) {
         _this.eventEmitter.publish('SET_ANNOTATION_EDITING.' + _this.windowId, {
-          "annotationId" : id,
-          "isEditable" : false,
-          "tooltip" : _this.annoTooltip // whats the point of this? maybe when we add confirm for cancel?
+          annotationId: id,
+          isEditable: false,
+          tooltip: _this.annoTooltip // whats the point of this? maybe when we add confirm for cancel?
         });
         _this.inEditOrCreateMode = false;
         // return to pointer mode
-        _this.eventEmitter.publish('SET_STATE_MACHINE_POINTER.' +_this.windowId);
-
+        _this.eventEmitter.publish('SET_STATE_MACHINE_POINTER.' + _this.windowId);
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('clearDraftPaths.'+_this.windowId,function(){
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('clearDraftPaths.' + _this.windowId, function () {
         _this.clearDraftData();
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('onAnnotationCreated.'+_this.windowId,function(event,oaAnno){
-        //should remove the styles added for newly created annotation
-        for(var i=0;i<_this.draftPaths.length;i++){
-          if(_this.draftPaths[i].data && _this.draftPaths[i].data.newlyCreated){
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('onAnnotationCreated.' + _this.windowId, function (event, oaAnno) {
+        // should remove the styles added for newly created annotation
+        for (var i = 0; i < _this.draftPaths.length; i++) {
+          if (_this.draftPaths[i].data && _this.draftPaths[i].data.newlyCreated) {
             _this.draftPaths[i].strokeWidth = _this.draftPaths[i].data.strokeWidth; // TODO: removed newlyCreatedStrokeFactor stuff here
             delete _this.draftPaths[i].data.newlyCreated;
             delete _this.draftPaths[i].data.newlyCreatedStrokeFactor;
@@ -39902,14 +39896,14 @@ return /******/ (function(modules) { // webpackBootstrap
           window: _this.state.getWindowObjectById(_this.windowId),
           overlay: _this
         });
-        //save to endpoint
-        _this.eventEmitter.publish('annotationCreated.' + _this.windowId, [oaAnno, function() {
+        // save to endpoint
+        _this.eventEmitter.publish('annotationCreated.' + _this.windowId, [oaAnno, function () {
           // stuff that needs to be called after the annotation has been created on the backend
           // return to pointer mode
           _this.inEditOrCreateMode = false;
           _this.eventEmitter.publish('SET_STATE_MACHINE_POINTER.' + _this.windowId);
 
-          //reenable viewer tooltips
+          // reenable viewer tooltips
           _this.eventEmitter.publish('enableTooltips.' + _this.windowId);
 
           _this.clearDraftData();
@@ -39918,8 +39912,8 @@ return /******/ (function(modules) { // webpackBootstrap
         }]);
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('onAnnotationCreatedCanceled.'+_this.windowId,function(event,cancelCallback,immediate){
-        var cancel = function(){
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('onAnnotationCreatedCanceled.' + _this.windowId, function (event, cancelCallback, immediate) {
+        var cancel = function () {
           _this.inEditOrCreateMode = false;
           _this.eventEmitter.publish('SET_STATE_MACHINE_POINTER.' + _this.windowId);
 
@@ -39933,17 +39927,17 @@ return /******/ (function(modules) { // webpackBootstrap
             closeButton: false,
             className: 'mirador-dialog',
             buttons: {
-              'no': {
+              no: {
                 label: i18next.t('no'),
                 className: 'btn-default',
-                callback: function() {
-                  return;
+                callback: function () {
+
                 }
               },
-              'yes': {
+              yes: {
                 label: i18next.t('yes'),
                 className: 'btn-primary',
-                callback: function() {
+                callback: function () {
                   cancel();
                   if (cancelCallback) {
                     cancelCallback();
@@ -39957,7 +39951,7 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }));
 
-      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('onAnnotationDeleted.' + _this.windowId, function(event, id, callback) {
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('onAnnotationDeleted.' + _this.windowId, function (event, id, callback) {
         _this.inEditOrCreateMode = false;
         _this.eventEmitter.publish('annotationDeleted.' + _this.windowId, [id]);
         _this.eventEmitter.publish('SET_STATE_MACHINE_POINTER.' + _this.windowId);
@@ -39966,43 +39960,42 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }));
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe('SET_OVERLAY_TOOLTIP.' + this.windowId, function(event, options) {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('SET_OVERLAY_TOOLTIP.' + this.windowId, function (event, options) {
         _this.annoTooltip = options.tooltip;
         _this.annoEditorVisible = options.visible;
         _this.draftPaths = options.paths;
       }));
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe('CANCEL_ACTIVE_ANNOTATIONS.' + this.windowId, function(event) {
-        //for now, don't worry about getting user confirmation, just cancel everything
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('CANCEL_ACTIVE_ANNOTATIONS.' + this.windowId, function (event) {
+        // for now, don't worry about getting user confirmation, just cancel everything
         _this.clearDraftData();
         _this.annoTooltip = null;
         _this.annoEditorVisible = false;
       }));
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe("ANNOTATIONS_LIST_UPDATED",function(event,options){
-        if(options.windowId) {
-          _this.eventEmitter.publish("refreshOverlay." + _this.windowId);
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('ANNOTATIONS_LIST_UPDATED', function (event, options) {
+        if (options.windowId) {
+          _this.eventEmitter.publish('refreshOverlay.' + _this.windowId);
         }
       }));
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe("enableManipulation",function(event, tool){
-        if(tool === 'mirror') {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('enableManipulation', function (event, tool) {
+        if (tool === 'mirror') {
           _this.horizontallyFlipped = true;
         }
       }));
 
-      this.eventsSubscriptions.push(this.eventEmitter.subscribe("disableManipulation",function(event, tool){
-        if(tool === 'mirror') {
+      this.eventsSubscriptions.push(this.eventEmitter.subscribe('disableManipulation', function (event, tool) {
+        if (tool === 'mirror') {
           _this.horizontallyFlipped = false;
         }
       }));
     },
 
-    deleteShape:function(shape){
-
-      for(var i=0;i<this.draftPaths.length;i++){
-        if(this.draftPaths[i]._name.toString() === shape._name.toString()){
-          this.draftPaths.splice(i,1);
+    deleteShape: function (shape) {
+      for (var i = 0; i < this.draftPaths.length; i++) {
+        if (this.draftPaths[i]._name.toString() === shape._name.toString()) {
+          this.draftPaths.splice(i, 1);
           break;
         }
       }
@@ -40010,7 +40003,7 @@ return /******/ (function(modules) { // webpackBootstrap
       shape.remove();
     },
 
-    getMousePositionInImage: function(mousePosition) {
+    getMousePositionInImage: function (mousePosition) {
       var _this = this;
       var originWindow = this.state.getWindowObjectById(this.windowId);
       var currentCanvasModel = originWindow.canvases[originWindow.canvasID];
@@ -40033,18 +40026,18 @@ return /******/ (function(modules) { // webpackBootstrap
       return mousePosition;
     },
 
-    adjustDeltaForShape: function(lastPoint, currentPoint, delta, bounds) {
+    adjustDeltaForShape: function (lastPoint, currentPoint, delta, bounds) {
       var originWindow = this.state.getWindowObjectById(this.windowId);
       var currentCanvasModel = originWindow.canvases[originWindow.canvasID];
 
-      //first check along x axis
+      // first check along x axis
       if (lastPoint.x < currentPoint.x) {
-        //moving to the right, delta should be based on the right most edge
+        // moving to the right, delta should be based on the right most edge
         if (bounds.x + bounds.width > currentCanvasModel.getBounds().width) {
           delta.x = currentCanvasModel.getBounds().width - (bounds.x + bounds.width);
         }
       } else {
-        //moving to the left, prevent it from going past the left edge.  if it does, use the shapes x value as the delta
+        // moving to the left, prevent it from going past the left edge.  if it does, use the shapes x value as the delta
         if (bounds.x < 0) {
           delta.x = Math.abs(bounds.x);
         }
@@ -40053,14 +40046,14 @@ return /******/ (function(modules) { // webpackBootstrap
         delta.x = -delta.x;
       }
 
-      //check along y axis
+      // check along y axis
       if (lastPoint.y < currentPoint.y) {
         // moving to the bottom
         if (bounds.y + bounds.height > currentCanvasModel.getBounds().height) {
           delta.y = currentCanvasModel.getBounds().height - (bounds.y + bounds.height);
         }
       } else {
-        //moving to the top
+        // moving to the top
         if (bounds.y < 0) {
           delta.y = Math.abs(bounds.y);
         }
@@ -40069,10 +40062,10 @@ return /******/ (function(modules) { // webpackBootstrap
       return delta;
     },
 
-    onMouseUp: function(event) {
+    onMouseUp: function (event) {
       if (!this.overlay.disabled) {
-        // event.stopPropagation();
-        //jQuery(this.overlay.viewer.canvas).css('cursor','default');
+        event.stopPropagation();
+        // jQuery(this.overlay.viewer.canvas).css('cursor','default');
         // if (this.overlay.mode === 'deform' || this.overlay.mode === 'edit') {
         //   this.overlay.segment = null;
         //   this.overlay.()) = null;
@@ -40081,43 +40074,42 @@ return /******/ (function(modules) { // webpackBootstrap
         //   this.overlay.mode = '';
         // }
         if (this.overlay.currentTool) {
-          //we may not currently have a tool if the user is in edit mode and didn't click on an editable shape
+          // we may not currently have a tool if the user is in edit mode and didn't click on an editable shape
           this.overlay.currentTool.onMouseUp(event, this.overlay);
         }
       }
     },
 
-    onMouseDrag: function(event) {
+    onMouseDrag: function (event) {
       if (!this.overlay.disabled) {
-        // event.stopPropagation();
+        event.stopPropagation();
         if (this.overlay.currentTool) {
+          if (this.overlay.currentTool.name === 'TextOverlay') return;
           if (this.overlay.currentTool.name === 'Freehand' && this.overlay.mode === 'create') {
-            //freehand create needs to use mouse position because bounds are not accurate until shape is finished
+            // freehand create needs to use mouse position because bounds are not accurate until shape is finished
             event.point = this.overlay.getMousePositionInImage(event.point);
             event.delta = event.point - event.lastPoint;
-          } else {
-            if(this.overlay.path){
-              var bounds = this.overlay.path.bounds;
+          } else if (this.overlay.path) {
+            var bounds = this.overlay.path.bounds;
               // we already have a shape, and we are moving it, need to account for that, rather than mouse position
-              event.delta = this.overlay.adjustDeltaForShape(event.lastPoint, event.point, event.delta, bounds);
-            }
+            event.delta = this.overlay.adjustDeltaForShape(event.lastPoint, event.point, event.delta, bounds);
           }
-          //we may not currently have a tool if the user is in edit mode and didn't click on an editable shape
+          // we may not currently have a tool if the user is in edit mode and didn't click on an editable shape
           this.overlay.currentTool.onMouseDrag(event, this.overlay);
         }
       } else {
         var absolutePoint = {
-          'x': event.event.clientX,
-          'y': event.event.clientY
+          x: event.event.clientX,
+          y: event.event.clientY
         };
         this.overlay.eventEmitter.publish('updateTooltips.' + this.overlay.windowId, [event.point, absolutePoint]);
       }
       this.overlay.paperScope.view.draw();
     },
 
-    onMouseMove: function(event) {
+    onMouseMove: function (event) {
       if (!this.overlay.disabled) {
-        //We are in drawing mode
+        // We are in drawing mode
         if (this.overlay.paperScope.project.hitTest(event.point, this.overlay.hitOptions)) {
           this.overlay.eventEmitter.publish('POINTER_CURSOR.' + this.overlay.windowId);
         } else if (this.overlay.currentTool && !this.overlay.path) {
@@ -40131,15 +40123,15 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       } else {
         var absolutePoint = {
-          'x': event.event.clientX,
-          'y': event.event.clientY
+          x: event.event.clientX,
+          y: event.event.clientY
         };
         this.overlay.eventEmitter.publish('updateTooltips.' + this.overlay.windowId, [event.point, absolutePoint]);
       }
       this.overlay.paperScope.view.draw();
     },
 
-    onMouseDown: function(event) {
+    onMouseDown: function (event) {
       if (this.overlay.disabled) {
         return;
       }
@@ -40153,13 +40145,12 @@ return /******/ (function(modules) { // webpackBootstrap
         this.overlay.latestMouseDownTime = time;
         var hitResult = this.overlay.paperScope.project.hitTest(event.point, this.overlay.hitOptions);
 
-        if (this.overlay.mode !== 'create' && this.overlay.mode !=='') {
+        if (this.overlay.mode !== 'create' && this.overlay.mode !== '') {
           this.overlay.mode = '';
           this.overlay.currentTool = null;
         }
 
         if (hitResult && this.overlay.mode !== 'create') {
-
           var overlayEditable = false;
           if (typeof hitResult.item.data.editable !== 'undefined') {
             overlayEditable = hitResult.item.data.editable; // TODO should remove this editable variable when persisting the svg (will reduce length of string/memory)
@@ -40172,7 +40163,6 @@ return /******/ (function(modules) { // webpackBootstrap
           if (!overlayEditable) {
             return;
           }
-
         }
 
         if (hitResult && (!this.overlay.currentTool || (hitResult.item._name.toString().indexOf(this.overlay.currentTool.idPrefix) === -1 && this.overlay.mode === ''))) {
@@ -40185,7 +40175,6 @@ return /******/ (function(modules) { // webpackBootstrap
           longPrefix = longPrefix[0] + '_' + longPrefix[1] + '_';
 
           for (var j = 0; j < this.overlay.tools.length; j++) {
-
             if (this.overlay.tools[j].idPrefix === prefix || this.overlay.tools[j].idPrefix === longPrefix) {
               this.overlay.eventEmitter.publish('toggleDrawingTool.' + this.overlay.windowId, this.overlay.tools[j].logoClass);
               break;
@@ -40194,7 +40183,7 @@ return /******/ (function(modules) { // webpackBootstrap
         }
 
         if (this.overlay.currentTool) {
-          this.overlay.eventEmitter.publish('HUD_REMOVE_CLASS.'+this.overlay.windowId, ['.hud-dropdown', 'hud-disabled']);
+          this.overlay.eventEmitter.publish('HUD_REMOVE_CLASS.' + this.overlay.windowId, ['.hud-dropdown', 'hud-disabled']);
           event.point = this.overlay.getMousePositionInImage(event.point);
           this.overlay.currentTool.onMouseDown(event, this.overlay);
         }
@@ -40203,15 +40192,14 @@ return /******/ (function(modules) { // webpackBootstrap
       this.overlay.paperScope.view.draw();
     },
 
-    onDoubleClick: function(event) {
-
+    onDoubleClick: function (event) {
       event.stopPropagation();
       if (this.overlay.currentTool) {
         this.overlay.currentTool.onDoubleClick(event, this.overlay);
       }
     },
 
-    fitFixedSizeShapes: function(shape) {
+    fitFixedSizeShapes: function (shape) {
       shape.data.fixedSize = true;
 
       if (shape.name.toString().indexOf('pin_') != -1) {
@@ -40221,11 +40209,10 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    updateSelection: function(selected, item) {
-
-      if(item && item._name){
+    updateSelection: function (selected, item) {
+      if (item && item._name) {
         var shapeTool = this.getTool(item);
-        if(shapeTool){
+      if (shapeTool) {
           item.selectedColor = this.selectedColor;
           shapeTool.updateSelection(selected, item, this);
         }
@@ -40234,12 +40221,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
     rotate: function (event) {
       if (this.paperScope && this.paperScope.view) {
-        this.paperScope.view._matrix.rotate(event.degrees-this.lastAngle, this.paperScope.view.center);
+        this.paperScope.view._matrix.rotate(event.degrees - this.lastAngle, this.paperScope.view.center);
         this.lastAngle = event.degrees;
       }
     },
 
-    resize: function() {
+    resize: function () {
       var _this = this;
       var viewportBounds = this.viewer.viewport.getBounds(true);
       // var originWindow = this.state.getWindowObjectById(this.windowId);
@@ -40271,8 +40258,8 @@ return /******/ (function(modules) { // webpackBootstrap
           if (allItems[j].data.fixedSize) {
             this.fitFixedSizeShapes(allItems[j]);
           }
-          if(this.getTool(allItems[j]).onResize){
-            this.getTool(allItems[j]).onResize(allItems[j],this);
+          if (this.getTool(allItems[j]).onResize) {
+            this.getTool(allItems[j]).onResize(allItems[j], this);
           }
           allItems[j].strokeWidth = allItems[j].data.strokeWidth / this.paperScope.view.zoom;
           if (allItems[j].style) {
@@ -40282,8 +40269,8 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    hover: function() {
-      if(!this.currentTool){
+    hover: function () {
+      if (!this.currentTool) {
         return;
       }
 
@@ -40293,31 +40280,26 @@ return /******/ (function(modules) { // webpackBootstrap
       }
 
       if (this.hoveredPath) {
-
         if (this.hoveredPath._name.toString().indexOf(this.currentTool.idPrefix) === -1) {
           this.updateSelection(false, this.hoveredPath);
           this.hoveredPath = null;
         }
-        if (this.path && this.path._name.toString().indexOf(this.currentTool.idPrefix) !== -1 ) {
-
-          //should make exception for the dynamically attached paths to shapes
-          if(this.currentTool.partOfPrefix && this.path._name.toString().indexOf(this.currentTool.partOfPrefix) !== -1){
+        if (this.path && this.path._name.toString().indexOf(this.currentTool.idPrefix) !== -1) {
+          // should make exception for the dynamically attached paths to shapes
+          if (this.currentTool.partOfPrefix && this.path._name.toString().indexOf(this.currentTool.partOfPrefix) !== -1) {
             return;
           }
 
           if (this.hoveredPath) {
-            if(this.hoveredPath._name.toString() === this.path._name.toString() ){
+            if (this.hoveredPath._name.toString() === this.path._name.toString()) {
               return;
-            }else{
-              this.updateSelection(false, this.hoveredPath);
             }
-
+            this.updateSelection(false, this.hoveredPath);
           }
           this.hoveredPath = this.path;
           this.updateSelection(true, this.hoveredPath);
         }
         return;
-
       }
 
       if (this.path && this.path._name.toString().indexOf(this.currentTool.idPrefix) != -1) {
@@ -40326,7 +40308,8 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    removeFocus: function() {
+    removeFocus: function () {
+      console.log('this.hoveredPath', this.hoveredPath);
       if (this.hoveredPath) {
         this.updateSelection(false, this.hoveredPath);
         this.hoveredPath = null;
@@ -40337,21 +40320,21 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    restoreEditedShapes: function() {
+    restoreEditedShapes: function () {
       this.editedPaths = [];
       this.removeFocus();
     },
 
-    restoreDraftShapes: function() {
+    restoreDraftShapes: function () {
       this.clearDraftData();
       this.removeFocus();
     },
 
     // get the tool which controls given shape
-    getTool:function(shape){
-      for(var i=0;i<this.tools.length;i++){
+    getTool: function (shape) {
+      for (var i = 0; i < this.tools.length; i++) {
         if (shape.name) {
-          if(shape.name.toString().indexOf(this.tools[i].idPrefix) !== -1){
+          if (shape.name.toString().indexOf(this.tools[i].idPrefix) !== -1) {
             return this.tools[i];
           }
         } else {
@@ -40362,12 +40345,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // replaces paper.js objects with the required properties only.
     // 'shapes' coordinates are image coordiantes
-    replaceShape: function(shape, annotation) {
-
-      //backward compatibility when changing shapes points
+    replaceShape: function (shape, annotation) {
+      // backward compatibility when changing shapes points
       var shapeTool = this.getTool(shape);
-      if(shapeTool && shapeTool.SEGMENT_POINTS_COUNT && shapeTool.SEGMENT_POINTS_COUNT !== shape.segments.length){
-        shapeTool.adaptSegments(shape,this);
+      if (shapeTool && shapeTool.SEGMENT_POINTS_COUNT && shapeTool.SEGMENT_POINTS_COUNT !== shape.segments.length) {
+        shapeTool.adaptSegments(shape, this);
       }
 
       var cloned = new this.paperScope.Path({
@@ -40383,7 +40365,7 @@ return /******/ (function(modules) { // webpackBootstrap
         cloned.fillColor = shape.fillColor;
 
         // workaround for paper js fill hit test
-        if(shape.fillColor.alpha === 0){
+        if (shape.fillColor.alpha === 0) {
           shape.fillColor.alpha = FILL_COLOR_ALPHA_WORKAROUND;
         }
         if (shape.fillColor.alpha) {
@@ -40403,12 +40385,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // creating shapes used for backward compatibility.
     // shape coordinates are viewport coordinates.
-    createRectangle: function(shape, annotation) {
+    createRectangle: function (shape, annotation) {
       var paperItems = [];
       var rect = new $.Rectangle();
       var initialPoint = {
-        'x': shape.x,
-        'y': shape.y
+        x: shape.x,
+        y: shape.y
       };
       var currentMode = this.mode;
       var currentPath = this.path;
@@ -40422,9 +40404,9 @@ return /******/ (function(modules) { // webpackBootstrap
       this.mode = 'create';
       this.path = rect.createShape(initialPoint, this);
       var eventData = {
-        'delta': {
-          'x': shape.width,
-          'y': shape.height
+        delta: {
+          x: shape.width,
+          y: shape.height
         }
       };
       rect.onMouseDrag(eventData, this);
@@ -40440,17 +40422,14 @@ return /******/ (function(modules) { // webpackBootstrap
       return paperItems;
     },
 
-    parseSVG: function(svg, annotation) {
+    parseSVG: function (svg, annotation) {
       var paperItems = [];
       var svgParser = new DOMParser();
-      var svgDOM = svgParser.parseFromString(svg, "text/xml");
-      console.log('svg', svg)
+      var svgDOM = svgParser.parseFromString(svg, 'text/xml');
       if (svgDOM.documentElement.nodeName == 'parsererror') {
         return; // if svg is not valid XML structure - backward compatibility.
       }
-      console.log('project', this.paperScope.project);
       var svgTag = this.paperScope.project.importSVG(svg);
-      console.log('svgTag', svgTag);
       // removes SVG tag which is the root object of comment SVG segment.
       if (svgTag !== null) {
         var body = svgTag.removeChildren()[0];
@@ -40477,21 +40456,17 @@ return /******/ (function(modules) { // webpackBootstrap
         textItem.fitBounds(textItem.bounds, true);
         textItem.data.annotation = annotation;
         // textItem.style = { width: '100%' };
-        console.log(textItem);
-        textItem.onMouseUp = function(event) {
+        textItem.onMouseUp = function (event) {
           event.stopPropagation();
-          alert('helo');
-        }
+        };
         paperItems.push(textItem);
       }
-      
-      console.log('paperItems', paperItems);
       this.paperScope.view.update(true);
       return paperItems;
     },
 
     // Restore latest view before rendering.
-    restoreLastView: function(shapeArray) {
+    restoreLastView: function (shapeArray) {
       for (var i = 0; i < this.editedPaths.length; i++) {
         for (var idx = 0; idx < shapeArray.length; idx++) {
           if (shapeArray[idx].name == this.editedPaths[i].name) {
@@ -40522,7 +40497,7 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    deselectAll: function() {
+    deselectAll: function () {
       if (this.paperScope && this.paperScope.view && this.paperScope.project) {
         this.paperScope.project.deselectAll();
         this.paperScope.view.update(true);
@@ -40530,91 +40505,90 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    hide: function() {
+    hide: function () {
       this.canvas.style.display = 'none';
       this.deselectAll();
     },
 
-    show: function() {
+    show: function () {
       this.canvas.style.display = 'block';
     },
 
-    checkToRemoveFocus: function() {
+    checkToRemoveFocus: function () {
       this.currentTool = '';
-      //if we are switching between editing and drawing, remove an old path
+      // if we are switching between editing and drawing, remove an old path
       if (this.inEditOrCreateMode && this.path) {
         this.removeFocus();
       }
     },
 
-    disable: function() {
+    disable: function () {
       this.disabled = true;
       this.inEditOrCreateMode = false;
       this.eventEmitter.publish('enableTooltips.' + this.windowId);
       this.deselectAll();
     },
 
-    enableEdit: function() {
+    enableEdit: function () {
       this.disabled = false;
       this.inEditOrCreateMode = true;
       this.eventEmitter.publish('disableTooltips.' + this.windowId);
     },
 
-    enable: function() {
+    enable: function () {
       this.disabled = false;
-      //this.inEditOrCreateMode = false;
+      // this.inEditOrCreateMode = false;
       this.eventEmitter.publish('disableTooltips.' + this.windowId);
     },
 
-    refresh: function() {
+    refresh: function () {
       this.paperScope.view.update(true);
     },
 
-    destroyCommentPanel: function() {
+    destroyCommentPanel: function () {
       this.eventEmitter.publish('removeTooltips.' + this.windowId);
       jQuery(this.canvas).parents('.mirador-osd').qtip('destroy', true);
       this.commentPanel = null;
     },
 
-    getName: function(tool) {
+    getName: function (tool) {
       return tool.idPrefix + $.genUUID();
     },
 
-    getSVGString: function(shapes) {
+    getSVGString: function (shapes) {
       var svg = "<svg xmlns='http://www.w3.org/2000/svg'>";
       if (shapes.length > 1) {
-        svg += "<g>";
+        svg += '<g>';
         for (var i = 0; i < shapes.length; i++) {
-          this.updateSelection(false,shapes[i]);
+          this.updateSelection(false, shapes[i]);
           if (shapes[i].data.fixedSize) {
             this.fitFixedSizeShapes(shapes[i]);
           }
           var anno = shapes[i].data.annotation;
           shapes[i].data.annotation = null;
           svg += shapes[i].exportSVG({
-            "asString": true
+            asString: true
           });
           shapes[i].data.annotation = anno;
         }
-        svg += "</g>";
+        svg += '</g>';
       } else {
-        this.updateSelection(false,shapes[0]);
+        this.updateSelection(false, shapes[0]);
         if (shapes[0].data.fixedSize) {
           this.fitFixedSizeShapes(shapes[0]);
         }
         var annoSingle = shapes[0].data.annotation;
         shapes[0].data.annotation = null;
         svg += shapes[0].exportSVG({
-          "asString": true
+          asString: true
         });
         shapes[0].data.annotation = annoSingle;
       }
-      svg += "</svg>";
+      svg += '</svg>';
       return svg;
     },
 
-    onDrawFinish: function() {
-
+    onDrawFinish: function () {
       var shape = this.path;
       if (!shape) {
         return;
@@ -40653,30 +40627,30 @@ return /******/ (function(modules) { // webpackBootstrap
         return;
       }
       var _this = this;
-      if (typeof this.annoEditorVisible === 'undefined' || !this.annoEditorVisible)  {
+      if (typeof this.annoEditorVisible === 'undefined' || !this.annoEditorVisible) {
         this.annoTooltip.showEditor({
           annotation: {},
           onSaveClickCheck: function () {
             return _this.draftPaths.length;
           },
-          onAnnotationCreated: function(oaAnno) {
-            _this.eventEmitter.publish('onAnnotationCreated.'+_this.windowId,[oaAnno]);
+          onAnnotationCreated: function (oaAnno) {
+            _this.eventEmitter.publish('onAnnotationCreated.' + _this.windowId, [oaAnno]);
           }
         });
         _this.annoEditorVisible = true;
       }
     },
 
-    onEditFinish: function() {
+    onEditFinish: function () {
       var _this = this;
-      jQuery.each(this.draftPaths, function(index, value) {
+      jQuery.each(this.draftPaths, function (index, value) {
         if (_this.path.name === value.name) {
           _this.draftPaths[index] = _this.path;
         }
       });
     },
 
-    clearDraftData: function() {
+    clearDraftData: function () {
       var _this = this;
       for (var idx = 0; idx < _this.draftPaths.length; idx++) {
         _this.updateSelection(false, this.draftPaths[idx]);
@@ -40695,42 +40669,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // Should unsubscribe from all events
     // Should have no references in order to be garbage collected
-    destroy:function(){
+    destroy: function () {
       var _this = this;
 
-      this.eventsSubscriptions.forEach(function(event){
-        _this.eventEmitter.unsubscribe(event.name,event.handler);
+      this.eventsSubscriptions.forEach(function (event) {
+        _this.eventEmitter.unsubscribe(event.name, event.handler);
       });
 
-      this.viewer.removeHandler('animation',this._thisResize);
-      this.viewer.removeHandler('open',this._thisResize);
-      this.viewer.removeHandler('animation-finish',this._thisResize);
-      this.viewer.removeHandler('update-viewport',this._thisResize);
-      this.viewer.removeHandler('resize',this._thisResize);
-      this.viewer.removeHandler('rotate',this._thisResize);
-      this.viewer.removeHandler('constrain',this._thisResize);
-      this.viewer.removeHandler('close',this._thisDestroy);
+      this.viewer.removeHandler('animation', this._thisResize);
+      this.viewer.removeHandler('open', this._thisResize);
+      this.viewer.removeHandler('animation-finish', this._thisResize);
+      this.viewer.removeHandler('update-viewport', this._thisResize);
+      this.viewer.removeHandler('resize', this._thisResize);
+      this.viewer.removeHandler('rotate', this._thisResize);
+      this.viewer.removeHandler('constrain', this._thisResize);
+      this.viewer.removeHandler('close', this._thisDestroy);
     }
   };
 }(Mirador));
 
-(function($) {
-  $.Pin = function(options) {
+(function ($) {
+  $.Pin = function (options) {
     jQuery.extend(this, {
       name: 'Pin',
       logoClass: 'room',
       idPrefix: 'pin_',
-      tooltip: 'pinTooltip',
+      tooltip: 'pinTooltip'
     }, options);
 
     this.init();
   };
 
   $.Pin.prototype = {
-    init: function() {
+    init: function () {
     },
 
-    createShape: function(initialPoint, overlay) {
+    createShape: function (initialPoint, overlay) {
       overlay.mode = 'create';
       var _this = this;
       var size = overlay.fixedShapeSize;
@@ -40755,7 +40729,7 @@ return /******/ (function(modules) { // webpackBootstrap
       return shape;
     },
 
-    updateSelection: function(selected, item, overlay) {
+    updateSelection: function (selected, item, overlay) {
       if (item._name.toString().indexOf(this.idPrefix) !== -1) {
         if (selected) {
           item.strokeColor = overlay.selectedColor;
@@ -40763,7 +40737,7 @@ return /******/ (function(modules) { // webpackBootstrap
           if (!item.data.deleteIcon) {
             item.data.deleteIcon = new overlay.annotationUtils.DeleteActionIcon(overlay.paperScope, {
               name: item.name + this.partOfPrefix + 'delete',
-              fillColor : item.selectedColor
+              fillColor: item.selectedColor
             });
 
             item.data.deleteIcon.addData('pivot', item.segments[0].point);
@@ -40773,9 +40747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
             item.data.deleteIcon.setOnMouseDownListener(overlay);
-
           }
-
         } else {
           item.strokeColor = overlay.strokeColor;
 
@@ -40783,78 +40755,75 @@ return /******/ (function(modules) { // webpackBootstrap
             item.data.deleteIcon.remove();
             item.data.deleteIcon = null;
           }
-
         }
       }
     },
 
-    onResize:function(item,overlay){
-      if(item._name.toString().indexOf(this.partOfPrefix)!== -1){
-        if(item._name.toString().indexOf('delete')){
+    onResize: function (item, overlay) {
+      if (item._name.toString().indexOf(this.partOfPrefix) !== -1) {
+        if (item._name.toString().indexOf('delete')) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
-          item.data.self.resize(24 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(24 * 1 / overlay.paperScope.view.zoom);
         }
       }
     },
 
-    onHover:function(activate,shape,hoverWidth,hoverColor){
+    onHover: function (activate, shape, hoverWidth, hoverColor) {
       shape.strokeWidth = hoverWidth;
       // shape needs to have hovered styles
-      if(activate && !shape.data.hovered){
+      if (activate && !shape.data.hovered) {
         shape.data.nonHoverStrokeColor = shape.strokeColor.clone();
         shape.data.hovered = true;
         shape.strokeColor = hoverColor;
       }
       // shape is not longer hovered
-      if(!activate && shape.data.hovered){
+      if (!activate && shape.data.hovered) {
         shape.strokeColor = shape.data.nonHoverStrokeColor.clone();
         delete shape.data.nonHoverStrokeColor;
         delete shape.data.hovered;
       }
     },
 
-    onMouseUp: function(event, overlay) {
+    onMouseUp: function (event, overlay) {
       // Empty block.
     },
 
-    onMouseDrag: function(event, overlay) {
+    onMouseDrag: function (event, overlay) {
       if (overlay.mode === 'translate') {
         if (overlay.path) {
           overlay.path.position.x += event.delta.x;
           overlay.path.position.y += event.delta.y;
-          if(overlay.path.data.deleteIcon){
-            overlay.path.data.deleteIcon.translateByXY(event.delta.x,event.delta.y);
+          if (overlay.path.data.deleteIcon) {
+            overlay.path.data.deleteIcon.translateByXY(event.delta.x, event.delta.y);
           }
         }
       }
     },
 
-    onMouseMove: function(event, overlay) {
+    onMouseMove: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
-      if(hitResult && hitResult.item._name.toString().indexOf(this.idPrefix)!==-1){
-        if(!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !==-1){
-          this.setCursor(hitResult,overlay);
+      if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) !== -1) {
+        if (!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !== -1) {
+          this.setCursor(hitResult, overlay);
         }
       }
     },
 
-    setCursor:function(hitResult,overlay){
-      if(hitResult.type === 'stroke' || hitResult.type === 'handle-in' || hitResult.type === 'handle-out' || hitResult.type === 'segment'){
-        jQuery(overlay.viewer.canvas).css('cursor','move');
+    setCursor: function (hitResult, overlay) {
+      if (hitResult.type === 'stroke' || hitResult.type === 'handle-in' || hitResult.type === 'handle-out' || hitResult.type === 'segment') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'move');
         return;
       }
 
       // mouse over attached icon
-      if(hitResult.type === 'pixel'){
+      if (hitResult.type === 'pixel') {
         jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
-        return;
       }
     },
 
     onMouseDown: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
       if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) != -1) {
-
         if (hitResult.item._name.toString().indexOf(this.partOfPrefix) !== -1) {
           hitResult.item.data.self.onMouseDown();
           return;
@@ -40882,14 +40851,14 @@ return /******/ (function(modules) { // webpackBootstrap
       overlay.onDrawFinish();
     },
 
-    onDoubleClick: function(event, overlay) {
+    onDoubleClick: function (event, overlay) {
       // Empty block.
     }
   };
 }(Mirador));
 
-(function($) {
-  $.Polygon = function(options) {
+(function ($) {
+  $.Polygon = function (options) {
     jQuery.extend(this, {
       name: 'Polygon',
       logoClass: 'timeline',
@@ -40901,10 +40870,10 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.Polygon.prototype = {
-    init: function() {
+    init: function () {
     },
 
-    createShape: function(initialPoint, overlay) {
+    createShape: function (initialPoint, overlay) {
       overlay.mode = 'create';
       var _this = this;
       var shape = new overlay.paperScope.Path({
@@ -40918,53 +40887,49 @@ return /******/ (function(modules) { // webpackBootstrap
       return shape;
     },
 
-    updateSelection: function(selected, item, overlay) {
+    updateSelection: function (selected, item, overlay) {
       if (item._name.toString().indexOf(this.idPrefix) != -1) {
         item.selected = selected;
 
-        if(selected){
-          if (!item.data.deleteIcon && overlay.mode !=='create') {
+        if (selected) {
+          if (!item.data.deleteIcon && overlay.mode !== 'create') {
             item.data.deleteIcon = new overlay.annotationUtils.DeleteActionIcon(overlay.paperScope, {
               name: item.name + this.partOfPrefix + 'delete',
-              fillColor:item.selectedColor
+              fillColor: item.selectedColor
             });
-            item.data.deleteIcon.addData('pivot',new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(item)));
+            item.data.deleteIcon.addData('pivot', new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(item)));
             item.data.deleteIcon.addData('type', 'deleteIcon');
             item.data.deleteIcon.addData('self', item.data.deleteIcon);
             item.data.deleteIcon.addData('parent', item);
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
             item.data.deleteIcon.setOnMouseDownListener(overlay);
           }
-        }else{
-
-          if(item.data.deleteIcon){
-            item.data.deleteIcon.remove();
-            item.data.deleteIcon = null;
-          }
+        } else if (item.data.deleteIcon) {
+          item.data.deleteIcon.remove();
+          item.data.deleteIcon = null;
         }
       }
     },
 
-    onResize:function(item,overlay){
-      if(item._name.toString().indexOf(this.partOfPrefix)!== -1){
-        if(item._name.toString().indexOf('delete') !==-1){
-
+    onResize: function (item, overlay) {
+      if (item._name.toString().indexOf(this.partOfPrefix) !== -1) {
+        if (item._name.toString().indexOf('delete') !== -1) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
-          item.data.self.resize(24 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(24 * 1 / overlay.paperScope.view.zoom);
         }
       }
     },
 
-    getPivotPointForDeleteIcon:function(item){
+    getPivotPointForDeleteIcon: function (item) {
       var points = [];
 
-      for(var i=0;i<item.segments.length;i++){
+      for (var i = 0; i < item.segments.length; i++) {
         points.push(item.segments[i].point);
       }
 
       return {
-        x:this.getGeometricCenterOfPoints(points).x,
-        y:this.getLowestPoint(points).y
+        x: this.getGeometricCenterOfPoints(points).x,
+        y: this.getLowestPoint(points).y
       };
     },
 
@@ -40986,39 +40951,39 @@ return /******/ (function(modules) { // webpackBootstrap
     getGeometricCenterOfPoints: function (points) {
       var cx = 0;
       var cy = 0;
-      for(var i= 0;i<points.length;i++){
-        cx +=points[i].x;
-        cy +=points[i].y;
+      for (var i = 0; i < points.length; i++) {
+        cx += points[i].x;
+        cy += points[i].y;
       }
 
       return {
-        x:cx/points.length,
-        y:cy/points.length
+        x: cx / points.length,
+        y: cy / points.length
       };
     },
 
-    onHover:function(activate,shape,hoverWidth,hoverColor){
+    onHover: function (activate, shape, hoverWidth, hoverColor) {
       shape.strokeWidth = hoverWidth;
 
       // shape needs to have hovered styles
-      if(activate && !shape.data.hovered){
+      if (activate && !shape.data.hovered) {
         shape.data.nonHoverStrokeColor = shape.strokeColor.clone();
         shape.data.hovered = true;
         shape.strokeColor = hoverColor;
       }
       // shape is not longer hovered
-      if(!activate && shape.data.hovered){
+      if (!activate && shape.data.hovered) {
         shape.strokeColor = shape.data.nonHoverStrokeColor.clone();
         delete shape.data.nonHoverStrokeColor;
         delete shape.data.hovered;
       }
     },
 
-    onMouseUp: function(event, overlay) {
+    onMouseUp: function (event, overlay) {
 
     },
 
-    onMouseDrag: function(event, overlay) {
+    onMouseDrag: function (event, overlay) {
       if (overlay.mode === 'deform') {
         if (overlay.segment) {
           overlay.segment.point.x += event.delta.x;
@@ -41026,7 +40991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
           var path = overlay.segment.path;
 
-          if(path.data.deleteIcon){
+          if (path.data.deleteIcon) {
             path.data.deleteIcon.addData('pivot', new overlay.paperScope.Point(this.getPivotPointForDeleteIcon(path)));
             path.data.deleteIcon.setPosition(path.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom)));
           }
@@ -41042,46 +41007,44 @@ return /******/ (function(modules) { // webpackBootstrap
           if (overlay.path.data.deleteIcon) {
             overlay.path.data.deleteIcon.translateByXY(event.delta.x, event.delta.y);
           }
-
         }
       }
     },
 
-    onMouseMove: function(event, overlay) {
+    onMouseMove: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
-      if(hitResult && hitResult.item._name.toString().indexOf(this.idPrefix)!==-1){
-        if(!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !==-1){
-          this.setCursor(hitResult,overlay);
+      if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) !== -1) {
+        if (!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !== -1) {
+          this.setCursor(hitResult, overlay);
         }
       }
     },
 
-    setCursor:function(hitResult,overlay){
-      if(hitResult.type === 'stroke'){
-        jQuery(overlay.viewer.canvas).css('cursor','move');
+    setCursor: function (hitResult, overlay) {
+      if (hitResult.type === 'stroke') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'move');
         return;
       }
 
-      if(hitResult.type === 'handle-in' || hitResult.type === 'handle-out'){
-        jQuery(overlay.viewer.canvas).css('cursor','pointer');
-        return;
-      }
-
-      // mouse over attached icon
-      if(hitResult.type === 'pixel'){
+      if (hitResult.type === 'handle-in' || hitResult.type === 'handle-out') {
         jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
         return;
       }
 
-      if(hitResult.segment){
-        jQuery(overlay.viewer.canvas).css('cursor','pointer');
+      // mouse over attached icon
+      if (hitResult.type === 'pixel') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
+        return;
+      }
+
+      if (hitResult.segment) {
+        jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
       }
     },
 
-    onMouseDown: function(event, overlay) {
+    onMouseDown: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
       if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) !== -1) {
-
         if (hitResult.item._name.toString().indexOf(this.partOfPrefix) !== -1) {
           hitResult.item.data.self.onMouseDown();
           return;
@@ -41092,10 +41055,9 @@ return /******/ (function(modules) { // webpackBootstrap
             overlay.mode = 'edit';
             overlay.segment = null;
             overlay.path = null;
-            document.body.style.cursor = "move";
+            document.body.style.cursor = 'move';
           } else {
-
-            document.body.style.cursor = "default";
+            document.body.style.cursor = 'default';
           }
 
           if (hitResult.type === 'stroke') {
@@ -41106,25 +41068,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
           if (hitResult.type === 'segment') {
             // When shift is being pressed and segment point selected it deletes
-            if(event.modifiers.shift){
-              if(hitResult.item.segments.length > 2){
+            if (event.modifiers.shift) {
+              if (hitResult.item.segments.length > 2) {
                 hitResult.segment.remove();
                 return;
               }
-
             }
             overlay.mode = 'deform';
             overlay.segment = hitResult.segment;
             overlay.path = hitResult.item;
             return;
           }
-
-
         }
-      } else {
-        if(overlay.mode !=='create'){
-          overlay.mode = '';
-        }
+      } else if (overlay.mode !== 'create') {
+        overlay.mode = '';
       }
 
       if (overlay.mode === '') {
@@ -41134,16 +41091,12 @@ return /******/ (function(modules) { // webpackBootstrap
       }
       if (overlay.mode === 'create') {
         overlay.path.add(event.point);
-
-        return;
       }
-
     },
 
-    onDoubleClick: function(event, overlay) {
+    onDoubleClick: function (event, overlay) {
       if (overlay.mode === 'create') {
         if (overlay.path && overlay.path.segments.length > 1) {
-
           if (overlay.path.segments[0].point.getDistance(overlay.path.segments[overlay.path.segments.length - 1].point) * overlay.paperScope.view.zoom < overlay.hitOptions.tolerance) {
             overlay.path.closed = true;
             overlay.path.fillColor = overlay.fillColor;
@@ -41152,15 +41105,13 @@ return /******/ (function(modules) { // webpackBootstrap
           }
           overlay.onDrawFinish();
         }
-
       }
-
     }
   };
 }(Mirador));
 
-(function($) {
-  $.Rectangle = function(options) {
+(function ($) {
+  $.Rectangle = function (options) {
     jQuery.extend(this, {
       name: 'Rectangle',
       logoClass: 'check_box_outline_blank',
@@ -41171,11 +41122,11 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   $.Rectangle.prototype = {
-    init: function() {
+    init: function () {
       this.SEGMENT_POINTS_COUNT = 9;
     },
 
-    createShape: function(initialPoint, overlay) {
+    createShape: function (initialPoint, overlay) {
       overlay.mode = 'create';
       var segments = this._createSegments(initialPoint, overlay);
       var shape = new overlay.paperScope.Path({
@@ -41196,7 +41147,7 @@ return /******/ (function(modules) { // webpackBootstrap
       return shape;
     },
 
-    _createSegments:function(initialPoint, overlay){
+    _createSegments: function (initialPoint, overlay) {
       var segments = [];
       // point indexes
       // 0    1&2    3
@@ -41220,25 +41171,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
     updateSelection: function (selected, item, overlay) {
       if (item._name.toString().indexOf(this.idPrefix) != -1) {
-
-        if(item._name.toString().indexOf(this.partOfPrefix)!=-1){
+        if (item._name.toString().indexOf(this.partOfPrefix) != -1) {
           return;
         }
 
         item.selected = selected;
         if (selected) {
-
-          //item.segments[1].handleOut = new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom);
+          // item.segments[1].handleOut = new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom);
          // item.segments[1].handleOut = item.segments[1].handleOut.rotate(item.data.rotation, item.segments[1]);
 
           if (!item.data.deleteIcon) {
-
             item.data.deleteIcon = new overlay.annotationUtils.DeleteActionIcon(overlay.paperScope, {
               name: item.name + this.partOfPrefix + 'delete',
               fillColor: item.selectedColor
             });
 
-            item.data.deleteIcon.addData('pivot',item.segments[6].point);
+            item.data.deleteIcon.addData('pivot', item.segments[6].point);
             item.data.deleteIcon.addData('type', 'deleteIcon');
             item.data.deleteIcon.addData('self', item.data.deleteIcon);
             item.data.deleteIcon.addData('parent', item);
@@ -41246,17 +41194,15 @@ return /******/ (function(modules) { // webpackBootstrap
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
 
             item.data.deleteIcon.setOnMouseDownListener(overlay);
-
           }
 
           if (!item.data.rotationIcon) {
-
             item.data.rotationIcon = new overlay.annotationUtils.RotationIcon(overlay.paperScope, {
               name: item.name + this.partOfPrefix + 'rotation',
               fillColor: item.selectedColor
             });
 
-            item.data.rotationIcon.addData('pivot',item.segments[1].point);
+            item.data.rotationIcon.addData('pivot', item.segments[1].point);
             item.data.rotationIcon.addData('type', 'rotationIcon');
             item.data.rotationIcon.addData('self', item.data.rotationIcon);
             item.data.rotationIcon.addData('parent', item);
@@ -41264,11 +41210,10 @@ return /******/ (function(modules) { // webpackBootstrap
             item.data.rotationIcon.setPosition(item.data.rotationIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
 
             item.data.rotationIcon.setOnMouseDownListener(overlay);
-
           }
 
           if (!item.data.group) {
-            item.data.group = new overlay.annotationUtils.Group(overlay.paperScope,[item,item.data.deleteIcon.getItem(),item.data.deleteIcon.getMask().getItem(),item.data.rotationIcon.getItem(),item.data.rotationIcon.getMask().getItem()]);
+            item.data.group = new overlay.annotationUtils.Group(overlay.paperScope, [item, item.data.deleteIcon.getItem(), item.data.deleteIcon.getMask().getItem(), item.data.rotationIcon.getItem(), item.data.rotationIcon.getMask().getItem()]);
           }
 
           var point = item.segments[1].point.clone();
@@ -41278,33 +41223,32 @@ return /******/ (function(modules) { // webpackBootstrap
             item.segments[1].handleOut = item.segments[1].handleOut.rotate(180, item.segments[1]);
           }
 
-          if(item.contains(item.data.deleteIcon.getItem().position)){
+          if (item.contains(item.data.deleteIcon.getItem().position)) {
             item.data.deleteIcon.setPosition(item.data.deleteIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
-            item.data.deleteIcon.rotate(180,item.data.deleteIcon.getData('pivot'));
+            item.data.deleteIcon.rotate(180, item.data.deleteIcon.getData('pivot'));
             item.data.deleteIcon.rotate(180);
           }
 
-          if(item.contains(item.data.rotationIcon.getItem().position)){
+          if (item.contains(item.data.rotationIcon.getItem().position)) {
             item.data.rotationIcon.setPosition(item.data.rotationIcon.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.rotation)));
-            item.data.rotationIcon.rotate(180,item.data.rotationIcon.getData('pivot'));
+            item.data.rotationIcon.rotate(180, item.data.rotationIcon.getData('pivot'));
             item.data.rotationIcon.rotate(180);
           }
 
           item.segments[1].handleOut.selected = false;
         } else {
-
-          if(item.data.group){
+          if (item.data.group) {
             item.data.group.remove();
             item.data.group = null;
             overlay.paperScope.project.activeLayer.addChild(item);
           }
 
-          if(item.data.deleteIcon){
+          if (item.data.deleteIcon) {
             item.data.deleteIcon.remove();
             item.data.deleteIcon = null;
           }
 
-          if(item.data.rotationIcon){
+          if (item.data.rotationIcon) {
             item.data.rotationIcon.remove();
             item.data.rotationIcon = null;
           }
@@ -41313,17 +41257,17 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    onHover:function(activate,shape,hoverWidth,hoverColor){
+    onHover: function (activate, shape, hoverWidth, hoverColor) {
       shape.strokeWidth = hoverWidth;
 
       // shape needs to have hovered styles
-      if(activate && !shape.data.hovered){
+      if (activate && !shape.data.hovered) {
         shape.data.nonHoverStrokeColor = shape.strokeColor.clone();
         shape.data.hovered = true;
         shape.strokeColor = hoverColor;
       }
       // shape is not longer hovered
-      if(!activate && shape.data.hovered){
+      if (!activate && shape.data.hovered) {
         shape.strokeColor = shape.data.nonHoverStrokeColor.clone();
         delete shape.data.nonHoverStrokeColorColor;
         delete shape.data.hovered;
@@ -41332,12 +41276,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // Old rectangle shapes does not have rotation handle point
     // add it manually for old shapes
-    adaptSegments:function(shape,overlay){
+    adaptSegments: function (shape, overlay) {
       var handleSegment = shape.segments[1].clone();
-      shape.segments.splice(1,0,handleSegment);
+      shape.segments.splice(1, 0, handleSegment);
     },
 
-    onMouseUp: function(event, overlay) {
+    onMouseUp: function (event, overlay) {
       if (overlay.mode === 'create' && overlay.path) {
         overlay.onDrawFinish();
       } else if (overlay.mode === 'translate' || overlay.mode === 'deform' && overlay.path) {
@@ -41345,21 +41289,21 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     },
 
-    translate: function(event, overlay) {
+    translate: function (event, overlay) {
       for (var i = 0; i < overlay.path.segments.length; i++) {
         overlay.path.segments[i].point.x += event.delta.x;
         overlay.path.segments[i].point.y += event.delta.y;
       }
-      overlay.path.data.rotationIcon.translateByXY(event.delta.x,event.delta.y);
-      overlay.path.data.deleteIcon.translateByXY(event.delta.x,event.delta.y);
+      overlay.path.data.rotationIcon.translateByXY(event.delta.x, event.delta.y);
+      overlay.path.data.deleteIcon.translateByXY(event.delta.x, event.delta.y);
     },
 
-    rotate:function(event,overlay){
+    rotate: function (event, overlay) {
       var center = overlay.path.position;
       var rotation = Math.atan2(event.point.y - center.y + event.delta.y, event.point.x - center.x + event.delta.x) - Math.atan2(event.point.y - center.y, event.point.x - center.x);
-      rotation = rotation * (180 / Math.PI);
+      rotation *= (180 / Math.PI);
 
-      overlay.path.data.group.rotate(rotation,overlay.path.position);
+      overlay.path.data.group.rotate(rotation, overlay.path.position);
 
       overlay.path.data.deleteIcon.rotate(-rotation);
       overlay.path.data.rotationIcon.rotate(-rotation);
@@ -41450,71 +41394,67 @@ return /******/ (function(modules) { // webpackBootstrap
           overlay.path.data.rotationIcon.rotate(180, overlay.path.data.rotationIcon.getData('pivot'));
           overlay.path.data.rotationIcon.rotate(180);
         }
-
       }
     },
 
-    onResize:function(item,overlay){
-      if(item._name.toString().indexOf(this.partOfPrefix)!== -1){
-        if(item._name.toString().indexOf('delete') !==-1){
+    onResize: function (item, overlay) {
+      if (item._name.toString().indexOf(this.partOfPrefix) !== -1) {
+        if (item._name.toString().indexOf('delete') !== -1) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.parent.data.rotation)));
 
-          if(item.data.parent.contains(item.position)){
-            item.data.self.rotate(180,item.data.self.getData('pivot'));
+          if (item.data.parent.contains(item.position)) {
+            item.data.self.rotate(180, item.data.self.getData('pivot'));
             item.data.self.rotate(180);
           }
 
-          item.data.self.resize(24 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(24 * 1 / overlay.paperScope.view.zoom);
         }
 
-        if(item._name.toString().indexOf('rotation') !== -1){
+        if (item._name.toString().indexOf('rotation') !== -1) {
           item.data.self.setPosition(item.data.self.getData('pivot').add(new overlay.paperScope.Point(0, 21 / overlay.paperScope.view.zoom).rotate(item.data.parent.data.rotation)));
 
-          if(item.data.parent.contains(item.position)){
-            item.data.self.rotate(180,item.data.self.getData('pivot'));
+          if (item.data.parent.contains(item.position)) {
+            item.data.self.rotate(180, item.data.self.getData('pivot'));
             item.data.self.rotate(180);
           }
 
-          item.data.self.resize(16 *  1 / overlay.paperScope.view.zoom);
+          item.data.self.resize(16 * 1 / overlay.paperScope.view.zoom);
         }
-
       }
     },
 
-    onMouseMove: function(event, overlay) {
+    onMouseMove: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
-      if(hitResult && hitResult.item._name.toString().indexOf(this.idPrefix)!==-1){
-        if(!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !==-1){
-          this.setCursor(hitResult,overlay);
+      if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) !== -1) {
+        if (!overlay.disabled && overlay.hoveredPath && hitResult.item._name.toString().indexOf(overlay.hoveredPath._name.toString()) !== -1) {
+          this.setCursor(hitResult, overlay);
         }
       }
     },
 
-    setCursor:function(hitResult,overlay){
-
-      if(hitResult.type === 'stroke'){
-        jQuery(overlay.viewer.canvas).css('cursor','move');
+    setCursor: function (hitResult, overlay) {
+      if (hitResult.type === 'stroke') {
+        jQuery(overlay.viewer.canvas).css('cursor', 'move');
         return;
       }
 
-      if(hitResult.type === 'pixel'){
+      if (hitResult.type === 'pixel') {
         jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
         return;
       }
 
-      if(hitResult.segment){
-        jQuery(overlay.viewer.canvas).css('cursor','pointer');
+      if (hitResult.segment) {
+        jQuery(overlay.viewer.canvas).css('cursor', 'pointer');
       }
-
     },
 
-    onMouseDown: function(event, overlay) {
+    onMouseDown: function (event, overlay) {
       var hitResult = overlay.paperScope.project.hitTest(event.point, overlay.hitOptions);
       if (hitResult && hitResult.item._name.toString().indexOf(this.idPrefix) != -1) {
         if (overlay.mode !== 'deform' && overlay.mode !== 'translate' && overlay.mode !== 'create') {
           if (hitResult.item._name.toString().indexOf(this.partOfPrefix) !== -1) {
             hitResult.item.data.self.onMouseDown(); // TODO should check this for memory leak
-            if(overlay.mode === 'rotate'){
+            if (overlay.mode === 'rotate') {
               overlay.path = hitResult.item.data.self.getItem().data.parent;
             }
             return;
@@ -41560,12 +41500,314 @@ return /******/ (function(modules) { // webpackBootstrap
       overlay.path = this.createShape(event.point, overlay);
     },
 
-    onDoubleClick: function(event, overlay) {
+    onDoubleClick: function (event, overlay) {
 
     }
 
   };
+}(Mirador));
 
+(function ($) {
+  $.TextOverlay = function (options) {
+    jQuery.extend(this, {
+      name: 'TextOverlay',
+      logoClass: 'text_format',
+      idPrefix: 'ocr_',
+      tooltip: 'ocrTooltip',
+      osd: null,
+      canvasID: null,
+      words: [],
+      wordOverlays: [],
+      volume: null,
+      page: null,
+      eventEmitter: null,
+      state: null,
+      annotationState: null,
+      windowId: null,
+      eventsSubscriptions: [],
+      selecting: false,
+      showTextOverlay: false,
+      displayAnnotations: false,
+      annotationCanvas: null,
+      ocrOverlayContainer: null
+    }, options);
+    this.init();
+  };
+
+  $.TextOverlay.prototype = {
+    init: function () {
+      this.ocrContainer = document.getElementById('ocr')
+      this.updateCanvasId();
+      // console.log(this);
+      if (this.eventEmitter !== null) {
+        this.listenForActions();
+      }
+    },
+
+    updateCanvasId() {
+      if (this.canvasID) {
+        this.volume = this.canvasID.split('/').reverse()[2];
+        this.page = this.canvasID.split('/').reverse()[0];
+      }
+    },
+    
+    addTextOverlay: function() {
+      // if (!this.showTextOverlay) return;
+      var _this = this;
+      jQuery.ajax({
+        url: '/iiif/v2/' + _this.volume + '/list/' + _this.page,
+        type: 'GET',
+        dataType: 'json',
+        headers: {},
+        data: {},
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+          jQuery.each(data.resources, function (index, value) {
+            // Things get out of sync when changing canvases. This check for an element with
+            // the id is to make sure we don't add the word more than once.
+            // TODO: add a class for the OCR spans. That way we can do a check for the class once
+            // and skip the ajax call and the loop.
+            if (value.resource["@type"] === 'cnt:ContentAsText' && !document.getElementById(value['@id'])) {
+              jQuery(value.on[0].selector.item.value).appendTo(_this.ocrContainer);
+              var loc = value.on[0].selector.default.value.split('=')[1].split(',').map(function (i) {
+                return parseInt(i);
+              });
+              var ocrEl = document.getElementById(value['@id']);
+              // _this.words.push(ocrEl);
+              ocrEl.style.width = 'auto';
+              ocrEl.style.letterSpacing = (ocrEl.offsetWidth) / (ocrEl.innerText.length + 1) + 'px';
+              
+              ocrEl.width = loc[2];
+              
+              var word = {
+                element: ocrEl,
+                location: new OpenSeadragon.Rect(loc[0], loc[1], loc[2], loc[3])
+              };
+              
+              _this.words.push(word);
+              
+              var wordOverlay = _this.osd.addOverlay(word);
+              console.log('wordOverlay', ocrEl);
+                  // if (index === 0) {
+                    // _this.osd.canvas = ocrEl.parentElement;
+                    _this.annotationCanvas = _this.osd.canvas.lastElementChild;
+                    console.log('annoCanv', _this.osd.canvas.lastElementChild);
+                  // }
+
+              // _this.osd.updateOverlay(word);
+              _this.wordOverlays.push(wordOverlay.currentOverlays[wordOverlay.currentOverlays.length-1]);
+
+              
+            }
+          });
+        },
+        error: function (error) {
+          if (typeof errorCallback === "function") {
+            errorCallback();
+          }
+        }
+      });
+
+      return this.words;
+    },
+
+    dragHandler: function (event) {
+      console.log('drag', event);
+      // if (_this.selecting) {
+        this.osd.setMouseNavEnabled(false);
+        this.osd.gestureSettingsMouse.clickToZoom = false;
+        this.osd.mouseNavEnabled = false;
+        this.osd.panVertical = false;
+        this.osd.panHorizontal = false;
+        // selection = document.createRange();
+        // window.getSelection().removeAllRanges();
+        // selection.setStartBefore(event.eventSource.element);
+        // selection.setEndAfter(event.originalEvent.srcElement);
+        // window.getSelection().addRange(selection);
+      // }
+      // _this.osd.canvas.addEventListener('dragend', _this.dragEndHandler(), {capture: true});
+    },
+
+    dragEndHandler: function (event) {
+      console.log('dragend', event)
+      // if(event.tagName === 'span') {
+        var selected = window.getSelection().getRangeAt(0);
+        console.log(selected);
+        selected.cloneContents().querySelectorAll('span').forEach(event => {if(event.id){console.log('ocr', event.id, event.innerText)}});
+        // this.osd.setMouseNavEnabled(true);
+        // this.osd.gestureSettingsMouse.clickToZoom = true;
+        // this.osd.mouseNavEnabled = true;
+        // this.osd.panVertical = true;
+        // this.osd.panHorizontal = true;
+        // _this.osd.canvas.addEventListener('mousedown', _this.dragHandler(), {capture: true});
+  
+        // this.enableSelecting();
+      // }
+    },
+
+    mouseUp(e) {
+      console.log('mouseup', e);
+    },
+
+    enableSelecting() {
+      var _this = this;
+      document.addEventListener('selectionchange', function() {
+        console.log('Selection changed.'); 
+        // document.addEventListener('mouseup', _this.dragEndHandler)
+      })
+      console.log(this.annotationCanvas);
+      console.log('enable selecting', _this.osd.canvas);
+      _this.annotationCanvas.style.display = 'none';
+      jQuery(_this.osd.canvas).css("cursor", "text");
+      // jQuery(word.element).attr('tabindex', '0').mousedown(function () { jQuery(this).focus(); });
+      console.log(_this.osd.canvas);
+      _this.osd.canvas.addEventListener('mousedown', _this.dragHandler);
+      _this.osd.canvas.addEventListener('mouseup', _this.dragEndHandler);
+      _this.words.forEach(function(word){
+        // workaround to remove focus from editor
+        // new OpenSeadragon.MouseTracker({
+        //   element: word.element.id,
+
+        //   dragEndHandler: function (event) {
+        //     // if( _this.selecting) {
+        //       console.log('dragend')
+        //       var selected = window.getSelection().getRangeAt(0);
+        //       selected.cloneContents().querySelectorAll('*').forEach(event => console.log(event.id, event.innerText));
+        //       _this.osd.setMouseNavEnabled(true);
+        //       _this.osd.gestureSettingsMouse.clickToZoom = true;
+        //       _this.osd.mouseNavEnabled = true;
+        //       _this.osd.panVertical = true;
+        //       _this.osd.panHorizontal = true;
+        //     // }
+        //   },
+        //   dragHandler: function (event) {
+        //     console.log('drag');
+        //     // if (_this.selecting) {
+        //       _this.osd.setMouseNavEnabled(false);
+        //       _this.osd.gestureSettingsMouse.clickToZoom = false;
+        //       _this.osd.mouseNavEnabled = false;
+        //       _this.osd.panVertical = false;
+        //       _this.osd.panHorizontal = false;
+        //       selection = document.createRange();
+        //       window.getSelection().removeAllRanges();
+        //       selection.setStartBefore(event.eventSource.element);
+        //       selection.setEndAfter(event.originalEvent.srcElement);
+        //       window.getSelection().addRange(selection);
+        //     // }
+        //   },
+        //   enterHandler: function () {}
+        // }).setTracking(true);
+      });
+    },
+
+    removeTextOverlay: function() {
+      console.log('removing');
+      var _this = this;
+      if (this.words.length > 0) {
+        this.words.forEach(function(word, index) {
+          _this.osd.removeOverlay(word.element.id);
+          // console.log('remove', word.element.id, document.getElementById(word.element.id));
+          if (document.getElementById(word.element.id)) {
+            document.getElementById(word.element.id).remove();
+          }
+        });
+        _this.words = [];
+      }
+      if (this.wordOverlays.length > 0) {
+        this.wordOverlays.forEach(function(wordOverlay) {
+          wordOverlay.destroy();
+        });
+        _this.wordOverlays = [];
+      }
+    },
+
+    listenForActions: function () {
+      var _this = this;
+
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('refreshOverlay.' + _this.windowId, function (event) {
+        // _this.removeTextOverlay();
+        // _this.addTextOverlay();
+      }));
+
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('modeChange.' + _this.windowId, function (event, mode) {
+        // console.log('event', event);
+        console.log('mode', mode);
+        console.log('mouse enabled', _this.osd.isMouseNavEnabled());
+        console.log('showTextOverlay', _this.showTextOverlay);
+        if(mode === 'displayAnnotations' && !_this.showTextOverlay) {
+          _this.showTextOverlay = true;
+          _this.addTextOverlay();
+        } else if (mode === 'default' && _this.showTextOverlay) {
+          // _this.showTextOverlay = false;
+          // _this.removeTextOverlay();
+        }
+        // _this.osd.forceRedraw();
+
+      }));
+      // this.eventsSubscriptions.push(_this.eventEmitter.subscribe('toggleDrawingTool.' + _this.windowId, function (event, tool) {
+      //   if(tool === _this.logoClass) {
+      //     _this.selecting = true;
+      //   }
+      // }));
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('toggleDrawingTool.' + _this.windowId, function (event, tool) {
+        console.log('mouse enabled toggle tool', _this.osd.isMouseNavEnabled(), tool);
+        
+        if(tool === _this.logoClass) {
+          _this.selecting = true;
+
+          // setTimeout(function(){_this.enableSelecting()}, 1000);
+          _this.enableSelecting()
+        }
+      }));
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('windowUpdated.' + _this.windowId, function (event, tool) {
+        // console.log('windowUpdated tool', tool);
+        // console.log('windowUpdated event', event);
+        if (_this.annotationState === 'on') {
+          // _this.addTextOverlay();
+        }
+      }));
+      this.eventsSubscriptions.push(_this.eventEmitter.subscribe('SET_CURRENT_CANVAS_ID.' + _this.windowId, function (event, canvasID) {
+        _this.canvasID = canvasID;
+        console.log('change canvas');
+        _this.removeTextOverlay();
+        // if (_this.showTextOverlay) {
+        //   _this.addTextOverlay();
+        // }
+        _this.updateCanvasId();
+      }));
+    },
+
+    updateSelection: function () {},
+
+    onHover: function () {},
+
+    onMouseUp: function () {},
+
+    translate: function () {},
+
+    rotate: function () {},
+
+    onMouseDrag: function () {},
+
+    onResize: function () {},
+
+    onMouseMove: function () {},
+
+    setCursor: function () {},
+
+    onMouseDown: function () {},
+
+    onDoubleClick: function () {},
+
+    destroy: function () {
+      var _this = this;
+      this.words = [];
+      this.eventsSubscriptions.forEach(function (event) {
+        _this.eventEmitter.unsubscribe(event.name, event.handler);
+      });
+    }
+
+  };
 }(Mirador));
 
 /*
@@ -41601,56 +41843,45 @@ return /******/ (function(modules) { // webpackBootstrap
 
   $.ReaduxEndpoint.prototype = {
     init: function() {
-      console.log('this', this);
       var _this = this;
-      // _this.osd = options.osd;
       _this.windowID = this.windowID ? this.windowID : this.windowIDwindowID;
       
-      // this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowID, function(event, canvasId) {
-      //   console.log(canvasId);
-      //   var pathParts = canvasId.split('/').reverse();
-      //   var canvasPid = pathParts[0].replace(/:/g, '%3A');
-      //   history.pushState(null, null, canvasPid);
-      // });
-      
+      // Listener to update the canvas if user navigates with the forward or back buttons.
       window.addEventListener("popstate", function(event) {
-        console.log('event.state', event);
+        // If new canvas is loading b/c user navigated with back or forward buttons
+        // we need to skip the `history.pushState()` call.
         _this.popStateEvent = true;
-        // canvasID: 'http://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}'
-        console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
         var pathParts = document.location.pathname.split('/').reverse();
         var newCanvasID = document.location.protocol + '//' + document.location.host + '/iiif/' + pathParts[1] + '/canvas/' + pathParts[0];
-        console.log(newCanvasID.replace(/%3A/g, ':'));
-        _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowID, newCanvasID.replace(/%3A/g, ':'));
-        // var pathParts = newCanvasID.split('/').reverse();
-        // var canvasPid = pathParts[0].replace(/:/g, '%3A');
-        // history.pushState(null, null, canvasPid);
+        _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowID, newCanvasID.replace(/%3A/g, ':'), this);
       });
     },
 
     //Search endpoint for all annotations with a given URI in options
     search: function(options, successCallback, errorCallback) {
-
+      var linkContainer = document.getElementById("myLink");
+      var link = document.createElement('a');
+      var linkText = document.createTextNode(options.uri);
+      link.href = options.uri;
+      link.title = 'Stable link for canvas';
+      link.appendChild(linkText);
+      linkContainer.innerHTML='';
+      linkContainer.appendChild(link);
       var _this = this;
-      console.log('search', _this);
       var volume = options.uri.split('/').reverse()[2];
       var page = options.uri.split('/').reverse()[0];
-      console.log('state', page.replace(/:/g, '%3A'));
-      console.log('popSE', _this.popStateEvent);
+      // If the user navigated to the canvas using the back or forward buttons,
+      // we don't want to mess with the state. Doing so would clear any forward states
+      // and make the back only one canvas deep.
+      // All we do if the load is due to a `popstate` event is reset flag for the
+      // next switch.
       if (_this.popStateEvent) {
         _this.popStateEvent = false;
       } else {
-        history.pushState(history.sate, '', page.replace(/:/g, '%3A'));
-        console.log('push', page);
-        var el = document.getElementById("myMeta");
-        var content1  = document.getElementById("myContent1");
-        document.getElementById("myMeta").content=content1.content + '/' + page + '/full/600,/0/default.jpg';
-        var el2 = document.getElementById("myMeta2");
-        var content2  = document.getElementById("myContent2");
-        document.getElementById("myMeta2").content=content2.content + '/' + page + '/full/600,/0/default.jpg';
-        var el3 = document.getElementById("myMeta3");
-        var content3  = document.getElementById("myContent3");
-        document.getElementById("myMeta3").content=content3.content + '/page/' + page;
+        // If the new canvas load is due to the user using any of the Mirador
+        // navigation, we need to update the location and history with the new
+        // canvas id.
+        history.pushState(history.state, '', page.replace(/:/g, '%3A'));
       }
       this.annotationsList = [];
 
@@ -41667,13 +41898,10 @@ return /******/ (function(modules) { // webpackBootstrap
           if (typeof successCallback === "function") {
             // successCallback(data);
           } else {
-            // console.log(data);
             jQuery.each(data.resources, function(index, value) {
-              // console.log('value', value);
               if (value["@type"] !== 'cnt:ContentAsText') {                
                 value.endpoint = _this;
                 _this.annotationsList.push(value);
-              } else {
               }
             });
             _this.dfd.resolve(true);
@@ -41815,20 +42043,18 @@ return /******/ (function(modules) { // webpackBootstrap
  * deleteAnnotation(annotationID, returnSuccess, returnError) (delete is a reserved word)
  *
  */
-(function ($){
-
-$.SimpleASEndpoint = function (options) {
-
-  jQuery.extend(this, {
-        token: null,
+(function ($) {
+  $.SimpleASEndpoint = function (options) {
+    jQuery.extend(this, {
+      token: null,
         // prefix:    'annotation', /**/
-        uri: null,
-        url: options.url,
-        dfd: null,
+      uri: null,
+      url: options.url,
+      dfd: null,
         // OA list for Mirador use
-        annotationsList: [],
+      annotationsList: [],
         // internal list for module use to map id to URI
-        idMapper: {}
+      idMapper: {}
     }, options);
 
     this.init();
@@ -41843,10 +42069,10 @@ $.SimpleASEndpoint = function (options) {
           name: this.username
         },
         permissions: {
-          'read':   [],
-          'update': [this.userid],
-          'delete': [this.userid],
-          'admin': [this.userid]
+          read: [],
+          update: [this.userid],
+          delete: [this.userid],
+          admin: [this.userid]
         }
       };
     },
@@ -41872,9 +42098,9 @@ $.SimpleASEndpoint = function (options) {
         },
 
         contentType: 'application/json; charset=utf-8',
-        success: function(data) {
+        success: function (data) {
           _this.annotationsList = data; // gmr
-          jQuery.each(_this.annotationsList, function(index, value) {
+          jQuery.each(_this.annotationsList, function (index, value) {
             // Swap out URI of anno to shorter ID
             value.fullId = value['@id'];
             value['@id'] = $.genUUID();
@@ -41889,7 +42115,7 @@ $.SimpleASEndpoint = function (options) {
             _this.dfd.resolve(true);
           }
         },
-        error: function(xhr, statusText, err) {
+        error: function (xhr, statusText, err) {
           if (typeof errorCallback === 'function') {
             errorCallback();
           } else {
@@ -41919,15 +42145,15 @@ $.SimpleASEndpoint = function (options) {
           // 'x-annotator-auth-token': this.token
         },
         data: {
-          uri: annotationID,
+          uri: annotationID
         },
         contentType: 'application/json; charset=utf-8',
-        success: function(data) {
+        success: function (data) {
           if (typeof returnSuccess === 'function') {
             returnSuccess();
           }
         },
-        error: function(xhr, statusText, err) {
+        error: function (xhr, statusText, err) {
           if (typeof returnError === 'function') {
             returnError();
           } else {
@@ -41957,13 +42183,13 @@ $.SimpleASEndpoint = function (options) {
         },
         data: JSON.stringify(annotation),
         contentType: 'application/json; charset=utf-8',
-        success: function(data) {
+        success: function (data) {
           _this.fixOn(data);
           if (typeof returnSuccess === 'function') {
             returnSuccess(data);
           }
         },
-        error: function(xhr, statusText, err) {
+        error: function (xhr, statusText, err) {
           if (typeof returnError === 'function') {
             returnError();
           } else {
@@ -41990,7 +42216,7 @@ $.SimpleASEndpoint = function (options) {
         },
         data: JSON.stringify(annotation),
         contentType: 'application/json; charset=utf-8',
-        success: function(data) {
+        success: function (data) {
           data.fullId = data['@id'];
           data['@id'] = $.genUUID();
           data.endpoint = _this;
@@ -42000,7 +42226,7 @@ $.SimpleASEndpoint = function (options) {
             returnSuccess(data);
           }
         },
-        error: function(xhr, statusText, err) {
+        error: function (xhr, statusText, err) {
           if (typeof returnError === 'function') {
             returnError();
           } else {
@@ -42023,10 +42249,8 @@ $.SimpleASEndpoint = function (options) {
   };
 }(Mirador));
 
-(function($){
-
-  $.TinyMCEAnnotationBodyEditor = function(options) {
-
+(function ($) {
+  $.TinyMCEAnnotationBodyEditor = function (options) {
     jQuery.extend(this, {
       annotation: null,
       windowId: null,
@@ -42041,15 +42265,15 @@ $.SimpleASEndpoint = function (options) {
   };
 
   $.TinyMCEAnnotationBodyEditor.prototype = {
-    init: function() {
+    init: function () {
       var _this = this;
-      var annoText = "",
+      var annoText = '',
         selectedTags = [],
         tags = [];
       if (!jQuery.isEmptyObject(_this.annotation)) {
         if (jQuery.isArray(_this.annotation.resource)) {
-          jQuery.each(_this.annotation.resource, function(index, value) {
-            if (value['@type'] === "oa:Tag") {
+          jQuery.each(_this.annotation.resource, function (index, value) {
+            if (value['@type'] === 'oa:Tag') {
               selectedTags.push(value.chars);
             } else {
               annoText = value.chars;
@@ -42059,7 +42283,7 @@ $.SimpleASEndpoint = function (options) {
           annoText = _this.annotation.resource.chars;
         }
       }
-      (this.config.tags || []).forEach(function(item) {
+      (this.config.tags || []).forEach(function (item) {
         if (selectedTags.indexOf(item) < 0) {
           tags.push(item);
         }
@@ -42068,13 +42292,13 @@ $.SimpleASEndpoint = function (options) {
 
       this.editorMarkup = this.editorTemplate({
         content: annoText,
-        selectedTags : selectedTags,
+        selectedTags: selectedTags,
         tags: tags,
-        windowId : _this.windowId
+        windowId: _this.windowId
       });
     },
 
-    show: function(selector) {
+    show: function (selector) {
       this.editorContainer = jQuery(selector)
         .prepend(this.editorMarkup);
       tinymce.init({
@@ -42084,13 +42308,13 @@ $.SimpleASEndpoint = function (options) {
         statusbar: false,
         toolbar_items_size: 'small',
         toolbar: this.config.toolbar,
-        default_link_target:"_blank",
-        setup: function(editor) {
-          editor.on('init', function(args) {
+        default_link_target: '_blank',
+        setup: function (editor) {
+          editor.on('init', function (args) {
             tinymce.execCommand('mceFocus', false, args.target.id);
             jQuery('.tags-editor').select2({
               tags: true,
-              placeholder: "Add tags here..."
+              placeholder: 'Add tags here...'
               // tokenSeparators: [',', ' ']  // spaces for backward compatibility
             });
           });
@@ -42098,11 +42322,11 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    isDirty: function() {
+    isDirty: function () {
       return tinymce.activeEditor.isDirty();
     },
 
-    createAnnotation: function() {
+    createAnnotation: function () {
       var tags = this.editorContainer.find('.tags-editor').val(),
         resourceText = tinymce.activeEditor.getContent();
 
@@ -42111,54 +42335,54 @@ $.SimpleASEndpoint = function (options) {
         on;
 
       if (tags && tags.length > 0) {
-        motivation.push("oa:tagging");
-        jQuery.each(tags, function(index, value) {
+        motivation.push('oa:tagging');
+        jQuery.each(tags, function (index, value) {
           resource.push({
-            "@type": "oa:Tag",
-            "chars": value
+            '@type': 'oa:Tag',
+            chars: value
           });
         });
       }
-      motivation.push("oa:commenting");
+      motivation.push('oa:commenting');
       resource.push({
-        "@type": "dctypes:Text",
-        "format": "text/html",
-        "chars": resourceText
+        '@type': 'dctypes:Text',
+        format: 'text/html',
+        chars: resourceText
       });
       return {
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "@type": "oa:Annotation",
-        "motivation": motivation,
-        "resource": resource
+        '@context': 'http://iiif.io/api/presentation/2/context.json',
+        '@type': 'oa:Annotation',
+        motivation: motivation,
+        resource: resource
       };
     },
 
-    updateAnnotation: function(oaAnno) {
+    updateAnnotation: function (oaAnno) {
       var selectedTags = this.editorContainer.find('.tags-editor').val(),
         resourceText = tinymce.activeEditor.getContent();
 
       var motivation = [],
         resource = [];
 
-      //remove all tag-related content in annotation
-      oaAnno.motivation = jQuery.grep(oaAnno.motivation, function(value) {
-        return value !== "oa:tagging";
+      // remove all tag-related content in annotation
+      oaAnno.motivation = jQuery.grep(oaAnno.motivation, function (value) {
+        return value !== 'oa:tagging';
       });
-      oaAnno.resource = jQuery.grep(oaAnno.resource, function(value) {
-        return value["@type"] !== "oa:Tag";
+      oaAnno.resource = jQuery.grep(oaAnno.resource, function (value) {
+        return value['@type'] !== 'oa:Tag';
       });
-      //re-add tagging if we have them
+      // re-add tagging if we have them
       if (selectedTags.length > 0) {
-        oaAnno.motivation.push("oa:tagging");
-        jQuery.each(selectedTags, function(index, value) {
+        oaAnno.motivation.push('oa:tagging');
+        jQuery.each(selectedTags, function (index, value) {
           oaAnno.resource.push({
-            "@type": "oa:Tag",
-            "chars": value
+            '@type': 'oa:Tag',
+            chars: value
           });
         });
       }
-      jQuery.each(oaAnno.resource, function(index, value) {
-        if (value["@type"] === "dctypes:Text") {
+      jQuery.each(oaAnno.resource, function (index, value) {
+        if (value['@type'] === 'dctypes:Text') {
           value.chars = resourceText;
         }
       });
@@ -42174,30 +42398,27 @@ $.SimpleASEndpoint = function (options) {
 
   // Handlebars helper: Contains
   // check if a value is contained in an array
-  $.Handlebars.registerHelper("ifContains", function( array, value, options ){
-    array = ( array instanceof Array ) ? array : [array];
-    return (array.indexOf(value) > -1) ? options.fn( this ) : "";
+  $.Handlebars.registerHelper('ifContains', function (array, value, options) {
+    array = (array instanceof Array) ? array : [array];
+    return (array.indexOf(value) > -1) ? options.fn(this) : '';
   });
 }(Mirador));
 
-(function($) {
-
-  $.Slot = function(options) {
-
+(function ($) {
+  $.Slot = function (options) {
     jQuery.extend(true, this, {
       workspaceSlotCls: 'slot',
-      slotID:           null,
-      layoutAddress:    null,
-      focused:          null,
-      appendTo:         null,
-      window:           null,
-      windowElement:    null,
-      state:            null,
-      eventEmitter:     null
+      slotID: null,
+      layoutAddress: null,
+      focused: null,
+      appendTo: null,
+      window: null,
+      windowElement: null,
+      state: null,
+      eventEmitter: null
     }, options);
 
     this.init();
-
   };
 
   $.Slot.prototype = {
@@ -42285,148 +42506,140 @@ $.SimpleASEndpoint = function (options) {
         })];
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this,
-          dropTarget = this.element.find('.dropMask');
+        dropTarget = this.element.find('.dropMask');
 
-      this.element.find('.addItemLink').on('click', function(){ _this.addItem(); });
-      this.element.find('.remove-slot-option').on('click', function(){
+      this.element.find('.addItemLink').on('click', function () { _this.addItem(); });
+      this.element.find('.remove-slot-option').on('click', function () {
         _this.eventEmitter.publish('REMOVE_NODE', _this);
       });
-      this.element.on('dragover', function(e) {
+      this.element.on('dragover', function (e) {
         e.preventDefault();
         dropTarget.show();
       });
-      dropTarget.on('dragenter', function(e) {
+      dropTarget.on('dragenter', function (e) {
         e.preventDefault();
         _this.element.addClass('draggedOver');
       });
-      dropTarget.on('dragleave', function(e) {
+      dropTarget.on('dragleave', function (e) {
         e.preventDefault();
         _this.element.removeClass('draggedOver');
         dropTarget.hide();
       });
-      this.element.on('drop', function(e) {
+      this.element.on('drop', function (e) {
         _this.dropItem(e);
       });
     },
 
-    dropItem: function(e) {
+    dropItem: function (e) {
       var _this = this;
 
       e.preventDefault();
-      var text_url = e.originalEvent.dataTransfer.getData("text/plain");
+      var text_url = e.originalEvent.dataTransfer.getData('text/plain');
       if (text_url) {
         _this.handleDrop(text_url);
       } else {
-        e.originalEvent.dataTransfer.items[0].getAsString(function(url) {
+        e.originalEvent.dataTransfer.items[0].getAsString(function (url) {
           _this.handleDrop(url);
         });
       }
     },
 
-    handleDrop: function(url) {
-        var _this = this;
+    handleDrop: function (url) {
+      var _this = this;
 
-        url = url || text_url;
-        var manifestUrl = $.getQueryParams(url).manifest || url,
-            collectionUrl = $.getQueryParams(url).collection,
-            canvasId = $.getQueryParams(url).canvas,
-            imageInfoUrl = $.getQueryParams(url).image,
-            windowConfig;
+      url = url || text_url;
+      var manifestUrl = $.getQueryParams(url).manifest || url,
+        collectionUrl = $.getQueryParams(url).collection,
+        canvasId = $.getQueryParams(url).canvas,
+        imageInfoUrl = $.getQueryParams(url).image,
+        windowConfig;
 
-        if (typeof _this.state.getStateProperty('manifests')[manifestUrl] !== 'undefined') {
-          windowConfig = {
-            manifest: _this.state.getStateProperty('manifests')[manifestUrl],
-            slotAddress: _this.getAddress()
-          };
+      if (typeof _this.state.getStateProperty('manifests')[manifestUrl] !== 'undefined') {
+        windowConfig = {
+          manifest: _this.state.getStateProperty('manifests')[manifestUrl],
+          slotAddress: _this.getAddress()
+        };
 
-          if (canvasId) {
+        if (canvasId) {
             // If the canvasID is defined, we need to both add
             // it to the windowConfig and tell it to open in
             // image view. If we don't specify the focus, the
             // window will open in thumbnail view with the
             // chosen page highlighted.
-            windowConfig.canvasID = canvasId;
-            windowConfig.viewType = 'ImageView';
+          windowConfig.canvasID = canvasId;
+          windowConfig.viewType = 'ImageView';
+        }
+
+        _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+      } else if (typeof imageInfoUrl !== 'undefined') {
+        if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
+          _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [imageInfoUrl, '(Added from URL)']);
+        }
+      } else if (typeof collectionUrl !== 'undefined') {
+        jQuery.getJSON(collectionUrl).done(function (data, status, jqXHR) {
+          if (data.hasOwnProperty('manifests')) {
+            jQuery.each(data.manifests, function (ci, mfst) {
+              if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
+                _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [mfst['@id'], '(Added from URL)']);
+              }
+            });
+          } else if (data.hasOwnProperty('members')) {
+            jQuery.each(data.members, function (ci, mfst) {
+              if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
+                _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [mfst['@id'], '(Added from URL)']);
+              }
+            });
           }
+        });
 
-          _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+          // TODO:
+          // this works;
+          // but you might want to check if some "publish" action would be better
+        _this.addItem();
+      } else if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
+        _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [manifestUrl, '(Added from URL)']);
+      }
 
-        }
-
-        else if (typeof imageInfoUrl !== 'undefined') {
-          if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
-            _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [imageInfoUrl, "(Added from URL)"]);
-          }
-        }
-        else if (typeof collectionUrl !== 'undefined'){
-          jQuery.getJSON(collectionUrl).done(function (data, status, jqXHR) {
-            if (data.hasOwnProperty('manifests')){
-              jQuery.each(data.manifests, function (ci, mfst) {
-                if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
-                  _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [mfst['@id'], "(Added from URL)"]);
-                }
-              });
-            } else if (data.hasOwnProperty('members')){
-              jQuery.each(data.members, function (ci, mfst) {
-                if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
-                  _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [mfst['@id'], "(Added from URL)"]);
-                }
-              });
-            }
-          });
-
-          //TODO:
-          //this works;
-          //but you might want to check if some "publish" action would be better
-          _this.addItem();
-
-        }
-        else {
-          if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
-            _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [manifestUrl, "(Added from URL)"]);
-          }
-        }
-
-        _this.eventEmitter.subscribe('manifestReceived', function(event, manifest) {
-          var windowConfig;
-          if (manifest.jsonLd['@id'] === manifestUrl || manifest.jsonLd['@id']+'/info.json' === imageInfoUrl) {
+      _this.eventEmitter.subscribe('manifestReceived', function (event, manifest) {
+        var windowConfig;
+        if (manifest.jsonLd['@id'] === manifestUrl || manifest.jsonLd['@id'] + '/info.json' === imageInfoUrl) {
             // There are many manifests that may be received
             // while we are waiting for this one, so we
             // need to make sure the event actually refers to the
             // manifest we've just dropped.
 
-            windowConfig = {
-              manifest: manifest,
-              slotAddress: _this.getAddress()
-            };
+          windowConfig = {
+            manifest: manifest,
+            slotAddress: _this.getAddress()
+          };
 
-            if (manifest.jsonLd['@id']+'/info.json' === imageInfoUrl) {
+          if (manifest.jsonLd['@id'] + '/info.json' === imageInfoUrl) {
               // If this was added from a naked info.json, pick the
               // first (and only) page from the synthetic manifest.
-              canvasId = manifest.jsonLd.sequences[0].canvases[0]['@id'];
-            }
+            canvasId = manifest.jsonLd.sequences[0].canvases[0]['@id'];
+          }
 
-            if (canvasId) {
+          if (canvasId) {
               // If the canvasID is defined, we need to both add
               // it to the windowConfig and tell it to open in
               // image view. If we don't specify the focus, the
               // window will open in thumbnail view with the
               // chosen page highlighted.
-              windowConfig.canvasID = canvasId;
-              windowConfig.viewType = 'ImageView';
-            }
-
-            _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+            windowConfig.canvasID = canvasId;
+            windowConfig.viewType = 'ImageView';
           }
-        });
+
+          _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+        }
+      });
     },
 
-    destroyEvents:function(){
+    destroyEvents: function () {
       var _this = this;
-      this.events.forEach(function(event){
-        _this.eventEmitter.unsubscribe(event.name,event.handler);
+      this.events.forEach(function (event) {
+        _this.eventEmitter.unsubscribe(event.name, event.handler);
       });
     },
 
@@ -42442,11 +42655,11 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    getAddress: function() {
+    getAddress: function () {
       return this.layoutAddress;
     },
 
-    addItem: function() {
+    addItem: function () {
       var _this = this;
       _this.focused = true;
 
@@ -42455,9 +42668,9 @@ $.SimpleASEndpoint = function (options) {
 
     // template should be based on workspace type
     template: $.Handlebars.compile([
-                                 '<div id="{{slotID}}" class="{{workspaceSlotCls}}">',
-                                 '<a class="remove-slot-option"><i class="fa fa-times fa-lg fa-fw"></i> {{t "close"}}</a>',
-                                 '<div class="slotIconContainer">',
+      '<div id="{{slotID}}" class="{{workspaceSlotCls}}">',
+      '<a class="remove-slot-option"><i class="fa fa-times fa-lg fa-fw"></i> {{t "close"}}</a>',
+      '<div class="slotIconContainer">',
                                  // '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="Replace object"><i class="fa fa-table fa-lg fa-fw"></i>',
                                  // '<ul class="dropdown slot-controls">',
                                  // '<li class="new-object-option"><i class="fa fa-plus-square fa-lg fa-fw"></i> {{t "newObject"}}</li>',
@@ -42471,21 +42684,20 @@ $.SimpleASEndpoint = function (options) {
                                  // accessbility-wise it's really bad practice to have h1 tags be used like this
                                  // most screen reader users get a sense of where they are based on header tags
                                  // if these are merely h1 tags for aesthetic purposes, it might be better to make them specific classes
-                                '<h1 class="plus" role="presentation" aria-label="Add item using Link">',
-                                    '<span>+</span>',
-                                '<div class="dropIcon">',
-                                    '<i class="fa fa-level-down"></i>',
-                                '</div>',
-                                '</h1>',
-                                 '<h1 class="addItemText">{{t "addItem"}}</h1>',
-                                 '<h1 class="dropMeMessage">{{t "dropToLoad"}}</h1>',
-                                 '</div>',
-                                 '<a class="addItemLink" role="button" aria-label="Add item"></a>',
+      '<h1 class="plus" role="presentation" aria-label="Add item using Link">',
+      '<span>+</span>',
+      '<div class="dropIcon">',
+      '<i class="fa fa-level-down"></i>',
+      '</div>',
+      '</h1>',
+      '<h1 class="addItemText">{{t "addItem"}}</h1>',
+      '<h1 class="dropMeMessage">{{t "dropToLoad"}}</h1>',
+      '</div>',
+      '<a class="addItemLink" role="button" aria-label="Add item"></a>',
       '<a class="dropMask"></a>',
-                                 '</div>'
+      '</div>'
     ].join(''))
   };
-
 }(Mirador));
 
 (function($) {
@@ -42622,7 +42834,8 @@ $.SimpleASEndpoint = function (options) {
       //for use by SidePanel, which needs to know if the current view can have the annotations tab
       _this.eventEmitter.publish(('windowUpdated'), {
         id: _this.id,
-        annotationsAvailable: this.annotationsAvailable
+        annotationsAvailable: this.annotationsAvailable,
+        onWhat: 'window.init'
       });
 
       //check config
@@ -43160,7 +43373,8 @@ $.SimpleASEndpoint = function (options) {
       }
       _this.eventEmitter.publish(('windowUpdated'), {
         id: _this.id,
-        sidePanelVisible: visible
+        sidePanelVisible: visible,
+        onWhat: 'sidePanelVis'
       });
     },
 
@@ -43170,7 +43384,8 @@ $.SimpleASEndpoint = function (options) {
       _this.eventEmitter.publish(('bottomPanelSet.' + _this.id), visible);
       _this.eventEmitter.publish(('windowUpdated'), {
         id: _this.id,
-        bottomPanelVisible: visible
+        bottomPanelVisible: visible,
+        onWhat: 'bottomPanelVis'
       });
     },
 
@@ -43395,6 +43610,7 @@ $.SimpleASEndpoint = function (options) {
             var annotations = list.resources;
             jQuery.each(annotations, function(index, value) {
               //if there is no ID for this annotation, set a random one
+              // console.log(annotations);
               if (typeof value['@id'] === 'undefined') {
                 value['@id'] = $.genUUID();
               }
@@ -43425,7 +43641,6 @@ $.SimpleASEndpoint = function (options) {
           options.eventEmitter = _this.eventEmitter;
           _this.endpoint = new $[module](options);
         }
-        // console.log('_this', _this);
         _this.endpoint.search({ "uri" : _this.canvasID});
 
         dfd.done(function(loaded) {
@@ -43646,20 +43861,18 @@ $.SimpleASEndpoint = function (options) {
 
 }(Mirador));
 
-(function($) {
-
-  $.AnnotationsLayer = function(options) {
-
+(function ($) {
+  $.AnnotationsLayer = function (options) {
     jQuery.extend(true, this, {
-      annotationsList:   null,
-      viewer:            null,
-      drawTool:          null,
-      selected:          null,
-      hovered:           null,
-      windowId:          null,
-      mode:              'default',
-      element:           null,
-      eventEmitter:      null
+      annotationsList: null,
+      viewer: null,
+      drawTool: null,
+      selected: null,
+      hovered: null,
+      windowId: null,
+      mode: 'default',
+      element: null,
+      eventEmitter: null
     }, options);
 
     this.init();
@@ -43669,7 +43882,7 @@ $.SimpleASEndpoint = function (options) {
 
   $.AnnotationsLayer.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this;
       _this.eventEmitter.unsubscribe(('modeChange.' + _this.windowId));
       _this.eventEmitter.unsubscribe(('slotLeave.' + _this.windowId));
@@ -43681,73 +43894,74 @@ $.SimpleASEndpoint = function (options) {
       this.listenForActions();
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      _this.eventEmitter.subscribe('modeChange.' + _this.windowId, function(event, modeName) {
+      _this.eventEmitter.subscribe('modeChange.' + _this.windowId, function (event, modeName) {
         _this.mode = modeName;
         _this.modeSwitch();
       });
 
-      _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function(event) {
+      _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function (event) {
         _this.annotationsList = _this.state.getWindowAnnotationsList(_this.windowId);
         _this.updateRenderer();
       });
 
-      _this.eventEmitter.subscribe('slotLeave.' + _this.windowId, function(event, eventData) {
-        if (_this.layerState.current == "display") {
+      _this.eventEmitter.subscribe('slotLeave.' + _this.windowId, function (event, eventData) {
+        if (_this.layerState.current == 'display') {
           _this.layerState.defaultState();
           _this.modeSwitch();
         }
       });
 
-      _this.eventEmitter.subscribe('slotEnter.' + _this.windowId, function(event, eventData) {
-        if (_this.element.showAnno && _this.layerState.current == "display") {
+      _this.eventEmitter.subscribe('slotEnter.' + _this.windowId, function (event, eventData) {
+        if (_this.element.showAnno && _this.layerState.current == 'display') {
           _this.layerState.defaultState();
           _this.modeSwitch();
         }
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
     },
 
-    createStateMachine: function() {
+    createStateMachine: function () {
       var _this = this;
       this.layerState = StateMachine.create({
         events: [
           { name: 'startup', from: 'none', to: 'default' },
           { name: 'defaultState', from: ['default', 'display', 'create', 'edit'], to: 'default' },
           { name: 'displayAnnotations', from: ['default', 'display', 'create', 'edit', 'newShape'], to: 'display' },
-          { name: 'createAnnotation', from: ['default','display'], to: 'create' },
-          { name: 'createShape', from: 'edit', to: 'newShape'},
-          { name: 'editAnnotation', from: ['default','display', 'newShape'], to: 'edit' }
+          { name: 'createAnnotation', from: ['default', 'display'], to: 'create' },
+          { name: 'createShape', from: 'edit', to: 'newShape' },
+          { name: 'editAnnotation', from: ['default', 'display', 'newShape'], to: 'edit' }
         ],
         callbacks: {
-          onstartup: function(event) {
+          onstartup: function (event) {
             _this.drawTool.enterDefault();
           },
-          ondefaultState: function(event) {
+          ondefaultState: function (event) {
             _this.drawTool.enterDefault();
           },
-          ondisplayAnnotations: function(event) {
+          ondisplayAnnotations: function (event) {
             _this.drawTool.enterDisplayAnnotations();
           },
-          oncreateAnnotation: function(event) {
+          oncreateAnnotation: function (event) {
+            console.log(_this);
             _this.drawTool.enterCreateAnnotation();
           },
-          oncreateShape: function(event) {
+          oncreateShape: function (event) {
             _this.drawTool.enterCreateShape();
           },
-          oneditAnnotation: function(event) {
+          oneditAnnotation: function (event) {
             _this.drawTool.enterEditAnnotation();
           }
         }
       });
     },
 
-    createRenderer: function() {
+    createRenderer: function () {
       var _this = this;
       this.drawTool = new $.OsdRegionDrawTool({
         osdViewer: _this.viewer,
@@ -43761,188 +43975,177 @@ $.SimpleASEndpoint = function (options) {
       this.layerState.startup();
     },
 
-    updateRenderer: function() {
+    updateRenderer: function () {
       this.drawTool.list = this.annotationsList;
       // this.modeSwitch();
     },
 
-    modeSwitch: function() {
+    modeSwitch: function () {
       if (this.mode === 'displayAnnotations') {
         this.layerState.displayAnnotations();
-      }
-      else if (this.mode === 'editingAnnotation') {
+      } else if (this.mode === 'editingAnnotation') {
         this.layerState.editAnnotation();
-      }
-      else if (this.mode === 'creatingAnnotation') {
+      } else if (this.mode === 'creatingAnnotation') {
         if (this.layerState.current !== 'edit') {
           this.layerState.createAnnotation();
         } else {
           this.layerState.createShape();
         }
-      }
-      else if (this.mode === 'default') {
+      } else if (this.mode === 'default') {
         this.layerState.defaultState();
-      }
-      else {}
+      } else {}
     }
   };
-
 }(Mirador));
 
-(function($) {
+(function ($) {
+  $.AnnotationsTab = function (options) {
+    jQuery.extend(true, this, {
+      element: null,
+      appendTo: null,
+      manifest: null,
+      visible: null,
+      state: null,
+      eventEmitter: null
+    }, options);
 
-    $.AnnotationsTab = function(options) {
-        jQuery.extend(true, this, {
-            element:           null,
-            appendTo:          null,
-            manifest:          null,
-            visible:           null,
-            state:             null,
-            eventEmitter:      null
-        }, options);
+    this.init();
+  };
 
-        this.init();
-    };
+  $.AnnotationsTab.prototype = {
+    init: function () {
+      var _this = this;
+      this.windowId = this.windowId;
 
-    $.AnnotationsTab.prototype = {
-        init: function() {
-            var _this = this;
-            this.windowId = this.windowId;
+      this.localState({
+        id: 'annotationsTab',
+        visible: this.visible,
+        annotationLists: [],
+        selectedList: null,
+        empty: true,
+        focusedList: null
+      }, true);
 
-            this.localState({
-                id: 'annotationsTab',
-                visible: this.visible,
-                annotationLists: [],
-                selectedList: null,
-                empty: true,
-                focusedList: null
-            }, true);
+      this.listenForActions();
+      this.render(this.localState());
+      this.loadTabComponents();
+      this.bindEvents();
+    },
+    localState: function (state, initial) {
+      var _this = this;
+      if (!arguments.length) return this.annoTabState;
+      this.annoTabState = state;
 
-            this.listenForActions();
-            this.render(this.localState());
-            this.loadTabComponents();
-            this.bindEvents();
-        },
-        localState: function(state, initial) {
-            var _this = this;
-            if (!arguments.length) return this.annoTabState;
-            this.annoTabState = state;
+      if (!initial) {
+        _this.eventEmitter.publish('annotationsTabStateUpdated.' + this.windowId, this.annoTabState);
+      }
 
-            if (!initial) {
-                _this.eventEmitter.publish('annotationsTabStateUpdated.' + this.windowId, this.annoTabState);
-            }
-
-            return this.annoTabState;
-        },
-        loadTabComponents: function() {
-            var _this = this;
-
-        },
-        tabStateUpdated: function(visible) {
-            localState = this.localState();
-            localState.visible = visible;
-            this.localState(localState);
-            visible ? this.element.show() : this.element.hide();
-        },
-        annotationListLoaded: function() {
-            var _this = this,
-            annotationSources = [],
-            localState = this.localState();
-            jQuery.each(_this.state.getWindowAnnotationsList(_this.windowId), function(index, value) {
-              //loads annoations from external annotationLists
-              if(value.endpoint && typeof value.endpoint === 'string') {
-                  annotationSources.push(value.resource);
-              }
-              else if (value.resource){
-                //loads annoations from external annotationLists
-                if(value.resource.endpoint && typeof value.resource.endpoint === 'string') {
-                  annotationSources.push(value.resource);
-                }
-                //loads annoations from local annotation endpoint
-                else {
-                  annotationSources.push(value.resource[0]);
-                }
-              }
-            });
+      return this.annoTabState;
+    },
+    loadTabComponents: function () {
+      var _this = this;
+    },
+    tabStateUpdated: function (visible) {
+      localState = this.localState();
+      localState.visible = visible;
+      this.localState(localState);
+      visible ? this.element.show() : this.element.hide();
+    },
+    annotationListLoaded: function () {
+      var _this = this,
+        annotationSources = [],
+        localState = this.localState();
+      jQuery.each(_this.state.getWindowAnnotationsList(_this.windowId), function (index, value) {
+              // loads annoations from external annotationLists
+        if (value.endpoint && typeof value.endpoint === 'string') {
+          annotationSources.push(value.resource);
+        } else if (value.resource) {
+                // loads annoations from external annotationLists
+          if (value.resource.endpoint && typeof value.resource.endpoint === 'string') {
+            annotationSources.push(value.resource);
+          }
+                // loads annoations from local annotation endpoint
+          else {
+            annotationSources.push(value.resource[0]);
+          }
+        }
+      });
             // make unique
-            annotationSources = annotationSources.filter(function(itm,i,annotationSources){
-                return i==annotationSources.indexOf(itm);
-            });
+      annotationSources = annotationSources.filter(function (itm, i, annotationSources) {
+        return i == annotationSources.indexOf(itm);
+      });
 
-            localState.annotationLists = annotationSources.map(function(annotationSource) {
-                //var s = (annotationSource === localState.selectedList ? true : false);
-                return {
-                    annotationSource: annotationSource,
-                    layer: null,
-                    selected: (annotationSource === localState.selectedList ? true : false),
-                    focused: false
-                };
-            });
+      localState.annotationLists = annotationSources.map(function (annotationSource) {
+                // var s = (annotationSource === localState.selectedList ? true : false);
+        return {
+          annotationSource: annotationSource,
+          layer: null,
+          selected: (annotationSource === localState.selectedList),
+          focused: false
+        };
+      });
 
-            if(localState.annotationLists.length){
-              localState.empty = false;
-            }
-            this.localState(localState);
-        },
-        deselectList: function(listId) {
-            var _this = this;
-            var localState = this.localState();
-            localState.selectedList = null;
-            localState.annotationLists.forEach(function(list){ list.selected = false; });
-            this.localState(localState);
-        },
-        selectList: function(listId) {
-            var _this = this;
-            var localState = this.localState();
-            localState.selectedList = listId;
-            localState.annotationLists.forEach(function(list){ list.selected = list.annotationSource === listId ? true : false; });
-            this.localState(localState);
-        },
-        focusList: function(listId) {
-            var localState = this.localState();
-            localState.focusedList = listId;
-            localState.annotationLists.forEach(function(list){ list.focused = list.annotationSource === listId ? true : false;});
-            this.localState(localState);
-        },
-        toggle: function() {},
-        listenForActions: function() {
-            var _this = this;
+      if (localState.annotationLists.length) {
+        localState.empty = false;
+      }
+      this.localState(localState);
+    },
+    deselectList: function (listId) {
+      var _this = this;
+      var localState = this.localState();
+      localState.selectedList = null;
+      localState.annotationLists.forEach(function (list) { list.selected = false; });
+      this.localState(localState);
+    },
+    selectList: function (listId) {
+      var _this = this;
+      var localState = this.localState();
+      localState.selectedList = listId;
+      localState.annotationLists.forEach(function (list) { list.selected = list.annotationSource === listId; });
+      this.localState(localState);
+    },
+    focusList: function (listId) {
+      var localState = this.localState();
+      localState.focusedList = listId;
+      localState.annotationLists.forEach(function (list) { list.focused = list.annotationSource === listId; });
+      this.localState(localState);
+    },
+    toggle: function () {},
+    listenForActions: function () {
+      var _this = this;
 
-            _this.eventEmitter.subscribe('annotationsTabStateUpdated.' + _this.windowId, function(_, data) {
-                _this.render(data);
-            });
+      _this.eventEmitter.subscribe('annotationsTabStateUpdated.' + _this.windowId, function (_, data) {
+        _this.render(data);
+      });
 
-            _this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function(_, data) {
-                _this.tabStateUpdated(data.tabs[data.selectedTabIndex].options.id == 'annotationsTab');
-            });
+      _this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function (_, data) {
+        _this.tabStateUpdated(data.tabs[data.selectedTabIndex].options.id == 'annotationsTab');
+      });
 
 
-            _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function(_, data) {
-                _this.annotationListLoaded();
-            });
+      _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function (_, data) {
+        _this.annotationListLoaded();
+      });
 
-            _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function(event) {
+      _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function (event) {
+        _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function (event) {
+          _this.annotationListLoaded();
+        });
 
-            _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function(event) {
-                _this.annotationListLoaded();
-            });
+        _this.selectList(_this.localState().selectedList);
+      });
 
-              _this.selectList(_this.localState().selectedList);
+      _this.eventEmitter.subscribe('listSelected.' + _this.windowId, function (event, listId) {
+        _this.selectList(listId);
+      });
 
-            });
-
-            _this.eventEmitter.subscribe('listSelected.' + _this.windowId, function(event, listId) {
-                _this.selectList(listId);
-            });
-
-            _this.eventEmitter.subscribe('listDeselected.' + _this.windowId, function(event, listId) {
-                _this.deselectList(listId);
-            });
-
-        },
-        bindEvents: function() {
-            var _this = this,
-                listItems = this.element.find('.annotationListItem');
+      _this.eventEmitter.subscribe('listDeselected.' + _this.windowId, function (event, listId) {
+        _this.deselectList(listId);
+      });
+    },
+    bindEvents: function () {
+      var _this = this,
+        listItems = this.element.find('.annotationListItem');
 
             // listItems.on('click', function(event) {
             //     //event.stopImmediatePropagation();
@@ -43956,69 +44159,65 @@ $.SimpleASEndpoint = function (options) {
             //     }
             //
             // });
+    },
+    render: function (state) {
+      var _this = this,
+        templateData = {
+          annotationSources: state.annotationLists
+        };
+      if (!this.element) {
+        this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
+      } else {
+        jQuery(_this.appendTo).find('.annotationsPanel').remove();
+        this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
+      }
+      _this.bindEvents();
 
-        },
-        render: function(state) {
-            var _this = this,
-                templateData = {
-                    annotationSources: state.annotationLists
-                };
-            if (!this.element) {
-                this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
-            } else {
-                jQuery(_this.appendTo).find(".annotationsPanel").remove();
-                this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
-            }
-            _this.bindEvents();
 
-
-            if (state.visible) {
-                this.element.show();
-            } else {
-                this.element.hide();
-            }
-        },
-        template: $.Handlebars.compile([
-            '<div class="annotationsPanel">',
-            '<ul class="annotationSources">',
-            '{{#each annotationSources}}',
-            //'<li class="annotationListItem {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}" data-id="{{this.annotationSource.chars}}">',
-            '<li class="annotationListItem" {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}">',
-            '<span style="font-weight: bold">{{{this.annotationSource.label}}}</span>',
-            '<br/>',
-            '<span>{{{this.annotationSource.chars}}}</span>',
-            //'<span>{{this.annotationSource}}</span>',
-            '</li>',
-            '{{/each}}',
-            '</ul>',
-            '</div>',
-        ].join(''))
-    };
-
+      if (state.visible) {
+        this.element.show();
+      } else {
+        this.element.hide();
+      }
+    },
+    template: $.Handlebars.compile([
+      '<div class="annotationsPanel">',
+      '<ul class="annotationSources">',
+      '{{#each annotationSources}}',
+            // '<li class="annotationListItem {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}" data-id="{{this.annotationSource.chars}}">',
+      '<li class="annotationListItem" {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}">',
+      '<span style="font-weight: bold">{{{this.annotationSource.label}}}</span>',
+      '<br/>',
+      '<span>{{{this.annotationSource.chars}}}</span>',
+            // '<span>{{this.annotationSource}}</span>',
+      '</li>',
+      '{{/each}}',
+      '</ul>',
+      '</div>'
+    ].join(''))
+  };
 }(Mirador));
 
-(function($) {
-
-  $.BookView = function(options) {
-
+(function ($) {
+  $.BookView = function (options) {
     jQuery.extend(this, {
-      currentImg:       null,
-      windowId:         null,
-      currentImgIndex:  0,
-      stitchList:       [],
-      canvasID:          null,
-      imagesList:       [],
-      imagesListRtl:       [],
-      element:          null,
-      focusImages:      [],
-      manifest:         null,
+      currentImg: null,
+      windowId: null,
+      currentImgIndex: 0,
+      stitchList: [],
+      canvasID: null,
+      imagesList: [],
+      imagesListRtl: [],
+      element: null,
+      focusImages: [],
+      manifest: null,
       viewingDirection: 'left-to-right',
-      viewingHint:      'paged',
-      osd:              null,
-      osdCls:           'mirador-osd',
+      viewingHint: 'paged',
+      osd: null,
+      osdCls: 'mirador-osd',
       osdOptions: {
-        osdBounds:        null,
-        zoomLevel:        null
+        osdBounds: null,
+        zoomLevel: null
       },
       stitchTileMargin: 10,
       eventEmitter: null
@@ -44030,10 +44229,10 @@ $.SimpleASEndpoint = function (options) {
 
   $.BookView.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this;
-      if(this.vDirectionStatus == 'rtl'){
-        this.imagesList =  this.imagesListRtl.concat();
+      if (this.vDirectionStatus == 'rtl') {
+        this.imagesList = this.imagesListRtl.concat();
       }
       if (this.canvasID !== null) {
         this.currentImgIndex = $.getImageIndexById(this.imagesList, this.canvasID);
@@ -44041,8 +44240,8 @@ $.SimpleASEndpoint = function (options) {
 
       if (!this.osdOptions) {
         this.osdOptions = {
-          osdBounds:        null,
-          zoomLevel:        null
+          osdBounds: null,
+          zoomLevel: null
         };
       }
 
@@ -44055,7 +44254,7 @@ $.SimpleASEndpoint = function (options) {
         bottomPanelAvailable: this.bottomPanelAvailable,
         windowId: this.windowId,
         annotationLayerAvailable: false,
-        showNextPrev : this.imagesList.length !== 1,
+        showNextPrev: this.imagesList.length !== 1,
         eventEmitter: this.eventEmitter,
         showAnno: false,
         showImageControls: false
@@ -44086,12 +44285,12 @@ $.SimpleASEndpoint = function (options) {
       '</div>'
     ].join('')),
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this,
-          firstCanvasId = _this.imagesList[0]['@id'],
-          lastCanvasId = _this.imagesList[_this.imagesList.length-1]['@id'];
+        firstCanvasId = _this.imagesList[0]['@id'],
+        lastCanvasId = _this.imagesList[_this.imagesList.length - 1]['@id'];
 
-      _this.eventEmitter.subscribe('bottomPanelSet.' + _this.windowId, function(event, visible) {
+      _this.eventEmitter.subscribe('bottomPanelSet.' + _this.windowId, function (event, visible) {
         var dodgers = _this.element.find('.mirador-osd-toggle-bottom-panel, .mirador-pan-zoom-controls');
         var arrows = _this.element.find('.mirador-osd-next, .mirador-osd-previous');
         if (visible === true) {
@@ -44103,12 +44302,12 @@ $.SimpleASEndpoint = function (options) {
         }
       });
 
-      _this.eventEmitter.subscribe('fitBounds.' + _this.windowId, function(event, bounds) {
+      _this.eventEmitter.subscribe('fitBounds.' + _this.windowId, function (event, bounds) {
         var rect = _this.osd.viewport.imageToViewportRectangle(Number(bounds.x), Number(bounds.y), Number(bounds.width), Number(bounds.height));
         _this.osd.viewport.fitBoundsWithConstraints(rect, false);
       });
 
-      _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function(event, canvasId) {
+      _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function (event, canvasId) {
         // If it is the first canvas, hide the "go to previous" button, otherwise show it.
         if (canvasId === firstCanvasId) {
           _this.element.find('.mirador-osd-previous').hide();
@@ -44124,54 +44323,54 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      this.element.find('.mirador-osd-next').on('click', function() {
+      this.element.find('.mirador-osd-next').on('click', function () {
         _this.next();
       });
 
-      this.element.find('.mirador-osd-previous').on('click', function() {
+      this.element.find('.mirador-osd-previous').on('click', function () {
         _this.previous();
       });
 
-      this.element.find('.mirador-osd-go-home').on('click', function() {
+      this.element.find('.mirador-osd-go-home').on('click', function () {
         _this.osd.viewport.goHome();
       });
 
-      this.element.find('.mirador-osd-up').on('click', function() {
+      this.element.find('.mirador-osd-up').on('click', function () {
         var panBy = _this.getPanByValue();
         _this.osd.viewport.panBy(new OpenSeadragon.Point(0, -panBy.y));
         _this.osd.viewport.applyConstraints();
       });
-      this.element.find('.mirador-osd-right').on('click', function() {
+      this.element.find('.mirador-osd-right').on('click', function () {
         var panBy = _this.getPanByValue();
         _this.osd.viewport.panBy(new OpenSeadragon.Point(panBy.x, 0));
         _this.osd.viewport.applyConstraints();
       });
-      this.element.find('.mirador-osd-down').on('click', function() {
+      this.element.find('.mirador-osd-down').on('click', function () {
         var panBy = _this.getPanByValue();
         _this.osd.viewport.panBy(new OpenSeadragon.Point(0, panBy.y));
         _this.osd.viewport.applyConstraints();
       });
-      this.element.find('.mirador-osd-left').on('click', function() {
+      this.element.find('.mirador-osd-left').on('click', function () {
         var panBy = _this.getPanByValue();
         _this.osd.viewport.panBy(new OpenSeadragon.Point(-panBy.x, 0));
         _this.osd.viewport.applyConstraints();
       });
 
-      this.element.find('.mirador-osd-zoom-in').on('click', function() {
+      this.element.find('.mirador-osd-zoom-in').on('click', function () {
         var osd = _this.osd;
-        if ( osd.viewport ) {
+        if (osd.viewport) {
           osd.viewport.zoomBy(
             osd.zoomPerClick / 1.0
           );
           osd.viewport.applyConstraints();
         }
       });
-      this.element.find('.mirador-osd-zoom-out').on('click', function() {
+      this.element.find('.mirador-osd-zoom-out').on('click', function () {
         var osd = _this.osd;
-        if ( osd.viewport ) {
+        if (osd.viewport) {
           osd.viewport.zoomBy(
             1.0 / osd.zoomPerClick
           );
@@ -44179,25 +44378,25 @@ $.SimpleASEndpoint = function (options) {
         }
       });
 
-      this.element.find('.mirador-osd-toggle-bottom-panel').on('click', function() {
+      this.element.find('.mirador-osd-toggle-bottom-panel').on('click', function () {
         _this.eventEmitter.publish('TOGGLE_BOTTOM_PANEL_VISIBILITY.' + _this.windowId);
       });
     },
 
-    getPanByValue: function() {
+    getPanByValue: function () {
       var bounds = this.osd.viewport.getBounds(true);
-      //for now, let's keep 50% of the image on the screen
+      // for now, let's keep 50% of the image on the screen
       var panBy = {
-        "x" : bounds.width * 0.5,
-        "y" : bounds.height * 0.5
+        x: bounds.width * 0.5,
+        y: bounds.height * 0.5
       };
       return panBy;
     },
 
-    setBounds: function() {
+    setBounds: function () {
       var _this = this;
       this.osdOptions.osdBounds = this.osd.viewport.getBounds(true);
-      _this.eventEmitter.publish("imageBoundsUpdated", {
+      _this.eventEmitter.publish('imageBoundsUpdated', {
         id: _this.windowId,
         osdBounds: {
           x: _this.osdOptions.osdBounds.x,
@@ -44208,7 +44407,7 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    toggle: function(stateValue) {
+    toggle: function (stateValue) {
       if (stateValue) {
         this.show();
       } else {
@@ -44216,13 +44415,16 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    hide: function() {
-      jQuery(this.element).hide({effect: "fade", duration: 300, easing: "easeOutCubic"});
+    hide: function () {
+      jQuery(this.element).hide({ effect: 'fade', duration: 300, easing: 'easeOutCubic' });
     },
 
-    show: function() {
+    show: function () {
       jQuery(this.element).show({
-        effect: "fade", duration: 300, easing: "easeInCubic", complete: function () {
+        effect: 'fade',
+        duration: 300,
+        easing: 'easeInCubic',
+        complete: function () {
           // Under firefox $.show() used under display:none iframe does not change the display.
           // This is workaround for https://github.com/IIIF/mirador/issues/929
           jQuery(this).css('display', 'block');
@@ -44230,16 +44432,16 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    adjustWidth: function(className, hasClass) {
+    adjustWidth: function (className, hasClass) {
       var _this = this;
       if (hasClass) {
-        _this.eventEmitter.publish('REMOVE_CLASS.'+this.windowId, className);
+        _this.eventEmitter.publish('REMOVE_CLASS.' + this.windowId, className);
       } else {
-        _this.eventEmitter.publish('ADD_CLASS.'+this.windowId, className);
+        _this.eventEmitter.publish('ADD_CLASS.' + this.windowId, className);
       }
     },
 
-    adjustHeight: function(className, hasClass) {
+    adjustHeight: function (className, hasClass) {
       if (hasClass) {
         this.element.removeClass(className);
       } else {
@@ -44247,44 +44449,44 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    updateImage: function(canvasID) {
+    updateImage: function (canvasID) {
       this.canvasID = canvasID;
       this.currentImgIndex = $.getImageIndexById(this.imagesList, this.canvasID);
       this.currentImg = this.imagesList[this.currentImgIndex];
       var newList = this.getStitchList();
-      var is_same = this.stitchList.length == newList.length && this.stitchList.every(function(element, index) {
+      var is_same = this.stitchList.length == newList.length && this.stitchList.every(function (element, index) {
         return element === newList[index];
       });
       if (!is_same) {
         this.stitchList = newList;
         this.osdOptions = {
-          osdBounds:        null,
-          zoomLevel:        null
+          osdBounds: null,
+          zoomLevel: null
         };
         this.osd.close();
         this.createOpenSeadragonInstance();
       }
     },
 
-    createOpenSeadragonInstance: function() {
+    createOpenSeadragonInstance: function () {
       var uniqueID = $.genUUID(),
-          osdId = 'mirador-osd-' + uniqueID,
-          osdToolBarId = osdId + '-toolbar',
-          elemOsd,
-          tileSources = [],
-          _this = this,
-          toolbarID = 'osd-toolbar-' + uniqueID,
-          dfd = jQuery.Deferred();
+        osdId = 'mirador-osd-' + uniqueID,
+        osdToolBarId = osdId + '-toolbar',
+        elemOsd,
+        tileSources = [],
+        _this = this,
+        toolbarID = 'osd-toolbar-' + uniqueID,
+        dfd = jQuery.Deferred();
 
       this.element.find('.' + this.osdCls).remove();
 
-      jQuery.each(this.stitchList, function(index, image) {
+      jQuery.each(this.stitchList, function (index, image) {
         var imageUrl = $.Iiif.getImageUrl(image),
-            infoJsonUrl = imageUrl + '/info.json';
+          infoJsonUrl = imageUrl + '/info.json';
 
         jQuery.getJSON(infoJsonUrl).done(function (data, status, jqXHR) {
           tileSources.splice(index, 0, data);
-          if (tileSources.length === _this.stitchList.length ) { dfd.resolve(); }
+          if (tileSources.length === _this.stitchList.length) { dfd.resolve(); }
         });
       });
 
@@ -44298,8 +44500,8 @@ $.SimpleASEndpoint = function (options) {
           .appendTo(_this.element);
 
         _this.osd = $.OpenSeadragon({
-          'id':           elemOsd.attr('id'),
-          'toolbarID' : toolbarID
+          id: elemOsd.attr('id'),
+          toolbarID: toolbarID
         });
 
         // if (_this.state.getStateProperty('autoHideControls')) {
@@ -44320,10 +44522,10 @@ $.SimpleASEndpoint = function (options) {
         //   });
         // }
 
-        _this.osd.addHandler('open', function(){
+        _this.osd.addHandler('open', function () {
           _this.addLayer(tileSources.slice(1), aspectRatio);
-          var addItemHandler = function( event ) {
-            _this.osd.world.removeHandler( "add-item", addItemHandler );
+          var addItemHandler = function (event) {
+            _this.osd.world.removeHandler('add-item', addItemHandler);
             if (_this.osdOptions.osdBounds) {
               var rect = new OpenSeadragon.Rect(_this.osdOptions.osdBounds.x, _this.osdOptions.osdBounds.y, _this.osdOptions.osdBounds.width, _this.osdOptions.osdBounds.height);
               _this.osd.viewport.fitBounds(rect, true);
@@ -44337,25 +44539,24 @@ $.SimpleASEndpoint = function (options) {
             _this.boundsToFocusOnNextOpen = null;
           }
 
-          _this.osd.world.addHandler( "add-item", addItemHandler );
+          _this.osd.world.addHandler('add-item', addItemHandler);
 
-          _this.osd.addHandler('zoom', $.debounce(function(){
+          _this.osd.addHandler('zoom', $.debounce(function () {
             _this.setBounds();
           }, 300));
 
-          _this.osd.addHandler('pan', $.debounce(function(){
+          _this.osd.addHandler('pan', $.debounce(function () {
             _this.setBounds();
           }, 300));
         });
 
-        _this.osd.open(tileSources[0], {opacity:1, x:0, y:0, width:1});
+        _this.osd.open(tileSources[0], { opacity: 1, x: 0, y: 0, width: 1 });
       });
-
     },
 
-    addLayer: function(tileSources, aspectRatio) {
+    addLayer: function (tileSources, aspectRatio) {
       var _this = this;
-      jQuery.each(tileSources, function(index, value) {
+      jQuery.each(tileSources, function (index, value) {
         var newAR = (value.height / value.width);
         var options = {
           tileSource: value,
@@ -44371,7 +44572,7 @@ $.SimpleASEndpoint = function (options) {
     // next two pages for paged objects
     // need next single page for lining pages up
     // don't need for continuous or individuals
-    next: function() {
+    next: function () {
       var _this = this;
       var next;
       if (this.currentImgIndex % 2 === 0) {
@@ -44387,7 +44588,7 @@ $.SimpleASEndpoint = function (options) {
     // previous two pages for paged objects
     // need previous single page for lining things up
     // don't need for continuous or individuals
-    previous: function() {
+    previous: function () {
       var _this = this;
       var prev;
       if (this.currentImgIndex % 2 === 0) {
@@ -44400,16 +44601,16 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    getStitchList: function() {
+    getStitchList: function () {
       // Need to check metadata for object type and viewing direction
       // Default to 'paged' and 'left-to-right'
       // Set index(es) for any other images to stitch with selected image
       var stitchList = [],
-          leftIndex = [],
-          rightIndex = [],
-          topIndex = [],
-          bottomIndex = [],
-          _this = this;
+        leftIndex = [],
+        rightIndex = [],
+        topIndex = [],
+        bottomIndex = [],
+        _this = this;
 
       this.focusImages = [];
 
@@ -44418,52 +44619,52 @@ $.SimpleASEndpoint = function (options) {
         stitchList = [this.currentImg];
       } else if (this.viewingHint === 'paged') {
         // determine the other image for this pair based on index and viewingDirection
-        if (this.currentImgIndex === 0 || this.currentImgIndex === this.imagesList.length-1) {
-          //first page (front cover) or last page (back cover), display on its own
+        if (this.currentImgIndex === 0 || this.currentImgIndex === this.imagesList.length - 1) {
+          // first page (front cover) or last page (back cover), display on its own
           stitchList = [this.currentImg];
         } else if (this.currentImgIndex % 2 === 0) {
           // even, get previous page.  set order in array based on viewingDirection
           switch (this.viewingDirection) {
-          case "left-to-right":
-            leftIndex[0] = this.currentImgIndex-1;
-            stitchList = [this.imagesList[this.currentImgIndex-1], this.currentImg];
-            break;
-          case "right-to-left":
-            rightIndex[0] = this.currentImgIndex-1;
-            stitchList = [this.currentImg, this.imagesList[this.currentImgIndex-1]];
-            break;
-          case "top-to-bottom":
-            topIndex[0] = this.currentImgIndex-1;
-            stitchList = [this.imagesList[this.currentImgIndex-1], this.currentImg];
-            break;
-          case "bottom-to-top":
-            bottomIndex[0] = this.currentImgIndex-1;
-            stitchList = [this.currentImg, this.imagesList[this.currentImgIndex-1]];
-            break;
-          default:
-            break;
+            case 'left-to-right':
+              leftIndex[0] = this.currentImgIndex - 1;
+              stitchList = [this.imagesList[this.currentImgIndex - 1], this.currentImg];
+              break;
+            case 'right-to-left':
+              rightIndex[0] = this.currentImgIndex - 1;
+              stitchList = [this.currentImg, this.imagesList[this.currentImgIndex - 1]];
+              break;
+            case 'top-to-bottom':
+              topIndex[0] = this.currentImgIndex - 1;
+              stitchList = [this.imagesList[this.currentImgIndex - 1], this.currentImg];
+              break;
+            case 'bottom-to-top':
+              bottomIndex[0] = this.currentImgIndex - 1;
+              stitchList = [this.currentImg, this.imagesList[this.currentImgIndex - 1]];
+              break;
+            default:
+              break;
           }
         } else {
           // odd, get next page
           switch (this.viewingDirection) {
-          case "left-to-right":
-            rightIndex[0] = this.currentImgIndex+1;
-            stitchList = [this.currentImg, this.imagesList[this.currentImgIndex+1]];
-            break;
-          case "right-to-left":
-            leftIndex[0] = this.currentImgIndex+1;
-            stitchList = [this.imagesList[this.currentImgIndex+1], this.currentImg];
-            break;
-          case "top-to-bottom":
-            bottomIndex[0] = this.currentImgIndex+1;
-            stitchList = [this.currentImg, this.imagesList[this.currentImgIndex+1]];
-            break;
-          case "bottom-to-top":
-            topIndex[0] = this.currentImgIndex+1;
-            stitchList = [this.imagesList[this.currentImgIndex+1], this.currentImg];
-            break;
-          default:
-            break;
+            case 'left-to-right':
+              rightIndex[0] = this.currentImgIndex + 1;
+              stitchList = [this.currentImg, this.imagesList[this.currentImgIndex + 1]];
+              break;
+            case 'right-to-left':
+              leftIndex[0] = this.currentImgIndex + 1;
+              stitchList = [this.imagesList[this.currentImgIndex + 1], this.currentImg];
+              break;
+            case 'top-to-bottom':
+              bottomIndex[0] = this.currentImgIndex + 1;
+              stitchList = [this.currentImg, this.imagesList[this.currentImgIndex + 1]];
+              break;
+            case 'bottom-to-top':
+              topIndex[0] = this.currentImgIndex + 1;
+              stitchList = [this.imagesList[this.currentImgIndex + 1], this.currentImg];
+              break;
+            default:
+              break;
           }
         }
       } else if (this.viewingHint === 'continuous') {
@@ -44472,21 +44673,18 @@ $.SimpleASEndpoint = function (options) {
         // undefined viewingHint, don't do anything
       }
 
-      //set the focusImages for highlighting in panels
-      jQuery.each(stitchList, function(index, image) {
+      // set the focusImages for highlighting in panels
+      jQuery.each(stitchList, function (index, image) {
         _this.focusImages.push(image['@id']);
       });
-      _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {array: this.focusImages});
+      _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, { array: this.focusImages });
       return stitchList;
     }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.ContextControls = function(options) {
-
+(function ($) {
+  $.ContextControls = function (options) {
     jQuery.extend(this, {
       element: null,
       container: null,
@@ -44501,12 +44699,12 @@ $.SimpleASEndpoint = function (options) {
 
   $.ContextControls.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this;
       var showStrokeStyle = false,
-      showStrokeColor = false,
-      showFillColor = false;
-      this.availableAnnotationStylePickers.forEach(function(picker) {
+        showStrokeColor = false,
+        showFillColor = false;
+      this.availableAnnotationStylePickers.forEach(function (picker) {
         if (picker === 'StrokeType') {
           showStrokeStyle = true;
         }
@@ -44518,39 +44716,39 @@ $.SimpleASEndpoint = function (options) {
         }
       });
       this.setBackground = {
-        'solid':function(el){
+        solid: function (el) {
           _this.setBackgroundImage(el, 'border_type_1.png');
         },
-        'dashed':function(el){
+        dashed: function (el) {
           _this.setBackgroundImage(el, 'border_type_2.png');
         },
-        'dotdashed':function(el){
+        dotdashed: function (el) {
           _this.setBackgroundImage(el, 'border_type_3.png');
         },
-        'thick':function(el){
+        thick: function (el) {
           _this.setBackgroundImage(el, 'border_type_4.png');
         },
-        'thickest':function(el){
+        thickest: function (el) {
           _this.setBackgroundImage(el, 'border_type_5.png');
-        },
+        }
       };
       var annotationProperties = this.canvasControls.annotations;
 
       if (annotationProperties.annotationLayer && this.annoEndpointAvailable) {
         this.annotationElement = jQuery(this.annotationTemplate({
-          tools : _this.availableAnnotationTools,
-          showEdit : annotationProperties.annotationCreation,
+          tools: _this.availableAnnotationTools,
+          showEdit: annotationProperties.annotationCreation,
           showStrokeStyle: showStrokeStyle,
           showStrokeColor: showStrokeColor,
           showFillColor: showFillColor,
-          showRefresh : annotationProperties.annotationRefresh
+          showRefresh: annotationProperties.annotationRefresh
         })).appendTo(this.container.find('.mirador-osd-annotation-controls'));
         this.annotationElement.hide();
         this.setQtips(this.container.find('.mirador-osd-annotation-controls'));
         this.setBorderFillColorPickers();
       }
 
-      if(showStrokeStyle){
+      if (showStrokeStyle) {
         this.addStrokeStylePicker();
       }
 
@@ -44572,12 +44770,12 @@ $.SimpleASEndpoint = function (options) {
       this.bindEvents();
     },
 
-    setQtips: function(element) {
+    setQtips: function (element) {
       var _this = this;
-      element.find('a').each(function() {
+      element.find('a').each(function () {
         jQuery(this).qtip({
           content: {
-            text: jQuery(this).attr('title'),
+            text: jQuery(this).attr('title')
           },
           position: {
             my: 'bottom center',
@@ -44592,23 +44790,23 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    addColorPicker:function(selector,options){
+    addColorPicker: function (selector, options) {
       this.container.find(selector).spectrum(options);
     },
 
-    getImagePath:function(imageName){
+    getImagePath: function (imageName) {
       return this.state.getStateProperty('buildPath') + this.state.getStateProperty('imagesPath') + imageName;
     },
 
-    setBackgroundImage:function(el,imageName){
-      el.css('background-image','url('+this.getImagePath(imageName)+')');
+    setBackgroundImage: function (el, imageName) {
+      el.css('background-image', 'url(' + this.getImagePath(imageName) + ')');
     },
 
-    removeBackgroundImage:function(el){
-      el.css('background-image','');
+    removeBackgroundImage: function (el) {
+      el.css('background-image', '');
     },
 
-    addStrokeStylePicker:function(){
+    addStrokeStylePicker: function () {
       this.setBackground.solid(this.container.find('.mirador-line-type .solid'));
       this.setBackground.thick(this.container.find('.mirador-line-type .thick'));
       this.setBackground.thickest(this.container.find('.mirador-line-type .thickest'));
@@ -44616,15 +44814,15 @@ $.SimpleASEndpoint = function (options) {
       this.setBackground.dotdashed(this.container.find('.mirador-line-type .dotdashed'));
     },
 
-    setBorderFillColorPickers: function() {
+    setBorderFillColorPickers: function () {
       var _this = this;
       var defaultBorderColor = _this.state.getStateProperty('drawingToolsSettings').strokeColor,
-      defaultFillColor = _this.state.getStateProperty('drawingToolsSettings').fillColor,
-      defaultAlpha = _this.state.getStateProperty('drawingToolsSettings').fillColorAlpha,
-      colorObj = tinycolor(defaultFillColor);
+        defaultFillColor = _this.state.getStateProperty('drawingToolsSettings').fillColor,
+        defaultAlpha = _this.state.getStateProperty('drawingToolsSettings').fillColorAlpha,
+        colorObj = tinycolor(defaultFillColor);
       colorObj.setAlpha(defaultAlpha);
 
-      this.addColorPicker('.borderColorPicker',{
+      this.addColorPicker('.borderColorPicker', {
         showInput: true,
         showInitial: false,
         showPalette: true,
@@ -44632,30 +44830,30 @@ $.SimpleASEndpoint = function (options) {
         showSelectionPalette: true,
         hideAfterPaletteSelect: true,
         appendTo: 'parent',
-        containerClassName: 'borderColorPickerPop'+_this.windowId,
-        preferredFormat: "rgb",
-        hide: function(color) {
+        containerClassName: 'borderColorPickerPop' + _this.windowId,
+        preferredFormat: 'rgb',
+        hide: function (color) {
           _this.eventEmitter.publish('changeBorderColor.' + _this.windowId, color.toHexString());
-          jQuery(this).spectrum("set", color.toHexString());
+          jQuery(this).spectrum('set', color.toHexString());
         },
-        move: function(color) {
+        move: function (color) {
           _this.eventEmitter.publish('changeBorderColor.' + _this.windowId, color.toHexString());
         },
-        show: function(color) {
+        show: function (color) {
           _this.setColorPickerInCanvas('.borderColorPicker');
         },
         maxSelectionSize: 4,
         color: defaultBorderColor,
         palette: [
-          [defaultBorderColor, "black", "red", "green"],
-          ["white", "blue", "magenta", "yellow"]
+          [defaultBorderColor, 'black', 'red', 'green'],
+          ['white', 'blue', 'magenta', 'yellow']
         ]
       });
 
-      _this.container.find(".borderColorPicker").next(".sp-replacer").prepend("<i class='material-icons'>border_color</i>");
+      _this.container.find('.borderColorPicker').next('.sp-replacer').prepend("<i class='material-icons'>border_color</i>");
       // _this.container.find(".borderColorPicker").next(".sp-replacer").append('<i class="fa fa-caret-down dropdown-icon"></i>');
 
-      _this.addColorPicker('.fillColorPicker',{
+      _this.addColorPicker('.fillColorPicker', {
         showInput: true,
         showInitial: false,
         showAlpha: true,
@@ -44664,73 +44862,73 @@ $.SimpleASEndpoint = function (options) {
         showSelectionPalette: true,
         appendTo: 'parent',
         clickoutFiresChange: true,
-        containerClassName: 'fillColorPickerPop'+_this.windowId,
-        preferredFormat: "rgb",
-        hide: function(color) {
+        containerClassName: 'fillColorPickerPop' + _this.windowId,
+        preferredFormat: 'rgb',
+        hide: function (color) {
           _this.eventEmitter.publish('changeFillColor.' + _this.windowId, [color.toHexString(), color.getAlpha()]);
-          jQuery(this).spectrum("set", color);
+          jQuery(this).spectrum('set', color);
         },
-        move: function(color) {
+        move: function (color) {
           _this.eventEmitter.publish('changeFillColor.' + _this.windowId, [color.toHexString(), color.getAlpha()]);
         },
-        show: function(color) {
+        show: function (color) {
           _this.setColorPickerInCanvas('.fillColorPicker');
         },
         maxSelectionSize: 4,
         color: colorObj,
         palette: [
-          [colorObj, "black", "red", "green"],
-          ["white", "blue", "magenta", "yellow"]
+          [colorObj, 'black', 'red', 'green'],
+          ['white', 'blue', 'magenta', 'yellow']
         ]
       });
 
-      _this.container.find(".fillColorPicker").next(".sp-replacer").prepend("<i class='material-icons'>format_color_fill</i>");
+      _this.container.find('.fillColorPicker').next('.sp-replacer').prepend("<i class='material-icons'>format_color_fill</i>");
       // _this.container.find(".fillColorPicker").next(".sp-replacer").append('<i class="fa fa-caret-down dropdown-icon"></i>');
     },
 
-    setColorPickerInCanvas: function(selector) {
+    setColorPickerInCanvas: function (selector) {
       // check for the selector being out of canvas
-      var pickerContainer=this.container.find(selector).siblings('.sp-container').first(),
-      pickerOffset=pickerContainer.offset(),
-      windowWidth = this.state.windowsElements[this.windowId].width();
+      var pickerContainer = this.container.find(selector).siblings('.sp-container').first(),
+        pickerOffset = pickerContainer.offset(),
+        windowWidth = this.state.windowsElements[this.windowId].width();
       if (pickerContainer.width() + pickerOffset.left > windowWidth) {
         pickerContainer.css('left', windowWidth - (pickerContainer.outerWidth()));
       }
     },
 
-    annotationShow: function() {
-      this.annotationElement.fadeIn("150");
+    annotationShow: function () {
+      this.annotationElement.fadeIn('150');
     },
 
-    annotationHide: function() {
-      this.annotationElement.fadeOut("150");
+    annotationHide: function () {
+      this.annotationElement.fadeOut('150');
     },
 
-    manipulationShow: function() {
-      this.manipulationElement.fadeIn("150");
+    manipulationShow: function () {
+      this.manipulationElement.fadeIn('150');
     },
 
-    manipulationHide: function() {
-      this.manipulationElement.fadeOut("150");
+    manipulationHide: function () {
+      this.manipulationElement.fadeOut('150');
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
       // for some reason using :not selector isn't working for mouseenter/mouseleave,
       // so check for hud-disabled at the beginning instead
-      this.container.find('.mirador-line-type').on('mouseenter', function() {
+      this.container.find('.mirador-line-type').on('mouseenter', function () {
         if (jQuery(this).hasClass('hud-disabled')) {
           return false;
         }
         _this.container.find('.type-list').stop().slideFadeToggle(300);
       });
-      this.container.find('.mirador-line-type').on('mouseleave', function() {
+      this.container.find('.mirador-line-type').on('mouseleave', function () {
         if (jQuery(this).hasClass('hud-disabled')) {
           return false;
         }
         _this.container.find('.type-list').stop().slideFadeToggle(300);
       });
-      this.container.find('.mirador-line-type').find('ul li').on('click', function() {
+      this.container.find('.mirador-line-type').find('ul li').on('click', function () {
         if (jQuery(this).hasClass('hud-disabled')) {
           return false;
         }
@@ -44742,130 +44940,125 @@ $.SimpleASEndpoint = function (options) {
     },
 
     annotationTemplate: $.Handlebars.compile([
-                                   '{{#if showEdit}}',
-                                   '<a class="mirador-osd-pointer-mode hud-control selected" title="{{t "pointerTooltip"}}">',
-                                   '<i class="fa fa-mouse-pointer"></i>',
-                                   '</a>',
-                                   '{{#each tools}}',
-                                   '<a class="mirador-osd-{{this.logoClass}}-mode hud-control mirador-osd-edit-mode" title="{{t this.tooltip}}">',
-                                   '<i class="material-icons">{{this.logoClass}}</i>',
-                                   '</a>',
-                                   '{{/each}}',
-                                   '<a class="hud-control mirador-osd-edit-mode" title="{{t "pointerTooltip"}}">',
-                                   '<i class="fa fa-i-cursor"></i>',
-                                   '</a>',
-                                   '{{#if showStrokeStyle}}',
-                                   '<a class="hud-control hud-dropdown hud-disabled mirador-line-type" aria-label="{{t "borderTypeTooltip"}}" title="{{t "borderTypeTooltip"}}">',
-                                   '<i class="material-icons mirador-border-icon">create</i>',
-                                   '<i class="border-type-image solid"></i>',
-                                   '<i class="fa fa-caret-down dropdown-icon"></i>',
-                                   '<ul class="dropdown type-list">',
-                                   '<li><i class="fa solid"></i> {{t "solid"}}</li>',
-                                   '<li><i class="fa thick"></i> {{t "thick"}}</li>',
-                                   '<li><i class="fa thickest"></i> {{t "thickest"}}</li>',
-                                   '<li><i class="fa dashed"></i> {{t "dashed"}}</li>',
-                                   '<li><i class="fa dotdashed"></i> {{t "dotDashed"}}</li>',
-                                   '</ul>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showStrokeColor}}',
-                                   '<a class="hud-control hud-dropdown hud-disabled mirador-osd-color-picker" title="{{t "borderColorTooltip"}}">',
-                                   '<input type="text" class="borderColorPicker"/>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showFillColor}}',
-                                   '<a class="hud-control hud-dropdown hud-disabled mirador-osd-color-picker" title="{{t "fillColorTooltip"}}">',
-                                   '<input type="text" class="fillColorPicker"/>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showRefresh}}',
-                                     '<a class="hud-control mirador-osd-refresh-mode">',
-                                     '<i class="fa fa-lg fa-refresh"></i>',
-                                     '</a>',
-                                   '{{/if}}',
-                                   '{{/if}}'
+      '{{#if showEdit}}',
+      '<a class="mirador-osd-pointer-mode hud-control selected" title="{{t "pointerTooltip"}}">',
+      '<i class="fa fa-mouse-pointer"></i>',
+      '</a>',
+      '{{#each tools}}',
+      '<a class="mirador-osd-{{this.logoClass}}-mode hud-control mirador-osd-edit-mode" title="{{t this.tooltip}}">',
+      '<i class="material-icons">{{this.logoClass}}</i>',
+      '</a>',
+      '{{/each}}',
+      '{{#if showStrokeStyle}}',
+      '<a class="hud-control hud-dropdown hud-disabled mirador-line-type" aria-label="{{t "borderTypeTooltip"}}" title="{{t "borderTypeTooltip"}}">',
+      '<i class="material-icons mirador-border-icon">create</i>',
+      '<i class="border-type-image solid"></i>',
+      '<i class="fa fa-caret-down dropdown-icon"></i>',
+      '<ul class="dropdown type-list">',
+      '<li><i class="fa solid"></i> {{t "solid"}}</li>',
+      '<li><i class="fa thick"></i> {{t "thick"}}</li>',
+      '<li><i class="fa thickest"></i> {{t "thickest"}}</li>',
+      '<li><i class="fa dashed"></i> {{t "dashed"}}</li>',
+      '<li><i class="fa dotdashed"></i> {{t "dotDashed"}}</li>',
+      '</ul>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showStrokeColor}}',
+      '<a class="hud-control hud-dropdown hud-disabled mirador-osd-color-picker" title="{{t "borderColorTooltip"}}">',
+      '<input type="text" class="borderColorPicker"/>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showFillColor}}',
+      '<a class="hud-control hud-dropdown hud-disabled mirador-osd-color-picker" title="{{t "fillColorTooltip"}}">',
+      '<input type="text" class="fillColorPicker"/>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showRefresh}}',
+      '<a class="hud-control mirador-osd-refresh-mode">',
+      '<i class="fa fa-lg fa-refresh"></i>',
+      '</a>',
+      '{{/if}}',
+      '{{/if}}'
     ].join('')),
 
     manipulationTemplate: $.Handlebars.compile([
-                                   '{{#if showRotate}}',
-                                   '<a class="hud-control mirador-osd-rotate-right" title="{{t "rotateRightTooltip"}}">',
-                                   '<i class="fa fa-lg fa-rotate-right"></i>',
-                                   '</a>',
-                                   '<a class="hud-control mirador-osd-rotate-left" title="{{t "rotateLeftTooltip"}}">',
-                                   '<i class="fa fa-lg fa-rotate-left"></i>',
-                                   '</a>',
-                                   '{{/if}}',
-
-                                '{{#if filtersSupported}}',
-                                   '{{#if showBrightness}}',
-                                   '<a class="hud-control mirador-osd-brightness" title="{{t "brightnessTooltip"}}">',
-                                   '<i class="material-icons">wb_sunny</i>',
-                                   '<i class="fa fa-caret-down"></i>',
-                                   '<div class="mirador-osd-brightness-slider mirador-slider"/>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showContrast}}',
-                                   '<a class="hud-control mirador-osd-contrast" title="{{t "contrastTooltip"}}">',
-                                   '<i class="material-icons">brightness_6</i>',
-                                   '<i class="fa fa-caret-down"></i>',
-                                   '<div class="mirador-osd-contrast-slider mirador-slider"/>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showSaturate}}',
-                                   '<a class="hud-control mirador-osd-saturation" title="{{t "saturationTooltip"}}">',
-                                   '<i class="material-icons">gradient</i>',
-                                   '<i class="fa fa-caret-down"></i>',
-                                   '<div class="mirador-osd-saturation-slider mirador-slider"/>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showGrayscale}}',
-                                   '<a class="hud-control mirador-osd-grayscale" title="{{t "grayscaleTooltip"}}">',
-                                   '<i class="material-icons">filter_b_and_w</i>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showInvert}}',
-                                   '<a class="hud-control mirador-osd-invert" title="{{t "invertTooltip"}}">',
-                                   '<i class="material-icons">invert_colors</i>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '{{#if showMirror}}',
-                                   '<a class="hud-control mirador-osd-mirror" title="{{t "mirrorTooltip"}}">',
-                                   '<i class="material-icons">swap_horiz</i>',
-                                   '</a>',
-                                   '{{/if}}',
-                                   '<a class="hud-control mirador-osd-reset" title="{{t "resetTooltip"}}">',
-                                   '<i class="fa fa-lg fa-refresh"></i>',
-                                   '</a>',
+      '{{#if showRotate}}',
+      '<a class="hud-control mirador-osd-rotate-right" title="{{t "rotateRightTooltip"}}">',
+      '<i class="fa fa-lg fa-rotate-right"></i>',
+      '</a>',
+      '<a class="hud-control mirador-osd-rotate-left" title="{{t "rotateLeftTooltip"}}">',
+      '<i class="fa fa-lg fa-rotate-left"></i>',
+      '</a>',
       '{{/if}}',
+
+      '{{#if filtersSupported}}',
+      '{{#if showBrightness}}',
+      '<a class="hud-control mirador-osd-brightness" title="{{t "brightnessTooltip"}}">',
+      '<i class="material-icons">wb_sunny</i>',
+      '<i class="fa fa-caret-down"></i>',
+      '<div class="mirador-osd-brightness-slider mirador-slider"/>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showContrast}}',
+      '<a class="hud-control mirador-osd-contrast" title="{{t "contrastTooltip"}}">',
+      '<i class="material-icons">brightness_6</i>',
+      '<i class="fa fa-caret-down"></i>',
+      '<div class="mirador-osd-contrast-slider mirador-slider"/>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showSaturate}}',
+      '<a class="hud-control mirador-osd-saturation" title="{{t "saturationTooltip"}}">',
+      '<i class="material-icons">gradient</i>',
+      '<i class="fa fa-caret-down"></i>',
+      '<div class="mirador-osd-saturation-slider mirador-slider"/>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showGrayscale}}',
+      '<a class="hud-control mirador-osd-grayscale" title="{{t "grayscaleTooltip"}}">',
+      '<i class="material-icons">filter_b_and_w</i>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showInvert}}',
+      '<a class="hud-control mirador-osd-invert" title="{{t "invertTooltip"}}">',
+      '<i class="material-icons">invert_colors</i>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showMirror}}',
+      '<a class="hud-control mirador-osd-mirror" title="{{t "mirrorTooltip"}}">',
+      '<i class="material-icons">swap_horiz</i>',
+      '</a>',
+      '{{/if}}',
+      '<a class="hud-control mirador-osd-reset" title="{{t "resetTooltip"}}">',
+      '<i class="fa fa-lg fa-refresh"></i>',
+      '</a>',
+      '{{/if}}'
     ].join('')),
 
     // for accessibility, make sure to add aria-labels just like above
     editorTemplate: $.Handlebars.compile([
-                                 '<div class="mirador-osd-context-controls hud-container">',
-                                   '<a class="mirador-osd-back hud-control" role="button">',
-                                   '<i class="fa fa-lg fa-arrow-left"></i>',
-                                   '</a>',
-                                   '<a class="mirador-osd-rect-tool hud-control" role ="buton">',
-                                   '<i class="fa fa-lg fa-pencil-square"></i>',
-                                   '</a>',
-                                   '<a class="mirador-osd-rect-tool hud-control" role="button">',
-                                   '<i class="fa fa-lg fa-ellipsis-h"></i>',
-                                   '</a>',
-                                   '<a class="mirador-osd-rect-tool hud-control" role="button">',
-                                   '<i class="fa fa-lg fa-gear"></i>',
-                                   '</a>',
-                                 '</div>'
+      '<div class="mirador-osd-context-controls hud-container">',
+      '<a class="mirador-osd-back hud-control" role="button">',
+      '<i class="fa fa-lg fa-arrow-left"></i>',
+      '</a>',
+      '<a class="mirador-osd-rect-tool hud-control" role ="buton">',
+      '<i class="fa fa-lg fa-pencil-square"></i>',
+      '</a>',
+      '<a class="mirador-osd-rect-tool hud-control" role="button">',
+      '<i class="fa fa-lg fa-ellipsis-h"></i>',
+      '</a>',
+      '<a class="mirador-osd-rect-tool hud-control" role="button">',
+      '<i class="fa fa-lg fa-gear"></i>',
+      '</a>',
+      '</div>'
     ].join(''))
   };
 }(Mirador));
 
-(function($) {
-
-  $.Hud = function(options) {
-
+(function ($) {
+  $.Hud = function (options) {
     jQuery.extend(this, {
-      element:   null,
-      windowId:  null,
+      element: null,
+      windowId: null,
       annoState: null,
       annoEndpointAvailable: false,
       eventEmitter: null
@@ -44876,16 +45069,16 @@ $.SimpleASEndpoint = function (options) {
 
   $.Hud.prototype = {
 
-    init: function() {
+    init: function () {
       this.createStateMachines();
 
       var showAnno = typeof this.showAnno !== 'undefined' ? this.showAnno : this.canvasControls.annotations.annotationLayer,
-      showImageControls = typeof this.showImageControls !== 'undefined' ? this.showImageControls : this.canvasControls.imageManipulation.manipulationLayer;
+        showImageControls = typeof this.showImageControls !== 'undefined' ? this.showImageControls : this.canvasControls.imageManipulation.manipulationLayer;
       this.element = jQuery(this.template({
-        showNextPrev : this.showNextPrev,
-        showBottomPanel : typeof this.bottomPanelAvailable === 'undefined' ? true : this.bottomPanelAvailable,
-        showAnno : showAnno,
-        showImageControls : showImageControls
+        showNextPrev: this.showNextPrev,
+        showBottomPanel: typeof this.bottomPanelAvailable === 'undefined' ? true : this.bottomPanelAvailable,
+        showAnno: showAnno,
+        showImageControls: showImageControls
       })).appendTo(this.appendTo);
 
       if (showAnno || showImageControls) {
@@ -44908,17 +45101,17 @@ $.SimpleASEndpoint = function (options) {
       this.bindEvents();
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
-      this.eventEmitter.subscribe('DISABLE_TOOLTIPS_BY_CLASS.' + this.windowId, function(event, className) {
+      this.eventEmitter.subscribe('DISABLE_TOOLTIPS_BY_CLASS.' + this.windowId, function (event, className) {
         _this.element.find(className).qtip('disable');
       });
 
-      this.eventEmitter.subscribe('ENABLE_TOOLTIPS_BY_CLASS.' + this.windowId, function(event, className) {
+      this.eventEmitter.subscribe('ENABLE_TOOLTIPS_BY_CLASS.' + this.windowId, function (event, className) {
         _this.element.find(className).qtip('enable');
       });
 
-      this.eventEmitter.subscribe('SET_STATE_MACHINE_POINTER.' + this.windowId, function(event) {
+      this.eventEmitter.subscribe('SET_STATE_MACHINE_POINTER.' + this.windowId, function (event) {
         if (_this.annoState.current === 'none') {
           _this.annoState.startup();
         } else if (_this.annoState.current === 'off') {
@@ -44929,138 +45122,147 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
     },
 
-    createStateMachines: function() {
+    createStateMachines: function () {
       var _this = this,
-      duration = "200";
+        duration = '200';
 
-      //add more to these as AnnoState becomes more complex
-      //initial state is 'none'
+      // add more to these as AnnoState becomes more complex
+      // initial state is 'none'
       this.annoState = StateMachine.create({
         events: [
           { name: 'startup', from: 'none', to: 'off' },
-          { name: 'displayOn', from: 'off', to: 'pointer'},
-          { name: 'displayOff', from: ['pointer', 'shape'], to: 'off'},
-          { name: 'choosePointer', from: ['pointer', 'shape'], to: 'pointer'},
-          { name: 'chooseShape', from: 'pointer', to: 'shape'},
-          { name: 'changeShape', from: 'shape', to: 'shape'},
-          { name: 'refresh', from: 'pointer', to: 'pointer'},
-          { name: 'refresh', from: 'shape', to: 'shape'}
+          { name: 'displayOn', from: 'off', to: 'pointer' },
+          { name: 'displayOff', from: ['pointer', 'shape'], to: 'off' },
+          { name: 'choosePointer', from: ['pointer', 'shape'], to: 'pointer' },
+          { name: 'chooseShape', from: 'pointer', to: 'shape' },
+          { name: 'changeShape', from: 'shape', to: 'shape' },
+          { name: 'refresh', from: 'pointer', to: 'pointer' },
+          { name: 'refresh', from: 'shape', to: 'shape' }
         ],
         callbacks: {
-          onstartup: function(event, from, to) {
+          onstartup: function (event, from, to) {
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              annotationState: to
+              annotationState: to,
+              onWhat: 'onstartup'
             });
           },
-          ondisplayOn: function(event, from, to) {
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.mirador-osd-annotations-layer', 'selected']);
+          ondisplayOn: function (event, from, to) {
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.mirador-osd-annotations-layer', 'selected']);
             if (_this.annoEndpointAvailable) {
-                  _this.contextControls.annotationShow();
+              _this.contextControls.annotationShow();
             }
             _this.eventEmitter.publish('modeChange.' + _this.windowId, 'displayAnnotations');
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.hud-dropdown', 'hud-disabled']);
-            _this.eventEmitter.publish('DISABLE_TOOLTIPS_BY_CLASS.'+_this.windowId, '.hud-dropdown');
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.hud-dropdown', 'hud-disabled']);
+            _this.eventEmitter.publish('DISABLE_TOOLTIPS_BY_CLASS.' + _this.windowId, '.hud-dropdown');
             _this.eventEmitter.publish('DEFAULT_CURSOR.' + _this.windowId);
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              annotationState: to
+              annotationState: to,
+              onWhat: 'ondisplayOn'
             });
           },
-          ondisplayOff: function(event, from, to) {
+          ondisplayOff: function (event, from, to) {
             if (_this.annoEndpointAvailable) {
-              _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-edit-mode', 'selected']);
-              _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
-              _this.eventEmitter.publish('CANCEL_ACTIVE_ANNOTATIONS.'+_this.windowId);
+              _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-edit-mode', 'selected']);
+              _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
+              _this.eventEmitter.publish('CANCEL_ACTIVE_ANNOTATIONS.' + _this.windowId);
               _this.contextControls.annotationHide();
             }
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-annotations-layer', 'selected']);
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-annotations-layer', 'selected']);
             _this.eventEmitter.publish('modeChange.' + _this.windowId, 'default');
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              annotationState: to
+              annotationState: to,
+              onWhat: 'ondisplayOff'
             });
           },
-          onchoosePointer: function(event, from, to) {
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-edit-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.hud-dropdown', 'hud-disabled']);
-            _this.eventEmitter.publish('DISABLE_TOOLTIPS_BY_CLASS.'+_this.windowId, '.hud-dropdown');
+          onchoosePointer: function (event, from, to) {
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-edit-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.hud-dropdown', 'hud-disabled']);
+            _this.eventEmitter.publish('DISABLE_TOOLTIPS_BY_CLASS.' + _this.windowId, '.hud-dropdown');
             _this.eventEmitter.publish('modeChange.' + _this.windowId, 'displayAnnotations');
             _this.eventEmitter.publish('DEFAULT_CURSOR.' + _this.windowId);
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              annotationState: to
+              annotationState: to,
+              onWhat: 'onchoosePointer'
             });
           },
-          onchooseShape: function(event, from, to, shape) {
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-edit-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.hud-dropdown', 'hud-disabled']);
-            _this.eventEmitter.publish('ENABLE_TOOLTIPS_BY_CLASS.'+_this.windowId, '.hud-dropdown');
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.mirador-osd-'+shape+'-mode', 'selected']);
+          onchooseShape: function (event, from, to, shape) {
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-edit-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.hud-dropdown', 'hud-disabled']);
+            _this.eventEmitter.publish('ENABLE_TOOLTIPS_BY_CLASS.' + _this.windowId, '.hud-dropdown');
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.mirador-osd-' + shape + '-mode', 'selected']);
             _this.eventEmitter.publish('modeChange.' + _this.windowId, 'creatingAnnotation');
             _this.eventEmitter.publish('CROSSHAIR_CURSOR.' + _this.windowId);
-            _this.eventEmitter.publish('toggleDrawingTool.'+_this.windowId, shape);
+            _this.eventEmitter.publish('toggleDrawingTool.' + _this.windowId, shape);
 
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              annotationState: to
+              annotationState: to,
+              onWhat: 'onchooseShape'
             });
           },
-          onchangeShape: function(event, from, to, shape) {
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-osd-edit-mode', 'selected']);
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.hud-dropdown', 'hud-disabled']);
-            _this.eventEmitter.publish('ENABLE_TOOLTIPS_BY_CLASS.'+_this.windowId, '.hud-dropdown');
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.mirador-osd-'+shape+'-mode', 'selected']);
+          onchangeShape: function (event, from, to, shape) {
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-pointer-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-osd-edit-mode', 'selected']);
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.hud-dropdown', 'hud-disabled']);
+            _this.eventEmitter.publish('ENABLE_TOOLTIPS_BY_CLASS.' + _this.windowId, '.hud-dropdown');
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.mirador-osd-' + shape + '-mode', 'selected']);
             _this.eventEmitter.publish('CROSSHAIR_CURSOR.' + _this.windowId);
-            //don't need to trigger a mode change, just change tool
-            _this.eventEmitter.publish('toggleDrawingTool.'+_this.windowId, shape);
+            // don't need to trigger a mode change, just change tool
+            _this.eventEmitter.publish('toggleDrawingTool.' + _this.windowId, shape);
 
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              annotationState: to
+              annotationState: to,
+              onWhat: 'onchangeShape'
             });
           },
-          onrefresh: function(event, from, to) {
-            //TODO
+          onrefresh: function (event, from, to) {
+            // TODO
           }
         }
       });
 
       this.manipulationState = StateMachine.create({
         events: [
-          { name: 'startup',  from: 'none',  to: 'manipulationOff' },
-          { name: 'displayOn',  from: 'manipulationOff',  to: 'manipulationOn' },
+          { name: 'startup', from: 'none', to: 'manipulationOff' },
+          { name: 'displayOn', from: 'manipulationOff', to: 'manipulationOn' },
           { name: 'displayOff', from: 'manipulationOn', to: 'manipulationOff' }
         ],
         callbacks: {
-          onstartup: function(event, from, to) {
+          onstartup: function (event, from, to) {
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              manipulationState: to
+              manipulationState: to,
+              onWhat: 'onstartup'
             });
           },
-          ondisplayOn: function(event, from, to) {
-            _this.eventEmitter.publish('HUD_ADD_CLASS.'+_this.windowId, ['.mirador-manipulation-toggle', 'selected']);
+          ondisplayOn: function (event, from, to) {
+            _this.eventEmitter.publish('HUD_ADD_CLASS.' + _this.windowId, ['.mirador-manipulation-toggle', 'selected']);
             _this.contextControls.manipulationShow();
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              manipulationState: to
+              manipulationState: to,
+              onWhat: 'ondisplayOn'
             });
           },
-          ondisplayOff: function(event, from, to) {
+          ondisplayOff: function (event, from, to) {
             _this.contextControls.manipulationHide();
-            _this.eventEmitter.publish('HUD_REMOVE_CLASS.'+_this.windowId, ['.mirador-manipulation-toggle', 'selected']);
+            _this.eventEmitter.publish('HUD_REMOVE_CLASS.' + _this.windowId, ['.mirador-manipulation-toggle', 'selected']);
             _this.eventEmitter.publish(('windowUpdated'), {
               id: _this.windowId,
-              manipulationState: to
+              manipulationState: to,
+              onWhat: 'ondisplayOff'
             });
           }
         }
@@ -45068,94 +45270,93 @@ $.SimpleASEndpoint = function (options) {
     },
 
     template: $.Handlebars.compile([
-                                 '<div class="mirador-hud">',
-                                 '{{#if showNextPrev}}',
-                                 '<a class="mirador-osd-previous hud-control ">',
-                                 '<i class="fa fa-3x fa-chevron-left "></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '<div class="mirador-osd-context-controls hud-container">',
-                                 '{{#if showAnno}}',
-                                  '<div class="mirador-osd-annotation-controls">',
-                                  '<a class="mirador-osd-annotations-layer hud-control" role="button" title="{{t "annotationTooltip"}}" aria-label="{{t "annotationTooltip"}}">',
-                                  '<i class="fa fa-lg fa-comments"></i>',
-                                  '</a>',
-                                  '</div>',
-                                 '{{/if}}',
-                                 '{{#if showImageControls}}',
-                                  '<div class="mirador-manipulation-controls">',
-                                  '<a class="mirador-manipulation-toggle hud-control" role="button" title="{{t "imageManipulationTooltip"}}" aria-label="{{t "imageManipulationTooltip"}}">',
-                                  '<i class="material-icons">tune</i>',
-                                  '</a>',
-                                  '</div>',
-                                 '{{/if}}',
-                                 '</div>',
-                                 '{{#if showNextPrev}}',
-                                 '<a class="mirador-osd-next hud-control ">',
-                                 '<i class="fa fa-3x fa-chevron-right"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '{{#if showBottomPanel}}',
-                                 '<a class="mirador-osd-toggle-bottom-panel hud-control" role="button" aria-label="Toggle Bottom Panel">',
-                                 '<i class="fa fa-2x fa-ellipsis-h"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '<div class="mirador-pan-zoom-controls hud-control">',
-                                 '<a class="mirador-osd-up hud-control" role="button" aria-label="Move image up">',
-                                 '<i class="fa fa-chevron-circle-up"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-right hud-control" role="button" aria-label="Move image right">',
-                                 '<i class="fa fa-chevron-circle-right"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-down hud-control" role="button" aria-label="Move image down">',
-                                 '<i class="fa fa-chevron-circle-down"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-left hud-control" role="button" aria-label="Move image left">',
-                                 '<i class="fa fa-chevron-circle-left"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-zoom-in hud-control" role="button" aria-label="Zoom in">',
-                                 '<i class="fa fa-plus-circle"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-zoom-out hud-control" role="button" aria-label="Zoom out">',
-                                 '<i class="fa fa-minus-circle"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
-                                 '<i class="fa fa-home"></i>',
-                                 '</a>',
-                                 '</div>',
-                                 '</div>'
+      '<div class="mirador-hud">',
+      '{{#if showNextPrev}}',
+      '<a class="mirador-osd-previous hud-control ">',
+      '<i class="fa fa-3x fa-chevron-left "></i>',
+      '</a>',
+      '{{/if}}',
+      '<div class="mirador-osd-context-controls hud-container">',
+      '{{#if showAnno}}',
+      '<div class="mirador-osd-annotation-controls">',
+      '<a class="mirador-osd-annotations-layer hud-control" role="button" title="{{t "annotationTooltip"}}" aria-label="{{t "annotationTooltip"}}">',
+      '<i class="fa fa-lg fa-comments"></i>',
+      '</a>',
+      '</div>',
+      '{{/if}}',
+      '{{#if showImageControls}}',
+      '<div class="mirador-manipulation-controls">',
+      '<a class="mirador-manipulation-toggle hud-control" role="button" title="{{t "imageManipulationTooltip"}}" aria-label="{{t "imageManipulationTooltip"}}">',
+      '<i class="material-icons">tune</i>',
+      '</a>',
+      '</div>',
+      '{{/if}}',
+      '</div>',
+      '{{#if showNextPrev}}',
+      '<a class="mirador-osd-next hud-control ">',
+      '<i class="fa fa-3x fa-chevron-right"></i>',
+      '</a>',
+      '{{/if}}',
+      '{{#if showBottomPanel}}',
+      '<a class="mirador-osd-toggle-bottom-panel hud-control" role="button" aria-label="Toggle Bottom Panel">',
+      '<i class="fa fa-2x fa-ellipsis-h"></i>',
+      '</a>',
+      '{{/if}}',
+      '<div class="mirador-pan-zoom-controls hud-control">',
+      '<a class="mirador-osd-up hud-control" role="button" aria-label="Move image up">',
+      '<i class="fa fa-chevron-circle-up"></i>',
+      '</a>',
+      '<a class="mirador-osd-right hud-control" role="button" aria-label="Move image right">',
+      '<i class="fa fa-chevron-circle-right"></i>',
+      '</a>',
+      '<a class="mirador-osd-down hud-control" role="button" aria-label="Move image down">',
+      '<i class="fa fa-chevron-circle-down"></i>',
+      '</a>',
+      '<a class="mirador-osd-left hud-control" role="button" aria-label="Move image left">',
+      '<i class="fa fa-chevron-circle-left"></i>',
+      '</a>',
+      '<a class="mirador-osd-zoom-in hud-control" role="button" aria-label="Zoom in">',
+      '<i class="fa fa-plus-circle"></i>',
+      '</a>',
+      '<a class="mirador-osd-zoom-out hud-control" role="button" aria-label="Zoom out">',
+      '<i class="fa fa-minus-circle"></i>',
+      '</a>',
+      '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
+      '<i class="fa fa-home"></i>',
+      '</a>',
+      '</div>',
+      '</div>'
     ].join(''))
 
   };
-
 }(Mirador));
 
-(function($) {
+(function ($) {
 
-  $.ImageView = function(options) {
+  $.ImageView = function (options) {
 
     jQuery.extend(this, {
-      currentImg:       null,
-      windowId:         null,
-      currentImgIndex:  0,
-      canvasID:         null,
-      canvases:         null,
-      imagesList:       [],
-      imagesListRtl:    [],
-      element:          null,
-      elemOsd:          null,
-      manifest:         null,
-      osd:              null,
+      currentImg: null,
+      windowId: null,
+      currentImgIndex: 0,
+      canvasID: null,
+      canvases: null,
+      imagesList: [],
+      imagesListRtl: [],
+      element: null,
+      elemOsd: null,
+      manifest: null,
+      osd: null,
       osdOptions: {
-        osdBounds:        null,
-        zoomLevel:        null
+        osdBounds: null,
+        zoomLevel: null
       },
       osdCls: 'mirador-osd',
-      elemAnno:         null,
-      annoCls:          'annotation-canvas',
+      elemAnno: null,
+      annoCls: 'annotation-canvas',
       annotationsLayer: null,
       forceShowControls: false,
-      eventEmitter:     null,
+      eventEmitter: null,
       vDirectionStatus: ''
     }, options);
 
@@ -45164,14 +45365,14 @@ $.SimpleASEndpoint = function (options) {
 
   $.ImageView.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this;
       this.horizontallyFlipped = false;
       this.originalDragHandler = null;
-      this.ocrAnnotations = [];
-      if(this.vDirectionStatus == 'rtl'){
-          this.imagesList =  this.imagesListRtl.concat();
-       }
+      this.ocrAnnotations = null;
+      if (this.vDirectionStatus == 'rtl') {
+        this.imagesList = this.imagesListRtl.concat();
+      }
       // check (for thumbnail view) if the canvasID is set.
       // If not, make it page/item 1.
       if (this.canvasID !== null) {
@@ -45180,8 +45381,8 @@ $.SimpleASEndpoint = function (options) {
 
       if (!this.osdOptions) {
         this.osdOptions = {
-          osdBounds:        null,
-          zoomLevel:        null
+          osdBounds: null,
+          zoomLevel: null
         };
       }
       this.currentImg = this.imagesList[this.currentImgIndex];
@@ -45191,12 +45392,15 @@ $.SimpleASEndpoint = function (options) {
         .appendTo(this.element);
 
 
-      _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {array: [this.canvasID]});
+      _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {
+        array: [this.canvasID]
+      });
 
       var allTools = $.getTools(this.state.getStateProperty('drawingToolsSettings'));
+      console.log(allTools);
       this.availableAnnotationTools = [];
-      for ( var i = 0; i < this.state.getStateProperty('availableAnnotationDrawingTools').length; i++) {
-        for ( var j = 0; j < allTools.length; j++) {
+      for (var i = 0; i < this.state.getStateProperty('availableAnnotationDrawingTools').length; i++) {
+        for (var j = 0; j < allTools.length; j++) {
           if (this.state.getStateProperty('availableAnnotationDrawingTools')[i] == allTools[j].name) {
             var values = {};
             values.logoClass = allTools[j].logoClass;
@@ -45214,7 +45418,7 @@ $.SimpleASEndpoint = function (options) {
         windowId: this.windowId,
         canvasControls: this.canvasControls,
         annoEndpointAvailable: this.annoEndpointAvailable,
-        showNextPrev : this.imagesList.length !== 1,
+        showNextPrev: this.imagesList.length !== 1,
         availableAnnotationStylePickers: this.state.getStateProperty('availableAnnotationStylePickers'),
         availableAnnotationTools: this.availableAnnotationTools,
         state: this.state,
@@ -45233,15 +45437,15 @@ $.SimpleASEndpoint = function (options) {
     },
 
     template: $.Handlebars.compile([
-       '<div class="image-view">',
-       '</div>'
+      '<div class="image-view">',
+      '</div>'
 
     ].join('')),
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      _this.eventEmitter.subscribe('bottomPanelSet.' + _this.windowId, function(event, visible) {
+      _this.eventEmitter.subscribe('bottomPanelSet.' + _this.windowId, function (event, visible) {
         var dodgers = _this.element.find('.mirador-osd-toggle-bottom-panel, .mirador-pan-zoom-controls');
         var arrows = _this.element.find('.mirador-osd-next, .mirador-osd-previous');
         if (visible === true) {
@@ -45253,7 +45457,7 @@ $.SimpleASEndpoint = function (options) {
         }
       });
 
-      _this.eventEmitter.subscribe('fitBounds.' + _this.windowId, function(event, bounds) {
+      _this.eventEmitter.subscribe('fitBounds.' + _this.windowId, function (event, bounds) {
         var rect = new OpenSeadragon.Rect(bounds.x, bounds.y, bounds.width, bounds.height);
         _this.osd.viewport.fitBoundsWithConstraints(rect, false);
       });
@@ -45272,61 +45476,65 @@ $.SimpleASEndpoint = function (options) {
       // _this.eventEmitter.subscribe('canvas-position-updated');
 
       //Related to Annotations HUD
-      _this.eventEmitter.subscribe('HUD_REMOVE_CLASS.' + _this.windowId, function(event, elementSelector, className) {
+      _this.eventEmitter.subscribe('HUD_REMOVE_CLASS.' + _this.windowId, function (event, elementSelector, className) {
         _this.element.find(elementSelector).removeClass(className);
       });
 
-      _this.eventEmitter.subscribe('HUD_ADD_CLASS.' + _this.windowId, function(event, elementSelector, className) {
+      _this.eventEmitter.subscribe('HUD_ADD_CLASS.' + _this.windowId, function (event, elementSelector, className) {
         _this.element.find(elementSelector).addClass(className);
       });
 
-      _this.eventEmitter.subscribe('HUD_FADE_IN.' + _this.windowId, function(event, elementSelector, duration) {
+      _this.eventEmitter.subscribe('HUD_FADE_IN.' + _this.windowId, function (event, elementSelector, duration) {
         _this.element.find(elementSelector).fadeIn(duration);
       });
 
-      _this.eventEmitter.subscribe('HUD_FADE_OUT.' + _this.windowId, function(event, elementSelector, duration, complete) {
+      _this.eventEmitter.subscribe('HUD_FADE_OUT.' + _this.windowId, function (event, elementSelector, duration, complete) {
         _this.element.find(elementSelector).fadeOut(duration, complete);
       });
 
-      _this.eventEmitter.subscribe('DEFAULT_CURSOR.' + _this.windowId, function(event) {
+      _this.eventEmitter.subscribe('DEFAULT_CURSOR.' + _this.windowId, function (event) {
         jQuery(_this.osd.canvas).css("cursor", "default");
       });
-      _this.eventEmitter.subscribe('CROSSHAIR_CURSOR.' + _this.windowId, function(event) {
-        jQuery(_this.osd.canvas).css("cursor", "crosshair");
+      _this.eventEmitter.subscribe('CROSSHAIR_CURSOR.' + _this.windowId, function (event) {
+        if (jQuery(_this.osd.canvas).css('cursor') !== 'text') {
+          jQuery(_this.osd.canvas).css("cursor", "crosshair");
+        }
       });
-      _this.eventEmitter.subscribe('POINTER_CURSOR.' + _this.windowId, function(event) {
+      _this.eventEmitter.subscribe('POINTER_CURSOR.' + _this.windowId, function (event) {
         jQuery(_this.osd.canvas).css("cursor", "pointer");
       });
       //Related to Annotations HUD
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      this.element.find('.mirador-osd-next').on('click', function() {
+      this.element.find('.mirador-osd-next').on('click', function () {
         _this.next();
       });
 
-      this.element.find('.mirador-osd-previous').on('click', function() {
+      this.element.find('.mirador-osd-previous').on('click', function () {
         _this.previous();
       });
 
-      this.element.find('.mirador-osd-annotations-layer').on('click', function() {
+      this.element.find('.mirador-osd-annotations-layer').on('click', function () {
         if (_this.hud.annoState.current === 'none') {
           _this.hud.annoState.startup(this);
         }
         if (_this.hud.annoState.current === 'off') {
           _this.hud.annoState.displayOn(this);
           _this.annotationState = 'on';
+          _this.ocrAnnotations.annotationState = 'on';
         } else {
           //make sure to force the controls back to auto fade
           _this.forceShowControls = false;
           _this.hud.annoState.displayOff(this);
           _this.annotationState = 'off';
+          // _this.ocrAnnotations.removeTextOverlay();
         }
       });
 
-      this.element.find('.mirador-manipulation-toggle').on('click', function() {
+      this.element.find('.mirador-manipulation-toggle').on('click', function () {
         if (_this.hud.manipulationState.current === 'none') {
           _this.hud.manipulationState.startup(this);
         }
@@ -45337,16 +45545,16 @@ $.SimpleASEndpoint = function (options) {
         }
       });
 
-      this.element.find('.mirador-osd-go-home').on('click', function() {
+      this.element.find('.mirador-osd-go-home').on('click', function () {
         _this.osd.viewport.goHome();
       });
 
-      this.element.find('.mirador-osd-up').on('click', function() {
+      this.element.find('.mirador-osd-up').on('click', function () {
         var panBy = _this.getPanByValue();
         _this.osd.viewport.panBy(new OpenSeadragon.Point(0, -panBy.y));
         _this.osd.viewport.applyConstraints();
       });
-      this.element.find('.mirador-osd-right').on('click', function() {
+      this.element.find('.mirador-osd-right').on('click', function () {
         var panBy = _this.getPanByValue();
         if (_this.horizontallyFlipped) {
           _this.osd.viewport.panBy(new OpenSeadragon.Point(-panBy.x, 0));
@@ -45355,12 +45563,12 @@ $.SimpleASEndpoint = function (options) {
         }
         _this.osd.viewport.applyConstraints();
       });
-      this.element.find('.mirador-osd-down').on('click', function() {
+      this.element.find('.mirador-osd-down').on('click', function () {
         var panBy = _this.getPanByValue();
         _this.osd.viewport.panBy(new OpenSeadragon.Point(0, panBy.y));
         _this.osd.viewport.applyConstraints();
       });
-      this.element.find('.mirador-osd-left').on('click', function() {
+      this.element.find('.mirador-osd-left').on('click', function () {
         var panBy = _this.getPanByValue();
         if (_this.horizontallyFlipped) {
           _this.osd.viewport.panBy(new OpenSeadragon.Point(panBy.x, 0));
@@ -45370,18 +45578,18 @@ $.SimpleASEndpoint = function (options) {
         _this.osd.viewport.applyConstraints();
       });
 
-      this.element.find('.mirador-osd-zoom-in').on('click', function() {
+      this.element.find('.mirador-osd-zoom-in').on('click', function () {
         var osd = _this.osd;
-        if ( osd.viewport ) {
+        if (osd.viewport) {
           osd.viewport.zoomBy(
             osd.zoomPerClick / 1.0
           );
           osd.viewport.applyConstraints();
         }
       });
-      this.element.find('.mirador-osd-zoom-out').on('click', function() {
+      this.element.find('.mirador-osd-zoom-out').on('click', function () {
         var osd = _this.osd;
-        if ( osd.viewport ) {
+        if (osd.viewport) {
           osd.viewport.zoomBy(
             1.0 / osd.zoomPerClick
           );
@@ -45389,12 +45597,12 @@ $.SimpleASEndpoint = function (options) {
         }
       });
 
-      this.element.find('.mirador-osd-toggle-bottom-panel').on('click', function() {
+      this.element.find('.mirador-osd-toggle-bottom-panel').on('click', function () {
         _this.eventEmitter.publish('TOGGLE_BOTTOM_PANEL_VISIBILITY.' + _this.windowId);
       });
 
       // Annotation specific controls
-      this.element.find('.mirador-osd-edit-mode').on('click', function() {
+      this.element.find('.mirador-osd-edit-mode').on('click', function () {
         var shape = jQuery(this).find('.material-icons').html();
         if (_this.hud.annoState.current === 'pointer') {
           _this.hud.annoState.chooseShape(shape);
@@ -45404,9 +45612,11 @@ $.SimpleASEndpoint = function (options) {
         //when a user is in Create mode, don't let the controls auto fade as it could be distracting to the user
         _this.forceShowControls = true;
         _this.element.find(".hud-control").stop(true, true).removeClass('hidden', _this.state.getStateProperty('fadeDuration'));
+      console.log('annostate', _this.hud.annoState);
+
       });
 
-      this.element.find('.mirador-osd-pointer-mode').on('click', function() {
+      this.element.find('.mirador-osd-pointer-mode').on('click', function () {
         // go back to pointer mode
         if (_this.hud.annoState.current === 'shape') {
           _this.hud.annoState.choosePointer();
@@ -45415,7 +45625,7 @@ $.SimpleASEndpoint = function (options) {
         }
       });
 
-      this.element.find('.mirador-osd-refresh-mode').on('click', function() {
+      this.element.find('.mirador-osd-refresh-mode').on('click', function () {
         //update annotation list from endpoint
         _this.eventEmitter.publish('updateAnnotationList.' + _this.windowId);
       });
@@ -45424,22 +45634,24 @@ $.SimpleASEndpoint = function (options) {
       //Image manipulation controls
       //set the original values for all of the CSS filter options
       var filterValues = {
-        "brightness" : "brightness(100%)",
-        "contrast" : "contrast(100%)",
-        "saturate" : "saturate(100%)",
-        "grayscale" : "grayscale(0%)",
-        "invert" : "invert(0%)"
+        "brightness": "brightness(100%)",
+        "contrast": "contrast(100%)",
+        "saturate": "saturate(100%)",
+        "grayscale": "grayscale(0%)",
+        "invert": "invert(0%)"
       };
 
       function setFilterCSS() {
-        var filterCSS = jQuery.map(filterValues, function(value, key) { return value; }).join(" "),
-            osdCanvas = jQuery(_this.osd.drawer.canvas);
+        var filterCSS = jQuery.map(filterValues, function (value, key) {
+            return value;
+          }).join(" "),
+          osdCanvas = jQuery(_this.osd.drawer.canvas);
         osdCanvas.css({
-          'filter'         : filterCSS,
-          '-webkit-filter' : filterCSS,
-          '-moz-filter'    : filterCSS,
-          '-o-filter'      : filterCSS,
-          '-ms-filter'     : filterCSS
+          'filter': filterCSS,
+          '-webkit-filter': filterCSS,
+          '-moz-filter': filterCSS,
+          '-o-filter': filterCSS,
+          '-ms-filter': filterCSS
         });
       }
 
@@ -45451,17 +45663,17 @@ $.SimpleASEndpoint = function (options) {
 
         //reset brightness
         filterValues.brightness = "brightness(100%)";
-        _this.element.find('.mirador-osd-brightness-slider').slider('option','value',100);
+        _this.element.find('.mirador-osd-brightness-slider').slider('option', 'value', 100);
         _this.element.find('.mirador-osd-brightness-slider').find('.percent').text(100 + '%');
 
         //reset contrast
         filterValues.contrast = "contrast(100%)";
-        _this.element.find('.mirador-osd-contrast-slider').slider('option','value',100);
+        _this.element.find('.mirador-osd-contrast-slider').slider('option', 'value', 100);
         _this.element.find('.mirador-osd-contrast-slider').find('.percent').text(100 + '%');
 
         //reset saturation
         filterValues.saturate = "saturate(100%)";
-        _this.element.find('.mirador-osd-saturation-slider').slider('option','value',100);
+        _this.element.find('.mirador-osd-saturation-slider').slider('option', 'value', 100);
         _this.element.find('.mirador-osd-saturation-slider').find('.percent').text(100 + '%');
 
         //reset grayscale
@@ -45481,14 +45693,14 @@ $.SimpleASEndpoint = function (options) {
         setFilterCSS();
       }
 
-      this.element.find('.mirador-osd-rotate-right').on('click', function() {
+      this.element.find('.mirador-osd-rotate-right').on('click', function () {
         if (_this.osd) {
           var currentRotation = _this.osd.viewport.getRotation();
           _this.osd.viewport.setRotation(currentRotation + 90);
         }
       });
 
-      this.element.find('.mirador-osd-rotate-left').on('click', function() {
+      this.element.find('.mirador-osd-rotate-left').on('click', function () {
         if (_this.osd) {
           var currentRotation = _this.osd.viewport.getRotation();
           _this.osd.viewport.setRotation(currentRotation - 90);
@@ -45501,26 +45713,26 @@ $.SimpleASEndpoint = function (options) {
         min: 0,
         max: 200,
         value: 100,
-        create: function(event, ui) {
+        create: function (event, ui) {
           var v = jQuery(this).slider('value'),
-              span = jQuery('<span class="percent">').text(v + '%');
+            span = jQuery('<span class="percent">').text(v + '%');
 
           jQuery(this).find('.ui-slider-handle').append(span);
         },
-        slide: function(event, ui) {
-          filterValues.brightness = "brightness("+ui.value+"%)";
+        slide: function (event, ui) {
+          filterValues.brightness = "brightness(" + ui.value + "%)";
           setFilterCSS();
           jQuery(this).find('.percent').text(ui.value + '%');
         }
       }).hide();
 
       this.element.find('.mirador-osd-brightness').on('mouseenter',
-                                                      function() {
-                                                        _this.element.find('.mirador-osd-brightness-slider').stop(true, true).show();
-                                                      }).on('mouseleave',
-                                                            function() {
-                                                              _this.element.find('.mirador-osd-brightness-slider').stop(true, true).hide();
-                                                            });
+        function () {
+          _this.element.find('.mirador-osd-brightness-slider').stop(true, true).show();
+        }).on('mouseleave',
+        function () {
+          _this.element.find('.mirador-osd-brightness-slider').stop(true, true).hide();
+        });
 
       this.element.find('.mirador-osd-contrast-slider').slider({
         orientation: "vertical",
@@ -45528,26 +45740,26 @@ $.SimpleASEndpoint = function (options) {
         min: 0,
         max: 200,
         value: 100,
-        create: function(event, ui) {
+        create: function (event, ui) {
           var v = jQuery(this).slider('value'),
-              span = jQuery('<span class="percent">').text(v + '%');
+            span = jQuery('<span class="percent">').text(v + '%');
 
           jQuery(this).find('.ui-slider-handle').append(span);
         },
-        slide: function(event, ui) {
-          filterValues.contrast = "contrast("+ui.value+"%)";
+        slide: function (event, ui) {
+          filterValues.contrast = "contrast(" + ui.value + "%)";
           setFilterCSS();
           jQuery(this).find('.percent').text(ui.value + '%');
         }
       }).hide();
 
       this.element.find('.mirador-osd-contrast').on('mouseenter',
-                                                    function() {
-                                                      _this.element.find('.mirador-osd-contrast-slider').stop(true, true).show();
-                                                    }).on('mouseleave',
-                                                          function() {
-                                                            _this.element.find('.mirador-osd-contrast-slider').stop(true, true).hide();
-                                                          });
+        function () {
+          _this.element.find('.mirador-osd-contrast-slider').stop(true, true).show();
+        }).on('mouseleave',
+        function () {
+          _this.element.find('.mirador-osd-contrast-slider').stop(true, true).hide();
+        });
 
       this.element.find('.mirador-osd-saturation-slider').slider({
         orientation: "vertical",
@@ -45555,28 +45767,28 @@ $.SimpleASEndpoint = function (options) {
         min: 0,
         max: 200,
         value: 100,
-        create: function(event, ui) {
+        create: function (event, ui) {
           var v = jQuery(this).slider('value'),
-              span = jQuery('<span class="percent">').text(v + '%');
+            span = jQuery('<span class="percent">').text(v + '%');
 
           jQuery(this).find('.ui-slider-handle').append(span);
         },
-        slide: function(event, ui) {
-          filterValues.saturate = "saturate("+ui.value+"%)";
+        slide: function (event, ui) {
+          filterValues.saturate = "saturate(" + ui.value + "%)";
           setFilterCSS();
           jQuery(this).find('.percent').text(ui.value + '%');
         }
       }).hide();
 
       this.element.find('.mirador-osd-saturation').on('mouseenter',
-                                                      function() {
-                                                        _this.element.find('.mirador-osd-saturation-slider').stop(true, true).show();
-                                                      }).on('mouseleave',
-                                                            function() {
-                                                              _this.element.find('.mirador-osd-saturation-slider').stop(true, true).hide();
-                                                            });
+        function () {
+          _this.element.find('.mirador-osd-saturation-slider').stop(true, true).show();
+        }).on('mouseleave',
+        function () {
+          _this.element.find('.mirador-osd-saturation-slider').stop(true, true).hide();
+        });
 
-      this.element.find('.mirador-osd-grayscale').on('click', function() {
+      this.element.find('.mirador-osd-grayscale').on('click', function () {
         if (jQuery(this).hasClass('selected')) {
           filterValues.grayscale = "grayscale(0%)";
           jQuery(this).removeClass('selected');
@@ -45587,7 +45799,7 @@ $.SimpleASEndpoint = function (options) {
         setFilterCSS();
       });
 
-      this.element.find('.mirador-osd-invert').on('click', function() {
+      this.element.find('.mirador-osd-invert').on('click', function () {
         if (jQuery(this).hasClass('selected')) {
           filterValues.invert = "invert(0%)";
           jQuery(this).removeClass('selected');
@@ -45598,7 +45810,7 @@ $.SimpleASEndpoint = function (options) {
         setFilterCSS();
       });
 
-      this.element.find('.mirador-osd-mirror').on('click', function() {
+      this.element.find('.mirador-osd-mirror').on('click', function () {
         if (!_this.originalDragHandler) {
           _this.originalDragHandler = _this.osd.viewport && _this.osd.viewport.viewer.innerTracker.dragHandler;
         }
@@ -45616,29 +45828,29 @@ $.SimpleASEndpoint = function (options) {
           _this.eventEmitter.publish('enableManipulation', 'mirror');
           if (_this.osd.viewport) {
             var viewer = _this.osd.viewport.viewer;
-            viewer.innerTracker.dragHandler = OpenSeadragon.delegate(viewer, function(event) {
+            viewer.innerTracker.dragHandler = OpenSeadragon.delegate(viewer, function (event) {
               event.delta.x = -event.delta.x;
               _this.originalDragHandler(event);
-            });re
+            });
           }
           _this.horizontallyFlipped = true;
         }
-    });
+      });
 
-      this.element.find('.mirador-osd-reset').on('click', function() {
+      this.element.find('.mirador-osd-reset').on('click', function () {
         resetImageManipulationControls();
       });
 
-      this.eventEmitter.subscribe('resetImageManipulationControls.'+this.windowId, function() {
+      this.eventEmitter.subscribe('resetImageManipulationControls.' + this.windowId, function () {
         resetImageManipulationControls();
       });
       //Image manipulation controls
     },
 
-    currentCanvasIDUpdated: function(event, canvasId) {
+    currentCanvasIDUpdated: function (event, canvasId) {
       var _this = this,
-          firstCanvasId = _this.imagesList[0]['@id'],
-          lastCanvasId = _this.imagesList[_this.imagesList.length-1]['@id'];
+        firstCanvasId = _this.imagesList[0]['@id'],
+        lastCanvasId = _this.imagesList[_this.imagesList.length - 1]['@id'];
 
       // If it is the first canvas, hide the "go to previous" button, otherwise show it.
       if (canvasId === firstCanvasId) {
@@ -45654,18 +45866,19 @@ $.SimpleASEndpoint = function (options) {
       // If it is the last canvas, hide the "go to previous" button, otherwise show it.
     },
 
-    loadImage: function(event, imageResource) {
+    loadImage: function (event, imageResource) {
       var _this = this;
 
       // We've already loaded this tilesource
-      if(imageResource.status === 'drawn') {
+      if (imageResource.status === 'drawn') {
         return;
       }
 
-      if (_this.ocrAnnotations.length > 0) {
-        _this.ocrAnnotations.forEach(function(word) {
-          _this.osd.removeOverlay(word);
-        });
+      if (_this.ocrAnnotations) {
+        // _this.ocrAnnotations.forEach(function (word) {
+        //   _this.osd.removeOverlay(word);
+        // });
+        // _this.ocrAnnotations.removeTextOverlay();
       }
 
       imageResource.setStatus('requested');
@@ -45680,137 +45893,38 @@ $.SimpleASEndpoint = function (options) {
         clip: imageResource.clipRegion,
         index: imageResource.zIndex,
 
-        success: function(event) {
+        success: function (event) {
           var tiledImage = event.item;
 
           imageResource.osdTiledImage = tiledImage;
           imageResource.setStatus('loaded');
           _this.syncAllImageResourceProperties(imageResource);
 
-          var tileDrawnHandler = function(event) {
+          var tileDrawnHandler = function (event) {
             if (event.tiledImage === tiledImage) {
               imageResource.setStatus('drawn');
               _this.osd.removeHandler('tile-drawn', tileDrawnHandler);
             }
           };
           _this.osd.addHandler('tile-drawn', tileDrawnHandler);
-          var volume = _this.canvasID.split('/').reverse()[2];
-          var page = _this.canvasID.split('/').reverse()[0];
+
+         
           _this.selecting = false;
-          jQuery.ajax({
-            url: '/iiif/v2/' + volume + '/list/' + page,
-            type: 'GET',
-            dataType: 'json',
-            headers: { },
-            data: { },
-            contentType: "application/json; charset=utf-8",
-            success: function(data) {
-              
-              console.log('%%%', _this);
-              jQuery.each(data.resources, function(index, value) {
-                // console.log('value', value);
-                if (value.resource["@type"] === 'cnt:ContentAsText') {
-                  var svgContainer = document.getElementById('ocr');
-                  jQuery(value.on[0].selector.item.value).appendTo(svgContainer);
-                  var loc = value.on[0].selector.default.value.split('=')[1].split(',').map(function(i) {return parseInt(i);});
-                  var ocrEl = document.getElementById(value['@id']);
-                  _this.ocrAnnotations.push(ocrEl);
-                  ocrEl.style.width = 'auto';
-                  console.log('auto width', ocrEl.offsetWidth);
-                  console.log('should width', loc[2]);
-                  ocrEl.style.letterSpacing = (ocrEl.offsetWidth) / (ocrEl.innerText.length + 1) + 'px';
-
-                  ocrEl.width = loc[2];
-
-                  console.log(loc)
-                  
-                  var word = _this.osd.addOverlay({
-                    element: ocrEl,
-                    location: new OpenSeadragon.Rect(loc[0], loc[1], loc[2], loc[3])
-                  });
-                  // _this.eventEmitter.subscribe(('SET_CURRENT_CANVAS_ID.' + _this.windowId), function(event, canvasID) {
-                  //   console.log('remove');
-                  //   _this.osd.removeOverlay(word);
-                  //   ocrEl.parentElement.removeChild(ocrEl)
-                  // });
-                  // Letter Spacing
-                  // el = document.getElementById('7d5853c9-0eed-42eb-9b89-9ec9fb3eb8d5')
-                  // el.style.letterSpacing = (el.parentElement.clientWidth - el.offsetWidth) / charCount
-                  // HIGHLIGHT
-                  // var div = document.createRange();
-                  // div.setStartBefore(document.getElementById("divid"));
-                  // div.setEndAfter(document.getElementById("divid")) ;
-                  // window.getSelection().addRange(div);
- 
-                  // new OpenSeadragon.MouseTracker({
-                  //   element: word.element,
-                  //   enterHandler: function(event) {
-                  //     // Show tooltip
-                  //   },
-                  //   exitHandler: function(event) {
-                  //     // Hide tooltip
-                  //   }
-                  // }).setTracking(true);
-                  // _this.osd.navigator.addHandler('canvas-drag', function(e) {
-                  //   console.log(e);
-                  // });
-                  console.log('osd', _this);
-                  new OpenSeadragon.MouseTracker({
-                    element: ocrEl.id,
-                    dragEndHandler: function(e) {
-                        console.log('mousetracker', e);
-                        var selected = window.getSelection().getRangeAt(0);
-                        selected.cloneContents().querySelectorAll('*').forEach(e => console.log(e.id, e.innerText));
-                        _this.osd.setMouseNavEnabled(true);
-                        _this.osd.gestureSettingsMouse.clickToZoom = true;
-                        _this.osd.mouseNavEnabled = true;
-                        _this.osd.panVertical = true;
-                        _this.osd.panHorizontal = true; 
-                        _this.osd.removeAllHandlers()          },
-                    dragHandler: function(e) {
-                      console.log('drag', e);
-                      _this.osd.setMouseNavEnabled(false);
-                      _this.osd.gestureSettingsMouse.clickToZoom = false;
-                      _this.osd.mouseNavEnabled = false;
-                      _this.osd.panVertical = false;
-                      _this.osd.panHorizontal = false;
-                      selection = document.createRange();
-                      window.getSelection().removeAllRanges();
-                      selection.setStartBefore(e.eventSource.element);
-                      selection.setEndAfter(e.originalEvent.srcElement);
-                      window.getSelection().addRange(selection);
-                    },
-                    enterHandler: function() {
-                    }
-                }).setTracking(true);
-                  // word.element.onclick = function(event) {
-                  //     _this.selecting = true;
-                  //     // word.element.ondragover = function(event) {
-                  //       // }
-                  //       // console.log(word.element);
-                  //     }
-                  //     word.element.onmouseover = function(event) {
-                  //       if (_this.selecting) {
-                  //         console.log(event);
-                  //       event.target.parentElement.style['background'] = 'black';
-                  //       event.target.parentElement.firstElementChild.style['opacity'] = 1;
-                  //       event.target.parentElement.firstElementChild.style['fill'] = 'white';
-
-                  //     }
-                  //   }
-                    
-                  }
-                });
-            },
-            error: function() {
-              if (typeof errorCallback === "function") {
-                errorCallback();
-              }
-            }
+          var textOverlay = new Mirador.TextOverlay({
+            osd: _this.osd,
+            canvasID: _this.canvasID,
+            eventEmitter: _this.eventEmitter,
+            state: _this.state,
+            annotationState: _this.annotationState,
+            windowId: _this.windowId
           });
+
+          textOverlay.addTextOverlay();
+
+          _this.ocrAnnotations = textOverlay;
         },
 
-        error: function(event) {
+        error: function (event) {
           // Add any auth information here.
           //
           // var errorInfo = {
@@ -45822,7 +45936,7 @@ $.SimpleASEndpoint = function (options) {
         }
       });
     },
-    showImage: function(event, imageResource) {
+    showImage: function (event, imageResource) {
       // Check whether or not this item has been drawn.
       // This implies that the request has been issued already
       // and the opacity can be updated.
@@ -45830,26 +45944,25 @@ $.SimpleASEndpoint = function (options) {
         this.updateImageOpacity(null, imageResource);
       }
     },
-    hideImage: function(event, imageResource) {
+    hideImage: function (event, imageResource) {
       if (imageResource.getStatus() === 'drawn') {
         imageResource.osdTiledImage.setOpacity(0);
       }
     },
-    removeImage: function() {
-    },
-    updateImageOpacity: function(event, imageResource) {
-      if(imageResource.osdTiledImage) {
+    removeImage: function () {},
+    updateImageOpacity: function (event, imageResource) {
+      if (imageResource.osdTiledImage) {
         imageResource.osdTiledImage.setOpacity(imageResource.opacity * imageResource.parent.getOpacity());
       }
     },
-    syncAllImageResourceProperties: function(imageResource) {
-      if(imageResource.osdTiledImage) {
+    syncAllImageResourceProperties: function (imageResource) {
+      if (imageResource.osdTiledImage) {
         var bounds = imageResource.getGlobalBounds();
         // If ever the clipRegion parameter becomes
         // writable, add it here.
         imageResource.osdTiledImage.setPosition({
-          x:bounds.x,
-          y:bounds.y
+          x: bounds.x,
+          y: bounds.y
         }, true);
         imageResource.osdTiledImage.setWidth(bounds.width, true);
         imageResource.osdTiledImage.setOpacity(
@@ -45860,17 +45973,17 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    getPanByValue: function() {
+    getPanByValue: function () {
       var bounds = this.osd.viewport.getBounds(true);
       //for now, let's keep 50% of the image on the screen
       var panBy = {
-        "x" : bounds.width * 0.5,
-        "y" : bounds.height * 0.5
+        "x": bounds.width * 0.5,
+        "y": bounds.height * 0.5
       };
       return panBy;
     },
 
-    setBounds: function() {
+    setBounds: function () {
       var _this = this;
 
       this.osdOptions.osdBounds = this.osd.viewport.getBounds(true);
@@ -45896,7 +46009,7 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    toggle: function(stateValue) {
+    toggle: function (stateValue) {
       if (stateValue) {
         this.show();
       } else {
@@ -45904,13 +46017,20 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    hide: function() {
-      jQuery(this.element).hide({effect: "fade", duration: 300, easing: "easeOutCubic"});
+    hide: function () {
+      jQuery(this.element).hide({
+        effect: "fade",
+        duration: 300,
+        easing: "easeOutCubic"
+      });
     },
 
-    show: function() {
+    show: function () {
       jQuery(this.element).show({
-        effect: "fade", duration: 300, easing: "easeInCubic", complete: function () {
+        effect: "fade",
+        duration: 300,
+        easing: "easeInCubic",
+        complete: function () {
           // Under firefox $.show() used under display:none iframe does not change the display.
           // This is workaround for https://github.com/IIIF/mirador/issues/929
           jQuery(this).css('display', 'block');
@@ -45918,16 +46038,16 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    adjustWidth: function(className, hasClass) {
+    adjustWidth: function (className, hasClass) {
       var _this = this;
       if (hasClass) {
-        _this.eventEmitter.publish('REMOVE_CLASS.'+this.windowId, className);
+        _this.eventEmitter.publish('REMOVE_CLASS.' + this.windowId, className);
       } else {
-        _this.eventEmitter.publish('ADD_CLASS.'+this.windowId, className);
+        _this.eventEmitter.publish('ADD_CLASS.' + this.windowId, className);
       }
     },
 
-    adjustHeight: function(className, hasClass) {
+    adjustHeight: function (className, hasClass) {
       if (hasClass) {
         this.element.removeClass(className);
       } else {
@@ -45935,10 +46055,10 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    initialiseImageCanvas: function() {
+    initialiseImageCanvas: function () {
       var _this = this,
-          osdID = 'mirador-osd-' + $.genUUID(),
-          canvasModel = _this.canvases[_this.canvasID];
+        osdID = 'mirador-osd-' + $.genUUID(),
+        canvasModel = _this.canvases[_this.canvasID];
 
       _this.elemOsd =
         jQuery('<div/>')
@@ -45965,11 +46085,11 @@ $.SimpleASEndpoint = function (options) {
       _this.osd.viewport.fitBounds(rect, true); // center viewport before image is placed.
 
       canvasModel.show();
-      canvasModel.getVisibleImages().forEach(function(imageResource) {
+      canvasModel.getVisibleImages().forEach(function (imageResource) {
         _this.loadImage(null, imageResource);
       });
 
-      _this.osd.addHandler('zoom', $.debounce(function(){
+      _this.osd.addHandler('zoom', $.debounce(function () {
         var point = {
           'x': -10000000,
           'y': -10000000
@@ -45977,7 +46097,7 @@ $.SimpleASEndpoint = function (options) {
         _this.eventEmitter.publish('updateTooltips.' + _this.windowId, [point, point]);
       }, 30));
 
-      _this.osd.addHandler('pan', $.debounce(function(){
+      _this.osd.addHandler('pan', $.debounce(function () {
         var point = {
           'x': -10000000,
           'y': -10000000
@@ -45986,7 +46106,7 @@ $.SimpleASEndpoint = function (options) {
       }, 30));
 
       // Maintain this as an external API.
-      _this.eventEmitter.publish('osdOpen.'+_this.windowId);
+      _this.eventEmitter.publish('osdOpen.' + _this.windowId);
       _this.addAnnotationsLayer(_this.elemAnno);
 
       if (_this.osdOptions.osdBounds) {
@@ -46021,17 +46141,17 @@ $.SimpleASEndpoint = function (options) {
         //original state is off, so don't need to do anything
       }
 
-      _this.osd.addHandler('zoom', $.debounce(function() {
+      _this.osd.addHandler('zoom', $.debounce(function () {
         _this.setBounds();
       }, 500));
 
-      _this.osd.addHandler('pan', $.debounce(function(){
+      _this.osd.addHandler('pan', $.debounce(function () {
         _this.setBounds();
       }, 500));
     },
 
     //TODO reuse annotationsLayer with IIIFManifestLayouts
-    addAnnotationsLayer: function(element) {
+    addAnnotationsLayer: function (element) {
       var _this = this;
       _this.annotationsLayer = new $.AnnotationsLayer({
         state: _this.state,
@@ -46043,10 +46163,10 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    updateImage: function(canvasID) {
+    updateImage: function (canvasID) {
       var _this = this;
       if (this.canvasID !== canvasID) {
-        this.canvases[_this.canvasID].getVisibleImages().forEach(function(imageResource){
+        this.canvases[_this.canvasID].getVisibleImages().forEach(function (imageResource) {
           imageResource.hide();
         });
         this.canvasID = canvasID;
@@ -46065,15 +46185,17 @@ $.SimpleASEndpoint = function (options) {
         newCanvas.show();
 
         this.osdOptions = {
-          osdBounds:        null,
-          zoomLevel:        null
+          osdBounds: null,
+          zoomLevel: null
         };
-        this.eventEmitter.publish('resetImageManipulationControls.'+this.windowId);
+        this.eventEmitter.publish('resetImageManipulationControls.' + this.windowId);
       }
-      _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {array: [canvasID]});
-      },
+      _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {
+        array: [canvasID]
+      });
+    },
 
-    next: function() {
+    next: function () {
       var _this = this;
       var next = this.currentImgIndex + 1;
       if (next < this.imagesList.length) {
@@ -46081,7 +46203,7 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    previous: function() {
+    previous: function () {
       var _this = this;
       var prev = this.currentImgIndex - 1;
 
@@ -46092,27 +46214,25 @@ $.SimpleASEndpoint = function (options) {
   };
 
 }(Mirador));
-
-(function($) {
-
-  $.LayersTab = function(options) {
+(function ($) {
+  $.LayersTab = function (options) {
     jQuery.extend(true, this, {
-      windowId:          null,
-      element:           null,
-      appendTo:          null,
-      manifest:          null,
-      visible:           null,
-      state:             null,
-      eventEmitter:      null,
-      canvasID:          null,
-      canvases:          null
+      windowId: null,
+      element: null,
+      appendTo: null,
+      manifest: null,
+      visible: null,
+      state: null,
+      eventEmitter: null,
+      canvasID: null,
+      canvases: null
     }, options);
 
     this.init();
   };
 
   $.LayersTab.prototype = {
-    init: function() {
+    init: function () {
       var _this = this;
 
       this.localState({
@@ -46128,7 +46248,7 @@ $.SimpleASEndpoint = function (options) {
       this.listenForActions();
     },
 
-    localState: function(state, initial) {
+    localState: function (state, initial) {
       var _this = this;
       if (!arguments.length) return this.layerTabState;
       this.layerTabState = state;
@@ -46140,60 +46260,60 @@ $.SimpleASEndpoint = function (options) {
       return this.layerTabState;
     },
 
-    tabStateUpdated: function(visible) {
+    tabStateUpdated: function (visible) {
       var localState = this.localState();
-      localState.visible =  visible;
+      localState.visible = visible;
 
       this.localState(localState);
     },
 
-    canvasIdUpdated: function(event, canvasID) {
+    canvasIdUpdated: function (event, canvasID) {
       var localState = this.localState();
       localState.canvasID = canvasID;
 
       this.localState(localState);
     },
 
-    imageFocusUpdated: function(focus) {
+    imageFocusUpdated: function (focus) {
       var localState = this.localState();
-      localState.active = (focus !== 'ImageView') ? false : true;
+      localState.active = focus === 'ImageView';
 
       this.localState(localState);
     },
 
-    updateImageResourceStatus: function(event, imageResource) {
+    updateImageResourceStatus: function (event, imageResource) {
       var _this = this;
 
-      ['loaded', 'requested', 'initialized', 'drawn'].forEach(function(statusString){
-        _this.element.find('.layers-list-item[data-imageid="'+ imageResource.id + '"]').removeClass(statusString);
+      ['loaded', 'requested', 'initialized', 'drawn'].forEach(function (statusString) {
+        _this.element.find('.layers-list-item[data-imageid="' + imageResource.id + '"]').removeClass(statusString);
       });
 
-      this.element.find('.layers-list-item[data-imageid="'+ imageResource.id + '"]').addClass(imageResource.getStatus());
+      this.element.find('.layers-list-item[data-imageid="' + imageResource.id + '"]').addClass(imageResource.getStatus());
     },
-    showImageResource: function(event, imageResource) {
-      this.element.find('.visibility-toggle[data-imageid="'+ imageResource.id + '"]').prop('checked', true);
-      this.element.find('.opacity-slider[data-imageid="'+ imageResource.id + '"]').prop('disabled', false);
-      this.element.find('.opacity-label[data-imageid="'+ imageResource.id + '"]').removeClass('disabled').text("(" + Math.ceil(imageResource.getOpacity()*100) + ")%");
+    showImageResource: function (event, imageResource) {
+      this.element.find('.visibility-toggle[data-imageid="' + imageResource.id + '"]').prop('checked', true);
+      this.element.find('.opacity-slider[data-imageid="' + imageResource.id + '"]').prop('disabled', false);
+      this.element.find('.opacity-label[data-imageid="' + imageResource.id + '"]').removeClass('disabled').text('(' + Math.ceil(imageResource.getOpacity() * 100) + ')%');
     },
-    hideImageResource: function(event, imageResource) {
-      this.element.find('.visibility-toggle[data-imageid="'+ imageResource.id + '"]').prop('checked', false);
-      this.element.find('.opacity-slider[data-imageid="'+ imageResource.id + '"]').prop('disabled', true);
-      this.element.find('.opacity-label[data-imageid="'+ imageResource.id + '"]').addClass('disabled').text("(" + i18next.t('disabledOpacityMessage') + ")");
+    hideImageResource: function (event, imageResource) {
+      this.element.find('.visibility-toggle[data-imageid="' + imageResource.id + '"]').prop('checked', false);
+      this.element.find('.opacity-slider[data-imageid="' + imageResource.id + '"]').prop('disabled', true);
+      this.element.find('.opacity-label[data-imageid="' + imageResource.id + '"]').addClass('disabled').text('(' + i18next.t('disabledOpacityMessage') + ')');
     },
-    updateImageResourceOpacity: function(event, imageResource) {
-      this.element.find('.opacity-slider[data-imageid="'+ imageResource.id + '"]').val(imageResource.getOpacity()*100);
-      this.element.find('.opacity-label[data-imageid="'+ imageResource.id + '"]').text("(" + Math.ceil(imageResource.getOpacity()*100) + ")%");
+    updateImageResourceOpacity: function (event, imageResource) {
+      this.element.find('.opacity-slider[data-imageid="' + imageResource.id + '"]').val(imageResource.getOpacity() * 100);
+      this.element.find('.opacity-label[data-imageid="' + imageResource.id + '"]').text('(' + Math.ceil(imageResource.getOpacity() * 100) + ')%');
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
       // This event is fired by the component itself anytime its local state is updated.
-      _this.eventEmitter.subscribe('layersTabStateUpdated.' + _this.windowId, function(_, data) {
+      _this.eventEmitter.subscribe('layersTabStateUpdated.' + _this.windowId, function (_, data) {
         _this.render(data);
       });
 
-      _this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function(_, data) {
+      _this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function (_, data) {
         var visible = data.tabs[data.selectedTabIndex].options.id === 'layersTab';
         _this.tabStateUpdated(visible);
       });
@@ -46204,9 +46324,7 @@ $.SimpleASEndpoint = function (options) {
       _this.eventEmitter.subscribe('image-hide' + _this.windowId, _this.hideImageResource.bind(_this));
       _this.eventEmitter.subscribe('image-opacity-updated' + _this.windowId, _this.updateImageResourceOpacity.bind(_this));
 
-      _this.eventEmitter.subscribe('focusUpdated' + _this.windowId, function(event, focus) {
-
-
+      _this.eventEmitter.subscribe('focusUpdated' + _this.windowId, function (event, focus) {
         // update the disabled state of the layersTab
         // since it cannot be used in overview mode
         // but is visible/available in image mode.
@@ -46214,33 +46332,33 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      this.element.find('img').on('load', function(event) {
+      this.element.find('img').on('load', function (event) {
         // fades in thumbs when they finish loading.
         jQuery(this).addClass('loaded');
         jQuery(this).closest('.thumb-container').removeClass('awaiting-thumbnail');
       });
 
-      this.element.find('img').on('error', function(event) {
+      this.element.find('img').on('error', function (event) {
         // prevents failed images from showing.
         jQuery(this).addClass('failed');
         jQuery(this).closest('.thumb-container').removeClass('awaiting-thumbnail');
         jQuery(this).closest('.thumb-container').addClass('thumb-failed');
       });
 
-      this.element.on('input', '.opacity-slider', function(event) {
+      this.element.on('input', '.opacity-slider', function (event) {
         var canvasModel = _this.canvases[_this.localState().canvasID],
-            eventedImageResource = canvasModel.getImageById(event.currentTarget.attributes['data-imageid'].nodeValue);
+          eventedImageResource = canvasModel.getImageById(event.currentTarget.attributes['data-imageid'].nodeValue);
 
-        eventedImageResource.setOpacity(event.currentTarget.value/100);
+        eventedImageResource.setOpacity(event.currentTarget.value / 100);
       });
 
-      this.element.on('change', '.visibility-toggle', function(event) {
+      this.element.on('change', '.visibility-toggle', function (event) {
         var canvasModel = _this.canvases[_this.localState().canvasID],
-            eventedImageResource = canvasModel.getImageById(event.currentTarget.attributes['data-imageid'].nodeValue);
-        if(event.currentTarget.checked) {
+          eventedImageResource = canvasModel.getImageById(event.currentTarget.attributes['data-imageid'].nodeValue);
+        if (event.currentTarget.checked) {
           eventedImageResource.show();
         } else {
           eventedImageResource.hide();
@@ -46248,33 +46366,33 @@ $.SimpleASEndpoint = function (options) {
       });
     },
 
-    render: function(state) {
+    render: function (state) {
       var _this = this,
-          canvasModel = _this.canvases[state.canvasID],
-          templateData = {
-            active: state.active ? '' : 'inactive',
-            imagesFor: i18next.t('imagesFor'),
-            hasLayers: canvasModel.images.length > 0,
-            canvasTitle: canvasModel.label,
-            disabledLayersTabMessage: i18next.t('disabledLayersTabMessage'),
-            layers: canvasModel.images.map(function(imageResource){
-              return {
-                visibleLabel: i18next.t('visibleLabel'),
-                opacityLabel: i18next.t('opacityLabel'),
-                disabledOpacityMessage: i18next.t('disabledOpacityMessage'),
-                emptyTemplateMessage: i18next.t('emptyTemplateMessage'),
-                imageId: imageResource.id,
-                title: imageResource.label === 'No Label' ? i18next.t('noLabel') : imageResource.label,
-                opacity: imageResource.getOpacity()*100, // scale factor for limitations of html5 slider element
-                loadingStatus: imageResource.getStatus(),
-                visibility: imageResource.getVisible(),
-                url: imageResource.thumbUrl
-              };
-            })
-          };
+        canvasModel = _this.canvases[state.canvasID],
+        templateData = {
+          active: state.active ? '' : 'inactive',
+          imagesFor: i18next.t('imagesFor'),
+          hasLayers: canvasModel.images.length > 0,
+          canvasTitle: canvasModel.label,
+          disabledLayersTabMessage: i18next.t('disabledLayersTabMessage'),
+          layers: canvasModel.images.map(function (imageResource) {
+            return {
+              visibleLabel: i18next.t('visibleLabel'),
+              opacityLabel: i18next.t('opacityLabel'),
+              disabledOpacityMessage: i18next.t('disabledOpacityMessage'),
+              emptyTemplateMessage: i18next.t('emptyTemplateMessage'),
+              imageId: imageResource.id,
+              title: imageResource.label === 'No Label' ? i18next.t('noLabel') : imageResource.label,
+              opacity: imageResource.getOpacity() * 100, // scale factor for limitations of html5 slider element
+              loadingStatus: imageResource.getStatus(),
+              visibility: imageResource.getVisible(),
+              url: imageResource.thumbUrl
+            };
+          })
+        };
 
       if (this.element) {
-        _this.appendTo.find(".layersPanel").remove();
+        _this.appendTo.find('.layersPanel').remove();
       }
       this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
 
@@ -46320,21 +46438,18 @@ $.SimpleASEndpoint = function (options) {
       '<div class="disabled-overlay">',
       '<h3>{{disabledLayersTabMessage}}</h3>',
       '</div>',
-      '</div>',
+      '</div>'
     ].join(''))
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.MetadataView = function(options) {
-
+(function ($) {
+  $.MetadataView = function (options) {
     jQuery.extend(this, {
-      manifest:             null,
-      element:              null,
-      metadataTypes:        null,
-      metadataListingCls:   'metadata-listing'
+      manifest: null,
+      element: null,
+      metadataTypes: null,
+      metadataListingCls: 'metadata-listing'
     }, options);
 
     this.init();
@@ -46342,11 +46457,11 @@ $.SimpleASEndpoint = function (options) {
 
   $.MetadataView.prototype = {
 
-    init: function() {
+    init: function () {
       var _this = this,
-          tplData = {
-            metadataListingCls: this.metadataListingCls
-          };
+        tplData = {
+          metadataListingCls: this.metadataListingCls
+        };
 
       _this.manifest = _this.manifest.jsonLd;
       this.metadataTypes = {};
@@ -46355,11 +46470,11 @@ $.SimpleASEndpoint = function (options) {
       this.metadataTypes.rights = _this.getMetadataRights(_this.manifest);
       this.metadataTypes.links = _this.getMetadataLinks(_this.manifest);
 
-      //vvvvv This is *not* how this should be done.
-      jQuery.each(this.metadataTypes, function(metadataKey, metadataValues) {
+      // vvvvv This is *not* how this should be done.
+      jQuery.each(this.metadataTypes, function (metadataKey, metadataValues) {
         tplData[metadataKey] = [];
 
-        jQuery.each(metadataValues, function(idx, itm) {
+        jQuery.each(metadataValues, function (idx, itm) {
           if (typeof itm.value === 'object') {
             itm.value = _this.stringifyObject(itm.value);
           }
@@ -46376,7 +46491,7 @@ $.SimpleASEndpoint = function (options) {
 
       if (_this.manifest.logo) {
         var logo = '';
-        if (typeof _this.manifest.logo === "string") {
+        if (typeof _this.manifest.logo === 'string') {
           logo = _this.manifest.logo;
         } else if (typeof _this.manifest.logo['@id'] !== 'undefined') {
           logo = _this.manifest.logo['@id'];
@@ -46389,73 +46504,73 @@ $.SimpleASEndpoint = function (options) {
     },
 
   // Base code from https://github.com/padolsey/prettyprint.js. Modified to fit Mirador needs
-  stringifyObject: function(obj, nestingMargin) {
-    var type = typeof obj,
+    stringifyObject: function (obj, nestingMargin) {
+      var type = typeof obj,
         _this = this,
         str,
         first = true,
         increment = 15,
         delimiter = '<br/>';
 
-    if (obj instanceof RegExp) {
-      return '/' + obj.source + '/';
-    }
-
-    if (typeof nestingMargin === 'undefined') {
-      nestingMargin = 0;
-    }
-
-    if (obj instanceof Array) {
-      str = '[ ';
-      jQuery.each(obj, function (i, item) {
-        str += (i === 0 ? '' : ', ') + _this.stringifyObject(item, nestingMargin + increment);
-      });
-      return str + ' ]';
-    }
-
-    if (typeof obj === 'object' && obj['@type'] === 'sc:Collection') {
-      var collectionUrl = obj['@id'];
-      var collectionLabel = obj.label || collectionUrl;
-      return '<a href="' + collectionUrl + '" target="_blank">' + collectionLabel + '</a>';
-    } else if (typeof obj === 'object') {
-      str = '<div style="margin-left:' +  nestingMargin + 'px">';
-      for (var i in obj) {
-        if (obj.hasOwnProperty(i)) {
-          str += (first ? '' : delimiter) + i + ': ' + _this.stringifyObject(obj[i], nestingMargin + increment);
-          first = false;
-        }
+      if (obj instanceof RegExp) {
+        return '/' + obj.source + '/';
       }
 
-      return str + '</div>';
-    }
-    return obj.toString();
-  },
+      if (typeof nestingMargin === 'undefined') {
+        nestingMargin = 0;
+      }
 
-  stringifyRelated: function(obj) {
-    var _this = this,
+      if (obj instanceof Array) {
+        str = '[ ';
+        jQuery.each(obj, function (i, item) {
+          str += (i === 0 ? '' : ', ') + _this.stringifyObject(item, nestingMargin + increment);
+        });
+        return str + ' ]';
+      }
+
+      if (typeof obj === 'object' && obj['@type'] === 'sc:Collection') {
+        var collectionUrl = obj['@id'];
+        var collectionLabel = obj.label || collectionUrl;
+        return '<a href="' + collectionUrl + '" target="_blank">' + collectionLabel + '</a>';
+      } else if (typeof obj === 'object') {
+        str = '<div style="margin-left:' + nestingMargin + 'px">';
+        for (var i in obj) {
+          if (obj.hasOwnProperty(i)) {
+            str += (first ? '' : delimiter) + i + ': ' + _this.stringifyObject(obj[i], nestingMargin + increment);
+            first = false;
+          }
+        }
+
+        return str + '</div>';
+      }
+      return obj.toString();
+    },
+
+    stringifyRelated: function (obj) {
+      var _this = this,
         str,
         next,
         label,
         format;
-    if (obj instanceof Array) {
-      str = '';
-      jQuery.each(obj, function (i, item) {
-        next = _this.stringifyRelated(item);
-        if (next !== '') str += (i === 0 ? '' : '<br/>') + next;
-      });
-      return str;
-    }
+      if (obj instanceof Array) {
+        str = '';
+        jQuery.each(obj, function (i, item) {
+          next = _this.stringifyRelated(item);
+          if (next !== '') str += (i === 0 ? '' : '<br/>') + next;
+        });
+        return str;
+      }
 
-    if (typeof obj === 'object' && '@id' in obj) {
-      label = ('label' in obj)? obj.label : obj['@id'];
-      format = ('format' in obj && obj.format !== 'text/html')? '(' + obj.format + ')' : '';
-      return '<a href="' + obj['@id'] + '"  target="_blank">' + label + '</a> ' + format;
-    }
+      if (typeof obj === 'object' && '@id' in obj) {
+        label = ('label' in obj) ? obj.label : obj['@id'];
+        format = ('format' in obj && obj.format !== 'text/html') ? '(' + obj.format + ')' : '';
+        return '<a href="' + obj['@id'] + '"  target="_blank">' + label + '</a> ' + format;
+      }
 
-    return _this.addLinksToUris(obj.toString());
-  },
+      return _this.addLinksToUris(obj.toString());
+    },
 
-  getMetadataDetails: function(jsonLd) {
+    getMetadataDetails: function (jsonLd) {
       var mdList = [
         { label: i18next.t('label'),
           value: '<b>' + ($.JsonLd.getTextValue(jsonLd.label) || '') + '</b>' },
@@ -46464,116 +46579,115 @@ $.SimpleASEndpoint = function (options) {
       ];
 
       if (jsonLd.metadata) {
-        value = "";
-        label = "";
-        jQuery.each(jsonLd.metadata, function(index, item) {
+        value = '';
+        label = '';
+        jQuery.each(jsonLd.metadata, function (index, item) {
           label = $.JsonLd.getTextValue(item.label);
           value = $.JsonLd.getTextValue(item.value);
-          mdList.push({label: label, value: value});
+          mdList.push({ label: label, value: value });
         });
       }
 
       return mdList;
     },
 
-  getMetadataRights: function(jsonLd) {
-    return [
-      {
-        identifier: 'license',
-        label: i18next.t('license'),
-        value: jsonLd.license || ''
-      }, {
-        identifier: 'attribution',
-        label: i18next.t('attribution'),
-        value: $.JsonLd.getTextValue(jsonLd.attribution) || ''
-      }
-    ];
-  },
+    getMetadataRights: function (jsonLd) {
+      return [
+        {
+          identifier: 'license',
+          label: i18next.t('license'),
+          value: jsonLd.license || ''
+        }, {
+          identifier: 'attribution',
+          label: i18next.t('attribution'),
+          value: $.JsonLd.getTextValue(jsonLd.attribution) || ''
+        }
+      ];
+    },
 
-  getMetadataLinks: function(jsonLd) {
+    getMetadataLinks: function (jsonLd) {
     // #414
-    return [
-      {
-        identifier: 'related',
-        label: i18next.t('related'),
-        value: this.stringifyRelated(jsonLd.related || '')
-      }, {
-        identifier: 'seeAlso',
-        label: i18next.t('seeAlso'),
-        value: this.stringifyRelated(jsonLd.seeAlso || '')
-      }, {
-        identifier: 'manifest',
-        label: i18next.t('manifest'),
-        value: this.stringifyRelated(jsonLd['@id'] || '')
-      }, {
-        identifier: 'within',
-        label: i18next.t('within'),
-        value: this.getWithin(jsonLd.within || '')
+      return [
+        {
+          identifier: 'related',
+          label: i18next.t('related'),
+          value: this.stringifyRelated(jsonLd.related || '')
+        }, {
+          identifier: 'seeAlso',
+          label: i18next.t('seeAlso'),
+          value: this.stringifyRelated(jsonLd.seeAlso || '')
+        }, {
+          identifier: 'manifest',
+          label: i18next.t('manifest'),
+          value: this.stringifyRelated(jsonLd['@id'] || '')
+        }, {
+          identifier: 'within',
+          label: i18next.t('within'),
+          value: this.getWithin(jsonLd.within || '')
+        }
+      ];
+    },
+
+    getWithin: function (within) {
+      if (typeof within === 'object' && within['@type'] === 'sc:Collection') {
+        var collectionUrl = within['@id'];
+        var collectionLabel = within.label || collectionUrl;
+        return '<a href="' + collectionUrl + '" target="_blank">' + collectionLabel + '</a>';
+      } else if (within instanceof Array) {
+        return within.map(this.getWithin, this).join('<br/>');
       }
-    ];
-  },
-
-   getWithin: function(within) {
-     if (typeof within === 'object' && within['@type'] === 'sc:Collection') {
-      var collectionUrl = within['@id'];
-      var collectionLabel = within.label || collectionUrl;
-      return '<a href="' + collectionUrl + '" target="_blank">' + collectionLabel + '</a>';
-     } else if (within instanceof Array) {
-       return within.map(this.getWithin, this).join("<br/>");
-     } else {
-       return this.stringifyObject(within);
-     }
-   },
-
-   extractLabelFromAttribute: function(attr) {
-    var label = attr;
-
-    label = label.replace(/^@/, '');
-    label = label.replace(/\s{2,}/g, ' ');
-
-    return label;
-  },
-
-    bindEvents: function() {
+      return this.stringifyObject(within);
     },
 
-    toggle: function(stateValue) {
-        if (stateValue) {
-            this.show();
-        } else {
-            this.hide();
-        }
+    extractLabelFromAttribute: function (attr) {
+      var label = attr;
+
+      label = label.replace(/^@/, '');
+      label = label.replace(/\s{2,}/g, ' ');
+
+      return label;
     },
 
-    show: function() {
-        var element = jQuery(this.element);
-        if (this.panel) {
-            element = element.parent();
-        }
-        element.show({effect: "slide", direction: "right", duration: 300, easing: "swing"});
+    bindEvents: function () {
     },
 
-    hide: function() {
-        var element = jQuery(this.element);
-        if (this.panel) {
-            element = element.parent();
-        }
-        element.hide({effect: "slide", direction: "right", duration: 300, easing: "swing"});
+    toggle: function (stateValue) {
+      if (stateValue) {
+        this.show();
+      } else {
+        this.hide();
+      }
     },
 
-    addLinksToUris: function(text) {
+    show: function () {
+      var element = jQuery(this.element);
+      if (this.panel) {
+        element = element.parent();
+      }
+      element.show({ effect: 'slide', direction: 'right', duration: 300, easing: 'swing' });
+    },
+
+    hide: function () {
+      var element = jQuery(this.element);
+      if (this.panel) {
+        element = element.parent();
+      }
+      element.hide({ effect: 'slide', direction: 'right', duration: 300, easing: 'swing' });
+    },
+
+    addLinksToUris: function (text) {
       // http://stackoverflow.com/questions/8188645/javascript-regex-to-match-a-url-in-a-field-of-text
       var regexUrl = /(http|ftp|https):\/\/[\w\-]+(\.[\w\-]+)+([\w.,@?\^=%&amp;:\/~+#\-]*[\w@?\^=%&amp;\/~+#\-])?/gi,
-          textWithLinks = text,
-          matches,
-          parsedTextWithLinks;
+        textWithLinks = text,
+        matches,
+        parsedTextWithLinks;
 
       if (typeof text === 'string') {
         if (textWithLinks.indexOf('<a ') === -1) {
           matches = text.match(regexUrl);
 
           if (matches) {
-            jQuery.each(matches, function(index, match) {
+            jQuery.each(matches, function (index, match) {
               textWithLinks = textWithLinks.replace(match, '<a href="' + match + '" target="_blank">' + match + '</a>');
             });
           }
@@ -46588,97 +46702,92 @@ $.SimpleASEndpoint = function (options) {
     },
 
     template: $.Handlebars.compile([
-    '<div class="sub-title">{{t "details"}}:</div>',
-        '<div class="{{metadataListingCls}}">',
-          '{{#each details}}',
-            '<div class="metadata-item"><div class="metadata-label">{{label}}:</div><div class="metadata-value">{{{value}}}</div></div>',
-          '{{/each}}',
-        '</div>',
-        '<div class="sub-title">{{t "rights"}}:</div>',
-        '{{#if rights}}',
-        '<div class="{{metadataListingCls}}">',
-          '{{#each rights}}',
-            '<div class="metadata-item {{identifier}}"><div class="metadata-label">{{label}}:</div><div class="metadata-value">{{{value}}}</div></div>',
-          '{{/each}}',
-          '{{#if logo}}',
-            '<div class="metadata-item"><div class="metadata-label">{{t "logo"}}:</div><img class="metadata-logo" src="{{logo}}"/></div>',
-          '{{/if}}',
-        '</div>',
-        '{{else}}',
-        '<div class="{{metadataListingCls}}">',
-          '<div class="metadata-item"><div class="metadata-label">{{t "rightsStatus"}}:</div><div class="metadata-value">{{t "unspecified"}}</div></div>',
-        '</div>',
-        '{{/if}}',
-        '{{#if links}}',
-        '<div class="sub-title">{{t "links"}}:</div>',
-        '<div class="{{metadataListingCls}}">',
-          '{{#each links}}',
-            '<div class="metadata-item {{identifier}}"><div class="metadata-label">{{label}}:</div><div class="metadata-value">{{{value}}}</div></div>',
-          '{{/each}}',
+      '<div class="sub-title">{{t "details"}}:</div>',
+      '<div class="{{metadataListingCls}}">',
+      '{{#each details}}',
+      '<div class="metadata-item"><div class="metadata-label">{{label}}:</div><div class="metadata-value">{{{value}}}</div></div>',
+      '{{/each}}',
+      '</div>',
+      '<div class="sub-title">{{t "rights"}}:</div>',
+      '{{#if rights}}',
+      '<div class="{{metadataListingCls}}">',
+      '{{#each rights}}',
+      '<div class="metadata-item {{identifier}}"><div class="metadata-label">{{label}}:</div><div class="metadata-value">{{{value}}}</div></div>',
+      '{{/each}}',
+      '{{#if logo}}',
+      '<div class="metadata-item"><div class="metadata-label">{{t "logo"}}:</div><img class="metadata-logo" src="{{logo}}"/></div>',
+      '{{/if}}',
+      '</div>',
+      '{{else}}',
+      '<div class="{{metadataListingCls}}">',
+      '<div class="metadata-item"><div class="metadata-label">{{t "rightsStatus"}}:</div><div class="metadata-value">{{t "unspecified"}}</div></div>',
+      '</div>',
+      '{{/if}}',
+      '{{#if links}}',
+      '<div class="sub-title">{{t "links"}}:</div>',
+      '<div class="{{metadataListingCls}}">',
+      '{{#each links}}',
+      '<div class="metadata-item {{identifier}}"><div class="metadata-label">{{label}}:</div><div class="metadata-value">{{{value}}}</div></div>',
+      '{{/each}}',
         // '{{#if relatedLinks}}',
         //   '<dt>{{label}}:</dt><dd>{{{value}}}</dd>',
         // '{{/if}}',
-        '</dl>',
-        '{{/if}}'
+      '</dl>',
+      '{{/if}}'
 
     ].join(''), { noEscape: true })
 
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.ScrollView = function(options) {
-
+(function ($) {
+  $.ScrollView = function (options) {
     jQuery.extend(this, {
-      currentImgIndex:      0,
-      canvasID:              null,
-      focusImages:          [],
-      manifest:             null,
-      element:              null,
-      imagesList:           [],
-      appendTo:             null,
-      thumbInfo:            {thumbsHeight: 150, listingCssCls: 'listing-thumbs', thumbnailCls: 'thumbnail-view'},
-      windowId:             null,
-      panel:                false,
+      currentImgIndex: 0,
+      canvasID: null,
+      focusImages: [],
+      manifest: null,
+      element: null,
+      imagesList: [],
+      appendTo: null,
+      thumbInfo: { thumbsHeight: 150, listingCssCls: 'listing-thumbs', thumbnailCls: 'thumbnail-view' },
+      windowId: null,
+      panel: false,
       vDirectionStatus: '',
-      lazyLoadingFactor:    1.5  //should be >= 1
+      lazyLoadingFactor: 1.5  // should be >= 1
     }, options);
 
     jQuery.extend($.ScrollView.prototype, $.ThumbnailsView.prototype);
     this.init();
-    if(this.vDirectionStatus == 'rtl') {
+    if (this.vDirectionStatus == 'rtl') {
       jQuery(this.appendTo).find('.scroll-view').addClass('v-direction-rtl');
     }
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.SearchTab = function(options) {
+(function ($) {
+  $.SearchTab = function (options) {
     jQuery.extend(true, this, {
-      element:           null,
-      appendTo:          null,
-      manifest:          null,
-      visible:           null,
-      canvasID:          null,
-      windowId:          null,
-      eventEmitter:      null,
+      element: null,
+      appendTo: null,
+      manifest: null,
+      visible: null,
+      canvasID: null,
+      windowId: null,
+      eventEmitter: null
     }, options);
 
     this.init();
   };
 
   $.SearchTab.prototype = {
-    init: function() {
+    init: function () {
       var _this = this;
       this.windowId = this.windowId;
 
       this.localState({
         id: 'searchTab',
-        visible: this.visible,
+        visible: this.visible
       }, true);
 
       this.listenForActions();
@@ -46686,7 +46795,7 @@ $.SimpleASEndpoint = function (options) {
       this.loadTabComponents();
     },
 
-    localState: function(state, initial) {
+    localState: function (state, initial) {
       if (!arguments.length) return this.searchTabState;
       this.searchTabState = state;
 
@@ -46697,29 +46806,28 @@ $.SimpleASEndpoint = function (options) {
       return this.searchTabState;
     },
 
-    loadTabComponents: function() {
+    loadTabComponents: function () {
       var _this = this;
     },
 
-    tabStateUpdated: function(data) {
+    tabStateUpdated: function (data) {
       if (data.tabs[data.selectedTabIndex].options.id === 'searchTab') {
         this.element.show();
-      }
-      else {
+      } else {
         this.element.hide();
       }
     },
 
-    toggle: function() {},
+    toggle: function () {},
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      //jQuery.subscribe('searchTabStateUpdated.' + _this.windowId, function(_, data) {
+      // jQuery.subscribe('searchTabStateUpdated.' + _this.windowId, function(_, data) {
       //    _this.render(data);
-      //});
+      // });
 
-      this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function(_, data) {
+      this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function (_, data) {
         _this.tabStateUpdated(data);
       });
 
@@ -46728,18 +46836,17 @@ $.SimpleASEndpoint = function (options) {
       // });
     },
 
-    displaySearchWithin: function(query_params, searchUrl){
+    displaySearchWithin: function (query_params, searchUrl) {
       var _this = this;
-      if (query_params !== "") {
-
+      if (query_params !== '') {
         this.searchObject = new $.SearchWithinResults({
           manifest: _this.manifest,
-          appendTo: _this.element.find(".search-results-list"),
+          appendTo: _this.element.find('.search-results-list'),
           panel: true,
           canvasID: _this.canvasID,
           windowId: _this.windowId,
           imagesList: _this.imagesList,
-          thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
+          thumbInfo: { thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view' },
           query_params: query_params,
           searchService: searchUrl,
           eventEmitter: _this.eventEmitter
@@ -46747,52 +46854,49 @@ $.SimpleASEndpoint = function (options) {
       }
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      this.element.find(".js-perform-query").on('submit', function(event){
+      this.element.find('.js-perform-query').on('submit', function (event) {
         event.preventDefault();
 
-        var query = _this.element.find(".js-query").val();
-        var motivation = _this.element.find(".js-motivation").val();
-        var date = _this.element.find(".js-date").val();
-        var user = _this.element.find(".js-user").val();
-        var searchUrl = _this.element.find("#search-within-selector").val();
+        var query = _this.element.find('.js-query').val();
+        var motivation = _this.element.find('.js-motivation').val();
+        var date = _this.element.find('.js-date').val();
+        var user = _this.element.find('.js-user').val();
+        var searchUrl = _this.element.find('#search-within-selector').val();
 
         _this.displaySearchWithin({
-          "q": query,
-          "motivation": motivation,
-          "date": date,
-          "user": user
+          q: query,
+          motivation: motivation,
+          date: date,
+          user: user
         }, searchUrl);
-
       });
 
-      this.element.find(".js-search-expand").on('click', function(event){
+      this.element.find('.js-search-expand').on('click', function (event) {
         event.preventDefault();
 
-        _this.element.find(".js-search-expanded").slideToggle("fast");
+        _this.element.find('.js-search-expanded').slideToggle('fast');
 
-        if (jQuery(this).text() === i18next.t("more")){
-          jQuery(this).text(i18next.t("less"));
-        }
-        else if (jQuery(this).text() === i18next.t("less")){
-          jQuery(this).text(i18next.t("more"));
+        if (jQuery(this).text() === i18next.t('more')) {
+          jQuery(this).text(i18next.t('less'));
+        } else if (jQuery(this).text() === i18next.t('less')) {
+          jQuery(this).text(i18next.t('more'));
         }
       });
-
     },
 
-    render: function(state) {
+    render: function (state) {
       var _this = this;
 
       var searchService = this.manifest.getSearchWithinService(),
-          searchServiceIdArray = searchService && searchService.map(function(data){
-        return {
-          "url": data['@id'],
-          "label": data.label
-        };
-      });
+        searchServiceIdArray = searchService && searchService.map(function (data) {
+          return {
+            url: data['@id'],
+            label: data.label
+          };
+        });
 
       templateData = {
         searchService: searchServiceIdArray
@@ -46802,7 +46906,7 @@ $.SimpleASEndpoint = function (options) {
         this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
         _this.bindEvents();
       } else {
-        _this.appendTo.find(".search-results").remove();
+        _this.appendTo.find('.search-results').remove();
         this.element = jQuery(_this.template(templateData)).appendTo(_this.appendTo);
       }
 
@@ -46815,38 +46919,36 @@ $.SimpleASEndpoint = function (options) {
 
     template: $.Handlebars.compile([
       '<div class="search-results">',
-        '{{#if searchService}}',
-        '<label for="search-within-selector">{{t "searchLabelSelect"}}</label>',
-          '<select id="search-within-selector" style="width: 100%">',
-            '{{#each searchService}}',
-            '<option value="{{ url }}">{{#if label}}{{ label }}{{ else }} {{ url }}{{/if}}</option>',
-            '{{/each}}',
-          '</select>',
-          '<form id="search-within-form" class="js-perform-query">',
-            '<input class="js-query" type="text" placeholder="{{t "searchText"}}"/>',
+      '{{#if searchService}}',
+      '<label for="search-within-selector">{{t "searchLabelSelect"}}</label>',
+      '<select id="search-within-selector" style="width: 100%">',
+      '{{#each searchService}}',
+      '<option value="{{ url }}">{{#if label}}{{ label }}{{ else }} {{ url }}{{/if}}</option>',
+      '{{/each}}',
+      '</select>',
+      '<form id="search-within-form" class="js-perform-query">',
+      '<input class="js-query" type="text" placeholder="{{t "searchText"}}"/>',
 
-            '<input style="margin: 10px 0" type="submit" value="{{t "submit"}}"/>',
+      '<input style="margin: 10px 0" type="submit" value="{{t "submit"}}"/>',
 
-            '<div style="margin-bottom: 5px"><a class="js-search-expand" href="#">{{t "more"}}</a></div>',
-            '<div class="js-search-expanded" style="display: none;">',
-              '<input class="js-motivation" type="text" placeholder="motivation"/>',
-              '<input class="js-date" type="text" placeholder="date"/>',
-              '<input class="js-user" type="text" placeholder="user"/>',
+      '<div style="margin-bottom: 5px"><a class="js-search-expand" href="#">{{t "more"}}</a></div>',
+      '<div class="js-search-expanded" style="display: none;">',
+      '<input class="js-motivation" type="text" placeholder="motivation"/>',
+      '<input class="js-date" type="text" placeholder="date"/>',
+      '<input class="js-user" type="text" placeholder="user"/>',
               // '<input class="js-box" type="text" placeholder="box: x, y, w, h"/>',
-            '</div>',
-          '</form>',
-          '<div class="search-results-list"></div>',
-        '{{else}}',
-          '{{t "searchNotAvailable"}}',
-        '{{/if}}',
       '</div>',
+      '</form>',
+      '<div class="search-results-list"></div>',
+      '{{else}}',
+      '{{t "searchNotAvailable"}}',
+      '{{/if}}',
+      '</div>'
     ].join(''))
   };
-
 }(Mirador));
 
-(function($) {
-
+(function ($) {
 /**
  * UI + logic to get search results for a given search query. On initialization,
  * the provided search query is given tothe provided IIIF Search service.
@@ -46857,52 +46959,50 @@ $.SimpleASEndpoint = function (options) {
  * Currently follows IIIF Content Search API v1.0
  * (http://iiif.io/api/search/0.9/)
  */
-$.SearchWithinResults = function(options) {
-
-  jQuery.extend(this, {
-    manifest:             null,
-    element:              null,
-    metadataTypes:        null,
-    metadataListingCls:   'metadata-listing',
+  $.SearchWithinResults = function (options) {
+    jQuery.extend(this, {
+      manifest: null,
+      element: null,
+      metadataTypes: null,
+      metadataListingCls: 'metadata-listing',
     /** Search service URL */
-    searchService:     null,
-    windowId:             null,
+      searchService: null,
+      windowId: null,
     /** {q: query, motivation: motivation, date: date, user: user} */
-    query_params:         null,
+      query_params: null,
     /** Used for paging. This assumes that searches start on page 1... */
-    currentPage:          1,
-    eventEmitter:         null
-  }, options);
+      currentPage: 1,
+      eventEmitter: null
+    }, options);
 
-  this.init();
-};
+    this.init();
+  };
 
-$.SearchWithinResults.prototype = {
+  $.SearchWithinResults.prototype = {
 
-  init: function() {
-    this.registerHandlebars();
+    init: function () {
+      this.registerHandlebars();
 
-    jQuery(this.appendTo).empty();
-    this.element = jQuery(this.template()).appendTo(this.appendTo);
-    jQuery("<h3>Search results for: " + this.query_params.q + "</h3>")
+      jQuery(this.appendTo).empty();
+      this.element = jQuery(this.template()).appendTo(this.appendTo);
+      jQuery('<h3>Search results for: ' + this.query_params.q + '</h3>')
         .appendTo(this.appendTo.find('.search-results-messages'));
-    this.doSearchFromQuery(this.query_params);
-  },
+      this.doSearchFromQuery(this.query_params);
+    },
 
-  doSearchFromQuery: function(query_params) {
-    query_string = "";
-    for (var param in query_params){
-      if (param === "q"){
-        query_string += param + "=" + query_params[param];
+    doSearchFromQuery: function (query_params) {
+      query_string = '';
+      for (var param in query_params) {
+        if (param === 'q') {
+          query_string += param + '=' + query_params[param];
+        } else if (query_params[param].length > 0) {
+          query_string += '&' + param + '=' + query_params[param];
+        }
       }
-      else if (query_params[param].length > 0){
-       query_string += "&" + param + "=" + query_params[param];
-      }
-    }
 
-    var url = this.searchService + '?' + query_string;
-    this.doSearchFromUrl(url);
-  },
+      var url = this.searchService + '?' + query_string;
+      this.doSearchFromUrl(url);
+    },
 
   /**
    * AJAX request is made from here!
@@ -46913,67 +47013,67 @@ $.SearchWithinResults.prototype = {
    * @param  {[type]} url [description]
    * @return {[type]}     [description]
    */
-  doSearchFromUrl: function(url) {
-    var _this = this;
+    doSearchFromUrl: function (url) {
+      var _this = this;
 
-    this.element.find('.search-results-container').empty();
+      this.element.find('.search-results-container').empty();
 
-    jQuery.ajax({
-      url: url,
-      dataType: 'json',
-      async: true
-    })
-    .done(function(searchResults) {
-        if (searchResults.resources) {
+      jQuery.ajax({
+        url: url,
+        dataType: 'json',
+        async: true
+      })
+    .done(function (searchResults) {
+      if (searchResults.resources) {
           // display result totals
-          _this.displayResultCounts(searchResults);
+        _this.displayResultCounts(searchResults);
           // show results list
-          _this.processResults(searchResults);
+        _this.processResults(searchResults);
       } else {
-        jQuery('.search-results-count').html("<p>No results</p>");
+        jQuery('.search-results-count').html('<p>No results</p>');
       }
     })
-    .fail(function() {
-        jQuery('.search-results-count').html("<p>No results</p>");
+    .fail(function () {
+      jQuery('.search-results-count').html('<p>No results</p>');
     })
     .always();
-  },
+    },
 
 
-  displayResultCounts: function(searchResults){
-    var total = searchResults.within.total,
-    startResultNumber = searchResults.startIndex + 1,
-    endResultNumber = "";
+    displayResultCounts: function (searchResults) {
+      var total = searchResults.within.total,
+        startResultNumber = searchResults.startIndex + 1,
+        endResultNumber = '';
 
-    //if there is only only resource, it will not be array and therefore we can't
-    //take the length of it; this conditions check first to see if the resources
-    //property contains an array or single object
+    // if there is only only resource, it will not be array and therefore we can't
+    // take the length of it; this conditions check first to see if the resources
+    // property contains an array or single object
 
     // TODO: not that this single object vs. array seems to be problem throughout.
     // Pages with only one result do not display properly. See for example:
     // http://exist.scta.info/exist/apps/scta/iiif/pl-zbsSII72/search?q=fides&page=3
 
-    if (searchResults.resources.constructor === Array) {
-      endResultNumber = searchResults.startIndex + searchResults.resources.length;
-    } else {
-      endResultNumber = searchResults.startIndex + 1;
-    }
+      if (searchResults.resources.constructor === Array) {
+        endResultNumber = searchResults.startIndex + searchResults.resources.length;
+      } else {
+        endResultNumber = searchResults.startIndex + 1;
+      }
 
-    jQuery('.search-results-count').html("<p>Showing " + startResultNumber + " - " + endResultNumber + " out of " + total + "</p>");
-  },
+      jQuery('.search-results-count').html('<p>Showing ' + startResultNumber + ' - ' + endResultNumber + ' out of ' + total + '</p>');
+    },
 
-  processResults: function(searchResults) {
-    //create tplData array
-    if (searchResults.hits) {
-      this.tplData = this.getHits(searchResults);
-    } else {
-      this.tplData = this.getSearchAnnotations(searchResults);
-    }
-    jQuery($.Handlebars.compile('{{> resultsList }}')(this.tplData)).appendTo(jQuery(this.element.find('.search-results-container')));
-    this.bindEvents();
+    processResults: function (searchResults) {
+    // create tplData array
+      if (searchResults.hits) {
+        this.tplData = this.getHits(searchResults);
+      } else {
+        this.tplData = this.getSearchAnnotations(searchResults);
+      }
+      jQuery($.Handlebars.compile('{{> resultsList }}')(this.tplData)).appendTo(jQuery(this.element.find('.search-results-container')));
+      this.bindEvents();
 
-    this.setPager(searchResults);
-  },
+      this.setPager(searchResults);
+    },
 
   /**
    * Look for necessary properties that point to the need for paging.
@@ -46982,19 +47082,18 @@ $.SearchWithinResults.prototype = {
    * @param  results IIIF Search results
    * @return TRUE if paging is needed
    */
-  needsPager: function(results) {
+    needsPager: function (results) {
     // Check for some properties on the search results
-    if (!results || !results.within || !results.resources) {
-      return false;
-    }
-    var total = results.within.total;
+      if (!results || !results.within || !results.resources) {
+        return false;
+      }
+      var total = results.within.total;
     // Check if 'resources' (list of annotations) is an array, or single value
-    if (Array.isArray(results.resources)) {
-      return results.resources.length < total;
-    } else {
+      if (Array.isArray(results.resources)) {
+        return results.resources.length < total;
+      }
       return total > 1;
-    }
-  },
+    },
 
   /**
    * Initialize search results pager. It is assumed that it has already
@@ -47007,25 +47106,25 @@ $.SearchWithinResults.prototype = {
    *
    * @param  results - IIIF Search results
    */
-  setPager: function(searchResults) {
-    var _this = this;
-    var pager = this.element.find('.search-results-pager');
+    setPager: function (searchResults) {
+      var _this = this;
+      var pager = this.element.find('.search-results-pager');
 
     // HACK: pager.pagination will be undefined until canvasID are set properly
-    if (!this.needsPager(searchResults) || !pager.pagination) {
-      return;
-    }
+      if (!this.needsPager(searchResults) || !pager.pagination) {
+        return;
+      }
 
     /*
      * Hack to get proper page numbers.
      * TODO probably shouldn't use this library if it requires page numbers,
      * instead have something with ONLY FIRST/LAST and PREV/NEXT controls.
      */
-    if (!this.onPageCount) { // This will be set with initial page and not be changed.
-      this.onPageCount = searchResults.resources.length;
-    }
+      if (!this.onPageCount) { // This will be set with initial page and not be changed.
+        this.onPageCount = searchResults.resources.length;
+      }
 
-    pager.pagination({
+      pager.pagination({
         items: searchResults.within.total,
         itemsOnPage: _this.onPageCount,
         currentPage: _this.currentPage,
@@ -47036,7 +47135,7 @@ $.SearchWithinResults.prototype = {
         hrefTextPrefix: '',
         prevText: '<i class="fa fa-lg fa-angle-left"></i>',
         nextText: '<i class="fa fa-lg fa-angle-right"></i>',
-        onPageClick: function(pageNumber, event) {
+        onPageClick: function (pageNumber, event) {
           event.preventDefault();
           pager.pagination('disable');
 
@@ -47067,9 +47166,9 @@ $.SearchWithinResults.prototype = {
             );
           }
         }
-    });
-    pager.pagination('enable');
-  },
+      });
+      pager.pagination('enable');
+    },
 
   /**
    * Do a Bitwise OR to truncate decimal
@@ -47077,90 +47176,90 @@ $.SearchWithinResults.prototype = {
    * @param  num original number, could be integer or decimal
    * @return integer with any decimal part of input truncated (no rounding)
    */
-  float2int: function(num) {
-    return num | 0;
-  },
+    float2int: function (num) {
+      return num | 0;
+    },
 
-  parseSearchAnnotation: function(annotation){
-    var _this = this;
-    var canvasid = annotation.on;
+    parseSearchAnnotation: function (annotation) {
+      var _this = this;
+      var canvasid = annotation.on;
     // deals with possibiliy of "on" propert taking an object
-    if (typeof canvasid === 'object') {
-      canvasid = annotation.on['@id'];
-    }
+      if (typeof canvasid === 'object') {
+        canvasid = annotation.on['@id'];
+      }
 
-    var canvaslabel = _this.getLabel(annotation);
+      var canvaslabel = _this.getLabel(annotation);
 
     // Split ID from Coordinates if necessary
-    var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
+      var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
 
-    return {
-      canvasid: id_parts.base,
-      coordinates: id_parts.coords,
-      canvaslabel: canvaslabel,
-      resulttext: annotation.resource.chars
-    };
-  },
+      return {
+        canvasid: id_parts.base,
+        coordinates: id_parts.coords,
+        canvaslabel: canvaslabel,
+        resulttext: annotation.resource.chars
+      };
+    },
 
-  getSearchAnnotations: function(searchResults) {
-    var _this = this;
-    tplData = [];
-    //add condition here to make sure searchResults.resources is not null
-    if (searchResults.resources !== null) {
-      //This conditional handles if the results come back as a single object or as an array
-      //TODO: This possibility is not yet handled in the getHits function
-      if (!Array.isArray(searchResults.resources)){
-        annotation = searchResults.resources;
-        tplData.push(_this.parseSearchAnnotation(annotation));
-      }
-      else {
-        searchResults.resources.forEach(function(annotation){
+    getSearchAnnotations: function (searchResults) {
+      var _this = this;
+      tplData = [];
+    // add condition here to make sure searchResults.resources is not null
+      if (searchResults.resources !== null) {
+      // This conditional handles if the results come back as a single object or as an array
+      // TODO: This possibility is not yet handled in the getHits function
+        if (!Array.isArray(searchResults.resources)) {
+          annotation = searchResults.resources;
           tplData.push(_this.parseSearchAnnotation(annotation));
-        });
+        } else {
+          searchResults.resources.forEach(function (annotation) {
+            tplData.push(_this.parseSearchAnnotation(annotation));
+          });
+        }
+        return tplData;
       }
-    return tplData;
-    }
-  },
+    },
 
-  getHits: function(searchResults) {
-    var _this = this;
-    tplData = [];
-    searchResults.hits.forEach(function(hit) {
-      //this seems like a really slow way to retrieve on property from hits
-      //note that at present it is only retrieving the first annotation
-      //but a hit annotation property takes an array and could have more than one
-      //annotation -- its not a very common case but a possibility.
-      var resultObject, resultObjects = [];
-      hit.annotations.forEach(function(annotation) {
-        //canvases could come back as an array
-        var resource = _this.getHitResources(searchResults, annotation)[0],
+    getHits: function (searchResults) {
+      var _this = this;
+      tplData = [];
+      searchResults.hits.forEach(function (hit) {
+      // this seems like a really slow way to retrieve on property from hits
+      // note that at present it is only retrieving the first annotation
+      // but a hit annotation property takes an array and could have more than one
+      // annotation -- its not a very common case but a possibility.
+        var resultObject,
+          resultObjects = [];
+        hit.annotations.forEach(function (annotation) {
+        // canvases could come back as an array
+          var resource = _this.getHitResources(searchResults, annotation)[0],
             canvasLabel = _this.getLabel(resource),
             canvasID = resource && resource.on;
         // If you have the full annotation, set ID and label appropriately
-        if (typeof canvasID === 'object') {
-          canvasID = resource.on['@id'];
-        }
+          if (typeof canvasID === 'object') {
+            canvasID = resource.on['@id'];
+          }
         // Extract coordinates if necessary
-        var canvasIDParts = _this.splitBaseUrlAndCoordinates(canvasID);
-        resultObject = {
-          canvasid: canvasIDParts.base,
-          coordinates: canvasIDParts.coords,
-          canvaslabel: canvasLabel,
-          hit: hit      // TODO must handle different results structures, see IIIF search spec for different responses
-        };
-        resultObjects.push(resultObject);
-      });
+          var canvasIDParts = _this.splitBaseUrlAndCoordinates(canvasID);
+          resultObject = {
+            canvasid: canvasIDParts.base,
+            coordinates: canvasIDParts.coords,
+            canvaslabel: canvasLabel,
+            hit: hit      // TODO must handle different results structures, see IIIF search spec for different responses
+          };
+          resultObjects.push(resultObject);
+        });
       // First result is returned and gets attached an array of all annotations
-      if (resultObjects) {
-        resultObject = resultObjects[0];
-        if (resultObjects.length > 1) {
-          resultObject.annotations = resultObjects;
+        if (resultObjects) {
+          resultObject = resultObjects[0];
+          if (resultObjects.length > 1) {
+            resultObject.annotations = resultObjects;
+          }
+          tplData.push(resultObject);
         }
-        tplData.push(resultObject);
-      }
-    });
-    return tplData;
-  },
+      });
+      return tplData;
+    },
 
   /**
    * Get a label describing a search match. This label is set to the
@@ -47170,32 +47269,32 @@ $.SearchWithinResults.prototype = {
    * @param  {[type]} resource annotation associated with the search match
    * @return {[type]}          string label
    */
-  getLabel: function(resource) {
-    var label;
+    getLabel: function (resource) {
+      var label;
 
-    if (resource && typeof resource === 'object') {
-      if (resource.label) {
-        return resource.label;
-      } else if (resource.resource.label){
-        return resource.resource.label;
-      } else if (resource.on && typeof resource.on === 'string') {
-        label = this.manifest.getCanvasLabel(resource.on);
-        return label ? 'Canvas ' + label : undefined;
-      } else if (resource.on && typeof resource.on === 'object') {
-        label = resource.on.label ? resource.on.label : this.manifest.getCanvasLabel(resource.on['@id']);
-        return label ? 'Canvas ' + label : undefined;
+      if (resource && typeof resource === 'object') {
+        if (resource.label) {
+          return resource.label;
+        } else if (resource.resource.label) {
+          return resource.resource.label;
+        } else if (resource.on && typeof resource.on === 'string') {
+          label = this.manifest.getCanvasLabel(resource.on);
+          return label ? 'Canvas ' + label : undefined;
+        } else if (resource.on && typeof resource.on === 'object') {
+          label = resource.on.label ? resource.on.label : this.manifest.getCanvasLabel(resource.on['@id']);
+          return label ? 'Canvas ' + label : undefined;
+        }
+      } else {
+        return undefined;
       }
-    } else {
-      return undefined;
-    }
-  },
+    },
 
-  getHitResources: function(searchResults, annotationid) {
+    getHitResources: function (searchResults, annotationid) {
     // Get array of results
-    return searchResults.resources.filter(function(resource){
-      return resource['@id'] === annotationid;
-    });
-  },
+      return searchResults.resources.filter(function (resource) {
+        return resource['@id'] === annotationid;
+      });
+    },
 
   /**
    * @param  url - a resource ID
@@ -47204,28 +47303,28 @@ $.SearchWithinResults.prototype = {
    *   coords: coordinates from ID if present
    * }
    */
-  splitBaseUrlAndCoordinates: function(url) {
-    var coordinates;
-    var base = url;
+    splitBaseUrlAndCoordinates: function (url) {
+      var coordinates;
+      var base = url;
 
-    if (typeof url === 'string') {
+      if (typeof url === 'string') {
       // Separate base ID from fragment selector
-      var parts = url.split('#');
+        var parts = url.split('#');
 
-      base = parts[0];
-      if (parts.length === 2) {
-        coordinates = parts[1];
+        base = parts[0];
+        if (parts.length === 2) {
+          coordinates = parts[1];
+        }
       }
-    }
 
-    return {
-      base: base,
-      coords: coordinates
-    };
-  },
+      return {
+        base: base,
+        coords: coordinates
+      };
+    },
 
-  bindEvents: function() {
-    var _this = this;
+    bindEvents: function () {
+      var _this = this;
 
     // jQuery.subscribe(('currentCanvasIDUpdated.' + _this.windowId), function(event, canvasID) {
     //     //if (!_this.structures) { return; }
@@ -47234,82 +47333,82 @@ $.SearchWithinResults.prototype = {
     //
     //   });
 
-    //TODO
-    //This function works to move the user to the specified canvas
-    //but if there are associated coordinates, it does not yet know how to highlight
-    //those coordinates.
+    // TODO
+    // This function works to move the user to the specified canvas
+    // but if there are associated coordinates, it does not yet know how to highlight
+    // those coordinates.
 
-    //thie miniAnnotatList attempted to do this, but is no longer working
-    //it needs to be replaced by a new strategy.
+    // thie miniAnnotatList attempted to do this, but is no longer working
+    // it needs to be replaced by a new strategy.
 
-    this.element.find('.js-show-canvas').on("click", function(event) {
-      event.stopPropagation();
+      this.element.find('.js-show-canvas').on('click', function (event) {
+        event.stopPropagation();
 
-      var canvasid = jQuery(this).attr('data-canvasid'),
+        var canvasid = jQuery(this).attr('data-canvasid'),
           coordinates = jQuery(this).attr('data-coordinates'),
           xywh = coordinates && coordinates.split('=')[1].split(',').map(Number),
-          bounds = xywh && {x: xywh[0], y: xywh[1], width: xywh[2], height: xywh[3]};
-      jQuery(".result-wrapper,.result-wrapper *").css("background-color", "");
-      jQuery(this).parent().css("background-color", "lightyellow");
-      if (jQuery(this).is("a")) {
-        jQuery(this).parent().next().css("background-color", "lightyellow");
-      }
-      //if there was more than one annotation
-      //(for example if a word crossed a line and needed two coordinates sets)
-      //the miniAnnotationList should have multiple objects
-      miniAnnotationList  = [{
-        "@id": "test",
-        "@type": "oa:Annotation",
-        "motivation": "sc:painting",
-        "resource": {
-          "@type": "cnt:ContentAsText",
-          "chars": _this.query
-        },
-        "on": canvasid + (coordinates ? "#" + coordinates : '')
+          bounds = xywh && { x: xywh[0], y: xywh[1], width: xywh[2], height: xywh[3] };
+        jQuery('.result-wrapper,.result-wrapper *').css('background-color', '');
+        jQuery(this).parent().css('background-color', 'lightyellow');
+        if (jQuery(this).is('a')) {
+          jQuery(this).parent().next().css('background-color', 'lightyellow');
+        }
+      // if there was more than one annotation
+      // (for example if a word crossed a line and needed two coordinates sets)
+      // the miniAnnotationList should have multiple objects
+        miniAnnotationList = [{
+          '@id': 'test',
+          '@type': 'oa:Annotation',
+          motivation: 'sc:painting',
+          resource: {
+            '@type': 'cnt:ContentAsText',
+            chars: _this.query
+          },
+          on: canvasid + (coordinates ? '#' + coordinates : '')
         }];
-      //_this.parent.annotationsList = miniAnnotationList;
-      var options = {
-        "canvasID": canvasid,
-        "bounds": bounds
-      };
-      _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, options);
-    });
-  },
+      // _this.parent.annotationsList = miniAnnotationList;
+        var options = {
+          canvasID: canvasid,
+          bounds: bounds
+        };
+        _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, options);
+      });
+    },
 
-  registerHandlebars: function() {
-    $.Handlebars.registerPartial('resultsList', [
-      '{{#each this}}',
+    registerHandlebars: function () {
+      $.Handlebars.registerPartial('resultsList', [
+        '{{#each this}}',
         '<div class="result-wrapper">',
-          '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-            '{{canvaslabel}}',
-          '</a>',
-          '{{#if annotations}}',
-            '<div>',
-              '<em>Annotations</em>: ',
-              '{{#each annotations}}',
-                '<a class="search-result search-annotation js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-                  '<i class="fa fa-fw" aria-hidden="true"></i>',
-                '</a>',
-              '{{/each}}',
-            '</div>',
-          '{{/if}}',
-          '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-            '{{#if hit.before}}',
-              '{{hit.before}} ',
-            '{{/if}}',
-            '{{#if hit.match}}',
-              '<span class="highlight">{{hit.match}}</span>',
-            '{{else}}',
-              '{{{resulttext}}}',   // If this text must NOT be escaped, use:   '{{resulttext}}'
-            '{{/if}}',
-            '{{#if hit.after}}',
-              '{{ hit.after}}',
-            '{{/if}}',
-          '</div>',
+        '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+        '{{canvaslabel}}',
+        '</a>',
+        '{{#if annotations}}',
+        '<div>',
+        '<em>Annotations</em>: ',
+        '{{#each annotations}}',
+        '<a class="search-result search-annotation js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+        '<i class="fa fa-fw" aria-hidden="true"></i>',
+        '</a>',
+        '{{/each}}',
         '</div>',
-      '{{/each}}',
-    ].join(''));
-  },
+        '{{/if}}',
+        '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+        '{{#if hit.before}}',
+        '{{hit.before}} ',
+        '{{/if}}',
+        '{{#if hit.match}}',
+        '<span class="highlight">{{hit.match}}</span>',
+        '{{else}}',
+        '{{{resulttext}}}',   // If this text must NOT be escaped, use:   '{{resulttext}}'
+        '{{/if}}',
+        '{{#if hit.after}}',
+        '{{ hit.after}}',
+        '{{/if}}',
+        '</div>',
+        '</div>',
+        '{{/each}}'
+      ].join(''));
+    },
 
   /**
    * Handlebars template. Accepts data and formats appropriately. To use,
@@ -47323,77 +47422,75 @@ $.SearchWithinResults.prototype = {
    *    var templateData = { template data goes here }
    *    var htmlString = template(templateData);
    */
-  template: $.Handlebars.compile([
-    '<div>',
+    template: $.Handlebars.compile([
+      '<div>',
       '<div class="search-results-messages"></div>',
       '<div class="search-results-count"></div>',
       '<div class="search-results-pager"></div>',
       '<div class="search-results-container">',
-        '{{> resultsList }}',
+      '{{> resultsList }}',
       '</div>',
-    '</div>'
-  ].join(""))};
-
+      '</div>'
+    ].join('')) };
 }(Mirador));
 
-(function($) {
-
-  $.SidePanel= function(options) {
+(function ($) {
+  $.SidePanel = function (options) {
     jQuery.extend(true, this, {
-      element:           null,
-      appendTo:          null,
-      manifest:          null,
-      panelState:        {},
-      tocTabAvailable:   null,
+      element: null,
+      appendTo: null,
+      manifest: null,
+      panelState: {},
+      tocTabAvailable: null,
       annotationsTabAvailable: false,
       layersTabAvailable: false,
       searchTabAvailable: null,
-      hasStructures:     false,
-      state:             null,
-      eventEmitter:      null
+      hasStructures: false,
+      state: null,
+      eventEmitter: null
     }, options);
 
     this.init();
   };
 
   $.SidePanel.prototype = {
-    init: function() {
+    init: function () {
       var _this = this;
 
       this.updateState({
-        tabs : [
+        tabs: [
           {
-            name : 'toc',
-            options : {
+            name: 'toc',
+            options: {
               available: _this.tocTabAvailable,
-              id:'tocTab',
+              id: 'tocTab',
               label: i18next.t('tabTitleIndex')
             }
           },
           {
-           name : 'annotations',
-           options : {
-           available: _this.annotationsTabAvailable,
-           id:'annotationsTab',
-           label:'Anno.'
-           }
+            name: 'annotations',
+            options: {
+              available: _this.annotationsTabAvailable,
+              id: 'annotationsTab',
+              label: 'Anno.'
+            }
           },
           {
-            name : 'search',
-            options : {
+            name: 'search',
+            options: {
               available: _this.searchTabAvailable,
               id: 'searchTab',
               label: i18next.t('tabTitleSearch')
             }
           },
           {
-            name : 'layers',
-            options : {
+            name: 'layers',
+            options: {
               available: _this.layersTabAvailable,
-              id:'layersTab',
+              id: 'layersTab',
               label: i18next.t('tabTitleLayers')
             }
-          },
+          }
         ],
         width: 280,
         open: true
@@ -47405,14 +47502,14 @@ $.SearchWithinResults.prototype = {
       this.loadSidePanelComponents();
     },
 
-    loadSidePanelComponents: function() {
+    loadSidePanelComponents: function () {
       var _this = this;
 
       new $.Tabs({
         windowId: this.windowId,
         appendTo: this.appendTo,
-        tabs : this.panelState.tabs,
-        hasStructures : this.hasStructures,
+        tabs: this.panelState.tabs,
+        hasStructures: this.hasStructures,
         eventEmitter: this.eventEmitter
       });
 
@@ -47456,12 +47553,11 @@ $.SearchWithinResults.prototype = {
           eventEmitter: _this.eventEmitter
         });
       }
-
     },
 
-    update: function(name, availability) {
+    update: function (name, availability) {
       var updatedState = this.panelState;
-      jQuery.each(updatedState.tabs, function(index, value) {
+      jQuery.each(updatedState.tabs, function (index, value) {
         if (value.name === name) {
           value.options.available = availability;
         }
@@ -47469,7 +47565,7 @@ $.SearchWithinResults.prototype = {
       this.updateState(updatedState);
     },
 
-    updateState: function(newState, initial) {
+    updateState: function (newState, initial) {
       var _this = this;
       if (!arguments.length) return this.panelState;
       jQuery.extend(true, this.panelState, newState);
@@ -47478,21 +47574,21 @@ $.SearchWithinResults.prototype = {
         _this.eventEmitter.publish('sidePanelStateUpdated.' + this.windowId, this.panelState);
       }
 
-      /*var enableSidePanel = false;
+      /* var enableSidePanel = false;
        jQuery.each(this.panelState.tabs, function(index, value) {
        if (value.options.available) {
        enableSidePanel = true;
        }
        });
 
-       this.toggle(enableSidePanel);*/
+       this.toggle(enableSidePanel); */
 
       return this.panelState;
     },
 
-    panelToggled: function() {
+    panelToggled: function () {
       var currentState = this.updateState(),
-          open = !currentState.open;
+        open = !currentState.open;
 
       currentState.open = open;
       this.updateState(currentState);
@@ -47506,20 +47602,20 @@ $.SearchWithinResults.prototype = {
     //     };
     // },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
-      _this.eventEmitter.subscribe('sidePanelStateUpdated.' + this.windowId, function(_, data) {
+      _this.eventEmitter.subscribe('sidePanelStateUpdated.' + this.windowId, function (_, data) {
         _this.render(data);
       });
 
-      _this.eventEmitter.subscribe('sidePanelResized', function() {
+      _this.eventEmitter.subscribe('sidePanelResized', function () {
       });
 
-      _this.eventEmitter.subscribe('sidePanelToggled.' + this.windowId, function() {
+      _this.eventEmitter.subscribe('sidePanelToggled.' + this.windowId, function () {
         _this.panelToggled();
       });
 
-      _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function(event) {
+      _this.eventEmitter.subscribe('annotationListLoaded.' + _this.windowId, function (event) {
         var windowObject = _this.state.getWindowObjectById(_this.windowId);
         if (windowObject.annotationsAvailable[windowObject.viewType]) {
           if (_this.state.getWindowAnnotationsList(_this.windowId).length > 0) {
@@ -47528,18 +47624,16 @@ $.SearchWithinResults.prototype = {
         }
       });
 
-      _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function(event, newCanvasId) {
+      _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function (event, newCanvasId) {
         _this.canvasID = newCanvasId;
       });
-
     },
 
-    render: function(renderingData) {
+    render: function (renderingData) {
       var _this = this;
       if (!this.element) {
         this.element = this.appendTo;
         jQuery(_this.template(renderingData)).appendTo(_this.appendTo);
-        return;
       }
     },
 
@@ -47554,16 +47648,15 @@ $.SearchWithinResults.prototype = {
       var _this = this;
       if (!enableSidePanel) {
         jQuery(this.appendTo).hide();
-        _this.eventEmitter.publish('ADD_CLASS.'+this.windowId, 'focus-max-width');
-        _this.eventEmitter.publish('HIDE_ICON_TOC.'+this.windowId);
+        _this.eventEmitter.publish('ADD_CLASS.' + this.windowId, 'focus-max-width');
+        _this.eventEmitter.publish('HIDE_ICON_TOC.' + this.windowId);
       } else {
-        jQuery(this.appendTo).show({effect: "fade", duration: 300, easing: "easeInCubic"});
-        _this.eventEmitter.publish('REMOVE_CLASS.'+this.windowId, 'focus-max-width');
-        _this.eventEmitter.publish('SHOW_ICON_TOC.'+this.windowId);
+        jQuery(this.appendTo).show({ effect: 'fade', duration: 300, easing: 'easeInCubic' });
+        _this.eventEmitter.publish('REMOVE_CLASS.' + this.windowId, 'focus-max-width');
+        _this.eventEmitter.publish('SHOW_ICON_TOC.' + this.windowId);
       }
     }
   };
-
 }(Mirador));
 
 (function ($) {
@@ -47574,34 +47667,33 @@ $.SearchWithinResults.prototype = {
   };
 }(Mirador));
 
-(function($) {
-
-  $.Tabs = function(options) {
+(function ($) {
+  $.Tabs = function (options) {
     jQuery.extend(true, this, {
-      element:           null,
-      appendTo:          null,
-      windowId:          null,
-      tabState:          {},
-      tabs:              [],
-      eventEmitter:      null
+      element: null,
+      appendTo: null,
+      windowId: null,
+      tabState: {},
+      tabs: [],
+      eventEmitter: null
     }, options);
 
     this.init();
   };
 
   $.Tabs.prototype = {
-    init: function() {
+    init: function () {
       var _this = this;
 
       this.state({
-        tabs : this.tabs,
+        tabs: this.tabs,
         selectedTabIndex: 0
       }, true);
       this.listenForActions();
       this.render(this.state());
       this.bindEvents();
     },
-    state: function(state, initial) {
+    state: function (state, initial) {
       var _this = this;
       if (!arguments.length) return this.tabState;
       jQuery.extend(true, this.tabState, state);
@@ -47612,58 +47704,58 @@ $.SearchWithinResults.prototype = {
 
       return this.tabState;
     },
-    tabSelected: function(index) {
+    tabSelected: function (index) {
       var state = this.state();
       state.selectedTabIndex = index;
       this.state(state);
     },
-    getTemplateData: function() {
+    getTemplateData: function () {
       return {
         annotationsTab: this.state().annotationsTab,
         tocTab: this.state().tocTab,
         searchTab: this.state().searchTab
       };
     },
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
 
-      _this.eventEmitter.subscribe('tabStateUpdated.' + this.windowId, function(_, data) {
+      _this.eventEmitter.subscribe('tabStateUpdated.' + this.windowId, function (_, data) {
         _this.render(data);
       });
 
-      _this.eventEmitter.subscribe('tabSelected.' + this.windowId, function(_, data) {
+      _this.eventEmitter.subscribe('tabSelected.' + this.windowId, function (_, data) {
         _this.tabSelected(data);
       });
 
-      _this.eventEmitter.subscribe('tabFocused.', function() {
+      _this.eventEmitter.subscribe('tabFocused.', function () {
       });
     },
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
-      this.element.find('.tab').on('click', function(event) {
-        _this.eventEmitter.publish('tabSelected.' + _this.windowId, jQuery( this ).index());
+      this.element.find('.tab').on('click', function (event) {
+        _this.eventEmitter.publish('tabSelected.' + _this.windowId, jQuery(this).index());
       });
     },
-    render: function(renderingData) {
+    render: function (renderingData) {
       var _this = this;
 
       if (!this.element) {
         var displayLabels = false;
-        var tabs = jQuery.grep(renderingData.tabs, function(value, index) {
+        var tabs = jQuery.grep(renderingData.tabs, function (value, index) {
           return value.options.available;
         });
         renderingData.tabs = tabs;
-        if(renderingData.tabs.length === 1){
+        if (renderingData.tabs.length === 1) {
           // TODO: temporary logic to minimize side panel if only tab is toc and toc is empty
           if (renderingData.tabs[0].name === 'toc' && !_this.hasStructures) {
-            _this.eventEmitter.publish("sidePanelVisibilityByTab." + _this.windowId, false);
+            _this.eventEmitter.publish('sidePanelVisibilityByTab.' + _this.windowId, false);
           }
 
           // don't show button if only one tab
           renderingData.tabs = [];
         }
-        //TODO: add text if there is one label or no content within this tab
+        // TODO: add text if there is one label or no content within this tab
         this.element = jQuery(_this.template(renderingData)).prependTo(_this.appendTo);
         return;
       }
@@ -47671,7 +47763,6 @@ $.SearchWithinResults.prototype = {
       this.element.find('.tab').removeClass('selected');
       var tabClass = '.' + renderingData.tabs[renderingData.selectedTabIndex].options.id;
       this.element.find(tabClass).addClass('selected');
-
     },
     template: $.Handlebars.compile([
       '<ul class="tabGroup">',
@@ -47680,33 +47771,30 @@ $.SearchWithinResults.prototype = {
       '{{this.options.label}}',
       '</li>',
       '{{/each}}',
-      '</ul>',
+      '</ul>'
     ].join('')),
     toggle: function () {}
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.ThumbnailsView = function(options) {
-
+(function ($) {
+  $.ThumbnailsView = function (options) {
     jQuery.extend(this, {
-      currentImgIndex:      0,
-      canvasID:              null,
-      focusImages:          [],
-      manifest:             null,
-      element:              null,
-      imagesList:           [],
-      imagesListLtr:           [],
-      vDirectionStatus:           '',
-      appendTo:             null,
-      thumbInfo:            {thumbsHeight: 150, listingCssCls: 'listing-thumbs', thumbnailCls: 'thumbnail-view'},
-      defaultThumbHeight:   150,
-      windowId:             null,
-      panel:                false,
-      lazyLoadingFactor:    1.5,  //should be >= 1
-      eventEmitter:         null
+      currentImgIndex: 0,
+      canvasID: null,
+      focusImages: [],
+      manifest: null,
+      element: null,
+      imagesList: [],
+      imagesListLtr: [],
+      vDirectionStatus: '',
+      appendTo: null,
+      thumbInfo: { thumbsHeight: 150, listingCssCls: 'listing-thumbs', thumbnailCls: 'thumbnail-view' },
+      defaultThumbHeight: 150,
+      windowId: null,
+      panel: false,
+      lazyLoadingFactor: 1.5,  // should be >= 1
+      eventEmitter: null
     }, options);
 
     this.init();
@@ -47714,19 +47802,19 @@ $.SearchWithinResults.prototype = {
 
   $.ThumbnailsView.prototype = {
 
-    init: function() {
+    init: function () {
       if (this.canvasID !== null) {
         this.currentImgIndex = $.getImageIndexById(this.imagesList, this.canvasID);
       }
-      if(this.vDirectionStatus == 'rtl'){
-        this.imagesList =  this.imagesListLtr.concat();
+      if (this.vDirectionStatus == 'rtl') {
+        this.imagesList = this.imagesListLtr.concat();
       }
       this.loadContent();
-      if(this.vDirectionStatus == 'rtl'){
+      if (this.vDirectionStatus == 'rtl') {
         var firstCanvasId = this.imagesList[0]['@id'];
-        var firstCanvasThumbSelector = 'img.thumbnail-image[data-image-id="'+firstCanvasId+'"]';
+        var firstCanvasThumbSelector = 'img.thumbnail-image[data-image-id="' + firstCanvasId + '"]';
         jQuery(this.appendTo).find('.panel-thumbnail-view').addClass('v-direction-rtl');
-        jQuery(this.appendTo).find('.thumbnail-view').find('li').each(function(){
+        jQuery(this.appendTo).find('.thumbnail-view').find('li').each(function () {
           jQuery(this).addClass('thumbnail-rtl');
         });
       }
@@ -47734,28 +47822,28 @@ $.SearchWithinResults.prototype = {
       this.listenForActions();
     },
 
-    loadContent: function() {
+    loadContent: function () {
       var _this = this,
-      tplData = {
-        defaultHeight:  this.thumbInfo.thumbsHeight,
-        listingCssCls:  this.thumbInfo.listingCssCls,
-        thumbnailCls:   this.thumbInfo.thumbnailCls
-      };
+        tplData = {
+          defaultHeight: this.thumbInfo.thumbsHeight,
+          listingCssCls: this.thumbInfo.listingCssCls,
+          thumbnailCls: this.thumbInfo.thumbnailCls
+        };
 
-      tplData.thumbs = jQuery.map(this.imagesList, function(canvas, index) {
+      tplData.thumbs = jQuery.map(this.imagesList, function (canvas, index) {
         if (canvas.width === 0) {
           return {};
         }
 
-        var aspectRatio = canvas.height/canvas.width,
-        width = (_this.thumbInfo.thumbsHeight/aspectRatio),
-        thumbnailUrl = $.getThumbnailForCanvas(canvas, width);
+        var aspectRatio = canvas.height / canvas.width,
+          width = (_this.thumbInfo.thumbsHeight / aspectRatio),
+          thumbnailUrl = $.getThumbnailForCanvas(canvas, width);
 
         return {
           thumbUrl: thumbnailUrl,
-          title:    $.JsonLd.getTextValue(canvas.label),
-          id:       canvas['@id'],
-          width:    width,
+          title: $.JsonLd.getTextValue(canvas.label),
+          id: canvas['@id'],
+          width: width,
           highlight: _this.currentImgIndex === index ? 'highlight' : ''
         };
       });
@@ -47763,77 +47851,72 @@ $.SearchWithinResults.prototype = {
       this.element = jQuery(_this.template(tplData)).appendTo(this.appendTo);
     },
 
-    updateImage: function(canvasId) {
+    updateImage: function (canvasId) {
       this.currentImgIndex = $.getImageIndexById(this.imagesList, canvasId);
       this.element.find('.highlight').removeClass('highlight');
-      this.element.find("img[data-image-id='"+canvasId+"']").addClass('highlight');
-      this.element.find("img[data-image-id='"+canvasId+"']").parent().addClass('highlight');
+      this.element.find("img[data-image-id='" + canvasId + "']").addClass('highlight');
+      this.element.find("img[data-image-id='" + canvasId + "']").parent().addClass('highlight');
     },
 
-    updateFocusImages: function(focusList) {
+    updateFocusImages: function (focusList) {
       var _this = this;
       this.element.find('.highlight').removeClass('highlight');
-      jQuery.each(focusList, function(index, canvasId) {
-        _this.element.find("img[data-image-id='"+canvasId+"']").addClass('highlight');
-        _this.element.find("img[data-image-id='"+canvasId+"']").parent().addClass('highlight');
+      jQuery.each(focusList, function (index, canvasId) {
+        _this.element.find("img[data-image-id='" + canvasId + "']").addClass('highlight');
+        _this.element.find("img[data-image-id='" + canvasId + "']").parent().addClass('highlight');
       });
     },
 
-    currentImageChanged: function() {
+    currentImageChanged: function () {
       var _this = this,
-      target = _this.element.find('.highlight'),
-      scrollPosition,
-      windowObject = this.state.getWindowObjectById(this.windowId);
+        target = _this.element.find('.highlight'),
+        scrollPosition,
+        windowObject = this.state.getWindowObjectById(this.windowId);
 
       if (target.position()) {
         if (windowObject && windowObject.viewType === 'BookView') {
-          scrollPosition = _this.element.scrollLeft() + (target.position().left + (target.next().width() + target.outerWidth())/2) - _this.element.width()/2;
+          scrollPosition = _this.element.scrollLeft() + (target.position().left + (target.next().width() + target.outerWidth()) / 2) - _this.element.width() / 2;
         } else {
-          scrollPosition = _this.element.scrollLeft() + (target.position().left + target.width()/2) - _this.element.width()/2;
+          scrollPosition = _this.element.scrollLeft() + (target.position().left + target.width() / 2) - _this.element.width() / 2;
         }
       }
       _this.element.scrollTo(scrollPosition, 900);
     },
 
-    listenForActions: function() {
+    listenForActions: function () {
       var _this = this;
-      _this.eventEmitter.subscribe(('currentCanvasIDUpdated.' + _this.windowId), function(event) {
+      _this.eventEmitter.subscribe(('currentCanvasIDUpdated.' + _this.windowId), function (event) {
         _this.currentImageChanged();
       });
 
-      _this.eventEmitter.subscribe('windowResize', $.debounce(function(){
+      _this.eventEmitter.subscribe('windowResize', $.debounce(function () {
         _this.loadImages();
       }, 100));
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
-      _this.element.find('img').on('load', function() {
-        jQuery(this).hide().fadeIn(750,function(){
+      _this.element.find('img').on('load', function () {
+        jQuery(this).hide().fadeIn(750, function () {
           // Under firefox $.show() used under display:none iframe does not change the display.
           // This is workaround for https://github.com/IIIF/mirador/issues/929
           jQuery(this).css('display', 'block');
-          // grabs the url onload to display on the page
-        var canvasID = window.location.href;
-        document.getElementById("myLink").innerHTML=canvasID;
         });
       });
 
-      jQuery(_this.element).scroll(function() {
+      jQuery(_this.element).scroll(function () {
         _this.loadImages();
       });
 
-      //add any other events that would trigger thumbnail display (resize, etc)
+      // add any other events that would trigger thumbnail display (resize, etc)
 
-      _this.element.find('.thumbnail-image').on('click', function() {
+      _this.element.find('.thumbnail-image').on('click', function () {
         var canvasID = jQuery(this).attr('data-image-id');
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
-        // grabs the changed url when you click a thumbnail and updates the myLink variable to change the page url
-        document.getElementById("myLink").innerHTML=canvasID;
       });
     },
 
-    toggle: function(stateValue) {
+    toggle: function (stateValue) {
       if (stateValue) {
         this.show();
       } else {
@@ -47841,35 +47924,35 @@ $.SearchWithinResults.prototype = {
       }
     },
 
-    loadImages: function() {
+    loadImages: function () {
       var _this = this;
-      jQuery.each(_this.element.find("img"), function(key, value) {
-        if ($.isOnScreen(value, _this.lazyLoadingFactor) && !jQuery(value).attr("src")) {
-          var url = jQuery(value).attr("data");
+      jQuery.each(_this.element.find('img'), function (key, value) {
+        if ($.isOnScreen(value, _this.lazyLoadingFactor) && !jQuery(value).attr('src')) {
+          var url = jQuery(value).attr('data');
           _this.loadImage(value, url);
         }
       });
     },
 
-    loadImage: function(imageElement, url) {
+    loadImage: function (imageElement, url) {
       var _this = this,
-      imagePromise = $.createImagePromise(url);
+        imagePromise = $.createImagePromise(url);
 
-      imagePromise.done(function(image) {
+      imagePromise.done(function (image) {
         jQuery(imageElement).attr('src', image);
       });
     },
 
-    reloadImages: function(newThumbHeight, triggerShow) {
+    reloadImages: function (newThumbHeight, triggerShow) {
       var _this = this;
       this.thumbInfo.thumbsHeight = newThumbHeight;
 
-      jQuery.each(this.imagesList, function(index, image) {
-        var aspectRatio = image.height/image.width,
-        width = (_this.thumbInfo.thumbsHeight/aspectRatio),
-        newThumbURL = $.getThumbnailForCanvas(image, width),
-        id = image['@id'];
-        var imageElement = _this.element.find('img[data-image-id="'+id+'"]');
+      jQuery.each(this.imagesList, function (index, image) {
+        var aspectRatio = image.height / image.width,
+          width = (_this.thumbInfo.thumbsHeight / aspectRatio),
+          newThumbURL = $.getThumbnailForCanvas(image, width),
+          id = image['@id'];
+        var imageElement = _this.element.find('img[data-image-id="' + id + '"]');
         imageElement.attr('data', newThumbURL).attr('height', _this.thumbInfo.thumbsHeight).attr('width', width).attr('src', '');
       });
       if (triggerShow) {
@@ -47878,37 +47961,37 @@ $.SearchWithinResults.prototype = {
     },
 
     template: $.Handlebars.compile([
-                                 '<div class="{{thumbnailCls}}">',
-                                 '<ul class="{{listingCssCls}}" role="list" aria-label="Thumbnails">',
-                                 '{{#thumbs}}',
-                                 '<li class="{{highlight}}" role="listitem" aria-label="Thumbnail">',
-                                 '<img class="thumbnail-image {{highlight}}" title="{{title}}" data-image-id="{{id}}" src="" data="{{thumbUrl}}" height="{{../defaultHeight}}" width="{{width}}">',
-                                 '<div class="thumb-label">{{title}}</div>',
-                                 '</li>',
-                                 '{{/thumbs}}',
-                                 '</ul>',
-                                 '</div>'
+      '<div class="{{thumbnailCls}}">',
+      '<ul class="{{listingCssCls}}" role="list" aria-label="Thumbnails">',
+      '{{#thumbs}}',
+      '<li class="{{highlight}}" role="listitem" aria-label="Thumbnail">',
+      '<img class="thumbnail-image {{highlight}}" title="{{title}}" data-image-id="{{id}}" src="" data="{{thumbUrl}}" height="{{../defaultHeight}}" width="{{width}}">',
+      '<div class="thumb-label">{{title}}</div>',
+      '</li>',
+      '{{/thumbs}}',
+      '</ul>',
+      '</div>'
     ].join('')),
 
-    hide: function() {
+    hide: function () {
       var element = jQuery(this.element);
       if (this.panel) {
         element = element.parent();
       }
-      element.hide({effect: "fade", duration: 300, easing: "easeOutCubic"});
+      element.hide({ effect: 'fade', duration: 300, easing: 'easeOutCubic' });
     },
 
-    show: function() {
+    show: function () {
       var element = jQuery(this.element);
       if (this.panel) {
         element = element.parent();
       }
       var _this = this;
       element.show({
-        effect: "fade",
+        effect: 'fade',
         duration: 300,
-        easing: "easeInCubic",
-        complete: function() {
+        easing: 'easeInCubic',
+        complete: function () {
           // Under firefox $.show() used under display:none iframe does not change the display.
           // This is workaround for https://github.com/IIIF/mirador/issues/929
           jQuery(this).css('display', 'block');
@@ -47917,16 +48000,16 @@ $.SearchWithinResults.prototype = {
       });
     },
 
-    adjustWidth: function(className, hasClass) {
+    adjustWidth: function (className, hasClass) {
       var _this = this;
       if (hasClass) {
-        _this.eventEmitter.publish('REMOVE_CLASS.'+this.windowId, className);
+        _this.eventEmitter.publish('REMOVE_CLASS.' + this.windowId, className);
       } else {
-        _this.eventEmitter.publish('ADD_CLASS.'+this.windowId, className);
+        _this.eventEmitter.publish('ADD_CLASS.' + this.windowId, className);
       }
     },
 
-    adjustHeight: function(className, hasClass) {
+    adjustHeight: function (className, hasClass) {
       if (hasClass) {
         this.element.removeClass(className);
       } else {
@@ -47935,27 +48018,22 @@ $.SearchWithinResults.prototype = {
     }
 
   };
-
-
-
 }(Mirador));
 
-(function($) {
-
-  $.TableOfContents = function(options) {
-
+(function ($) {
+  $.TableOfContents = function (options) {
     jQuery.extend(true, this, {
-      element:           null,
-      appendTo:          null,
-      windowId:          null,
-      structures:        [],
-      manifestVersion:   null,
+      element: null,
+      appendTo: null,
+      windowId: null,
+      structures: [],
+      manifestVersion: null,
       previousSelectedElements: [],
       selectedElements: [],
       previousOpenElements: [],
-      openElements:     [],
-      hoveredElement:   [],
-      selectContext:    null,
+      openElements: [],
+      hoveredElement: [],
+      selectContext: null,
       tocData: {},
       active: null,
       eventEmitter: null
@@ -47964,7 +48042,7 @@ $.SearchWithinResults.prototype = {
     this.init();
 
     var self = this;
-    window.render = function() {self.render();};
+    window.render = function () { self.render(); };
   };
 
   $.TableOfContents.prototype = {
@@ -47982,7 +48060,7 @@ $.SearchWithinResults.prototype = {
       this.bindEvents();
     },
 
-    tabStateUpdated: function(data) {
+    tabStateUpdated: function (data) {
       if (data.tabs[data.selectedTabIndex].options.id === 'tocTab') {
         this.element.show();
       } else {
@@ -47990,21 +48068,21 @@ $.SearchWithinResults.prototype = {
       }
     },
 
-    getTplData: function() {
+    getTplData: function () {
       var _this = this,
-          filteredStructures = _this.structures.map(function(structure) {
-            structure.id = structure['@id'];
-            return structure;
-          }),
-          ranges;
+        filteredStructures = _this.structures.map(function (structure) {
+          structure.id = structure['@id'];
+          return structure;
+        }),
+        ranges;
 
       switch (_this.manifestVersion) {
-      case '1':
-        ranges = _this.extractV1RangeTrees(_this.structures);
-        break;
-      case '2':
-        ranges = _this.extractV2RangeTrees(_this.structures);
-        break;
+        case '1':
+          ranges = _this.extractV1RangeTrees(_this.structures);
+          break;
+        case '2':
+          ranges = _this.extractV2RangeTrees(_this.structures);
+          break;
         // case '2.1':
         //   _this.extractV21RangeTrees(_this.structures);
       }
@@ -48017,13 +48095,13 @@ $.SearchWithinResults.prototype = {
       return ranges;
     },
 
-    initTocData: function() {
+    initTocData: function () {
       var _this = this,
-          tocData = {};
+        tocData = {};
 
-      _this.structures.forEach(function(structure) {
+      _this.structures.forEach(function (structure) {
         var rangeID = structure['@id'],
-            attrString = '[data-rangeid="' + rangeID +'"]';
+          attrString = '[data-rangeid="' + rangeID + '"]';
 
         tocData[structure['@id']] = {
           element: _this.element.find(attrString).closest('li')
@@ -48033,8 +48111,9 @@ $.SearchWithinResults.prototype = {
       return tocData;
     },
 
-    extractV1RangeTrees: function(rangeList) {
-      var tree, parent;
+    extractV1RangeTrees: function (rangeList) {
+      var tree,
+        parent;
       // Recursively build tree/table of contents data structure
       // Begins with the list of topmost categories
       function unflatten(flatRanges, parent, tree) {
@@ -48042,10 +48121,10 @@ $.SearchWithinResults.prototype = {
         // but use the tree that is being recursively built
         // by the call below.
         tree = typeof tree !== 'undefined' ? tree : [];
-        parent = typeof parent !== 'undefined' ? parent : {'@id': "root", label: "Table of Contents" };
-        var children = jQuery.grep(flatRanges, function(child) { if (!child.within) { child.within = 'root'; } return child.within == parent['@id']; });
-        if ( children.length ) {
-          if ( parent['@id'] === 'root') {
+        parent = typeof parent !== 'undefined' ? parent : { '@id': 'root', label: 'Table of Contents' };
+        var children = jQuery.grep(flatRanges, function (child) { if (!child.within) { child.within = 'root'; } return child.within == parent['@id']; });
+        if (children.length) {
+          if (parent['@id'] === 'root') {
             // If there are children and their parent's
             // id is a root, bind them to the tree object.
             //
@@ -48053,7 +48132,7 @@ $.SearchWithinResults.prototype = {
             // and all non-top-level children are now
             // bound the these base nodes set on the tree
             // object.
-            children.forEach(function(child) {
+            children.forEach(function (child) {
               child.level = 0;
             });
             tree = children;
@@ -48067,15 +48146,15 @@ $.SearchWithinResults.prototype = {
             // the second parameter in the next call,
             // in the next iteration "parent" will be the
             // first child bound here.
-            children.forEach(function(child) {
-              child.level = parent.level+1;
+            children.forEach(function (child) {
+              child.level = parent.level + 1;
             });
             parent.children = children;
           }
           // The function cannot continue to the return
           // statement until this line stops being called,
           // which only happens when "children" is empty.
-          jQuery.each( children, function( index, child ){ unflatten( flatRanges, child ); } );
+          jQuery.each(children, function (index, child) { unflatten(flatRanges, child); });
         }
         return tree;
       }
@@ -48083,8 +48162,9 @@ $.SearchWithinResults.prototype = {
       return unflatten(rangeList);
     },
 
-    extractV2RangeTrees: function(rangeList) {
-      var tree, parent;
+    extractV2RangeTrees: function (rangeList) {
+      var tree,
+        parent;
       // Recursively build tree/table of contents data structure
       // Begins with the list of topmost categories
       function unflatten(flatRanges, parent, tree) {
@@ -48092,13 +48172,13 @@ $.SearchWithinResults.prototype = {
         // but use the tree that is being recursively built
         // by the call below.
         tree = typeof tree !== 'undefined' ? tree : [];
-        parent = typeof parent !== 'undefined' ? parent : {'@id': "root", label: "Table of Contents" };
+        parent = typeof parent !== 'undefined' ? parent : { '@id': 'root', label: 'Table of Contents' };
         var children = [];
         if (parent.ranges) {
-          jQuery.each(parent.ranges, function(index, id) {
-            //make sure id is a string for grepping
+          jQuery.each(parent.ranges, function (index, id) {
+            // make sure id is a string for grepping
             id = typeof id === 'object' ? id['@id'] : id;
-            var child = jQuery.grep(flatRanges, function(range, index) {
+            var child = jQuery.grep(flatRanges, function (range, index) {
               if (range['@id'] === id) {
                 return range;
               }
@@ -48109,10 +48189,10 @@ $.SearchWithinResults.prototype = {
           });
         } else if (parent['@id'] === 'root') {
           // we have created a dummy root node, get the top most range as only child
-          var top = jQuery.grep(flatRanges, function(range, index) {
-            //check if we have a viewingHint
+          var top = jQuery.grep(flatRanges, function (range, index) {
+            // check if we have a viewingHint
             if (range.hasOwnProperty('viewingHint') && range.viewingHint === 'top') {
-              //found the top most range
+              // found the top most range
               return range;
             }
           })[0];
@@ -48122,19 +48202,19 @@ $.SearchWithinResults.prototype = {
           // if we still don't have children, loop through and look for a range with children
           // if we still can't find one, then create a dummy range in which all ranges are its children
           if (children.length === 0) {
-            jQuery.each(flatRanges, function(index, range) {
+            jQuery.each(flatRanges, function (index, range) {
               if (range.ranges) {
                 children.push(range);
                 return false;
               }
             });
             if (children.length === 0) {
-              children.push({"ranges" : flatRanges});
+              children.push({ ranges: flatRanges });
             }
           }
         }
-        if ( children.length ) {
-          if ( parent['@id'] === 'root') {
+        if (children.length) {
+          if (parent['@id'] === 'root') {
             // If there are children and their parent's
             // id is a root, bind them to the tree object.
             //
@@ -48142,7 +48222,7 @@ $.SearchWithinResults.prototype = {
             // and all non-top-level children are now
             // bound the these base nodes set on the tree
             // object.
-            children.forEach(function(child) {
+            children.forEach(function (child) {
               child.level = 0;
             });
             tree = children;
@@ -48156,15 +48236,15 @@ $.SearchWithinResults.prototype = {
             // the second parameter in the next call,
             // in the next iteration "parent" will be the
             // first child bound here.
-            children.forEach(function(child) {
-              child.level = parent.level+1;
+            children.forEach(function (child) {
+              child.level = parent.level + 1;
             });
             parent.children = children;
           }
           // The function cannot continue to the return
           // statement until this line stops being called,
           // which only happens when "children" is empty.
-          jQuery.each( children, function( index, child ){ unflatten( flatRanges, child ); } );
+          jQuery.each(children, function (index, child) { unflatten(flatRanges, child); });
         }
         return tree;
       }
@@ -48172,54 +48252,53 @@ $.SearchWithinResults.prototype = {
       return unflatten(rangeList);
     },
 
-    render: function() {
-
+    render: function () {
       var _this = this;
-      var toDeselect = _this.previousSelectedElements.map(function(rangeID) {
-        return _this.tocData[rangeID].element;
-      }),
-          toSelect = _this.selectedElements.map(function(rangeID) {
-            return _this.tocData[rangeID].element;
-          }),
-          toOpen = _this.openElements.filter(function(rangeID) {
-            return jQuery.inArray(rangeID, _this.previousOpenElements) === -1;
-          }).map(function(rangeID) {
-            return _this.tocData[rangeID].element;
-          }),
-          toClose = _this.previousOpenElements.filter(function(rangeID) {
-            return jQuery.inArray(rangeID, _this.openElements) === -1;
-          }).map(function(rangeID) {
-            return _this.tocData[rangeID].element;
-          });
+      var toDeselect = _this.previousSelectedElements.map(function (rangeID) {
+          return _this.tocData[rangeID].element;
+        }),
+        toSelect = _this.selectedElements.map(function (rangeID) {
+          return _this.tocData[rangeID].element;
+        }),
+        toOpen = _this.openElements.filter(function (rangeID) {
+          return jQuery.inArray(rangeID, _this.previousOpenElements) === -1;
+        }).map(function (rangeID) {
+          return _this.tocData[rangeID].element;
+        }),
+        toClose = _this.previousOpenElements.filter(function (rangeID) {
+          return jQuery.inArray(rangeID, _this.openElements) === -1;
+        }).map(function (rangeID) {
+          return _this.tocData[rangeID].element;
+        });
 
       if (_this.previousSelectedElements !== _this.selectedElements) {
         // Deselect elements
-        toDeselect.forEach(function(element) {
+        toDeselect.forEach(function (element) {
           element.removeClass('selected');
         });
 
         // Select new elements
-        toSelect.forEach(function(element) {
+        toSelect.forEach(function (element) {
           element.addClass('selected');
         });
 
-        toClose.forEach(function(element) {
+        toClose.forEach(function (element) {
           element.removeClass('open');
           element.find('ul:first').slideFadeToggle();
         });
 
-        toOpen.forEach(function(element) {
+        toOpen.forEach(function (element) {
           // TODO if you open a range below an open range, it scrolls back up to the first open range
           // comment out scrolling for now
-          //element.addClass('open').find('ul:first').slideFadeToggle(250, 'swing', scroll);
+          // element.addClass('open').find('ul:first').slideFadeToggle(250, 'swing', scroll);
           element.addClass('open').find('ul:first').slideFadeToggle();
         });
       } else {
-        toOpen.forEach(function(element) {
+        toOpen.forEach(function (element) {
           element.addClass('open').find('ul:first').slideFadeToggle();
         });
 
-        toClose.forEach(function(element) {
+        toClose.forEach(function (element) {
           element.removeClass('open').find('ul:first').slideFadeToggle();
         });
       }
@@ -48233,7 +48312,7 @@ $.SearchWithinResults.prototype = {
       }
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
 
       // _this.eventEmitter.subscribe('focusChanged', function(_, focusFrame) {
@@ -48242,26 +48321,26 @@ $.SearchWithinResults.prototype = {
       // _this.eventEmitter.subscribe('cursorFrameUpdated', function(_, cursorBounds) {
       // });
 
-      _this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function(_, data) {
+      _this.eventEmitter.subscribe('tabStateUpdated.' + _this.windowId, function (_, data) {
         _this.tabStateUpdated(data);
       });
 
-      _this.eventEmitter.subscribe(('currentCanvasIDUpdated.' + _this.windowId), function(event, canvasID) {
+      _this.eventEmitter.subscribe(('currentCanvasIDUpdated.' + _this.windowId), function (event, canvasID) {
         if (!_this.structures) { return; }
         _this.setSelectedElements($.getRangeIDByCanvasID(_this.structures, canvasID));
         _this.render();
       });
 
-      _this.element.find('.toc-link').on('click', function(event) {
+      _this.element.find('.toc-link').on('click', function (event) {
         event.stopPropagation();
 
         var rangeID = jQuery(this).data().rangeid,
-            canvasID = jQuery.grep(_this.structures, function(item) { return item['@id'] == rangeID; })[0].canvases[0];
+          canvasID = jQuery.grep(_this.structures, function (item) { return item['@id'] == rangeID; })[0].canvases[0];
 
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
       });
 
-      _this.element.find('.toc-caret').on('click', function(event) {
+      _this.element.find('.toc-caret').on('click', function (event) {
         event.stopPropagation();
 
         var rangeID = jQuery(this).parent().data().rangeid;
@@ -48270,25 +48349,24 @@ $.SearchWithinResults.prototype = {
       });
     },
 
-    setActive: function(active) {
+    setActive: function (active) {
       var _this = this;
       _this.active = active;
     },
 
-    setOpenItem: function(rangeID) {
+    setOpenItem: function (rangeID) {
       var _this = this,
-          alreadyOpen = jQuery.inArray(rangeID, _this.openElements) !== -1;
+        alreadyOpen = jQuery.inArray(rangeID, _this.openElements) !== -1;
 
       _this.previousOpenElements = _this.openElements;
-      _this.openElements = (function() {
+      _this.openElements = (function () {
         if (alreadyOpen) {
-          return _this.openElements.filter(function(elementID) {
+          return _this.openElements.filter(function (elementID) {
             return elementID !== rangeID;
           });
         }
-        return _this.openElements.map(function(elementID) {return elementID;}).concat([rangeID]);
-      })();
-
+        return _this.openElements.map(function (elementID) { return elementID; }).concat([rangeID]);
+      }());
     },
 
     // focusCursorFrame: function() {
@@ -48297,7 +48375,7 @@ $.SearchWithinResults.prototype = {
     // hoverItem: function() {
     // },
 
-    setSelectedElements: function(rangeIDs) {
+    setSelectedElements: function (rangeIDs) {
       var _this = this;
 
       _this.previousSelectedElements = _this.selectedElements;
@@ -48306,9 +48384,9 @@ $.SearchWithinResults.prototype = {
       // Ensure that all new selected elements are added to
       // the list of open elements,
       // and all previously selected elements are removed.
-      _this.openElements = _this.openElements.filter(function(openElementID) {
+      _this.openElements = _this.openElements.filter(function (openElementID) {
         return jQuery.inArray(openElementID, _this.previousSelectedElements) === -1;
-      }).concat(rangeIDs).filter(function(openElementID,index,openElements){
+      }).concat(rangeIDs).filter(function (openElementID, index, openElements) {
         // this filters out any duplicates, which would cause a bug.
         return index === openElements.indexOf(openElementID);
       });
@@ -48318,11 +48396,10 @@ $.SearchWithinResults.prototype = {
       '<ul class="toc">',
       '<li class="leaf-item open">',
       '<h2><span>{{t "noIndex"}}</span></h2>',
-      '</ul>',
+      '</ul>'
     ].join('')),
 
-    template: function(tplData) {
-
+    template: function (tplData) {
       var template = $.Handlebars.compile([
         '<ul class="toc">',
         '{{#nestedRangeLevel ranges}}',
@@ -48340,44 +48417,43 @@ $.SearchWithinResults.prototype = {
 
       var previousTemplate;
 
-      $.Handlebars.registerHelper('nestedRangeLevel', function(children, options) {
+      $.Handlebars.registerHelper('nestedRangeLevel', function (children, options) {
         var out = '';
 
         if (options.fn !== undefined) {
           previousTemplate = options.fn;
         }
 
-        children.forEach(function(child) {
+        children.forEach(function (child) {
           child.label = $.JsonLd.getTextValue(child.label);
-          out = out + previousTemplate(child);
+          out += previousTemplate(child);
         });
 
         return out;
       });
 
-      $.Handlebars.registerHelper('tocLevel', function(id, label, level, children) {
+      $.Handlebars.registerHelper('tocLevel', function (id, label, level, children) {
         var caret = '<i class="fa fa-caret-right toc-caret"></i>',
-            cert = '<i class="fa fa-certificate star"></i>';
-        return '<h' + (level+1) + '><a class="toc-link" data-rangeID="' + id + '">' + caret + cert + '<span>' + label + '</span></a></h' + (level+1) + '>';
+          cert = '<i class="fa fa-certificate star"></i>';
+        return '<h' + (level + 1) + '><a class="toc-link" data-rangeID="' + id + '">' + caret + cert + '<span>' + label + '</span></a></h' + (level + 1) + '>';
       });
 
       return template(tplData);
     },
 
-    hide: function() {
+    hide: function () {
       var _this = this;
       jQuery(this.appendTo).hide();
-      _this.eventEmitter.publish('ADD_CLASS.'+this.windowId, 'focus-max-width');
+      _this.eventEmitter.publish('ADD_CLASS.' + this.windowId, 'focus-max-width');
     },
 
-    show: function() {
+    show: function () {
       var _this = this;
-      jQuery(this.appendTo).show({effect: "fade", duration: 300, easing: "easeInCubic"});
-      _this.eventEmitter.publish('REMOVE_CLASS.'+this.windowId, 'focus-max-width');
+      jQuery(this.appendTo).show({ effect: 'fade', duration: 300, easing: 'easeInCubic' });
+      _this.eventEmitter.publish('REMOVE_CLASS.' + this.windowId, 'focus-max-width');
     }
 
   };
-
 }(Mirador));
 
 (function ($) {
@@ -48393,32 +48469,32 @@ $.SearchWithinResults.prototype = {
     confirm: function (message, callback) {
       return this._attachEvents(bootbox.confirm(message, callback));
     },
-    dialog: function(opts){
+    dialog: function (opts) {
       this._attachEvents(bootbox.dialog(opts));
     },
-    _attachEvents:function(el){
+    _attachEvents: function (el) {
       var _this = this;
-      el.init(function(){
+      el.init(function () {
         // set bigger z-index that one used in qtip
         var zIndex = 20000;
 
-        jQuery(el).css('z-index',zIndex);
+        jQuery(el).css('z-index', zIndex);
         // workaround because bootstap does not support external configuration for backdrop parent
-        jQuery('.modal-backdrop').prependTo(_this.container).css('z-index',zIndex);
+        jQuery('.modal-backdrop').prependTo(_this.container).css('z-index', zIndex);
       });
-      jQuery(el).on('hidden.bs.modal',function(){
+      jQuery(el).on('hidden.bs.modal', function () {
         jQuery('.modal-backdrop').remove();
       });
     }
   };
+}(Mirador));
 
-})(Mirador);
-(function($) {
-  $.EventEmitter = function(config) {
+(function ($) {
+  $.EventEmitter = function (config) {
     jQuery.extend(true, this, {
-      'debug': $.EventEmitter.debug, // Log events to console if true
-      'trace': $.EventEmitter.trace,  // Use console.trace for logging if true, console.log if false
-      'debugExclude': $.EventEmitter.excludePatterns // substring patterns for event IDs to exclude
+      debug: $.EventEmitter.debug, // Log events to console if true
+      trace: $.EventEmitter.trace,  // Use console.trace for logging if true, console.log if false
+      debugExclude: $.EventEmitter.excludePatterns // substring patterns for event IDs to exclude
     }, config);
     this.emitterId = $.EventEmitter.nextId();
     if (this.debug) {
@@ -48430,14 +48506,14 @@ $.SearchWithinResults.prototype = {
   };
 
   $.EventEmitter.id = 0;
-  $.EventEmitter.nextId = function() {
+  $.EventEmitter.nextId = function () {
     $.EventEmitter.id++;
     return $.EventEmitter.id;
   };
 
-  /************************
+  /** **********************
    * BEGIN debug settings *
-   ************************/
+   *********************** */
   $.EventEmitter.debug = false;
   $.EventEmitter.trace = false;
 
@@ -48445,20 +48521,20 @@ $.SearchWithinResults.prototype = {
   // e.g. ['updateTooltips', 'ANNO.*UPDATED']
   $.EventEmitter.excludePatterns = [];
 
-  $.EventEmitter.Logger = function(options) {
+  $.EventEmitter.Logger = function (options) {
     this.trace = options.trace;
     this.debugExclude = options.debugExclude;
     this.scaffoldMap = {};
   };
   $.EventEmitter.Logger.prototype = {
-    log: function() {
+    log: function () {
       if (this.trace) {
         console.trace.apply(console, arguments);
       } else {
         console.log.apply(console, arguments);
       }
     },
-    exclude: function(str) {
+    exclude: function (str) {
       var patterns = this.debugExclude;
       for (var i = 0; i < patterns.length; ++i) {
         if (str.match(patterns[i])) {
@@ -48467,27 +48543,27 @@ $.SearchWithinResults.prototype = {
       }
       return false;
     },
-    scaffoldHandler: function(eventId, handler) {
+    scaffoldHandler: function (eventId, handler) {
       var _this = this;
-      var scaffold = function() {
-        _this.log("EventEmitter:handler:", eventId, handler, Array.prototype.slice.call(arguments));
+      var scaffold = function () {
+        _this.log('EventEmitter:handler:', eventId, handler, Array.prototype.slice.call(arguments));
         handler.apply(null, arguments);
       };
       this.scaffoldMap[handler] = scaffold;
       return scaffold;
     },
-    unscaffold: function(handler) {
+    unscaffold: function (handler) {
       var scaffold = this.scaffoldMap[handler];
       delete this.scaffoldMap[handler];
       return scaffold;
     }
   };
-  /**********************
+  /** ********************
    * END debug settings *
-   **********************/
+   ********************* */
 
-  ['subscribe', 'unsubscribe', 'publish'].forEach(function(action) {
-    $.EventEmitter.prototype[action] = function() {
+  ['subscribe', 'unsubscribe', 'publish'].forEach(function (action) {
+    $.EventEmitter.prototype[action] = function () {
       var args = Array.prototype.slice.call(arguments);
       var eventId = args[0];
       var globalEventId = this.emitterId.toString() + '::' + eventId;
@@ -48512,7 +48588,7 @@ $.SearchWithinResults.prototype = {
 
       args[0] = globalEventId;
       if (logging) {
-        this.logger.log("EventEmitter:" + action + ":", args);
+        this.logger.log('EventEmitter:' + action + ':', args);
       }
       jQuery[action].apply(jQuery, args);
 
@@ -48521,86 +48597,80 @@ $.SearchWithinResults.prototype = {
       }
     };
   });
-})(Mirador);
+}(Mirador));
 
 
-(function($) {
-
+(function ($) {
   $.Iiif = {
 
-    getImageUrl: function(image) {
-
+    getImageUrl: function (image) {
       if (!image.images[0].resource.service) {
-        id = image.images[0].resource['default'].service['@id'];
-        id = id.replace(/\/$/, "");
+        id = image.images[0].resource.default.service['@id'];
+        id = id.replace(/\/$/, '');
         return id;
       }
       var id = image.images[0].resource.service['@id'];
-      id = id.replace(/\/$/, "");
+      id = id.replace(/\/$/, '');
 
       return id;
     },
 
-    getVersionFromContext: function(context) {
+    getVersionFromContext: function (context) {
       if (context instanceof Array) {
-        context = context.filter(function(ctx) {
-          return typeof ctx === "string" && ctx.indexOf('http://iiif.io') === 0;
+        context = context.filter(function (ctx) {
+          return typeof ctx === 'string' && ctx.indexOf('http://iiif.io') === 0;
         })[0];
       }
-      if (context == "http://iiif.io/api/image/2/context.json") {
-        return "2.0";
-      } else {
-        return "1.1";
+      if (context == 'http://iiif.io/api/image/2/context.json') {
+        return '2.0';
       }
+      return '1.1';
     },
 
-    getComplianceLevelFromProfile: function(profile) {
+    getComplianceLevelFromProfile: function (profile) {
         // what to return if we can't determine profile? 0 is not a good idea
-        // would be better to have $.Iiif.supports(profile, feature) but that needs a lot more! 
-        var compliance = -1;
-        var complianceString = null;
-        if(profile) {
-            if(typeof(profile) === 'string'){
-                complianceString = profile;    
-            } else if (typeof(profile) === 'object'){
-               complianceString = profile[0];
-            }   
-            switch(complianceString){
-                case "http://iiif.io/api/image/2/level0.json":
-                    compliance = 0;
-                    break;
-                case "http://iiif.io/api/image/2/level1.json":
-                    compliance = 1;
-                    break;
-                case "http://iiif.io/api/image/2/level2.json":
-                    compliance = 2;
-                    break;
-            }
+        // would be better to have $.Iiif.supports(profile, feature) but that needs a lot more!
+      var compliance = -1;
+      var complianceString = null;
+      if (profile) {
+        if (typeof (profile) === 'string') {
+          complianceString = profile;
+        } else if (typeof (profile) === 'object') {
+          complianceString = profile[0];
         }
-        return compliance;
+        switch (complianceString) {
+          case 'http://iiif.io/api/image/2/level0.json':
+            compliance = 0;
+            break;
+          case 'http://iiif.io/api/image/2/level1.json':
+            compliance = 1;
+            break;
+          case 'http://iiif.io/api/image/2/level2.json':
+            compliance = 2;
+            break;
+        }
+      }
+      return compliance;
     },
-    
-    makeUriWithWidth: function(uri, width, version) {
+
+    makeUriWithWidth: function (uri, width, version) {
       uri = uri.replace(/\/$/, '');
       if (version[0] == '1') {
         return uri + '/full/' + width + ',/0/native.jpg';
-      } else {
-        return uri + '/full/' + width + ',/0/default.jpg';
       }
+      return uri + '/full/' + width + ',/0/default.jpg';
     },
 
-    getImageHostUrl: function(json) {
+    getImageHostUrl: function (json) {
       var regex,
-          matches = [];
+        matches = [];
 
       if (!json.hasOwnProperty('image_host')) {
-
         json.image_host = json.tilesUrl || json['@id'] || '';
 
-       if (json.hasOwnProperty('identifier')) {
+        if (json.hasOwnProperty('identifier')) {
           regex = new RegExp('/?' + json.identifier + '/?$', 'i');
           json.image_host = json.image_host.replace(regex, '');
-
         } else {
           regex = new RegExp('(.*)\/(.*)$');
           matches = regex.exec(json.image_host);
@@ -48616,118 +48686,111 @@ $.SearchWithinResults.prototype = {
     }
 
   };
-
 }(Mirador));
 
 
-(function($){
-
+(function ($) {
   var JSONBLOB_API_ENDPOINT = '/api/jsonBlob';
 
   function getAPIUri(host, port, ssl, body) {
+    var proto = 'http';
+    port = port || '80';
 
-	var proto = 'http';
-	port = port ? port : '80';
+    if (ssl) {
+      proto = 'https';
+      port = port || '443';
+    }
 
-	if ( ssl ) {
-		proto = 'https';
-		port = port ? port : '443';
-	}
+    host = host || 'jsonblob.com';
 
-	host = host ? host : 'jsonblob.com';
+    var path = JSONBLOB_API_ENDPOINT;
 
-	var path = JSONBLOB_API_ENDPOINT;
+        // If the body is a string, this is a blob GET operation,
+	// otherwise it's a POST
+    if (typeof body === 'string' || body instanceof String) {
+      path += '/' + body;
+    }
 
-        // If the body is a string, this is a blob GET operation, 
-	// otherwise it's a POST	
-        if ( typeof body === 'string' || body instanceof String ){
-		path += '/' + body;
-	}
-
-	return proto + '://' + host + ':' + port + path;
+    return proto + '://' + host + ':' + port + path;
   }
 
   function initSettings(method, host, port, ssl, requestBody) {
-
-	var ajaxSettings = {
-		type: method,
-		url: getAPIUri(host, port, ssl, requestBody),
-		contentType: 'application/json; charset=UTF-8',
-		accept: 'application/json',
-		dataType: 'json',
-		processData: false
-	};
+    var ajaxSettings = {
+      type: method,
+      url: getAPIUri(host, port, ssl, requestBody),
+      contentType: 'application/json; charset=UTF-8',
+      accept: 'application/json',
+      dataType: 'json',
+      processData: false
+    };
 
 	// POST The data
-        if ( typeof requestBody  !== 'string' && !(requestBody instanceof String) ) {
-		ajaxSettings.data = JSON.stringify(requestBody);
-	}
+    if (typeof requestBody !== 'string' && !(requestBody instanceof String)) {
+      ajaxSettings.data = JSON.stringify(requestBody);
+    }
 
-	return ajaxSettings;
+    return ajaxSettings;
   }
 
   function syncRequest(method, host, port, ssl, requestBody) {
-	var result;
-	var settings = initSettings(method, host, port, ssl, requestBody);
-	settings.async = false;
-	settings.success = function(data, textStatus, request) {
-          result = data;
-        };
-	jQuery.ajax(settings);
-	return result;
+    var result;
+    var settings = initSettings(method, host, port, ssl, requestBody);
+    settings.async = false;
+    settings.success = function (data, textStatus, request) {
+      result = data;
+    };
+    jQuery.ajax(settings);
+    return result;
   }
 
   function asyncRequest(method, host, port, ssl, requestBody, cb) {
-	var settings = initSettings(method, host, port, ssl, requestBody);
-	settings.success = cb;
-	jQuery.ajax(settings);
+    var settings = initSettings(method, host, port, ssl, requestBody);
+    settings.success = cb;
+    jQuery.ajax(settings);
   }
 
-  $.JSONBlobAPI = function(options) {
-	this.options = options;
+  $.JSONBlobAPI = function (options) {
+    this.options = options;
   };
 
 
   $.JSONBlobAPI.prototype = {
-	readSync: function(blobId) {
-		return syncRequest('GET', this.options.host, this.options.port, this.options.ssl, blobId);
-	},
-	save: function(blob) {
-		var deferred = jQuery.Deferred();
-		asyncRequest('POST', this.options.host, this.options.port, this.options.ssl, blob, function(data, textStatus, request) {
-			var blobid = request.getResponseHeader('X-Jsonblob');
-			deferred.resolve(blobid);
-		});
-		return deferred.promise();
-	}
+    readSync: function (blobId) {
+      return syncRequest('GET', this.options.host, this.options.port, this.options.ssl, blobId);
+    },
+    save: function (blob) {
+      var deferred = jQuery.Deferred();
+      asyncRequest('POST', this.options.host, this.options.port, this.options.ssl, blob, function (data, textStatus, request) {
+        var blobid = request.getResponseHeader('X-Jsonblob');
+        deferred.resolve(blobid);
+      });
+      return deferred.promise();
+    }
   };
-
 }(Mirador));
 
 
-(function($) {
+(function ($) {
   /** Get the language to use for displaying the given propertyValue.
    *
    * Uses the algorithm described in
    * http://iiif.io/api/presentation/2.1/#language-of-property-values
    */
   function getDisplayLanguage(languages, items) {
-    var itemLanguages = items.map(function(itm) {
+    var itemLanguages = items.map(function (itm) {
       if (typeof itm === 'string') {
         return null;
-      } else {
-        return itm['@language'];
       }
+      return itm['@language'];
     });
 
     var bestLanguageMatch = null;
-    jQuery.each(languages, function(idx, lang) {
+    jQuery.each(languages, function (idx, lang) {
       if (bestLanguageMatch !== null) {
         return false;
-      } else {
-        if (itemLanguages.indexOf(lang) !== -1) {
-          bestLanguageMatch = lang;
-        }
+      }
+      if (itemLanguages.indexOf(lang) !== -1) {
+        bestLanguageMatch = lang;
       }
     });
 
@@ -48740,7 +48803,7 @@ $.SearchWithinResults.prototype = {
   }
 
   $.JsonLd = {
-    getTextValue: function(propertyValue, language) {
+    getTextValue: function (propertyValue, language) {
       var languages = i18next.languages || ['en'];
       if (typeof language === 'string') {
         languages = [language].concat(languages);
@@ -48750,14 +48813,12 @@ $.SearchWithinResults.prototype = {
 
       if (typeof propertyValue === 'undefined' || propertyValue === null) {
         return '';
-      }
-      else if (typeof propertyValue === 'string') {
+      } else if (typeof propertyValue === 'string') {
         return $.sanitizeHtml(propertyValue);
-      }
-      else if (Array.isArray(propertyValue)) {
+      } else if (Array.isArray(propertyValue)) {
         var displayLanguage = getDisplayLanguage(languages, propertyValue);
         var text = '';
-        jQuery.each(propertyValue, function(idx, item) {
+        jQuery.each(propertyValue, function (idx, item) {
           var textToAdd = '';
           if (typeof item === 'string' && displayLanguage === null) {
             textToAdd = item;
@@ -48770,79 +48831,71 @@ $.SearchWithinResults.prototype = {
           text += textToAdd;
         });
         return $.sanitizeHtml(text);
-      } else {
-        return $.sanitizeHtml(propertyValue['@value']);
       }
+      return $.sanitizeHtml(propertyValue['@value']);
     }
   };
-  
 }(Mirador));
 
 /* Local fake JsonBlob endpoint */
 
 /* global Storage, Mirador */
 
-(function($){
-    function generateUUID() {
-        var d = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = (d + Math.random()*16)%16 | 0;
-            d = Math.floor(d/16);
-            return (c==='x' ? r : (r&0x3|0x8)).toString(16);
-        });
-        return uuid;
-    }
-    
-    $.LocalJSONBlobAPI = function(opts) {
-          this.options = {
-              storage: window.localStorage
-          };
-          jQuery.extend(this.options, opts);
-    };
+(function ($) {
+  function generateUUID() {
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+  }
 
-    $.LocalJSONBlobAPI.prototype = {
-        readSync: function(blobId) {
-            return JSON.parse(this.options.storage.getItem(blobId));
-        },
-        save: function(blob) {
-            var deferred = jQuery.Deferred(),
-                uuid = generateUUID();
-            this.options.storage.setItem("BM-" + uuid, JSON.stringify(blob));
-            deferred.resolve("BM-" + uuid);
-            return deferred.promise();
-        }
+  $.LocalJSONBlobAPI = function (opts) {
+    this.options = {
+      storage: window.localStorage
     };
+    jQuery.extend(this.options, opts);
+  };
+
+  $.LocalJSONBlobAPI.prototype = {
+    readSync: function (blobId) {
+      return JSON.parse(this.options.storage.getItem(blobId));
+    },
+    save: function (blob) {
+      var deferred = jQuery.Deferred(),
+        uuid = generateUUID();
+      this.options.storage.setItem('BM-' + uuid, JSON.stringify(blob));
+      deferred.resolve('BM-' + uuid);
+      return deferred.promise();
+    }
+  };
 }(Mirador));
 
 
-(function($) {
-
-  $.OpenSeadragon = function(options) {
-
+(function ($) {
+  $.OpenSeadragon = function (options) {
     var osd = OpenSeadragon(
 
       jQuery.extend({
         preserveViewport: true,
-        visibilityRatio:  1,
-        minZoomLevel:     0,
+        visibilityRatio: 1,
+        minZoomLevel: 0,
         defaultZoomLevel: 0,
-        blendTime:        0.1,
-        alwaysBlend:      false,
+        blendTime: 0.1,
+        alwaysBlend: false,
         showNavigationControl: false
       }, options)
 
     );
-    
+
     return osd;
-
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.SaveController = function(config) {
-
+(function ($) {
+  $.SaveController = function (config) {
     jQuery.extend(true, this, {
       currentConfig: null,
       originalConfig: null, // Don't know if we really need this.
@@ -48855,7 +48908,7 @@ $.SearchWithinResults.prototype = {
 
     // error check - removes invalid annotation tools
     if (config.availableAnnotationDrawingTools) {
-      config.availableAnnotationDrawingTools = jQuery.grep(config.availableAnnotationDrawingTools, function(element, index) {
+      config.availableAnnotationDrawingTools = jQuery.grep(config.availableAnnotationDrawingTools, function (element, index) {
         return jQuery.inArray(element, $.DEFAULT_SETTINGS.availableAnnotationDrawingTools) >= 0;
       });
     }
@@ -48867,13 +48920,13 @@ $.SearchWithinResults.prototype = {
 
     // if a user used dot notation for nested settings, unpack
     // e.g. windowSettings.canvasControls.annotations.annotationState
-    function index(previousValue,currentValue,currentIndex) {
+    function index(previousValue, currentValue, currentIndex) {
       var newObj = {};
       newObj[currentValue] = previousValue;
       return newObj;
     }
-    jQuery.each(config, function(key, value) {
-      if (typeof key === "string" && key.indexOf('.') !== -1) {
+    jQuery.each(config, function (key, value) {
+      if (typeof key === 'string' && key.indexOf('.') !== -1) {
         var array = key.split('.').reverse();
         var object = array.reduce(index, value);
         delete config[key];
@@ -48890,7 +48943,7 @@ $.SearchWithinResults.prototype = {
         if (object.hasOwnProperty(property)) {
           if (object[property] instanceof Array) {
             object[property] = JSON.stringify(object[property]);
-          } else if (typeof object[property] === "object") {
+          } else if (typeof object[property] === 'object') {
             iterateStringify(object[property]);
           } else {}
         }
@@ -48899,9 +48952,9 @@ $.SearchWithinResults.prototype = {
     function iterateParse(object) {
       for (var property in object) {
         if (object.hasOwnProperty(property)) {
-          if (typeof object[property] === "string" && object[property][0] === '[') {
+          if (typeof object[property] === 'string' && object[property][0] === '[') {
             object[property] = JSON.parse(object[property]);
-          } else if (typeof object[property] === "object") {
+          } else if (typeof object[property] === 'object') {
             iterateParse(object[property]);
           } else {}
         }
@@ -48916,7 +48969,7 @@ $.SearchWithinResults.prototype = {
 
   $.SaveController.prototype = {
 
-    init: function(config) {
+    init: function (config) {
       var _this = this;
 
       this.eventEmitter = config.eventEmitter;
@@ -48935,7 +48988,7 @@ $.SearchWithinResults.prototype = {
       var sessionID = window.location.hash.substring(1); // will return empty string if none exists, causing the or statement below to evaluate to false, generating a new sesssionID.
 
       if (sessionID) {
-        this.sessionID =  sessionID;
+        this.sessionID = sessionID;
       } else {
         this.sessionID = $.genUUID(); // might want a cleaner thing for the url.
       }
@@ -48945,7 +48998,7 @@ $.SearchWithinResults.prototype = {
       } else {
         var paramURL = window.location.search.substring(1);
         if (paramURL) {
-          //get json from JSON storage and set currentConfig to it
+          // get json from JSON storage and set currentConfig to it
           var params = paramURL.split('=');
           var jsonblob = params[1];
           this.currentConfig = this.storageModule.readSync(jsonblob) || config;
@@ -48953,15 +49006,15 @@ $.SearchWithinResults.prototype = {
           this.currentConfig = config;
         }
       }
-      //remove empty hashes from config
-      this.currentConfig.windowObjects = jQuery.map(this.currentConfig.windowObjects, function(value, index) {
+      // remove empty hashes from config
+      this.currentConfig.windowObjects = jQuery.map(this.currentConfig.windowObjects, function (value, index) {
         if (Object.keys(value).length === 0) return null;
         return value;
       });
 
-      //add UUIDs to parts of config that need them
+      // add UUIDs to parts of config that need them
       if (this.currentConfig.windowObjects) {
-        jQuery.each(this.currentConfig.windowObjects, function(index, window) {
+        jQuery.each(this.currentConfig.windowObjects, function (index, window) {
           if (!window.id) {
             window.id = $.genUUID();
           }
@@ -48972,21 +49025,20 @@ $.SearchWithinResults.prototype = {
       // put history stuff here, for a great cross-browser demo, see: http://browserstate.github.io/history.js/demo/
       // http://stackoverflow.com/questions/17801614/popstate-passing-popped-state-to-event-handler
 
-      //also remove ?json bit so it's a clean URL
-      var cleanURL = window.location.href.replace(window.location.search, "");
+      // also remove ?json bit so it's a clean URL
+      var cleanURL = window.location.href.replace(window.location.search, '');
       if (window.location.hash) {
-       history.replaceState(this.currentConfig, "Mirador Session", cleanURL);
+        history.replaceState(this.currentConfig, 'Mirador Session', cleanURL);
       } else {
-       history.replaceState(this.currentConfig, "Mirador Session", cleanURL+"#"+this.sessionID);
+        history.replaceState(this.currentConfig, 'Mirador Session', cleanURL + '#' + this.sessionID);
       }
 
       this.bindEvents();
-
     },
 
-    getWindowObjectById: function(windowId) {
+    getWindowObjectById: function (windowId) {
       var returnObject = null;
-      jQuery.each(this.currentConfig.windowObjects, function(index, window) {
+      jQuery.each(this.currentConfig.windowObjects, function (index, window) {
         if (window.id === windowId) {
           returnObject = window;
           return false;
@@ -48995,33 +49047,31 @@ $.SearchWithinResults.prototype = {
       return returnObject;
     },
 
-    getWindowAnnotationsList: function(windowId) {
+    getWindowAnnotationsList: function (windowId) {
       if (this.windowsAnnotationsLists) {
         return this.windowsAnnotationsLists[windowId];
-      } else {
-        return null;
       }
+      return null;
     },
 
-    getSlots: function() {
+    getSlots: function () {
       return this.slots;
     },
 
-    getWindowElement: function(windowId) {
+    getWindowElement: function (windowId) {
       if (this.windowsElements) {
         return this.windowsElements[windowId];
-      } else {
-        return null;
       }
+      return null;
     },
 
-    getStateProperty: function(prop) {
+    getStateProperty: function (prop) {
       return this.get(prop, 'currentConfig');
     },
 
-    getManifestIndex: function(manifestUri) {
+    getManifestIndex: function (manifestUri) {
       var manifestIndex = -1;
-      jQuery.each(this.currentConfig.data, function(index, dataObj) {
+      jQuery.each(this.currentConfig.data, function (index, dataObj) {
         if (dataObj.manifestUri === manifestUri) {
           manifestIndex = index;
           return false;
@@ -49030,14 +49080,14 @@ $.SearchWithinResults.prototype = {
       return manifestIndex;
     },
 
-    get: function(prop, parent) {
+    get: function (prop, parent) {
       if (parent) {
         return this[parent][prop];
       }
       return this[prop];
     },
 
-    set: function(prop, value, options) {
+    set: function (prop, value, options) {
       var _this = this;
       // when a property of the config is updated,
       // save it to localStore.
@@ -49049,23 +49099,23 @@ $.SearchWithinResults.prototype = {
       if (this.currentConfig.saveSession) {
         this.save();
       }
-      _this.eventEmitter.publish("saveControllerConfigUpdated");
+      _this.eventEmitter.publish('saveControllerConfigUpdated');
     },
 
-    bindEvents: function() {
+    bindEvents: function () {
       var _this = this;
       // listen to existing events and use the
       // available data to update the appropriate
       // field in the stored config.
 
-      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
-        _this.set("manifestPanelVisible", manifestPanelVisible, {parent: "currentConfig"} );
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, manifestPanelVisible) {
+        _this.set('manifestPanelVisible', manifestPanelVisible, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
+      _this.eventEmitter.subscribe('windowUpdated', function (event, options) {
         var windowObjects = _this.currentConfig.windowObjects;
         if (windowObjects && windowObjects.length > 0) {
-          jQuery.each(windowObjects, function(index, window){
+          jQuery.each(windowObjects, function (index, window) {
             if (window.id === options.id) {
               jQuery.extend(windowObjects[index], options);
             }
@@ -49073,13 +49123,13 @@ $.SearchWithinResults.prototype = {
         } else {
           windowObjects = [options];
         }
-        _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+        _this.set('windowObjects', windowObjects, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe("imageBoundsUpdated", function(event, options) {
+      _this.eventEmitter.subscribe('imageBoundsUpdated', function (event, options) {
         var windowObjects = _this.currentConfig.windowObjects;
         if (windowObjects && windowObjects.length > 0) {
-          jQuery.each(windowObjects, function(index, window){
+          jQuery.each(windowObjects, function (index, window) {
             if (window.id === options.id) {
               if (!windowObjects[index].windowOptions) {
                 windowObjects[index].windowOptions = {};
@@ -49088,10 +49138,10 @@ $.SearchWithinResults.prototype = {
             }
           });
         }
-        _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+        _this.set('windowObjects', windowObjects, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe('ANNOTATIONS_LIST_UPDATED', function(event, options) {
+      _this.eventEmitter.subscribe('ANNOTATIONS_LIST_UPDATED', function (event, options) {
         if (!_this.windowsAnnotationsLists) {
           _this.windowsAnnotationsLists = {};
         }
@@ -49099,17 +49149,17 @@ $.SearchWithinResults.prototype = {
         _this.eventEmitter.publish('annotationListLoaded.' + options.windowId);
       });
 
-      _this.eventEmitter.subscribe('WINDOW_ELEMENT_UPDATED', function(event, options) {
+      _this.eventEmitter.subscribe('WINDOW_ELEMENT_UPDATED', function (event, options) {
         if (!_this.windowsElements) {
           _this.windowsElements = {};
         }
         _this.windowsElements[options.windowId] = options.element;
       });
 
-      _this.eventEmitter.subscribe('windowSlotAddressUpdated', function(event, options) {
+      _this.eventEmitter.subscribe('windowSlotAddressUpdated', function (event, options) {
         var windowObjects = _this.currentConfig.windowObjects;
         if (windowObjects && windowObjects.length > 0) {
-          jQuery.each(windowObjects, function(index, window){
+          jQuery.each(windowObjects, function (index, window) {
             if (window.id === options.id) {
               jQuery.extend(windowObjects[index], options);
             }
@@ -49117,75 +49167,75 @@ $.SearchWithinResults.prototype = {
         } else {
           windowObjects = [options];
         }
-        _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+        _this.set('windowObjects', windowObjects, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe('manifestQueued', function(event, manifestObject, repository) {
+      _this.eventEmitter.subscribe('manifestQueued', function (event, manifestObject, repository) {
         var data = _this.currentConfig.data,
-        objectInConfig = false,
-        url = manifestObject.uri;
+          objectInConfig = false,
+          url = manifestObject.uri;
 
-        jQuery.each(data, function(index, manifestObject){
+        jQuery.each(data, function (index, manifestObject) {
           if (manifestObject.manifestUri === url) {
             objectInConfig = true;
           }
         });
         if (!objectInConfig) {
-          data.push({"manifestUri":url, "location":repository});
-          _this.set("data", data, {parent: "currentConfig"});
+          data.push({ manifestUri: url, location: repository });
+          _this.set('data', data, { parent: 'currentConfig' });
         }
         var manifests = _this.currentConfig.manifests;
         manifests[url] = manifestObject;
-        _this.set('manifests', manifests, {parent: 'currentConfig'});
+        _this.set('manifests', manifests, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe("slotsUpdated", function(event, options) {
+      _this.eventEmitter.subscribe('slotsUpdated', function (event, options) {
         _this.slots = options.slots;
       });
 
-      _this.eventEmitter.subscribe("layoutChanged", function(event, layoutDescription) {
+      _this.eventEmitter.subscribe('layoutChanged', function (event, layoutDescription) {
         // string parents to prevent invalid circular representation.
-        var serialisedLayout = JSON.stringify(layoutDescription, function(key, value) {
+        var serialisedLayout = JSON.stringify(layoutDescription, function (key, value) {
           if (key === 'parent') return undefined;
           return value;
         });
-        _this.set('layout', serialisedLayout, {parent: "currentConfig"} );
+        _this.set('layout', serialisedLayout, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe("windowSlotAdded", function(event, options) {
+      _this.eventEmitter.subscribe('windowSlotAdded', function (event, options) {
         var windowObjects = _this.currentConfig.windowObjects,
-        inArray = jQuery.grep(windowObjects, function(windowObj) {
-          return windowObj.id === options.id;
-        });
+          inArray = jQuery.grep(windowObjects, function (windowObj) {
+            return windowObj.id === options.id;
+          });
         if (inArray.length === 0) {
           windowObjects.push({
-            'id' : options.id,
-            'slotAddress': options.slotAddress
+            id: options.id,
+            slotAddress: options.slotAddress
           });
-          _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+          _this.set('windowObjects', windowObjects, { parent: 'currentConfig' });
         }
       });
 
-        _this.eventEmitter.subscribe("windowsRemoved", function(event) {
-          _this.set("windowObjects", [], {parent: "currentConfig"} );
-        });
+      _this.eventEmitter.subscribe('windowsRemoved', function (event) {
+        _this.set('windowObjects', [], { parent: 'currentConfig' });
+      });
 
-      _this.eventEmitter.subscribe("windowRemoved", function(event, windowID) {
-        var windowObjects = jQuery.grep(_this.currentConfig.windowObjects, function(window, index) {
+      _this.eventEmitter.subscribe('windowRemoved', function (event, windowID) {
+        var windowObjects = jQuery.grep(_this.currentConfig.windowObjects, function (window, index) {
           return window.id !== windowID;
         });
-        _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+        _this.set('windowObjects', windowObjects, { parent: 'currentConfig' });
       });
 
 
-      _this.eventEmitter.subscribe('DELETE_FROM_CONFIG', function(event, options) {
-        var windowObjects = jQuery.grep(_this.currentConfig.windowObjects, function(window, index) {
+      _this.eventEmitter.subscribe('DELETE_FROM_CONFIG', function (event, options) {
+        var windowObjects = jQuery.grep(_this.currentConfig.windowObjects, function (window, index) {
           return window.loadedManifest !== options.loadedManifest || window.id;
         });
-        _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+        _this.set('windowObjects', windowObjects, { parent: 'currentConfig' });
       });
 
-      _this.eventEmitter.subscribe('etc...', function(junk) {
+      _this.eventEmitter.subscribe('etc...', function (junk) {
         // handle adding the property in the appropriate place
         // in this.currentConfig by passing to the _this.set(),
         // which "saves" to localstore as a side effect.
@@ -49211,28 +49261,25 @@ $.SearchWithinResults.prototype = {
       // you may need to bind another event here that responds to the
       // user navigating history, for the purpose of popping the
       // history entry back off.
-
     },
 
-    cleanup: function(obj) {
-
+    cleanup: function (obj) {
       /**
        * Setup an array-based implementation of a Set
        * to track the objects we have
        * already cloned - this will generically clean circular refs.
-       **/
+       * */
       var clonedSet = [];
 
       function cloner(obj) {
-
-        if(obj === null || typeof(obj) != 'object') {
+        if (obj === null || typeof (obj) !== 'object') {
           return obj;
         }
 
         if (clonedSet.indexOf(obj) === -1) {
           clonedSet.push(obj);
           var temp = Array.isArray(obj) ? [] : {};
-          for(var key in obj) {
+          for (var key in obj) {
             if (obj.hasOwnProperty(key)) {
               temp[key] = cloner(obj[key]);
             }
@@ -49246,7 +49293,7 @@ $.SearchWithinResults.prototype = {
       return cloner(obj);
     },
 
-    save: function() {
+    save: function () {
       var _this = this;
 
       // the hash must be stringified because
@@ -49257,12 +49304,10 @@ $.SearchWithinResults.prototype = {
     }
 
   };
-
 }(Mirador));
 
-(function($) {
-
-  $.trimString = function(str) {
+(function ($) {
+  $.trimString = function (str) {
     return str.replace(/^\s+|\s+$/g, '');
   };
 
@@ -49270,10 +49315,10 @@ $.SearchWithinResults.prototype = {
      Methods related to manifest data
      -------------------------------------------------------------------------- */
 
-  $.getImageIndexById = function(imagesList, id) {
+  $.getImageIndexById = function (imagesList, id) {
     var imgIndex = 0;
 
-    jQuery.each(imagesList, function(index, img) {
+    jQuery.each(imagesList, function (index, img) {
       if ($.trimString(img['@id']) === $.trimString(id)) {
         imgIndex = index;
       }
@@ -49282,11 +49327,11 @@ $.SearchWithinResults.prototype = {
     return imgIndex;
   };
 
-  $.getThumbnailForCanvas = function(canvas, width) {
-    var version = "1.1",
-    compliance = -1,
-    service,
-    thumbnailUrl;
+  $.getThumbnailForCanvas = function (canvas, width) {
+    var version = '1.1',
+      compliance = -1,
+      service,
+      thumbnailUrl;
 
     // Ensure width is an integer...
     width = parseInt(width, 10);
@@ -49294,22 +49339,22 @@ $.SearchWithinResults.prototype = {
     // Respecting the Model...
     if (canvas.hasOwnProperty('thumbnail')) {
       // use the thumbnail image, prefer via a service
-      if (typeof(canvas.thumbnail) == 'string') {
+      if (typeof (canvas.thumbnail) === 'string') {
         thumbnailUrl = canvas.thumbnail;
       } else if (canvas.thumbnail.hasOwnProperty('service')) {
         service = canvas.thumbnail.service;
-        if(service.hasOwnProperty('profile')) {
-            compliance = $.Iiif.getComplianceLevelFromProfile(service.profile);
+        if (service.hasOwnProperty('profile')) {
+          compliance = $.Iiif.getComplianceLevelFromProfile(service.profile);
         }
-        if(compliance === 0){
+        if (compliance === 0) {
             // don't change existing behaviour unless compliance is explicitly 0
-            thumbnailUrl = canvas.thumbnail['@id'];
+          thumbnailUrl = canvas.thumbnail['@id'];
         } else {
             // Get the IIIF Image API via the @context
-            if (service.hasOwnProperty('@context')) {
-                version = $.Iiif.getVersionFromContext(service['@context']);
-            }
-            thumbnailUrl = $.Iiif.makeUriWithWidth(service['@id'], width, version);
+          if (service.hasOwnProperty('@context')) {
+            version = $.Iiif.getVersionFromContext(service['@context']);
+          }
+          thumbnailUrl = $.Iiif.makeUriWithWidth(service['@id'], width, version);
         }
       } else {
         thumbnailUrl = canvas.thumbnail['@id'];
@@ -49317,7 +49362,7 @@ $.SearchWithinResults.prototype = {
     } else {
       // No thumbnail, use main image
       var resource = canvas.images[0].resource;
-      service = resource['default'] ? resource['default'].service : resource.service;
+      service = resource.default ? resource.default.service : resource.service;
       if (service.hasOwnProperty('@context')) {
         version = $.Iiif.getVersionFromContext(service['@context']);
       }
@@ -49330,16 +49375,16 @@ $.SearchWithinResults.prototype = {
      miscellaneous utilities
      */
 
-  $.getQueryParams = function(url) {
-    var assoc  = {};
-    var decode = function (s) { return decodeURIComponent(s.replace(/\+/g, " ")); };
+  $.getQueryParams = function (url) {
+    var assoc = {};
+    var decode = function (s) { return decodeURIComponent(s.replace(/\+/g, ' ')); };
     var queryString = url.split('?')[1];
-    if (typeof queryString === "undefined") {
+    if (typeof queryString === 'undefined') {
       return {};
     }
     var keyValues = queryString.split('&');
 
-    for(var i in keyValues) {
+    for (var i in keyValues) {
       var key = keyValues[i].split('=');
       if (key.length > 1) {
         assoc[decode(key[0])] = decode(key[1]);
@@ -49349,21 +49394,24 @@ $.SearchWithinResults.prototype = {
     return assoc;
   };
 
-  $.genUUID = function() {
+  $.genUUID = function () {
     var idNum = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16|0, v = c == 'x' ? r : (r&0x3|0x8);
+      var r = Math.random() * 16 | 0,
+        v = c == 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
 
     return idNum;
   };
 
-  jQuery.fn.slideFadeToggle  = function(speed, easing, callback) {
-    return this.animate({opacity: 'toggle', height: 'toggle'}, speed, easing, callback);
+  jQuery.fn.slideFadeToggle = function (speed, easing, callback) {
+    return this.animate({ opacity: 'toggle', height: 'toggle' }, speed, easing, callback);
   };
 
-  $.throttle = function(func, wait, options) {
-    var context, args, result;
+  $.throttle = function (func, wait, options) {
+    var context,
+      args,
+      result;
     var timeout = null;
     var previous = 0;
 
@@ -49371,12 +49419,12 @@ $.SearchWithinResults.prototype = {
       options = {};
     }
 
-    var later = function() {
+    var later = function () {
       previous = options.leading === false ? 0 : new Date();
       timeout = null;
       result = func.apply(context, args);
     };
-    return function() {
+    return function () {
       var now = new Date();
       if (!previous && options.leading === false) previous = now;
       var remaining = wait - (now - previous);
@@ -49394,13 +49442,17 @@ $.SearchWithinResults.prototype = {
     };
   };
 
-  $.debounce = function(func, wait, immediate) {
-    var timeout, args, context, timestamp, result;
-    return function() {
+  $.debounce = function (func, wait, immediate) {
+    var timeout,
+      args,
+      context,
+      timestamp,
+      result;
+    return function () {
       context = this;
       args = arguments;
       timestamp = new Date();
-      var later = function() {
+      var later = function () {
         var last = (new Date()) - timestamp;
         if (last < wait) {
           timeout = setTimeout(later, wait - last);
@@ -49419,15 +49471,15 @@ $.SearchWithinResults.prototype = {
   };
 
   // http://upshots.org/javascript/jquery-test-if-element-is-in-viewport-visible-on-screen
-  $.isOnScreen = function(elem, outsideViewportFactor) {
+  $.isOnScreen = function (elem, outsideViewportFactor) {
     var factor = 1;
     if (outsideViewportFactor) {
       factor = outsideViewportFactor;
     }
     var win = jQuery(window);
     var viewport = {
-      top : (win.scrollTop() * factor),
-      left : (win.scrollLeft() * factor)
+      top: (win.scrollTop() * factor),
+      left: (win.scrollLeft() * factor)
     };
     viewport.bottom = (viewport.top + win.outerHeight()) * factor;
     viewport.right = (viewport.left + win.outerWidth()) * factor;
@@ -49440,21 +49492,21 @@ $.SearchWithinResults.prototype = {
     return (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
   };
 
-  $.getRangeIDByCanvasID = function(structures, canvasID /*, [given parent range] (for multiple ranges, later) */) {
-    var ranges = jQuery.grep(structures, function(range) { return jQuery.inArray(canvasID, range.canvases) > -1; }),
-    rangeIDs = jQuery.map(ranges,  function(range) { return range['@id']; });
+  $.getRangeIDByCanvasID = function (structures, canvasID /* , [given parent range] (for multiple ranges, later) */) {
+    var ranges = jQuery.grep(structures, function (range) { return jQuery.inArray(canvasID, range.canvases) > -1; }),
+      rangeIDs = jQuery.map(ranges, function (range) { return range['@id']; });
 
     return rangeIDs;
   };
 
   $.layoutDescriptionFromGridString = function (gridString) {
-    var columns = parseInt(gridString.substring(gridString.indexOf("x") + 1, gridString.length),10),
-    rowsPerColumn = parseInt(gridString.substring(0, gridString.indexOf("x")),10),
-    layoutDescription = {
-      type:'row'
-    };
+    var columns = parseInt(gridString.substring(gridString.indexOf('x') + 1, gridString.length), 10),
+      rowsPerColumn = parseInt(gridString.substring(0, gridString.indexOf('x')), 10),
+      layoutDescription = {
+        type: 'row'
+      };
 
-    if (gridString === "1x1") return layoutDescription;
+    if (gridString === '1x1') return layoutDescription;
 
     layoutDescription.children = [];
 
@@ -49462,7 +49514,7 @@ $.SearchWithinResults.prototype = {
     // long live the humble for loop.
     // Use a closure to contain the column and row variables.
     for (var i = 0, c = columns; i < c; i++) {
-      var column = { type: 'column'};
+      var column = { type: 'column' };
 
       if (rowsPerColumn > 1) {
         column.children = [];
@@ -49480,19 +49532,19 @@ $.SearchWithinResults.prototype = {
   };
 
   // Configurable Promises
-  $.createImagePromise = function(imageUrl) {
+  $.createImagePromise = function (imageUrl) {
     var img = new Image(),
-    dfd = jQuery.Deferred();
+      dfd = jQuery.Deferred();
 
-    img.onload = function() {
+    img.onload = function () {
       dfd.resolve(img.src);
     };
 
-    img.onerror = function() {
+    img.onerror = function () {
       dfd.reject(img.src);
     };
 
-    dfd.fail(function() {
+    dfd.fail(function () {
       console.log('image failed to load: ' + img.src);
     });
 
@@ -49500,7 +49552,7 @@ $.SearchWithinResults.prototype = {
     return dfd.promise();
   };
 
-  $.enterFullscreen = function(el) {
+  $.enterFullscreen = function (el) {
     if (el.requestFullscreen) {
       el.requestFullscreen();
     } else if (el.mozRequestFullScreen) {
@@ -49512,7 +49564,7 @@ $.SearchWithinResults.prototype = {
     }
   };
 
-  $.exitFullscreen = function() {
+  $.exitFullscreen = function () {
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
@@ -49522,24 +49574,23 @@ $.SearchWithinResults.prototype = {
     }
   };
 
-  $.isFullscreen = function() {
+  $.isFullscreen = function () {
     var fullscreen = $.fullscreenElement();
     return (fullscreen.length > 0);
   };
 
-  $.fullscreenElement = function() {
+  $.fullscreenElement = function () {
     return (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement);
   };
 
-  $.sanitizeHtml = function(dirty) {
+  $.sanitizeHtml = function (dirty) {
     return sanitizeHtml(dirty, {
       allowedTags: ['a', 'b', 'br', 'i', 'img', 'p', 'span', 'strong', 'em', 'ul', 'ol', 'li'],
       allowedAttributes: {
-        'a': ['href', 'target'],
-        'img': ['src', 'alt'],
-        'p': ['dir']
+        a: ['href', 'target'],
+        img: ['src', 'alt'],
+        p: ['dir']
       }
     });
   };
-
 }(Mirador));

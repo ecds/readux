@@ -35,7 +35,7 @@ class Serializer(JSONSerializer):
                 "@context": "https://iiif.io/api/presentation/2/context.json",
                 "@id": "%s/iiif/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.annotation_set.all(), islist=True))
+                "resources": json.loads(serialize('annotation', obj.annotation_set.all().distinct('order'), islist=True))
             }
             return data
 

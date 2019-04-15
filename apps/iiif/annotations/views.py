@@ -24,7 +24,7 @@ class AnnotationsForPage(View):
 
     def get_queryset(self):
         canvas = Canvas.objects.get(pid=self.kwargs['page'])
-        return Annotation.objects.filter(canvas=canvas)
+        return Annotation.objects.filter(canvas=canvas).distinct('order')
     
     def get(self, request, *args, **kwargs):
         return JsonResponse(

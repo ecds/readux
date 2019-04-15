@@ -1,329 +1,150 @@
 [{
-    "model": "annotations.annotation",
-    "pk": "13d3b867-d668-4294-b56a-df3e8860015c",
-    "fields": {
-      "created": "2018-08-27T18:28:57.549Z",
-      "updated": "2018-08-27T21:29:53.327Z",
-      "text": "",
-      "quote": "",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0007",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0007",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "13d3b867-d668-4294-b56a-df3e8860015c",
-        "@type": "oa:Annotation",
-        "annotatedBy": {
-          "name": "Me"
-        },
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "chars": "<p>wfv3v3v3</p>",
-          "format": "text/html",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "selector": {
-            "item": {
-              "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M535.35328,454.26803h340.27623v0h340.27623v212.4209v212.4209h-340.27623h-340.27623v-212.4209z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_f0e03302-d1c0-44e2-8d6f-575c6a304024\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            },
-            "@type": "oa:Choice",
-            "default": {
-              "value": "xywh=535,454,681,425",
-              "@type": "oa:FragmentSelector"
-            }
+  "model": "annotations.annotation",
+  "pk": "f8414e51-1f41-4d00-800c-de07012fe91f",
+  "fields": {
+      "x": 1146,
+      "y": 928,
+      "w": 22,
+      "h": 22,
+      "order": 54,
+      "content": "a",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
           },
-          "@type": "oa:SpecificResource",
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0007",
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          }
-        }],
-        "motivation": [
-          "oa:commenting"
-        ]
-      }
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": "161bbee1-fa11-4464-8e86-a9624b6d5d47",
-    "fields": {
-      "created": "2018-08-27T17:38:26.475Z",
-      "updated": "2018-08-27T17:38:26.475Z",
-      "text": "",
-      "quote": "",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0005",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "8210347e-037b-4ce6-a51c-6254d9c71a1c",
-        "@type": "oa:Annotation",
-        "motivation": [
-          "oa:commenting"
-        ],
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "format": "text/html",
-          "chars": "<p>oh, hello</p>",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "selector": {
-            "default": {
-              "value": "xywh=366,666,451,587",
-              "@type": "oa:FragmentSelector"
-            },
-            "@type": "oa:Choice",
-            "item": {
-              "value": "<svg xmlns=\"http: //www.w3.org/2000/svg\"><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M365.76633,665.87653h225.70612v0h225.70612v293.32602v293.32602h-225.70612h-225.70612v-293.32602z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_9acc5592-ed35-4c41-8c42-edeab0ac2428\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            }
-          },
-          "@type": "oa:SpecificResource",
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          },
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005"
-        }]
-      }
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": "3390c83f-c5fe-4345-862d-c44ed25020f3",
-    "fields": {
-      "created": "2018-08-27T17:39:46.069Z",
-      "updated": "2018-08-27T17:39:46.069Z",
-      "text": "",
-      "quote": "",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0005",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "8210347e-037b-4ce6-a51c-6254d9c71a1d",
-        "@type": "oa:Annotation",
-        "motivation": [
-          "oa:commenting"
-        ],
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "format": "text/html",
-          "chars": "<p>oh, hello</p>",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "selector": {
-            "default": {
-              "value": "xywh=366,666,451,587",
-              "@type": "oa:FragmentSelector"
-            },
-            "@type": "oa:Choice",
-            "item": {
-              "value": "<svg xmlns=\"http: //www.w3.org/2000/svg\"><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M365.76633,665.87653h225.70612v0h225.70612v293.32602v293.32602h-225.70612h-225.70612v-293.32602z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_9acc5592-ed35-4c41-8c42-edeab0ac2428\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            }
-          },
-          "@type": "oa:SpecificResource",
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          },
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005"
-        }]
-      }
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": "74d4d049-71fa-4f0e-a9ec-b796c9a37b11",
-    "fields": {
-      "created": "2018-08-27T18:12:52.158Z",
-      "updated": "2018-08-27T18:12:52.158Z",
-      "text": "",
-      "quote": "",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0005",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "8210347e-037b-4ce6-a51c-6254d9c71a1d",
-        "@type": "oa:Annotation",
-        "motivation": [
-          "oa:commenting"
-        ],
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "chars": "<p>oh, hello</p>",
-          "format": "text/html",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "selector": {
-            "item": {
-              "value": "<svg xmlns=\"http: //www.w3.org/2000/svg\"><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M365.76633,665.87653h225.70612v0h225.70612v293.32602v293.32602h-225.70612h-225.70612v-293.32602z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_9acc5592-ed35-4c41-8c42-edeab0ac2428\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            },
-            "@type": "oa:Choice",
-            "default": {
-              "value": "xywh=366,666,451,587",
-              "@type": "oa:FragmentSelector"
-            }
-          },
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          },
-          "@type": "oa:SpecificResource",
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005"
-        }]
-      }
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": "7a248ab1-0d39-4df4-871f-6d93815c8eba",
-    "fields": {
-      "created": "2018-08-27T17:46:50.270Z",
-      "updated": "2018-08-27T17:46:50.270Z",
-      "text": "",
-      "quote": "",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0005",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "8210347e-037b-4ce6-a51c-6254d9c71a1d",
-        "@type": "oa:Annotation",
-        "motivation": [
-          "oa:commenting"
-        ],
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "chars": "<p>oh, hello</p>",
-          "format": "text/html",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          },
-          "@type": "oa:SpecificResource",
-          "selector": {
-            "item": {
-              "value": "<svg xmlns=\"http: //www.w3.org/2000/svg\"><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M365.76633,665.87653h225.70612v0h225.70612v293.32602v293.32602h-225.70612h-225.70612v-293.32602z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_9acc5592-ed35-4c41-8c42-edeab0ac2428\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            },
-            "@type": "oa:Choice",
-            "default": {
-              "value": "xywh=366,666,451,587",
-              "@type": "oa:FragmentSelector"
-            }
-          },
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005"
-        }]
-      }
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": "87ab1052-9c69-4cad-8788-e58008fcf848",
-    "fields": {
-      "created": "2018-08-23T15:26:46.207Z",
-      "updated": "2018-08-27T14:46:28.328Z",
-      "text": "iif annotation",
-      "quote": "actual",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0005",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "8210347e-037b-4ce6-a51c-6254d9c71a1b",
-        "@type": "oa:Annotation",
-        "motivation": [
-          "oa:commenting"
-        ],
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "format": "text/html",
-          "chars": "<p>oh, hello</p>",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          },
-          "@type": "oa:SpecificResource",
-          "selector": {
-            "item": {
-              "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M365.76633,665.87653h225.70612v0h225.70612v293.32602v293.32602h-225.70612h-225.70612v-293.32602z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_9acc5592-ed35-4c41-8c42-edeab0ac2428\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            },
-            "@type": "oa:Choice",
-            "default": {
-              "value": "xywh=366,666,451,587",
-              "@type": "oa:FragmentSelector"
-            }
-          },
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005"
-        }]
-      }
-    }
-  },
-  {
-    "model": "annotations.annotation",
-    "pk": "f23dc8a4-c59d-423d-bbfd-7b5eedbd32a1",
-    "fields": {
-      "created": "2018-09-27T22:25:42.947Z",
-      "updated": "2018-09-27T22:25:42.947Z",
-      "text": "",
-      "quote": "",
-      "volume_identifier": "MSS_Vat.lat.3225",
-      "page": "p0005",
-      "uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-      "volume_uri": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-      "iiif_annotation": {
-        "@id": "f23dc8a4-c59d-423d-bbfd-7b5eedbd32a1",
-        "@type": "oa:Annotation",
-        "annotatedBy": {
-          "name": "Me"
-        },
-        "@context": "http://iiif.io/api/presentation/2/context.json",
-        "resource": [{
-          "format": "text/html",
-          "chars": "<p>wcl;w;w</p>",
-          "@type": "dctypes:Text"
-        }],
-        "on": [{
-          "selector": {
-            "item": {
-              "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M1137.12218,526.25908h172.08391v0h172.08391v231.11286v231.11286h-172.08391h-172.08391v-231.11286z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_734a54bb-4af4-4c4b-859b-eed835e14c3f\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"1\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-              "@type": "oa:SvgSelector"
-            },
-            "@type": "oa:Choice",
-            "default": {
-              "value": "xywh=1137,526,344,462",
-              "@type": "oa:FragmentSelector"
-            }
-          },
-          "@type": "oa:SpecificResource",
-          "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0005",
-          "within": {
-            "@id": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/manifest.json",
-            "@type": "sc:Manifest"
-          }
-        }],
-        "motivation": [
-          "oa:commenting"
-        ]
-      }
-    }
+          "@id": "f8414e51-1f41-4d00-800c-de07012fe91f"
+      },
+      "svg": "<span id='f8414e51-1f41-4d00-800c-de07012fe91f' style='font-family: monospace; height: 22px; width: 22px; font-size: 13.597033374536464px'>a</span>"
   }
-]
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f8425441-6056-4729-9933-15059643c3b3",
+  "fields": {
+      "x": 692,
+      "y": 1797,
+      "w": 99,
+      "h": 59,
+      "order": 122,
+      "content": "dio",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f8425441-6056-4729-9933-15059643c3b3"
+      },
+      "svg": "<span id='f8425441-6056-4729-9933-15059643c3b3' style='font-family: monospace; height: 59px; width: 99px; font-size: 36.464771322620514px'>dio</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f842fe71-e1da-49c3-865e-f3e62a5179ff",
+  "fields": {
+      "x": 951,
+      "y": 2014,
+      "w": 90,
+      "h": 59,
+      "order": 163,
+      "content": "de'",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f842fe71-e1da-49c3-865e-f3e62a5179ff"
+      },
+      "svg": "<span id='f842fe71-e1da-49c3-865e-f3e62a5179ff' style='font-family: monospace; height: 59px; width: 90px; font-size: 36.464771322620514px'>de'</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f8446c85-5b45-42bb-aa52-e8210f4b0d93",
+  "fields": {
+      "x": 738,
+      "y": 2844,
+      "w": 209,
+      "h": 83,
+      "order": 141,
+      "content": "Quef\u00eca",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f8446c85-5b45-42bb-aa52-e8210f4b0d93"
+      },
+      "svg": "<span id='f8446c85-5b45-42bb-aa52-e8210f4b0d93' style='font-family: monospace; height: 83px; width: 209px; font-size: 51.29789864029666px'>Quef\u00eca</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f844b87b-600a-4bb4-8ea4-4a6f49fe2fce",
+  "fields": {
+      "x": 1033,
+      "y": 1140,
+      "w": 142,
+      "h": 50,
+      "order": 61,
+      "content": "retto",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f844b87b-600a-4bb4-8ea4-4a6f49fe2fce"
+      },
+      "svg": "<span id='f844b87b-600a-4bb4-8ea4-4a6f49fe2fce' style='font-family: monospace; height: 50px; width: 142px; font-size: 30.90234857849196px'>retto</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f846587c-1e1c-44d3-b1ce-20c0f7104dc5",
+  "fields": {
+      "x": 468,
+      "y": 1382,
+      "w": 17,
+      "h": 28,
+      "order": 95,
+      "content": ",",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f846587c-1e1c-44d3-b1ce-20c0f7104dc5"
+      },
+      "svg": "<span id='f846587c-1e1c-44d3-b1ce-20c0f7104dc5' style='font-family: monospace; height: 28px; width: 17px; font-size: 17.305315203955498px'>,</span>"
+  }
+}]

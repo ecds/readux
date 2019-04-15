@@ -3227,10 +3227,10 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   overflow-y: scroll;
   width: 280px;
   padding-right: 10px;
-  position: fixed;
+  position: absolute;
   box-sizing: border-box;
   left: 0;
-  top: 85px;
+  top: 0px;
   bottom: 0;
   list-style-type: none;
   font-size: 75%;

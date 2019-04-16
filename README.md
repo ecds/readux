@@ -73,6 +73,8 @@ python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 
 ### Running the tests
 
+[![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=feature/coverage)](https://coveralls.io/github/ecds/readux?branch=feature/coverage)
+
 Readux uses Django's default test framework, but is configured to use pytest. To run the tests, simply run:
 
 ~~~bash

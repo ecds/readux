@@ -41891,6 +41891,16 @@ return /******/ (function(modules) { // webpackBootstrap
         var el3 = document.getElementById("myMeta3");
         var content3  = document.getElementById("myContent3");
         document.getElementById("myMeta3").content=content3.content + '/page/' + page;
+        var facebookContainer = document.getElementById("facebookpage");
+        var face = document.createElement('a');
+//         var faceText = document.createTextNode('http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + &p[images][0] + content1.content + '/' + page + '/full/600,/0/default.jpg');
+        face.href = "'http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + &p[images][0] + content1.content + '/' + page + '/full/600,/0/default.jpg'";
+        face.title = 'Share with Facebook';
+//         face.appendChild(faceText);
+        facebookContainer.innerHTML='<img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>';
+        facebookContainer.appendChild(face);
+        //purple = 'http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + &p[images][0] + content1.content + '/' + page + '/full/600,/0/default.jpg';
+        //document.getElementByClassName("facebook").getElementsByTagName("a").setAttribute("href", purple);
       }
       this.annotationsList = [];
 

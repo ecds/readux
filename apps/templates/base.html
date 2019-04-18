@@ -28,6 +28,7 @@
     <!-- {% for page in volume.canvas_set.all %}{% if forloop.last %} -->
     <meta property="og:image" id="myMeta" content="" />
     <meta property="og:image:secure_url" id="myMeta2" content="" />
+    <!-- the following two meta tags grab the server information for url links -->
     <meta id="myContent1" content="{{ page.IIIF_IMAGE_SERVER_BASE }}" />
     <meta id="myContent2" content="{{ page.IIIF_IMAGE_SERVER_BASE }}" />
 <!-- 
@@ -63,6 +64,7 @@
 
     {% for col in volume.collections.all %}
     <meta property="og:url"  id="myMeta3" content="" />
+    <!-- the following meta tag grab the server information for url links -->
     <meta id="myContent3" content="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" />
     {% endfor %}
 

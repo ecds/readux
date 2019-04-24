@@ -43,7 +43,7 @@ class Serializer(JSONSerializer):
                     "chars": obj.content,
                     "language": obj.language
                 },
-                "on": [{
+                "on": {
                     "full": "%s/iiif/%s/%s/canvas/%s" % (settings.HOSTNAME, self.version, obj.canvas.manifest.pid, obj.canvas.pid),
                     "@type": "oa:SpecificResource",
                     "within": {
@@ -51,17 +51,10 @@ class Serializer(JSONSerializer):
                         "@type": "sc:Manifest"
                     },
                     "selector": {
-                        "item": {
-                            "@type": "oa:SvgSelector",
-                            "value": obj.svg
-                        },
-                        "@type": "oa:Choice",
-                        "default": {
-                            "@type": "oa:FragmentSelector",
-                            "value": "xywh=%s,%s,%s,%s" % (str(obj.x), str(obj.y), str(obj.w), str(obj.h))
-                        }
+                        "@type": "oa:FragmentSelector",
+                        "value": "xywh=%s,%s,%s,%s" % (str(obj.x), str(obj.y), str(obj.w), str(obj.h))
                     }
-                }]
+                }
             }
             return data
 

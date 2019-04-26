@@ -39,8 +39,8 @@ class Serializer(JSONSerializer):
                 },
                 "resource": {
                     "@type": obj.resource_type,
-                    "format": obj.format,
-                    "chars": obj.content,
+                    "format": "text/html",
+                    "chars": obj.svg,
                     "language": obj.language
                 },
                 "on": {

@@ -13,60 +13,16 @@
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
     <meta property="og:description" content="{{ collection.summary }}" />
     <meta property="og:type" content="Collection in web database" />
-<!-- 
-    <script>
-    var link = document.createElement('meta');
-    link.setAttribute('property', 'og:url');
-    link.content = document.location;
-    document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
- -->    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
+    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
     {% elif volume.label %}
     <meta property="og:title" content="{{ volume.label|safe }}" />
     <meta property="og:description" content="{{ volume.summary }}" />
     <meta property="og:type" content="Volume in web database" />
+<!-- 
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />
+ -->
     <!-- {% for page in volume.canvas_set.all %}{% if forloop.last %} -->
-    <meta property="og:image" id="myMeta" content="" />
-    <meta property="og:image:secure_url" id="myMeta2" content="" />
-    <!-- the following two meta tags grab the server information for url links -->
-    <meta id="myContent1" content="{{ page.IIIF_IMAGE_SERVER_BASE }}" />
-    <meta id="myContent2" content="{{ page.IIIF_IMAGE_SERVER_BASE }}" />
-<!-- 
-    <script>
-    var link = document.createElement('meta');
-    link.setAttribute('property', 'og:url');
-    link.content = window.location.href;
-    document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
- -->
-<!-- 
-    <script>
-    var link = document.createElement('meta');
-    link.setAttribute('property', 'og:image');
-    thething = window.location.pathname.split('/page/');
-    linkstrip = "{{ page.social_media }}"
-    linkstrip2 = linkstrip.split('iiif/');
-    linkstrip3 = linkstrip2[0] + "iiif/" + thething[1] + "/full/full/0/default.jpg"
-    link.content = linkstrip3;
-    document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
-    <script>
-    var link = document.createElement('meta');
-    link.setAttribute('property', 'og:image:secure_url');
-    thething = window.location.pathname.split('/page/');
-    linkstrip = "{{ page.social_media }}"
-    linkstrip2 = linkstrip.split('iiif/');
-    linkstrip3 = linkstrip2[0] + "iiif/" + thething[1] + "/full/full/0/default.jpg"
-    link.content = linkstrip3;
-    document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
- -->
 
-    {% for col in volume.collections.all %}
-    <meta property="og:url"  id="myMeta3" content="" />
-    <!-- the following meta tag grab the server information for url links -->
-    <meta id="myContent3" content="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" />
-    {% endfor %}
 
     <!-- {% endif %}{% endfor %} -->
     {% else %}
@@ -74,16 +30,9 @@
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />
     <meta property="og:description" content="{{ page.tagline }}" />
     <meta property="og:type" content="website" />
-<!-- 
-    <script>
-    var link = document.createElement('meta');
-    link.setAttribute('property', 'og:url');
-    link.content = document.location;
-    document.getElementsByTagName('head')[0].appendChild(link);
-    </script>
- -->    <meta property="og:url" content="https://readux.ecds.emory.edu" />
+    <meta property="og:url" content="https://readux.ecds.emory.edu" />
     {% endif %}
-    <meta name="twitter:image:alt" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
+    <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta name="og:site_name" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="@emorycds" />

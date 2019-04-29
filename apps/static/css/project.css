@@ -13,9 +13,9 @@
 }
 
 #viewer {
-  width: 75%;
-  height: calc(100% - 280px);
-  position: fixed;
+  width: 78%;
+  height: calc(100% - 250px);
+  position: absolute;
   bottom: 0;
 }
 

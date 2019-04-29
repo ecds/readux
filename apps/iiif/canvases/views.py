@@ -36,6 +36,7 @@ class CreateAnnotation(View):
         annotation.save()
         return JsonResponse(oa_annotation, safe=False)
         
+# TODO It should be okay to remove this.
 class StartingCanvas(View):
     def get_queryset(self):
         return Canvas.objects.filter(is_starting_page=True)

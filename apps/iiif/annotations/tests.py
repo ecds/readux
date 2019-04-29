@@ -1,19 +1,11 @@
 from django.test import TestCase
 from django.conf import settings
-from django.core.checks import Warning
+import warnings
 from .views import AnnotationListCreate
 from rest_framework.test import APIRequestFactory
 from rest_framework.test import APIClient
 from rest_framework.test import APITestCase
-import requests
 import json
-from os import killpg, path, setsid
-import signal
-import subprocess
-import logging
-
-logger = logging.getLogger(__name__)
-
 
 class AnnotationTests(APITestCase):
     factory = APIRequestFactory()
@@ -71,24 +63,4 @@ class AnnotationTests(APITestCase):
             'readux/annotations/MSS_Vat.lat.3225/p0005', format='json')
         response = view(request)
         response.render()
-        assert response.status_code == 200
-
-    def test_validate_iiif(self):
-        iiif_validator = path.abspath(path.join(
-            str(settings.ROOT_DIR.path()),
-            'presentation-validator',
-            'iiif-presentation-validator.py')
-        )
-        if (not path.isfile(iiif_validator)):
-            command = 'python presentation-validator/iiif-presentation-validator.py'
-            process = subprocess.Popen(
-                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                shell=True, preexec_fn=setsid
-            )
-            killpg(process.pid, signal.SIGTERM)
-        else:
-            return Warning(
-                'IIIF Presentation Validator not found.',
-                hint='Check README',
-                id='R001'
-            )        
+        assert response.status_code == 200        

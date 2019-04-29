@@ -10,12 +10,15 @@ psycopg2-binary==2.7.5  # https://github.com/psycopg/psycopg2
 mypy==0.641  # https://github.com/python/mypy
 pytest==3.9.3  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.1  # https://github.com/Frozenball/pytest-sugar
+pytest-cov
 requests
+iiif-prezi # https://github.com/iiif-prezi/iiif-prezi
 
 # Code quality
 # ------------------------------------------------------------------------------
 flake8==3.6.0  # https://github.com/PyCQA/flake8
 coverage==4.5.1  # https://github.com/nedbat/coveragepy
+coveralls
 
 # Django
 # ------------------------------------------------------------------------------

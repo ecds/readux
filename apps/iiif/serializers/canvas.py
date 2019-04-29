@@ -5,7 +5,7 @@ from django.core.serializers.json import Serializer as JSONSerializer
 V2
 {
   // Metadata about this canvas
-  "@context": "https://iiif.io/api/presentation/2/context.json",
+  "@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": "https://example.org/iiif/book1/canvas/p1",
   "@type": "sc:Canvas",
   "label": "p. 1",
@@ -80,9 +80,10 @@ class Serializer(JSONSerializer):
         super().start_object(obj)
 
     def get_dump_object(self, obj):
+        obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
             data = {
-                "@context": "https://iiif.io/api/presentation/2/context.json",
+                "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,
                 "@type": "sc:Canvas",
                 "label": obj.label,
@@ -90,7 +91,7 @@ class Serializer(JSONSerializer):
                 "width": obj.width,
                 "images": [
                   {
-                    "@context": "https://iiif.io/api/presentation/2/context.json",
+                    "@context": "http://iiif.io/api/presentation/2/context.json",
                     "@id": "%s" % (obj.anno_id),
                     "@type": "oa:Annotation",
                     "motivation": "sc:painting",

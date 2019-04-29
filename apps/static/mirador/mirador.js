@@ -41894,7 +41894,7 @@ return /******/ (function(modules) { // webpackBootstrap
         var facebookContainer = document.getElementById("facebookpage");
         var face = document.createElement('a');
 //         var faceText = document.createTextNode('http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + &p[images][0] + content1.content + '/' + page + '/full/600,/0/default.jpg');
-        var facehref='http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + '&p[images][0]' + content1.content + '/' + page + '/full/600,/0/default.jpg';
+        var facehref='http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + '&p[images][0]=' + content1.content + '/' + page + '/full/600,/0/default.jpg';
         face.href=facehref;
         face.title = 'Share with Facebook';
 //         face.appendChild(faceText);

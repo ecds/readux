@@ -97,13 +97,14 @@ class Serializer(JSONSerializer):
                 "label": "Notes",
                 "value": obj.metadata
               }],
+              "description": obj.summary,
+              "viewingDirection": obj.viewingDirection,
+              "viewingHint": "paged",
               "sequences": [
                 {
                   "@id": "%s/sequence/normal" % (obj.baseurl),
                   "@type": "sc:Sequence",
                   "label": "Current Page Order",
-                  "viewingDirection": obj.viewingDirection,
-                  "viewingHint": "paged",
                   "startCanvas": obj.start_canvas,
                   "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
                 }

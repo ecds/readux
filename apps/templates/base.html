@@ -18,13 +18,11 @@
     <meta property="og:title" content="{{ volume.label|safe }}" />
     <meta property="og:description" content="{{ volume.summary }}" />
     <meta property="og:type" content="Volume in web database" />
-<!-- 
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />
- -->
-    <!-- {% for page in volume.canvas_set.all %}{% if forloop.last %} -->
 
-
-    <!-- {% endif %}{% endfor %} -->
+    {% for page in volume.canvas_set.all %}{% if forloop.first %}
+    <meta property="og:image" content="{{ page.social_media }}" />
+    <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+    {% endif %}{% endfor %}
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/favicons/favicon.ico" />

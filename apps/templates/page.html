@@ -46,6 +46,7 @@
         <br />
         <b>Export Citation:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download RIS file</a>
         <br />
+        <b>Export Annotations:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestExport' 'v2' volume.pid %}" target="_blank">Click to download ZIP file of annotations and IIIF data</a>
         <br />
         <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>
         <br />

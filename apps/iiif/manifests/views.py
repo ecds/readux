@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
@@ -8,8 +9,8 @@ from django.urls import reverse
 from .models import Manifest
 from apps.iiif.annotations.models import Annotation
 import json
-import os.path
-import tempfile
+import zipfile
+import io
 
 # TODO Would still be nice to use DRF. Try this?
 # https://stackoverflow.com/a/35019122
@@ -55,36 +56,48 @@ class ManifestExport(View):
     def get(self, request, *args, **kwargs):
         # we should probably move this out of the view, into a library
         manifest = self.get_queryset()[0]
-        tmpdir = tempfile.mkdtemp()
-        outdir = os.path.join(tmpdir, manifest.label)
-        zip_path = os.path.join(tmpdir, "iiif_export.zip")
-        os.mkdir(outdir)
+        # tmpdir = tempfile.mkdtemp()
+        # outdir = os.path.join(tmpdir, manifest.label)
+        # os.mkdir(outdir)
+        zip_subdir = manifest.label
+        zip_filename = "iiif_export.zip"
 
-        manifest_path = os.path.join(outdir, "manifest.json")
-        with open(manifest_path, "w") as manifest_file:
-            manifest_file.write(
+        # Open StringIO to grab in-memory ZIP contents
+        s = io.BytesIO()
+
+        # The zip compressor
+        zf = zipfile.ZipFile(s, "w")
+
+        zf.writestr('test.txt', 'test contents')
+        zf.writestr('manifest.json',
+            serialize(
+                'manifest',
+                self.get_queryset(),
+                version=kwargs['version']
+            )
+        )
+
+        for canvas in manifest.canvas_set.all():
+            annotation_file = "annotation_list_" + canvas.pid + ".json"
+            zf.writestr(
+                annotation_file,
                 serialize(
-                    'manifest',
-                    self.get_queryset(),
+                    'annotation_list',
+                    [canvas],
                     version=kwargs['version']
                 )
             )
 
-        written_filenames = []
-        for canvas in manifest.canvas_set.all():
-            annotations_path = os.path.join(outdir, canvas.pid) # we cannot use the IRI for the annotation list because of invalid characters in the filename
-            with open(annotations_path, "w") as annotations_file:
-                annotations_file.write(
-                    serialize(
-                        'annotation_list',
-                        [canvas],
-                        version=kwargs['version']
-                    )
-                )
-
 #        finally:
             # Remove our temporary directory
 #            shutil.rmtree(tmpdir, ignore_errors=True)
-        
 
-        return JsonResponse({'success': 'not implemented yet'})
+    # Must close zip for all contents to be written
+        zf.close()
+
+        # Grab ZIP file from in-memory, make response with correct MIME-type
+        resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+        # ..and correct content-disposition
+        resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
+
+        return resp

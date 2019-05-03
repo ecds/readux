@@ -8,6 +8,8 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from .models import Manifest
 from .export import IiifManifestExport
+import json
+
 
 # TODO Would still be nice to use DRF. Try this?
 # https://stackoverflow.com/a/35019122

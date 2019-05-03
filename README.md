@@ -69,6 +69,12 @@ python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 
 ### Running the tests
 
+Your database user will need to be able to create a database:
+
+~~~
+alter user readux createdb;
+~~~
+
 Readux uses Django's default test framework.
 
 ~~~bash

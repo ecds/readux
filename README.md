@@ -37,7 +37,7 @@ source venv/bin/activate
 4. Install dependencies
 
 ~~~bash
-pip install -r requirements/local
+pip install -r requirements/local.txt
 ~~~
 
 5. Copy and set up your local settings

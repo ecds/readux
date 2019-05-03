@@ -1,12 +1,11 @@
 from django.core.serializers import serialize
 from .models import Manifest
 from apps.iiif.annotations.models import Annotation
+from datetime import datetime
 import json
 import zipfile
 import io
 
-# TODO Would still be nice to use DRF. Try this?
-# https://stackoverflow.com/a/35019122
 class IiifManifestExport:
     @classmethod
     def get_zip(self, manifest, version):
@@ -19,25 +18,43 @@ class IiifManifestExport:
         # The zip compressor
         zf = zipfile.ZipFile(byte_stream, "w")
 
-        zf.writestr('test.txt', 'test contents')
+        # First write basic human-readable metadata
+        title = manifest.label
+        now = datetime.utcnow()
+        readme = "Annotation export from Readux %(version)s\nExported at %(now)s UTC\nVolume: %(title)s\n" % locals()
+        zf.writestr('README.txt', readme)
+
+        # Next write the manifest
         zf.writestr('manifest.json',
-            serialize(
-                'manifest',
-                [manifest],
-                version=version
+            json.dumps(
+                json.loads(
+                    serialize(
+                        'manifest',
+                        [manifest],
+                        version=version
+                    )
+                ),
+                indent=4
             )
         )
 
+        # Then write the annotations
         for canvas in manifest.canvas_set.all():
-            annotation_file = "annotation_list_" + canvas.pid + ".json"
-            zf.writestr(
-                annotation_file,
-                serialize(
-                    'annotation_list',
-                    [canvas],
-                    version=version
+            if canvas.annotation_set.count() > 0:
+                annotation_file = "annotation_list_" + canvas.pid + ".json"
+                zf.writestr(
+                    annotation_file,
+                    json.dumps(
+                        json.loads(
+                            serialize(
+                                'annotation_list',
+                                [canvas],
+                                version=version
+                            )
+                         ),
+                        indent=4
+                    )
                 )
-            )
 
         zf.close() # flush zipfile to byte stream
 

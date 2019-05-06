@@ -46,13 +46,13 @@
         <br />
         <b>Export Citation:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download RIS file</a>
         <br />
-        <b>Export Annotations:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestExport' 'v2' volume.pid %}" target="_blank">Click to download ZIP file of annotations and IIIF data</a>
-        <br />
         <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>
         <br />
         <b>Canvas URL:</b> <span class="link" id="myLink"></span>
         <br />
         <b>Stable page URL:</b> <span class="link" id="mySpan"></span>
+        <br />
+        <form action="{% url 'ManifestExport' 'v2' volume.pid %}" class="button_to" method="POST"><div><input type="submit" value="Export IIIF Bundle" title="Export volume and annotations as a IIIF bundle for preservation."/>{% csrf_token %}</div></form>
 <!-- 
         <p id="test"></p>
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">

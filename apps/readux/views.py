@@ -63,3 +63,11 @@ class PageDetail(TemplateView):
         context['page'] = Canvas.objects.filter(pid=kwargs['page']).first()
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         return context
+
+class ExportOptions(TemplateView):
+    template_name = "export.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
+        return context

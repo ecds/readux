@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block extra_css %}
+<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
+{% endblock extra_css %}
+
+{% block content %}
+
+<h1> NEW EXPORT PAGE</h1>
+<h1 class='uk-text-truncate'>
+  {{volume.label}}
+</h1>
+{% endblock content %}
+{% block viewer %}
+  <div class='uk-flex-center' uk-grid>
+    <div class='uk-width-3-4'>
+      <div class='uk-padding'>
+        <b>Author:</b> {{ volume.author }}
+        <br />
+        <b>Publication Date:</b> {{ volume.published_date }}
+        <br />{% for col in volume.collections.all %}
+        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
+        <br />
+        <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
+      </div>
+      <div class='uk-padding'>
+        <h3>IIIF Export</h3>
+        <p>Export volume and annotations as a IIIF bundle for preservation.  (Note this is different than the IIIF Manifest URL for reuse.)</p>
+        <form action="{% url 'ManifestExport' 'v2' volume.pid %}" class="button_to" method="POST"><div><input type="submit" value="Export IIIF Bundle" title="Export volume and annotations as a IIIF bundle for preservation."/>{% csrf_token %}</div></form>
+      </div>
+
+      <!-- start ocr el -->
+      <div id='ocr' style='opacity: 0;'>
+
+  </div>
+      <!-- end ocr el -->
+    </div>
+  </div>
+{% endblock viewer %}

@@ -40,7 +40,7 @@ class Serializer(JSONSerializer):
                 "resource": {
                     "@type": obj.resource_type,
                     "format": "text/html",
-                    "chars": obj.svg,
+                    "chars": obj.content,
                     "language": obj.language
                 },
                 "on": {

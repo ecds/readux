@@ -41864,6 +41864,7 @@ return /******/ (function(modules) { // webpackBootstrap
       var linkText = document.createTextNode(options.uri);
       link.href = options.uri;
       link.title = 'Stable link for canvas';
+      link.target = '_blank';
       link.appendChild(linkText);
       linkContainer.innerHTML='';
       linkContainer.appendChild(link);
@@ -41882,15 +41883,26 @@ return /******/ (function(modules) { // webpackBootstrap
         // navigation, we need to update the location and history with the new
         // canvas id.
         history.pushState(history.state, '', page.replace(/:/g, '%3A'));
-        var el = document.getElementById("myMeta");
-        var content1  = document.getElementById("myContent1");
-        document.getElementById("myMeta").content=content1.content + '/' + page + '/full/600,/0/default.jpg';
-        var el2 = document.getElementById("myMeta2");
-        var content2  = document.getElementById("myContent2");
-        document.getElementById("myMeta2").content=content2.content + '/' + page + '/full/600,/0/default.jpg';
-        var el3 = document.getElementById("myMeta3");
-        var content3  = document.getElementById("myContent3");
-        document.getElementById("myMeta3").content=content3.content + '/page/' + page;
+//         var el = document.getElementById("myMeta");
+//         var content1  = document.getElementById("myContent1");
+//         document.getElementById("myMeta").content=content1.content + '/' + page + '/full/600,/0/default.jpg';
+//         var el2 = document.getElementById("myMeta2");
+//         var content2  = document.getElementById("myContent2");
+//         document.getElementById("myMeta2").content=content2.content + '/' + page + '/full/600,/0/default.jpg';
+//         var el3 = document.getElementById("myMeta3");
+//         var content3  = document.getElementById("myContent3");
+//         document.getElementById("myMeta3").content=content3.content + '/page/' + page;
+//         var facebookContainer = document.getElementById("facebookpage");
+//         var face = document.createElement('a');
+//         var faceText = document.createTextNode('http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + &p[images][0] + content1.content + '/' + page + '/full/600,/0/default.jpg');
+//         var facehref='http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + '&p[images][0]=' + content1.content + '/' + page + '/full/600,/0/default.jpg';
+//         face.href=facehref;
+//         face.title = 'Share with Facebook';
+//         face.appendChild(faceText);
+//         facebookContainer.innerHTML='<img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>';
+//         facebookContainer.appendChild(face);
+//         purple = 'http://www.facebook.com/sharer.php?s=100&p[url]=' + content3.content + '/page/' + page + &p[images][0] + content1.content + '/' + page + '/full/600,/0/default.jpg';
+//         document.getElementByClassName("facebook").getElementsByTagName("a").setAttribute("href", purple);
       }
       this.annotationsList = [];
 

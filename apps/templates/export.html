@@ -6,9 +6,10 @@
 
 {% block content %}
 
-<h1> NEW EXPORT PAGE</h1>
+<h1>{{request.user.id}}</h1>
 <h1 class='uk-text-truncate'>
-  {{volume.label}}
+  {{volume.label}}    
+
 </h1>
 {% endblock content %}
 {% block viewer %}

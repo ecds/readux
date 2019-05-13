@@ -155,6 +155,6 @@ def set_span_element(sender, instance, **kwargs):
         instance.svg = instance.oa_annotation['on'][0]['selector']['item']['value']
         instance.oa_annotation['annotatedBy'] = {'name': 'Me'}
         instance.content = instance.oa_annotation['resource'][0]['chars']
-        instance.resource_type = Annotation.COMMENTING
+        instance.resource_type = instance.oa_annotation['resource'][0]['@type']
         instance.parse_oa_annotation()
 

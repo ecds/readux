@@ -47,15 +47,20 @@
         <br />
         <b>Export Citation:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' col.pid volume.pid %}" target="_blank">Click to download RIS file</a>
         <br />
-        <br />
         <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' col.pid volume.pid %}</a>
         <br />
         <b>Canvas URL:</b> <span class="link" id="myLink"></span>
         <br />
-        <b>Stable page URL:</b> <span class="link" id="mySpan"></span><a class="link" id="mySpan"></a>
-        <br/>
-
-
+        <b>Stable page URL:</b> <span class="link" id="mySpan"></span>
+        <br />
+        {% if user_annotation_count > 0 %}
+        <form action="{% url 'export' col.pid volume.pid %}" class="button_to" method="GET"><div><input type="submit" value="Export" title="Export in a variety of formats"/>{% csrf_token %}</div></form>
+        {% endif %}
+<!-- 
+        <p id="test"></p>
+        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
+        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
+ -->
         {% endfor %}
       </div>
 

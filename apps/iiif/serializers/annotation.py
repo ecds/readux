@@ -29,13 +29,16 @@ class Serializer(JSONSerializer):
 
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
+            name = 'OCR'
+            if obj.owner_id:
+                name = obj.owner.name
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": str(obj.pk),
                 "@type": "oa:Annotation",
                 "motivation": obj.motivation,
                 "annotatedBy": {
-                    "name": 'Me'
+                    "name": name
                 },
                 "resource": {
                     "@type": obj.resource_type,

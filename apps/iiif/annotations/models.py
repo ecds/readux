@@ -103,38 +103,21 @@ class Annotation(models.Model):
     language = models.CharField(max_length=10, default='en')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
-    # TODO should probably change svg to span
+    # TODO Should we keep this for annotations from Mirador, or just get rid of it?
     svg = models.TextField()
 
     ordering = ['order']
 
-    # @property
-    # def identifier(self):
-    #   """
-    #   http://example.org/iiif/book1/list/p1
-    #   """
-    #   return "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.manifest.pid, self.pid)
-
     def parse_oa_annotation(self):
-        dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
+        dimensions = self.oa_annotation['on']['selector']['default']['value'].split('=')[-1].split(',')
         self.x = dimensions[0]
         self.y = dimensions[1]
         self.w = dimensions[2]
         self.h = dimensions[3]
-        # if isinstance(self.oa_annotation, dict):
-        #     try:
-        #         # canvas = Canvas.objects.get(pid=self.oa_annotation['on'][0]['full'].split('/')[-1])
-        #         self.canvas = Canvas.objects.get(pid=page)
-        #     except (KeyError, TypeError):
-        #         print('Invalid IIIF OA Annotation: Cannot get canvas id.')
-        #         pass
+
 
     def __str__(self):
         return str(self.pk)
-
-# @receiver(signals.pre_save, sender=Annotation)
-# def set_oa_annotation(sender, instance, **kwargs):
-#     instance.parse_oa_annotation()
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_span_element(sender, instance, **kwargs):
@@ -145,14 +128,14 @@ def set_span_element(sender, instance, **kwargs):
             # (12*(17.697/1.618))/12
             character_count = len(instance.content)
             font_size = (character_count*(instance.h/1.618))/character_count
-            instance.svg = "<span id='{pk}' style='font-family: monospace; height: {h}px; width: {w}px; font-size: {f}px'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size))
+            instance.content = "<span id='{pk}' style='font-family: monospace; height: {h}px; width: {w}px; font-size: {f}px'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size))
         except ValueError as error:
-            instance.svg = ""
+            instance.content = ""
             print("WARNING: {e}".format(e=error))
     else:
         if (type(instance.oa_annotation) == str):
             instance.oa_annotation = json.loads(instance.oa_annotation)
-        instance.svg = instance.oa_annotation['on'][0]['selector']['item']['value']
+        instance.svg = instance.oa_annotation['on']['selector']['item']['value']
         instance.oa_annotation['annotatedBy'] = {'name': 'Me'}
         instance.content = instance.oa_annotation['resource'][0]['chars']
         instance.resource_type = instance.oa_annotation['resource'][0]['@type']

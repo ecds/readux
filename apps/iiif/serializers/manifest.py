@@ -7,7 +7,7 @@ import json
 V2
 {
   // Metadata about this canvas
-  "@context": "https://iiif.io/api/presentation/2/context.json",
+  "@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": 'https://example.org/iiif/%s/canvas/p1' % (obj.pid),
   "@type": "sc:Canvas",
   "label": "p. 1",
@@ -77,7 +77,7 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
-              "@context": "https://iiif.io/api/presentation/2/context.json",
+              "@context": "http://iiif.io/api/presentation/2/context.json",
               "@id": "%s/manifest" % (obj.baseurl),
               "@type": "sc:Manifest",
               "label": obj.label,
@@ -97,14 +97,23 @@ class Serializer(JSONSerializer):
                 "label": "Notes",
                 "value": obj.metadata
               }],
+              "description": obj.summary,
+              "thumbnail": {
+                "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
+                "service": {
+                "@context": "http://iiif.io/api/image/2/context.json",
+                "@id": "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
+                "profile": "http://iiif.io/api/image/2/level1.json"
+               }
+              },
+              "viewingDirection": obj.viewingDirection,
+              "viewingHint": "paged",
               "sequences": [
                 {
                   "@id": "%s/sequence/normal" % (obj.baseurl),
                   "@type": "sc:Sequence",
                   "label": "Current Page Order",
-                  "viewingDirection": obj.viewingDirection,
-                  "viewingHint": "paged",
-                  "startCanvas": json.loads(serialize('startingcanvas', obj.canvas_set.all().exclude(is_starting_page=False), islist=True)),
+                  "startCanvas": obj.start_canvas,
                   "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
                 }
               ]

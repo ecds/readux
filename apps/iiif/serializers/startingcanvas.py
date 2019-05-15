@@ -5,7 +5,7 @@ from django.core.serializers.json import Serializer as JSONSerializer
 V2
 {
   // Metadata about this canvas
-  "@context": "https://iiif.io/api/presentation/2/context.json",
+  "@context": "http://iiif.io/api/presentation/2/context.json",
   "@id": "https://example.org/iiif/book1/canvas/p1",
   "@type": "sc:Canvas",
   "label": "p. 1",

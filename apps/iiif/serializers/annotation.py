@@ -30,7 +30,7 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
-                "@context": "https://iiif.io/api/presentation/2/context.json",
+                "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": str(obj.pk),
                 "@type": "oa:Annotation",
                 "motivation": obj.motivation,
@@ -39,11 +39,11 @@ class Serializer(JSONSerializer):
                 },
                 "resource": {
                     "@type": obj.resource_type,
-                    "format": obj.format,
+                    "format": "text/html",
                     "chars": obj.content,
                     "language": obj.language
                 },
-                "on": [{
+                "on": {
                     "full": "%s/iiif/%s/%s/canvas/%s" % (settings.HOSTNAME, self.version, obj.canvas.manifest.pid, obj.canvas.pid),
                     "@type": "oa:SpecificResource",
                     "within": {
@@ -51,17 +51,10 @@ class Serializer(JSONSerializer):
                         "@type": "sc:Manifest"
                     },
                     "selector": {
-                        "item": {
-                            "@type": "oa:SvgSelector",
-                            "value": obj.svg
-                        },
-                        "@type": "oa:Choice",
-                        "default": {
-                            "@type": "oa:FragmentSelector",
-                            "value": "xywh=%s,%s,%s,%s" % (str(obj.x), str(obj.y), str(obj.w), str(obj.h))
-                        }
+                        "@type": "oa:FragmentSelector",
+                        "value": "xywh=%s,%s,%s,%s" % (str(obj.x), str(obj.y), str(obj.w), str(obj.h))
                     }
-                }]
+                }
             }
             return data
 

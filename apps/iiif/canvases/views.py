@@ -30,12 +30,15 @@ class CreateAnnotation(View):
         payload = json.loads(request.body.decode('utf-8'))
         oa_annotation = json.loads(payload['oa_annotation'])
         canvas = Canvas.objects.get(pid=oa_annotation['on'][0]['full'].split('/')[-1])
+        user_id = request.user.id
         annotation = Annotation()
         annotation.canvas = canvas
         annotation.oa_annotation = oa_annotation
+        annotation.owner_id = user_id
         annotation.save()
         return JsonResponse(oa_annotation, safe=False)
         
+# TODO It should be okay to remove this.
 class StartingCanvas(View):
     def get_queryset(self):
         return Canvas.objects.filter(is_starting_page=True)

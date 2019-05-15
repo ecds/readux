@@ -47,6 +47,8 @@ class HomePage(Page):
 
     content_panels = Page.content_panels + [
 #        AutocompletePanel('featured_volume', target_model='manifests.Manifest'),
+        FieldPanel('tagline', classname="full"),
+        FieldPanel('content_display', classname="full"),
         FieldPanel('featured_collections', widget=forms.CheckboxSelectMultiple, classname="full"),
         FieldPanel('featured_collections_sort_order', classname="full"),
         FieldPanel('featured_volumes', widget=forms.CheckboxSelectMultiple, classname="full"),

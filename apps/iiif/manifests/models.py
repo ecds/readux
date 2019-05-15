@@ -38,6 +38,11 @@ class Manifest(models.Model):
     @property
     def baseurl(self):
         return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
+
+    @property
+    def start_canvas(self):
+        first = self.canvas_set.all().exclude(is_starting_page=False).first()
+        return first.identifier if first else self.canvas_set.all().first().identifier
     
  #   def autocomplete_label(self):
  #       return self.label

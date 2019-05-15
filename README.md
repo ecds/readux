@@ -16,6 +16,10 @@ Administrators can organize digitized books into collections, facilitating user 
 
 ...
 
+### Build status
+
+[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
+
 ## Installation (development)
 
 ### Requirements
@@ -25,22 +29,22 @@ Administrators can organize digitized books into collections, facilitating user 
 
 ### Set up development environment
 
-1. Clone this repository
-2. Navigate to the readux directory
-3. Create virtual environment
+1. Clone this repository.
+2. Navigate to the readux directory.
+3. Create virtual environment and activate it.
 
 ~~~bash
 python3 -m venv venv
 source venv/bin/activate
 ~~~
 
-4. Install dependencies
+4. Install the dependencies.
 
 ~~~bash
 pip install -r requirements/local.txt
 ~~~
 
-5. Copy and set up your local settings
+5. Copy and set up your local settings.
 
 ~~~bash
 cp config/settings/local.dst config/settings/local.py
@@ -52,7 +56,7 @@ cp config/settings/local.dst config/settings/local.py
 export DATABASE_URL=postgres://<database user>:<database password>@127.0.0.1:5432/<database name>
 ~~~
 
-7. Run the migrations and load the example data
+7. Run the migrations and load the example data.
 
 ~~~bash
 python manage.py migrate
@@ -61,7 +65,7 @@ python manage.py loaddata apps/fixtures/dump.json
 
 ### Running local development server
 
-Run the development under https. Note: this is generate a self-signed certificate. There are ways tell your browser to trust these certs, but that is beyond the scope of this README.
+Run the development under https to avoid mix content errors. Note: this will generate a self-signed certificate. There are ways to tell your browser to trust these certs, but that is beyond the scope of this README.
 
 ~~~bash
 python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
@@ -69,21 +73,27 @@ python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 
 ### Running the tests
 
+[![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=develop)](https://coveralls.io/github/ecds/readux?branch=develop)
+
+Readux uses Django's default test framework, but is configured to use pytest.
+
 Your database user will need to be able to create a database:
 
 ~~~
 alter user readux createdb;
 ~~~
 
-Readux uses Django's default test framework.
+To run the tests, simply run:
 
 ~~~bash
-python manage.py test
+pytest
 ~~~
+
+Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
 
 ## Contribute
 
-We use the [Git-Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model. Pull requests should be made against the develop branch.
+We use the [Git-Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branching model. Please submit pull requests against the develop branch.
 
 ### Code of conduct
 

@@ -41,7 +41,7 @@ source venv/bin/activate
 4. Install the dependencies.
 
 ~~~bash
-pip install -r requirements/local
+pip install -r requirements/local.txt
 ~~~
 
 5. Copy and set up your local settings.
@@ -75,7 +75,15 @@ python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 
 [![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=develop)](https://coveralls.io/github/ecds/readux?branch=develop)
 
-Readux uses Django's default test framework, but is configured to use pytest. To run the tests, simply run:
+Readux uses Django's default test framework, but is configured to use pytest.
+
+Your database user will need to be able to create a database:
+
+~~~
+alter user readux createdb;
+~~~
+
+To run the tests, simply run:
 
 ~~~bash
 pytest

@@ -68,6 +68,11 @@ class Canvas(models.Model):
             # landscape
             return "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
+    @property
+    def result(self):
+        "Empty attribute to hold the result of requests to get OCR data."
+        return None
+
     def __str__(self):
         return str(self.pid)
 
@@ -82,24 +87,23 @@ def set_dimensions(sender, instance, **kwargs):
 
 @receiver(signals.post_save, sender=Canvas)
 def add_ocr(sender, instance, **kwargs):
-    ocr = services.add_positional_ocr(instance)
-    # What comes back from fedora is 8-bit bytes
-    # https://stackoverflow.com/a/9562196
+    result = services.fetch_positional_ocr(instance)
+    ocr = services.add_positional_ocr(instance, result)
     word_order = 1
+    print(ocr)
+    print(type(ocr))
     if ocr is not None:
-        for word in ocr.decode('UTF-8-sig').strip().split('\r\n'):
+        for word in ocr:
             if word == '':
                 continue
             a = Annotation()
             a.canvas = instance
-            print('&&&')
-            print(word)
-            a.x = int(word.split('\t')[0])
-            a.y = int(word.split('\t')[1])
-            a.w = int(word.split('\t')[2])
-            a.h = int(word.split('\t')[3])
+            a.x = word['x']
+            a.y = word['y']
+            a.w = word['w']
+            a.h = word['h']
             a.resource_type = a.OCR
-            a.content = word.split('\t')[4]
+            a.content = word['content']
             a.order = word_order
             a.save()
             word_order += 1

@@ -35,18 +35,23 @@
 .uk-search-default {
   width: 95% !important;
 }
-.ocr-line {
-  z-index: 999;
-}
 
-.mirador-container .ocrtext text {
+/* .ocr-line {
+  z-index: 999;
+} */
+
+/* .mirador-container .ocrtext text {
   fill: red;
   opacity: 1;
-}
+} */
 
 .openseadragon-container span {
- line-height: initial;
- color: transparent;
+    align-items: center;
+    line-height: initial;
+    color: transparent;
+    display: inline-flex !important;
+    /* outline-style: solid;
+    outline-color: blue; */
 }
 
 /* Wagtail embedded objects */

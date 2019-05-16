@@ -13,7 +13,7 @@ class AnnotationTests(APITestCase):
 
     valid_annotation = {
         'oa_annotation': '''{
-            "on": [{
+            "on": {
                 "full": "https://digi.vatlib.it/iiif/MSS_Vat.lat.3225/canvas/p0007",
                 "@type": "oa:SpecificResource",
                 "selector": {
@@ -31,7 +31,7 @@ class AnnotationTests(APITestCase):
                     "@type": "sc:Manifest",
                     "@id": "https://ecds.emory.edu/iiif/MSS_Vat.lat.3225/manifest.json"
                 }
-            }],
+            },
             "@type": "oa:Annotation",
             "@context": "http://iiif.io/api/presentation/2/context.json",
             "@id": "13d3b867-d668-4294-b56a-df3e8860016c",

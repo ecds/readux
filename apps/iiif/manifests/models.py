@@ -2,9 +2,7 @@ from django.db import models
 import config.settings.local as settings
 from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
-from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
-from json import JSONEncoder
 import uuid
 from uuid import UUID
 #trying to work with autocomplete
@@ -38,9 +36,12 @@ class Manifest(ClusterableModel):
     created_at = models.DateTimeField(auto_now_add=True)
     #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")
     autocomplete_search_field = 'label'
+<<<<<<< HEAD
 
     def get_absolute_url(self):
         return "%s/volume/%s" % (settings.HOSTNAME, self.pid)
+=======
+>>>>>>> update
 
     @property
     def note_list(self):

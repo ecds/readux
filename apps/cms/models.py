@@ -1,25 +1,17 @@
 from django.db import models
 from django import forms
-from wagtail.core.models import Page, Orderable
+from wagtail.core.models import Page
 from modelcluster.models import ClusterableModel
 from wagtail.core.fields import RichTextField, StreamField
-from wagtailautocomplete.edit_handlers import AutocompletePanel
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
-
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
-from urllib.parse import urlencode
-from urllib.parse import urlencode
-from django.http.response import Http404
-from django.http import request
 
 from .blocks import BaseStreamBlock
 from ..iiif.kollections.models import Collection
 from ..iiif.manifests.models import Manifest
-from ..iiif.canvases.models import Canvas
-from ..iiif import manifests
-import urllib.request
+
+
 
 class ContentPage(Page):
     body = StreamField(
@@ -164,18 +156,25 @@ class HomePage(Page):
 
     content_panels = Page.content_panels + [
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         AutocompletePanel('featured_volumes', target_model='manifests.Manifest'),
 >>>>>>> update
+=======
+>>>>>>> working on autocomplete multiselect
         FieldPanel('tagline', classname="full"),
         FieldPanel('content_display', classname="full"),
         #FieldPanel('featured_collections', widget=forms.CheckboxSelectMultiple, classname="full"),
         AutocompletePanel('featured_collections', target_model="kollections.Collection"),
         FieldPanel('featured_collections_sort_order', classname="full"),
 <<<<<<< HEAD
+<<<<<<< HEAD
         AutocompletePanel('featured_volumes', target_model="manifests.Manifest"),
 =======
 >>>>>>> update
+=======
+        AutocompletePanel('featured_volumes', target_model='manifests.Manifest', is_single=False),
+>>>>>>> working on autocomplete multiselect
         #FieldPanel('featured_volumes', widget=forms.CheckboxSelectMultiple, classname="full"),
         FieldPanel('featured_volumes_sort_order', classname="full"),
     ]

@@ -1,16 +1,16 @@
 from django.db import models
 from django import forms
-from ..iiif.kollections.models import Collection
-from ..iiif.manifests.models import Manifest
-
 from wagtail.core.models import Page
+from modelcluster.models import ClusterableModel
 from wagtail.core.fields import RichTextField, StreamField
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
 
-from modelcluster.fields import ParentalKey, ParentalManyToManyField
-
 from .blocks import BaseStreamBlock
+from ..iiif.kollections.models import Collection
+from ..iiif.manifests.models import Manifest
+
 
 
 class ContentPage(Page):
@@ -46,11 +46,11 @@ class HomePage(Page):
     volumes = Manifest.objects.all
 
     content_panels = Page.content_panels + [
-        AutocompletePanel('featured_volumes', target_model='manifests.Manifest'),
         FieldPanel('tagline', classname="full"),
         FieldPanel('content_display', classname="full"),
         FieldPanel('featured_collections', widget=forms.CheckboxSelectMultiple, classname="full"),
         FieldPanel('featured_collections_sort_order', classname="full"),
+        AutocompletePanel('featured_volumes', target_model='manifests.Manifest', is_single=False),
         #FieldPanel('featured_volumes', widget=forms.CheckboxSelectMultiple, classname="full"),
         FieldPanel('featured_volumes_sort_order', classname="full"),
     ]

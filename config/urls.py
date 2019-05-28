@@ -27,7 +27,7 @@ sitemaps = {
 urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
      name='django.contrib.sitemaps.views.sitemap'),
-    url(r'^cms/autocomplete/', include(autocomplete_admin_urls)),
+    #url(r'^cms/autocomplete/', include(autocomplete_admin_urls)),
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'^pages/', include(wagtail_urls)),

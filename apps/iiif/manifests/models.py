@@ -2,10 +2,11 @@ from django.db import models
 import config.settings.local as settings
 from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
+from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 import uuid
 
-class Manifest(models.Model):
+class Manifest(ClusterableModel):
     DIRECTIONS = (
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')

@@ -22,6 +22,7 @@
     {% for page in volume.canvas_set.all %}{% if forloop.first %}
     <meta property="og:image" content="{{ page.social_media }}" />
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+    <meta property="twitter:image" content="{{ page.social_media }}" />
     {% endif %}{% endfor %}
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />

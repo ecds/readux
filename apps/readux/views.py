@@ -6,7 +6,7 @@ from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
-
+from django.views.generic.base import RedirectView
 
 class CollectionsList(ListView):
     template_name = "collections.html"
@@ -66,6 +66,27 @@ class PageDetail(TemplateView):
         context['volume'] = manifest
         context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         return context
+
+# class PageRedirect(TemplateView):
+#     template_name = "page.html"
+# 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['page'] = Canvas.objects.first()
+#         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+#         context['volume'] = manifest
+#         context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+#         return context
+# class PageRedirectView(RedirectView):
+# 
+#     permanent = False
+#     query_string = True
+#     pattern_name = 'page-redirect'
+# 
+#     def get_redirect_url(self, *args, **kwargs):
+#         page = Manifest.canvas_set.first()
+#         return super().get_redirect_url(*args, **kwargs)
+
 
 class ExportOptions(TemplateView):
     template_name = "export.html"

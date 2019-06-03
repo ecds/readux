@@ -12,12 +12,12 @@
     <meta property="og:title" content="Readux collection: {{ collection.label }}" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
     <meta property="og:description" content="{{ collection.summary }}" />
-    <meta property="og:type" content="Collection in web database" />
+    <meta property="og:type" content="website" />
     <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
     {% elif volume.label %}
     <meta property="og:title" content="{{ volume.label|safe }}" />
     <meta property="og:description" content="{{ volume.summary }}" />
-    <meta property="og:type" content="Volume in web database" />
+    <meta property="og:type" content="book" />
 
     {% for page in volume.canvas_set.all %}{% if forloop.first %}
     <meta property="og:image" content="{{ page.social_media }}" />

@@ -10,13 +10,17 @@
     <meta name="author" content="">
     {% if collection.label %}
     <meta property="og:title" content="Readux collection: {{ collection.label }}" />
+    <meta property="twitter:title" content="Readux collection: {{ collection.label }}" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
     <meta property="og:description" content="{{ collection.summary }}" />
+    <meta property="twitter:description" content="{{ collection.summary }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
     {% elif volume.label %}
     <meta property="og:title" content="{{ volume.label|safe }}" />
+    <meta property="twitter:title" content="{{ volume.label|safe }}" />
     <meta property="og:description" content="{{ volume.summary }}" />
+    <meta property="twitter:description" content="{{ volume.summary }}" />
     <meta property="og:type" content="book" />
 
     {% for page in volume.canvas_set.all %}{% if forloop.first %}
@@ -27,8 +31,10 @@
     {% endif %}{% endfor %}
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
+    <meta property="twitter:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/static/images/readux_logo.png" />
     <meta property="og:description" content="{{ page.tagline }}" />
+    <meta property="twitter:description" content="{{ page.tagline }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://readux.ecds.emory.edu" />
     {% endif %}

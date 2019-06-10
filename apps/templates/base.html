@@ -26,6 +26,7 @@
     {% for page in volume.canvas_set.all %}{% if forloop.first %}
     <meta property="og:image" content="{{ page.social_media }}" />
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta name="twitter:image" content="{{ page.social_media }}" />
     <meta property="og:image:width" content="600" />
     {% endif %}{% endfor %}

@@ -28,6 +28,7 @@
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
     <meta property="og:image:type" content="image/jpeg" />
     {% if "/cantaloupe/iiif/2" in page.social_media %}
+    <meta name="twitter:image" content="{{ page.twitter_media1 }}" />
     <meta name="twitter:image:src" content="{{ page.twitter_media2 }}"/>
     {% else %}
     <meta name="twitter:image" content="{{ page.twitter_media2 }}" />
@@ -37,7 +38,7 @@
     {% else %}
     <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta name="twitter:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.png" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
     <meta property="og:description" content="{{ page.tagline }}" />
     <meta name="twitter:description" content="{{ page.tagline }}" />
     <meta property="og:type" content="website" />

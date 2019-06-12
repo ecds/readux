@@ -56,6 +56,18 @@ class Canvas(models.Model):
         return "%s/%s/full/600,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
     @property
+    def get_IIIF_IMAGE_SERVER_BASE(self):
+        return self.IIIF_IMAGE_SERVER_BASE
+        
+    @property
+    def twitter_media1(self):
+        return "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.pid)
+        
+    @property
+    def twitter_media2(self):
+            return "%s/%s/full/600,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
+    @property
     def uri(self):
         return "%s/iiif/%s/" % (settings.HOSTNAME, self.manifest.pid)
 

@@ -27,7 +27,11 @@
     <meta property="og:image" content="{{ page.social_media }}" />
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta name="twitter:image" content="{{ page.social_media }}" />
+    {% if "/cantaloupe/iiif/2" in page.social_media %}
+    <meta name="twitter:image" content="{{ page.twitter_media1 }}"/>
+    {% else %}
+    <meta name="twitter:image" content="{{ page.twitter_media2 }}" />
+    {% endif %}
     <meta property="og:image:width" content="600" />
     {% endif %}{% endfor %}
     {% else %}

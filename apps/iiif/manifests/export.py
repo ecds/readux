@@ -19,9 +19,26 @@ class IiifManifestExport:
         zf = zipfile.ZipFile(byte_stream, "w")
 
         # First write basic human-readable metadata
+        ''' Annotated edition from {grab site identity/version of Readux} at {grab site URL}
+        volume title
+        volume author
+        volume date
+        volume publisher
+        number of pages
+        annotator username
+        time of export
+        '''
         title = manifest.label
+        author = manifest.author
+        date = manifest.published_date
+        publisher = manifest.publisher
+        page_count = manifest.canvas_set.count()
         now = datetime.utcnow()
-        readme = "Annotation export from Readux %(version)s\nExported at %(now)s UTC\nVolume: %(title)s\n" % locals()
+        readme = "Annotation export from Readux %(version)s\nedition type: Readux IIIF Exported Edition\nexport date: %(now)s UTC\n\n" % locals()
+        volume_data = "volume title: %(title)s\nvolume author: %(author)s\nvolume date: %(date)s\nvolume publisher: %(publisher)s\npages: %(page_count)s \n\n" % locals()
+        boilerplate = "Readux is a platform developed by Emory University’s Center for Digital Scholarship for browsing, annotating, and publishing with digitized books. This zip file includes an International Image Interoperability Framework (IIIF) manifest for the digitized book and an annotation list for each page that includes both the encoded text of the book and annotations created by the user who created this export. This bundle can be used to archive the recognized text and annotations for preservation and future access.\n\n"
+        explanation = "Each canvas (\"sc:Canvas\") in the manifest represents a page of the work. Each canvas includes an \"otherContent\" field-set with information identifying that page's annotation list. This field-set includes an \"@id\" field and the label field (\"@type\") \"sc:AnnotationList\". The \"@id\" field contains the URL link at which the annotation list was created and originally hosted from the Readux site. In order to host this IIIF manifest and its annotation lists again to browse the book and annotations outside of Readux, these @id fields would need to be updated to the appropriate URLs for the annotation lists on the new host."
+        readme = readme + volume_data + boilerplate + explanation
         zf.writestr('README.txt', readme)
 
         # Next write the manifest

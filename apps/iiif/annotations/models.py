@@ -109,7 +109,7 @@ class Annotation(models.Model):
     ordering = ['order']
 
     def parse_oa_annotation(self):
-        dimensions = self.oa_annotation['on']['selector']['default']['value'].split('=')[-1].split(',')
+        dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
         self.x = dimensions[0]
         self.y = dimensions[1]
         self.w = dimensions[2]
@@ -135,7 +135,7 @@ def set_span_element(sender, instance, **kwargs):
     else:
         if (type(instance.oa_annotation) == str):
             instance.oa_annotation = json.loads(instance.oa_annotation)
-        instance.svg = instance.oa_annotation['on']['selector']['item']['value']
+        instance.svg = instance.oa_annotation['on'][0]['selector']['item']['value']
         instance.oa_annotation['annotatedBy'] = {'name': 'Me'}
         instance.content = instance.oa_annotation['resource'][0]['chars']
         instance.resource_type = instance.oa_annotation['resource'][0]['@type']

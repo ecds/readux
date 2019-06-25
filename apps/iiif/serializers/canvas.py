@@ -112,7 +112,6 @@ class Serializer(JSONSerializer):
                 ],
                 "thumbnail" : {
                     "@id" : obj.thumbnail,
-                    "@type": "dctypes:Image",
                     "height": 250,
                     "width": 200
                 },

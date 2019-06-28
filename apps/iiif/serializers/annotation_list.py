@@ -33,7 +33,7 @@ class Serializer(JSONSerializer):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
-                "@id": "%s/iiif/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
+                "@id": "%s/iiif/v2/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
                 "resources": json.loads(serialize('annotation', obj.annotation_set.all(), islist=True))
             }

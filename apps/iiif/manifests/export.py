@@ -86,3 +86,9 @@ class IiifManifestExport:
         zf.close() # flush zipfile to byte stream
 
         return byte_stream.getvalue()
+
+
+class JekyllExport:
+    @classmethod
+    def get_zip(self, manifest, version):
+        return "foo"    

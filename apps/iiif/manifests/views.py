@@ -61,3 +61,18 @@ class ManifestExport(View):
         resp['Content-Disposition'] = 'attachment; filename=iiif_export.zip'
 
         return resp
+
+class JekyllExport(View):
+
+    def get_queryset(self):
+        return Manifest.objects.filter(pid=self.kwargs['pid'])
+
+    def post(self, request, *args, **kwargs):
+        # we should probably move this out of the view, into a library
+        manifest = self.get_queryset()[0]
+
+        zip = IiifManifestExport.get_zip(manifest, kwargs['version'])
+        resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
+        resp['Content-Disposition'] = 'attachment; filename=iiif_export.zip'
+
+        return resp

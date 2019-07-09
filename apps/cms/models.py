@@ -10,6 +10,7 @@ from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePane
 from .blocks import BaseStreamBlock
 from ..iiif.kollections.models import Collection
 from ..iiif.manifests.models import Manifest
+from ..iiif import manifests
 
 
 
@@ -155,26 +156,12 @@ class HomePage(Page):
     volumes = Manifest.objects.all
 
     content_panels = Page.content_panels + [
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        AutocompletePanel('featured_volumes', target_model='manifests.Manifest'),
->>>>>>> update
-=======
->>>>>>> working on autocomplete multiselect
         FieldPanel('tagline', classname="full"),
         FieldPanel('content_display', classname="full"),
         #FieldPanel('featured_collections', widget=forms.CheckboxSelectMultiple, classname="full"),
         AutocompletePanel('featured_collections', target_model="kollections.Collection"),
         FieldPanel('featured_collections_sort_order', classname="full"),
-<<<<<<< HEAD
-<<<<<<< HEAD
         AutocompletePanel('featured_volumes', target_model="manifests.Manifest"),
-=======
->>>>>>> update
-=======
-        AutocompletePanel('featured_volumes', target_model='manifests.Manifest', is_single=False),
->>>>>>> working on autocomplete multiselect
         #FieldPanel('featured_volumes', widget=forms.CheckboxSelectMultiple, classname="full"),
         FieldPanel('featured_volumes_sort_order', classname="full"),
     ]

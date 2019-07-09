@@ -4,6 +4,7 @@ from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
+from json import JSONEncoder
 import uuid
 from uuid import UUID
 #trying to work with autocomplete

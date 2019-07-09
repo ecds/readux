@@ -115,8 +115,3 @@ This software is distributed under the Apache 2.0 License.
 ## Autocomplete
 
 Use the fork of Wagtail Autocomplete because of UUID. https://github.com/jcmundy/wagtail-autocomplete
-
-## When importing with Import-Export
-
-Import Collections, then Manifests, then I Servers, then Canvases.  Annotations will populate based on Canvases.
-When importing collections, images for the "Original" field must already be in the apps/media/originals/ folder.  List `originals/filename.jpg` in the column for original.

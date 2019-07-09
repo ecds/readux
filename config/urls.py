@@ -27,7 +27,7 @@ sitemaps = {
 urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
      name='django.contrib.sitemaps.views.sitemap'),
-    #url(r'^cms/autocomplete/', include(autocomplete_admin_urls)),
+    url(r'^cms/autocomplete/', include(autocomplete_admin_urls)),
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'^pages/', include(wagtail_urls)),
@@ -53,7 +53,6 @@ urlpatterns = [
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     url(r'^', include('apps.readux.urls')),
-    url(r'^admin/autocomplete/', include(autocomplete_admin_urls)),
     re_path(r'', include(wagtail_urls)),
 
 

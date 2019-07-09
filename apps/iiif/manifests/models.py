@@ -4,7 +4,15 @@ from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
+from json import JSONEncoder
 import uuid
+from uuid import UUID
+#trying to work with autocomplete
+JSONEncoder_olddefault = JSONEncoder.default
+def JSONEncoder_newdefault(self, o):
+    if isinstance(o, UUID): return str(o)
+    return JSONEncoder_olddefault(self, o)
+JSONEncoder.default = JSONEncoder_newdefault
 
 class Manifest(ClusterableModel):
     DIRECTIONS = (

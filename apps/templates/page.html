@@ -36,11 +36,11 @@
           </li>
           {% endfor %}
         </ul>
-        <br />{% for col in volume.collections.all %}
+        <br />
         <b>Manifest URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}</a>
-        <br />
+        <br />{% for col in volume.collections.all %}
         <b>Collection Manifest URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
-        <br />
+        <br />{% endfor %}
         <br />
         <b>View PDF:</b> <a href="{{volume.pdf}}" target="_blank">Click to view volume PDF</a>
         <br />
@@ -61,7 +61,7 @@
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
         <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
  -->
-        {% endfor %}
+        
       </div>
 
       <!-- start ocr el -->

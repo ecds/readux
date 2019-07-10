@@ -5,7 +5,7 @@ from . import views
 # from .views import PageRedirectView
 
 urlpatterns = [
-  #path('', views.CollectionsList.as_view(), name='home' ),
+  path('col/', views.CollectionsList.as_view(), name='home' ),
   path('col/<collection>/', views.CollectionDetail.as_view(), name="collection" ),
   path('col/<collection>/vol/<volume>', views.VolumeDetail.as_view(), name='volume' ),
   # url for page altered to prevent conflict with Wagtail

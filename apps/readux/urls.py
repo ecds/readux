@@ -9,10 +9,9 @@ from . import views
 # from .views import PageRedirectView
 
 urlpatterns = [
-  path('collection/', views.CollectionsList.as_view(), name='collections list' ),
-  path('volume/', views.VolumesList.as_view(), name='volumes list' ),
-  path('collection/<collection>/', views.CollectionDetail.as_view(), name="collection" ),
-  path('volume/<volume>', views.VolumeDetail.as_view(), name='volume' ),
+  path('col/', views.CollectionsList.as_view(), name='home' ),
+  path('col/<collection>/', views.CollectionDetail.as_view(), name="collection" ),
+  path('col/<collection>/vol/<volume>', views.VolumeDetail.as_view(), name='volume' ),
   # url for page altered to prevent conflict with Wagtail
   # TODO: find another way to resolve this conflict
   path('volume/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),

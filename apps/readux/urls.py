@@ -11,17 +11,11 @@ from . import views
 urlpatterns = [
   path('col/', views.CollectionsList.as_view(), name='home' ),
   path('col/<collection>/', views.CollectionDetail.as_view(), name="collection" ),
-  path('col/<collection>/vol/<volume>', views.VolumeDetail.as_view(), name='volume' ),
+  path('vol/<volume>', views.VolumeDetail.as_view(), name='volume' ),
   # url for page altered to prevent conflict with Wagtail
   # TODO: find another way to resolve this conflict
-  path('volume/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),
+  path('vol/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),
 #   path('col/<collection>/vol/<volume>/page/', RedirectView.as_view(pattern_name='page'), name='page 1' ),
 #   path('col/<collection>/vol/<volume>/page/', PageRedirectView.as_view(), name='page 1' ),
-  path('volume/<volume>/export', views.ExportOptions.as_view(), name='export' ),
-  path('annotations/<username>/<volume>/<canvas>/list', annotations.Annotations.as_view(), name='user_annotations' )
-  # path('annotations', annotations.Annotations.as_view() )
-  path('col/<collection>/vol/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),
-#   path('col/<collection>/vol/<volume>/page/', RedirectView.as_view(pattern_name='page'), name='page 1' ),
-#   path('col/<collection>/vol/<volume>/page/', PageRedirectView.as_view(), name='page 1' ),
-  path('col/<collection>/vol/<volume>/export', views.ExportOptions.as_view(), name='export' ),
+  path('vol/<volume>/export', views.ExportOptions.as_view(), name='export' ),
 ]

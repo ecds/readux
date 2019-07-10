@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
   path('iiif/<version>/<pid>/manifest', views.ManifestDetail.as_view(), name="ManifestRender"),
   path('iiif/<version>/<pid>/export', views.ManifestExport.as_view(), name="ManifestExport"),
-  path('col/<collection>/vol/<volume>/citation.ris', views.ManifestRis.as_view(), name='ris' ),
+  path('vol/<volume>/citation.ris', views.ManifestRis.as_view(), name='ris' ),
 ]

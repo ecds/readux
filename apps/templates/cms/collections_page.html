@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<h1 class='uk-heading-hero uk-text-center'>{{ page.title }}</h1>
+<h2 class='uk-heading-primary uk-text-center'>{{page.tagline}}</h2>
+<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
+<ol>
+  {% for collection in collections %}
+  <li>
+    <div>
+        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          {{ collection.label }}
+        </a>
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% endblock content %}

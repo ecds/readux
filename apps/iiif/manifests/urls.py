@@ -5,10 +5,5 @@ from . import views
 urlpatterns = [
   path('iiif/<version>/<pid>/manifest', views.ManifestDetail.as_view(), name="ManifestRender"),
   path('iiif/<version>/<pid>/export', views.ManifestExport.as_view(), name="ManifestExport"),
-<<<<<<< HEAD
-  path('iiif/<version>/<pid>/jekyllexport', views.JekyllExport.as_view(), name="JekyllExport"),
-  path('volume/<volume>/citation.ris', views.ManifestRis.as_view(), name='ris' )
-=======
-  path('vol/<volume>/citation.ris', views.ManifestRis.as_view(), name='ris' ),
->>>>>>> removing <collection> from volume and page url
+  path('volume/<volume>/citation.ris', views.ManifestRis.as_view(), name='ris' ),
 ]

@@ -6,7 +6,9 @@
 
 {% block content %}
 
+<!-- 
 <p class="breadcrumbs"><a href="/">Home</a> > Collection{{Collections|length|pluralize}}: {% for col in volume.collections.all %}<a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a> {% if not forloop.last %}| {% endif %} {% endfor %}> Work: <a href="">{{volume.label}}</a></p>
+ -->
 <h1 class='uk-text-truncate'>
   {{volume.label}}
 </h1>

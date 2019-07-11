@@ -86,6 +86,11 @@ body .uk-container {
     max-width: 90%;
 }
 
+.breadcrumbs {
+    font-size:80%;
+    margin: 0;
+}
+
 header.page-header {
     position: relative;
     z-index: 10;

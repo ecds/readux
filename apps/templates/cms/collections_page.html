@@ -4,9 +4,9 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h1 class='uk-heading-hero uk-text-center'>{{ page.title }}</h1>
+<h1 class='uk-heading-hero uk-text-center'>{{ page.page_title }}</h1>
 <h2 class='uk-heading-primary uk-text-center'>{{page.tagline}}</h2>
-<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
+<p class='uk-text-lead uk-text-center'>{{ page.page_text }}</p>
 <ul>
   {% for collection in page.collections %}
   <li>

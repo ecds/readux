@@ -52,10 +52,11 @@
   {% for collection in page.collections %}
   <li>
     <div class="collectioncontainer">
-      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" style="width:90%;"/><br />
-        <div class="collection-label"><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
-          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
-        </span></a></div>
+      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" style="width:100%;"/><br />
+        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          {{ collection.label }}
+        </a>
+        {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
     </div>
   </li>
   {% endfor %}

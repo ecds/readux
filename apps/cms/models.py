@@ -24,6 +24,7 @@ class ContentPage(Page):
     ]
 
 # class CollectionsPage(Page):
+#     page_title = models.TextField(blank=True)
 #     tagline = models.TextField(blank=True)
 #     collections = Collection.objects.all
 #     volumes = Manifest.objects.all
@@ -32,6 +33,7 @@ class ContentPage(Page):
 #     ]
 # 
 # class VolumesPage(Page):
+#     page_title = models.TextField(blank=True)
 #     tagline = models.TextField(blank=True)
 #     collections = Collection.objects.all
 #     volumes = Manifest.objects.all

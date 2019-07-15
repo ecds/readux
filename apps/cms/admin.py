@@ -11,7 +11,16 @@ class ContentPageAdmin(admin.ModelAdmin):
     class Meta:
         model = ContentPage
         
+# class CollectionsPageAdmin(admin.ModelAdmin):
+#     class Meta:
+#         model = CollectionsPage
+# 
+# class VolumesPageAdmin(admin.ModelAdmin):
+#     class Meta:
+#         model = VolumesPage
 
 admin.site.register(ContentPage, ContentPageAdmin)
 admin.site.register(HomePage, HomePageAdmin)
+# admin.site.register(CollectionsPage, CollectionsPageAdmin)
+# admin.site.register(VolumesPage, VolumesPageAdmin)
 # Register your models here.

@@ -23,6 +23,16 @@ class ContentPage(Page):
         StreamFieldPanel('body'),
     ]
 
+# class CollectionsPage(Page):
+#     tagline = models.TextField(blank=True)
+#     collections = Collection.objects.all
+#     volumes = Manifest.objects.all
+# 
+# class VolumesPage(Page):
+#     tagline = models.TextField(blank=True)
+#     collections = Collection.objects.all
+#     volumes = Manifest.objects.all
+
 class HomePage(Page):
     tagline = models.TextField(blank=True)
     content_display = models.CharField(max_length=20, choices = (("Collections", "Collections"),

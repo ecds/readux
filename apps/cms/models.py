@@ -27,11 +27,17 @@ class ContentPage(Page):
 #     tagline = models.TextField(blank=True)
 #     collections = Collection.objects.all
 #     volumes = Manifest.objects.all
+#     content_panels = Page.content_panels + [
+#         FieldPanel('tagline', classname="full"),
+#     ]
 # 
 # class VolumesPage(Page):
 #     tagline = models.TextField(blank=True)
 #     collections = Collection.objects.all
 #     volumes = Manifest.objects.all
+#     content_panels = Page.content_panels + [
+#         FieldPanel('tagline', classname="full"),
+#     ]
 
 class HomePage(Page):
     tagline = models.TextField(blank=True)

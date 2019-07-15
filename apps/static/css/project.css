@@ -150,6 +150,32 @@ header#page-bg .collection-label h1 {
     align-items: center;
     display: flex;
 }
+.collectioncontainer .collection-label{
+    height: 0;
+}
+
+.collectioncontainer .collection-label a.nav-link {
+    font-size: 3em;
+    color: #DEDEDE;
+    width:90%;
+    height:100%;
+    position: relative;
+    top: -2em;
+    left: 0px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+}
+
+.collectioncontainer .collection-label a.nav-link span {
+    background-color: rgba(0, 0, 0, 0.62);
+    padding: 0.3em;
+}
+
+.uk-container ul {
+    list-style: none;
+}
 
 header#page-bg .collection-label h1 span {
     background-color: rgba(0, 0, 0, 0.62);

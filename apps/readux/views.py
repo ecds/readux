@@ -14,6 +14,12 @@ class CollectionsList(ListView):
     context_object_name = 'collections'
     queryset = Collection.objects.all()
 
+class VolumesList(ListView):
+    template_name = "volumes.html"
+
+    context_object_name = 'volumes'
+    queryset = Manifest.objects.all()
+
 class CollectionDetail(TemplateView):
     template_name = "collection.html"
 

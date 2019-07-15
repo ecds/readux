@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<h1 class='uk-heading-hero uk-text-center'>Readux</h1>
+<h2 class='uk-heading-primary uk-text-center'>Read. Annotate. Publish.</h2>
+<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
+<ul>
+  {% for volume in volumes %}
+  <li>
+    <div>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+      </a>
+      <p>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      <p>{{ volume.label }}</p>
+  </a></p>
+  <p>Author: {{volume.author}}</p>
+  <p>Date Published: {{volume.published_date}}</p>
+  <p>Added {{volume.created_at}}</p>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock content %}

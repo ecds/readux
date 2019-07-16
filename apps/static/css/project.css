@@ -150,27 +150,42 @@ header#page-bg .collection-label h1 {
     align-items: center;
     display: flex;
 }
-.collectioncontainer .collection-label{
+
+ul > li > .collectionbox {
+   width: 100%;
+   padding-bottom: 15%;
+   position: relative;
+}
+
+ul > li > .collectionbox > .collectioncontainer {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   bottom: 0;
+   overflow: hidden;
+}
+
+ul > li > .collectionbox > .collectioncontainer > .collection-label{
     height: 0;
 }
 
-.collectioncontainer .collection-label a.nav-link {
+ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link {
     font-size: 3em;
     color: #DEDEDE;
-    width:100%;
-    height:100%;
-    position: relative;
-    top: -2em;
-    left: 0px;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-    display: flex;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 25%;
+    bottom: 10px;
+    text-align: center;
+    color: black;
 }
 
-.collectioncontainer .collection-label a.nav-link span {
-    background-color: rgba(0, 0, 0, 0.62);
+ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link span {
+    background-color: rgba(255, 255, 255, 0.62);
     padding: 0.3em;
+    border-radius: 20px;
 }
 
 .uk-container ul {
@@ -327,4 +342,29 @@ header#page-bg .collection-label h1 {
       width: 25%;
       padding-bottom: 25%;
    }
+}
+
+@media only screen and (max-width : 1290px) and (min-width : 1051px) {
+   /* Medium desktop: 4 tiles */
+ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link {
+    font-size: 3em;
+}
+}
+@media only screen and (max-width : 1050px) and (min-width : 651px) {
+   /* Small desktop / ipad view: 3 tiles */
+ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link {
+    font-size: 2.5em;
+}
+}
+@media only screen and (max-width : 650px) and (min-width : 481px) {
+   /* Tablet view: 2 tiles */
+ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link {
+    font-size: 2em;
+}
+}
+@media only screen and (max-width : 480px) {
+   /* Smartphone view: 1 tile */
+ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link {
+    font-size: 1em;
+}
 }

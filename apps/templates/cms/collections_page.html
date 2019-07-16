@@ -7,16 +7,19 @@
 <h1 class='uk-heading-hero uk-text-center'>{{ page.page_title }}</h1>
 <h2 class='uk-heading-primary uk-text-center'>{{page.tagline}}</h2>
 <p class='uk-text-lead uk-text-center'>{{ page.page_text }}</p>
+<div>
 <ul>
   {% for collection in page.collections %}
   <li>
+  <div class="collectionbox">
     <div class="collectioncontainer">
-      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" style="width:100%;"/><br />
+      <img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" style="width:100%;"/><br />
         <div class="collection-label"><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
           {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
         </span></a></div>
-    </div>
+    </div></div>
   </li>
   {% endfor %}
 </ul>
+</div>
 {% endblock content %}

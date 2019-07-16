@@ -266,12 +266,16 @@ header#page-bg .collection-image-info.collasped .info{
 #innerContent p {
    text-align: center;
    background: rgba(255, 255, 255, 0.7);
-   color: black;
+   color: #4F4F4F;
    border-radius: 15px;
 }
 
+#innerContent p em {
+   color: black;
+}
+
 #innerContent a {
-   color: #1C1F5D;
+   color: black;
    #background: rgba(255, 255, 255, 0.7);
    text-decoration: underline;
 }

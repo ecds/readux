@@ -58,7 +58,6 @@ V3
 
 class Serializer(JSONSerializer):
     """
-    Convert a queryset to GeoJSON, https://geojson.org/
     """
     def _init_options(self):
         super()._init_options()
@@ -136,7 +135,7 @@ class Serializer(JSONSerializer):
                   "@type": "sc:Sequence",
                   "label": "Current Page Order",
                   "startCanvas": obj.start_canvas,
-                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
+                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), is_list=True))
                 }
               ]
             }

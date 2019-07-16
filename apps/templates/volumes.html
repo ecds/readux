@@ -19,9 +19,9 @@
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
       <p>{{ volume.label }}</p>
   </a></p>
-  <p>Author: {{volume.author}}</p>
-  <p>Date Published: {{volume.published_date}}</p>
-  <p>Added {{volume.created_at}}</p></div>
+  <p><strong>Author:</strong> {{volume.author}}<br/>
+  <strong>Date Published:</strong> {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
     </div></div>
   {% endfor %}
   </div>

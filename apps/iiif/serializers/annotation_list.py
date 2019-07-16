@@ -13,7 +13,10 @@ class Serializer(JSONSerializer):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
         self.is_list = self.json_kwargs.pop('is_list', False)
+<<<<<<< HEAD
         self.request = self.json_kwargs.pop('request')
+=======
+>>>>>>> Added model for user annotations. Altered annotation serializer for text annotations.
 
     def start_serialization(self):
         self._init_options()
@@ -37,7 +40,7 @@ class Serializer(JSONSerializer):
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": "%s/iiif/v2/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.annotation_set.filter(Q(owner=None) | Q(owner=self.request.user.id)), is_list=True))
+                "resources": json.loads(serialize('annotation', obj.annotation_set.all(), is_list=True))
             }
             return data
 

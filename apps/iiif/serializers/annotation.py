@@ -68,7 +68,26 @@ class Serializer(JSONSerializer):
     
     @classmethod
     def __serialize_item(self, obj):
-        return obj.item
+        return {
+                    "type": "RangeSelector",
+                    "startSelector": {
+                        "@type": "XPathSelector",
+                        "value": "//*[@id='%s']" % obj.item['start_element'],
+                        "refinedBy" : {
+                            "@type": "TextPositionSelector",
+                            "start": obj.item['start_offset']
+                        }
+                    },
+                    "endSelector": {
+                        "@type": "XPathSelector",
+                        "value": "//*[@id='%s']" % obj.item['end_element'],
+                        "refinedBy" : {
+                            "@type": "TextPositionSelector",
+                            "start": obj.item['end_offset']
+                        }
+                    }
+        }
+
 
 class Deserializer:
     def __init__(self, *args, **kwargs):

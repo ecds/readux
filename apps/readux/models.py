@@ -54,6 +54,7 @@ class UserAnnotation(AbstractAnnotation):
             isinstance(self.end_selector, Annotation)
         ])
 
+<<<<<<< HEAD
     def __is_svg_annotation(self):
         return self.svg is not None
 
@@ -120,3 +121,16 @@ class UserAnnotation(AbstractAnnotation):
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
     instance.parse_mirador_annotation()
+=======
+    @property
+    def item(self):
+        if self.__is_text_annotation():
+            return dict({
+                    'start_element': str(self.start_selector.pk),
+                    'end_element': str(self.end_selector.pk),
+                    'start_offset': self.start_offset,
+                    'end_offset': self.end_offset
+                })
+        else:
+            return None
+>>>>>>> Added model for user annotations. Altered annotation serializer for text annotations.

@@ -195,7 +195,7 @@ class Serializer(JSONSerializer):
                   "@type": "sc:Sequence",
                   "label": "Current Page Order",
                   "startCanvas": obj.start_canvas,
-                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
+                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), is_list=True))
                 }
               ]
             }

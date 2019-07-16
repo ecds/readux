@@ -15,7 +15,7 @@ class IIIFV2List(View):
         return Canvas.objects.filter(manifest=Manifest.objects.get(pid=self.kwargs['manifest']))
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(serialize('canvas', self.get_queryset(), islist=True)), safe=False)
+        return JsonResponse(json.loads(serialize('canvas', self.get_queryset(), is_list=True)), safe=False)
 
 class IIIFV2Detail(View):
     def get_queryset(self):
@@ -44,5 +44,5 @@ class StartingCanvas(View):
         return Canvas.objects.filter(is_starting_page=True)
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), islist=True)), safe=False)
+        return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), is_list=True)), safe=False)
 

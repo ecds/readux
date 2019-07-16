@@ -33,7 +33,7 @@ class AnnotationsForPage(View):
                     'annotation',
                     self.get_queryset(),
                     # version=kwargs['version'],
-                    islist = True
+                    is_list = True
                 )
             ),
             safe=False

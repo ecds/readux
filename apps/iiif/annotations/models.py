@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 import json
 import uuid
+from abc import abstractmethod
 
 # class Annotation(models.Model):
 #     '''
@@ -67,7 +68,8 @@ import uuid
 #         #     # ('delete_collection', 'Can delete any collection'),
 #         # )
 
-class Annotation(models.Model):
+    
+class AbstractAnnotation(models.Model):
     OCR = 'cnt:ContentAsText'
     TEXT = 'dctypes:Text'
     TYPE_CHOICES = (
@@ -106,7 +108,11 @@ class Annotation(models.Model):
     # TODO Should we keep this for annotations from Mirador, or just get rid of it?
     svg = models.TextField()
 
-    ordering = ['order']
+    # @property
+    # @abstractmethod
+    # def item(self):
+    #     pass
+
 
     def parse_oa_annotation(self):
         dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
@@ -118,6 +124,14 @@ class Annotation(models.Model):
 
     def __str__(self):
         return str(self.pk)
+    
+    class Meta:
+        abstract = True
+
+class Annotation(AbstractAnnotation):
+    class Meta:
+        ordering = ['position']
+        abstract = False
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_span_element(sender, instance, **kwargs):

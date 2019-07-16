@@ -17,6 +17,35 @@ class CollectionsList(ListView):
 class VolumesList(ListView):
     template_name = "volumes.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sort = self.request.GET.get('sort', None)
+
+        q = Manifest.objects.all()
+
+        sort_options = ['title', 'author', 'date published', 'date added']
+        if sort not in sort_options:
+            sort = 'title'
+
+        if sort == 'title':
+            q = q.order_by('label')
+        elif sort == 'author':
+            q = q.order_by('author')
+        elif sort == 'date published':
+            q = q.order_by('published_date')
+        elif sort == 'date added':
+            q = q.order_by('-created_at')
+
+        sort_url_params = self.request.GET.copy()
+        if 'sort' in sort_url_params:
+            del sort_url_params['sort']
+
+        context['volumes'] = q.all
+        context.update({
+        'sort_url_params': urlencode(sort_url_params),
+        'sort': sort, 'sort_options': sort_options,
+                     })
+        return context
     context_object_name = 'volumes'
     queryset = Manifest.objects.all()
 

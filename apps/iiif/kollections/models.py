@@ -38,7 +38,7 @@ class Collection(models.Model):
 
     def make_thumbnail(self):
 
-        THUMB_SIZE = (200, 250)
+        THUMB_SIZE = (400, 500)
         image = Image.open(self.original)
         image.thumbnail(THUMB_SIZE, Image.ANTIALIAS)
 

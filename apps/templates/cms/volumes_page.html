@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
+{% load static %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
 <h1 class='uk-heading-hero uk-text-center'>{{ page.page_title }}</h1>
 <h2 class='uk-heading-primary uk-text-center'>{{page.tagline}}</h2>
-<p class='uk-text-lead uk-text-center'>{{ page.page_text }}</p>
+<p class='uk-text-lead uk-text-center'>{{ page.paragraph }}</p>
+
+{% include "snippets/sort_dropdown.html" %}
+
+
   <div id="wrap">
-  {% for volume in page.volumes %}
+  {% for volume in volumespage %}
     <div id="box">
     <div id="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">

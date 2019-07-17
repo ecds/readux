@@ -101,6 +101,9 @@ header.page-header .container img{
     width: 100%;
 }
 
+h3 {
+    font-size: 2.2rem;
+}
 
 header#page-bg .collection-image-info {
     float: right;

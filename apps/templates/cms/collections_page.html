@@ -7,6 +7,8 @@
 <h2 class='uk-heading-primary uk-text-center'>{{ page.page_title }}</h1>
 <h3 class='uk-text-center'>{{page.tagline}}</h2>
 <p class='uk-text-lead uk-text-center'>{{ page.paragraph }}</p>
+
+{% if page.layout == 'List' %}
 <div class="collectionswrapper">
 <ul>
   {% for collection in page.collections %}
@@ -22,4 +24,20 @@
   {% endfor %}
 </ul>
 </div>
+{% endif %}
+{% if page.layout == 'Grid' %}
+<div id="wrap">
+  {% for collection in page.collections %}
+  <div id="box">
+    <div id="boxInnerb">
+    <a class="nav-link" href="{% url 'collection' collection.pid %}">
+      <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/></a>
+        <div id="innerContentb"><a class="nav-link" href="{% url 'collection' collection.pid %}"><h2>
+          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
+        </h2></a></div>
+    </div></div>
+  {% endfor %}
+</div>
+
+{% endif %}
 {% endblock content %}

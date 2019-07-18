@@ -98,6 +98,16 @@ class Collection(models.Model):
                 
         return True
 
+    @property
+    def thumbnail_crop_volume(self):
+        if self.height > self.width:
+            # portrait
+            return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+        else:
+            # landscape
+            return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
+
 #     def make_header(self):
 #         x = (0)
 #         y = (0)

@@ -11,7 +11,7 @@
 
 {% include "snippets/sort_dropdown.html" %}
 
-
+{% if page.layout == 'Grid' %}
   <div id="wrap">
   {% for volume in volumespage %}
     <div id="box">
@@ -29,4 +29,27 @@
     </div></div>
   {% endfor %}
   </div>
+{% endif %}
+
+{% if page.layout == 'List' %}
+<ol>
+  {% for volume in volumespage %}
+  <li>
+    <div><div id="grid"><div id="grid-image">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+        <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
+      </a></div><div id="grid-metaforimage">
+      <p>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {{ volume.label }}
+  </a><br/>
+  Author: {{volume.author}}<br/>
+  Date Published: {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
+    </div></div>
+  </li>
+  {% endfor %}
+</ol>
+{% endif %}
+
 {% endblock content %}

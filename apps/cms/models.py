@@ -30,24 +30,34 @@ class CollectionsPage(Page):
     page_title = models.TextField(blank=True)
     tagline = models.TextField(blank=True)
     paragraph = models.TextField(blank=True)
+    layout = models.CharField(max_length=20, choices = (("Grid", "Grid"),
+            ("List", "List"),),
+            default = "List",
+            help_text="Select to show all volumes as a list or a grid of icons.")
     collections = Collection.objects.all
     volumes = Manifest.objects.all
     content_panels = Page.content_panels + [
         FieldPanel('page_title', classname="full"),
         FieldPanel('tagline', classname="full"),
         FieldPanel('paragraph', classname="full"),
+        FieldPanel('layout', classname="full"),
     ]
 
 class VolumesPage(Page):
     page_title = models.TextField(blank=True)
     tagline = models.TextField(blank=True)
     paragraph = models.TextField(blank=True)
+    layout = models.CharField(max_length=20, choices = (("Grid", "Grid"),
+            ("List", "List"),),
+            default = "Grid",
+            help_text="Select to show all volumes as a list or a grid of icons.")
     collections = Collection.objects.all
     volumes = Manifest.objects.all
     content_panels = Page.content_panels + [
         FieldPanel('page_title', classname="full"),
         FieldPanel('tagline', classname="full"),
         FieldPanel('paragraph', classname="full"),
+        FieldPanel('layout', classname="full"),
     ]
 #     def get_context(self, request):
 #         context = super(VolumesPage, self).get_context(request)

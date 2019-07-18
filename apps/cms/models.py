@@ -14,6 +14,7 @@ from django.http import request
 from .blocks import BaseStreamBlock
 from ..iiif.kollections.models import Collection
 from ..iiif.manifests.models import Manifest
+from ..iiif.canvases.models import Canvas
 from ..iiif import manifests
 import urllib.request
 
@@ -96,8 +97,11 @@ class VolumesPage(Page):
         sort_url_params = request.GET.copy()
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
-
+     
         context['volumespage'] = q.all
+        canvasquery = Canvas.objects.filter(is_starting_page=1)
+
+        context['firstthumbnail'] = canvasquery.all
         context.update({
         'sort_url_params': urlencode(sort_url_params),
         'sort': sort, 'sort_options': sort_options,

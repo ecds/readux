@@ -33,8 +33,8 @@
     <a class="nav-link" href="{% url 'collection' collection.pid %}">
       <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/></a>
         <div id="innerContentb"><a class="nav-link" href="{% url 'collection' collection.pid %}"><h2>
-          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
-        </h2></a></div>
+          {{ collection.label }}
+        </h2></a></div><div id="innerContentc"><button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button></div>
     </div></div>
   {% endfor %}
 </div>

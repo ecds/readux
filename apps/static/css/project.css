@@ -303,7 +303,7 @@ header#page-bg .collection-image-info.collasped .info{
    right: 0;
    top: 0;
    bottom: 0;
-   max-height: 225px;
+   #max-height: 225px;
    overflow: hidden;
 }
 #boxInner img {
@@ -350,6 +350,16 @@ header#page-bg .collection-image-info.collasped .info{
    left: 10px;
    right: 10px;
    top: 10px;
+   bottom: 10px;
+   text-align: center;
+   color: black;
+}
+
+#innerContentc {
+   position: absolute;
+   left: 10px;
+   right: 10px;
+   #top: 10px;
    bottom: 10px;
    text-align: center;
    color: black;

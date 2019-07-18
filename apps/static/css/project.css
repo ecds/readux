@@ -326,6 +326,12 @@ header#page-bg .collection-image-info.collasped .info{
    bottom: 10px;
    text-align: center;
    color: black;
+   transition: 0.5s;
+   opacity: 0;
+}
+
+#innerContent:hover {
+   opacity: 1;
 }
 
 #innerContent p {

@@ -17,7 +17,7 @@
     <div id="box">
     <div id="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail_crop_volume }}" {% endif %}{% endfor %}alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail_crop_volume }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"{% endif %}{% endfor %}alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
       </a>
       <div id="innerContent"><p>
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">

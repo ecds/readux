@@ -164,6 +164,10 @@ ol {
   -moz-columns: 2;
 }
 
+ol > li.list {
+   height: 320px;
+}
+
 ul > li > .collectionbox {
    width: 100%;
    padding-bottom: 15%;

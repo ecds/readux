@@ -8,11 +8,11 @@
 
 {% if page.featured_collections.all|length != 0  %}
 <h2>Featured Collection{{page.featured_collections.all|length|pluralize}}</h2>
-<ul>
+<ol>
   {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
   <li>
     <div>
-      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/>
+      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/><br/>
         <a class="nav-link" href="{% url 'collection' collection.pid %}">
           {{ collection.label }}
         </a>
@@ -20,7 +20,7 @@
     </div>
   </li>
   {% endfor %}
-</ul>
+</ol>
 {% endif %}
 
 {% if page.featured_volumes.all|length != 0 %}

@@ -15,6 +15,7 @@
                     </option>
                 {% endfor %}
             </select>
+            <a onclick="ascaddURL(this)" href=""><button>ASC</button></a><a onclick="descaddURL(this)" href=""><button>DESC</button></a>
             <p>
     </section>
 </footer>
@@ -28,4 +29,38 @@ $('.select-sort').selectize({
         }
     }
 })
+</script>
+<script>
+function ascaddURL(element)
+{
+    $(element).attr('href', function() {
+        if (window.location.search.length == 0) {
+        return this.href + '?sort=title&order=asc';
+        } else if (window.location.search.match(/[?&]order=asc/gi)) {
+        this.href = this.href.replace('order=asc', 'order=asc');
+        return this.href;
+        } else if (window.location.search.match(/[?&]order=desc/gi)) {
+        this.href = this.href.replace('order=desc', 'order=asc');
+        return this.href;
+        } else {
+        return this.href + '&order=asc';
+        }
+    });
+}
+function descaddURL(element)
+{
+    $(element).attr('href', function() {
+        if (window.location.search.length == 0) {
+        return this.href + '?sort=title&order=desc';
+        } else if (window.location.search.match(/[?&]order=asc/gi)) {
+        this.href = this.href.replace('order=asc', 'order=desc');
+        return this.href;
+        } else if (window.location.search.match(/[?&]order=desc/gi)) {
+        this.href = this.href.replace('order=desc', 'order=desc');
+        return this.href;
+        } else {
+        return this.href + '&order=desc';
+        }
+    });
+}
 </script>

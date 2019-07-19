@@ -78,33 +78,60 @@ class VolumesPage(Page):
     def get_context(self, request):
         context = super().get_context(request)
         sort = request.GET.get('sort', None)
-
+        order = request.GET.get('order', None)
+        
         q = Manifest.objects.all()
 
         sort_options = ['title', 'author', 'date published', 'date added']
-        if sort not in sort_options:
+        order_options = ['asc', 'desc']
+        if sort not in sort_options and order not in order_options:
             sort = 'title'
+            order = 'asc'
+        elif sort not in sort_options:
+            sort = 'title'
+        elif order not in order_options:
+            order = 'asc'
 
         if sort == 'title':
-            q = q.order_by('label')
+            if(order == 'asc'):
+                q = q.order_by('label')
+            elif(order == 'desc'):
+                q = q.order_by('-label')            
         elif sort == 'author':
-            q = q.order_by('author')
+            if(order == 'asc'):
+                q = q.order_by('author')
+            elif(order == 'desc'):
+                q = q.order_by('-author')            
         elif sort == 'date published':
-            q = q.order_by('published_date')
+            if(order == 'asc'):
+                q = q.order_by('published_date')
+            elif(order == 'desc'):
+                q = q.order_by('-published_date')            
         elif sort == 'date added':
-            q = q.order_by('-created_at')
+            if(order == 'asc'):
+                q = q.order_by('created_at')
+            elif(order == 'desc'):
+                q = q.order_by('-created_at')            
 
         sort_url_params = request.GET.copy()
-        if 'sort' in sort_url_params:
+        order_url_params = request.GET.copy()
+        if 'sort' in sort_url_params and 'order' in order_url_params:
             del sort_url_params['sort']
-     
+            del order_url_params['order']
+        elif 'sort' in sort_url_params:
+            del sort_url_params['sort']
+        elif 'order' in order_url_params:
+            del order_url_params['order']
+       
         context['volumespage'] = q.all
-        canvasquery = Canvas.objects.filter(is_starting_page=1)
+#         canvasquery = Canvas.objects.filter(is_starting_page=1)
 
-        context['firstthumbnail'] = canvasquery.all
+#         context['firstthumbnail'] = canvasquery.all
         context.update({
         'sort_url_params': urlencode(sort_url_params),
+        'order_url_params': urlencode(order_url_params),
         'sort': sort, 'sort_options': sort_options,
+        'order': order, 'order_options': order_options,
                      })
         return context
 

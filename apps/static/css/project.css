@@ -101,8 +101,21 @@ header.page-header .container img{
     width: 100%;
 }
 
+h1 {
+    color: #737373;
+}
+
+h2 {
+    color: #737373;
+}
+
 h3 {
     font-size: 2.2rem;
+    color: #737373;
+}
+
+p.uk-text-lead {
+    color: #737373;
 }
 
 header#page-bg .collection-image-info {

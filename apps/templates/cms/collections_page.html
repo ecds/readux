@@ -4,9 +4,9 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h2 class='uk-heading-primary uk-text-center'>{{ page.page_title }}</h1>
-<h3 class='uk-text-center'>{{page.tagline}}</h2>
-<p class='uk-text-lead uk-text-center'>{{ page.paragraph }}</p>
+<h2 class='uk-heading-primary'>{{ page.page_title }}</h1>
+<h3>{{page.tagline}}</h2>
+<p class='uk-text-lead'>{{ page.paragraph }}</p>
 
 {% if page.layout == 'List' %}
 <div class="collectionswrapper">

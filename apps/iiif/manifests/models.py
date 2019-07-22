@@ -2,10 +2,19 @@ from django.db import models
 import config.settings.local as settings
 from ..kollections.models import Collection
 from django.contrib.postgres.fields import JSONField
-#from wagtailautocomplete.edit_handlers import AutocompletePanel
+from modelcluster.models import ClusterableModel
+from wagtailautocomplete.edit_handlers import AutocompletePanel
+from json import JSONEncoder
 import uuid
+from uuid import UUID
+#trying to work with autocomplete
+JSONEncoder_olddefault = JSONEncoder.default
+def JSONEncoder_newdefault(self, o):
+    if isinstance(o, UUID): return str(o)
+    return JSONEncoder_olddefault(self, o)
+JSONEncoder.default = JSONEncoder_newdefault
 
-class Manifest(models.Model):
+class Manifest(ClusterableModel):
     DIRECTIONS = (
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')
@@ -25,7 +34,7 @@ class Manifest(models.Model):
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
     #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")
-#    autocomplete_search_field = 'label'
+    autocomplete_search_field = 'label'
 
     @property
     def note_list(self):
@@ -44,8 +53,8 @@ class Manifest(models.Model):
         first = self.canvas_set.all().exclude(is_starting_page=False).first()
         return first.identifier if first else self.canvas_set.all().first().identifier
     
- #   def autocomplete_label(self):
- #       return self.label
+    def autocomplete_label(self):
+        return self.label
 
     def __str__(self):
         return self.label

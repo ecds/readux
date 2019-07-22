@@ -53,7 +53,6 @@ urlpatterns = [
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     url(r'^', include('apps.readux.urls')),
-    url(r'^admin/autocomplete/', include(autocomplete_admin_urls)),
     re_path(r'', include(wagtail_urls)),
 
 

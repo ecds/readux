@@ -20,30 +20,52 @@ class VolumesList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sort = self.request.GET.get('sort', None)
+        order = self.request.GET.get('order', None)
 
         q = Manifest.objects.all()
 
         sort_options = ['title', 'author', 'date published', 'date added']
-        if sort not in sort_options:
+        order_options = ['asc', 'desc']
+        if sort not in sort_options and order not in order_options:
             sort = 'title'
+            order = 'asc'
+        elif sort not in sort_options:
+            sort = 'title'
+        elif order not in order_options:
+            order = 'asc'
 
         if sort == 'title':
-            q = q.order_by('label')
+            if(order == 'asc'):
+                q = q.order_by('label')
+            elif(order == 'desc'):
+                q = q.order_by('-label')            
         elif sort == 'author':
-            q = q.order_by('author')
+            if(order == 'asc'):
+                q = q.order_by('author')
+            elif(order == 'desc'):
+                q = q.order_by('-author')            
         elif sort == 'date published':
-            q = q.order_by('published_date')
+            if(order == 'asc'):
+                q = q.order_by('published_date')
+            elif(order == 'desc'):
+                q = q.order_by('-published_date')            
         elif sort == 'date added':
-            q = q.order_by('-created_at')
+            if(order == 'asc'):
+                q = q.order_by('created_at')
+            elif(order == 'desc'):
+                q = q.order_by('-created_at')            
 
         sort_url_params = self.request.GET.copy()
+        order_url_params = self.request.GET.copy()
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
 
         context['volumes'] = q.all
         context.update({
         'sort_url_params': urlencode(sort_url_params),
+        'order_url_params': urlencode(order_url_params),
         'sort': sort, 'sort_options': sort_options,
+        'order': order, 'order_options': order_options,
                      })
         return context
     context_object_name = 'volumes'
@@ -55,23 +77,43 @@ class CollectionDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sort = self.request.GET.get('sort', None)
+        order = self.request.GET.get('order', None)
 
         q = Collection.objects.filter(pid=kwargs['collection']).first().manifests
 
         sort_options = ['title', 'author', 'date published', 'date added']
-        if sort not in sort_options:
+        order_options = ['asc', 'desc']
+        if sort not in sort_options and order not in order_options:
             sort = 'title'
+            order = 'asc'
+        elif sort not in sort_options:
+            sort = 'title'
+        elif order not in order_options:
+            order = 'asc'
 
         if sort == 'title':
-            q = q.order_by('label')
+            if(order == 'asc'):
+                q = q.order_by('label')
+            elif(order == 'desc'):
+                q = q.order_by('-label')            
         elif sort == 'author':
-            q = q.order_by('author')
+            if(order == 'asc'):
+                q = q.order_by('author')
+            elif(order == 'desc'):
+                q = q.order_by('-author')            
         elif sort == 'date published':
-            q = q.order_by('published_date')
+            if(order == 'asc'):
+                q = q.order_by('published_date')
+            elif(order == 'desc'):
+                q = q.order_by('-published_date')            
         elif sort == 'date added':
-            q = q.order_by('-created_at')
+            if(order == 'asc'):
+                q = q.order_by('created_at')
+            elif(order == 'desc'):
+                q = q.order_by('-created_at')            
 
         sort_url_params = self.request.GET.copy()
+        order_url_params = self.request.GET.copy()
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
 
@@ -79,7 +121,9 @@ class CollectionDetail(TemplateView):
         context['volumes'] = q.all
         context.update({
         'sort_url_params': urlencode(sort_url_params),
+        'order_url_params': urlencode(order_url_params),
         'sort': sort, 'sort_options': sort_options,
+        'order': order, 'order_options': order_options,
                      })
         return context
 

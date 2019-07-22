@@ -3,7 +3,7 @@ from apps.cms.models import ContentPage, HomePage
 
 class HomePageAdmin(admin.ModelAdmin):
     search_fields = ('featured_volumes', 'featured_collections')
-    autocomplete_fields = ('featured_volumes', 'featured_collections')
+    autocomplete_fields = ('featured_volumes',)
     class Meta:
         model = HomePage
 

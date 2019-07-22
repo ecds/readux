@@ -111,3 +111,7 @@ We use the [Git-Flow](https://danielkummer.github.io/git-flow-cheatsheet/) branc
 ## License
 
 This software is distributed under the Apache 2.0 License.
+
+## Autocomplete
+
+Use the fork of Wagtail Autocomplete because of UUID. https://github.com/jcmundy/wagtail-autocomplete

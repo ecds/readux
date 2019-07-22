@@ -73,6 +73,9 @@ HOSTNAME = 'https://readux-dev.org:3000'
 DATASTREAM_PREFIX = 'http://repo.library.emory.edu/fedora/objects/'
 DATASTREAM_SUFFIX = '/datastreams/position/content'
 
+JEKYLLIMPORT_MANIFEST_SCRIPT='bundle exec iiif_to_jekyll'
+
+
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'SCOPE': [

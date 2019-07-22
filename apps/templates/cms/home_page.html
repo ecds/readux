@@ -28,12 +28,12 @@
 <ol>
     {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
   <li>
-    <div>{% for col in volume.collections.all %}
-      <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
+    <div>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
         <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
       </a>
       <p>
-      <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
 
       <p>{{ volume.label }}</p>
   </a></p>
@@ -68,12 +68,12 @@
 <ol>
   {% for volume in page.volumes %}
   <li>
-    <div>{% for col in volume.collections.all %}
-      <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">
+    <div>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
         <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
       </a>
       <p>
-      <a class="nav-link" href="{% url 'page' col.pid volume.pid volume.canvas_set.first.pid %}">{% endfor %}
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
       <p>{{ volume.label }}</p>
   </a></p>
   <p>Author: {{volume.author}}</p>

@@ -24,12 +24,12 @@
 <div class="uk-container">
 {% for volume in volumes %}
 <div class="collection-row" style="display:inline-block;"><div class="collection-image" style="display:inline; float:left;">
-  <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
+  <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
     <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
   </a>
   </div>
   <div class="collection-info" style="display:inline; float:left; max-width:80%;">
-    <a class="nav-link" href="{% url 'page' collection.pid volume.pid volume.canvas_set.first.pid %}">
+    <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}
 </a>
 <p>Author: {{volume.author}}</p>

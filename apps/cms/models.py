@@ -32,7 +32,7 @@ class CollectionsPage(Page):
     tagline = models.TextField(blank=True)
     paragraph = models.TextField(blank=True)
     layout = models.CharField(max_length=20, choices = (("Grid", "Grid"),
-            ("List", "List"),),
+            ("List", "List"),("Banner", "Banner")),
             default = "List",
             help_text="Select to show all volumes as a list or a grid of icons.")
     collections = Collection.objects.all

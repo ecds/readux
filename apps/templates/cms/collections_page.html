@@ -8,7 +8,7 @@
 <h3>{{page.tagline}}</h2>
 <p class='text-lead'>{{ page.paragraph }}</p>
 
-{% if page.layout == 'List' %}
+{% if page.layout == 'Banner' %}
 <div class="collectionswrapper">
 <ul>
   {% for collection in page.collections %}
@@ -39,5 +39,21 @@
   {% endfor %}
 </div>
 
+{% endif %}
+{% if page.layout == 'List' %}
+<div class="collectionswrapper">
+<ol>
+  {% for collection in page.collections %}
+  <li class="list">
+    <div><div id="grid"><div id="grid-image">
+      <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}""/></div>
+        <div id="grid-metaforimage"><p><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
+          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
+        </span></a><br/>{{collection.summary}}</p></div>
+    </div></div>
+  </li>
+  {% endfor %}
+</ol>
+</div>
 {% endif %}
 {% endblock content %}

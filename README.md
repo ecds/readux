@@ -42,6 +42,7 @@ source venv/bin/activate
 
 ~~~bash
 pip install -r requirements/local.txt
+bundle install
 ~~~
 
 5. Copy and set up your local settings.

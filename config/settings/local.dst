@@ -139,5 +139,3 @@ LOGGING = {
         },
  },
 }
-
-JEKYLLIMPORT_MANIFEST_SCRIPT='bundle exec iiif_to_jekyll'

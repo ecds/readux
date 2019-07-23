@@ -8,6 +8,7 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from .models import Manifest
 from .export import IiifManifestExport
+from .export import JekyllSiteExport
 import json
 
 
@@ -59,5 +60,21 @@ class ManifestExport(View):
         zip = IiifManifestExport.get_zip(manifest, kwargs['version'])
         resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
         resp['Content-Disposition'] = 'attachment; filename=iiif_export.zip'
+
+        return resp
+
+class JekyllExport(View):
+
+    def get_queryset(self):
+        return Manifest.objects.filter(pid=self.kwargs['pid'])
+
+    def post(self, request, *args, **kwargs):
+        # we should probably move this out of the view, into a library
+        manifest = self.get_queryset()[0]
+
+        jekyll_export = JekyllSiteExport(manifest, kwargs['version']);
+        zip = jekyll_export.get_zip()
+        resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
+        resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
 
         return resp

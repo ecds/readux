@@ -28,3 +28,6 @@ wagtail-autocomplete==0.3.1
 
 #import-export
 django-import-export==1.2.0
+
+# jekyll theme for zipfile used in export functionality
+-e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

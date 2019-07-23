@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<h2 class='uk-heading-primary'>{{ page.page_title }}</h1>
+<h3>{{page.tagline}}</h3>
+<p class='text-lead'>{{ page.paragraph }}</p>
+
+{% include "snippets/sort_dropdown.html" %}
+
+{% if page.layout == 'Grid' %}
+  <div id="wrap">
+  {% for volume in volumespage %}
+    <div id="box">
+    <div id="boxInner">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail_crop_volume }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"{% endif %}{% endfor %}alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+      </a>
+      <div id="innerContent"><p>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      <p>{{ volume.label }}</p>
+  </a></p>
+  <p><em>Author:</em> {{volume.author}}<br/>
+  <em>Date Published:</em> {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
+    </div></div>
+  {% endfor %}
+  </div>
+{% endif %}
+
+{% if page.layout == 'List' %}
+<ol>
+  {% for volume in volumespage %}
+  <li class="list">
+    <div><div id="grid"><div id="grid-image">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
+      </a></div><div id="grid-metaforimage">
+      <p>
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {{ volume.label }}
+  </a><br/>
+  Author: {{volume.author}}<br/>
+  Date Published: {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
+    </div></div>
+  </li>
+  {% endfor %}
+</ol>
+{% endif %}
+
+{% endblock content %}

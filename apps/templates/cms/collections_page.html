@@ -4,18 +4,56 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h1 class='uk-heading-hero uk-text-center'>{{ page.title }}</h1>
-<h2 class='uk-heading-primary uk-text-center'>{{page.tagline}}</h2>
-<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
-<ol>
-  {% for collection in collections %}
+<h2 class='uk-heading-primary'>{{ page.page_title }}</h1>
+<h3>{{page.tagline}}</h2>
+<p class='text-lead'>{{ page.paragraph }}</p>
+
+{% if page.layout == 'Banner' %}
+<div class="collectionswrapper">
+<ul>
+  {% for collection in page.collections %}
   <li>
-    <div>
-        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+  <div class="collectionbox">
+    <div class="collectioncontainer">
+      <img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}""/><br />
+        <div class="collection-label"><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
+          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
+        </span></a></div>
+    </div></div>
+  </li>
+  {% endfor %}
+</ul>
+</div>
+{% endif %}
+{% if page.layout == 'Grid' %}
+<div id="wrap">
+  {% for collection in page.collections %}
+  <div id="box">
+    <div id="boxInnerb">
+    <a class="nav-link" href="{% url 'collection' collection.pid %}">
+      <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/></a>
+        <div id="innerContentb"><a class="nav-link" href="{% url 'collection' collection.pid %}"><h2>
           {{ collection.label }}
-        </a>
-    </div>
+        </h2></a></div><div id="innerContentc"><button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button></div>
+    </div></div>
+  {% endfor %}
+</div>
+
+{% endif %}
+{% if page.layout == 'List' %}
+<div class="collectionswrapper">
+<ol>
+  {% for collection in page.collections %}
+  <li class="list">
+    <div><div id="grid"><div id="grid-image">
+      <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}""/></div>
+        <div id="grid-metaforimage"><p><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
+          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
+        </span></a><br/>{{collection.summary}}</p></div>
+    </div></div>
   </li>
   {% endfor %}
 </ol>
+</div>
+{% endif %}
 {% endblock content %}

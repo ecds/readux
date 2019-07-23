@@ -38,10 +38,32 @@ class Collection(models.Model):
 
     def make_thumbnail(self):
 
-        THUMB_SIZE = (200, 250)
+#         THUMB_SIZE = (400, 500)
+#         image = Image.open(self.original)
+#         image.thumbnail(THUMB_SIZE, Image.ANTIALIAS)
+        # If height is higher we resize vertically, if not we resize horizontally
+        size = (400, 500)
         image = Image.open(self.original)
-        image.thumbnail(THUMB_SIZE, Image.ANTIALIAS)
-
+        # Get current and desired ratio for the images
+        img_ratio = image.size[0] / float(image.size[1])
+        ratio = size[0] / float(size[1])
+        #The image is scaled/cropped vertically or horizontally depending on the ratio
+        if ratio > img_ratio:
+            image = image.resize((size[0], size[0] * image.size[1] / image.size[0]),
+                    Image.ANTIALIAS)
+            # Crop in the top, middle or bottom
+            box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
+            image = image.crop(box)
+        elif ratio < img_ratio:
+            imageratio = (int(size[1] * image.size[0] / image.size[1]), int(size[1]))
+            image = image.resize(imageratio,
+                    Image.ANTIALIAS)
+            box = ((image.size[0] - size[0]) / 2, 0, (image.size[0] + size[0]) / 2, image.size[1])
+            image = image.crop(box)
+        else :
+            image = image.resize((size[0], size[1]),
+                    Image.ANTIALIAS)
+            # If the scale is the same, we do not need to crop
         thumb_name, thumb_extension = os.path.splitext(self.original.name)
         thumb_extension = thumb_extension.lower()
 
@@ -97,6 +119,16 @@ class Collection(models.Model):
         temp_thumb.close()
                 
         return True
+
+    @property
+    def thumbnail_crop_volume(self):
+        if self.height > self.width:
+            # portrait
+            return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+        else:
+            # landscape
+            return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+
 
 #     def make_header(self):
 #         x = (0)

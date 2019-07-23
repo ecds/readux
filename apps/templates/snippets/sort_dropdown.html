@@ -6,7 +6,7 @@
 <script src="{% static 'js/selectize.js' %}"></script>
 <footer class="pagination pagination-dropdown"> {# cheating: borrowing styles from eultheme pagination dropdown #}
     <section>
-        <h2 class="h4">Sort</h2>
+        <!--<h2 class="h4">Sort</h2>-->
             <label class="sr-only" for="select-page">Sort:</label>
             <select id="select-sort" class="select-sort" placeholder="Sort by...">
                 {% for i in sort_options %}
@@ -15,6 +15,7 @@
                     </option>
                 {% endfor %}
             </select>
+            <a onclick="ascaddURL(this)" href=""><button>&uarr;</button></a><a onclick="descaddURL(this)" href=""><button>&darr;</button></a>
             <p>
     </section>
 </footer>
@@ -28,4 +29,38 @@ $('.select-sort').selectize({
         }
     }
 })
+</script>
+<script>
+function ascaddURL(element)
+{
+    $(element).attr('href', function() {
+        if (window.location.search.length == 0) {
+        return this.href + '?sort=title&order=asc';
+        } else if (window.location.search.match(/[?&]order=asc/gi)) {
+        this.href = this.href.replace('order=asc', 'order=asc');
+        return this.href;
+        } else if (window.location.search.match(/[?&]order=desc/gi)) {
+        this.href = this.href.replace('order=desc', 'order=asc');
+        return this.href;
+        } else {
+        return this.href + '&order=asc';
+        }
+    });
+}
+function descaddURL(element)
+{
+    $(element).attr('href', function() {
+        if (window.location.search.length == 0) {
+        return this.href + '?sort=title&order=desc';
+        } else if (window.location.search.match(/[?&]order=asc/gi)) {
+        this.href = this.href.replace('order=asc', 'order=desc');
+        return this.href;
+        } else if (window.location.search.match(/[?&]order=desc/gi)) {
+        this.href = this.href.replace('order=desc', 'order=desc');
+        return this.href;
+        } else {
+        return this.href + '&order=desc';
+        }
+    });
+}
 </script>

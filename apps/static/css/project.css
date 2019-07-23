@@ -177,6 +177,12 @@ ol {
   -moz-columns: 2;
 }
 
+ol > li {
+   break-inside: avoid-column;
+   -webkit-column-break-inside: avoid;
+   page-break-inside: avoid;
+}
+
 ol > li.list {
    #height: 300px;
 }

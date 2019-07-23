@@ -228,7 +228,7 @@ ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link s
 #grid {
     display: grid;
     grid-template-columns: 260px auto;
-    height: 260px;
+    height: 320px;
     grid-auto-rows: 320px;
 }
 

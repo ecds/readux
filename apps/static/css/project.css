@@ -178,7 +178,7 @@ ol {
 }
 
 ol > li.list {
-   height: 320px;
+   #height: 300px;
 }
 
 ul > li > .collectionbox {
@@ -227,12 +227,15 @@ ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link s
 
 #grid {
     display: grid;
-    grid-template-columns: 250px auto;
+    grid-template-columns: 260px auto;
+    height: 260px;
+    grid-auto-rows: 320px;
 }
 
 #grid-image {
     display: grid;
     margin-bottom: 10px;
+    align-self: center;
 }
 
 #grid-metaforimage {

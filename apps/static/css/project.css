@@ -244,6 +244,11 @@ ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link s
     align-self: center;
 }
 
+#grid-image-volume {
+    display: grid;
+    margin-bottom: 10px;
+}
+
 #grid-metaforimage {
     display: grid;
 }

@@ -177,8 +177,14 @@ ol {
   -moz-columns: 2;
 }
 
+ol > li {
+   break-inside: avoid-column;
+   -webkit-column-break-inside: avoid;
+   page-break-inside: avoid;
+}
+
 ol > li.list {
-   height: 320px;
+   #height: 300px;
 }
 
 ul > li > .collectionbox {
@@ -227,10 +233,18 @@ ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link s
 
 #grid {
     display: grid;
-    grid-template-columns: 250px auto;
+    grid-template-columns: 260px auto;
+    height: 320px;
+    grid-auto-rows: 320px;
 }
 
 #grid-image {
+    display: grid;
+    margin-bottom: 10px;
+    align-self: center;
+}
+
+#grid-image-volume {
     display: grid;
     margin-bottom: 10px;
 }

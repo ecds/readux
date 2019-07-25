@@ -154,10 +154,14 @@ class JekyllSiteExport(object):
 
         try:
             logger.debug('Jekyll import command: %s', ' '.join(import_command))
-            subprocess.check_call(' '.join(import_command), shell=True)
+            output = subprocess.check_output(' '.join(import_command), shell=True, stderr=subprocess.STDOUT)
+            logger.debug('Jekyll import output:')
+            logger.debug(output.decode('utf-8'))
 #            subprocess.check_call(import_command, cwd=tmpdir)
-        except subprocess.CalledProcessError:
-            err_msg = 'Error running jekyll import on IIIF manifest'
+        except subprocess.CalledProcessError as e:
+            logger.debug('Jekyll import error:')
+            logger.debug(e.output)
+            err_msg = "Error running jekyll import on IIIF manifest!\n" + ' '.join(import_command) + "\n" + e.output.decode('utf-8')
             if self.update_callback is not None:
                 self.update_callback(err_msg, 'error')
             raise ExportException(err_msg)

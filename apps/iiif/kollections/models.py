@@ -24,7 +24,11 @@ class Collection(models.Model):
     collection_image_title = models.CharField(max_length=255, null=True, blank=True, help_text="The title of the header/thumbnail image.")
     collection_image_creator = models.CharField(max_length=255, null=True, blank=True, help_text="The artist or author of the header/thumbnail image source.")
     collection_image_summary = models.CharField(max_length=255, null=True, blank=True, help_text="Any additional information to display about the header/thumbnail image source.")
-    
+    autocomplete_search_field = 'label'
+
+    def autocomplete_label(self):
+        return self.label
+
     def __str__(self):
         return self.label
 

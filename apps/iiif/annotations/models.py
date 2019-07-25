@@ -78,7 +78,7 @@ class Annotation(models.Model):
     COMMENTING = 'oa:commenting'
     PAINTING = 'sc:painting'
     MOTIVATION_CHOICES = (
-        (COMMENTING, 'commeting'),
+        (COMMENTING, 'commenting'),
         (PAINTING, 'painting')
     )
 

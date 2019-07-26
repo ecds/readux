@@ -98,6 +98,7 @@ class Serializer(JSONSerializer):
                 "value": obj.metadata
               }],
               "description": obj.summary,
+              "related": obj.get_absolute_url(),
               "thumbnail": {
                 "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
                 "service": {

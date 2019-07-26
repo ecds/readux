@@ -90,16 +90,12 @@ class Serializer(JSONSerializer):
                 "value": obj.author
               },
               {
-                "label": "Publisher",
-                "value": obj.publisher
-              },
-              {
-                "label": "Place of Publication",
-                "value": obj.published_city
-              },
-              {
-                "label": "Publication Date",
-                "value": obj.published_date
+                "label": "Published",
+                "value": [{
+                    "@value": "%s : %s, %s" % (obj.published_city, obj.publisher, obj.published_date),
+                    "@language": "en"
+                  }
+                ]
               },
               {
                 "label": "Notes",

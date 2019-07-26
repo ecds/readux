@@ -104,9 +104,13 @@ class Serializer(JSONSerializer):
               {
                 "label": "Notes",
                 "value": obj.metadata
+              },
+              {
+                "label": "Record Created",
+                "value": obj.created_at
               }],
               "description": obj.summary,
-              "related": obj.get_absolute_url(),
+              "related": ["This manifest is hosted by Readux.", obj.get_absolute_url(), "https://readux.ecdsdev.org/about/"],
               "within": within,
               "thumbnail": {
                 "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),

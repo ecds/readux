@@ -104,7 +104,7 @@ class Annotation(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
     # TODO Should we keep this for annotations from Mirador, or just get rid of it?
-    svg = models.TextField()
+    svg = models.TextField(blank=True)
 
     ordering = ['order']
 
@@ -124,6 +124,17 @@ def set_span_element(sender, instance, **kwargs):
     if instance.resource_type in (sender.OCR,):
         try:
             instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
+            # instance.svg = "<svg xmlns='http://www.w3.org/2000/svg' id='{pk}' class='ocrtext' fill=red' style='height: {h}px;' viewBox='0 0 {w} {h}'><text x='0' y='100%' textLength='100%' style='font-size: {h}px; user-select: all;'>{content}</text></svg>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content)
+            # (12*(17.697/1.618))/12
+            character_count = len(instance.content)
+            font_size = (character_count*(instance.h/1.618))/character_count
+            instance.content = "<span id='{pk}' style='font-family: monospace; height: {h}px; width: {w}px; font-size: {f}px'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size))
+        except ValueError as error:
+            instance.content = ""
+            print("WARNING: {e}".format(e=error))
+    elif instance.oa_annotation == '{"annotatedBy": {"name": "ocr"}}': 
+        try:
+            #instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
             # instance.svg = "<svg xmlns='http://www.w3.org/2000/svg' id='{pk}' class='ocrtext' fill=red' style='height: {h}px;' viewBox='0 0 {w} {h}'><text x='0' y='100%' textLength='100%' style='font-size: {h}px; user-select: all;'>{content}</text></svg>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content)
             # (12*(17.697/1.618))/12
             character_count = len(instance.content)

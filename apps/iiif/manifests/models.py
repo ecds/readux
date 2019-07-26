@@ -23,6 +23,7 @@ class Manifest(ClusterableModel):
     pid = models.CharField(max_length=255)
     label = models.CharField(max_length=255)
     summary = models.TextField()
+    rights = models.TextField(null=True)
     author = models.TextField(null=True)
     published_city = models.TextField(null=True)
     published_date = models.CharField(max_length=25)

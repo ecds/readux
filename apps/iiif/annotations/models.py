@@ -132,6 +132,18 @@ def set_span_element(sender, instance, **kwargs):
         except ValueError as error:
             instance.content = ""
             print("WARNING: {e}".format(e=error))
+    elif instance.oa_annotation == '{"annotatedBy": {"name": "ocr"}}': 
+    #To do: refactor this code to better handle ingest. This elif allows for an admin to use import-export by defining oa_annotation as above to import ocr from a spreadsheet.
+        try:
+            #instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
+            # instance.svg = "<svg xmlns='http://www.w3.org/2000/svg' id='{pk}' class='ocrtext' fill=red' style='height: {h}px;' viewBox='0 0 {w} {h}'><text x='0' y='100%' textLength='100%' style='font-size: {h}px; user-select: all;'>{content}</text></svg>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content)
+            # (12*(17.697/1.618))/12
+            character_count = len(instance.content)
+            font_size = (character_count*(instance.h/1.618))/character_count
+            instance.content = "<span id='{pk}' style='font-family: monospace; height: {h}px; width: {w}px; font-size: {f}px'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size))
+        except ValueError as error:
+            instance.content = ""
+            print("WARNING: {e}".format(e=error))
     else:
         if (type(instance.oa_annotation) == str):
             instance.oa_annotation = json.loads(instance.oa_annotation)

@@ -13,12 +13,13 @@ class AnnotationResource(resources.ModelResource):
         widget=ForeignKeyWidget(Canvas, 'pid'))
     class Meta:
         model = Annotation
-        fields = ('id', 'x','y','w','h','order','content','resource_type','motivation','format','canvas_link', 'language')
+        fields = ('id', 'x','y','w','h','order','content','resource_type','motivation','format','canvas_link', 'language', 'oa_annotation')
 
 
 class AnnotationAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = AnnotationResource
     pass     
     list_display = ('id', 'canvas', 'order', 'content', 'x', 'y', 'w', 'h')
+    search_fields = ('content','oa_annotation')
     
 admin.site.register(Annotation, AnnotationAdmin)

@@ -24,7 +24,11 @@ class Collection(models.Model):
     collection_image_title = models.CharField(max_length=255, null=True, blank=True, help_text="The title of the header/thumbnail image.")
     collection_image_creator = models.CharField(max_length=255, null=True, blank=True, help_text="The artist or author of the header/thumbnail image source.")
     collection_image_summary = models.CharField(max_length=255, null=True, blank=True, help_text="Any additional information to display about the header/thumbnail image source.")
-    
+    autocomplete_search_field = 'label'
+
+    def autocomplete_label(self):
+        return self.label
+
     def __str__(self):
         return self.label
 
@@ -120,14 +124,14 @@ class Collection(models.Model):
                 
         return True
 
-    @property
-    def thumbnail_crop_volume(self):
-        if self.height > self.width:
-            # portrait
-            return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
-        else:
-            # landscape
-            return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+#     @property
+#     def thumbnail_crop_volume(self):
+#         if self.height > self.width:
+#             # portrait
+#             return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+#         else:
+#             # landscape
+#             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
 
 #     def make_header(self):

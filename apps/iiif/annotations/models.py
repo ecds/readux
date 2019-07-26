@@ -104,7 +104,7 @@ class Annotation(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
     # TODO Should we keep this for annotations from Mirador, or just get rid of it?
-    svg = models.TextField(blank=True)
+    svg = models.TextField()
 
     ordering = ['order']
 
@@ -133,6 +133,7 @@ def set_span_element(sender, instance, **kwargs):
             instance.content = ""
             print("WARNING: {e}".format(e=error))
     elif instance.oa_annotation == '{"annotatedBy": {"name": "ocr"}}': 
+    #To do: refactor this code to better handle ingest. This elif allows for an admin to use import-export by defining oa_annotation as above to import ocr from a spreadsheet.
         try:
             #instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
             # instance.svg = "<svg xmlns='http://www.w3.org/2000/svg' id='{pk}' class='ocrtext' fill=red' style='height: {h}px;' viewBox='0 0 {w} {h}'><text x='0' y='100%' textLength='100%' style='font-size: {h}px; user-select: all;'>{content}</text></svg>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content)

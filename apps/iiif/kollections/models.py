@@ -1,4 +1,5 @@
 import os.path
+import config.settings.local as settings
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.template.defaultfilters import slugify
@@ -27,6 +28,9 @@ class Collection(models.Model):
     
     def __str__(self):
         return self.label
+
+    def get_absolute_url(self):
+        return "%s/collection/%s" % (settings.HOSTNAME, self.pid)
 
     def save(self, *args, **kwargs):
 

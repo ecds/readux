@@ -76,7 +76,11 @@ class Serializer(JSONSerializer):
 
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
-            data = {
+          within = []
+          for col in obj.collections.all():
+            within.append(col.get_absolute_url())
+
+          data = {
               "@context": "http://iiif.io/api/presentation/2/context.json",
               "@id": "%s/manifest" % (obj.baseurl),
               "@type": "sc:Manifest",
@@ -99,6 +103,7 @@ class Serializer(JSONSerializer):
               }],
               "description": obj.summary,
               "related": obj.get_absolute_url(),
+              "within": within,
               "thumbnail": {
                 "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
                 "service": {
@@ -119,7 +124,7 @@ class Serializer(JSONSerializer):
                 }
               ]
             }
-            return data
+          return data
 
     def handle_field(self, obj, field):
         super().handle_field(obj, field)

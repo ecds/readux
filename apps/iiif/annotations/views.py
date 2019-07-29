@@ -59,6 +59,7 @@ class OcrForPage(View):
                 serialize(
                     'annotation_list',
                     self.get_queryset(),
+                    request=request,
                     version=kwargs['version']
                 )
             ),

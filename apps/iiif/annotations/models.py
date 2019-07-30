@@ -109,11 +109,7 @@ class AbstractAnnotation(models.Model):
     svg = models.TextField()
     item = None
 
-    # @property
-    # @abstractmethod
-    # def item(self):
-    #     pass
-
+    ordering = ['order']
 
     # @property
     # @abstractmethod
@@ -142,7 +138,7 @@ class AbstractAnnotation(models.Model):
 
 class Annotation(AbstractAnnotation):
     class Meta:
-        ordering = ['position']
+        ordering = ['order']
         abstract = False
 
 @receiver(signals.pre_save, sender=Annotation)

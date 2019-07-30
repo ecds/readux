@@ -99,6 +99,13 @@ class AnnotationTests(TestCase):
 
     def setUp(self):
         fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+<<<<<<< HEAD
+=======
+        # for fixture in fixtures:
+        #     call_command('loaddata', fixture)
+        # for anno in Annotation.objects.all():
+        #     print(anno.pk)
+>>>>>>> Moving user created annotations logic to Readux app. Added support and tests for text annotatins.
         User = get_user_model()
         self.user = User.objects.create_user('zaphod', 'zaphod_beeblebrox@gmail.com', 'terrific!')
         self.user.name = 'Zaphod Beeblebrox'
@@ -138,7 +145,12 @@ class AnnotationTests(TestCase):
         text_anno.save()
         self.client.login(username='zaphod', password='terrific!')
         kwargs = {'username': 'zaphod', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+<<<<<<< HEAD
         url = reverse('user_annotations', kwargs=kwargs)
+=======
+        url = reverse('annos', kwargs=kwargs)
+        print(url)
+>>>>>>> Moving user created annotations logic to Readux app. Added support and tests for text annotatins.
         response = self.client.get(url)
         annotation = json.loads(response.content.decode('UTF-8-sig'))
         assert len(annotation) == 1

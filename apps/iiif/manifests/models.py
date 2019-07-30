@@ -28,7 +28,7 @@ class Manifest(ClusterableModel):
     published_date = models.CharField(max_length=25)
     publisher = models.CharField(max_length=255)
     #collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name = 'manifest')
-    collections = models.ManyToManyField(Collection, related_name = 'manifests')
+    collections = models.ManyToManyField(Collection, null=True, blank=True, related_name = 'manifests')
     pdf = models.URLField()
     metadata = JSONField(default=dict, blank=False)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")

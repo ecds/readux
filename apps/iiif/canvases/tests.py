@@ -1,10 +1,21 @@
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.test import RequestFactory
+from django.urls import reverse
 from .models import Canvas
+from ..manifests.models import Manifest
 from . import services
-
+import json
 
 class CanvasTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+
+    def setUp(self):
+        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+        self.client = Client()
+        self.manifest = Manifest.objects.all().first()
+        self.canvas = self.manifest.canvas_set.all().first()
+
+
     def test_ia_ocr_creation(self):
         valid_ia_ocr_response = {
         'ocr': [
@@ -76,3 +87,24 @@ class CanvasTests(TestCase):
             assert type(word['x']) == int
             assert type(word['y']) == int
             assert type(word['content']) == str
+    
+    def test_canvas_detail(self):
+        kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
+        url = reverse('RenderCanvasDetail', kwargs=kwargs)
+        response = self.client.get(url)
+        serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
+        
+        assert response.status_code == 200
+        assert serialized_canvas['@id'] == self.canvas.identifier
+        assert serialized_canvas['label'] == str(self.canvas.position)
+        assert serialized_canvas['images'][0]['@id'] == self.canvas.anno_id
+        assert serialized_canvas['images'][0]['resource']['@id'] == "%s/full/full/0/default.jpg" % (self.canvas.service_id)
+
+    def test_canvas_list(self):
+        kwargs = { 'manifest': self.manifest.pid }
+        url = reverse('RenderCanvasList', kwargs=kwargs)
+        response = self.client.get(url)
+        canvas_list = json.loads(response.content.decode('UTF-8-sig'))
+
+        assert response.status_code == 200
+        assert len(canvas_list) == 2

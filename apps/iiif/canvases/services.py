@@ -8,8 +8,7 @@ import config.settings.local as local_settings
 
 def get_canvas_info(canvas):
     """ Given a url, this function returns a dictionary of all collections."""
-    results = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
-    return results
+    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
 
 def fetch_positional_ocr(canvas):
     if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:

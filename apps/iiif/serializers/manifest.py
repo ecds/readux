@@ -108,7 +108,7 @@ class Serializer(JSONSerializer):
               },
               {
                 "label": "This manifest is hosted by Readux.",
-                "value": obj.get_absolute_url(), "https://readux.ecdsdev.org/about/"
+                "value": "https://readux.ecdsdev.org/about/"
               },
               {
                 "label": "Record Created",

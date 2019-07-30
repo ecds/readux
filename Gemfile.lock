@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/ecds/iiif-to-jekyll.git
-  revision: c79ce49318d067b48907472d7a66c32d79150c67
+  revision: 1b963741716ff909c75a7f2b09932418a9a175cc
   specs:
-    iiif_to_jekyll (0.2.1)
+    iiif_to_jekyll (0.2.2)
       iiif-presentation (~> 0.2.0)
       openssl
 
@@ -35,7 +35,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  iiif_to_jekyll!
+  iiif_to_jekyll (= 0.2.2)!
 
 BUNDLED WITH
    1.16.1

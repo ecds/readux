@@ -34,11 +34,59 @@
         <p>Export volume and annotations as static digital edition.</p>
         <form action="{% url 'JekyllExport' 'v2' volume.pid %}" class="button_to" method="POST"><div><input type="submit" value="Export Static Edition" title="Export volume and annotations as a static digital edition."/>{% csrf_token %}</div></form>
       </div>
-      <!-- start ocr el -->
-      <div id='ocr' style='opacity: 0;'>
 
-  </div>
-      <!-- end ocr el -->
+
+        <form class="volume-webexport"  action="{% url 'JekyllExport' 'v2' volume.pid %}"  method="POST">
+          {% csrf_token %}
+          <div class="text-danger form-errors">
+            {{ export_form.non_field_errors }}
+          </div>
+          {# include volume pid as a hidden field so it is included in websocket form submission #}
+          <input type="hidden" name="pid" value="{{ volume.pid }}"/>
+
+   {% for field in export_form %}
+        {% if field.name == 'mode' %}
+          <div class="export-title">export mode</div>
+          {% for radio in field %}
+            <div class="radio">
+              <label for="{{ radio.id_for_label }}">
+                  {{ radio.tag }} {{ radio.choice_label}}
+              </label>
+              {% with forloop.counter|cut:' ' as index %}
+                <div class="help-block indented-help-block">{{ export_form.mode_help|slice:index|last }}</div>
+              {% endwith %}
+            </div>
+          {% endfor %}
+          <div class="text-danger mode-errors">{{ field.errors }}</div>
+        {% elif field.name == 'annotations' and export_form.hide_annotation_choice %}
+          {# hide annotation choice when flag is set (i.e., only one choice available) #}
+            {# field|add_class:"hidden" #}
+
+        {% elif field.field.is_checkbox %}
+          {# bootstrap styles for checkbox input #}
+          <div class="display-none checkbox {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
+            <label>
+              {{ field }} {{ field.label }}
+            </label>
+            <div class="help-block">{{ field.help_text}}</div>
+          </div>
+        {% else %}
+          <div class="display-none form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}"{% if field.name == 'github_repo' or field.name == 'update_repo' %}style="display:none"{% endif %}>
+              <label for="{{ field.name }}">{{ field.label }}</label>
+              {{ field }}
+              <div class="help-block">{{ field.help_text}}</div>
+              <div class="text-warning {{ field.name }}-errors">{{ field.errors }}</div>
+          </div>
+        {% endif %}
+    {% endfor %}
+
+
+            <div class="form-group export-form-group" >
+              <button type="submit" class="btn btn-primary center-block export-btn" id="export-button"><i class="fa fa-download" aria-hidden="true"></i> Export</button>
+            </div>
+        </form>
+
+
     </div>
   </div>
 {% endblock viewer %}

@@ -113,9 +113,9 @@ class JekyllSiteExport(object):
         # self.page_one = page_one
         self.update_callback = update_callback
         # self.include_images = include_images
-        # self.deep_zoom = deep_zoom
-        # self.include_deep_zoom = (deep_zoom == 'include')
-        # self.no_deep_zoom = (deep_zoom == 'exclude')
+        #self.deep_zoom = deep_zoom
+        self.include_deep_zoom = (deep_zoom == 'include')
+        self.no_deep_zoom = (deep_zoom == 'exclude')
         # self.github_repo = github_repo
 
         # # initialize github connection values to None
@@ -149,8 +149,8 @@ class JekyllSiteExport(object):
         #     import_command.extend(['--page-one', unicode(self.page_one)])
         # # if no deep zoom is requested, pass through so the jekyll
         # #  config can be updated appropriately
-        # if self.no_deep_zoom:
-        #     import_command.append('--no-deep-zoom')
+        if self.no_deep_zoom:
+            import_command.append('--no-deep-zoom')
 
         try:
             logger.debug('Jekyll import command: %s', ' '.join(import_command))
@@ -253,7 +253,7 @@ class JekyllSiteExport(object):
     # This is essentially view code from readux 1's consumers.py, which parses
     # the export form, kicks off various exports, and handles S3 or Github 
     # integration.  It may need to be moved to the view for the initial pass.
-    def volume_export(self):
+    def volume_export(self, export_mode='download'):
     #     '''Consumer method to handle volume export form submission via
     #     websockets.  Initializes :class:`readux.books.export.VolumeExport`
     #     and then calls the appropriate method based on the requested export
@@ -301,7 +301,6 @@ class JekyllSiteExport(object):
     #     # if form is valid, then proceed with the export
     #     cleaned_data = export_form.cleaned_data
     #     export_mode = cleaned_data['mode']
-        export_mode = 'download'  # TODO
     #     image_hosting = cleaned_data['image_hosting']
     #     include_images = (image_hosting == 'independently_hosted')
     #     deep_zoom = cleaned_data['deep_zoom']

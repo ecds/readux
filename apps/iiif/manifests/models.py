@@ -27,6 +27,9 @@ class Manifest(ClusterableModel):
     published_city = models.TextField(null=True)
     published_date = models.CharField(max_length=25)
     publisher = models.CharField(max_length=255)
+    attribution = models.CharField(max_length=255, null=True, blank=True, default="Emory University Libraries", help_text="The institution holding the manifest")
+    logo = models.ImageField(upload_to='logos/', null=True, blank=True, default="logos/lits-logo-web.png", help_text="Upload the Logo of the institution holding the manifest.")
+    license = models.CharField(max_length=255, null=True, blank=True, default="https://creativecommons.org/publicdomain/zero/1.0/", help_text="Only enter a URI to a license statement.")
     #collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name = 'manifest')
     collections = models.ManyToManyField(Collection, null=True, blank=True, related_name = 'manifests')
     pdf = models.URLField()
@@ -46,6 +49,10 @@ class Manifest(ClusterableModel):
     @property
     def publisher_bib(self):
       "%s : %s" % (published_city, publisher)
+
+    @property
+    def thumbnail_logo(self):
+        return "%s/%s/%s" % (settings.HOSTNAME, "media", self.logo)
 
     @property
     def baseurl(self):

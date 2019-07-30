@@ -125,6 +125,9 @@ class Serializer(JSONSerializer):
                 "profile": "http://iiif.io/api/image/2/level1.json"
                }
               },
+              "attribution": obj.attribution,
+              "logo": obj.thumbnail_logo,
+              "license": obj.license,
               "viewingDirection": obj.viewingDirection,
               "viewingHint": "paged",
               "sequences": [
@@ -182,6 +185,9 @@ class Serializer(JSONSerializer):
                 "profile": "http://iiif.io/api/image/2/level1.json"                
                }
               },
+              "attribution": obj.attribution,
+              "logo": obj.thumbnail_logo,
+              "license": obj.license,
               "viewingDirection": obj.viewingDirection,
               "viewingHint": "paged",
               "sequences": [

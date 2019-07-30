@@ -53,7 +53,7 @@ class Collection(models.Model):
         ratio = size[0] / float(size[1])
         #The image is scaled/cropped vertically or horizontally depending on the ratio
         if ratio > img_ratio:
-            image = image.resize((size[0], size[0] * image.size[1] / image.size[0]),
+            image = image.resize((int(size[0]), int(size[0] * image.size[1] / image.size[0])),
                     Image.ANTIALIAS)
             # Crop in the top, middle or bottom
             box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)

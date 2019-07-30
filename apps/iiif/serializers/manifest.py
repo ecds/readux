@@ -75,7 +75,52 @@ class Serializer(JSONSerializer):
         super().start_object(obj)
 
     def get_dump_object(self, obj):
+        startpage = obj.canvas_set.all().filter(is_starting_page=1)
         if ((self.version == 'v2') or (self.version is None)):
+          if (startpage.count() > 0):
+            data = {
+              "@context": "http://iiif.io/api/presentation/2/context.json",
+              "@id": "%s/manifest" % (obj.baseurl),
+              "@type": "sc:Manifest",
+              "label": obj.label,
+              "metadata": [{
+                "label": "Author",
+                "value": obj.author
+              },
+              {
+                "label": "Published",
+                "value": [{
+                    "@value": "%s : %s, %s" % (obj.published_city, obj.publisher, obj.published_date),
+                    "@language": "en"
+                  }
+                ]
+              },
+              {
+                "label": "Notes",
+                "value": obj.metadata
+              }],
+              "description": obj.summary,
+              "thumbnail": {
+                "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid),
+                "service": {
+                "@context": "http://iiif.io/api/image/2/context.json",
+                "@id": "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid),
+                "profile": "http://iiif.io/api/image/2/level1.json"
+               }
+              },
+              "viewingDirection": obj.viewingDirection,
+              "viewingHint": "paged",
+              "sequences": [
+                {
+                  "@id": "%s/sequence/normal" % (obj.baseurl),
+                  "@type": "sc:Sequence",
+                  "label": "Current Page Order",
+                  "startCanvas": obj.start_canvas,
+                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
+                }
+              ]
+            }
+          else:
             data = {
               "@context": "http://iiif.io/api/presentation/2/context.json",
               "@id": "%s/manifest" % (obj.baseurl),
@@ -103,7 +148,7 @@ class Serializer(JSONSerializer):
                 "service": {
                 "@context": "http://iiif.io/api/image/2/context.json",
                 "@id": "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
-                "profile": "http://iiif.io/api/image/2/level1.json"
+                "profile": "http://iiif.io/api/image/2/level1.json"                
                }
               },
               "viewingDirection": obj.viewingDirection,
@@ -118,7 +163,7 @@ class Serializer(JSONSerializer):
                 }
               ]
             }
-            return data
+          return data
 
     def handle_field(self, obj, field):
         super().handle_field(obj, field)

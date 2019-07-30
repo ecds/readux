@@ -107,11 +107,14 @@ class Serializer(JSONSerializer):
                 "value": obj.metadata
               },
               {
+                "label": "This manifest is hosted by Readux.",
+                "value": obj.get_absolute_url(), "https://readux.ecdsdev.org/about/"
+              },
+              {
                 "label": "Record Created",
                 "value": obj.created_at
               }],
               "description": obj.summary,
-              "related": ["This manifest is hosted by Readux.", obj.get_absolute_url(), "https://readux.ecdsdev.org/about/"],
               "within": within,
               "thumbnail": {
                 "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid),

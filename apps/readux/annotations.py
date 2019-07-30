@@ -20,18 +20,18 @@ class Annotations(ListView):
     def get(self, request, *args, **kwargs):
         annotations = self.get_queryset()
         for anno in annotations:
-        return JsonResponse(
-            json.loads(
-                serialize(
-                    'annotation',
-                    annotations,
-                    # version=kwargs['version'],
-                    is_list = True
-                )
-            ),
-            safe=False,
-            status=200
-        )
+            return JsonResponse(
+                json.loads(
+                    serialize(
+                        'annotation',
+                        annotations,
+                        # version=kwargs['version'],
+                        is_list = True
+                    )
+                ),
+                safe=False,
+                status=200
+            )
 
     def post(self, request):
         payload = json.loads(request.body.decode('utf-8'))

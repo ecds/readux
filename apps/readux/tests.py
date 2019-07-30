@@ -1,16 +1,12 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
-from django.urls import reverse
 # from django.core.management import call_command
 import warnings
 from .annotations import Annotations
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-# from rest_framework.test import APIRequestFactory
-from rest_framework.test import APIClient
-from rest_framework.test import APITestCase
 from apps.iiif.annotations.models import Annotation
 from .models import UserAnnotation
 import json
@@ -103,10 +99,6 @@ class AnnotationTests(TestCase):
 
     def setUp(self):
         fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-        # for fixture in fixtures:
-        #     call_command('loaddata', fixture)
-        # for anno in Annotation.objects.all():
-        #     print(anno.pk)
         User = get_user_model()
         self.user = User.objects.create_user('zaphod', 'zaphod_beeblebrox@gmail.com', 'terrific!')
         self.user.name = 'Zaphod Beeblebrox'
@@ -146,8 +138,7 @@ class AnnotationTests(TestCase):
         text_anno.save()
         self.client.login(username='zaphod', password='terrific!')
         kwargs = {'username': 'zaphod', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
-        url = reverse('annos', kwargs=kwargs)
-        print(url)
+        url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = json.loads(response.content.decode('UTF-8-sig'))
         assert len(annotation) == 1

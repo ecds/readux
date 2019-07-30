@@ -76,7 +76,11 @@ class Serializer(JSONSerializer):
 
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
-            data = {
+          within = []
+          for col in obj.collections.all():
+            within.append(col.get_absolute_url())
+
+          data = {
               "@context": "http://iiif.io/api/presentation/2/context.json",
               "@id": "%s/manifest" % (obj.baseurl),
               "@type": "sc:Manifest",
@@ -86,18 +90,28 @@ class Serializer(JSONSerializer):
                 "value": obj.author
               },
               {
-                "label": "Published",
-                "value": [{
-                    "@value": "%s : %s, %s" % (obj.published_city, obj.publisher, obj.published_date),
-                    "@language": "en"
-                  }
-                ]
+                "label": "Publisher",
+                "value": obj.publisher
+              },
+              {
+                "label": "Place of Publication",
+                "value": obj.published_city
+              },
+              {
+                "label": "Publication Date",
+                "value": obj.published_date
               },
               {
                 "label": "Notes",
                 "value": obj.metadata
+              },
+              {
+                "label": "Record Created",
+                "value": obj.created_at
               }],
               "description": obj.summary,
+              "related": ["This manifest is hosted by Readux.", obj.get_absolute_url(), "https://readux.ecdsdev.org/about/"],
+              "within": within,
               "thumbnail": {
                 "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
                 "service": {
@@ -118,7 +132,7 @@ class Serializer(JSONSerializer):
                 }
               ]
             }
-            return data
+          return data
 
     def handle_field(self, obj, field):
         super().handle_field(obj, field)

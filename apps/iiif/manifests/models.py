@@ -36,6 +36,9 @@ class Manifest(ClusterableModel):
     #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")
     autocomplete_search_field = 'label'
 
+    def get_absolute_url(self):
+        return "%s/volume/%s" % (settings.HOSTNAME, self.pid)
+
     @property
     def note_list(self):
       self.note_set.values('label')[0]['label']

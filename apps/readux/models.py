@@ -119,8 +119,6 @@ class UserAnnotation(AbstractAnnotation):
 
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
-    instance.parse_mirador_annotation()
-=======
             return None
         start_position = self.start_selector.order
         end_position = self.end_selector.order
@@ -182,4 +180,6 @@ def parse_payload(sender, instance, **kwargs):
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
     instance.parse_mirador_annotation()
->>>>>>> Moving user created annotations logic to Readux app. Added support and tests for text annotatins.
+=======
+    instance.parse_mirador_annotation()
+>>>>>>> 3a7226cbac944af357f646258259c84812ee481b

@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.urls import path
 from django.views.generic import RedirectView
-from . import views
+from . import views, annotations
 # from .views import PageRedirectView
 
 urlpatterns = [
@@ -14,4 +14,6 @@ urlpatterns = [
 #   path('col/<collection>/vol/<volume>/page/', RedirectView.as_view(pattern_name='page'), name='page 1' ),
 #   path('col/<collection>/vol/<volume>/page/', PageRedirectView.as_view(), name='page 1' ),
   path('volume/<volume>/export', views.ExportOptions.as_view(), name='export' ),
+  path('annotations/<username>/<volume>/<canvas>/list', annotations.Annotations.as_view(), name='annos' )
+  # path('annotations', annotations.Annotations.as_view() )
 ]

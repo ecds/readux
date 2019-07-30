@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 from django.shortcuts import render
+from django.views import View
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView
 from ..iiif.kollections.models import Collection

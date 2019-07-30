@@ -24,6 +24,7 @@ class IIIFV2Detail(View):
     def get(self, request, *args, **kwargs):
         return JsonResponse(json.loads(serialize('canvas', self.get_queryset())))
 
+# TODO: Get rid of this. It has moved to readux.annotations
 class CreateAnnotation(View):
     def post(self, request, *args, **kwargs):
         print(request.body.decode('utf-8'))

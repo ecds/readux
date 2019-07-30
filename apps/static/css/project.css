@@ -36,9 +36,14 @@
   width: 95% !important;
 }
 
-/* .ocr-line {
+.openseadragon-container span a {
+    background: rgba(255, 20, 147, 0.47058823529411764);
+}
+
+#ocr-layer {
+  position: absolute !important;
   z-index: 999;
-} */
+}
 
 /* .mirador-container .ocrtext text {
   fill: red;

@@ -107,6 +107,9 @@ class AbstractAnnotation(models.Model):
     oa_annotation = JSONField(default=dict, blank=False)
     # TODO Should we keep this for annotations from Mirador, or just get rid of it?
     svg = models.TextField()
+    item = None
+
+    ordering = ['order']
 
     # @property
     # @abstractmethod
@@ -114,12 +117,17 @@ class AbstractAnnotation(models.Model):
     #     pass
 
 
-    def parse_oa_annotation(self):
-        dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
-        self.x = dimensions[0]
-        self.y = dimensions[1]
-        self.w = dimensions[2]
-        self.h = dimensions[3]
+    def parse_mirador_annotation(self):
+        dimensions = None
+        if 'default' in self.oa_annotation['on'][0]['selector'].keys():
+            dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
+        elif 'value' in self.oa_annotation['on'][0]['selector']['item'].keys():
+            dimensions = self.oa_annotation['on'][0]['selector']['item']['value'].split('=')[-1].split(',')
+        if dimensions is not None:
+            self.x = dimensions[0]
+            self.y = dimensions[1]
+            self.w = dimensions[2]
+            self.h = dimensions[3]
 
 
     def __str__(self):
@@ -130,7 +138,7 @@ class AbstractAnnotation(models.Model):
 
 class Annotation(AbstractAnnotation):
     class Meta:
-        ordering = ['position']
+        ordering = ['order']
         abstract = False
 
 @receiver(signals.pre_save, sender=Annotation)
@@ -158,12 +166,4 @@ def set_span_element(sender, instance, **kwargs):
         except ValueError as error:
             instance.content = ""
             print("WARNING: {e}".format(e=error))
-    else:
-        if (type(instance.oa_annotation) == str):
-            instance.oa_annotation = json.loads(instance.oa_annotation)
-        instance.svg = instance.oa_annotation['on'][0]['selector']['item']['value']
-        instance.oa_annotation['annotatedBy'] = {'name': 'Me'}
-        instance.content = instance.oa_annotation['resource'][0]['chars']
-        instance.resource_type = instance.oa_annotation['resource'][0]['@type']
-        instance.parse_oa_annotation()
 

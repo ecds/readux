@@ -116,22 +116,6 @@ class UserAnnotation(AbstractAnnotation):
             }
         })
 
-
-@receiver(signals.pre_save, sender=UserAnnotation)
-def parse_payload(sender, instance, **kwargs):
-            return None
-        start_position = self.start_selector.order
-        end_position = self.end_selector.order
-        text = Annotation.objects.filter(
-            canvas=self.canvas,
-            order__lt=end_position,
-            order__gte=start_position
-        ).order_by('order')
-        self.x = min(text.values_list('x', flat=True))
-        self.y = max(text.values_list('y', flat=True))
-        self.h = max(text.values_list('h', flat=True))
-        self.w = text.last().x + text.last().w - self.x
-
     def __set_xywh_svg_anno(self):
         dimensions = None
         if 'default' in self.oa_annotation['on'][0]['selector'].keys():
@@ -180,6 +164,3 @@ def parse_payload(sender, instance, **kwargs):
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
     instance.parse_mirador_annotation()
-=======
-    instance.parse_mirador_annotation()
->>>>>>> 3a7226cbac944af357f646258259c84812ee481b

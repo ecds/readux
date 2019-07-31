@@ -1,4 +1,5 @@
 import os.path
+import config.settings.local as settings
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.template.defaultfilters import slugify
@@ -24,9 +25,16 @@ class Collection(models.Model):
     collection_image_title = models.CharField(max_length=255, null=True, blank=True, help_text="The title of the header/thumbnail image.")
     collection_image_creator = models.CharField(max_length=255, null=True, blank=True, help_text="The artist or author of the header/thumbnail image source.")
     collection_image_summary = models.CharField(max_length=255, null=True, blank=True, help_text="Any additional information to display about the header/thumbnail image source.")
-    
+    autocomplete_search_field = 'label'
+
+    def autocomplete_label(self):
+        return self.label
+
     def __str__(self):
         return self.label
+
+    def get_absolute_url(self):
+        return "%s/collection/%s" % (settings.HOSTNAME, self.pid)
 
     def save(self, *args, **kwargs):
 
@@ -49,7 +57,7 @@ class Collection(models.Model):
         ratio = size[0] / float(size[1])
         #The image is scaled/cropped vertically or horizontally depending on the ratio
         if ratio > img_ratio:
-            image = image.resize((size[0], size[0] * image.size[1] / image.size[0]),
+            image = image.resize((int(size[0]), int(size[0] * image.size[1] / image.size[0])),
                     Image.ANTIALIAS)
             # Crop in the top, middle or bottom
             box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
@@ -120,14 +128,14 @@ class Collection(models.Model):
                 
         return True
 
-    @property
-    def thumbnail_crop_volume(self):
-        if self.height > self.width:
-            # portrait
-            return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
-        else:
-            # landscape
-            return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+#     @property
+#     def thumbnail_crop_volume(self):
+#         if self.height > self.width:
+#             # portrait
+#             return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+#         else:
+#             # landscape
+#             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
 
 #     def make_header(self):

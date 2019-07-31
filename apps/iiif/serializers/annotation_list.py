@@ -1,5 +1,6 @@
 from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
+from django.db.models import Q
 import config.settings.local as settings
 from django.core.serializers import serialize
 import json
@@ -12,6 +13,7 @@ class Serializer(JSONSerializer):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
         self.islist = self.json_kwargs.pop('islist', False)
+        self.request = self.json_kwargs.pop('request')
 
     def start_serialization(self):
         self._init_options()
@@ -35,7 +37,7 @@ class Serializer(JSONSerializer):
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": "%s/iiif/v2/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.annotation_set.all(), islist=True))
+                "resources": json.loads(serialize('annotation', obj.annotation_set.filter(Q(owner=None) | Q(owner=self.request.user.id)), islist=True))
             }
             return data
 

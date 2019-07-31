@@ -81,125 +81,68 @@ class Serializer(JSONSerializer):
           for col in obj.collections.all():
             within.append(col.get_absolute_url())
           if (startpage.count() > 0):
-            data = {
-              "@context": "http://iiif.io/api/presentation/2/context.json",
-              "@id": "%s/manifest" % (obj.baseurl),
-              "@type": "sc:Manifest",
-              "label": obj.label,
-              "metadata": [{
-                "label": "Author",
-                "value": obj.author
-              },
-              {
-                "label": "Publisher",
-                "value": obj.publisher
-              },
-              {
-                "label": "Place of Publication",
-                "value": obj.published_city
-              },
-              {
-                "label": "Publication Date",
-                "value": obj.published_date
-              },
-              {
-                "label": "Notes",
-                "value": obj.metadata
-              },
-              {
-                "label": "This manifest is hosted by Readux.",
-                "value": "https://readux.ecdsdev.org/about/"
-              },
-              {
-                "label": "Record Created",
-                "value": obj.created_at
-              }],
-              "description": obj.summary,
-              "related": [obj.get_absolute_url()],
-              "within": within,
-              "thumbnail": {
-                "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid),
-                "service": {
-                "@context": "http://iiif.io/api/image/2/context.json",
-                "@id": "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid),
-                "profile": "http://iiif.io/api/image/2/level1.json"
-               }
-              },
-              "attribution": obj.attribution,
-              "logo": obj.thumbnail_logo,
-              "license": obj.license,
-              "viewingDirection": obj.viewingDirection,
-              "viewingHint": "paged",
-              "sequences": [
-                {
-                  "@id": "%s/sequence/normal" % (obj.baseurl),
-                  "@type": "sc:Sequence",
-                  "label": "Current Page Order",
-                  "startCanvas": obj.start_canvas,
-                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
-                }
-              ]
-            }
+            thumbnail="%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid)
           else:
-            data = {
-              "@context": "http://iiif.io/api/presentation/2/context.json",
-              "@id": "%s/manifest" % (obj.baseurl),
-              "@type": "sc:Manifest",
-              "label": obj.label,
-              "metadata": [{
-                "label": "Author",
-                "value": obj.author
-              },
+            thumbnail="%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid)
+          data = {
+            "@context": "http://iiif.io/api/presentation/2/context.json",
+            "@id": "%s/manifest" % (obj.baseurl),
+            "@type": "sc:Manifest",
+            "label": obj.label,
+            "metadata": [{
+              "label": "Author",
+              "value": obj.author
+            },
+            {
+              "label": "Publisher",
+              "value": obj.publisher
+            },
+            {
+              "label": "Place of Publication",
+              "value": obj.published_city
+            },
+            {
+              "label": "Publication Date",
+              "value": obj.published_date
+            },
+            {
+              "label": "Notes", 
+              "value": obj.metadata
+            },
+            {
+              "label": "This manifest is hosted by Readux.",
+              "value": "https://readux.ecdsdev.org/about/"
+            },
+            {
+              "label": "Record Created",
+              "value": obj.created_at
+            }],
+            "description": obj.summary,
+            "related": [obj.get_absolute_url()],
+            "within": within,
+            "thumbnail": {
+              "@id": thumbnail + "/full/600,/0/default.jpg",
+              "service": {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": thumbnail,
+              "profile": "http://iiif.io/api/image/2/level1.json"
+             }
+            },
+            "attribution": obj.attribution,
+            "logo": obj.thumbnail_logo,
+            "license": obj.license,
+            "viewingDirection": obj.viewingDirection,
+            "viewingHint": "paged",
+            "sequences": [
               {
-                "label": "Publisher",
-                "value": obj.publisher
-              },
-              {
-                "label": "Place of Publication",
-                "value": obj.published_city
-              },
-              {
-                "label": "Publication Date",
-                "value": obj.published_date
-              },
-              {
-                "label": "Notes",
-                "value": obj.metadata
-              },
-              {
-                "label": "This manifest is hosted by Readux.",
-                "value": "https://readux.ecdsdev.org/about/"
-              },
-              {
-                "label": "Record Created",
-                "value": obj.created_at
-              }],
-              "description": obj.summary,
-              "related": [obj.get_absolute_url()],
-              "within": within,
-              "thumbnail": {
-                "@id": "%s/%s/full/600,/0/default.jpg" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
-                "service": {
-                "@context": "http://iiif.io/api/image/2/context.json",
-                "@id": "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid),
-                "profile": "http://iiif.io/api/image/2/level1.json"                
-               }
-              },
-              "attribution": obj.attribution,
-              "logo": obj.thumbnail_logo,
-              "license": obj.license,
-              "viewingDirection": obj.viewingDirection,
-              "viewingHint": "paged",
-              "sequences": [
-                {
-                  "@id": "%s/sequence/normal" % (obj.baseurl),
-                  "@type": "sc:Sequence",
-                  "label": "Current Page Order",
-                  "startCanvas": obj.start_canvas,
-                  "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
-                }
-              ]
-            }
+                "@id": "%s/sequence/normal" % (obj.baseurl),
+                "@type": "sc:Sequence",
+                "label": "Current Page Order",
+                "startCanvas": obj.start_canvas,
+                "canvases": json.loads(serialize('canvas', obj.canvas_set.all(), islist=True))
+              }
+            ]
+          }
           return data
 
     def handle_field(self, obj, field):

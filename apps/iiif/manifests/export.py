@@ -25,7 +25,7 @@ class ExportException(Exception):
 
 class IiifManifestExport:
     @classmethod
-    def get_zip(self, manifest, version):
+    def get_zip(self, manifest, version, owners=[]):
         zip_subdir = manifest.label
         zip_filename = "iiif_export.zip"
 
@@ -91,7 +91,8 @@ class IiifManifestExport:
                             serialize(
                                 'annotation_list',
                                 [canvas],
-                                version=version
+                                version=version,
+                                owners=owners
                             )
                          ),
                         indent=4
@@ -105,7 +106,7 @@ class IiifManifestExport:
 
 class JekyllSiteExport(object):
     def __init__(self, manifest, version, page_one=None, update_callback=None,
-                 include_images=False, deep_zoom='hosted', github_repo=None):
+                 include_images=False, deep_zoom='hosted', github_repo=None, owners=None):
         # self.volume = volume
         self.manifest = manifest
         self.version = version
@@ -122,6 +123,8 @@ class JekyllSiteExport(object):
         # self.github = None
         # self.github_username = None
         # self.github_token = None
+        self.jekyll_site_dir = None
+        self.owners = owners
 
 
     def log_status(self, msg):
@@ -134,8 +137,10 @@ class JekyllSiteExport(object):
 
 
     def get_zip(self):
-        self.log_status("DEADBEEF")
         return self.volume_export()
+
+    def iiif_dir(self):
+        return os.path.join(self.jekyll_site_dir, 'iiif_export')
 
     def import_iiif_jekyll(self, manifest, tmpdir):
         # run the script to get a freash import of tei as jekyll site content
@@ -182,9 +187,17 @@ class JekyllSiteExport(object):
         self.log_status('Extracting jekyll template site')
         with zipfile.ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:
             jekyllzip.extractall(tmpdir)
-        jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
+        self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
         logger.debug('Jekyll site dir:')
-        logger.debug(jekyll_site_dir)
+        logger.debug(self.jekyll_site_dir)
+
+        logger.debug('Exporting IIIF bundle')
+        iiif_zip_stream = IiifManifestExport.get_zip(self.manifest, 'v2', owners=self.owners)
+        iiif_zip = zipfile.ZipFile(io.BytesIO(iiif_zip_stream), "r")
+
+        iiif_zip.extractall(self.iiif_dir())        
+
+
 
         # TODO
         # # save image files if requested, and update image paths in tei
@@ -199,7 +212,7 @@ class JekyllSiteExport(object):
         # teifile = self.save_tei_file(tmpdir)
 
         # run the script to import tei as jekyll site content
-        self.import_iiif_jekyll(self.manifest, jekyll_site_dir)
+        self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
         # NOTE: putting export content in a separate dir to make it easy to create
         # the zip file with the right contents and structure
@@ -207,7 +220,7 @@ class JekyllSiteExport(object):
         os.mkdir(export_dir)
 
         # rename the jekyll dir and move it into the export dir
-        shutil.move(jekyll_site_dir,
+        shutil.move(self.jekyll_site_dir,
                     os.path.join(export_dir, '%s_annotated_jekyll_site' %
                                  self.manifest.id))
 

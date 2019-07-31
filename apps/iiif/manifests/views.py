@@ -60,8 +60,9 @@ class ManifestExport(View):
     def post(self, request, *args, **kwargs):
         # we should probably move this out of the view, into a library
         manifest = self.get_queryset()[0]
+        owners = [request.user.id]
 
-        zip = IiifManifestExport.get_zip(manifest, kwargs['version'])
+        zip = IiifManifestExport.get_zip(manifest, kwargs['version'], owners=owners)
         resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
         resp['Content-Disposition'] = 'attachment; filename=iiif_export.zip'
 
@@ -94,9 +95,10 @@ class JekyllExport(View):
     #     include_images = (image_hosting == 'independently_hosted')
         deep_zoom = export_form.cleaned_data['deep_zoom']
 
+        owners = [request.user.id] # TODO switch to form group vs. solo control
 
 
-        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], deep_zoom=deep_zoom);
+        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], deep_zoom=deep_zoom, owners=owners);
         zip = jekyll_export.get_zip()
         resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
         resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'

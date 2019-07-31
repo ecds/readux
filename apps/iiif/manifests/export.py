@@ -147,7 +147,7 @@ class JekyllSiteExport(object):
         self.log_status('Running jekyll import IIIF manifest script')
         # jekyllimport_tei_script = settings.JEKYLLIMPORT_TEI_SCRIPT
         jekyllimport_manifest_script = settings.JEKYLLIMPORT_MANIFEST_SCRIPT
-        import_command = [jekyllimport_manifest_script, '-q', manifest.baseurl+'/manifest', tmpdir]
+        import_command = [jekyllimport_manifest_script, '--local-directory', '-q', self.iiif_dir(), tmpdir]
         # TODO
         # # if a page number is specified, pass it as a parameter to the script
         # if self.page_one is not None:

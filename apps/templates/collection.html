@@ -2,42 +2,65 @@
 {% load static %}
 {% block content %}
 <div class="uk-container">
-<header class="page-header" id="page-bg">
-  <div class="container">
-<img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}" style="width:100%;" />
+
+  <header class="page-header" id="page-bg">
+    <div class="container">
+      <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}"
+        style="width:100%;" />
+    </div>
+    <div class="collection-image-info collasped">
+      <h3>{{ collection.collection_image_title }}</h3>
+      <div class="info"> {% if collection.collection_image_summary %}
+        <p>{{ collection.collection_image_summary }}</p> {% endif %}
+        <p class="small credit">{{ collection.collection_image_creator }}</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="rx-head-container">
+    <div class="rx-title-container" uk-sticky="offset: 80">
+      <ul class="rx-breadcrumb">
+        <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+        <li class="rx-breadcrumb-item">Collections</li>
+        <li class="rx-breadcrumb-item">{{ collection.label }}</li>
+      </ul>
+      <div class="rx-title">{{ collection.label }}</div>
+      <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
+    </div>
+    <p>{{ collection.summary }}</p>
   </div>
-<div class="collection-image-info collasped">
 
-        <h3>{{ collection.collection_image_title }}</h3>
-        <div class="info"> {% if collection.collection_image_summary %}
-          <p>{{ collection.collection_image_summary }}</p> {% endif %}
-          <p class="small credit">{{ collection.collection_image_creator }}</p>
-        </div>
+  {% include "snippets/sort_dropdown.html" %}
+  <!--TODO: include ascending/descending sort feature-->
+
+  <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+    {% for volume in volumes %}
+    <div class="uk-width-1-2@m uk-grid-medium">
+      <div class=" uk-width-1-4@m">
+        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+          {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img
+            src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"
+            {% endif %}{% endfor %} alt="First page of {{volume.label}}"
+            onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
+        </a>
+      </div>
+      <div class="uk-width-3-4@m">
+        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+          <h3 class="readux-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        </a>
+        <p>
+          <ul class="uk-padding-remove">
+            <li>Author: {{volume.author|truncatechars:150}}</li>
+            <li>Published: {{volume.published_date}}</li>
+            <li>Publisher: {{volume.publisher}}</li>
+            <li>Publication City: {{volume.published_city}}</li>
+            <li>Added: {{volume.created_at}}</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+    {% endfor %}
   </div>
-<div class="collection-label"><h1><span>{{ collection.label }}</span></h1></div>
-</header>
-<p>{{ collection.summary }}</p>
-<h2>{{volumes|length}} volume{{volumes|length|pluralize}} in this collection</h2>
-
-{% include "snippets/sort_dropdown.html" %}
-<!--TODO: include ascending/descending sort feature-->
-
-<div class="uk-container">
-{% for volume in volumes %}
-<div><div id="grid"><div id="grid-image-volume">
-  <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-    {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-  </a>
-  </div><div id="grid-metaforimage"><p>
-    <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-  {{ volume.label }}
-</a><br/>
-Author: {{volume.author}}<br/>
-Date: {{volume.published_date}}<br/>
-Publisher: {{volume.publisher}}<br/>
-Publication City: {{volume.published_city}}</p>
-  </div></div>
-{% endfor %}
 </div>
-</div>
+
 {% endblock content %}

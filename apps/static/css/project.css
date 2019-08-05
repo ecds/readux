@@ -561,7 +561,7 @@ p {
   padding: 0.5em;
 }
 
-.rx-breadcrumb-item > a, .rx-action-btn, .rx-icon-btn {
+.rx-breadcrumb-item > a, .rx-action-btn, .rx-icon-btn, .uk-dropdown-nav>li>a:hover {
     color: #EA7C0F;
     opacity: 0.75;
     -webkit-transition: opacity 150ms ease-in-out;
@@ -570,7 +570,7 @@ p {
     -o-transition: opacity 150ms ease-in-out;
 }
 
-.rx-breadcrumb-item > a:hover, .rx-action-btn:hover, .rx-icon-btn:hover {
+.rx-breadcrumb-item > a:hover, .rx-action-btn:hover, .rx-icon-btn:hover, .uk-dropdown-nav>li.uk-active>a {
     color: #EA7C0F;
     opacity: 1;
     -webkit-transition: opacity 150ms ease-in-out;

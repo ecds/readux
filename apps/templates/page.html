@@ -5,23 +5,27 @@
 {% endblock extra_css %}
 
 {% block content %}
+<div class="rx-head-container">
+  <div class="rx-title-container" uk-sticky="offset: 80">
+    <ul class="rx-breadcrumb">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item"><a href="/collections/" alt="Collections">Collections</a></li>
+      <li class="rx-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}" alt="Collections">{{ volume.collections.first.label }}</a></li>
+    </ul>
+    <div class="rx-title uk-text-truncate">{{volume.label}}</div>
+  </div>
 
-<!-- 
-<p class="breadcrumbs"><a href="/">Home</a> > Collection{{Collections|length|pluralize}}: {% for col in volume.collections.all %}<a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a> {% if not forloop.last %}| {% endif %} {% endfor %}> Work: <a href="">{{volume.label}}</a></p>
- -->
-<h1 class='uk-text-truncate'>
-  {{volume.label}}
-</h1>
   <form class="uk-search uk-search-default">
-      <span uk-search-icon></span>
-      <input class="uk-search-input" type="search" placeholder="Search this volume...">
+    <span uk-search-icon></span>
+    <input class="uk-search-input" type="search" placeholder="Search this volume...">
   </form>
+</div>
 {% endblock content %}
-{% block viewer %}
-  <div class='uk-flex-center' uk-grid>
-    <div class='uk-width-3-4'>
-      <div  id='viewer'></div>
 
+{% block viewer %}
+  <div class='uk-flex' uk-grid>
+    <div class='uk-width-3-4'>
+      <div id='viewer'></div>
     </div>
     <div class='uk-width-1-4'>
       <div class='uk-padding'>
@@ -64,7 +68,6 @@
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
         <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
  -->
-        
       </div>
 
       <!-- start ocr el -->
@@ -75,6 +78,7 @@
     </div>
   </div>
 {% endblock viewer %}
+
 {% block extra_javascript %}
 <script src="{% static 'mirador/mirador.js' %}"></script>
 <script type="text/javascript">

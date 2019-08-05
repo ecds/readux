@@ -499,3 +499,38 @@ ol {
   -moz-columns: 1;
 }
 }
+
+
+
+.readux-home-tagline {
+    font-size: 3em;
+    font-weight: 700;
+}
+
+.readux-home-ecds {
+    width: 20em;
+}
+
+.readux-group-title {
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.readux-card-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #707070;
+}
+
+a:hover {
+    text-decoration: initial !important;
+}
+
+.rx-title-tagline {
+    font-size: 1em;
+    color: #AFAFAF;
+}
+
+p {
+    color: #707070 !important;
+}

@@ -3,8 +3,23 @@
 {% load readux_templatetags %}
 
 {% block content %}
-<h1>{{page.title}}</h1>
-<p class="lead">{{page.tagline}}</p>
+<div class="uk-child-width-expand@s uk-text-left" uk-grid>
+  <div>
+    <div uk-sticky="bottom: #offset">
+    <ul class="readux-home-tagline uk-padding-remove-left uk-margin-large-bottom uk-margin-large-top">
+      <li>Read.</li>
+      <li>Annotate.</li>
+      <li>Publish.</li>
+    </ul>
+    <p class="uk-margin-large-bottom">Engage with digitized print materials on an open source software platform and share new thinking.</p>
+    <img src="static/images/ecds.svg" class="readux-home-ecds uk-margin-large-top">
+    </div>
+  </div>
+
+
+<div>
+<!-- <h1>{{page.title}}</h1>
+<p class="lead">{{page.tagline}}</p> -->
 
 {% if page.featured_collections.all|length != 0  %}
 <h2>Featured Collection{{page.featured_collections.all|length|pluralize}}</h2>
@@ -12,11 +27,11 @@
   {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
   <li>
     <div>
-      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/><br/>
-        <a class="nav-link" href="{% url 'collection' collection.pid %}">
-          {{ collection.label }}
-        </a>
-        {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
+      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}" /><br />
+      <a class="nav-link" href="{% url 'collection' collection.pid %}">
+        {{ collection.label }}
+      </a>
+      {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
     </div>
   </li>
   {% endfor %}
@@ -26,38 +41,53 @@
 {% if page.featured_volumes.all|length != 0 %}
 <h2>Featured Volume{{page.featured_volumes.all|length|pluralize}}</h2>
 <ol>
-    {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
+  {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
   <li class="list">
-    <div><div id="grid"><div id="grid-image">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        <img src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-      </a></div><div id="grid-metaforimage">
-      <p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+    <div>
+      <div id="grid">
+        <div id="grid-image">
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <img src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}"
+              onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
+          </a></div>
+        <div id="grid-metaforimage">
+          <p>
+            <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
 
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  </a><br/>
-  Author: {{volume.author|truncatechars:100}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p>
-    </div></div></div>
+              <p>{{ volume.label|truncatechars:200 }}</p>
+            </a><br />
+            Author: {{volume.author|truncatechars:100}}<br />
+            Date Published: {{volume.published_date}}<br />
+            Added {{volume.created_at}}</p>
+        </div>
+      </div>
+    </div>
   </li>
   {% endfor %}
 </ol>
 {% endif %}
 
 {% if page.content_display == 'Collections' %}
-<h2>All Collections</h2>
-<ul>
+<div class="readux-group-title">All Collections</div>
+
+<ul class="uk-padding-remove-left">
   {% for collection in page.collections %}
   <li>
-    <div class="collectioncontainer">
-      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" style="width:100%;"/><br />
-        <a class="nav-link" href="{% url 'collection' collection.pid %}">
-          {{ collection.label }}
-        </a>
-        {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
-    </div>
+    <a class="nav-link" href="{% url 'collection' collection.pid %}">
+      <div class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-3@s uk-margin" uk-grid>
+        <div class="uk-card-media-left uk-cover-container uk-width-1-4">
+          <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" uk-cover>
+          <canvas width="600" height="400"></canvas>
+        </div>
+        <div class="uk-width-3-4">
+          <div class="uk-card-body">
+            <h3 class="readux-card-title uk-margin-remove-bottom">{{ collection.label }}</h3> 
+            <div class="rx-title-tagline">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
+            <p class="">{{ collection.summary }}</p>
+          </div>
+        </div>
+      </div>
+    </a>
   </li>
   {% endfor %}
 </ul>
@@ -68,21 +98,38 @@
 <ol>
   {% for volume in page.volumes %}
   <li class="list">
-    <div><div id="grid"><div id="grid-image">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail_crop_tallwide }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"{% endif %}{% endfor %}alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-      </a></div><div id="grid-metaforimage">
-      <p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  </a>
-  Author: {{volume.author|truncatechars:150}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
+    <div>
+      <div id="grid">
+        <div id="grid-image">
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img
+              src="{{ canvas.thumbnail_crop_tallwide }}" {% elif forloop.last %}<img
+              src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
+              {% endif %}{% endfor %}alt="First page of {{volume.label}}"
+              onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
+          </a></div>
+        <div id="grid-metaforimage">
+          <p>
+            <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+              <p>{{ volume.label|truncatechars:200 }}</p>
+            </a>
+            Author: {{volume.author|truncatechars:150}}<br />
+            Date Published: {{volume.published_date}}<br />
+            Added {{volume.created_at}}</p>
+        </div>
+      </div>
+    </div>
   </li>
   {% endfor %}
 </ol>
 {% endif %}
+
+
+
+  </div>
+</div>
+
+
+
 
 {% endblock %}

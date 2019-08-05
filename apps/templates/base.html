@@ -72,30 +72,36 @@
   <body>
 
     <div>
-      <nav class='uk-navbar-container uk-margin' uk-navbar>
-        <div class='uk-navbar-left'>
-        <a class='uk-navbar-item uk-logo' href="/">Readux</a>
-          <ul class='uk-navbar-nav'>
+
+      <nav class="uk-navbar-container" uk-navbar uk-sticky>
+        <div class="uk-navbar-left">
+          <a class="uk-navbar-item uk-logo" href="/">Readux</a>
+          <ul class="uk-navbar-nav">
             <li>
-             {% main_menu %}
-           </li>
-            {% if request.user.is_authenticated %}
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
-              </li>
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
-              </li>
-            {% else %}
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
-              </li>
-            {% endif %}
+              {% main_menu %}
+            </li>
           </ul>
         </div>
+        <div class="uk-navbar-right">
+          <ul class="uk-navbar-nav">
+              {% if request.user.is_authenticated %}
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
+                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span></a>
+              </li>
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}" href="{% url 'account_logout' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-out"></span></a>
+              </li>
+              {% else %}
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a href="{% url 'account_login' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in"></span></a>
+              </li>
+              {% endif %}
+          </ul>
+          </div>
       </nav>
 
     </div>

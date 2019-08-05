@@ -547,7 +547,7 @@ p {
     color: #707070;
 }
 
-.rx-breadcrumb {
+.rx-breadcrumb, .rx-action-title, .rx-action-btn {
     text-transform: uppercase;
     font-weight: bold;
     letter-spacing: 0.1em;
@@ -561,7 +561,7 @@ p {
   padding: 0.5em;
 }
 
-.rx-breadcrumb-item > a {
+.rx-breadcrumb-item > a, .rx-action-btn {
     color: #EA7C0F;
     opacity: 0.75;
     -webkit-transition: opacity 150ms ease-in-out;
@@ -570,7 +570,8 @@ p {
     -o-transition: opacity 150ms ease-in-out;
 }
 
-.rx-breadcrumb-item > a:hover {
+.rx-breadcrumb-item > a:hover, .rx-action-btn:hover{
+    color: #EA7C0F;
     opacity: 1;
     -webkit-transition: opacity 150ms ease-in-out;
     -moz-transition: opacity 150ms ease-in-out;

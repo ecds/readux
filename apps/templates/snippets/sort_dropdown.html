@@ -6,23 +6,28 @@
 	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
+<div class="uk-margin-bottom uk-flex-between uk-flex" id="rx-sort">
+	<div>
+		<span ref="v-attr-sort" data-sort="{{ sort }}"></span>
+		<span class="rx-action-title">Sort by: </span> <a class="rx-action-btn">[[currentSelection]]</a>
+		<div uk-dropdown="mode: click">
+			<ul class="uk-nav uk-dropdown-nav">
+				<li v-for="(option, index) in options" v-bind:class="{ 'uk-active' : (option==currentSelection) }">
+					<a href="#" @click="sortBy(option)">
+						[[ option ]]
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
 
-<div class="uk-margin-bottom" id="rx-sort">
-	<span ref="v-attr-sort" data-sort="{{ sort }}"></span>
-	<span class="rx-action-title">Sort by: </span> <a class="rx-action-btn">[[currentSelection]]</a>
-	<div uk-dropdown="mode: click">
-		<ul class="uk-nav uk-dropdown-nav">
-			<li v-for="(option, index) in options" v-bind:class="{ 'uk-active' : (option==currentSelection) }">
-				<a href="#" @click="sortBy(option)">
-					[[ option ]]
-				</a>
-			</li>
-		</ul>
+	<div>
+		<a class="rx-icon-btn" onclick="ascaddURL(this)" uk-icon="icon: arrow-up"
+			uk-tooltip="title: sort in ascending order"></a>
+		<a class="rx-icon-btn" onclick="descaddURL(this)" uk-icon="icon: arrow-down"
+			uk-tooltip="title: sort in descending order"></a>
 	</div>
 </div>
-
-<a onclick="ascaddURL(this)" href=""><button>&uarr;</button></a><a onclick="descaddURL(this)"
-	href=""><button>&darr;</button></a>
 
 <script>
 	var app = new Vue({
@@ -41,12 +46,45 @@
 					window.location = value;
 				}
 			}
-		},
-		mounted: function() {
-			this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
 
+			// ascaddURL: function(element) {
+			// 	$(element).attr('href', function () {
+			// 		if (window.location.search.length == 0) {
+			// 			return this.href + '?sort=title&order=asc';
+			// 		} else if (window.location.search.match(/[?&]order=asc/gi)) {
+			// 			this.href = this.href.replace('order=asc', 'order=asc');
+			// 			return this.href;
+			// 		} else if (window.location.search.match(/[?&]order=desc/gi)) {
+			// 			this.href = this.href.replace('order=desc', 'order=asc');
+			// 			return this.href;
+			// 		} else {
+			// 			return this.href + '&order=asc';
+			// 		}
+			// 	});
+			// },
+
+			// descaddURL: function(element) {
+			// 	$(element).attr('href', function () {
+			// 		if (window.location.search.length == 0) {
+			// 			return this.href + '?sort=title&order=desc';
+			// 		} else if (window.location.search.match(/[?&]order=asc/gi)) {
+			// 			this.href = this.href.replace('order=asc', 'order=desc');
+			// 			return this.href;
+			// 		} else if (window.location.search.match(/[?&]order=desc/gi)) {
+			// 			this.href = this.href.replace('order=desc', 'order=desc');
+			// 			return this.href;
+			// 		} else {
+			// 			return this.href + '&order=desc';
+			// 		}
+			// 	});
+			// }
+		},
+
+		mounted: function () {
+			this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
 		}
 	})
+
 
 	function ascaddURL(element) {
 		$(element).attr('href', function () {
@@ -63,6 +101,7 @@
 			}
 		});
 	}
+
 	function descaddURL(element) {
 		$(element).attr('href', function () {
 			if (window.location.search.length == 0) {

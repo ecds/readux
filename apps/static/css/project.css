@@ -534,3 +534,49 @@ a:hover {
 p {
     color: #707070 !important;
 }
+
+.rx-title-container {
+    background: white;
+    padding: 1em 0;
+}
+
+.rx-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #707070;
+}
+
+.rx-breadcrumb {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    display: inline-flex;
+    padding: 0;
+    margin: 0;
+}
+
+.rx-breadcrumb-item:not(:last-child)::after {
+  content: "-";
+  padding: 0.5em;
+}
+
+.rx-breadcrumb-item > a {
+    color: #EA7C0F;
+    opacity: 0.75;
+    -webkit-transition: opacity 150ms ease-in-out;
+    -moz-transition: opacity 150ms ease-in-out;
+    -ms-transition: opacity 150ms ease-in-out;
+    -o-transition: opacity 150ms ease-in-out;
+}
+
+.rx-breadcrumb-item > a:hover {
+    opacity: 1;
+    -webkit-transition: opacity 150ms ease-in-out;
+    -moz-transition: opacity 150ms ease-in-out;
+    -ms-transition: opacity 150ms ease-in-out;
+    -o-transition: opacity 150ms ease-in-out;
+}
+
+.rx-head-container {
+    margin: 3em 0 6em;
+}

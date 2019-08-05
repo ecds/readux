@@ -4,9 +4,19 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h2 class='uk-heading-primary'>{{ page.page_title }}</h1>
-<h3>{{page.tagline}}</h2>
-<p class='text-lead'>{{ page.paragraph }}</p>
+<div class="rx-head-container">
+  <div class="rx-title-container" uk-sticky="offset: 80">
+    <ul class="rx-breadcrumb">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item">Collections</li>
+    </ul>
+  
+    <div class="rx-title">{{ page.page_title }}</div>
+    <div class="rx-title-tagline">{{page.tagline}}</div>
+  </div>
+
+  <p class="text-lead">{{ page.paragraph }}</p>
+</div>
 
 {% if page.layout == 'Banner' %}
 <div class="collectionswrapper">
@@ -42,18 +52,26 @@
 {% endif %}
 {% if page.layout == 'List' %}
 <div class="collectionswrapper">
-<ol>
-  {% for collection in page.collections %}
-  <li>
-    <div><div id="grid"><div id="grid-image">
-      <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}""/></div>
-        <div id="grid-metaforimage"><p><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
-          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
-        </span></a><br/>{{collection.summary}}</p></div>
-    </div></div>
-  </li>
-  {% endfor %}
-</ol>
+  <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+    {% for collection in page.collections %}
+      <div class="uk-width-1-2@m uk-grid-medium">
+        <div class=" uk-width-1-4@m">
+          <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}" />
+        </div>
+        <div class="uk-width-3-4@m">
+          <a class="nav-link" href="{% url 'collection' collection.pid %}">
+            <h3 class="readux-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+          </a>
+          <div class="rx-title-tagline">
+            {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
+          </div>
+          <p>
+            {{collection.summary}}
+          </p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 {% endif %}
 {% endblock content %}

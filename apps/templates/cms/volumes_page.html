@@ -5,9 +5,20 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h2 class='uk-heading-primary'>{{ page.page_title }}</h1>
-<h3>{{page.tagline}}</h3>
-<p class='text-lead'>{{ page.paragraph }}</p>
+
+<div class="rx-head-container">
+  <div class="rx-title-container" uk-sticky="offset: 80">
+    <ul class="rx-breadcrumb">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item">Volumes</li>
+    </ul>
+
+    <div class="rx-title">{{ page.page_title }}</div>
+    <div class="rx-title-tagline">{{page.tagline}}</div>
+  </div>
+
+  <p>{{ page.paragraph }}</p>
+</div>
 
 {% include "snippets/sort_dropdown.html" %}
 
@@ -32,24 +43,28 @@
 {% endif %}
 
 {% if page.layout == 'List' %}
-<ol>
-  {% for volume in volumespage %}
-  <li class="list">
-    <div><div id="grid"><div id="grid-image-volume">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+
+  <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+    {% for volume in volumespage %}
+    <div class="uk-width-1-2@m uk-grid-medium">
+      <div class=" uk-width-1-4@m">
         {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-      </a></div><div id="grid-metaforimage">
-      <p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      {{ volume.label|truncatechars:200 }}
-  </a><br/>
-  Author: {{volume.author|truncatechars:150}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-  </li>
-  {% endfor %}
-</ol>
+      </div>
+      <div class="uk-width-3-4@m">
+        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+          <h3 class="readux-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        </a>
+        <p>
+          <ul class="uk-padding-remove">
+            <li>Author: {{volume.author|truncatechars:150}}</li>
+            <li>Published: {{volume.published_date}}</li>
+            <li>Added: {{volume.created_at}}</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 {% endif %}
 
 {% endblock content %}

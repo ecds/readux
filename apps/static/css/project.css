@@ -13,7 +13,7 @@
 }
 
 #viewer {
-  width: 78%;
+  /* width: 78%; */
   height: calc(100% - 250px);
   position: absolute;
   bottom: 0;
@@ -581,4 +581,34 @@ p {
 
 .rx-head-container {
     margin: 3em 0 6em;
+}
+
+.rx-info-title {
+    border: 0.5px solid #E2E2E2;
+    padding: 0.7em 1em 0.5em;
+    color: #707070;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 1em;
+    /* font-weight: bold; */
+}
+
+.rx-info-content-container {
+    border: 0.5px solid #E2E2E2;
+    padding: 1.5em 1em;
+    word-break: break-word;
+}
+
+.rx-info-content {
+    padding: 0.5em 0;
+}
+
+.rx-info-content-label {
+    color: #707070;
+    font-weight: bold;
+    line-height: 1em;
+}
+
+.rx-info-content-value {
+    color: #707070;
 }

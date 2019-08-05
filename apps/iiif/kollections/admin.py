@@ -32,7 +32,7 @@ from apps.iiif.manifests.models import Manifest, Note
 class CollectionResource(resources.ModelResource):
     class Meta:
         model = Collection
-        fields = ('id', 'label','summary', 'pid','metadata', 'upload')
+        fields = ('id', 'label','summary', 'pid', 'attribution', 'metadata', 'original', 'collection_image_title', 'collection_image_creator', 'collection_image_summary')
 
 class ManifestInline(admin.TabularInline):
 #    form = MyForm

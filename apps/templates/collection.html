@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="uk-container">
 <header class="page-header" id="page-bg">
@@ -23,20 +24,18 @@
 
 <div class="uk-container">
 {% for volume in volumes %}
-<div class="collection-row" style="display:inline-block;"><div class="collection-image" style="display:inline; float:left;">
+<div><div id="grid"><div id="grid-image-volume">
   <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-    <img src="{{ volume.canvas_set.first.thumbnail_crop_landscape }}"/>
+    {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
   </a>
-  </div>
-  <div class="collection-info" style="display:inline; float:left; max-width:80%;">
+  </div><div id="grid-metaforimage"><p>
     <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}
-</a>
-<p>Author: {{volume.author}}</p>
-<p>Date: {{volume.published_date}}</p>
-<p>Publisher: {{volume.publisher}}</p>
-<p>Publication City: {{volume.published_city}}</p>
-  </p>
+</a><br/>
+Author: {{volume.author}}<br/>
+Date: {{volume.published_date}}<br/>
+Publisher: {{volume.publisher}}<br/>
+Publication City: {{volume.published_city}}</p>
   </div></div>
 {% endfor %}
 </div>

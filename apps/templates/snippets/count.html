@@ -1,0 +1,4 @@
+{% if volume_annotation_count > 0 %}
+    <span class="count" title="{{ volume.volume_annotation_count }} annotation{{ volume.volume_annotation_count|pluralize }}">
+(annotations: {{ volume_annotation_count }})</span>
+{% endif %}

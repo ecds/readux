@@ -33914,7 +33914,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
     // default window settings, but can be changed in Mirador configuration on initialization
     windowSettings: {
-      availableViews: ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'], // any subset removes others
+      availableViews: ['ThumbnailsView', 'ImageView'],// 'ScrollView', 'BookView'], // any subset removes others
       viewType: 'ImageView', // one of [_'ThumbnailsView'_, 'ImageView', 'ScrollView', 'BookView'] - if using availableViews, must be in subset
       bottomPanel: true, // whether or not to make the bottom panel available in this window
       bottomPanelVisible: true, // whether or not to make the bottom panel visible in this window on load. This setting is dependent on bottomPanel being true
@@ -41880,29 +41880,31 @@ return /******/ (function(modules) { // webpackBootstrap
 
     //Search endpoint for all annotations with a given URI in options
     search: function(options, successCallback, errorCallback) {
-      var linkContainer = document.getElementById("myLink");
-      var link = document.createElement('a');
-      var linkText = document.createTextNode(options.uri);
-      link.href = options.uri;
-      link.title = 'Stable link for canvas';
-      link.appendChild(linkText);
-      linkContainer.innerHTML='';
-      linkContainer.appendChild(link);
-      var _this = this;
-      var volume = options.uri.split('/').reverse()[2];
-      var page = options.uri.split('/').reverse()[0];
+      if (document.getElementById("myLink") !== null) {
+        var linkContainer = document.getElementById("myLink");
+        var link = document.createElement('a');
+        var linkText = document.createTextNode(options.uri);
+        link.href = options.uri;
+        link.title = 'Stable link for canvas';
+        link.appendChild(linkText);
+        linkContainer.innerHTML='';
+        linkContainer.appendChild(link);
+        var _this = this;
+        var volume = options.uri.split('/').reverse()[2];
+        var page = options.uri.split('/').reverse()[0];
       // If the user navigated to the canvas using the back or forward buttons,
       // we don't want to mess with the state. Doing so would clear any forward states
       // and make the back only one canvas deep.
       // All we do if the load is due to a `popstate` event is reset flag for the
       // next switch.
-      if (_this.popStateEvent) {
-        _this.popStateEvent = false;
-      } else {
+        if (_this.popStateEvent) {
+          _this.popStateEvent = false;
+        } else {
         // If the new canvas load is due to the user using any of the Mirador
         // navigation, we need to update the location and history with the new
         // canvas id.
-        history.pushState(history.state, '', page.replace(/:/g, '%3A'));
+          history.pushState(history.state, '', page.replace(/:/g, '%3A'));
+        }
       }
       this.annotationsList = [];
 
@@ -47936,7 +47938,9 @@ return /******/ (function(modules) { // webpackBootstrap
           // TODO move this
           // grabs the url onload to display on the page
           var canvasID = window.location.href;
-          document.getElementById("mySpan").innerHTML=canvasID;
+          if (document.getElementById("mySpan") !== null) {
+            document.getElementById("mySpan").innerHTML=canvasID;
+          }
         });
       });
       

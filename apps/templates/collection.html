@@ -30,8 +30,15 @@
   </a>
   </div><div id="grid-metaforimage"><p>
     <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-  {{ volume.label }}
-</a><br/>
+  {{ volume.label }} 
+</a> 
+<!-- 
+{% if volume.volume_annotation_count > 0 %}
+    <span class="count" title="{{ volume.volume_annotation_count }} annotation{{ volume.volume_annotation_count|pluralize }}">
+(annotations: {{ volume.volume_annotation_count }})</span>
+{% endif %}
+ -->
+<br/>
 Author: {{volume.author}}<br/>
 Date: {{volume.published_date}}<br/>
 Publisher: {{volume.publisher}}<br/>

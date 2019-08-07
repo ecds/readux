@@ -52,22 +52,7 @@
         <br />
         <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}</a>
         <br />
-        <b>Canvas URL:</b> <span class="link" id="myLink"></span>
-        <br />
-        <b>Stable page URL:</b> <span class="link" id="mySpan"></span>
-        <br />{% if user_annotation_count > 0 %}
-        <b>My annotations (this manifest):</b> {{ user_annotation_count }}
-        <br />
-        <b>My annotations (this page):</b> {{ user_annotation_page_count }}
-        <br />{% endif %}
-        {% if user_annotation_count > 0 %}
-        <form action="{% url 'export' volume.pid %}" class="button_to" method="GET"><div><input type="submit" value="Export" title="Export in a variety of formats"/>{% csrf_token %}</div></form>
-        {% endif %}
-<!-- 
-        <p id="test"></p>
-        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
-        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
- -->
+
         
       </div>
 
@@ -94,7 +79,7 @@
       "layout": "1x1",
       "data": [
         {
-          "manifestUri": "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest", "location": "Emory University"
+          "manifestUri": "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ volume.pid }}/manifest", "location": "Emory University"
         }
       ],
       'windowSettings' : {
@@ -109,13 +94,14 @@
         }
       },
       "windowObjects": [{
-        loadedManifest: "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ page.manifest.pid }}/manifest",
+        loadedManifest: "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ volume.pid }}/manifest",
         annotationLayer: true,
         annotationCreation: true,
         annotationState: 'annoOncreateOn',
-        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{page.manifest.pid }}/canvas/{{ page.pid }}',
+        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ volume.pid }}/canvas/{{ volume.page_set.pid.first }}',
         displayLayout: false,
-        sidePanel: false
+        sidePanel: false,
+        viewType: "ThumbnailsView"
       }],
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });

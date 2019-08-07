@@ -119,6 +119,10 @@ class CollectionDetail(TemplateView):
 
         context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
         context['volumes'] = q.all
+        context['user_annotation'] = Annotation.objects.filter(owner_id=self.request.user.id)
+        context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).count()
+        value = 0
+        context['value'] = value
         context.update({
         'sort_url_params': urlencode(sort_url_params),
         'order_url_params': urlencode(order_url_params),
@@ -135,14 +139,38 @@ class VolumeDetail(TemplateView):
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         return context
 
+class AnnotationsCount(TemplateView):
+    template_name = "count.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        canvas = Canvas.objects.filter(pid=kwargs['page']).first()
+        context['page'] = canvas
+        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['volume'] = manifest
+        context['user_annotation_page_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
+        context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        return context
+
+class VolumeAllDetail(TemplateView):
+    template_name = "pageall.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['volume'] = manifest
+        return context
+
 class PageDetail(TemplateView):
     template_name = "page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page'] = Canvas.objects.filter(pid=kwargs['page']).first()
+        canvas = Canvas.objects.filter(pid=kwargs['page']).first()
+        context['page'] = canvas
         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['volume'] = manifest
+        context['user_annotation_page_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         return context
 

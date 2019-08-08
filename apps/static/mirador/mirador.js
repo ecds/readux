@@ -41903,6 +41903,7 @@ return /******/ (function(modules) { // webpackBootstrap
       var _this = this;
       if (_this.popStateEvent) {
         _this.popStateEvent = false;
+        window.localStorage.setItem('prevUrl', "all");
       } else {
         // If the new canvas load is due to the user using any of the Mirador
         // navigation, we need to update the location and history with the new
@@ -41911,10 +41912,12 @@ return /******/ (function(modules) { // webpackBootstrap
         var prevUrl = window.localStorage.getItem('prevUrl');
         if (prevUrl === null | page === '') {
           console.log(prevUrl);
-          console.log(oldpage);
+          console.log(page);
           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
           window.localStorage.setItem('prevUrl', "all");
         } else if (prevUrl === 'all') {
+          console.log(prevUrl);
+          console.log(page);
           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
           location.reload();                
           window.localStorage.setItem('prevUrl', "page");

@@ -50,7 +50,7 @@
         <br />
         <b>Export Citation:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}" target="_blank">Click to download RIS file</a>
         <br />
-        <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}</a>
+        <b>Stable volume URL:</b> <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all" target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all</a>
         <br />
         <b>Canvas URL:</b> <span class="link" id="myLink"></span>
         <br />

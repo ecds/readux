@@ -41892,17 +41892,33 @@ return /******/ (function(modules) { // webpackBootstrap
         var _this = this;
         var volume = options.uri.split('/').reverse()[2];
         var page = options.uri.split('/').reverse()[0];
+      }
       // If the user navigated to the canvas using the back or forward buttons,
       // we don't want to mess with the state. Doing so would clear any forward states
       // and make the back only one canvas deep.
       // All we do if the load is due to a `popstate` event is reset flag for the
       // next switch.
-        if (_this.popStateEvent) {
-          _this.popStateEvent = false;
-        } else {
+      var page = options.uri.split('/').reverse()[0];
+      var oldpage = window.location.href.split('/').reverse()[0];
+      var _this = this;
+      if (_this.popStateEvent) {
+        _this.popStateEvent = false;
+      } else {
         // If the new canvas load is due to the user using any of the Mirador
         // navigation, we need to update the location and history with the new
         // canvas id.
+        // below creates an infinite loop on first load - but then would work for click to another page - need another page to reload to get to other view.
+        var prevUrl = window.localStorage.getItem('prevUrl');
+        if (prevUrl === null) {
+          console.log(prevUrl);
+          history.pushState(history.state, '', page.replace(/:/g, '%3A'));
+          window.localStorage.setItem('prevUrl', "all");
+        } else if (prevUrl === 'all') {
+          history.pushState(history.state, '', page.replace(/:/g, '%3A'));
+          location.reload();                
+          window.localStorage.setItem('prevUrl', "page");
+        } else {        
+          console.log(prevUrl);
           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
         }
       }

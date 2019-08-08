@@ -14,7 +14,7 @@
 {% if page.layout == 'Grid' %}
   <div id="wrap">
   {% for volume in volumespage %}
-{% if volume.canvas_set.first.pid is null %}
+ {% if volume.canvas_set.first.pid is null %}
     <div id="box">
     <div id="boxInner">
         <img src='{% static '/images/image_not_found.jpg' %}'/>

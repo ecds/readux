@@ -41909,8 +41909,9 @@ return /******/ (function(modules) { // webpackBootstrap
         // canvas id.
         // below creates an infinite loop on first load - but then would work for click to another page - need another page to reload to get to other view.
         var prevUrl = window.localStorage.getItem('prevUrl');
-        if (prevUrl === null) {
+        if (prevUrl === null | page === '') {
           console.log(prevUrl);
+          console.log(oldpage);
           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
           window.localStorage.setItem('prevUrl', "all");
         } else if (prevUrl === 'all') {
@@ -41919,6 +41920,7 @@ return /******/ (function(modules) { // webpackBootstrap
           window.localStorage.setItem('prevUrl', "page");
         } else {        
           console.log(prevUrl);
+          console.log(page);
           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
         }
       }

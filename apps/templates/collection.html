@@ -24,6 +24,18 @@
 
 <div class="uk-container">
 {% for volume in volumes %}
+{% if volume.canvas_set.first.pid is null %}
+<div><div id="grid"><div id="grid-image-volume">
+    <img src='{% static 'images/image_not_found.jpg' %}'/>
+  </div><div id="grid-metaforimage"><p>
+  {{ volume.label }}
+<br/>
+Author: {{volume.author}}<br/>
+Date: {{volume.published_date}}<br/>
+Publisher: {{volume.publisher}}<br/>
+Publication City: {{volume.published_city}}</p>
+  </div></div>
+{% else %}
 <div><div id="grid"><div id="grid-image-volume">
   <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
     {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
@@ -44,6 +56,7 @@ Date: {{volume.published_date}}<br/>
 Publisher: {{volume.publisher}}<br/>
 Publication City: {{volume.published_city}}</p>
   </div></div>
+  {% endif %}
 {% endfor %}
 </div>
 </div>

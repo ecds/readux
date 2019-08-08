@@ -43859,7 +43859,7 @@ return /******/ (function(modules) { // webpackBootstrap
       '{{#if sidePanel}}',
       '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected mirador-tooltip" title="{{t "sidePanelTooltip"}}" aria-label="{{t "sidePanelTooltip"}}"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
       '{{/if}}',
-      '<h3 class="window-manifest-title" title="{{{title}}}" aria-label="{{{title}}}">{{{title}}}</h3>',
+//       '<h3 class="window-manifest-title" title="{{{title}}}" aria-label="{{{title}}}">{{{title}}}</h3>',
       '</div>',
       '<div class="content-container">',
       '{{#if sidePanel}}',

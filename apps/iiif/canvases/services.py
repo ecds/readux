@@ -35,7 +35,12 @@ def add_positional_ocr(canvas, result):
                             'y': w[1][3]
                         })
     elif 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-            reader = csv.DictReader(result.split('\n'), delimiter='\t')
+            # include the quote marks in content
+            class include_quotes_dialect(csv.Dialect):
+                lineterminator = '\n'
+                delimiter= '\t'
+                quoting = csv.QUOTE_NONE # perform no special processing of quote characters
+            reader = csv.DictReader(result.split('\n'), dialect=include_quotes_dialect)
             for row in reader:
                 content = row['content']
                 w = int(row['w'])

@@ -12,9 +12,10 @@
 <h1 class='uk-text-truncate'>
   {{volume.label}}
 </h1>
-  <form class="uk-search uk-search-default">
-      <span uk-search-icon></span>
-      <input class="uk-search-input" type="search" placeholder="Search this volume...">
+  <form class="uk-search uk-search-default" action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
+      <span uk-search-icon></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
   </form>
 {% endblock content %}
 {% block viewer %}
@@ -55,7 +56,15 @@
         <b>Canvas URL:</b> <span class="link" id="myLink"></span>
         <br />
         <b>Stable page URL:</b> <span class="link" id="mySpan"></span>
-        <br />
+        <br /><hr />
+<div>
+{% if qs %}
+<p><strong>The results of the search query: {{ request.GET.q }}</strong></p>
+<ul>{% for answer in qs %}
+<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer }}" target="_blank">{{ answer.manifest.label }} - {{ answer.label }}</a></li>
+{% endfor %}</ul>
+{% endif %}
+</div>
         {% if user_annotation_count > 0 %}
         <form action="{% url 'export' volume.pid %}" class="button_to" method="GET"><div><input type="submit" value="Export" title="Export in a variety of formats"/>{% csrf_token %}</div></form>
         {% endif %}

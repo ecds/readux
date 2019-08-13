@@ -7,6 +7,8 @@ from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from django.views.generic.base import RedirectView
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.utils.datastructures import MultiValueDictKeyError
 
 class CollectionsList(ListView):
     template_name = "collections.html"
@@ -144,6 +146,19 @@ class PageDetail(TemplateView):
         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['volume'] = manifest
         context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        qs = Canvas.objects.all()
+
+        try:
+          search_string = self.request.GET['q']
+          if search_string:
+              query = SearchQuery(search_string)
+              vector = SearchVector('annotation__content')
+              qs = qs.annotate(search=vector).filter(search=query)
+              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+          context['qs'] = qs
+        except MultiValueDictKeyError:
+          q = ''
+        
         return context
 
 # class PageRedirect(TemplateView):

@@ -60,9 +60,9 @@
 <div>
 {% if qs %}
 <p><strong>The results of the search query: {{ request.GET.q }}</strong></p>
-<ul>{% for answer in qs %}
-<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer }}" target="_blank">{{ answer.manifest.label }} - {{ answer.label }}</a></li>
-{% endfor %}</ul>
+<ul>{% for answer in qs %}{% if answer.manifest.label in volume.label %}
+<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer }}" target="_blank">{{ answer.manifest.label }} - {{ answer.position }}</a></li>
+{% endif %}{% endfor %}</ul>
 {% endif %}
 </div>
         {% if user_annotation_count > 0 %}

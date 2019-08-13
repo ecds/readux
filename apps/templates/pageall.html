@@ -12,10 +12,7 @@
 <h1 class='uk-text-truncate'>
   {{volume.label}}
 </h1>
-  <form class="uk-search uk-search-default">
-      <span uk-search-icon></span>
-      <input class="uk-search-input" type="search" placeholder="Search this volume...">
-  </form>
+
 {% endblock content %}
 {% block viewer %}
   <div class='uk-flex-center' uk-grid>
@@ -25,6 +22,11 @@
     </div>
     <div class='uk-width-1-4'>
       <div class='uk-padding'>
+        <form class="uk-search uk-search-default">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="search" placeholder="Search this volume...">
+        </form>
+        <p></p>
         <b>Author:</b> {{ volume.author }}
         <br />
         <b>Publication Date:</b> {{ volume.published_date }}

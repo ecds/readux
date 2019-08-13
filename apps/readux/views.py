@@ -153,7 +153,7 @@ class AnnotationsCount(TemplateView):
         return context
 
 class VolumeAllDetail(TemplateView):
-    template_name = "pageall.html"
+    template_name = "page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

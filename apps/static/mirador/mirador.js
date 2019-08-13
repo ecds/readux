@@ -41908,7 +41908,7 @@ return /******/ (function(modules) { // webpackBootstrap
         // If the new canvas load is due to the user using any of the Mirador
         // navigation, we need to update the location and history with the new
         // canvas id.
-        // below creates an infinite loop on first load - but then would work for click to another page - need another page to reload to get to other view.
+        // localStorage item tells the page to reload if you have changed from the gallery to the image view. Thus the html reloads and provides additional data.
         var prevUrl = window.localStorage.getItem('prevUrl');
         if (prevUrl === null | page === '') {
           console.log(prevUrl);

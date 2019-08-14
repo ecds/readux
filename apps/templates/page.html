@@ -69,7 +69,7 @@
 <ul>{% for answer in qs2 %}{% if answer.manifest.label in volume.label %}
 <li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer }}" target="_blank">Canvas {{ answer.position }}</a></li>
 {% endif %}{% endfor %}</ul>
-{% elif request.GET.q  and not qs1 %}<p>No results in your annotations in this volume</p>
+{% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
 {% endif %}
 </div>
         {% if user_annotation_count > 0 %}<hr />

@@ -60,6 +60,7 @@ DJANGO_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+    'django.contrib.postgres',
     # 'django.contrib.humanize', # Handy template tags
     # has to be included before django.contrib.admin
     'modeltranslation',

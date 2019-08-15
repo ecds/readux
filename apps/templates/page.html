@@ -66,14 +66,14 @@
 <div>
 {% if qs1 %}<hr />
 <p><strong>The results of the search query in text: {{ request.GET.q }}</strong></p>
-<ul>{% for answer in qs1 %}{% if answer.manifest.label in volume.label %}
-<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer }}" target="_blank">Canvas {{ answer.position }}</a></li>
+<ul>{% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
+<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}" target="_blank">Canvas {{ answer.canvas.position }}</a></li>
 {% endif %}{% endfor %}</ul>
 {% elif request.GET.q  and not qs1 %}<hr /><p>No results in the text in this volume</p>{% endif %}
 {% if qs2 %}
 <p><strong>The results of the search query in your annotations: {{ request.GET.q }}</strong></p>
-<ul>{% for answer in qs2 %}{% if answer.manifest.label in volume.label %}
-<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer }}" target="_blank">Canvas {{ answer.position }}</a></li>
+<ul>{% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
+<li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}" target="_blank">Canvas {{ answer.canvas.position }}</a></li>
 {% endif %}{% endfor %}</ul>
 {% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
 {% endif %}

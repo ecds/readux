@@ -156,8 +156,8 @@ class PageDetail(TemplateView):
               vector = SearchVector('annotation__content')
               qs = qs.annotate(search=vector).filter(search=query).filter(manifest__label=manifest.label)
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-              qs1 = qs.exclude(annotation__resource_type='dctypes:Text').distinct()
-              qs2 = qs.filter(annotation__owner_id=self.request.user.id).distinct()
+              qs1 = qs.exclude(annotation__resource_type='dctypes:Text').distinct().order_by('-rank')
+              qs2 = qs.filter(annotation__owner_id=self.request.user.id).distinct().order_by('-rank')
           context['qs1'] = qs1
           context['qs2'] = qs2
         except MultiValueDictKeyError:

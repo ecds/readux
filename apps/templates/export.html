@@ -32,8 +32,6 @@
       <div class='uk-padding'>
         <h3>Static Site Export</h3>
         <p>Export volume and annotations as static digital edition.</p>
-        <form action="{% url 'JekyllExport' 'v2' volume.pid %}" class="button_to" method="POST"><div><input type="submit" value="Export Static Edition" title="Export volume and annotations as a static digital edition."/>{% csrf_token %}</div></form>
-      </div>
 
 
         <form class="volume-webexport"  action="{% url 'JekyllExport' 'v2' volume.pid %}"  method="POST">
@@ -86,6 +84,7 @@
             </div>
         </form>
 
+      </div>
 
     </div>
   </div>

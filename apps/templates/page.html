@@ -21,11 +21,19 @@
     </div>
     <div class='uk-width-1-4'>
       <div class='uk-padding'>
+        {% if page.pid is not None %}
   <form class="uk-search uk-search-default" action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
       <span uk-search-icon></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
   </form>
+        {% else %}
+  <form class="uk-search uk-search-default" action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
+      <span uk-search-icon></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
+        {% endif %}
         <p></p>
         <b>Author:</b> {{ volume.author }}
         <br />
@@ -63,6 +71,7 @@
         <br />
         <b>My annotations (this page):</b> {{ user_annotation_page_count }}
         <br />{% endif %}
+        {% endif %}
 <div>
 {% if qs1 %}<hr />
 <p><strong>The results of the search query in text: {{ request.GET.q }}</strong></p>
@@ -81,6 +90,7 @@
         {% if user_annotation_count > 0 %}<hr />
         <form action="{% url 'export' volume.pid %}" class="button_to" method="GET"><div><input type="submit" value="Export" title="Export in a variety of formats"/>{% csrf_token %}</div></form>
         {% endif %}
+        {% if page.pid is not None %}
 <!-- 
         <p id="test"></p>
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">

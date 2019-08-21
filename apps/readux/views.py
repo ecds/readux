@@ -6,7 +6,9 @@ from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
+from ..iiif.manifests.forms import JekyllExportForm
 from django.views.generic.base import RedirectView
+from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q
@@ -19,6 +21,7 @@ class CollectionsList(ListView):
 
 class VolumesList(ListView):
     template_name = "volumes.html"
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -186,10 +189,22 @@ class PageDetail(TemplateView):
 #         return super().get_redirect_url(*args, **kwargs)
 
 
-class ExportOptions(TemplateView):
+class ExportOptions(TemplateView, FormMixin):
     template_name = "export.html"
+    form_class = JekyllExportForm
+
+
+    def get_form_kwargs(self):
+        # keyword arguments needed to initialize the form
+        kwargs = super(ExportOptions, self).get_form_kwargs()
+        # add user, which is used to determine available groups
+        kwargs['user'] = self.request.user
+        # add flag to indicate if user has a github account
+#        kwargs['user_has_github'] = self.user_has_github
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['export_form'] = self.get_form()
         return context

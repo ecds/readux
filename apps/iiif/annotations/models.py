@@ -114,6 +114,7 @@ class Annotation(models.Model):
         self.y = dimensions[1]
         self.w = dimensions[2]
         self.h = dimensions[3]
+        self.motivation = self.oa_annotation['motivation']
 
 
     def __str__(self):

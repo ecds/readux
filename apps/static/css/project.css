@@ -19,9 +19,18 @@
   bottom: 0;
 }
 
+.readux-metadata {
+    word-wrap: break-word;
+}
+
 .mirador-main-menu-bar,
 .manifest-info {
-  display: none;
+    background: unset !important;
+  /* display: none; */
+}
+
+.mirador-container .mirador-viewer a.mirador-icon-metadata-view {
+    display: none !important;
 }
 
 .mirador-container .mirador-viewer {
@@ -29,7 +38,7 @@
 }
 
 .content-container {
-  margin-top: 0 !important;
+  /* margin-top: 0 !important; */
 }
 
 .uk-search-default {
@@ -38,6 +47,15 @@
 
 .openseadragon-container span a {
     background: rgba(255, 20, 147, 0.47058823529411764);
+}
+
+.manifest-info > a,
+.manifest-info > h3 {
+    display: none !important;
+}
+
+.mirador-container .mirador-osd-context-controls {
+    top: -34px !important;
 }
 
 #ocr-layer {

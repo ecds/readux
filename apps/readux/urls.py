@@ -14,6 +14,7 @@ urlpatterns = [
 #   path('col/<collection>/vol/<volume>/page/', RedirectView.as_view(pattern_name='page'), name='page 1' ),
 #   path('col/<collection>/vol/<volume>/page/', PageRedirectView.as_view(), name='page 1' ),
   path('volume/<volume>/export', views.ExportOptions.as_view(), name='export' ),
-  path('annotations/<username>/<volume>/<canvas>/list', annotations.Annotations.as_view(), name='user_annotations' )
-  # path('annotations', annotations.Annotations.as_view() )
+  path('annotations/', annotations.Annotations.as_view(), name='post_user_annotations' ),
+  path('annotations/<username>/<volume>/<canvas>/list', annotations.Annotations.as_view(), name='user_annotations' ),
+  path('annotations-crud/', annotations.AnnotationCrud.as_view(), name='crud_user_annotation' )
 ]

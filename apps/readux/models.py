@@ -21,11 +21,14 @@ class UserAnnotation(AbstractAnnotation):
             return None
 
     def parse_mirador_annotation(self):
-        print(self.oa_annotation)
         if (type(self.oa_annotation) == str):
             self.oa_annotation = json.loads(self.oa_annotation)
 
-        anno_on = self.oa_annotation['on'][0]
+        if isinstance(self.oa_annotation['on'], list):
+            anno_on = self.oa_annotation['on'][0]
+        elif isinstance(self.oa_annotation['on'], dict):
+            anno_on = self.oa_annotation['on']
+
 
         self.canvas = Canvas.objects.get(pid=anno_on['full'].split('/')[-1])
 
@@ -42,9 +45,12 @@ class UserAnnotation(AbstractAnnotation):
             self.end_offset = mirador_item['endSelector']['refinedBy']['end']
             self.__set_xywh_text_anno()
 
-        
-        self.content = self.oa_annotation['resource'][0]['chars']
-        self.resource_type = self.oa_annotation['resource'][0]['@type']
+        if isinstance(self.oa_annotation['resource'], list):
+            self.content = self.oa_annotation['resource'][0]['chars']
+            self.resource_type = self.oa_annotation['resource'][0]['@type']
+        elif isinstance(self.oa_annotation['resource'], dict):
+            self.content = self.oa_annotation['resource']['chars']
+            self.resource_type = self.oa_annotation['resource']['@type']
 
     def __is_text_annotation(self):
         return all([
@@ -100,7 +106,7 @@ class UserAnnotation(AbstractAnnotation):
                 "value": "//*[@id='%s']" % str(self.end_selector.pk),
                 "refinedBy" : {
                     "@type": "TextPositionSelector",
-                    "start": self.end_offset
+                    "end": self.end_offset
                 }
             }
         })
@@ -127,27 +133,6 @@ class UserAnnotation(AbstractAnnotation):
             self.y = dimensions[1]
             self.w = dimensions[2]
             self.h = dimensions[3]
-
-    def __text_anno_item(self):
-        return dict({
-            "@type": "RangeSelector",
-            "startSelector": {
-                "@type": "XPathSelector",
-                "value": "//*[@id='%s']" % str(self.start_selector.pk),
-                "refinedBy" : {
-                    "@type": "TextPositionSelector",
-                    "start": self.start_offset
-                }
-            },
-            "endSelector": {
-                "@type": "XPathSelector",
-                "value": "//*[@id='%s']" % str(self.end_selector.pk),
-                "refinedBy" : {
-                    "@type": "TextPositionSelector",
-                    "start": self.end_offset
-                }
-            }
-        })
 
     def __svg_anno_item(self):
         return dict({

@@ -13,7 +13,7 @@ class Serializer(JSONSerializer):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
         self.is_list = self.json_kwargs.pop('is_list', False)
-        self.owners = self.json_kwargs.pop('owners')
+        self.owners = self.json_kwargs.pop('owners', 0)
 
     def start_serialization(self):
         self._init_options()

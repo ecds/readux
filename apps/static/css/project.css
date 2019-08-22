@@ -45,13 +45,17 @@
     display: none !important;
 }
 
-.mirador-container .mirador-osd-context-controls {
+/* .mirador-container .mirador-osd-context-controls {
     top: -34px !important;
-}
+} */
 
 #ocr-layer {
   position: absolute !important;
   z-index: 999;
+}
+
+#ocr-layer a {
+    background: rgba(255, 20, 147, 0.5);
 }
 
 .openseadragon-container span {

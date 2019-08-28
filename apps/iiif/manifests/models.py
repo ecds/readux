@@ -42,9 +42,10 @@ class Manifest(ClusterableModel):
     def get_absolute_url(self):
         return "%s/volume/%s" % (settings.HOSTNAME, self.pid)
 
-    @property
-    def note_list(self):
-      self.note_set.values('label')[0]['label']
+    # TODO is this needed?
+    # @property
+    # def note_list(self):
+    #   self.note_set.values('label')[0]['label']
 
     @property
     def publisher_bib(self):
@@ -69,6 +70,7 @@ class Manifest(ClusterableModel):
     def __str__(self):
         return self.label
 
+# TODO is this needed?
 class Note(models.Model):
     label = models.CharField(max_length=255)
     language = models.CharField(max_length=10, default='en')

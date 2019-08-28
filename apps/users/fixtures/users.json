@@ -1,0 +1,37 @@
+[{
+  "model": "users.user",
+  "pk": 1,
+  "fields": {
+    "password": "argon2$argon2i$v=19$m=512,t=2,p=2$MnkxU1B6anVTSzhh$bQe05wjeuhFVy/6266HGNA",
+    "last_login": "2019-04-02T18:24:53.963Z",
+    "is_superuser": true,
+    "username": "zaphod",
+    "first_name": "Zaphod",
+    "last_name": "Beeblebrox",
+    "email": "zaphod_beeblebrox@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2019-04-01T17:05:25.120Z",
+    "name": "Zaphod Beeblebrox",
+    "groups": [],
+    "user_permissions": []
+  }
+}, {
+  "model": "users.user",
+  "pk": 2,
+  "fields": {
+    "password": "argon2$argon2i$v=19$m=512,t=2,p=2$WWpzVG84b2tzN2lw$A6WTNoktIMmitgVEj8lt9A",
+    "last_login": "2019-04-01T21:38:05.845Z",
+    "is_superuser": true,
+    "username": "marvin",
+    "first_name": "Marvin",
+    "last_name": "Robot",
+    "email": "marvin@siriuscybernetics.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2019-04-01T21:37:53.416Z",
+    "name": "Marvin",
+    "groups": [1, 2],
+    "user_permissions": []
+  }
+}]

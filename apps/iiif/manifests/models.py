@@ -48,7 +48,7 @@ class Manifest(ClusterableModel):
 
     @property
     def publisher_bib(self):
-      "%s : %s" % (published_city, publisher)
+      return "%s : %s" % (self.published_city, self.publisher)
 
     @property
     def thumbnail_logo(self):

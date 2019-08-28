@@ -77,7 +77,7 @@ class JekyllExportForm(forms.Form):
         # widget=forms.RadioSelect,
         help_text='Deep zoom images can be included in your site to make ' +
         'the site more functional as a standalone entity, but it will make ' +
-        'your site larger. (Incuding deep zoom images is only allowed ' +
+        'your site larger. (Including deep zoom images is only allowed ' +
         'when page images are included.) Deep zoom images can be excluded ' +
         'entirely so the exported site can standalone without including all ' +
         'the images and storage required for deep zoom.'

@@ -1,8 +1,8 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
+import config.settings.local as settings
 from .models import Canvas
-from ..manifests.models import Manifest
 from . import services
 import json
 
@@ -13,8 +13,11 @@ class CanvasTests(TestCase):
     def setUp(self):
         fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
         self.client = Client()
-        self.manifest = Manifest.objects.all().first()
-        self.canvas = self.manifest.canvas_set.all().first()
+        self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
+        self.manifest = self.canvas.manifest
+        self.assumed_canvas_pid = 'fedora:emory:5622'
+        self.assumed_volume_pid = 'readux:st7r6'
+        self.assumed_iiif_base = 'https://loris.library.emory.edu'
 
     def test_ia_ocr_creation(self):
         valid_ia_ocr_response = {
@@ -108,3 +111,16 @@ class CanvasTests(TestCase):
 
         assert response.status_code == 200
         assert len(canvas_list) == 2
+
+    def test_properties(self):
+        assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
+        assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.twitter_media1 == "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.assumed_canvas_pid)
+        assert self.canvas.twitter_media2 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.uri == "%s/iiif/%s/" % (settings.HOSTNAME, self.assumed_volume_pid)
+        assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)

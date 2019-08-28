@@ -55,12 +55,13 @@ class Canvas(models.Model):
     def social_media(self):
         return "%s/%s/full/600,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
-    @property
-    def get_IIIF_IMAGE_SERVER_BASE(self):
-        return self.IIIF_IMAGE_SERVER_BASE
+    # @property
+    # def get_IIIF_IMAGE_SERVER_BASE(self):
+    #     return self.IIIF_IMAGE_SERVER_BASE
         
     @property
     def twitter_media1(self):
+        # TODO shouldn't this use `self.IIIF_IMAGE_SERVER_BASE`
         return "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.pid)
         
     @property
@@ -99,10 +100,10 @@ class Canvas(models.Model):
             # landscape
             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
-    @property
-    def result(self):
-        "Empty attribute to hold the result of requests to get OCR data."
-        return None
+    # @property
+    # def result(self):
+    #     "Empty attribute to hold the result of requests to get OCR data."
+    #     return None
 
     def __str__(self):
         return str(self.pid)

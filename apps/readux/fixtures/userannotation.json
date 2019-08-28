@@ -1,0 +1,245 @@
+[{
+  "model": "readux.userannotation",
+  "pk": "3949ce33-9512-40f5-9ae1-35fa737201de",
+  "fields": {
+    "x": 972,
+    "y": 444,
+    "w": 173,
+    "h": 118,
+    "order": 0,
+    "content": "<p>circle</p>",
+    "resource_type": "dctypes:Text",
+    "motivation": "sc:painting",
+    "format": "text/plain",
+    "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+    "language": "en",
+    "owner": 1,
+    "oa_annotation": {
+      "motivation": ["oa:commenting"],
+      "resource": [{
+        "chars": "<p>circle</p>",
+        "@type": "dctypes:Text",
+        "format": "text/html"
+      }],
+      "@type": "oa:Annotation",
+      "@id": "ca4f81ea-d37d-449c-9aca-0e329cefe340",
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "on": [{
+        "selector": {
+          "default": {
+            "value": "xywh=972,444,173,118",
+            "@type": "oa:FragmentSelector"
+          },
+          "item": {
+            "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M997.24606,461.32236c15.97837,-9.88506 38.51845,-17.24614 61.16776,-17.23734v0v0c22.64931,0.00879 42.38065,6.89496 61.16776,17.23734c18.7871,10.34238 26.08941,26.10218 25.33651,41.61462c-0.7529,15.51245 -9.561,30.77755 -25.33651,41.61462c-15.77552,10.83708 -38.51845,17.24614 -61.16776,17.23734c-22.64931,-0.00879 -45.20499,-6.43544 -61.16776,-17.23734c-15.96277,-10.8019 -25.33261,-25.97905 -25.33651,-41.61462c-0.0039,-15.63557 9.35814,-31.72956 25.33651,-41.61462z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"ellipse_7002957e-f7a0-4985-a6d7-a88398bb07cb\" fill-opacity=\"0.00001\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
+            "@type": "oa:SvgSelector"
+          },
+          "@type": "oa:Choice"
+        },
+        "full": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/edora:emory:5622",
+        "within": {
+          "@id": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/manifest",
+          "@type": "sc:Manifest"
+        },
+        "@type": "oa:SpecificResource"
+      }]
+    },
+    "svg": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M997.24606,461.32236c15.97837,-9.88506 38.51845,-17.24614 61.16776,-17.23734v0v0c22.64931,0.00879 42.38065,6.89496 61.16776,17.23734c18.7871,10.34238 26.08941,26.10218 25.33651,41.61462c-0.7529,15.51245 -9.561,30.77755 -25.33651,41.61462c-15.77552,10.83708 -38.51845,17.24614 -61.16776,17.23734c-22.64931,-0.00879 -45.20499,-6.43544 -61.16776,-17.23734c-15.96277,-10.8019 -25.33261,-25.97905 -25.33651,-41.61462c-0.0039,-15.63557 9.35814,-31.72956 25.33651,-41.61462z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"ellipse_7002957e-f7a0-4985-a6d7-a88398bb07cb\" fill-opacity=\"0.00001\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
+    "start_selector": null,
+    "end_selector": null,
+    "start_offset": null,
+    "end_offset": null
+  }
+}, {
+  "model": "readux.userannotation",
+  "pk": "582a04c0-9ff3-4767-bdeb-ca2072a83598",
+  "fields": {
+    "x": 999,
+    "y": 153,
+    "w": 218,
+    "h": 240,
+    "order": 0,
+    "content": "<p>freehand updated</p>\n<p>&nbsp;</p>",
+    "resource_type": "dctypes:Text",
+    "motivation": "sc:painting",
+    "format": "text/plain",
+    "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+    "language": "en",
+    "owner": 2,
+    "oa_annotation": {
+      "motivation": "sc:painting",
+      "resource": {
+        "chars": "<p>freehand updated</p>\n<p>&nbsp;</p>",
+        "language": "en",
+        "@type": "dctypes:Text",
+        "format": "text/html"
+      },
+      "@type": "oa:Annotation",
+      "@id": "582a04c0-9ff3-4767-bdeb-ca2072a83598",
+      "annotatedBy": {
+        "name": ""
+      },
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "on": [{
+        "selector": {
+          "default": {
+            "value": "xywh=999,153,218,240",
+            "@type": "oa:FragmentSelector"
+          },
+          "item": {
+            "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M999.27341,154.83384c47.14606,0 101.43527,-7.50961 145.39275,11.32931c20.07688,8.60438 50.94852,32.04412 62.31118,50.98187c2.79715,4.66191 4.98109,19.07832 5.66465,24.54683c1.92977,15.4382 6.67978,31.23702 3.77644,47.20544c-4.51617,24.83893 -30.53882,66.59117 -50.98187,81.19335c-1.61962,1.15687 -3.88442,0.9981 -5.66465,1.88822c-21.09596,10.54798 -28.89529,20.77039 -54.75831,20.77039c-12.23521,0 -27.92583,2.50931 -39.65257,-1.88822c-4.24973,-1.59365 -7.36176,-5.34868 -11.32931,-7.55287c-4.38371,-2.43539 -14.39889,-4.9578 -18.88218,-9.44109c-1.60468,-1.60468 -2.17176,-4.05998 -3.77644,-5.66465c-5.03622,-5.03622 -11.10764,-8.44224 -15.10574,-15.10574c-13.21398,-22.0233 -12.54076,-53.35055 -5.66465,-77.41692c2.98229,-10.43801 9.56425,-21.50938 11.32931,-32.0997c0.31042,-1.86253 -0.59711,-3.87333 0,-5.66465c0.71763,-2.1529 3.0588,-3.51175 3.77644,-5.66465c1.74055,-5.22165 0.55337,-11.65457 1.88822,-16.99396c5.85394,-23.41576 3.68034,-58.53474 -22.65861,-58.53474\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;annotation&quot;:null,&quot;editable&quot;:true}\" id=\"smooth_path_7869da12-47bf-421c-a56c-81bba127349f\" fill=\"none\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5.66465\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
+            "@type": "oa:SvgSelector"
+          },
+          "@type": "oa:Choice"
+        },
+        "full": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/edora:emory:5622",
+        "within": {
+          "@id": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/manifest",
+          "@type": "sc:Manifest"
+        },
+        "@type": "oa:SpecificResource"
+      }]
+    },
+    "svg": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M999.27341,154.83384c47.14606,0 101.43527,-7.50961 145.39275,11.32931c20.07688,8.60438 50.94852,32.04412 62.31118,50.98187c2.79715,4.66191 4.98109,19.07832 5.66465,24.54683c1.92977,15.4382 6.67978,31.23702 3.77644,47.20544c-4.51617,24.83893 -30.53882,66.59117 -50.98187,81.19335c-1.61962,1.15687 -3.88442,0.9981 -5.66465,1.88822c-21.09596,10.54798 -28.89529,20.77039 -54.75831,20.77039c-12.23521,0 -27.92583,2.50931 -39.65257,-1.88822c-4.24973,-1.59365 -7.36176,-5.34868 -11.32931,-7.55287c-4.38371,-2.43539 -14.39889,-4.9578 -18.88218,-9.44109c-1.60468,-1.60468 -2.17176,-4.05998 -3.77644,-5.66465c-5.03622,-5.03622 -11.10764,-8.44224 -15.10574,-15.10574c-13.21398,-22.0233 -12.54076,-53.35055 -5.66465,-77.41692c2.98229,-10.43801 9.56425,-21.50938 11.32931,-32.0997c0.31042,-1.86253 -0.59711,-3.87333 0,-5.66465c0.71763,-2.1529 3.0588,-3.51175 3.77644,-5.66465c1.74055,-5.22165 0.55337,-11.65457 1.88822,-16.99396c5.85394,-23.41576 3.68034,-58.53474 -22.65861,-58.53474\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;annotation&quot;:null,&quot;editable&quot;:true}\" id=\"smooth_path_7869da12-47bf-421c-a56c-81bba127349f\" fill=\"none\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5.66465\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
+    "start_selector": null,
+    "end_selector": null,
+    "start_offset": null,
+    "end_offset": null
+  }
+}, {
+  "model": "readux.userannotation",
+  "pk": "9ff1d308-976a-4402-98db-0c804c0355c8",
+  "fields": {
+    "x": 330,
+    "y": 590,
+    "w": 706,
+    "h": 88,
+    "order": 0,
+    "content": "<p>Annotation has been updated again maybe, just wwmaybe...maybe.go awayd. i feel good? Still working?</p>",
+    "resource_type": "dctypes:Text",
+    "motivation": "sc:painting",
+    "format": "text/plain",
+    "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+    "language": "en",
+    "owner": 1,
+    "oa_annotation": {
+      "motivation": "sc:painting",
+      "resource": {
+        "chars": "<p>Annotation has been updated again maybe, just wwmaybe...maybe.go awayd. i feel good? Still working?</p>",
+        "language": "en",
+        "@type": "dctypes:Text",
+        "format": "text/html"
+      },
+      "@type": "oa:Annotation",
+      "@id": "9ff1d308-976a-4402-98db-0c804c0355c8",
+      "annotatedBy": {
+        "name": ""
+      },
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "on": {
+        "selector": {
+          "value": "xywh=330,590,706,88",
+          "item": {
+            "endSelector": {
+              "value": "//*[@id='2548a0c1-ff47-41f6-a5c9-11f7097d8662']",
+              "refinedBy": {
+                "end": 7,
+                "@type": "TextPositionSelector"
+              },
+              "@type": "XPathSelector"
+            },
+            "startSelector": {
+              "value": "//*[@id='28ca35f3-a22e-4f4f-b45f-d0f37261d532']",
+              "refinedBy": {
+                "start": 0,
+                "@type": "TextPositionSelector"
+              },
+              "@type": "XPathSelector"
+            },
+            "@type": "RangeSelector"
+          },
+          "@type": "oa:FragmentSelector"
+        },
+        "full": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/canvas/edora:emory:5622",
+        "within": {
+          "@id": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/manifest",
+          "@type": "sc:Manifest"
+        },
+        "@type": "oa:SpecificResource"
+      }
+    },
+    "svg": "",
+    "start_selector": "28ca35f3-a22e-4f4f-b45f-d0f37261d532",
+    "end_selector": "2548a0c1-ff47-41f6-a5c9-11f7097d8662",
+    "start_offset": 0,
+    "end_offset": 7
+  }
+}, {
+  "model": "readux.userannotation",
+  "pk": "d421f51b-1c11-4ae1-82d1-a0fe4d00dfbf",
+  "fields": {
+    "x": 319,
+    "y": 1539,
+    "w": 551,
+    "h": 29,
+    "order": 0,
+    "content": "<p>partial works!? yes, yes it does, but will it stay?</p>",
+    "resource_type": "dctypes:Text",
+    "motivation": "sc:painting",
+    "format": "text/plain",
+    "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+    "language": "en",
+    "owner": 2,
+    "oa_annotation": {
+      "motivation": "sc:painting",
+      "resource": {
+        "chars": "<p>partial works!? yes, yes it does, but will it stay?</p>",
+        "language": "en",
+        "@type": "dctypes:Text",
+        "format": "text/html"
+      },
+      "@type": "oa:Annotation",
+      "@id": "d421f51b-1c11-4ae1-82d1-a0fe4d00dfbf",
+      "annotatedBy": {
+        "name": ""
+      },
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "on": {
+        "selector": {
+          "value": "xywh=319,1539,551,29",
+          "item": {
+            "endSelector": {
+              "value": "//*[@id='5add0a50-4de3-4892-a403-15ea310315b0']",
+              "refinedBy": {
+                "end": 4,
+                "@type": "TextPositionSelector"
+              },
+              "@type": "XPathSelector"
+            },
+            "startSelector": {
+              "value": "//*[@id='093c11ba-56cf-420d-90ee-4041f1070c7a']",
+              "refinedBy": {
+                "start": 7,
+                "@type": "TextPositionSelector"
+              },
+              "@type": "XPathSelector"
+            },
+            "@type": "RangeSelector"
+          },
+          "@type": "oa:FragmentSelector"
+        },
+        "full": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/canvas/edora:emory:5622",
+        "within": {
+          "@id": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/manifest",
+          "@type": "sc:Manifest"
+        },
+        "@type": "oa:SpecificResource"
+      }
+    },
+    "svg": "",
+    "start_selector": "093c11ba-56cf-420d-90ee-4041f1070c7a",
+    "end_selector": "5add0a50-4de3-4892-a403-15ea310315b0",
+    "start_offset": 7,
+    "end_offset": 4
+  }
+}]

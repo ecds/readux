@@ -2191,6 +2191,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   width: 120px;
   height: 40px;
   float: right;
+  z-index: 2;
 }
 .mirador-container .manifest-info .mirador-btn {
   font-size: .8em;
@@ -2201,8 +2202,9 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   left: 0;
   right: 0;
   top: 0;
-  margin-top: 34px;
+  *margin-top: 34px;
   box-sizing: border-box;
+  z-index: -1;
 }
 .mirador-container .view-container {
   margin-left: 280px;

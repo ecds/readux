@@ -23,13 +23,13 @@
       <div class='uk-padding'>
         {% if page.pid is not None %}
   <form class="uk-search uk-search-default" action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
-      <span uk-search-icon></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span uk-search-icon></span>&nbsp;
       <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
   </form>
         {% else %}
   <form class="uk-search uk-search-default" action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
-      <span uk-search-icon></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span uk-search-icon></span>&nbsp;
       <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
   </form>

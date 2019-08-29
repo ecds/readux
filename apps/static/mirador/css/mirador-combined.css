@@ -1905,9 +1905,10 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 .mirador-container .mirador-viewer a.mirador-osd-fullscreen {
   background: none;
   color: #929191;
-  box-sizing: border-box;
+  *box-sizing: border-box;
   margin-right: 5px;
   padding-bottom: 30px;
+  padding-left: 15px;
 }
 .mirador-container .mirador-viewer a.mirador-icon-window-menu,
 .mirador-container .mirador-viewer a.mirador-icon-toc,
@@ -2151,6 +2152,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   text-align: right;
   padding-right: 10px;
   font-size: 16px;
+  display: contents;
 }
 .mirador-container .mirador-status-bar {
   background-color: #ccc;
@@ -2184,8 +2186,11 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
   z-index: 1;
 }
 .mirador-container .manifest-info {
-  overflow: auto;
+  overflow: hidden;
   background: #fafafa;
+  width: 120px;
+  height: 40px;
+  float: right;
 }
 .mirador-container .manifest-info .mirador-btn {
   font-size: .8em;

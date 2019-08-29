@@ -1,10 +1,11 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-import config.settings.local as settings
-from .views import ManifestDetail, ManifestSitemap, ManifestRis
+from django.urls import reverse
+from .views import ManifestDetail, ManifestSitemap, ManifestRis, ManifestExport, JekyllExport
 from .models import Manifest
 from ..canvases.models import Canvas
 from .export import IiifManifestExport, JekyllSiteExport
@@ -28,6 +29,8 @@ class ManifestTests(TestCase):
         self.default_start_canvas = self.volume.canvas_set.filter(is_starting_page=False).first()
         self.assumed_label = ' Descrizione del Palazzo Apostolico Vaticano '
         self.assumed_pid = 'readux:st7r6'
+        self.manifest_export_view = ManifestExport.as_view()
+        self.jekyll_export_view = JekyllExport.as_view()
 
     def test_validate_iiif(self):
         view = ManifestDetail.as_view()
@@ -76,11 +79,12 @@ class ManifestTests(TestCase):
         zip = IiifManifestExport.get_zip(self.volume, 'v2', owners=[self.user.id])
         assert isinstance(zip, bytes)
 
-    def test_jekyll_export(self):
+    def test_jekyll_site_export(self):
         j = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id])
         zip = j.get_zip()
         tempdir = j.generate_website()
         web_zip = j.website_zip()
+        # j.import_iiif_jekyll(j.manifest, j.jekyll_site_dir)
         assert isinstance(zip, tempfile._TemporaryFileWrapper)
         assert zip.name.startswith("/tmp/%s_annotated_site_" % (str(self.volume.pk)))
         assert zip.name.endswith('.zip')
@@ -89,3 +93,21 @@ class ManifestTests(TestCase):
         assert web_zip.name.endswith('.zip')
         assert tempdir.startswith('/tmp/tmp-rdx-export')
         assert tempdir.endswith('/export')
+
+    def test_maifest_export(self):
+        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
+        url = reverse('ManifestExport', kwargs=kwargs)
+        request = self.factory.post(url, kwargs=kwargs)
+        request.user = self.user
+        response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
+        assert isinstance(response.getvalue(), bytes)
+
+    # FIXME this fails with "KeyError: 'mode'" on line 93 in the view.
+    # Not sure where the mode gets set.
+    # def test_jekyll_export(self):
+    #     kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
+    #     url = reverse('JekyllExport', kwargs=kwargs)
+    #     request = self.factory.post(url, kwargs=kwargs) 
+    #     request.user = self.user       
+    #     response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', mode='download')
+    #     assert isinstance(response.getvalue(), bytes)

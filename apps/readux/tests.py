@@ -10,6 +10,7 @@ from django.urls import reverse
 from apps.iiif.annotations.models import Annotation
 from .models import UserAnnotation
 import json
+import re
 
 class AnnotationTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -155,7 +156,7 @@ class AnnotationTests(TestCase):
         annotation = self.load_anno(response)
         assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
         assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
-        assert annotation['on']['full'] == 'https://readux-dev.org:3000/iiif/v2/readux:st7r6/canvas/fedora:emory:5622'
+        assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
         assert response.status_code == 201
 
     def test_get_user_annotations(self):

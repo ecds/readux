@@ -131,10 +131,16 @@ class AnnotationTests(TestCase):
 
     def test_get_user_annotations_unauthenticated(self):
         self.create_user_annotations(5, self.user_a)
+        assert len(UserAnnotation.objects.all()) == 5
         kwargs = {'username': 'readux', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
-        assert len(UserAnnotation.objects.all()) == 5
+        assert response.status_code == 404
+        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        url = reverse('user_annotations', kwargs=kwargs)
+        response = self.client.get(url)
+        annotation = self.load_anno(response)
+        assert len(annotation) == 0
         assert response.status_code == 200
 
     def test_mirador_svg_annotation_creation(self):
@@ -173,13 +179,18 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(5, self.user_b)
         self.create_user_annotations(4, self.user_a)
         self.client.login(username=self.user_b_uname, password=self.user_b_passwd)
-        kwargs = {'username': 'marvin', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_b_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
         assert len(annotation) == 5
         assert response.status_code == 200
         assert len(UserAnnotation.objects.all()) == 9
+        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        url = reverse('user_annotations', kwargs=kwargs)
+        response = self.client.get(url)
+        annotation = self.load_anno(response)
+        assert len(annotation) == 0
 
     def test_update_user_annotation(self):
         self.create_user_annotations(1, self.user_a)

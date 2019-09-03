@@ -5,7 +5,7 @@
 {% block content %}
 <div class="uk-child-width-expand@s uk-text-left uk-margin-large-top" uk-grid>
   <div>
-    <div uk-sticky="bottom: #offset">
+    <div>
     <ul class="readux-home-tagline uk-padding-remove-left uk-margin-large-bottom">
       <li>Read.</li>
       <li>Annotate.</li>
@@ -17,7 +17,7 @@
   </div>
 
 
-<div>
+<div class="rx-grid-right">
 <!-- <h1>{{page.title}}</h1>
 <p class="lead">{{page.tagline}}</p> -->
 
@@ -73,21 +73,23 @@
 <ul class="uk-padding-remove-left">
   {% for collection in page.collections %}
   <li>
-    <a class="nav-link" href="{% url 'collection' collection.pid %}">
-      <div class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-3@s uk-margin" uk-grid>
-        <div class="uk-card-media-left uk-cover-container uk-width-1-4">
-          <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" uk-cover>
-          <canvas width="600" height="400"></canvas>
+    
+
+      <article class="rx-article">
+        <div class="rx-card-image-container">
+          <a alt="Banner image for collection {{collection.label}}" class="rx-card-image" style="background-image: url('https://127.0.0.1:3000/media/{{collection.header}}'); // background-position: 77% 52% !important;"></a>
         </div>
-        <div class="uk-width-3-4">
-          <div class="uk-card-body">
-            <h3 class="readux-card-title uk-margin-remove-bottom">{{ collection.label }}</h3> 
-            <div class="rx-title-tagline">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
-            <p class="">{{ collection.summary }}</p>
+        <div class="rx-card-body">
+          <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+          <div class="rx-title-tagline">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
           </div>
+          <p class="rx-card-text">{{ collection.summary }}</p>
+          </a>
         </div>
-      </div>
-    </a>
+      </article>
+
+     
   </li>
   {% endfor %}
 </ul>

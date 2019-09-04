@@ -1,5 +1,8 @@
 from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
+from ...users.models import User
+from django.urls import reverse
+
 
 """
 V2
@@ -82,6 +85,20 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
+            otherContent = [ 
+                    { "@id" : "%s/list/%s" % (obj.manifest.baseurl, obj.pid),
+                      "@type": "sc:AnnotationList",
+                      "label": "OCR Text" }
+                  ]
+            for user in User.objects.filter(userannotation__canvas=obj):
+                kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
+                url = reverse('user_annotations', kwargs=kwargs)
+                user_endpoint = { 
+                    "label": "Annotations by %s" % user.username,
+                    "@type": "sc:AnnotationList",
+                    "@id": url
+                }
+                otherContent.append(user_endpoint)
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,
@@ -115,10 +132,7 @@ class Serializer(JSONSerializer):
                     "height": 250,
                     "width": 200
                 },
-                "otherContent" : [ 
-                  { "@id" : "%s/list/%s" % (obj.manifest.baseurl, obj.pid),
-                    "@type": "sc:AnnotationList" }
-                  ]
+                "otherContent" : otherContent
             }
             return data
 

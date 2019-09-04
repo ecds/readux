@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from apps.iiif.annotations.models import Annotation
+from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
 import json
 import re
@@ -270,3 +271,30 @@ class AnnotationTests(TestCase):
         message = self.load_anno(response)
         assert response.status_code == 401
         assert message['message'] == 'You are not the owner of this annotation.'
+
+    def test_user_annotations_on_canvas(self):
+        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+        self.manifest = Manifest.objects.all().first()
+        self.canvas = self.manifest.canvas_set.all().first()
+
+        # fetch a manifest with no user annotations
+        kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
+        url = reverse('RenderCanvasDetail', kwargs=kwargs)
+        response = self.client.get(url)
+        serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
+        assert len(serialized_canvas['otherContent']) == 1
+
+        # add annotations to the manifest    
+        self.create_user_annotations(1, self.user_a)
+        self.create_user_annotations(2, self.user_b)
+        existing_anno_a = UserAnnotation.objects.all()[0]
+        assert self.canvas.identifier == existing_anno_a.canvas.identifier
+        existing_anno_b = UserAnnotation.objects.all()[2]
+        assert self.canvas.identifier == existing_anno_b.canvas.identifier
+
+        # fetch a manifest with annotations by two users
+        assert response.status_code == 200
+        assert serialized_canvas['@id'] == self.canvas.identifier
+        assert serialized_canvas['label'] == str(self.canvas.position)
+        assert len(serialized_canvas['otherContent']) == 3
+

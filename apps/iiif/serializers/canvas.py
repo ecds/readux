@@ -90,7 +90,7 @@ class Serializer(JSONSerializer):
                       "@type": "sc:AnnotationList",
                       "label": "OCR Text" }
                   ]
-            for user in User.objects.filter(userannotation__canvas=obj):
+            for user in User.objects.filter(userannotation__canvas=obj).distinct():
                 kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
                 url = reverse('user_annotations', kwargs=kwargs)
                 user_endpoint = { 

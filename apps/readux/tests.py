@@ -293,6 +293,8 @@ class AnnotationTests(TestCase):
         assert self.canvas.identifier == existing_anno_b.canvas.identifier
 
         # fetch a manifest with annotations by two users
+        response = self.client.get(url)
+        serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
         assert response.status_code == 200
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)

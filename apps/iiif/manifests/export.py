@@ -83,7 +83,7 @@ class IiifManifestExport:
         # Then write the annotations
         for canvas in manifest.canvas_set.all():
             if canvas.annotation_set.count() > 0:
-                annotation_file = "annotation_list_" + canvas.pid + ".json"
+                annotation_file = "ocr_annotation_list_" + canvas.pid + ".json"
                 zf.writestr(
                     annotation_file,
                     json.dumps(

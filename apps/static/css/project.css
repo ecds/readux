@@ -14,11 +14,12 @@
 
 #viewer {
   width: 78%;
-  height: calc(100% - 250px);
+  height: calc(100% - 200px);
   position: absolute;
   bottom: 0;
 }
 
+/* 
 .readux-metadata {
     word-wrap: break-word;
 }
@@ -27,14 +28,19 @@
 .manifest-info {
     background: unset !important;
 }
+ */
 
+/* 
 .mirador-container .mirador-viewer {
   top: 0 !important;
 }
+ */
 
+/* 
 .content-container {
   margin-top: 0 !important;
 }
+ */
 
 .uk-search-default {
   width: 95% !important;
@@ -196,9 +202,14 @@ ol > li {
    page-break-inside: avoid;
 }
 
+ul.listing-thumbs > li > img.thumbnail-image {
+   height: 150px;
+}
+/* 
 ol > li.list {
    #height: 300px;
 }
+ */
 
 ul > li > .collectionbox {
    width: 100%;

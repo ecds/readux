@@ -42509,6 +42509,7 @@ return /******/ (function(modules) { // webpackBootstrap
           var newCanvasID = document.location.protocol + '//' + document.location.host + '/iiif/' + pathParts[1] + '/canvas/' + pathParts[0];
           document.title = pathParts[0]
           this.newCanvasID = newCanvasID;
+          this.page = newCanvasID.split('/').reverse()[0];
           if (new_state.viewType == 'ThumbnailsView') {
             history.pushState(history.state, '', 'all');
           } else {
@@ -42579,19 +42580,19 @@ return /******/ (function(modules) { // webpackBootstrap
   //Search endpoint for all annotations with a given URI in options
   search: function(options, successCallback, errorCallback) {
     this.annotationsList = [];
-    var linkContainer = document.getElementById("myLink");
-    var link = document.createElement('a');
-    var linkText = document.createTextNode(options.uri);
-    link.href = options.uri;
-    link.title = 'Stable link for canvas';
-    link.appendChild(linkText);
-    linkContainer.innerHTML='';
-    linkContainer.appendChild(link);
-    this.volume = options.uri.split('/').reverse()[2];
-    this.page = options.uri.split('/').reverse()[0];
+      var linkContainer = document.getElementById("myLink");
+      var link = document.createElement('a');
+      var linkText = document.createTextNode(options.uri);
+      link.href = options.uri;
+      link.title = 'Stable link for canvas';
+      link.appendChild(linkText);
+      linkContainer.innerHTML='';
+      linkContainer.appendChild(link);
+      this.volume = options.uri.split('/').reverse()[2];
+      this.page = options.uri.split('/').reverse()[0];
 
     let _this = this;
-    
+
       //use options.uri
       jQuery.ajax({
         url: `/annotations/mirador/${_this.volume}/${_this.page}/list`,
@@ -42628,18 +42629,19 @@ return /******/ (function(modules) { // webpackBootstrap
   //Search endpoint for all annotations with a given URI in options
   search: function(options, successCallback, errorCallback) {
     this.annotationsList = [];
-    var linkContainer = document.getElementById("myLink");
-    var link = document.createElement('a');
-    var linkText = document.createTextNode(options.uri);
-    link.href = options.uri;
-    link.title = 'Stable link for canvas';
-    link.appendChild(linkText);
-    linkContainer.innerHTML='';
-    linkContainer.appendChild(link);
-    this.volume = options.uri.split('/').reverse()[2];
-    this.page = options.uri.split('/').reverse()[0];
+    if (document.getElementById("myLink") !== null) {
+      var linkContainer = document.getElementById("myLink");
+      var link = document.createElement('a');
+      var linkText = document.createTextNode(options.uri);
+      link.href = options.uri;
+      link.title = 'Stable link for canvas';
+      link.appendChild(linkText);
+      linkContainer.innerHTML='';
+      linkContainer.appendChild(link);
+      this.volume = options.uri.split('/').reverse()[2];
+      this.page = options.uri.split('/').reverse()[0];
 
-    let _this = this;
+      let _this = this;
     
     //use options.uri
     jQuery.ajax({
@@ -42671,7 +42673,7 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }
     });
-  },
+  }},
     
     //Delete an annotation by endpoint identifier
     deleteAnnotation: function(annotationID, successCallback, errorCallback) {

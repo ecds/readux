@@ -7,6 +7,7 @@ from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm
+from ..readux.models import UserAnnotation
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -148,6 +149,7 @@ class VolumeDetail(TemplateView):
 class AnnotationsCount(TemplateView):
     template_name = "count.html"
 
+#CHANGE TO USERANNOTATION MODEL
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         canvas = Canvas.objects.filter(pid=kwargs['page']).first()
@@ -195,6 +197,7 @@ class VolumeAllDetail(TemplateView):
         context['user_annotation_page_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         qs = Annotation.objects.all()
+        qs2 = UserAnnotation.objects.all()
 
         try:
           search_string = self.request.GET['q']
@@ -204,7 +207,9 @@ class VolumeAllDetail(TemplateView):
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-              qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           context['qs1'] = qs1
           context['qs2'] = qs2
         except MultiValueDictKeyError:
@@ -224,6 +229,7 @@ class PageDetail(TemplateView):
         context['user_annotation_page_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         qs = Annotation.objects.all()
+        qs2 = UserAnnotation.objects.all()
 
         try:
           search_string = self.request.GET['q']
@@ -233,7 +239,9 @@ class PageDetail(TemplateView):
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-              qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           context['qs1'] = qs1
           context['qs2'] = qs2
         except MultiValueDictKeyError:

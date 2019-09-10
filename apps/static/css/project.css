@@ -20,9 +20,13 @@
 }
 
 /* 
+.readux-metadata {
+    word-wrap: break-word;
+}
+
 .mirador-main-menu-bar,
 .manifest-info {
-  display: none;
+    background: unset !important;
 }
  */
 
@@ -40,14 +44,23 @@
   width: 95% !important;
 }
 
-/* .ocr-line {
-  z-index: 999;
+.manifest-info > a,
+.manifest-info > h3 {
+    display: none !important;
+}
+
+/* .mirador-container .mirador-osd-context-controls {
+    top: -34px !important;
 } */
 
-/* .mirador-container .ocrtext text {
-  fill: red;
-  opacity: 1;
-} */
+#ocr-layer {
+  position: absolute !important;
+  z-index: 999;
+}
+
+#ocr-layer a {
+    background: rgba(255, 20, 147, 0.5);
+}
 
 .openseadragon-container span {
     align-items: center;

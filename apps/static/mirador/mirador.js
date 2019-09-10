@@ -42526,57 +42526,6 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       });
   },
-//   
-//     //Search endpoint for all annotations with a given URI in options
-//     search: function(options, successCallback, errorCallback) {
-//       if (document.getElementById("myLink") !== null) {
-//         var linkContainer = document.getElementById("myLink");
-//         var link = document.createElement('a');
-//         var linkText = document.createTextNode(options.uri);
-//         link.href = options.uri;
-//         link.title = 'Stable link for canvas';
-//         link.appendChild(linkText);
-//         linkContainer.innerHTML='';
-//         linkContainer.appendChild(link);
-//         var _this = this;
-//         var volume = options.uri.split('/').reverse()[2];
-//         var page = options.uri.split('/').reverse()[0];
-//       }
-//       // If the user navigated to the canvas using the back or forward buttons,
-//       // we don't want to mess with the state. Doing so would clear any forward states
-//       // and make the back only one canvas deep.
-//       // All we do if the load is due to a `popstate` event is reset flag for the
-//       // next switch.
-//       var page = options.uri.split('/').reverse()[0];
-//       var oldpage = window.location.href.split('/').reverse()[0];
-//       var _this = this;
-//       if (_this.popStateEvent) {
-//         _this.popStateEvent = false;
-//         window.localStorage.setItem('prevUrl', "all");
-//       } else {
-//         // If the new canvas load is due to the user using any of the Mirador
-//         // navigation, we need to update the location and history with the new
-//         // canvas id.
-//         // localStorage item tells the page to reload if you have changed from the gallery to the image view. Thus the html reloads and provides additional data.
-//         var prevUrl = window.localStorage.getItem('prevUrl');
-//         if (prevUrl === null | page === '') {
-//           console.log(prevUrl);
-//           console.log(page);
-//           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
-//           window.localStorage.setItem('prevUrl', "all");
-//         } else if (prevUrl === 'all') {
-//           console.log(prevUrl);
-//           console.log(page);
-//           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
-//           location.reload();                
-//           window.localStorage.setItem('prevUrl', "page");
-//         } else {        
-//           console.log(prevUrl);
-//           console.log(page);
-//           history.pushState(history.state, '', page.replace(/:/g, '%3A'));
-//         }
-//       }
-//       this.annotationsList = [];
 
   //Search endpoint for all annotations with a given URI in options
   search: function(options, successCallback, errorCallback) {

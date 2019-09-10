@@ -1,7 +1,10 @@
 from django.db import models
 import config.settings.local as settings
 from ..kollections.models import Collection
+from ..annotations.models import Annotation
 from django.contrib.postgres.fields import JSONField
+from django.contrib.auth.models import Group, User
+import urllib.request
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 from json import JSONEncoder
@@ -68,6 +71,15 @@ class Manifest(ClusterableModel):
 
     def __str__(self):
         return self.label
+        
+  
+#     def volume_annotation_count(request):
+#         '''Total number of annotations for this volume; filtered by annotations
+#         *visible* to a particular user, if specified.'''
+#         notes = Annotation.objects.all()
+#         current_user = request.user.id
+#         volume_annotation_count = notes.filter(owner_id=current_user).count()
+#         return volume_annotation_count
 
 class Note(models.Model):
     label = models.CharField(max_length=255)

@@ -42510,7 +42510,6 @@ return /******/ (function(modules) { // webpackBootstrap
           var newCanvasID = document.location.protocol + '//' + document.location.host + '/iiif/' + pathParts[1] + '/canvas/' + pathParts[0];
           document.title = pathParts[0]
           this.newCanvasID = newCanvasID;
-          this.page = newCanvasID.split('/').reverse()[0];
           if (new_state.viewType == 'ThumbnailsView') {
             history.pushState(history.state, '', 'all');
           } else {
@@ -42582,7 +42581,6 @@ return /******/ (function(modules) { // webpackBootstrap
   //Search endpoint for all annotations with a given URI in options
   search: function(options, successCallback, errorCallback) {
     this.annotationsList = [];
-    if (document.getElementById("myLink") !== null) {
       var linkContainer = document.getElementById("myLink");
       var link = document.createElement('a');
       var linkText = document.createTextNode(options.uri);
@@ -42626,7 +42624,6 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }
     });
-  } //closes if myLink
   },
     
     //Delete an annotation by endpoint identifier

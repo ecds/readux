@@ -183,6 +183,35 @@ class VolumeAllDetail(TemplateView):
         
         return context
 
+class VolumeAllDetail2(TemplateView):
+    template_name = "page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        canvas = Canvas.objects.filter(position='1').first()
+        context['page'] = canvas
+        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['volume'] = manifest
+        context['user_annotation_page_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
+        context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        qs = Annotation.objects.all()
+
+        try:
+          search_string = self.request.GET['q']
+          if search_string:
+              query = SearchQuery(search_string)
+              vector = SearchVector('content')
+              qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+              qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+          context['qs1'] = qs1
+          context['qs2'] = qs2
+        except MultiValueDictKeyError:
+          q = ''
+        
+        return context
+
 class PageDetail(TemplateView):
     template_name = "page.html"
 

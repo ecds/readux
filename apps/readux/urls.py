@@ -9,7 +9,7 @@ urlpatterns = [
   path('volume/', views.VolumesList.as_view(), name='volumes list' ),
   path('collection/<collection>/', views.CollectionDetail.as_view(), name="collection" ),
   path('volume/<volume>', views.VolumeDetail.as_view(), name='volume' ),
-  path('volume/<volume>/page/all', views.VolumeAllDetail.as_view(), name='volumeall' ),
+  path('volume/<volume>/page/all', views.VolumeAllDetail2.as_view(), name='volumeall' ),
   # url for page altered to prevent conflict with Wagtail
   # TODO: find another way to resolve this conflict
   path('volume/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),

@@ -68,7 +68,7 @@
         <br />
         <b>Stable page URL:</b> <span class="link" id="mySpan"></span>
         <br />{% if user_annotation_count > 0 %}
-        <b>My annotations (this manifest):</b> {{ user_annotation_count }}
+        <b>My annotations (this manifest):</b> {{ user_annotation_count }} <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
         <br />
         <b>My annotations (this page):</b> {{ user_annotation_page_count }}
         <br />{% endif %}

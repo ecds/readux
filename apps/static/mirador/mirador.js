@@ -42496,6 +42496,7 @@ return /******/ (function(modules) { // webpackBootstrap
         _this.newCanvasID = newCanvasID;
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowID, newCanvasID.replace(/%3A/g, ':'), this);
       });
+      
       this.eventEmitter.subscribe('windowUpdated', (event, new_state) => {
         
         // If the user navigated to the canvas using the back or forward buttons,
@@ -42577,54 +42578,6 @@ return /******/ (function(modules) { // webpackBootstrap
 //         }
 //       }
 //       this.annotationsList = [];
-  //Search endpoint for all annotations with a given URI in options
-  search: function(options, successCallback, errorCallback) {
-    this.annotationsList = [];
-      var linkContainer = document.getElementById("myLink");
-      var link = document.createElement('a');
-      var linkText = document.createTextNode(options.uri);
-      link.href = options.uri;
-      link.title = 'Stable link for canvas';
-      link.appendChild(linkText);
-      linkContainer.innerHTML='';
-      linkContainer.appendChild(link);
-      this.volume = options.uri.split('/').reverse()[2];
-      this.page = options.uri.split('/').reverse()[0];
-
-    let _this = this;
-
-      //use options.uri
-      jQuery.ajax({
-        url: `/annotations/mirador/${_this.volume}/${_this.page}/list`,
-        type: 'GET',
-        dataType: 'json',
-        headers: { },
-        data: { },
-        contentType: "application/json; charset=utf-8",
-        success: function(data) {
-          //check if a function has been passed in, otherwise, treat it as a normal search
-          if (typeof successCallback === "function") {
-            // successCallback(data);
-          } else {
-            jQuery.each(data.resources, function(index, value) {
-              console.log(value.resource["@type"]);
-              if (value.resource["@type"] !== 'cnt:ContentAsText') {  
-                value.endpoint = _this;
-                _this.annotationsList.push(value);
-              }
-            });
-            _this.dfd.resolve(true);
-            return _this.annotationsList;
-          }
-        },
-        error: function() {
-          if (typeof errorCallback === "function") {
-            errorCallback();
-          }
-        }
-      });
-    },
-          
 
   //Search endpoint for all annotations with a given URI in options
   search: function(options, successCallback, errorCallback) {
@@ -42673,7 +42626,8 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       }
     });
-  }},
+  } //closes if myLink
+  },
     
     //Delete an annotation by endpoint identifier
     deleteAnnotation: function(annotationID, successCallback, errorCallback) {

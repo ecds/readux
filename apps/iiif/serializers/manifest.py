@@ -63,6 +63,8 @@ class Serializer(JSONSerializer):
     def _init_options(self):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
+        self.annotators = self.json_kwargs.pop('annotators')
+        self.exportdate = self.json_kwargs.pop('exportdate')
 
     def start_serialization(self):
         self._init_options()
@@ -110,12 +112,24 @@ class Serializer(JSONSerializer):
               "value": obj.metadata
             },
             {
-              "label": "This manifest is hosted by Readux.",
+              "label": "Record Created",
+              "value": obj.created_at
+            },
+            {
+              "label": "Edition Type",
+              "value": "Readux IIIF Exported Edition"
+            },
+            {
+              "label": "About Readux",
               "value": "https://readux.ecdsdev.org/about/"
             },
             {
-              "label": "Record Created",
-              "value": obj.created_at
+              "label": "Annotators",
+              "value": self.annotators
+            },
+            {
+              "label": "Export Date",
+              "value": self.exportdate
             }],
             "description": obj.summary,
             "related": [obj.get_absolute_url()],

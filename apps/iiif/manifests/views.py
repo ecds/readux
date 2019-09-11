@@ -29,7 +29,9 @@ class ManifestDetail(View):
                 serialize(
                     'manifest',
                     self.get_queryset(),
-                    version=kwargs['version']
+                    version=kwargs['version'],
+                    annotators=request.user.name,
+                    exportdate=datetime.utcnow()
                 )
             )
         , safe=False)

@@ -14,6 +14,18 @@
 {% if page.layout == 'Grid' %}
   <div id="wrap">
   {% for volume in volumespage %}
+ {% if volume.canvas_set.first.pid is null %}
+    <div id="box">
+    <div id="boxInner">
+        <img src='{% static '/images/image_not_found.jpg' %}'/>
+      <div id="innerContent"><p>
+      <p>{{ volume.label|truncatechars:200 }}</p>
+  </p>
+  <p><em>Author:</em> {{volume.author|truncatechars:150}}<br/>
+  <em>Date Published:</em> {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
+    </div></div>
+{% else %}
     <div id="box">
     <div id="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
@@ -27,6 +39,7 @@
   <em>Date Published:</em> {{volume.published_date}}<br/>
   Added {{volume.created_at}}</p></div>
     </div></div>
+    {% endif %}
   {% endfor %}
   </div>
 {% endif %}
@@ -34,6 +47,20 @@
 {% if page.layout == 'List' %}
 <ol>
   {% for volume in volumespage %}
+{% if volume.canvas_set.first.pid is null %}
+  <li class="list">
+    <div><div id="grid"><div id="grid-image-volume">
+        <img src='{% static 'images/image_not_found.jpg' %}'/>
+      </div><div id="grid-metaforimage">
+      <p>
+      {{ volume.label|truncatechars:200 }}
+  <br/>
+  Author: {{volume.author|truncatechars:150}}<br/>
+  Date Published: {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
+    </div></div>
+  </li>
+{% else %}
   <li class="list">
     <div><div id="grid"><div id="grid-image-volume">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
@@ -48,6 +75,7 @@
   Added {{volume.created_at}}</p></div>
     </div></div>
   </li>
+    {% endif %}
   {% endfor %}
 </ol>
 {% endif %}

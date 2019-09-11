@@ -9,17 +9,18 @@ class Serializer(JSONSerializer):
     def _init_options(self):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
-        self.islist = self.json_kwargs.pop('islist', False)
+        self.is_list = self.json_kwargs.pop('is_list', False)
+        self.owners = self.json_kwargs.pop('owners', 0)
 
     def start_serialization(self):
         self._init_options()
-        if (self.islist):
+        if (self.is_list):
           self.stream.write('[')
         else:
           self.stream.write('')
 
     def end_serialization(self):
-        if (self.islist):
+        if (self.is_list):
           self.stream.write(']')
         else:
           self.stream.write('')
@@ -59,12 +60,17 @@ class Serializer(JSONSerializer):
                     }
                 }
             }
+            if obj.item is not None:
+                data['on']['selector']['item'] = self.__serialize_item(obj)
             return data
 
     def handle_field(self, obj, field):
         super().handle_field(obj, field)
 
+    @classmethod
+    def __serialize_item(self, obj):
+        return obj.item
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("geojson is a serialization-only serializer")
+        raise SerializerDoesNotExist("iiif.annotation is a serialization-only serializer")

@@ -2,6 +2,7 @@ from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
 from ...users.models import User
 from django.urls import reverse
+import config.settings.local as settings
 
 
 """
@@ -93,6 +94,7 @@ class Serializer(JSONSerializer):
             for user in User.objects.filter(userannotation__canvas=obj).distinct():
                 kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
                 url = reverse('user_annotations', kwargs=kwargs)
+                url = "%s/annotations/%s/%s/%s/list" % (settings.HOSTNAME, user.username, obj.manifest.pid, obj.pid)
                 user_endpoint = { 
                     "label": "Annotations by %s" % user.username,
                     "@type": "sc:AnnotationList",

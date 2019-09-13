@@ -8,8 +8,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from apps.iiif.annotations.models import Annotation
+from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
 import json
+import re
 
 class AnnotationTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -130,10 +132,16 @@ class AnnotationTests(TestCase):
 
     def test_get_user_annotations_unauthenticated(self):
         self.create_user_annotations(5, self.user_a)
+        assert len(UserAnnotation.objects.all()) == 5
         kwargs = {'username': 'readux', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
-        assert len(UserAnnotation.objects.all()) == 5
+        assert response.status_code == 404
+        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        url = reverse('user_annotations', kwargs=kwargs)
+        response = self.client.get(url)
+        annotation = self.load_anno(response)
+        assert len(annotation) == 0
         assert response.status_code == 200
 
     def test_mirador_svg_annotation_creation(self):
@@ -155,7 +163,7 @@ class AnnotationTests(TestCase):
         annotation = self.load_anno(response)
         assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
         assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
-        assert annotation['on']['full'] == 'https://readux-dev.org:3000/iiif/v2/readux:st7r6/canvas/fedora:emory:5622'
+        assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
         assert response.status_code == 201
 
     def test_get_user_annotations(self):
@@ -172,13 +180,18 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(5, self.user_b)
         self.create_user_annotations(4, self.user_a)
         self.client.login(username=self.user_b_uname, password=self.user_b_passwd)
-        kwargs = {'username': 'marvin', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_b_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
         assert len(annotation) == 5
         assert response.status_code == 200
         assert len(UserAnnotation.objects.all()) == 9
+        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        url = reverse('user_annotations', kwargs=kwargs)
+        response = self.client.get(url)
+        annotation = self.load_anno(response)
+        assert len(annotation) == 0
 
     def test_update_user_annotation(self):
         self.create_user_annotations(1, self.user_a)
@@ -258,3 +271,32 @@ class AnnotationTests(TestCase):
         message = self.load_anno(response)
         assert response.status_code == 401
         assert message['message'] == 'You are not the owner of this annotation.'
+
+    def test_user_annotations_on_canvas(self):
+        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+        self.manifest = Manifest.objects.all().first()
+        self.canvas = self.manifest.canvas_set.all().first()
+
+        # fetch a manifest with no user annotations
+        kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
+        url = reverse('RenderCanvasDetail', kwargs=kwargs)
+        response = self.client.get(url)
+        serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
+        assert len(serialized_canvas['otherContent']) == 1
+
+        # add annotations to the manifest    
+        self.create_user_annotations(1, self.user_a)
+        self.create_user_annotations(2, self.user_b)
+        existing_anno_a = UserAnnotation.objects.all()[0]
+        assert self.canvas.identifier == existing_anno_a.canvas.identifier
+        existing_anno_b = UserAnnotation.objects.all()[2]
+        assert self.canvas.identifier == existing_anno_b.canvas.identifier
+
+        # fetch a manifest with annotations by two users
+        response = self.client.get(url)
+        serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
+        assert response.status_code == 200
+        assert serialized_canvas['@id'] == self.canvas.identifier
+        assert serialized_canvas['label'] == str(self.canvas.position)
+        assert len(serialized_canvas['otherContent']) == 3
+

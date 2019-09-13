@@ -45,6 +45,9 @@ class Manifest(ClusterableModel):
     def get_absolute_url(self):
         return "%s/volume/%s" % (settings.HOSTNAME, self.pid)
 
+    def get_volume_url(self):
+        return "%s/volume/%s/page/all" % (settings.HOSTNAME, self.pid)
+
     @property
     def note_list(self):
       self.note_set.values('label')[0]['label']

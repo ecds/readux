@@ -132,7 +132,7 @@ class Serializer(JSONSerializer):
               "value": self.exportdate
             }],
             "description": obj.summary,
-            "related": [obj.get_absolute_url()],
+            "related": [obj.get_volume_url()],
             "within": within,
             "thumbnail": {
               "@id": thumbnail + "/full/600,/0/default.jpg",

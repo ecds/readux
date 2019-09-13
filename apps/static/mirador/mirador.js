@@ -42527,22 +42527,22 @@ return /******/ (function(modules) { // webpackBootstrap
         }
       });
   },
-
+  
   //Search endpoint for all annotations with a given URI in options
   search: function(options, successCallback, errorCallback) {
     this.annotationsList = [];
-      var linkContainer = document.getElementById("myLink");
-      var link = document.createElement('a');
-      var linkText = document.createTextNode(options.uri);
-      link.href = options.uri;
-      link.title = 'Stable link for canvas';
-      link.appendChild(linkText);
-      linkContainer.innerHTML='';
-      linkContainer.appendChild(link);
-      this.volume = options.uri.split('/').reverse()[2];
-      this.page = options.uri.split('/').reverse()[0];
+    var linkContainer = document.getElementById("myLink");
+    var link = document.createElement('a');
+    var linkText = document.createTextNode(options.uri);
+    link.href = options.uri;
+    link.title = 'Stable link for canvas';
+    link.appendChild(linkText);
+    linkContainer.innerHTML='';
+    linkContainer.appendChild(link);
+    this.volume = options.uri.split('/').reverse()[2];
+    this.page = options.uri.split('/').reverse()[0];
 
-      let _this = this;
+    let _this = this;
     
     //use options.uri
     jQuery.ajax({
@@ -44453,8 +44453,8 @@ return /******/ (function(modules) { // webpackBootstrap
       '</ul>',
       '</a>',
       '{{#if MetadataView}}',
-      '<a href="javascript:;" class="mirador-btn mirador-icon-metadata-view mirador-tooltip" role="button" title="{{t "metadataTooltip"}}" aria-label="{{t "metadataTooltip"}}" style="margin-top:0;padding-bottom:0;width:0;">',
-//       '<i class="fa fa-info-circle fa-lg fa-fw"></i>',
+      '<a href="javascript:;" class="mirador-btn mirador-icon-metadata-view mirador-tooltip" role="button" title="{{t "metadataTooltip"}}" aria-label="{{t "metadataTooltip"}}">',
+      '<i class="fa fa-info-circle fa-lg fa-fw"></i>',
       '</a>',
       '{{/if}}',
       '{{#if showFullScreen}}',
@@ -44491,7 +44491,7 @@ return /******/ (function(modules) { // webpackBootstrap
       '{{#if sidePanel}}',
       '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected mirador-tooltip" title="{{t "sidePanelTooltip"}}" aria-label="{{t "sidePanelTooltip"}}"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
       '{{/if}}',
-//       '<h3 class="window-manifest-title" title="{{{title}}}" aria-label="{{{title}}}">{{{title}}}</h3>',
+      '<h3 class="window-manifest-title" title="{{{title}}}" aria-label="{{{title}}}">{{{title}}}</h3>',
       '</div>',
       '<div class="content-container">',
       '{{#if sidePanel}}',
@@ -48603,12 +48603,6 @@ return /******/ (function(modules) { // webpackBootstrap
           // Under firefox $.show() used under display:none iframe does not change the display.
           // This is workaround for https://github.com/IIIF/mirador/issues/929
           jQuery(this).css('display', 'block');
-//           TODO move this
-//           grabs the url onload to display on the page
-//           var canvasID = window.location.href;
-//           if (document.getElementById("mySpan") !== null) {
-//             document.getElementById("mySpan").innerHTML=canvasID;
-//           }
         });
       });
       

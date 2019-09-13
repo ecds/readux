@@ -1,8 +1,10 @@
 from django.core.serializers import serialize
 from .models import Manifest
 from apps.iiif.annotations.models import Annotation
+from apps.iiif.canvases.models import Canvas
 from datetime import datetime
 from apps.users.models import User
+from apps.readux.models import UserAnnotation
 import config.settings.local as settings
 import digitaledition_jekylltheme
 import io
@@ -83,10 +85,10 @@ class IiifManifestExport:
             )
         )
 
-        # Then write the annotations
+        # Then write the OCR annotations
         for canvas in manifest.canvas_set.all():
             if canvas.annotation_set.count() > 0:
-                annotation_file = "annotation_list_" + canvas.pid + ".json"
+                annotation_file = "ocr_annotation_list_" + canvas.pid + ".json"
                 zf.writestr(
                     annotation_file,
                     json.dumps(
@@ -96,6 +98,29 @@ class IiifManifestExport:
                                 [canvas],
                                 version=version,
                                 owners=owners
+                            )
+                         ),
+                        indent=4
+                    )
+                )
+        # Then write the user annotations
+        for canvas in manifest.canvas_set.all():
+            if canvas.userannotation_set.count() > 0:
+                annotation_file = "user_annotation_list_" + canvas.pid + ".json"
+                # annotations = UserAnnotation.objects.filter(
+                #     owner=owners,
+                #     canvas=canvas
+                # )   
+                annotations = canvas.userannotation_set.filter(owner__in=owners).all()
+                zf.writestr(
+                    annotation_file,
+                    json.dumps(
+                        json.loads(
+                            serialize(
+                                'annotation',
+                                annotations,
+                                version=version,
+                                is_list=True
                             )
                          ),
                         indent=4

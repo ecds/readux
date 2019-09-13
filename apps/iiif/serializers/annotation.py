@@ -32,7 +32,7 @@ class Serializer(JSONSerializer):
         if ((self.version == 'v2') or (self.version is None)):
             name = 'OCR'
             if obj.owner_id:
-                name = obj.owner.name
+                name = obj.owner.username if  "" == obj.owner.name else obj.owner.name
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": str(obj.pk),

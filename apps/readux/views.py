@@ -7,6 +7,7 @@ from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm
+from apps.readux.models import UserAnnotation
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -125,6 +126,10 @@ class CollectionDetail(TemplateView):
 
         context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
         context['volumes'] = q.all
+        context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
+        context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).count()
+        value = 0
+        context['value'] = value
         context.update({
         'sort_url_params': urlencode(sort_url_params),
         'order_url_params': urlencode(order_url_params),
@@ -141,15 +146,84 @@ class VolumeDetail(TemplateView):
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         return context
 
+class AnnotationsCount(TemplateView):
+    template_name = "count.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        canvas = Canvas.objects.filter(pid=kwargs['page']).first()
+        context['page'] = canvas
+        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['volume'] = manifest
+        context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
+        context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        return context
+
+# class VolumeAllDetailOld(TemplateView):
+#     template_name = "page.html"
+# 
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+#         context['volume'] = manifest
+#         qs = Annotation.objects.all()
+# 
+#         try:
+#           search_string = self.request.GET['q']
+#           if search_string:
+#               query = SearchQuery(search_string)
+#               vector = SearchVector('content')
+#               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+#               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+#               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+#               qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+#           context['qs1'] = qs1
+#           context['qs2'] = qs2
+#         except MultiValueDictKeyError:
+#           q = ''
+#         
+#         return context
+
+class VolumeAllDetail(TemplateView):
+    template_name = "page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        canvas = Canvas.objects.filter(position='1').first()
+        context['page'] = canvas
+        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['volume'] = manifest
+        context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
+        context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        qs = Annotation.objects.all()
+
+        try:
+          search_string = self.request.GET['q']
+          if search_string:
+              query = SearchQuery(search_string)
+              vector = SearchVector('content')
+              qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+              qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+          context['qs1'] = qs1
+          context['qs2'] = qs2
+        except MultiValueDictKeyError:
+          q = ''
+        
+        return context
+
 class PageDetail(TemplateView):
     template_name = "page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page'] = Canvas.objects.filter(pid=kwargs['page']).first()
+        canvas = Canvas.objects.filter(pid=kwargs['page']).first()
+        context['page'] = canvas
         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['volume'] = manifest
-        context['user_annotation_count'] = Annotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
+        context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         qs = Annotation.objects.all()
 
         try:

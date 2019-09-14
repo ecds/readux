@@ -69,30 +69,32 @@ def add_positional_ocr(canvas, result):
     else:
         return None
 
-    def fetch_alto_ocr(canvas):
-        if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-            return None
-        else:
-            url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
-            print(url)
-            return fetch_url(url, format='text/plain')
+def fetch_alto_ocr(canvas):
+    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+        return None
+    else:
+        url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
+        print(url)
+        return fetch_url(url, format='text/plain')
 
-    def add_alto_ocr(canvas, result):
-        if result == None:
-            return None
-        ocr = []
-        surface = ET.fromstring(result)[-1][0]
-        for zones in surface:
-            if 'zone' in zones.tag:
-                for line in zones:
-                    ocr.append({
-                        'content': line[-1].text,
-                        'h': int(line.attrib['lry']) - int(line.attrib['uly']),
-                        'w': int(line.attrib['lrx']) - int(line.attrib['ulx']),
-                        'x': int(line.attrib['ulx']),
-                        'y': int(line.attrib['uly'])
-                    })
-        if (ocr):
-            return ocr
-        else:
-            return None
+def add_alto_ocr(canvas, result):
+    if result == None:
+        return None
+    ocr = []
+    surface = ET.fromstring(result)[-1][0]
+    for zones in surface:
+        if 'zone' in zones.tag:
+            for line in zones:
+                if line[-1].text is None:
+                    continue
+                ocr.append({
+                    'content': line[-1].text,
+                    'h': int(line.attrib['lry']) - int(line.attrib['uly']),
+                    'w': int(line.attrib['lrx']) - int(line.attrib['ulx']),
+                    'x': int(line.attrib['ulx']),
+                    'y': int(line.attrib['uly'])
+                })
+    if (ocr):
+        return ocr
+    else:
+        return None

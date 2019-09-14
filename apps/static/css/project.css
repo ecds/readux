@@ -19,11 +19,11 @@
   bottom: 0;
 }
 
-/* 
 .readux-metadata {
     word-wrap: break-word;
 }
 
+/* 
 .mirador-main-menu-bar,
 .manifest-info {
     background: unset !important;
@@ -41,6 +41,7 @@
   margin-top: 0 !important;
 }
  */
+} */
 
 .uk-search-default {
   width: 95% !important;
@@ -60,15 +61,18 @@
   z-index: 999;
 }
 
-#ocr-layer a {
+.show-annotations a {
     background: rgba(255, 20, 147, 0.5);
 }
 
 .openseadragon-container span {
-    align-items: center;
-    line-height: initial;
-    color: transparent;
+    background: rgba(0, 255, 255, 0.33);
+    /* color: transparent; */
+    color: deeppink;
     display: inline-flex !important;
+    font-size: 100%;
+    line-height: initial;
+    white-space: nowrap;
     /* outline-style: solid;
     outline-color: blue; */
 }

@@ -129,7 +129,7 @@ class AnnotationTests(TestCase):
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         assert response.status_code == 404
-        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_a.username, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
@@ -179,7 +179,7 @@ class AnnotationTests(TestCase):
         assert len(annotation) == 5
         assert response.status_code == 200
         assert len(UserAnnotation.objects.all()) == 9
-        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_a.username, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)

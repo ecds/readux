@@ -119,8 +119,8 @@ def set_dimensions(sender, instance, **kwargs):
 
 @receiver(signals.post_save, sender=Canvas)
 def add_ocr(sender, instance, **kwargs):
-    result = services.fetch_positional_ocr(instance)
-    ocr = services.add_positional_ocr(instance, result)
+    result = services.fetch_alto_ocr(instance)
+    ocr = services.add_alto_ocr(instance, result)
     word_order = 1
     if ocr is not None:
         for word in ocr:

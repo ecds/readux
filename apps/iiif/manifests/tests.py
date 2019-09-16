@@ -1,6 +1,5 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
-from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
@@ -15,7 +14,8 @@ import logging
 import tempfile
 
 logger = logging.getLogger(__name__)
-
+logging.disable(logging.NOTSET)
+logger.setLevel(logging.DEBUG)
 class ManifestTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
 
@@ -102,12 +102,22 @@ class ManifestTests(TestCase):
         response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
         assert isinstance(response.getvalue(), bytes)
 
-    # FIXME this fails with "KeyError: 'mode'" on line 93 in the view.
-    # Not sure where the mode gets set.
-    # def test_jekyll_export(self):
-    #     kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
-    #     url = reverse('JekyllExport', kwargs=kwargs)
-    #     request = self.factory.post(url, kwargs=kwargs) 
-    #     request.user = self.user       
-    #     response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', mode='download')
-    #     assert isinstance(response.getvalue(), bytes)
+    def test_jekyll_export_exclude_download(self):
+        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
+        url = reverse('JekyllExport', kwargs=kwargs)
+        kwargs['deep_zoom'] = 'exclude'
+        kwargs['mode'] = 'download'
+        request = self.factory.post(url, data=kwargs) 
+        request.user = self.user       
+        response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
+        assert isinstance(response.getvalue(), bytes)
+
+    def test_jekyll_export_include_download(self):
+        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
+        url = reverse('JekyllExport', kwargs=kwargs)
+        kwargs['deep_zoom'] = 'include'
+        kwargs['mode'] = 'download'
+        request = self.factory.post(url, data=kwargs) 
+        request.user = self.user       
+        response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
+        assert isinstance(response.getvalue(), bytes)

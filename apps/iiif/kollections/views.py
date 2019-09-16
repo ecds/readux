@@ -13,18 +13,11 @@ from .serializers import CollectionSerializer
 # TODO Would still be nice to use DRF. Try this?
 # https://stackoverflow.com/a/35019122
 
-class ManifestListCreate(generics.ListCreateAPIView):
-    """
-    Endpoint that allows annotations to be listed or created.
-    """
-    queryset = Manifest.objects.all()
-    serializer_class = CollectionSerializer
-
+# TODO is this view needed?
 class ManifestsForCollection(View):
     """
-    Endpoint to to display annotations for a page.
+    Endpoint to to display list of manifests for a given collection.
     """
-    # serializer_class = AnnotationSerializer
 
     def get_queryset(self):
         collection = Collection.objects.get(pid=self.kwargs['pid'])
@@ -44,6 +37,9 @@ class ManifestsForCollection(View):
         )
 
 class CollectionDetail(View):
+    """
+    Endpoint to display serialized IIIF collection
+    """
 
     def get_queryset(self):
         return Collection.objects.filter(pid=self.kwargs['pid'])

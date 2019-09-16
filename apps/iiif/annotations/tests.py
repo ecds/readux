@@ -22,4 +22,4 @@ class AnnotationTests(TestCase):
         response = self.client.get(url)
         annotations = json.loads(response.content.decode('UTF-8-sig'))
         assert len(annotations) == len(Annotation.objects.filter(canvas=Canvas.objects.get(pid=kwargs['page'])))
-        assert response.status_code == 200     
+        assert response.status_code == 200    

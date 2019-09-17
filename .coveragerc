@@ -1,0 +1,12 @@
+[report]
+omit =
+  *tests.py
+  apps/cms/*
+  apps/users/*
+  apps/contrib/*
+  *migrations*
+  *__init__.py
+exclude_lines =
+    # Ignore imports
+    from
+    import

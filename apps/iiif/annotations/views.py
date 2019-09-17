@@ -19,14 +19,15 @@ class AnnotationsForPage(View):
         return Annotation.objects.filter(canvas=canvas).distinct('order')
     
     def get(self, request, *args, **kwargs):
-        owners = [request.user.id]
+        # TODO Does this view need owners?
+        # owners = [request.user.id]
         return JsonResponse(
             json.loads(
                 serialize(
                     'annotation',
                     self.get_queryset(),
                     # version=kwargs['version'],
-                    owners=owners,
+                    # owners=owners,
                     is_list = True
                 )
             ),
@@ -34,14 +35,14 @@ class AnnotationsForPage(View):
         )
 
 
-class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Endpoint to update and delete annotation.
-    """
-    serializer_class = AnnotationSerializer
+# class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
+#     """
+#     Endpoint to update and delete annotation.
+#     """
+#     serializer_class = AnnotationSerialize
 
-    def get_queryset(self):
-        return Annotation.objects.all()
+#     def get_queryset(self):
+#         return Annotation.objects.all()
 
 class OcrForPage(View):
     def get_queryset(self):

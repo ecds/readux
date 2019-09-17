@@ -86,12 +86,12 @@ class ManifestTests(TestCase):
         web_zip = j.website_zip()
         # j.import_iiif_jekyll(j.manifest, j.jekyll_site_dir)
         assert isinstance(zip, tempfile._TemporaryFileWrapper)
-        assert zip.name.startswith("/tmp/%s_annotated_site_" % (str(self.volume.pk)))
+        assert "%s_annotated_site_" % (str(self.volume.pk)) in zip.name
         assert zip.name.endswith('.zip')
         assert isinstance(web_zip, tempfile._TemporaryFileWrapper)
-        assert web_zip.name.startswith("/tmp/%s_annotated_site_" % (str(self.volume.pk)))
+        assert "%s_annotated_site_" % (str(self.volume.pk)) in web_zip.name
         assert web_zip.name.endswith('.zip')
-        assert tempdir.startswith('/tmp/tmp-rdx-export')
+        assert 'tmp-rdx-export' in tempdir
         assert tempdir.endswith('/export')
 
     def test_maifest_export(self):

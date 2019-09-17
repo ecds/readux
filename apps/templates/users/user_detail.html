@@ -4,16 +4,26 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div class="container">
-
-  <div class="row">
-    <div class="col-sm-12">
-
-      <h2>{{ object.username }}</h2>
-      {% if object.name %}
-        <p>{{ object.name }}</p>
-      {% endif %}
+  <div class="rx-head-container">
+    <div class="rx-title-container" uk-sticky="offset: 80">
+      <ul class="rx-breadcrumb">
+        <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+        <li class="rx-breadcrumb-item">My Account</li>
+      </ul>
+  
+      <div class="rx-title">
+        {% if object.name %}
+          Hello, {{ object.name }}!
+        {% else %}
+          Hello!
+        {% endif %}
+      </div>
+      <div class="rx-title-tagline">
+        {{ object.username }}
+      </div>
     </div>
+  
+    <p>{{ page.paragraph }}</p>
   </div>
 
 {% if object == request.user %}
@@ -31,6 +41,5 @@
 {% endif %}
 
 
-</div>
 {% endblock content %}
 

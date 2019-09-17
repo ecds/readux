@@ -71,11 +71,10 @@
 
   <body>
 
-    <div>
-
-      <nav class="uk-navbar-container" uk-navbar uk-sticky id="rx-nav">
+    <div class="uk-container">
+      <nav class="" uk-navbar id="rx-nav">
         <div class="uk-navbar-left">
-          <a class="uk-navbar-item uk-logo" href="/">Readux</a>
+          <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">Readux</a>
           <ul class="uk-navbar-nav">
             <li>
               {% main_menu %}
@@ -88,11 +87,11 @@
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="{% if url_name == 'index' %}uk-active{% endif %}"
-                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span></a>
+                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user"></span></a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}" href="{% url 'account_logout' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-out"></span></a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" href="{% url 'account_logout' %}"><span class="uk-icon" uk-icon="icon: sign-out"></span></a>
               </li>
               {% else %}
               <li>
@@ -101,12 +100,9 @@
               </li>
               {% endif %}
           </ul>
-          </div>
+        </div>
       </nav>
-
-    </div>
-
-
+    
       {% if messages %}
           {% for message in messages %}
               <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
@@ -115,14 +111,13 @@
 
       {% block modal %}{% endblock modal %}
 
-      <div class="uk-container">
-        {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
-        {% endblock content %}
-      </div>
+      {% block content %}
+      <p>Use this document as a way to quick start any new project.</p>
+      {% endblock content %}
 
       {% block viewer %}{% endblock viewer %}
 
+    </div>
 
     {% block javascript %}
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -6,7 +6,7 @@
 {% block content %}
 <div class="rx-head-container">
   <div class="rx-title-container">
-    <ul class="rx-breadcrumb">
+    <ul class="rx-breadcrumb uk-text-truncate">
       <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
       <li class="rx-breadcrumb-item">Collections</li>
     </ul>
@@ -60,7 +60,7 @@
         </div>
         <div class="uk-width-3-4@m">
           <a class="nav-link" href="{% url 'collection' collection.pid %}">
-            <h3 class="readux-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+            <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
           </a>
           <div class="rx-title-tagline">
             {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}

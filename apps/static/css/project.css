@@ -635,7 +635,7 @@ p {
 }
 
 .rx-head-container {
-  margin: 3em 0 6em;
+  margin: 0em 0 3em;
 }
 
 .rx-info-title {
@@ -738,4 +738,10 @@ p {
 }
 .rx-grid-right {
   margin-left: 50%;
+}
+
+@media (max-width: 960px) {
+  .rx-volume-image {
+    margin-bottom: 1rem;
+  }
 }

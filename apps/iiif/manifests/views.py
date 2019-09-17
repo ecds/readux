@@ -10,8 +10,11 @@ from .models import Manifest
 from .export import IiifManifestExport
 from .export import JekyllSiteExport
 from .forms import JekyllExportForm
+from apps.users.models import User
+from datetime import datetime
 import json
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -24,12 +27,17 @@ class ManifestDetail(View):
         return Manifest.objects.filter(pid=self.kwargs['pid'])
 
     def get(self, request, *args, **kwargs):
+        manifest = self.get_queryset()[0].id
+        annotators = User.objects.filter(annotation__canvas__manifest__id=manifest).distinct()
+        annotators_string = ', '.join([str(i.name) for i in annotators])
         return JsonResponse(
             json.loads(
                 serialize(
                     'manifest',
                     self.get_queryset(),
-                    version=kwargs['version']
+                    version=kwargs['version'],
+                    annotators=annotators_string,
+                    exportdate=datetime.utcnow()
                 )
             )
         , safe=False)

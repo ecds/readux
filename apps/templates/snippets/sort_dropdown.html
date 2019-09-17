@@ -86,22 +86,19 @@
 
 
 	function ascaddURL(element) {
-		debugger;
 		$(element).attr('href', function () {
 			if (window.location.search.length == 0) {
-				location.href = this.href + '?sort=title&order=asc';
-				return location.href;
+				this.href = this.href + '?sort=title&order=asc';
+				return this.href;
 			} else if (window.location.search.match(/[?&]order=asc/gi)) {
-				location.href = this.href.replace('order=asc', 'order=asc');
-				return location.href;
+				this.href = this.href.replace('order=asc', 'order=asc');
+				return this.href;
 			} else if (window.location.search.match(/[?&]order=desc/gi)) {
-				location.href = this.href.replace('order=desc', 'order=asc');
-								return location.href;
-
+				this.href = this.href.replace('order=desc', 'order=asc');
+				return this.href;
 			} else {
-				location.href = this.href + '&order=asc';
-								return location.href;
-
+				this.href = this.href + '&order=asc';
+				return this.href;
 			}
 		});
 	}
@@ -110,21 +107,17 @@
 
 		$(element).attr('href', function () {
 			if (window.location.search.length == 0) {
-				location.href = this.href + '?sort=title&order=desc';
-								return location.href;
-
+				this.href = this.href + '?sort=title&order=desc';
+				return this.href;
 			} else if (window.location.search.match(/[?&]order=asc/gi)) {
-				location.href = this.href.replace('order=asc', 'order=desc');
-								return location.href;
-
+				this.href = this.href.replace('order=asc', 'order=desc');
+				return this.href;
 			} else if (window.location.search.match(/[?&]order=desc/gi)) {
-				location.href = this.href.replace('order=desc', 'order=desc');
-								return location.href;
-
+				this.href = this.href.replace('order=desc', 'order=desc');
+				return this.href;
 			} else {
-				location.href = this.href + '&order=desc';
-								return location.href;
-
+				this.href = this.href + '&order=desc';
+				return this.href;
 			}
 		});
 	}

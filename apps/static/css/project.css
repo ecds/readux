@@ -19,7 +19,8 @@
 }
 
 #viewer {
-  width: calc(90% + 3px);
+  width: 78%;
+  height: calc(100% - 200px);
   position: absolute;
   bottom: -3px;
   background: none !important;
@@ -43,27 +44,50 @@
   overflow-y: scroll;
 }
 
-.mirador-main-menu-bar,
-.manifest-info {
-  display: none;
+/* 
+.readux-metadata {
+    word-wrap: break-word;
 }
 
+.mirador-main-menu-bar,
+.manifest-info {
+    background: unset !important;
+}
+ */
+
+/* 
+.mirador-container .mirador-viewer {
+  top: 0 !important;
+}
+ */
+
+/* 
 .content-container {
   margin-top: 0 !important;
 }
+ */
 
 .uk-search-default {
   width: 95% !important;
 }
 
-/* .ocr-line {
-  z-index: 999;
+.manifest-info > a,
+.manifest-info > h3 {
+    display: none !important;
+}
+
+/* .mirador-container .mirador-osd-context-controls {
+    top: -34px !important;
 } */
 
-/* .mirador-container .ocrtext text {
-  fill: red;
-  opacity: 1;
-} */
+#ocr-layer {
+  position: absolute !important;
+  z-index: 999;
+}
+
+#ocr-layer a {
+    background: rgba(255, 20, 147, 0.5);
+}
 
 .openseadragon-container span {
   align-items: center;
@@ -206,9 +230,14 @@ ol > li {
   page-break-inside: avoid;
 }
 
+ul.listing-thumbs > li > img.thumbnail-image {
+   height: 150px;
+}
+/* 
 ol > li.list {
   #height: 300px;
 }
+ */
 
 ul > li > .collectionbox {
   width: 100%;

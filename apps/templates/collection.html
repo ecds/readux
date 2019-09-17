@@ -35,6 +35,31 @@
 
   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
     {% for volume in volumes %}
+    {% if volume.canvas_set.first.pid is null %}
+
+      <div class="uk-width-1-2@m uk-grid-medium">
+        <div class=" uk-width-1-4@m rx-volume-image">
+          <a class="nav-link" href="#">
+            <img src='{% static 'images/image_not_found.jpg' %}' />
+          </a>
+        </div>
+        <div class="uk-width-3-4@m">
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+          </a>
+          <p>
+            <ul class="uk-padding-remove">
+              <li>Author: {{volume.author|truncatechars:150}}</li>
+              <li>Published: {{volume.published_date}}</li>
+              <li>Publisher: {{volume.publisher}}</li>
+              <li>Publication City: {{volume.published_city}}</li>
+              <li>Added: {{volume.created_at}}</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+
+    {% else %}
     <div class="uk-width-1-2@m uk-grid-medium">
       <div class=" uk-width-1-4@m rx-volume-image">
         <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
@@ -59,6 +84,7 @@
         </p>
       </div>
     </div>
+    {% endif %}
     {% endfor %}
   </div>
 </div>

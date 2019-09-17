@@ -1,5 +1,9 @@
 from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
+from ...users.models import User
+from django.urls import reverse
+import config.settings.local as settings
+
 
 """
 V2
@@ -61,17 +65,17 @@ class Serializer(JSONSerializer):
     def _init_options(self):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
-        self.islist = self.json_kwargs.pop('islist', False)
+        self.is_list = self.json_kwargs.pop('is_list', False)
 
     def start_serialization(self):
         self._init_options()
-        if (self.islist):
+        if (self.is_list):
           self.stream.write('[')
         else:
           self.stream.write('')
 
     def end_serialization(self):
-        if (self.islist):
+        if (self.is_list):
           self.stream.write(']')
         else:
           self.stream.write('')
@@ -82,6 +86,21 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
+            otherContent = [ 
+                    { "@id" : "%s/list/%s" % (obj.manifest.baseurl, obj.pid),
+                      "@type": "sc:AnnotationList",
+                      "label": "OCR Text" }
+                  ]
+            for user in User.objects.filter(userannotation__canvas=obj).distinct():
+                kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
+                url = reverse('user_annotations', kwargs=kwargs)
+                url = "%s/annotations/%s/%s/%s/list" % (settings.HOSTNAME, user.username, obj.manifest.pid, obj.pid)
+                user_endpoint = { 
+                    "label": "Annotations by %s" % user.username,
+                    "@type": "sc:AnnotationList",
+                    "@id": url
+                }
+                otherContent.append(user_endpoint)
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,
@@ -115,10 +134,7 @@ class Serializer(JSONSerializer):
                     "height": 250,
                     "width": 200
                 },
-                "otherContent" : [ 
-                  { "@id" : "%s/list/%s" % (obj.manifest.baseurl, obj.pid),
-                    "@type": "sc:AnnotationList" }
-                  ]
+                "otherContent" : otherContent
             }
             return data
 

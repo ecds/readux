@@ -1,20 +1,12 @@
 from rest_framework import generics
 from django.views import View
+from django.views.generic import ListView
 from django.core.serializers import serialize
 import json
 from django.http import JsonResponse
 from .models import Annotation
 from ..canvases.models import Canvas
 from .serializers import AnnotationSerializer
-
-
-class AnnotationListCreate(generics.ListCreateAPIView):
-    """
-    Endpoint that allows annotations to be listed or created.
-    """
-    queryset = Annotation.objects.all()
-    serializer_class = AnnotationSerializer
-
 
 class AnnotationsForPage(View):
     """
@@ -27,13 +19,15 @@ class AnnotationsForPage(View):
         return Annotation.objects.filter(canvas=canvas).distinct('order')
     
     def get(self, request, *args, **kwargs):
+        owners = [request.user.id]
         return JsonResponse(
             json.loads(
                 serialize(
                     'annotation',
                     self.get_queryset(),
                     # version=kwargs['version'],
-                    islist = True
+                    owners=owners,
+                    is_list = True
                 )
             ),
             safe=False
@@ -54,13 +48,15 @@ class OcrForPage(View):
         return Canvas.objects.filter(pid=self.kwargs['page'])
     
     def get(self, request, *args, **kwargs):
+        owners = [request.user.id]
+
         return JsonResponse(
             json.loads(
                 serialize(
                     'annotation_list',
                     self.get_queryset(),
-                    request=request,
-                    version=kwargs['version']
+                    version=kwargs['version'],
+                    owners=owners
                 )
             ),
             safe=False

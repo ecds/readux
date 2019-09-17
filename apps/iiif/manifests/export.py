@@ -1,8 +1,10 @@
 from django.core.serializers import serialize
 from .models import Manifest
 from apps.iiif.annotations.models import Annotation
+from apps.iiif.canvases.models import Canvas
 from datetime import datetime
 from apps.users.models import User
+from apps.readux.models import UserAnnotation
 import config.settings.local as settings
 import digitaledition_jekylltheme
 import io
@@ -25,7 +27,7 @@ class ExportException(Exception):
 
 class IiifManifestExport:
     @classmethod
-    def get_zip(self, manifest, version):
+    def get_zip(self, manifest, version, owners=[]):
         zip_subdir = manifest.label
         zip_filename = "iiif_export.zip"
 
@@ -80,10 +82,10 @@ class IiifManifestExport:
             )
         )
 
-        # Then write the annotations
+        # Then write the OCR annotations
         for canvas in manifest.canvas_set.all():
             if canvas.annotation_set.count() > 0:
-                annotation_file = "annotation_list_" + canvas.pid + ".json"
+                annotation_file = "ocr_annotation_list_" + canvas.pid + ".json"
                 zf.writestr(
                     annotation_file,
                     json.dumps(
@@ -91,7 +93,31 @@ class IiifManifestExport:
                             serialize(
                                 'annotation_list',
                                 [canvas],
-                                version=version
+                                version=version,
+                                owners=owners
+                            )
+                         ),
+                        indent=4
+                    )
+                )
+        # Then write the user annotations
+        for canvas in manifest.canvas_set.all():
+            if canvas.userannotation_set.count() > 0:
+                annotation_file = "user_annotation_list_" + canvas.pid + ".json"
+                # annotations = UserAnnotation.objects.filter(
+                #     owner=owners,
+                #     canvas=canvas
+                # )   
+                annotations = canvas.userannotation_set.filter(owner__in=owners).all()
+                zf.writestr(
+                    annotation_file,
+                    json.dumps(
+                        json.loads(
+                            serialize(
+                                'annotation',
+                                annotations,
+                                version=version,
+                                is_list=True
                             )
                          ),
                         indent=4
@@ -105,7 +131,7 @@ class IiifManifestExport:
 
 class JekyllSiteExport(object):
     def __init__(self, manifest, version, page_one=None, update_callback=None,
-                 include_images=False, deep_zoom='hosted', github_repo=None):
+                 include_images=False, deep_zoom='hosted', github_repo=None, owners=None):
         # self.volume = volume
         self.manifest = manifest
         self.version = version
@@ -113,15 +139,17 @@ class JekyllSiteExport(object):
         # self.page_one = page_one
         self.update_callback = update_callback
         # self.include_images = include_images
-        # self.deep_zoom = deep_zoom
-        # self.include_deep_zoom = (deep_zoom == 'include')
-        # self.no_deep_zoom = (deep_zoom == 'exclude')
+        #self.deep_zoom = deep_zoom
+        self.include_deep_zoom = (deep_zoom == 'include')
+        self.no_deep_zoom = (deep_zoom == 'exclude')
         # self.github_repo = github_repo
 
         # # initialize github connection values to None
         # self.github = None
         # self.github_username = None
         # self.github_token = None
+        self.jekyll_site_dir = None
+        self.owners = owners
 
 
     def log_status(self, msg):
@@ -134,23 +162,25 @@ class JekyllSiteExport(object):
 
 
     def get_zip(self):
-        self.log_status("DEADBEEF")
         return self.volume_export()
+
+    def iiif_dir(self):
+        return os.path.join(self.jekyll_site_dir, 'iiif_export')
 
     def import_iiif_jekyll(self, manifest, tmpdir):
         # run the script to get a freash import of tei as jekyll site content
         self.log_status('Running jekyll import IIIF manifest script')
         # jekyllimport_tei_script = settings.JEKYLLIMPORT_TEI_SCRIPT
         jekyllimport_manifest_script = settings.JEKYLLIMPORT_MANIFEST_SCRIPT
-        import_command = [jekyllimport_manifest_script, '-q', manifest.baseurl+'/manifest', tmpdir]
+        import_command = [jekyllimport_manifest_script, '--local-directory', '-q', self.iiif_dir(), tmpdir]
         # TODO
         # # if a page number is specified, pass it as a parameter to the script
         # if self.page_one is not None:
         #     import_command.extend(['--page-one', unicode(self.page_one)])
         # # if no deep zoom is requested, pass through so the jekyll
         # #  config can be updated appropriately
-        # if self.no_deep_zoom:
-        #     import_command.append('--no-deep-zoom')
+        if self.no_deep_zoom:
+            import_command.append('--no-deep-zoom')
 
         try:
             logger.debug('Jekyll import command: %s', ' '.join(import_command))
@@ -182,9 +212,17 @@ class JekyllSiteExport(object):
         self.log_status('Extracting jekyll template site')
         with zipfile.ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:
             jekyllzip.extractall(tmpdir)
-        jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
+        self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
         logger.debug('Jekyll site dir:')
-        logger.debug(jekyll_site_dir)
+        logger.debug(self.jekyll_site_dir)
+
+        logger.debug('Exporting IIIF bundle')
+        iiif_zip_stream = IiifManifestExport.get_zip(self.manifest, 'v2', owners=self.owners)
+        iiif_zip = zipfile.ZipFile(io.BytesIO(iiif_zip_stream), "r")
+
+        iiif_zip.extractall(self.iiif_dir())        
+
+
 
         # TODO
         # # save image files if requested, and update image paths in tei
@@ -199,7 +237,7 @@ class JekyllSiteExport(object):
         # teifile = self.save_tei_file(tmpdir)
 
         # run the script to import tei as jekyll site content
-        self.import_iiif_jekyll(self.manifest, jekyll_site_dir)
+        self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
         # NOTE: putting export content in a separate dir to make it easy to create
         # the zip file with the right contents and structure
@@ -207,7 +245,7 @@ class JekyllSiteExport(object):
         os.mkdir(export_dir)
 
         # rename the jekyll dir and move it into the export dir
-        shutil.move(jekyll_site_dir,
+        shutil.move(self.jekyll_site_dir,
                     os.path.join(export_dir, '%s_annotated_jekyll_site' %
                                  self.manifest.id))
 
@@ -253,7 +291,7 @@ class JekyllSiteExport(object):
     # This is essentially view code from readux 1's consumers.py, which parses
     # the export form, kicks off various exports, and handles S3 or Github 
     # integration.  It may need to be moved to the view for the initial pass.
-    def volume_export(self):
+    def volume_export(self, export_mode='download'):
     #     '''Consumer method to handle volume export form submission via
     #     websockets.  Initializes :class:`readux.books.export.VolumeExport`
     #     and then calls the appropriate method based on the requested export
@@ -301,7 +339,6 @@ class JekyllSiteExport(object):
     #     # if form is valid, then proceed with the export
     #     cleaned_data = export_form.cleaned_data
     #     export_mode = cleaned_data['mode']
-        export_mode = 'download'  # TODO
     #     image_hosting = cleaned_data['image_hosting']
     #     include_images = (image_hosting == 'independently_hosted')
     #     deep_zoom = cleaned_data['deep_zoom']

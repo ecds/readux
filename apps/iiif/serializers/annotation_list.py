@@ -12,18 +12,18 @@ class Serializer(JSONSerializer):
     def _init_options(self):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
-        self.islist = self.json_kwargs.pop('islist', False)
-        self.request = self.json_kwargs.pop('request')
+        self.is_list = self.json_kwargs.pop('is_list', False)
+        self.owners = self.json_kwargs.pop('owners', 0)
 
     def start_serialization(self):
         self._init_options()
-        if (self.islist):
+        if (self.is_list):
           self.stream.write('[')
         else:
           self.stream.write('')
 
     def end_serialization(self):
-        if (self.islist):
+        if (self.is_list):
           self.stream.write(']')
         else:
           self.stream.write('')
@@ -37,7 +37,7 @@ class Serializer(JSONSerializer):
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": "%s/iiif/v2/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.annotation_set.filter(Q(owner=None) | Q(owner=self.request.user.id)), islist=True))
+                "resources": json.loads(serialize('annotation', obj.annotation_set.filter(Q(owner=None) | Q(owner__in=self.owners)), is_list=True))
             }
             return data
 

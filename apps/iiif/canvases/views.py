@@ -15,7 +15,7 @@ class IIIFV2List(View):
         return Canvas.objects.filter(manifest=Manifest.objects.get(pid=self.kwargs['manifest']))
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(serialize('canvas', self.get_queryset(), islist=True)), safe=False)
+        return JsonResponse(json.loads(serialize('canvas', self.get_queryset(), is_list=True)), safe=False)
 
 class IIIFV2Detail(View):
     def get_queryset(self):
@@ -23,20 +23,6 @@ class IIIFV2Detail(View):
     
     def get(self, request, *args, **kwargs):
         return JsonResponse(json.loads(serialize('canvas', self.get_queryset())))
-
-class CreateAnnotation(View):
-    def post(self, request, *args, **kwargs):
-        print(request.body.decode('utf-8'))
-        payload = json.loads(request.body.decode('utf-8'))
-        oa_annotation = json.loads(payload['oa_annotation'])
-        canvas = Canvas.objects.get(pid=oa_annotation['on'][0]['full'].split('/')[-1])
-        user_id = request.user.id
-        annotation = Annotation()
-        annotation.canvas = canvas
-        annotation.oa_annotation = oa_annotation
-        annotation.owner_id = user_id
-        annotation.save()
-        return JsonResponse(oa_annotation, safe=False)
         
 # TODO It should be okay to remove this.
 class StartingCanvas(View):
@@ -44,5 +30,4 @@ class StartingCanvas(View):
         return Canvas.objects.filter(is_starting_page=True)
 
     def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), islist=True)), safe=False)
-
+        return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), is_list=True)), safe=False)

@@ -1,16 +1,14 @@
 import requests
 import json
 import csv
-
 from django.conf import settings
 from apps.utils.fetch import fetch_url
 import config.settings.local as local_settings
-
+import xml.etree.ElementTree as ET
 
 def get_canvas_info(canvas):
     """ Given a url, this function returns a dictionary of all collections."""
-    results = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
-    return results
+    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
 
 def fetch_positional_ocr(canvas):
     if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
@@ -70,3 +68,31 @@ def add_positional_ocr(canvas, result):
         return ocr
     else:
         return None
+
+    def fetch_alto_ocr(canvas):
+        if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+            return None
+        else:
+            url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
+            print(url)
+            return fetch_url(url, format='text/plain')
+
+    def add_alto_ocr(canvas, result):
+        if result == None:
+            return None
+        ocr = []
+        surface = ET.fromstring(result)[-1][0]
+        for zones in surface:
+            if 'zone' in zones.tag:
+                for line in zones:
+                    ocr.append({
+                        'content': line[-1].text,
+                        'h': int(line.attrib['lry']) - int(line.attrib['uly']),
+                        'w': int(line.attrib['lrx']) - int(line.attrib['ulx']),
+                        'x': int(line.attrib['ulx']),
+                        'y': int(line.attrib['uly'])
+                    })
+        if (ocr):
+            return ocr
+        else:
+            return None

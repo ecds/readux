@@ -25,6 +25,18 @@
 {% if page.layout == 'Grid' %}
   <div id="wrap">
   {% for volume in volumespage %}
+ {% if volume.canvas_set.first.pid is null %}
+    <div id="box">
+    <div id="boxInner">
+        <img src='{% static '/images/image_not_found.jpg' %}'/>
+      <div id="innerContent"><p>
+      <p>{{ volume.label|truncatechars:200 }}</p>
+  </p>
+  <p><em>Author:</em> {{volume.author|truncatechars:150}}<br/>
+  <em>Date Published:</em> {{volume.published_date}}<br/>
+  Added {{volume.created_at}}</p></div>
+    </div></div>
+{% else %}
     <div id="box">
     <div id="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
@@ -38,6 +50,7 @@
   <em>Date Published:</em> {{volume.published_date}}<br/>
   Added {{volume.created_at}}</p></div>
     </div></div>
+    {% endif %}
   {% endfor %}
   </div>
 {% endif %}
@@ -46,7 +59,27 @@
 
   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
     {% for volume in volumespage %}
+    {% if volume.canvas_set.first.pid is null %}
     <div class="uk-width-1-2@m uk-grid-medium">
+      <div class="uk-width-1-4@m rx-volume-image">
+        <a class="nav-link" href="#">
+          <img src='{% static 'images/image_not_found.jpg' %}' />
+        </a>
+      </div>
+      <div class="uk-width-3-4@m">
+        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+          <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        </a>
+        <ul class="uk-padding-remove uk-margin-remove">
+          <li>Author: {{volume.author|truncatechars:150}}</li>
+          <li>Published: {{volume.published_date}}</li>
+          <li>Added: {{volume.created_at}}</li>
+        </ul>
+      </div>
+    </div>
+    {% else %}
+    <div class="uk-width-1-2@m uk-grid-medium">
+
       <div class="uk-width-1-4@m rx-volume-image">
         <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
           {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
@@ -62,9 +95,11 @@
           <li>Added: {{volume.created_at}}</li>
         </ul>
       </div>
-    </div>
+      </div>
+    {% endif %}
     {% endfor %}
   </div>
+
 {% endif %}
 
 {% endblock content %}

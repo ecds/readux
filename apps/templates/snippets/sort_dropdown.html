@@ -22,9 +22,9 @@
 	</div>
 
 	<div>
-		<a class="rx-icon-btn" onclick="ascaddURL(this)" uk-icon="icon: arrow-up"
+		<a class="rx-icon-btn" onclick="ascaddURL(this)" uk-icon="icon: arrow-up" href=""
 			uk-tooltip="title: sort in ascending order"></a>
-		<a class="rx-icon-btn" onclick="descaddURL(this)" uk-icon="icon: arrow-down"
+		<a class="rx-icon-btn" onclick="descaddURL(this)" uk-icon="icon: arrow-down" href=""
 			uk-tooltip="title: sort in descending order"></a>
 	</div>
 </div>
@@ -37,7 +37,6 @@
 			options: ["title", "author", "date published", "date added"],
 			searchPrefix: "?sort=",
 			currentSelection: null,
-
 		},
 		methods: {
 			sortBy: function (selection) {
@@ -87,33 +86,45 @@
 
 
 	function ascaddURL(element) {
+		debugger;
 		$(element).attr('href', function () {
 			if (window.location.search.length == 0) {
-				return this.href + '?sort=title&order=asc';
+				location.href = this.href + '?sort=title&order=asc';
+				return location.href;
 			} else if (window.location.search.match(/[?&]order=asc/gi)) {
-				this.href = this.href.replace('order=asc', 'order=asc');
-				return this.href;
+				location.href = this.href.replace('order=asc', 'order=asc');
+				return location.href;
 			} else if (window.location.search.match(/[?&]order=desc/gi)) {
-				this.href = this.href.replace('order=desc', 'order=asc');
-				return this.href;
+				location.href = this.href.replace('order=desc', 'order=asc');
+								return location.href;
+
 			} else {
-				return this.href + '&order=asc';
+				location.href = this.href + '&order=asc';
+								return location.href;
+
 			}
 		});
 	}
 
 	function descaddURL(element) {
+
 		$(element).attr('href', function () {
 			if (window.location.search.length == 0) {
-				return this.href + '?sort=title&order=desc';
+				location.href = this.href + '?sort=title&order=desc';
+								return location.href;
+
 			} else if (window.location.search.match(/[?&]order=asc/gi)) {
-				this.href = this.href.replace('order=asc', 'order=desc');
-				return this.href;
+				location.href = this.href.replace('order=asc', 'order=desc');
+								return location.href;
+
 			} else if (window.location.search.match(/[?&]order=desc/gi)) {
-				this.href = this.href.replace('order=desc', 'order=desc');
-				return this.href;
+				location.href = this.href.replace('order=desc', 'order=desc');
+								return location.href;
+
 			} else {
-				return this.href + '&order=desc';
+				location.href = this.href + '&order=desc';
+								return location.href;
+
 			}
 		});
 	}

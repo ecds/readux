@@ -9,6 +9,7 @@ from django.apps import apps
 from . import services
 import uuid
 
+# TODO add a test fixture that calls this.
 def get_default_iiif_setting():
   return "%s" % (settings.IIIF_IMAGE_SERVER_BASE)
 
@@ -98,6 +99,7 @@ class Canvas(models.Model):
             return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
         else:
             # landscape
+            # TODO add a landscape image to tests
             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
     # @property

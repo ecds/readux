@@ -4,6 +4,7 @@ from django.urls import reverse
 import config.settings.local as settings
 from .models import Canvas
 from . import services
+from apps.iiif.canvases.apps import CanvasesConfig
 import json
 
 
@@ -18,6 +19,10 @@ class CanvasTests(TestCase):
         self.assumed_canvas_pid = 'fedora:emory:5622'
         self.assumed_volume_pid = 'readux:st7r6'
         self.assumed_iiif_base = 'https://loris.library.emory.edu'
+    
+    def test_app_config(self):
+        assert CanvasesConfig.verbose_name == 'Canvases'
+        assert CanvasesConfig.name == 'apps.iiif.canvases'
 
     def test_ia_ocr_creation(self):
         valid_ia_ocr_response = {
@@ -76,8 +81,7 @@ class CanvasTests(TestCase):
     def test_fedora_ocr_creation(self):
         valid_fedora_positional_response = """523\t 116\t 151\t  45\tDistillery\r\n 704\t 117\t 148\t  52\tplaid,"\r\n""".encode('UTF-8-sig')
         
-        canvas = Canvas.objects.get(pid='fedora:emory:5622')
-        ocr = services.add_positional_ocr(canvas, valid_fedora_positional_response)
+        ocr = services.add_positional_ocr(self.canvas, valid_fedora_positional_response)
         assert len(ocr) == 2
         for word in ocr:
             assert 'w' in word
@@ -90,6 +94,15 @@ class CanvasTests(TestCase):
             assert type(word['x']) == int
             assert type(word['y']) == int
             assert type(word['content']) == str
+
+    def test_ocr_from_alto(self):
+        alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
+        ocr = services.add_alto_ocr(self.canvas, alto)
+        assert ocr[1]['content'] == 'AEN DEN LESIIU'
+        assert ocr[1]['h'] == 28
+        assert ocr[1]['w'] == 461
+        assert ocr[1]['x'] == 814
+        assert ocr[1]['y'] == 185
 
     def test_canvas_detail(self):
         kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }

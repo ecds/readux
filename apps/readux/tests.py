@@ -144,6 +144,11 @@ class AnnotationTests(TestCase):
         assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
         assert annotation['on']['selector']['value'] == 'xywh=535,454,681,425'
         assert response.status_code == 201
+        annotation_object = UserAnnotation.objects.get(pk=annotation['@id'])
+        assert annotation_object.x == 535
+        assert annotation_object.y == 454
+        assert annotation_object.w == 681
+        assert annotation_object.h == 425
 
 
     def test_mirador_text_annotation_creation(self):

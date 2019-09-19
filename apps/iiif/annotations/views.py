@@ -6,13 +6,11 @@ import json
 from django.http import JsonResponse
 from .models import Annotation
 from ..canvases.models import Canvas
-from .serializers import AnnotationSerializer
 
 class AnnotationsForPage(View):
     """
     Endpoint to to display annotations for a page.
     """
-    # serializer_class = AnnotationSerializer
 
     def get_queryset(self):
         canvas = Canvas.objects.get(pid=self.kwargs['page'])

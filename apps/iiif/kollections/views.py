@@ -8,7 +8,6 @@ from django.urls import reverse
 from .models import Collection
 from apps.iiif.manifests.models import Manifest
 import json
-from .serializers import CollectionSerializer
 
 # TODO Would still be nice to use DRF. Try this?
 # https://stackoverflow.com/a/35019122

@@ -80,7 +80,7 @@ class Annotation(AbstractAnnotation):
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_span_element(sender, instance, **kwargs):
-    if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation == '{"annotatedBy": {"name": "ocr"}}'):
+    if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation['annotatedBy']['name'] == "ocr"):
         try:
             instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
             character_count = len(instance.content)

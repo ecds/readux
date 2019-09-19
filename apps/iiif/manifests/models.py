@@ -48,13 +48,14 @@ class Manifest(ClusterableModel):
     def get_volume_url(self):
         return "%s/volume/%s/page/all" % (settings.HOSTNAME, self.pid)
 
-    @property
-    def note_list(self):
-      self.note_set.values('label')[0]['label']
+    # TODO is this needed?
+    # @property
+    # def note_list(self):
+    #   self.note_set.values('label')[0]['label']
 
     @property
     def publisher_bib(self):
-      "%s : %s" % (published_city, publisher)
+      return "%s : %s" % (self.published_city, self.publisher)
 
     @property
     def thumbnail_logo(self):
@@ -84,6 +85,7 @@ class Manifest(ClusterableModel):
 #         volume_annotation_count = notes.filter(owner_id=current_user).count()
 #         return volume_annotation_count
 
+# TODO is this needed?
 class Note(models.Model):
     label = models.CharField(max_length=255)
     language = models.CharField(max_length=10, default='en')

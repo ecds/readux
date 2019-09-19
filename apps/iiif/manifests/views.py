@@ -86,10 +86,12 @@ class JekyllExport(View):
     def post(self, request, *args, **kwargs):
         # we should probably move this out of the view, into a library
         manifest = self.get_queryset()[0]
-
+        logger.debug(request.POST)
+        logger.debug(dir(self.args))
 
         export_form = JekyllExportForm(self.request.user, data=request.POST)
 
+        # FIXME this needs to return an error.
         if not export_form.is_valid():
             logger.debug("Export form is not valid: %s", export_form.errors)
         #     # bail out
@@ -97,6 +99,7 @@ class JekyllExport(View):
 
         # if form is valid, then proceed with the export
         cleaned_data = export_form.clean()
+        logger.debug("Cleaned Data: %s", dir(cleaned_data))
 
         export_mode = export_form.cleaned_data['mode']
     #     image_hosting = cleaned_data['image_hosting']

@@ -56,6 +56,8 @@ EMAIL_PORT = 1025
 IIIF_IMAGE_SERVER_BASE = 'https://loris.library.emory.edu'
 
 HOSTNAME = 'https://readux-dev.org:3000'
+MEDIA_ROOT = '/tmp/'
+MEDIA_URL = '/media/'
 
 DATASTREAM_PREFIX = 'http://repo.library.emory.edu/fedora/objects/'
 DATASTREAM_SUFFIX = '/datastreams/position/content'

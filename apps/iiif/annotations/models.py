@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from abc import abstractmethod
 import json
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AbstractAnnotation(models.Model):
     OCR = 'cnt:ContentAsText'
@@ -80,27 +83,21 @@ def set_span_element(sender, instance, **kwargs):
     if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation == '{"annotatedBy": {"name": "ocr"}}'):
         try:
             instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
-            # instance.svg = "<svg xmlns='http://www.w3.org/2000/svg' id='{pk}' class='ocrtext' fill=red' style='height: {h}px;' viewBox='0 0 {w} {h}'><text x='0' y='100%' textLength='100%' style='font-size: {h}px; user-select: all;'>{content}</text></svg>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content)
-            # (12*(17.697/1.618))/12
             character_count = len(instance.content)
-            font_size = instance.h/1.6
-            string_width = font_size * character_count
+            # 1.6 is a "magic number" that seems to work pretty well ¯\_(ツ)_/¯
+            font_size = instance.h / 1.6
+            # Assuming a character's width is half the height. This was my first guess.
+            # This should give us how long all the characters will be.
+            string_width = (font_size / 2) * character_count
+            # And this is what we're short.
             space_to_fill = instance.w - string_width
+            # Divide up the space to fill and space the letters.
             letter_spacing = space_to_fill / character_count
-            instance.content = "<span id='{pk}' style='height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {s}px'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size), s=str(letter_spacing))
+            # Percent of letter spacing of overall width.
+            # This is used by OpenSeadragon. OSD will update the letter spacing relative to
+            # the width of the overlayed element when someone zooms in and out.
+            relative_letter_spacing = letter_spacing / instance.w
+            instance.content = "<span id='{pk}' style='height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {s}px' data-letter-spacing='{p}'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size), s=str(letter_spacing), p=str(relative_letter_spacing))
         except ValueError as error:
             instance.content = ""
-            print("WARNING: {e}".format(e=error))
-    # elif instance.oa_annotation == '{"annotatedBy": {"name": "ocr"}}': 
-    # #To do: refactor this code to better handle ingest. This elif allows for an admin to use import-export by defining oa_annotation as above to import ocr from a spreadsheet.
-    #     try:
-    #         #instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
-    #         # instance.svg = "<svg xmlns='http://www.w3.org/2000/svg' id='{pk}' class='ocrtext' fill=red' style='height: {h}px;' viewBox='0 0 {w} {h}'><text x='0' y='100%' textLength='100%' style='font-size: {h}px; user-select: all;'>{content}</text></svg>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content)
-    #         # (12*(17.697/1.618))/12
-    #         character_count = len(instance.content)
-    #         font_size = instance.h / 1.618
-    #         instance.content = "<span id='{pk}' height: {h}px; width: {w}px; font-size: {f}px'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size))
-    #     except ValueError as error:
-    #         instance.content = ""
-    #         print("WARNING: {e}".format(e=error))
-
+            logger.warn("WARNING: {e}".format(e=error))

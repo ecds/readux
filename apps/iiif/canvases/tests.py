@@ -1,9 +1,10 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
+import config.settings.local as settings
 from .models import Canvas
-from ..manifests.models import Manifest
 from . import services
+from apps.iiif.canvases.apps import CanvasesConfig
 import json
 
 
@@ -13,8 +14,15 @@ class CanvasTests(TestCase):
     def setUp(self):
         fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
         self.client = Client()
-        self.manifest = Manifest.objects.all().first()
-        self.canvas = self.manifest.canvas_set.all().first()
+        self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
+        self.manifest = self.canvas.manifest
+        self.assumed_canvas_pid = 'fedora:emory:5622'
+        self.assumed_volume_pid = 'readux:st7r6'
+        self.assumed_iiif_base = 'https://loris.library.emory.edu'
+    
+    def test_app_config(self):
+        assert CanvasesConfig.verbose_name == 'Canvases'
+        assert CanvasesConfig.name == 'apps.iiif.canvases'
 
     def test_ia_ocr_creation(self):
         valid_ia_ocr_response = {
@@ -73,8 +81,7 @@ class CanvasTests(TestCase):
     def test_fedora_ocr_creation(self):
         valid_fedora_positional_response = """523\t 116\t 151\t  45\tDistillery\r\n 704\t 117\t 148\t  52\tplaid,"\r\n""".encode('UTF-8-sig')
         
-        canvas = Canvas.objects.get(pid='fedora:emory:5622')
-        ocr = services.add_positional_ocr(canvas, valid_fedora_positional_response)
+        ocr = services.add_positional_ocr(self.canvas, valid_fedora_positional_response)
         assert len(ocr) == 2
         for word in ocr:
             assert 'w' in word
@@ -87,6 +94,15 @@ class CanvasTests(TestCase):
             assert type(word['x']) == int
             assert type(word['y']) == int
             assert type(word['content']) == str
+
+    def test_ocr_from_alto(self):
+        alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
+        ocr = services.add_alto_ocr(self.canvas, alto)
+        assert ocr[1]['content'] == 'AEN DEN LESIIU'
+        assert ocr[1]['h'] == 28
+        assert ocr[1]['w'] == 461
+        assert ocr[1]['x'] == 814
+        assert ocr[1]['y'] == 185
 
     def test_canvas_detail(self):
         kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
@@ -108,3 +124,16 @@ class CanvasTests(TestCase):
 
         assert response.status_code == 200
         assert len(canvas_list) == 2
+
+    def test_properties(self):
+        assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
+        assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.twitter_media1 == "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.assumed_canvas_pid)
+        assert self.canvas.twitter_media2 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.uri == "%s/iiif/%s/" % (settings.HOSTNAME, self.assumed_volume_pid)
+        assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)

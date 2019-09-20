@@ -14,7 +14,7 @@ import json
 import re
 
 class AnnotationTests(TestCase):
-    fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+    fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
 
     valid_mirador_annotations = {
         'svg': { 'oa_annotation': '''{
@@ -100,21 +100,14 @@ class AnnotationTests(TestCase):
 
     def setUp(self):
         fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-        self.User = get_user_model()
-        self.user_a_uname = 'zaphod'
-        self.user_a_passwd = 'terrific!'
-        self.user_a = self.User.objects.create_user(self.user_a_uname, 'zaphod_beeblebrox@gmail.com', self.user_a_passwd)
-        self.user_a.name = 'Zaphod Beeblebrox'
-        self.user_a.save
-        self.user_b_uname = 'marvin' 
-        self.user_b_passwd = 'life :('
-        self.user_b = self.User.objects.create_user(self.user_b_uname, 'marvin@siriuscybernetics.com', self.user_b_passwd)
-        self.user_b.name = 'Marvin'
-        self.user_b.save()
+        self.user_a = get_user_model().objects.get(pk=1)
+        self.user_b = get_user_model().objects.get(pk=2)
         self.factory = RequestFactory()
         self.client = Client()
         self.view = Annotations.as_view()
         self.crud_view = AnnotationCrud.as_view()
+        self.manifest = Manifest.objects.all()[0]
+        self.canvas = self.manifest.canvas_set.all()[0]
 
     def create_user_annotations(self, count, user):
         for anno in range(count):
@@ -136,12 +129,11 @@ class AnnotationTests(TestCase):
 
     def test_get_user_annotations_unauthenticated(self):
         self.create_user_annotations(5, self.user_a)
-        assert len(UserAnnotation.objects.all()) == 5
-        kwargs = {'username': 'readux', 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': 'readux', 'volume': self.manifest.pid, 'canvas': self.canvas.pid}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         assert response.status_code == 404
-        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_a.username, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
@@ -149,7 +141,6 @@ class AnnotationTests(TestCase):
 #        assert len(annotation) == 0
 
     def test_mirador_svg_annotation_creation(self):
-        self.client.login(username=self.user_a_uname, password=self.user_a_passwd)
         request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['svg']), content_type="application/json")
         request.user = self.user_a
         response = self.crud_view(request)
@@ -157,10 +148,14 @@ class AnnotationTests(TestCase):
         assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
         assert annotation['on']['selector']['value'] == 'xywh=535,454,681,425'
         assert response.status_code == 201
+        annotation_object = UserAnnotation.objects.get(pk=annotation['@id'])
+        assert annotation_object.x == 535
+        assert annotation_object.y == 454
+        assert annotation_object.w == 681
+        assert annotation_object.h == 425
 
 
     def test_mirador_text_annotation_creation(self):
-        self.client.login(username=self.user_a_uname, password=self.user_a_passwd)
         request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['text']), content_type="application/json")
         request.user = self.user_a
         response = self.crud_view(request)
@@ -172,10 +167,11 @@ class AnnotationTests(TestCase):
 
     def test_get_user_annotations(self):
         self.create_user_annotations(4, self.user_a)
-        self.client.login(username=self.user_a_uname, password=self.user_a_passwd)
-        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_a.username, 'volume': self.manifest.pid, 'canvas': self.canvas.pid}
         url = reverse('user_annotations', kwargs=kwargs)
-        response = self.client.get(url)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = self.view(request, username=self.user_a.username, volume=self.manifest.pid, canvas=self.canvas.pid)
         annotation = self.load_anno(response)
         assert len(annotation) == 4
         assert response.status_code == 200
@@ -183,15 +179,16 @@ class AnnotationTests(TestCase):
     def test_get_only_users_user_annotations(self):
         self.create_user_annotations(5, self.user_b)
         self.create_user_annotations(4, self.user_a)
-        self.client.login(username=self.user_b_uname, password=self.user_b_passwd)
-        kwargs = {'username': self.user_b_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': 'marvin', 'volume': self.manifest.pid, 'canvas': self.canvas.pid}
         url = reverse('user_annotations', kwargs=kwargs)
-        response = self.client.get(url)
+        request = self.factory.get(url)
+        request.user = self.user_b
+        response = self.view(request, username=self.user_b.username, volume=self.manifest.pid, canvas=self.canvas.pid)
         annotation = self.load_anno(response)
         assert len(annotation) == 5
         assert response.status_code == 200
         assert len(UserAnnotation.objects.all()) == 9
-        kwargs = {'username': self.user_a_uname, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {'username': self.user_a.username, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
@@ -200,7 +197,6 @@ class AnnotationTests(TestCase):
 
     def test_update_user_annotation(self):
         self.create_user_annotations(1, self.user_a)
-        self.client.login(username=self.user_a_uname, password=self.user_a_passwd)
         existing_anno = UserAnnotation.objects.all()[0]
         data = json.loads(self.valid_mirador_annotations['svg']['oa_annotation'])
         data['@id'] = existing_anno.id
@@ -208,7 +204,6 @@ class AnnotationTests(TestCase):
         resource = data['oa_annotation']['resource'][0]
         resource['chars'] = 'updated annotation'
         data['oa_annotation']['resource'] = resource 
-        # data = json.dumps(anno)
         data['id'] = existing_anno.id
         request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         request.user = self.user_a
@@ -219,7 +214,6 @@ class AnnotationTests(TestCase):
 
     def test_update_someone_elses_annotation(self):
         self.create_user_annotations(4, self.user_a)
-        self.client.login(username=self.user_b_uname, password=self.user_b_passwd)
         rando_anno = self.rando_anno()
         data = { 'id': rando_anno.pk }
         request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
@@ -245,7 +239,6 @@ class AnnotationTests(TestCase):
 
     def test_delete_user_annotation_as_owner(self):
         self.create_user_annotations(1, self.user_a)
-        self.client.login(username=self.user_a_uname, password=self.user_a_passwd)
         existing_anno = UserAnnotation.objects.all()[0]
         data = {'id': existing_anno.pk}
         request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
@@ -257,7 +250,6 @@ class AnnotationTests(TestCase):
 
     def test_delete_someone_elses_annotation(self):
         self.create_user_annotations(1, self.user_a)
-        self.client.login(username=self.user_b_uname, password=self.user_b_passwd)
         rando_anno = self.rando_anno()
         data = { 'id': rando_anno.pk }
         request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")

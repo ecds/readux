@@ -11,6 +11,7 @@ import io
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -85,42 +86,46 @@ class IiifManifestExport:
         # Then write the OCR annotations
         for canvas in manifest.canvas_set.all():
             if canvas.annotation_set.count() > 0:
-                annotation_file = "ocr_annotation_list_" + canvas.pid + ".json"
+                json_hash = json.loads(
+                  serialize(
+                      'annotation_list',
+                      [canvas],
+                      version=version,
+                      owners=owners
+                  )
+                )
+                anno_uri = json_hash['@id']
+
+                annotation_file = re.sub('\W','_', anno_uri) + ".json"
+
                 zf.writestr(
                     annotation_file,
                     json.dumps(
-                        json.loads(
-                            serialize(
-                                'annotation_list',
-                                [canvas],
-                                version=version,
-                                owners=owners
-                            )
-                         ),
-                        indent=4
+                      json_hash,
+                      indent=4
                     )
                 )
         # Then write the user annotations
         for canvas in manifest.canvas_set.all():
             if canvas.userannotation_set.count() > 0:
-                annotation_file = "user_annotation_list_" + canvas.pid + ".json"
-                # annotations = UserAnnotation.objects.filter(
-                #     owner=owners,
-                #     canvas=canvas
-                # )   
                 annotations = canvas.userannotation_set.filter(owner__in=owners).all()
+                json_hash = json.loads(
+                    serialize(
+                        'annotation',
+                        annotations,
+                        version=version,
+                        is_list=True
+                    )
+                )
+                anno_uri = json_hash['@id']
+
+                annotation_file = re.sub('\W','_', anno_uri) + ".json"
+
                 zf.writestr(
                     annotation_file,
                     json.dumps(
-                        json.loads(
-                            serialize(
-                                'annotation',
-                                annotations,
-                                version=version,
-                                is_list=True
-                            )
-                         ),
-                        indent=4
+                      json_hash,
+                      indent=4
                     )
                 )
 

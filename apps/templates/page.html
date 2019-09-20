@@ -146,6 +146,7 @@
       {% if user.is_anonymous %}
         "availableAnnotationDrawingTools": [],
         "availableAnnotationStylePickers": [],
+        "readuxUser": {{ request.user.name }},
       {% endif %}
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });

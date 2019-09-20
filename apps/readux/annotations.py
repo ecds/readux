@@ -5,6 +5,7 @@ from django.views import View
 from django.views.generic import ListView
 from .models import UserAnnotation
 from ..iiif.canvases.models import Canvas
+from ..iiif.canvases.models import Manifest
 import json
 import uuid
 from ..users.models import User
@@ -12,37 +13,32 @@ from ..users.models import User
 
 class Annotations(ListView):
 
-    def get_queryset(self, owner):
-        if self.request.user.is_authenticated and owner == self.request.user:
-            return UserAnnotation.objects.filter(
-                owner=owner,
-                canvas=Canvas.objects.get(pid=self.kwargs['canvas'])
-            )
-        return None
-
+    def get_queryset(self):
+        return Canvas.objects.filter(pid=self.kwargs['canvas'])
+    
     def get(self, request, *args, **kwargs):
         username = kwargs['username']
         try:
             owner = User.objects.get(username=username)
-            annotations = self.get_queryset(owner)
-            if annotations is not None:
-                for anno in annotations:
-                    return JsonResponse(
-                        json.loads(
-                            serialize(
-                                'annotation',
-                                annotations,
-                                # version=kwargs['version'],
-                                is_list = True
-                            )
-                        ),
-                        safe=False,
-                        status=200
-                    )
+            if self.request.user == owner: 
+                return JsonResponse(
+                    json.loads(
+                        serialize(
+                            'user_annotation_list',
+                            self.get_queryset(),
+                            owners=[owner]
+                        )
+                    ),
+                    safe=False
+                )
+            else:
+                return JsonResponse(status=401, data={"Permission to see annotations not allowed for logged in user.": username})
+
         except ObjectDoesNotExist:
             # attempt to get annotations for non-existent user
             return JsonResponse(status=404, data={"User not found.": username})
         return JsonResponse(status=200, data={})
+
 
 class AnnotationCrud(View):
 

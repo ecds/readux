@@ -66,8 +66,10 @@
             </h3>
             <div class="rx-title-tagline">TBD
             </div>
-            <p class="rx-card-text">Author: {{volume.author|truncatechars:100}}<br />
-              Published: {{volume.published_date}} | Added: {{volume.created_at}}</p>
+            <ul class="rx-card-text">
+              <li>Author: {{volume.author|truncatechars:100}}</li>
+              <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+            </ul>
           </a>
         </div>
       </article>
@@ -120,12 +122,14 @@
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
           <a class="nav-link" href="{% url 'collection' collection.pid %}">
-            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">
+              {{ volume.label|truncatechars:200 }}
             </h3>
-            <div class="rx-title-tagline">TBD
-            </div>
-            <p class="rx-card-text">Author: {{volume.author|truncatechars:150}}<br />
-              Published: {{volume.published_date}} | Added: {{volume.created_at}}</p>
+            <div class="rx-title-tagline"></div>
+            <ul class="rx-card-text">
+              <li>Author: {{volume.author|truncatechars:150}}</li>
+              <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+            </ul>
           </a>
         </div>
       </article>
@@ -147,8 +151,10 @@
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
             <div class="rx-title-tagline">TBD</div>
-            <p class="rx-card-text">Author: {{volume.author|truncatechars:150}}<br />
-              Published: {{volume.published_date}} | Added: {{volume.created_at}}</p>
+            <ul class="rx-card-text">
+              <li>Author: {{volume.author|truncatechars:150}}</li>
+              <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+            </ul>
           </a>
         </div>
       </article>

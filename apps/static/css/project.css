@@ -730,6 +730,8 @@ p {
 }
 
 .rx-card-text {
+  padding: 0;
+  color: #707070;
   margin: 0.5em 0;
   overflow: hidden;
   text-overflow: ellipsis;

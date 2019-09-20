@@ -205,7 +205,9 @@ class VolumeAllDetail(TemplateView):
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-              qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           else:
               qs1 = ''
               qs2 = ''
@@ -237,7 +239,9 @@ class PageDetail(TemplateView):
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-              qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           else:
               qs1 = ''
               qs2 = ''

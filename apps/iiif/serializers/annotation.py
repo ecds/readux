@@ -62,6 +62,8 @@ class Serializer(JSONSerializer):
             }
             if obj.item is not None:
                 data['on']['selector']['item'] = self.__serialize_item(obj)
+            else:
+                data['on']['selector']['item'] = {'@type': 'oa:FragmentSelector'}
             return data
 
     def handle_field(self, obj, field):

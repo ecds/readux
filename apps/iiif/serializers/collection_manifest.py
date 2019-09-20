@@ -8,17 +8,17 @@ class Serializer(JSONSerializer):
     def _init_options(self):
         super()._init_options()
         self.version = self.json_kwargs.pop('version', 'v2')
-        self.islist = self.json_kwargs.pop('islist', False)
+        self.is_list = self.json_kwargs.pop('is_list', False)
 
     def start_serialization(self):
         self._init_options()
-        if (self.islist):
+        if (self.is_list):
           self.stream.write('[')
         else:
           self.stream.write('')
 
     def end_serialization(self):
-        if (self.islist):
+        if (self.is_list):
           self.stream.write(']')
         else:
           self.stream.write('')
@@ -29,7 +29,7 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data =  {
-              "@id": "https://readux.ecds.emory.edu/iiif/%s/manifest" % (obj.pid),
+              "@id": "%s/iiif/%s/manifest" % (settings.HOSTNAME, obj.pid),
               "@type": "sc:Manifest",
               "label": obj.label,
             }

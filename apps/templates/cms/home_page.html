@@ -39,33 +39,46 @@
         </article>
       </li>
       {% endfor %}
+      <a class="nav-link" href="#">
+        <div class="rx-btn rx-btn-extension">Show All Featured Collections <i class="fas fa-chevron-right"></i></div>
+      </a>
     </ul>
     {% endif %}
 
+
+
     {% if page.featured_volumes.all|length != 0 %}
     <div class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</div>
-      {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
-      <li>
-        <article class="rx-article">
-          <div class="rx-card-image-container">
-            <a alt="First page of {{volume.label}}" class="rx-card-image"
-              href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
-              style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a>
-          </div>
-          <div class="rx-card-body">
-            <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-              <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:200 }}</h3>
-              <div class="rx-title-tagline">TBD
-              </div>
-              <p class="rx-card-text">Author: {{volume.author|truncatechars:100}}<br />
-              Date Published: {{volume.published_date}}<br />
-              Added {{volume.created_at}}</p>
-            </a>
-          </div>
-        </article>
-      </li>
-      {% endfor %}
+    {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
+    <li>
+      <article class="rx-article">
+        <div class="rx-card-image-container">
+          <a alt="First page of {{volume.label}}" class="rx-card-image"
+            href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
+            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a>
+        </div>
+        <div class="rx-card-body">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
+            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
+          </a>
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
+            </h3>
+            <div class="rx-title-tagline">TBD
+            </div>
+            <p class="rx-card-text">Author: {{volume.author|truncatechars:100}}<br />
+              Published: {{volume.published_date}} | Added: {{volume.created_at}}</p>
+          </a>
+        </div>
+      </article>
+    </li>
+    {% endfor %}
+    <a class="nav-link" href="#">
+      <div class="rx-btn rx-btn-extension">Show All Featured Volumes <i class="fas fa-chevron-right"></i></div>
+    </a>
     {% endif %}
+
+
 
     {% if page.content_display == 'Collections' %}
     <div class="readux-group-title">All Collections</div>
@@ -95,63 +108,68 @@
 
     {% if page.content_display == 'Volumes' %}
     <div class="readux-group-title">All Volumes</div>
-      {% for volume in page.volumes %}
-      {% if volume.canvas_set.first.pid is null %}
-      <li>
-        <article class="rx-article">
-          <div class="rx-card-image-container">
-            <img class="rx-card-image" src="{% static 'images/image_not_found.jpg' %}" />
-          </div>
-          <div class="rx-card-body">
-            <a class="nav-link" href="{% url 'collection' collection.pid %}">
-              <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:200 }}</h3>
-              <div class="rx-title-tagline">TBD
-              </div>
-              <p class="rx-card-text">Author: {{volume.author|truncatechars:150}}<br />
-              Date Published: {{volume.published_date}}<br />
-              Added {{volume.created_at}}</p>
-            </a>
-          </div>
-        </article>
-      </li>
-      
-      {% else %}
-      <li>
-        <article class="rx-article">
-          <div class="rx-card-image-container">
-            <a alt="Banner image for collection {{collection.label}}" class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
-              style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a>
-          </div>
-          <div class="rx-card-body">
-            <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-              <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:200 }}</h3>
-              <div class="rx-title-tagline">TBD
-              </div>
-              <p class="rx-card-text">Author: {{volume.author|truncatechars:150}}<br />
-              Date Published: {{volume.published_date}}<br />
-              Added {{volume.created_at}}</p>
-            </a>
-          </div>
-        </article>
-      </li>
+    {% for volume in page.volumes %}
+    {% if volume.canvas_set.first.pid is null %}
+    <li>
+      <article class="rx-article">
+        <div class="rx-card-image-container">
+          <img class="rx-card-image" src="{% static 'images/image_not_found.jpg' %}" />
+        </div>
+        <div class="rx-card-body">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
+            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
+          </a>
+          <a class="nav-link" href="{% url 'collection' collection.pid %}">
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
+            </h3>
+            <div class="rx-title-tagline">TBD
+            </div>
+            <p class="rx-card-text">Author: {{volume.author|truncatechars:150}}<br />
+              Published: {{volume.published_date}} | Added: {{volume.created_at}}</p>
+          </a>
+        </div>
+      </article>
+    </li>
 
-              <!-- <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+    {% else %}
+    <li>
+      <article class="rx-article">
+        <div class="rx-card-image-container">
+          <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
+            href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
+            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a>
+        </div>
+        <div class="rx-card-body">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
+            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
+          </a>
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
+            </h3>
+            <div class="rx-title-tagline">TBD</div>
+            <p class="rx-card-text">Author: {{volume.author|truncatechars:150}}<br />
+              Published: {{volume.published_date}} | Added: {{volume.created_at}}</p>
+          </a>
+        </div>
+      </article>
+    </li>
+
+    <!-- <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
                 {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img
                   src="{{ canvas.thumbnail_crop_tallwide }}" {% elif forloop.last %}<img
                   src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
                   {% endif %}{% endfor %}alt="First page of {{volume.label}}"
                   onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
               </a></div> -->
-      {% endif %}
-      {% endfor %}
     {% endif %}
+    {% endfor %}
 
+    <a class="nav-link" href="#">
+      <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
+    </a>
 
-
+    {% include "footer.html" %}
+    {% endif %}
   </div>
 </div>
-
-
-
-
 {% endblock %}

@@ -604,7 +604,7 @@ a:hover {
 }
 
 .rx-title-tagline {
-  font-size: 1em;
+  font-size: 14px;
   color: #afafaf;
 }
 
@@ -703,7 +703,7 @@ p {
   flex: 1 1 auto;
   max-width: 680px;
   width: 100%;
-  margin: 2rem 0;
+  margin: 3rem 0;
 }
 
 .rx-card-body {
@@ -730,11 +730,13 @@ p {
 }
 
 .rx-card-text {
+  margin: 0.5em 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3; /* number of lines to show */
   -webkit-box-orient: vertical;
+  font-size: 14px;
 }
 
 .rx-card-title {
@@ -773,4 +775,92 @@ p {
   .rx-volume-image {
     margin-bottom: 1rem;
   }
+}
+
+
+.rx-btn {
+  border-radius: 3px;
+  border: solid 1px #707070;
+  color: #707070;
+  font-family: HelveticaNeue;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: normal;
+  text-align: center;
+  padding: 5px 12px;
+  display: inline-block;
+}
+
+.rx-btn:hover{
+  border: solid 1px #707070;
+  color: white;
+  background: #707070;
+  transition: .1s ease-in-out;
+
+}
+
+.rx-btn-extension {
+  border-radius: 3px;
+  border: solid 1px #707070;
+  color: #707070;
+  font-family: HelveticaNeue;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.28;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  text-align: center;
+  padding: 8px 16px;
+  display: inline-block;
+}
+
+.rx-btn:hover{
+  border: solid 1px #707070;
+  color: white;
+  background: #707070;
+  transition: .1s ease-in-out;
+}
+
+.rx-btn-extension {
+  background: #ea7c0f;
+  color: white;
+  border: solid 1px #ea7c0f;
+}
+
+
+.rx-btn-extension:hover{
+  background: #FF7F00;
+  color: white;
+  border: solid 1px #FF7F00;
+  transition: .1s ease-in-out;
+  opacity: 1;
+}
+
+.uk-navbar-nav {
+  font-weight: bold;
+}
+
+.readux-group-title:not(:first-child) {
+  margin-top: 3rem;
+}
+
+.rx-footer {
+  display:flex;
+  list-style:none;
+  font-weight: bold;
+}
+
+.rx-footer > a {
+  padding: 1rem;
+  color: #999;
+  transition: ease-in-out;
+}
+
+.rx-footer > a:first-child {
+  padding-left: 0;
+}
+
+.rx-footer > a:hover {
+  color: #666;
 }

@@ -206,6 +206,9 @@ class VolumeAllDetail(TemplateView):
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
               qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+          else:
+              qs1 = ''
+              qs2 = ''
           context['qs1'] = qs1
           context['qs2'] = qs2
         except MultiValueDictKeyError:
@@ -235,6 +238,9 @@ class PageDetail(TemplateView):
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
               qs2 = qs.filter(owner_id=self.request.user.id).distinct()
+          else:
+              qs1 = ''
+              qs2 = ''
           context['qs1'] = qs1
           context['qs2'] = qs2
         except MultiValueDictKeyError:

@@ -14,6 +14,9 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q
 
+SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
+ORDER_OPTIONS = ['asc', 'desc']
+
 class CollectionsList(ListView):
     template_name = "collections.html"
 
@@ -22,23 +25,25 @@ class CollectionsList(ListView):
 
 class VolumesList(ListView):
     template_name = "volumes.html"
-
+    SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
+    ORDER_OPTIONS = ['asc', 'desc']
+    context_object_name = 'volumes'
+    
+    def get_queryset(self):
+        return Manifest.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sort = self.request.GET.get('sort', None)
         order = self.request.GET.get('order', None)
 
-        q = Manifest.objects.all()
+        q = self.get_queryset()
 
-        sort_options = ['title', 'author', 'date published', 'date added']
-        order_options = ['asc', 'desc']
-        if sort not in sort_options and order not in order_options:
+        # SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
+        # ORDER_OPTIONS = ['asc', 'desc']
+        if sort not in SORT_OPTIONS:
             sort = 'title'
-            order = 'asc'
-        elif sort not in sort_options:
-            sort = 'title'
-        elif order not in order_options:
+        if order not in ORDER_OPTIONS:
             order = 'asc'
 
         if sort == 'title':
@@ -62,40 +67,37 @@ class VolumesList(ListView):
             elif(order == 'desc'):
                 q = q.order_by('-created_at')            
 
-        sort_url_params = self.request.GET.copy()
-        order_url_params = self.request.GET.copy()
+        # sort_url_params = self.request.GET.copy()
+        # order_url_params = self.request.GET.copy()
+        sort_url_params = {'sort': sort, 'order': order}
+        order_url_params = {'sort': sort, 'order': order}
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
 
         context['volumes'] = q.all
         context.update({
-        'sort_url_params': urlencode(sort_url_params),
-        'order_url_params': urlencode(order_url_params),
-        'sort': sort, 'sort_options': sort_options,
-        'order': order, 'order_options': order_options,
-                     })
+            'sort_url_params': urlencode(sort_url_params),
+            'order_url_params': urlencode(order_url_params),
+            'sort': sort, 'SORT_OPTIONS': SORT_OPTIONS,
+            'order': order, 'ORDER_OPTIONS': ORDER_OPTIONS,
+        })
         return context
-    context_object_name = 'volumes'
-    queryset = Manifest.objects.all()
 
 class CollectionDetail(TemplateView):
     template_name = "collection.html"
+    SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
+    ORDER_OPTIONS = ['asc', 'desc']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sort = self.request.GET.get('sort', None)
         order = self.request.GET.get('order', None)
 
-        q = Collection.objects.filter(pid=kwargs['collection']).first().manifests
+        q = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests
 
-        sort_options = ['title', 'author', 'date published', 'date added']
-        order_options = ['asc', 'desc']
-        if sort not in sort_options and order not in order_options:
+        if sort not in SORT_OPTIONS:
             sort = 'title'
-            order = 'asc'
-        elif sort not in sort_options:
-            sort = 'title'
-        elif order not in order_options:
+        if order not in ORDER_OPTIONS:
             order = 'asc'
 
         if sort == 'title':
@@ -126,16 +128,17 @@ class CollectionDetail(TemplateView):
 
         context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
         context['volumes'] = q.all
+        context['manifest_query_set'] = q
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
         context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).count()
         value = 0
         context['value'] = value
         context.update({
-        'sort_url_params': urlencode(sort_url_params),
-        'order_url_params': urlencode(order_url_params),
-        'sort': sort, 'sort_options': sort_options,
-        'order': order, 'order_options': order_options,
-                     })
+            'sort_url_params': urlencode(sort_url_params),
+            'order_url_params': urlencode(order_url_params),
+            'sort': sort, 'SORT_OPTIONS': SORT_OPTIONS,
+            'order': order, 'ORDER_OPTIONS': ORDER_OPTIONS,
+        })
         return context
 
 class VolumeDetail(TemplateView):
@@ -184,6 +187,7 @@ class AnnotationsCount(TemplateView):
 #         
 #         return context
 
+# TODO Is this view still needed?
 class VolumeAllDetail(TemplateView):
     template_name = "page.html"
 
@@ -213,6 +217,7 @@ class VolumeAllDetail(TemplateView):
         
         return context
 
+# TODO is this still needed?
 class PageDetail(TemplateView):
     template_name = "page.html"
 
@@ -262,11 +267,10 @@ class PageDetail(TemplateView):
 #         page = Manifest.canvas_set.first()
 #         return super().get_redirect_url(*args, **kwargs)
 
-
+# TODO is this needed?
 class ExportOptions(TemplateView, FormMixin):
     template_name = "export.html"
     form_class = JekyllExportForm
-
 
     def get_form_kwargs(self):
         # keyword arguments needed to initialize the form

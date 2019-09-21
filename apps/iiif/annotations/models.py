@@ -1,5 +1,5 @@
 from django.contrib.postgres.fields import JSONField
-from django.db import models
+from django.db import models, IntegrityError
 from django.conf import settings
 from django.db.models import signals
 from django.dispatch import receiver
@@ -49,23 +49,10 @@ class AbstractAnnotation(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
     # TODO Should we keep this for annotations from Mirador, or just get rid of it?
-    svg = models.TextField()
+    svg = models.TextField(blank=True, null=True)
     item = None
 
     ordering = ['order']
-
-    def parse_mirador_annotation(self):
-        dimensions = None
-        if 'default' in self.oa_annotation['on'][0]['selector'].keys():
-            dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
-        elif 'value' in self.oa_annotation['on'][0]['selector']['item'].keys():
-            dimensions = self.oa_annotation['on'][0]['selector']['item']['value'].split('=')[-1].split(',')
-        if dimensions is not None:
-            self.x = dimensions[0]
-            self.y = dimensions[1]
-            self.w = dimensions[2]
-            self.h = dimensions[3]
-
 
     def __str__(self):
         return str(self.pk)
@@ -98,6 +85,7 @@ def set_span_element(sender, instance, **kwargs):
             # the width of the overlayed element when someone zooms in and out.
             relative_letter_spacing = letter_spacing / instance.w
             instance.content = "<span id='{pk}' style='height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {s}px' data-letter-spacing='{p}'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size), s=str(letter_spacing), p=str(relative_letter_spacing))
-        except ValueError as error:
-            instance.content = ""
-            logger.warn("WARNING: {e}".format(e=error))
+        # TODO Is this actually how this should be handeled? If not, remove the import of `IntegrityError`
+        except (ValueError, ZeroDivisionError, IntegrityError) as error:
+            instance.content = ''
+            logger.warning("WARNING: {e}".format(e=error))

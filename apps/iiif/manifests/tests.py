@@ -13,9 +13,6 @@ import json
 import logging
 import tempfile
 
-logger = logging.getLogger(__name__)
-logging.disable(logging.NOTSET)
-logger.setLevel(logging.DEBUG)
 class ManifestTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
 

@@ -13,10 +13,10 @@ class KollectionTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.collection = Collection.objects.all().first()
-        self.volume = self.collection.manifests.all()[0]
+        self.volume = self.collection.manifests.all().first()
 
     def test_collection_serialization(self):
-        kwargs = { 'pid': Collection.objects.all().first().pid, 'version': 'v2' }
+        kwargs = { 'pid': self.collection.pid, 'version': 'v2' }
         url = reverse('CollectionRender', kwargs=kwargs)
         response = self.client.get(url)
         collection = json.loads(response.content.decode('UTF-8-sig'))
@@ -30,7 +30,7 @@ class KollectionTests(TestCase):
         assert collection['manifests'][0]['label'] == self.volume.label
     
     def test_collection_manifest_list(self):
-        kwargs = { 'pid': Collection.objects.all().first().pid, 'version': 'v2' }
+        kwargs = { 'pid': self.collection.pid, 'version': 'v2' }
         url = reverse('CollectionManifestRender', kwargs=kwargs)
         response = self.client.get(url)
         collection = json.loads(response.content.decode('UTF-8-sig'))

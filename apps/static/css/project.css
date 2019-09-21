@@ -20,9 +20,9 @@
 
 #viewer {
   width: 78%;
-  height: calc(100% - 200px);
+  height: calc(100% - 193px);
   position: absolute;
-  bottom: -3px;
+  bottom: 0px;
   background: none !important;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .rx-info-container {
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 }
 
 /* 
@@ -673,13 +673,13 @@ p {
   color: #707070;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  font-size: 1em;
-  /* font-weight: bold; */
+  font-size: 0.875em;
+  font-weight: bold;
 }
 
 .rx-info-content-container {
   border: 0.5px solid #e2e2e2;
-  padding: 1.5em 1em;
+  padding: 1em 1em;
   word-break: break-word;
 }
 
@@ -689,12 +689,13 @@ p {
 
 .rx-info-content-label {
   color: #707070;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 1em;
 }
 
 .rx-info-content-value {
   color: #707070;
+  line-height: 1.5;
 }
 
 .rx-article {
@@ -865,4 +866,58 @@ p {
 
 .rx-footer > a:hover {
   color: #666;
+}
+
+.rx-anchor {
+  color: #ea7c0f;
+  opacity: 0.75;
+  -webkit-transition: opacity 150ms ease-in-out;
+  -moz-transition: opacity 150ms ease-in-out;
+  -ms-transition: opacity 150ms ease-in-out;
+  -o-transition: opacity 150ms ease-in-out;
+}
+
+.rx-anchor:hover {
+  color: #ea7c0f;
+  opacity: 1;
+}
+
+::selection {
+  background-color: #707070;
+}
+
+.rx-label-copy {
+  background: white;
+  color: #ea7c0f;
+  border: #ea7c0f 1px solid;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  opacity: 0.75;
+  cursor: pointer;
+  -webkit-transition: opacity 150ms ease-in-out;
+  -moz-transition: opacity 150ms ease-in-out;
+  -ms-transition: opacity 150ms ease-in-out;
+  -o-transition: opacity 150ms ease-in-out;
+}
+
+.rx-label-copy:hover {
+  background: #ea7c0f;
+  color: white;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  opacity: 1;
+}
+
+.rx-flex {
+  display: flex;
+}
+
+.mirador-container .manifest-info {
+  width: initial !important;
+}
+
+.mirador-container .mirador-viewer a.mirador-icon-view-type, .mirador-container .mirador-viewer a.mirador-icon-metadata-view, .mirador-container .mirador-viewer a.mirador-osd-fullscreen {
+  padding: 5px;
+  margin: 0;
 }

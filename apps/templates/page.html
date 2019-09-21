@@ -16,31 +16,6 @@
   <div class="rx-title uk-text-truncate">{{volume.label}}</div>
 </div>
 
-<!-- new search form -->
-{% if page.pid is not None %}
-<form class="uk-search uk-search-default" action="{% url 'page' volume.pid page.pid %}" method="get"
-  accept-charset="utf-8">
-  <!-- <span uk-search-icon></span>&nbsp; -->
-  <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
-  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-</form>
-{% else %}
-<form class="uk-search uk-search-default" action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
-  <!-- <span uk-search-icon></span>&nbsp; -->
-  <input class="form-control mr-sm-2" type="text" placeholder="Search this volume" aria-label="Search" name="q">
-  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-</form>
-{% endif %}
-<!-- new search form -->
-
-<!-- old search form -->
-<form class="uk-search uk-search-default" style="width: calc(100% - 42px) !important;">
-  <span uk-search-icon></span>
-  <input class="uk-search-input" type="search" placeholder="Search this volume..."
-    style="padding-right: 0; padding-top: 0; padding-bottom: 0;">
-</form>
-<!-- old search form -->
-
 {% endblock content %}
 
 {% block viewer %}
@@ -51,6 +26,28 @@
   </div>
 
   <div class="uk-width-1-3@m rx-info-container">
+
+    <div class="rx-info">
+      <!-- new search form -->
+      {% if page.pid is not None %}
+      <form class="uk-search uk-search-default" style="width: 100% !important;"
+        action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+      {% else %}
+      <form class="uk-search uk-search-default" style="width: calc(100% - 42px) !important;"
+        action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          style="padding-right: 0; padding-top: 0; padding-bottom: 0;">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+      {% endif %}
+      <!-- new search form -->
+    </div>
+
     <div class="rx-info">
       <div class="rx-info-title">Basic Information</div>
       <div class="rx-info-content-container">
@@ -66,9 +63,11 @@
   
         <div class="rx-info-content">
           <div class="rx-info-content-label">Collections</div>
-          <div class="rx-info-content-value">
+          <div class="rx-info-content-value uk-margin-small-top">
             {% for col in volume.collections.all %}
-            <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>
+            <a class="nav-link" href="{% url 'collection' col.pid %}">
+              <div class="rx-btn rx-btn-collection">{{ col.label }}</div>
+            </a>
             {% endfor %}
           </div>
         </div>
@@ -110,35 +109,36 @@
       <div class="rx-info-title">URLs</div>
       <div class="rx-info-content-container">
         <div class="rx-info-content">
-          <div class="rx-info-content-label">Manifest</div>
+          <div class="rx-info-content-label uk-flex-between rx-flex ">
+            <span class="">Manifest</span>
+            <span class="uk-label rx-label-copy">Copy</span>
+          </div>
           <div class="rx-info-content-value">
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}"
+            <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}" class="rx-anchor"
               target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}</a>
           </div>
         </div>
   
         <div class="rx-info-content">
-          <div class="rx-info-content-label">Manifest</div>
-          <div class="rx-info-content-value">
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}"
-              target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}</a>
+          <div class="rx-info-content-label uk-flex-between rx-flex ">
+            <span class="">Collection Manifest</span>
+            <span class="uk-label rx-label-copy">Copy</span>
           </div>
-        </div>
-  
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Collection Manifest</div>
           <div class="rx-info-content-value">
             {% for col in volume.collections.all %}
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}"
+            <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" class="rx-anchor"
               target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
             {% endfor %}
           </div>
         </div>
   
         <div class="rx-info-content">
-          <div class="rx-info-content-label">Stable Volume</div>
+          <div class="rx-info-content-label uk-flex-between rx-flex ">
+            <span class="">Stable Volume</span>
+            <span class="uk-label rx-label-copy">Copy</span>
+          </div>
           <div class="rx-info-content-value">
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all"
+            <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all" class="rx-anchor"
               target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all</a>
           </div>
   
@@ -146,7 +146,10 @@
   
         {% if page.pid is not None %}
         <div class="rx-info-content">
-          <div class="rx-info-content-label">Canvas</div>
+          <div class="rx-info-content-label uk-flex-between rx-flex ">
+            <span class="">Canvas</span>
+            <span class="uk-label rx-label-copy">Copy</span>
+          </div>
           <div class="rx-info-content-value">
             <span class="link" id="myLink"></span>
           </div>

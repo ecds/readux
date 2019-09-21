@@ -42608,6 +42608,7 @@ return /******/ (function(modules) { // webpackBootstrap
     var linkText = document.createTextNode(options.uri);
     link.href = options.uri;
     link.title = 'Stable link for canvas';
+    link.className = "rx-anchor";
     link.appendChild(linkText);
     linkContainer.innerHTML='';
     linkContainer.appendChild(link);

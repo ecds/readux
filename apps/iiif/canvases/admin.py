@@ -17,7 +17,7 @@ class CanvasResource(resources.ModelResource):
         widget=ForeignKeyWidget(IServer, 'IIIF_IMAGE_SERVER_BASE'))
     class Meta:
         model = Canvas
-        fields = ('id', 'pid', 'position','height','width', 'IIIF_IMAGE_SERVER_BASElink','manifestid', 'label', 'summary')
+        fields = ('id', 'pid', 'position','height','width', 'IIIF_IMAGE_SERVER_BASElink','manifestid', 'label', 'summary', 'default_ocr')
 
 class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CanvasResource

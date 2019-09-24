@@ -23,25 +23,31 @@
     word-wrap: break-word;
 }
 
-/* 
-.mirador-main-menu-bar,
-.manifest-info {
-    background: unset !important;
+.mirador-container .manifest-info {
+    width: auto !important;
+    height: 40px;
+    float: right;
+    z-index: 2;
 }
- */
 
-/* 
-.mirador-container .mirador-viewer {
-  top: 0 !important;
+.mirador-container .window-manifest-navigation {
+    float: right;
+    margin-left: 1em;
 }
- */
 
-/* 
-.content-container {
-  margin-top: 0 !important;
-}
- */
+
+/* .mirador-container .view-container.focus-max-width {
+    margin-left: 0px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin-top: 34px;
+    box-sizing: border-box;
+    z-index: -1;
 } */
+ 
 
 .uk-search-default {
   width: 95% !important;

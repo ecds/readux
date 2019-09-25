@@ -89,6 +89,11 @@
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="{% if url_name == 'index' %}uk-active{% endif %}"
+                  href="/admin/"><span class="uk-user" uk-icon="icon: cog"></span></a>
+              </li>
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
                   href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user"></span></a>
               </li>
               <li>

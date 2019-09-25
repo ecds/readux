@@ -77,6 +77,7 @@
           <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
         </div>
   
+        {% if volume.note_set|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Notes</div>
           <div class="rx-info-content-value">
@@ -87,6 +88,7 @@
             </ul>
           </div>
         </div>
+        {% endif %}
   
       </div>
     </div>

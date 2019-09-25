@@ -118,10 +118,10 @@
           <img class="rx-card-image" src="{% static 'images/image_not_found.jpg' %}" />
         </div>
         <div class="rx-card-body">
-          <a class="nav-link" href="#">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
-          <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          <a class="nav-link" href="#">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">
               {{ volume.label|truncatechars:200 }}
             </h3>

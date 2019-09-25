@@ -816,6 +816,9 @@ p {
   text-align: center;
   padding: 8px 16px;
   display: inline-block;
+    background: #ea7c0f;
+  color: white;
+  border: solid 1px #ea7c0f;
 }
 
 .rx-btn:hover{
@@ -823,12 +826,7 @@ p {
   color: white;
   background: #707070;
   transition: .1s ease-in-out;
-}
-
-.rx-btn-extension {
-  background: #ea7c0f;
-  color: white;
-  border: solid 1px #ea7c0f;
+  cursor: pointer;
 }
 
 
@@ -838,6 +836,7 @@ p {
   border: solid 1px #FF7F00;
   transition: .1s ease-in-out;
   opacity: 1;
+  cursor:pointer;
 }
 
 .uk-navbar-nav {
@@ -965,10 +964,29 @@ p {
 }
 
 .rx-volume-na {
-  border: 1px solid #afafaf;
+  /* border: 1px solid #afafaf; */
+  background: #fff1e4;
   padding: 1em 0;
 }
 
 .rx-nav-item.uk-active {
   color: #666;
+}
+
+.rx-title-2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #707070;
+}
+
+.rx-btn-small {
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: normal;
+  text-align: center;
+  padding: 6px 12px;
+}
+
+.rx-fieldset {
+  border: none;
 }

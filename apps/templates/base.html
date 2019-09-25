@@ -89,21 +89,21 @@
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="{% if url_name == 'index' %}uk-active{% endif %}"
-                  href="/admin/"><span class="uk-user" uk-icon="icon: cog"></span></a>
+                  href="/admin/"><span class="uk-user" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: bottom"></span></a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <a class="{% if url_name == 'index' %}uk-active{% endif %}"
-                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user"></span></a>
+                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user" uk-tooltip="title: Your account; pos: bottom"></span></a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" href="{% url 'account_logout' %}"><span class="uk-icon" uk-icon="icon: sign-out"></span></a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" href="{% url 'account_logout' %}"><span class="uk-icon" uk-icon="icon: sign-out" uk-tooltip="title: Logout; pos: bottom"></span></a>
               </li>
               {% else %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a href="{% url 'account_login' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in"></span></a>
+                <a href="{% url 'account_login' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in" uk-tooltip="title: Login; pos: bottom"></span></a>
               </li>
               {% endif %}
           </ul>

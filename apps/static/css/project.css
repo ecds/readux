@@ -963,3 +963,12 @@ p {
   width: 200px;
   height: 200px;
 }
+
+.rx-volume-na {
+  border: 1px solid #afafaf;
+  padding: 1em 0;
+}
+
+.rx-nav-item.uk-active {
+  color: #666;
+}

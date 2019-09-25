@@ -10,7 +10,7 @@
       <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
       <li class="rx-breadcrumb-item">Collections</li>
     </ul>
-  
+
     <div class="rx-title">{{ page.page_title }}</div>
     <div class="rx-title-tagline">{{page.tagline}}</div>
   </div>
@@ -20,33 +20,42 @@
 
 {% if page.layout == 'Banner' %}
 <div class="collectionswrapper">
-<ul>
-  {% for collection in page.collections %}
-  <li>
-  <div class="collectionbox">
-    <div class="collectioncontainer">
-      <img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}""/><br />
-        <div class="collection-label"><a class="nav-link" href="{% url 'collection' collection.pid %}"><span>
-          {{ collection.label }}<button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button>
-        </span></a></div>
-    </div></div>
-  </li>
-  {% endfor %}
-</ul>
+  <ul>
+    {% for collection in page.collections %}
+    <li>
+      <a class="nav-link" href="{% url 'collection' collection.pid %}">
+      <div class="collectionbox">
+        <div class="collectioncontainer">
+          <div class="collection-label">
+            {{ collection.label }}{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
+          </div>
+          <img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" />
+        </div>
+      </div>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
 </div>
 {% endif %}
 {% if page.layout == 'Grid' %}
-<div id="wrap">
-  {% for collection in page.collections %}
-  <div id="box">
-    <div id="boxInnerb">
-    <a class="nav-link" href="{% url 'collection' collection.pid %}">
-      <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/></a>
-        <div id="innerContentb"><a class="nav-link" href="{% url 'collection' collection.pid %}"><h2>
-          {{ collection.label }}
-        </h2></a></div><div id="innerContentc"><button>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</button></div>
-    </div></div>
-  {% endfor %}
+<div class="rx-grid">
+{% for collection in page.collections %}
+<article class="rx-article rx-col">
+  <a class="nav-link" href="{% url 'collection' collection.pid %}">
+  <div class="rx-image-container">
+    <figure></figure>
+    <p>{{ collection.label }}<br/>
+      {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</p>
+  </div>
+    <!-- <div class="rx-card-image-container">
+      <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}" />
+      <div class="rx-top-left">
+    </div>
+  </div> -->
+  </a>
+</article>
+{% endfor %}
 </div>
 
 {% endif %}
@@ -54,22 +63,22 @@
 <div class="collectionswrapper">
   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
     {% for collection in page.collections %}
-      <div class="uk-width-1-2@m uk-grid-medium">
-        <div class=" uk-width-1-4@m">
-          <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}" />
-        </div>
-        <div class="uk-width-3-4@m">
-          <a class="nav-link" href="{% url 'collection' collection.pid %}">
-            <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
-          </a>
-          <div class="rx-title-tagline">
-            {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
-          </div>
-          <p>
-            {{collection.summary}}
-          </p>
-        </div>
+    <div class="uk-width-1-2@m uk-grid-medium">
+      <div class=" uk-width-1-4@m">
+        <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}" />
       </div>
+      <div class="uk-width-3-4@m">
+        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+        </a>
+        <div class="rx-title-tagline">
+          {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
+        </div>
+        <p>
+          {{collection.summary}}
+        </p>
+      </div>
+    </div>
     {% endfor %}
   </div>
 </div>

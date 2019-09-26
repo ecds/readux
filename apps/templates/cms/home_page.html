@@ -86,7 +86,7 @@
     <div class="readux-group-title">All Collections</div>
 
     <ul class="uk-padding-remove-left">
-      {% for collection in page.collections %}
+      {% for collection in page.collections|slice:":8" %}
       <li>
         <article class="rx-article">
           <div class="rx-card-image-container">
@@ -110,7 +110,7 @@
 
     {% if page.content_display == 'Volumes' %}
     <div class="readux-group-title">All Volumes</div>
-    {% for volume in page.volumes %}
+    {% for volume in page.volumes|slice:":8" %}
     {% if volume.canvas_set.first.pid is null %}
     <li>
       <article class="rx-article">

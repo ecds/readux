@@ -238,6 +238,7 @@ class PageDetail(TemplateView):
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         qs = Annotation.objects.all()
+        qs2 = UserAnnotation.objects.all()
 
         try:
           search_string = self.request.GET['q']
@@ -247,7 +248,7 @@ class PageDetail(TemplateView):
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-              qs2 = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           else:

@@ -64,8 +64,7 @@
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
-            <div class="rx-title-tagline">TBD
-            </div>
+            <!-- <div class="rx-title-tagline">Expose annotation count when available</div> -->
             <ul class="rx-card-text">
               <li>Author: {{volume.author|truncatechars:100}}</li>
               <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
@@ -114,8 +113,9 @@
     {% if volume.canvas_set.first.pid is null %}
     <li>
       <article class="rx-article">
-        <div class="rx-card-image-container">
-          <img class="rx-card-image" src="{% static 'images/image_not_found.jpg' %}" />
+        <div class="rx-card-image-container uk-text-center rx-volume-na">
+          <span class="rx-item-na" uk-icon="icon: image; ratio: 3"></span>
+          <p>Volume is being added or cover is not available.</p>
         </div>
         <div class="rx-card-body">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
@@ -139,9 +139,21 @@
     <li>
       <article class="rx-article">
         <div class="rx-card-image-container">
-          <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
+          <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
+            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;">
+            {% for canvas in volume.canvas_set.all %}
+            {% if canvas.is_starting_page == 1 %}
+            <img src="{{ canvas.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}" onerror="placeEmptyVolume();" />
+            {% elif forloop.last %}
+            <img src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}"
+              onerror="placeEmptyVolume();" />
+            {% endif %}
+            {% endfor %}
+          </a>
+
+          <!-- <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
             href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
-            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a>
+            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a> -->
         </div>
         <div class="rx-card-body">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
@@ -160,13 +172,6 @@
       </article>
     </li>
 
-    <!-- <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-                {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img
-                  src="{{ canvas.thumbnail_crop_tallwide }}" {% elif forloop.last %}<img
-                  src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
-                  {% endif %}{% endfor %}alt="First page of {{volume.label}}"
-                  onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
-              </a></div> -->
     {% endif %}
     {% endfor %}
 
@@ -178,4 +183,10 @@
     {% endif %}
   </div>
 </div>
+
+<script>
+function placeEmptyVolume() {
+  alert("got an error");
+}
+</script>
 {% endblock %}

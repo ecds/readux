@@ -45,13 +45,15 @@ Publication City: {{volume.published_city}}</p>
   </div><div id="grid-metaforimage"><p>
     <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
   {{ volume.label }}
-</a>  Anno: {% for value in user_annotation_count %}{% if volume.pid in value %}{{ value|safe|slice:"-3:-1" }}{% endif %}{% endfor %}
-<!-- 
-{% if volume.volume_annotation_count > 0 %}
-    <span class="count" title="{{ volume.volume_annotation_count }} annotation{{ volume.volume_annotation_count|pluralize }}">
-(annotations: {{ volume.volume_annotation_count }})</span>
-{% endif %}
- -->
+</a>
+ {% for value in user_annotation_count %}
+ {% if volume.pid in value %}
+ {% if "0" not in value|safe|slice:"-3:-1" %}
+ Anno: {{ value|safe|slice:"-3:-1" }}
+ {% endif %}
+ {% endif %}
+ {% endfor %}
+
 <br/>
 Author: {{volume.author}}<br/>
 Date: {{volume.published_date}}<br/>

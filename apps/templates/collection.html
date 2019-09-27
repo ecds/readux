@@ -24,11 +24,13 @@
 
 <div class="uk-container">
 {% for volume in volumes %}
+
+
 {% if volume.canvas_set.first.pid is null %}
 <div><div id="grid"><div id="grid-image-volume">
     <img src='{% static 'images/image_not_found.jpg' %}'/>
   </div><div id="grid-metaforimage"><p>
-  {{ volume.label }}
+  {{ volume.label }} {% if user_annotation_count > 0 %}Anno: {{ user_annotation_count }}{% endif %}
 <br/>
 Author: {{volume.author}}<br/>
 Date: {{volume.published_date}}<br/>
@@ -42,8 +44,8 @@ Publication City: {{volume.published_city}}</p>
   </a>
   </div><div id="grid-metaforimage"><p>
     <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-  {{ volume.label }} 
-</a> 
+  {{ volume.label }}
+</a>  Anno: {% for value in user_annotation_count %}{% if volume.pid in value %}{{ value|safe|slice:"-3:-1" }}{% endif %}{% endfor %}
 <!-- 
 {% if volume.volume_annotation_count > 0 %}
     <span class="count" title="{{ volume.volume_annotation_count }} annotation{{ volume.volume_annotation_count|pluralize }}">
@@ -58,6 +60,8 @@ Publication City: {{volume.published_city}}</p>
   </div></div>
   {% endif %}
 {% endfor %}
+
+
 </div>
 </div>
 {% endblock content %}

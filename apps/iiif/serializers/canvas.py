@@ -60,7 +60,7 @@ V3
 
 class Serializer(JSONSerializer):
     """
-    Convert a queryset to GeoJSON, https://geojson.org/
+    Convert a queryset to IIIF Canvas
     """
     def _init_options(self):
         super()._init_options()

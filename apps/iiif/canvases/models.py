@@ -31,6 +31,12 @@ class Canvas(models.Model):
     width = models.IntegerField(default=0)
     IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
+    preferred_ocr = (
+        ('word', 'word'),
+        ('line', 'line'),
+        ('both', 'both')
+    )
+    default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
 
     @property
     def identifier(self):
@@ -121,24 +127,65 @@ def set_dimensions(sender, instance, **kwargs):
 
 @receiver(signals.post_save, sender=Canvas)
 def add_ocr(sender, instance, **kwargs):
-    result = services.fetch_alto_ocr(instance)
-    ocr = services.add_alto_ocr(instance, result)
-    word_order = 1
-    if ocr is not None:
-        for word in ocr:
-            if word == '':
-                continue
-            a = Annotation()
-            a.canvas = instance
-            a.x = word['x']
-            a.y = word['y']
-            a.w = word['w']
-            a.h = word['h']
-            a.resource_type = a.OCR
-            a.content = word['content']
-            a.order = word_order
-            a.save()
-            word_order += 1
+    if instance.default_ocr == "line":
+        result = services.fetch_alto_ocr(instance)
+        ocr = services.add_alto_ocr(instance, result)
+        word_order = 1
+        if ocr is not None:
+            for word in ocr:
+                if word == '':
+                    continue
+                a = Annotation()
+                a.canvas = instance
+                a.x = word['x']
+                a.y = word['y']
+                a.w = word['w']
+                a.h = word['h']
+                a.resource_type = a.OCR
+                a.content = word['content']
+                a.order = word_order
+                a.save()
+                word_order += 1
+    elif instance.default_ocr == "word":
+        result = services.fetch_positional_ocr(instance)
+        ocr = services.add_positional_ocr(instance, result)
+        word_order = 1
+        if ocr is not None:
+            for word in ocr:
+                if word == '':
+                    continue
+                a = Annotation()
+                a.canvas = instance
+                a.x = word['x']
+                a.y = word['y']
+                a.w = word['w']
+                a.h = word['h']
+                a.resource_type = a.OCR
+                a.content = word['content']
+                a.order = word_order
+                a.save()
+                word_order += 1
+    elif instance.default_ocr == "both":
+        result = services.fetch_positional_ocr(instance)
+        ocr = services.add_positional_ocr(instance, result)
+        word_order = 1
+        if ocr is not None:
+            for word in ocr:
+                if word == '':
+                    continue
+                a = Annotation()
+                a.canvas = instance
+                a.x = word['x']
+                a.y = word['y']
+                a.w = word['w']
+                a.h = word['h']
+                a.resource_type = a.OCR
+                a.content = word['content']
+                a.order = word_order
+                a.save()
+                word_order += 1
+            
+
 
 class Meta:
     # Translators: admin:skip

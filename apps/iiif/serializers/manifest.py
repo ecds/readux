@@ -58,7 +58,7 @@ V3
 
 class Serializer(JSONSerializer):
     """
-    Convert a queryset to GeoJSON, https://geojson.org/
+    Convert a queryset to IIIF Manifest
     """
     def _init_options(self):
         super()._init_options()
@@ -165,4 +165,4 @@ class Serializer(JSONSerializer):
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("geojson is a serialization-only serializer")
+        raise SerializerDoesNotExist("manifest is a serialization-only serializer")

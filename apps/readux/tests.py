@@ -4,12 +4,15 @@ from django.conf import settings
 # from django.core.management import call_command
 import warnings
 from .annotations import Annotations, AnnotationCrud
+# from .views import VolumesList
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
+from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions
+from urllib.parse import urlencode
 import json
 import re
 
@@ -105,9 +108,11 @@ class AnnotationTests(TestCase):
         self.factory = RequestFactory()
         self.client = Client()
         self.view = Annotations.as_view()
+        # self.volume_list_view = VolumeList.as_view()
         self.crud_view = AnnotationCrud.as_view()
-        self.manifest = Manifest.objects.all()[0]
-        self.canvas = self.manifest.canvas_set.all()[0]
+        self.manifest = Manifest.objects.get(pk='464d82f6-6ae5-4503-9afc-8e3cdd92a3f1')
+        self.canvas = self.manifest.canvas_set.all().first()
+        self.collection = self.manifest.collections.first()
 
     def create_user_annotations(self, count, user):
         for anno in range(count):
@@ -270,10 +275,6 @@ class AnnotationTests(TestCase):
         assert message['message'] == 'You are not the owner of this annotation.'
 
     def test_user_annotations_on_canvas(self):
-        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-        self.manifest = Manifest.objects.all().first()
-        self.canvas = self.manifest.canvas_set.all().first()
-
         # fetch a manifest with no user annotations
         kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
         url = reverse('RenderCanvasDetail', kwargs=kwargs)
@@ -296,4 +297,65 @@ class AnnotationTests(TestCase):
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)
         assert len(serialized_canvas['otherContent']) == 3
+    
+    def test_volume_list_view_no_kwargs(self):
+        response = self.client.get(reverse('volumes list'))
+        context = response.context_data
+        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
+        assert context['object_list'].count() == Manifest.objects.all().count()
+    
+    def test_volume_list_invalid_kwargs(self):
+        kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
+        response = self.client.get(reverse('volumes list'), data=kwargs)
+        context = response.context_data
+        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
+        assert context['object_list'].count() == Manifest.objects.all().count()
 
+    def test_volumes_list_view_sort_and_order(self):
+        view = VolumesList()
+        for sort in view.SORT_OPTIONS:
+            for order in view.ORDER_OPTIONS:
+                kwargs = {'sort': sort, 'order': order}
+                url = reverse('volumes list')
+                response = self.client.get(url, data=kwargs)
+                context = response.context_data
+                assert context['order_url_params'] == urlencode({'sort': sort, 'order': order})
+                assert context['object_list'].count() == Manifest.objects.all().count()
+                assert view.get_queryset().ordered
+
+    def test_collection_detail_view_no_kwargs(self):
+        response = self.client.get(reverse('volumes list'))
+        context = response.context_data
+        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
+        assert context['object_list'].count() == Manifest.objects.all().count()
+    
+    def test_collection_detail_invalid_kwargs(self):
+        kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
+        response = self.client.get(reverse('volumes list'), data=kwargs)
+        context = response.context_data
+        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
+        assert context['object_list'].count() == Manifest.objects.all().count()
+
+    # TODO are the volumes actually sorted?
+    def test_collection_detail_view_sort_and_order(self):
+        view = CollectionDetail()
+        for sort in view.SORT_OPTIONS:
+            for order in view.ORDER_OPTIONS:
+                kwargs = {'sort': sort, 'order': order}
+                url = reverse('collection', kwargs={ 'collection': self.collection.pid })
+                response = self.client.get(url, data=kwargs)
+                context = response.context_data
+                assert context['order_url_params'] == urlencode({'sort': sort, 'order': order})
+                assert context['manifest_query_set'].ordered
+
+    def test_volume_detail_view(self):
+        url = reverse('volume', kwargs={'volume': self.manifest.pid})
+        response = self.client.get(url)
+        assert response.context_data['volume'] == self.manifest
+        # for key, value in response.context_data.items() :
+        #     print(key, value)
+
+    # TODO This view maybe not needed?
+    def test_export_options_view(self):
+        url = reverse('export', kwargs={'volume': self.manifest.pid})
+        response = self.client.get(url)

@@ -41,3 +41,47 @@ class AnnotationTests(TestCase):
         a.sort()
         assert a == b
 
+    def test_ocr_span(self):
+        ocr = Annotation()
+        ocr.oa_annotation = {"annotatedBy": {"name": "ocr"}}
+        ocr.x = 100
+        ocr.y = 10
+        ocr.w = 100
+        ocr.h = 10
+        ocr.content = "Obviously you're not a golfer"
+        ocr.save()
+        assert ocr.content == "<span id='{pk}' style='height: 10px; width: 100px; font-size: 6.25px; letter-spacing: 0.3232758620689655px' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
+
+    def test_invalid_ocr(self):
+        ocr = Annotation()
+        ocr.oa_annotation = {"annotatedBy": {"name": "ocr"}}
+        ocr.x = 100
+        ocr.y = 10
+        ocr.w = 100
+        ocr.h = 10
+        ocr.format = Annotation.HTML
+        ocr.save()
+        assert ocr.content == ''
+        assert ocr.format == 'text/html'
+    
+    def test_annotation_string(self):
+        anno = Annotation.objects.all().first()
+        assert anno.__str__() == str(anno.pk)
+
+    def test_annotation_choices(self):
+        anno = Annotation()
+        anno.format = Annotation.HTML
+        assert anno.format == 'text/html'
+        anno.format = Annotation.PLAIN
+        assert anno.format == 'text/plain'
+        anno.format = Annotation.OCR
+        assert anno.format == 'cnt:ContentAsText'
+        anno.format = Annotation.TEXT
+        assert anno.format == 'dctypes:Text'
+        anno.format = Annotation.COMMENTING
+        assert anno.format == 'oa:commenting'
+        anno.format = Annotation.PAINTING
+        assert anno.format == 'sc:painting'
+        assert Annotation.FORMAT_CHOICES == (('text/plain', 'plain text'), ('text/html', 'html'))
+        assert Annotation.TYPE_CHOICES == (('cnt:ContentAsText', 'ocr'), ('dctypes:Text', 'text'))
+        assert Annotation.MOTIVATION_CHOICES == (('oa:commenting', 'commenting'), ('sc:painting', 'painting'))

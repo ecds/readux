@@ -47,6 +47,9 @@ class Manifest(ClusterableModel):
 
     def get_volume_url(self):
         return "%s/volume/%s/page/all" % (settings.HOSTNAME, self.pid)
+    
+    class Meta:
+        ordering = ['published_date']
 
     # TODO is this needed?
     # @property

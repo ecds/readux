@@ -114,14 +114,14 @@ class IiifManifestExport:
                 annotations = canvas.userannotation_set.filter(owner__in=owners).all()
                 json_hash = json.loads(
                     serialize(
-                        'annotation',
-                        annotations,
+                        'user_annotation_list',
+                        [canvas],
                         version=version,
-                        is_list=True
+                        is_list=False,
+                        owners=[User.objects.get(id__in=owners)]
                     )
                 )
                 anno_uri = json_hash['@id']
-
                 annotation_file = re.sub('\W','_', anno_uri) + ".json"
 
                 zf.writestr(

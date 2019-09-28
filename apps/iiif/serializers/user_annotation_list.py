@@ -4,6 +4,7 @@ from django.db.models import Q
 import config.settings.local as settings
 from django.core.serializers import serialize
 import json
+from apps.users.models import User
 
 class Serializer(JSONSerializer):
     """
@@ -37,7 +38,7 @@ class Serializer(JSONSerializer):
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": "%s/annotations/%s/%s/%s/list" % (settings.HOSTNAME, self.owners[0].username, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.userannotation_set.filter(owner__in=self.owners), is_list=True))
+                "resources": json.loads(serialize('annotation', obj.userannotation_set.filter(owner__in=[self.owners[0].id]), is_list=True))
             }
             return data
 

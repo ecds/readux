@@ -65,6 +65,7 @@ class AnnotationCrud(View):
         annotation = UserAnnotation()
         annotation.oa_annotation = oa_annotation
         annotation.owner = request.user
+        annotation.motivation = 'oa:commenting'
         annotation.save()
         # TODO: should we respond with the saved annotation?
         return JsonResponse(

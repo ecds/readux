@@ -5,7 +5,6 @@
 {% endblock extra_css %}
 
 {% block content %}
-
 <div class="rx-title-container">
   <ul class="rx-breadcrumb uk-text-truncate">
     <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
@@ -33,20 +32,79 @@
       <form class="uk-search uk-search-default" style="width: 100% !important;"
         action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
         <span uk-search-icon></span>
-        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q">
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q" value="{{request.GET.q}}">
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       {% else %}
       <form class="uk-search uk-search-default" style="width: calc(100% - 42px) !important;"
         action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
         <span uk-search-icon></span>
-        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-          style="padding-right: 0; padding-top: 0; padding-bottom: 0;">
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q" value="{{request.GET.q}}">
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       {% endif %}
       <!-- new search form -->
     </div>
+
+    {% if qs1 or qs2 %}
+    <div class="rx-info ">
+      <div class="rx-info-content-container uk-padding-remove-vertical">
+        <div class="rx-info-content">
+
+          <!--new-->
+          {% if user_annotation_count > 0 %}
+          <ul class="uk-subnav uk-subnav-pill" uk-switcher>
+            <li><a href="#">{{ user_annotation_count }} annotations in manifest</a></li>
+            <li><a href="#">{{ user_annotation_page_count }} annotations on page</a></li>
+          </ul>
+          <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
+          {% endif %}
+
+          <div>
+            <!-- nav head -->
+            <ul class="uk-tab" uk-switcher>
+              <li><a href="#">{{ qs1|length }} hits in text</a></li>
+              <li><a href="#">{{ user_annotation_page_count }} annotations on page</a></li>
+            </ul>
+            <!-- end of nav head -->
+            <!-- nav body -->
+            <ul class="uk-switcher uk-margin-small rx-search-result">
+              <li>
+                {% if qs1 %}
+                <ul class="uk-padding-remove">{% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
+                      target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                  {% endif %}{% endfor %}</ul>
+                {% elif request.GET.q  and not qs1 %}
+                <p>No results in the text in this volume</p>{% endif %}
+              </li>
+              <li>
+                {% if qs2 %}
+                <ul class="uk-padding-remove">{% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
+                      target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                  {% endif %}{% endfor %}</ul>
+                {% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
+                {% endif %}
+              </li>
+            </ul>
+            <!-- end of nav body -->
+          </div>
+
+          <!--new-->
+          {% if user_annotation_count > 0 %}
+          <form action="{% url 'export' volume.pid %}" class="button_to" method="GET">
+            <div><input type="submit" value="Export" title="Export in a variety of formats" />{% csrf_token %}</div>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+
 
     <div class="rx-info">
       <div class="rx-info-title">Basic Information</div>
@@ -55,12 +113,12 @@
           <div class="rx-info-content-label">Authors</div>
           <div class="rx-info-content-value">{{ volume.author }}</div>
         </div>
-  
+
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publication Date</div>
           <div class="rx-info-content-value">{{ volume.published_date }}</div>
         </div>
-  
+
         <div class="rx-info-content">
           <div class="rx-info-content-label">Collections</div>
           <div class="rx-info-content-value uk-margin-small-top">
@@ -71,12 +129,12 @@
             {% endfor %}
           </div>
         </div>
-  
+
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
           <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
         </div>
-  
+
         {% if volume.note_set|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Notes</div>
@@ -89,10 +147,10 @@
           </div>
         </div>
         {% endif %}
-  
+
       </div>
     </div>
-  
+
     <div class="rx-info">
       <div class="rx-info-title">Actions</div>
       <div class="rx-info-content-container">
@@ -106,121 +164,102 @@
 
       </div>
     </div>
-  
+
     <div class="rx-info">
       <div class="rx-info-title">URLs</div>
       <div class="rx-info-content-container">
+
         <div class="rx-info-content">
           <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span class="">Manifest</span>
-            <span class="uk-label rx-label-copy">Copy</span>
+            <span>Manifest</span>
+            <div>
+              <span class="rx-tooltip-hidden">Copied</span>
+              <span class="uk-label rx-label-copy">Copy</span>
+            </div>
           </div>
           <div class="rx-info-content-value">
             <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}" class="rx-anchor"
               target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}</a>
           </div>
         </div>
-  
+
         <div class="rx-info-content">
-          <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span class="">Collection Manifest</span>
-            <span class="uk-label rx-label-copy">Copy</span>
+          <div class="rx-info-content-label uk-flex-between rx-flex">
+            <span>Collection Manifest</span>
           </div>
-          <div class="rx-info-content-value">
+          <div class="rx-info-content-value uk-flex-between rx-flex">
             {% for col in volume.collections.all %}
             <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" class="rx-anchor"
               target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
+            <div>
+              <span class="rx-tooltip-hidden">Copied</span>
+              <span class="uk-label rx-label-copy">Copy</span>
+            </div>
             {% endfor %}
           </div>
         </div>
-  
+
         <div class="rx-info-content">
           <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span class="">Stable Volume</span>
-            <span class="uk-label rx-label-copy">Copy</span>
+            <span>Stable Volume</span>
+            <div>
+              <span class="rx-tooltip-hidden">Copied</span>
+              <span class="uk-label rx-label-copy">Copy</span></div>
           </div>
           <div class="rx-info-content-value">
             <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all" class="rx-anchor"
               target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all</a>
           </div>
-  
         </div>
-  
+
         {% if page.pid is not None %}
+
         <div class="rx-info-content">
           <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span class="">Canvas</span>
-            <span class="uk-label rx-label-copy">Copy</span>
-          </div>
-          <div class="rx-info-content-value">
-            <span class="link" id="myLink"></span>
-          </div>
-        </div>
-  
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Stable Page</div>
-          <div class="rx-info-content-value">
-            <span class="link" id="mySpan"></span>
-            <!--new-->
-            <br />{% if user_annotation_count > 0 %}
-            <b>My annotations (this manifest):</b> {{ user_annotation_count }}
-            <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
-            <br />
-            <b>My annotations (this page):</b> {{ user_annotation_page_count }}
-            <br />{% endif %}
-
+            <span>Canvas</span>
             <div>
-              {% if qs1 %}
-              <hr />
-              <p><strong>The results of the search query in text: {{ request.GET.q }}</strong></p>
-              <ul>{% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
-                <li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
-                    target="_blank">Canvas {{ answer.canvas.position }}</a></li>
-                {% endif %}{% endfor %}</ul>
-              {% elif request.GET.q  and not qs1 %}
-              <hr />
-              <p>No results in the text in this volume</p>{% endif %}
-              {% if qs2 %}
-              <p><strong>The results of the search query in your annotations: {{ request.GET.q }}</strong></p>
-              <ul>{% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
-                <li><a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
-                    target="_blank">Canvas {{ answer.canvas.position }}</a></li>
-                {% endif %}{% endfor %}</ul>
-              {% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
-              {% endif %}
-            </div>
-            <!--new-->
-            {% if user_annotation_count > 0 %}
-            <form action="{% url 'export' volume.pid %}" class="button_to" method="GET">
-              <div><input type="submit" value="Export" title="Export in a variety of formats" />{% csrf_token %}</div>
-            </form>
-            {% endif %}
-            {% endif %}
-
+              <span class="rx-tooltip-hidden">Copied</span>
+              <span class="uk-label rx-label-copy">Copy</span></div>
+          </div>
+          <div class="rx-info-content-value">
+            <a href="#" class="rx-anchor" id="rx-url-canvas" target="_blank"></a>
           </div>
         </div>
-  
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label uk-flex-between rx-flex ">
+            <span>Stable Page</span>
+            <div>
+              <span class="rx-tooltip-hidden">Copied</span>
+              <span class="uk-label rx-label-copy">Copy</span></div>
+          </div>
+          <div class="rx-info-content-value">
+            <a href="#" class="rx-anchor" id="rx-url-stable-page" target="_blank"></a>
+          </div>
+        </div>
+        {% endif %}
+
       </div>
-  
+
     </div>
-  
+
     <!-- start ocr el -->
     <div id="ocr" style="opacity: 0;"></div>
     <!-- end ocr el -->
   </div>
-  
+
 </div>
 
-        
-        
-          {% if page.pid is not None %}
+
+
+{% if page.pid is not None %}
 
 <!-- 
         <p id="test"></p>
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
         <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
 -->
-  {% endif %}
+{% endif %}
 
 {% endblock viewer %}
 
@@ -228,12 +267,25 @@
 <script src="{% static 'mirador/mirador.js' %}"></script>
 <script type="text/javascript">
 
-  $(function() {
+  $(".rx-label-copy").click(function () {
+    copyToClipboard(this.parentElement.parentElement.parentElement.lastElementChild.lastElementChild.href);
+  });
+
+  function copyToClipboard(text) {
+    var placeholder = document.createElement("textarea");
+    document.body.appendChild(placeholder);
+    placeholder.value = text;
+    placeholder.select();
+    document.execCommand("copy");
+    document.body.removeChild(placeholder);
+  }
+
+  $(function () {
     Mirador({
       "id": "viewer",
-      "mainMenuSettings" : {
-        'show' : false,
-        'buttons' : {
+      "mainMenuSettings": {
+        'show': false,
+        'buttons': {
           info: false
         }
       },
@@ -243,8 +295,8 @@
           "manifestUri": "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ volume.pid }}/manifest", "location": "Emory University"
         }
       ],
-      'windowSettings' : {
-        "overlay" : true,
+      'windowSettings': {
+        "overlay": true,
         "canvasControls": {}
       },
       "windowObjects": [{
@@ -252,21 +304,21 @@
         annotationLayer: true,
         annotationCreation: true,
         annotationState: 'annoOncreateOn',{% if page.pid is not None %}
-        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ page.manifest.pid }}/canvas/{{ page.pid }}',{% endif %}
-        displayLayout: false,
-        sidePanel: false,
-        {% if "/page/all" in request.get_full_path %}
-        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ volume.pid }}/canvas/{{ volume.canvas_set.pid.first }}',
-        viewType: "ThumbnailsView"
-        {% endif %}
+        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ page.manifest.pid }}/canvas/{{ page.pid }}', {% endif %}
+    displayLayout: false,
+    sidePanel: false,
+    {% if "/page/all" in request.get_full_path %}
+  canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ volume.pid }}/canvas/{{ volume.canvas_set.pid.first }}',
+    viewType: "ThumbnailsView"
+  {% endif %}
       }],
-      {% if user.is_anonymous %}
-        "availableAnnotationDrawingTools": [],
-        "availableAnnotationStylePickers": [],
+  {% if user.is_anonymous %}
+  "availableAnnotationDrawingTools": [],
+    "availableAnnotationStylePickers": [],
       {% else %}
-        username: '{{user.get_username}}',
-      {% endif %}
-      "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
+  username: '{{user.get_username}}',
+    {% endif %}
+  "annotationEndpoint": { "name": "Readux", "module": "ReaduxEndpoint" }
     });
   });
 

@@ -42593,8 +42593,8 @@ return /******/ (function(modules) { // webpackBootstrap
           this.popStateEvent = false;
         }
         // Wait until the history has been updated so `window.location` is accurate.
-        if (document.getElementById("mySpan") !== null) {
-          document.getElementById("mySpan").innerHTML = window.location.href;
+        if (document.getElementById("rx-url-stable-page") !== null) {
+          document.getElementById("rx-url-stable-page").innerHTML = window.location.href;
         }
       });
   },
@@ -42603,15 +42603,12 @@ return /******/ (function(modules) { // webpackBootstrap
   search: function(options, successCallback, errorCallback) {
     // if (this.username == null) return;
     this.annotationsList = [];
-    var linkContainer = document.getElementById("myLink");
-    var link = document.createElement('a');
+    var link = document.getElementById("rx-url-canvas");
     var linkText = document.createTextNode(options.uri);
     link.href = options.uri;
     link.title = 'Stable link for canvas';
     link.className = "rx-anchor";
     link.appendChild(linkText);
-    linkContainer.innerHTML='';
-    linkContainer.appendChild(link);
     this.volume = options.uri.split('/').reverse()[2];
     this.page = options.uri.split('/').reverse()[0];
 
@@ -48691,7 +48688,7 @@ return /******/ (function(modules) { // webpackBootstrap
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
         // TODO move this
         // grabs the changed url when you click a thumbnail and updates the myLink variable to change the page url
-        document.getElementById("mySpan").innerHTML=canvasID;
+        document.getElementById("rx-url-stable-page").innerHTML=canvasID;
       });
     },
 

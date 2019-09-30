@@ -15,6 +15,6 @@ urlpatterns = [
   path('volume/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),
   path('volume/<volume>/export', views.ExportOptions.as_view(), name='export' ),
   path('annotations/', annotations.Annotations.as_view(), name='post_user_annotations' ),
-  path('annotations/<username>/<volume>/<canvas>/list', annotations.Annotations.as_view(), name='user_annotations' ),
+  path('annotations/<username>/<volume>/list/<canvas>', annotations.Annotations.as_view(), name='user_annotations' ),
   path('annotations-crud/', annotations.AnnotationCrud.as_view(), name='crud_user_annotation' )
 ]

@@ -18,3 +18,42 @@
           navItem.classList.add("uk-active");
         }
     });
+
+
+    // sort items displayed by appending/updating search params in URL
+    function ascaddURL(element) {
+      $(element).attr("href", function() {
+        if (window.location.search.length == 0) {
+          this.href = this.href + "?sort=title&order=asc";
+          return this.href;
+        } else if (window.location.search.match(/[?&]order=asc/gi)) {
+          this.href = this.href.replace("order=asc", "order=asc");
+          return this.href;
+        } else if (window.location.search.match(/[?&]order=desc/gi)) {
+          this.href = this.href.replace("order=desc", "order=asc");
+          return this.href;
+        } else {
+          this.href = this.href + "&order=asc";
+          return this.href;
+        }
+      });
+    }
+
+    // sort items displayed by appending/updating search params in URL
+    function descaddURL(element) {
+      $(element).attr("href", function() {
+        if (window.location.search.length == 0) {
+          this.href = this.href + "?sort=title&order=desc";
+          return this.href;
+        } else if (window.location.search.match(/[?&]order=asc/gi)) {
+          this.href = this.href.replace("order=asc", "order=desc");
+          return this.href;
+        } else if (window.location.search.match(/[?&]order=desc/gi)) {
+          this.href = this.href.replace("order=desc", "order=desc");
+          return this.href;
+        } else {
+          this.href = this.href + "&order=desc";
+          return this.href;
+        }
+      });
+    }

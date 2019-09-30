@@ -71,7 +71,7 @@
 
   <body>
 
-    <div class="uk-container">
+    <div class="uk-container" id="v-readux">
       <nav class="" uk-navbar id="rx-nav">
         <div class="uk-navbar-left">
           <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
@@ -128,10 +128,12 @@
 
     {% block javascript %}
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit-icons.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
       <script src="{% static 'js/selectize.js' %}"></script>
       <script src="{% static 'js/project.js' %}"></script>
+      <script src="{% static 'js/vue-readux.js' %}"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit-icons.min.js"></script>
       <script src="https://kit.fontawesome.com/2ebfe61a88.js" crossorigin="anonymous"></script>
     {% endblock javascript %}
     {% block extra_javascript %}{% endblock extra_javascript %}

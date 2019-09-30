@@ -123,7 +123,11 @@ class AnnotationTests(TestCase):
             text_anno.save()
     
     def load_anno(self, response):
-        return json.loads(response.content.decode('UTF-8-sig'))
+        annotation_list = json.loads(response.content.decode('UTF-8-sig'))
+        if 'resources' in annotation_list:
+            return annotation_list['resources']
+        else:
+            return annotation_list
     
     def rando_anno(self):
         return UserAnnotation.objects.order_by("?").first()
@@ -138,8 +142,8 @@ class AnnotationTests(TestCase):
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
-        assert len(annotation) == 0
-        assert response.status_code == 200
+        assert response.status_code == 401
+#        assert len(annotation) == 0
 
     def test_mirador_svg_annotation_creation(self):
         request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['svg']), content_type="application/json")
@@ -193,7 +197,8 @@ class AnnotationTests(TestCase):
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
-        assert len(annotation) == 0
+        assert response.status_code == 401
+#        assert len(annotation) == 0
 
     def test_update_user_annotation(self):
         self.create_user_annotations(1, self.user_a)

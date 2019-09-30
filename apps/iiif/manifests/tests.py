@@ -51,14 +51,14 @@ class ManifestTests(TestCase):
 
     def test_properties(self):
         assert self.volume.publisher_bib == "In Roma : Appresso Niccol\u00f2, e Marco Pagliarini ..."
-        assert self.volume.thumbnail_logo == "%s/%s/%s" % (settings.HOSTNAME, "media", "awesome.png")
-        assert self.volume.baseurl == "%s/iiif/v2/%s" % (settings.HOSTNAME, self.volume.pid)
-        assert self.volume.start_canvas == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.volume.pid, self.start_canvas.pid)
+        assert self.volume.thumbnail_logo.endswith("/%s/%s" % ("media", "awesome.png"))
+        assert self.volume.baseurl.endswith("/iiif/v2/%s" % (self.volume.pid))
+        assert self.volume.start_canvas.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
     
     def test_default_start_canvas(self):
         self.start_canvas.is_starting_page = False
         self.start_canvas.save()
-        assert self.volume.start_canvas == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.volume.pid, self.default_start_canvas.pid)
+        assert self.volume.start_canvas.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.default_start_canvas.pid))
 
     def test_meta(self):
         assert str(self.volume) == self.assumed_label

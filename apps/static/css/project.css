@@ -72,9 +72,9 @@
 }
 
 .openseadragon-container span {
-    background: rgba(0, 255, 255, 0.33);
-    /* color: transparent; */
-    color: deeppink;
+    /* background: rgba(0, 255, 255, 0.33); */
+    color: transparent;
+    /* color: deeppink; */
     display: inline-flex !important;
     font-size: 100%;
     line-height: initial;

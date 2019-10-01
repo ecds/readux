@@ -5,9 +5,9 @@ from django.conf import settings
 import warnings
 from .annotations import Annotations, AnnotationCrud
 # from .views import VolumesList
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.template import Context, Template
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
@@ -15,6 +15,8 @@ from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, Colle
 from urllib.parse import urlencode
 import json
 import re
+
+User = get_user_model()
 
 class AnnotationTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -123,7 +125,11 @@ class AnnotationTests(TestCase):
             text_anno.save()
     
     def load_anno(self, response):
-        return json.loads(response.content.decode('UTF-8-sig'))
+        annotation_list = json.loads(response.content.decode('UTF-8-sig'))
+        if 'resources' in annotation_list:
+            return annotation_list['resources']
+        else:
+            return annotation_list
     
     def rando_anno(self):
         return UserAnnotation.objects.order_by("?").first()
@@ -138,8 +144,8 @@ class AnnotationTests(TestCase):
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
-        assert len(annotation) == 0
-        assert response.status_code == 200
+        assert response.status_code == 401
+#        assert len(annotation) == 0
 
     def test_mirador_svg_annotation_creation(self):
         request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['svg']), content_type="application/json")
@@ -193,7 +199,8 @@ class AnnotationTests(TestCase):
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
-        assert len(annotation) == 0
+        assert response.status_code == 401
+#        assert len(annotation) == 0
 
     def test_update_user_annotation(self):
         self.create_user_annotations(1, self.user_a)
@@ -336,7 +343,7 @@ class AnnotationTests(TestCase):
         view = CollectionDetail()
         for sort in view.SORT_OPTIONS:
             for order in view.ORDER_OPTIONS:
-                kwargs = {'sort': sort, 'order': order}
+                kwargs = {'sort': sort, 'order': order }
                 url = reverse('collection', kwargs={ 'collection': self.collection.pid })
                 response = self.client.get(url, data=kwargs)
                 context = response.context_data
@@ -354,3 +361,4 @@ class AnnotationTests(TestCase):
     def test_export_options_view(self):
         url = reverse('export', kwargs={'volume': self.manifest.pid})
         response = self.client.get(url)
+    

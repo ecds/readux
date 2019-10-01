@@ -2,63 +2,6 @@
 With these settings, tests run faster.
 """
 
-from .base import *  # noqa
-from .base import env
+from .local import *  # noqa
+from .local import env
 
-# GENERAL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = False
-# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY", default="3iptkMVNxVhgzsxo2L5qfZRbC1RJOFGUxQt65X9YqfCSAcj4PcOVIzoefkyDysfu")
-# https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
-TEST_RUNNER = "django.test.runner.DiscoverRunner"
-
-# CACHES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#caches
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache", "LOCATION": ""
-    }
-}
-
-# PASSWORDS
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#password-hashers
-PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
-# TEMPLATES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#templates
-TEMPLATES[0]["OPTIONS"]["debug"] = DEBUG  # noqa F405
-TEMPLATES[0]["OPTIONS"]["loaders"] = [  # noqa F405
-    (
-        "django.template.loaders.cached.Loader",
-        [
-            "django.template.loaders.filesystem.Loader",
-            "django.template.loaders.app_directories.Loader",
-        ],
-    )
-]
-
-# EMAIL
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = "localhost"
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-EMAIL_PORT = 1025
-
-# Your stuff...
-# ------------------------------------------------------------------------------
-IIIF_IMAGE_SERVER_BASE = 'https://loris.library.emory.edu'
-
-HOSTNAME = 'https://readux-dev.org:3000'
-MEDIA_ROOT = '/tmp/'
-MEDIA_URL = '/media/'
-
-DATASTREAM_PREFIX = 'http://repo.library.emory.edu/fedora/objects/'
-DATASTREAM_SUFFIX = '/datastreams/position/content'
-HTTP_REQUEST_TIMEOUT = 5

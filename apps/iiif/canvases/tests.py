@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
 import config.settings.local as settings
-from .models import Canvas
+from .models import Canvas, IServer
 from . import services
 from apps.iiif.canvases.apps import CanvasesConfig
 import json
@@ -19,6 +19,10 @@ class CanvasTests(TestCase):
         self.assumed_canvas_pid = 'fedora:emory:5622'
         self.assumed_volume_pid = 'readux:st7r6'
         self.assumed_iiif_base = 'https://loris.library.emory.edu'
+
+    def test_default_iiif_image_server_url(self):
+        i_server = IServer()
+        assert i_server.IIIF_IMAGE_SERVER_BASE == settings.IIIF_IMAGE_SERVER_BASE
     
     def test_app_config(self):
         assert CanvasesConfig.verbose_name == 'Canvases'
@@ -104,6 +108,26 @@ class CanvasTests(TestCase):
         assert ocr[1]['x'] == 814
         assert ocr[1]['y'] == 185
 
+    def test_ocr_from_tsv(self):
+        iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
+        self.canvas.IIIF_IMAGE_SERVER_BASE = iiif_server
+        tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n"""
+        ocr = services.add_positional_ocr(self.canvas, tsv)
+        assert ocr[0]['content'] == 'Jordan'
+        assert ocr[0]['h'] == 43
+        assert ocr[0]['w'] == 89
+        assert ocr[0]['x'] == 459
+        assert ocr[0]['y'] == 391
+
+    def test_no_alto_from_empty_result(self):
+        ocr = services.add_alto_ocr(self.canvas, None)
+        assert ocr is None
+    
+    def test_from_bad_alto(self):
+        alto = open('apps/iiif/canvases/fixtures/bad_alto.xml', 'r').read()
+        ocr = services.add_alto_ocr(self.canvas, alto)
+        assert ocr is None
+
     def test_canvas_detail(self):
         kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
         url = reverse('RenderCanvasDetail', kwargs=kwargs)
@@ -137,3 +161,5 @@ class CanvasTests(TestCase):
         assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
         assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
         assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+
+    # def test_default_ocr_line(self):

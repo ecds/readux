@@ -15,12 +15,8 @@ from datetime import datetime
 import json
 import logging
 
-
 logger = logging.getLogger(__name__)
 
-
-# TODO Would still be nice to use DRF. Try this?
-# https://stackoverflow.com/a/35019122
 class ManifestDetail(View):
 
     def get_queryset(self):

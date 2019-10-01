@@ -4,12 +4,13 @@ from django.conf import settings
 from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from abc import abstractmethod
 import json
 import uuid
 import logging
 
+User = get_user_model()
 logger = logging.getLogger(__name__)
 
 class AbstractAnnotation(models.Model):
@@ -46,7 +47,7 @@ class AbstractAnnotation(models.Model):
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)
     canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE, null=True)
     language = models.CharField(max_length=10, default='en')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
     # TODO Should we keep this for annotations from Mirador, or just get rid of it?
     svg = models.TextField(blank=True, null=True)
@@ -70,6 +71,7 @@ def set_span_element(sender, instance, **kwargs):
     if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation['annotatedBy']['name'] == "ocr"):
         try:
             instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
+            instance.owner = User.objects.get_or_create(username='ocr', name='OCR')[0]
             character_count = len(instance.content)
             # 1.6 is a "magic number" that seems to work pretty well ¯\_(ツ)_/¯
             font_size = instance.h / 1.6

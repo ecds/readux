@@ -10,6 +10,7 @@ def get_canvas_info(canvas):
     """ Given a url, this function returns a dictionary of all collections."""
     return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
 
+# TODO figure out a way to test the fetch
 def fetch_positional_ocr(canvas):
     if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
         return fetch_url("https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(m=canvas.manifest.pid, p=canvas.pid.split('$')[-1]))
@@ -74,7 +75,6 @@ def fetch_alto_ocr(canvas):
         return None
     else:
         url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
-        print(url)
         return fetch_url(url, format='text/plain')
 
 def add_alto_ocr(canvas, result):

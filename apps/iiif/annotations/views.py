@@ -2,11 +2,13 @@ from rest_framework import generics
 from django.views import View
 from django.views.generic import ListView
 from django.core.serializers import serialize
+from django.contrib.auth import get_user_model
 import json
 from django.http import JsonResponse
 from .models import Annotation
 from ..canvases.models import Canvas
 
+User = get_user_model()
 class AnnotationsForPage(View):
     """
     Endpoint to to display annotations for a page.
@@ -47,7 +49,7 @@ class OcrForPage(View):
         return Canvas.objects.filter(pid=self.kwargs['page'])
     
     def get(self, request, *args, **kwargs):
-        owners = [request.user.id]
+        owners = [User.objects.get(username='ocr', name='OCR')]
 
         return JsonResponse(
             json.loads(

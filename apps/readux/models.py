@@ -78,18 +78,6 @@ class UserAnnotation(AbstractAnnotation):
         self.h = max(text.values_list('h', flat=True))
         self.w = text.last().x + text.last().w - self.x
 
-    def __set_xywh_svg_anno(self):
-        dimensions = None
-        if 'default' in self.oa_annotation['on'][0]['selector'].keys():
-            dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
-        elif 'value' in self.oa_annotation['on'][0]['selector']['item'].keys():
-            dimensions = self.oa_annotation['on'][0]['selector']['item']['value'].split('=')[-1].split(',')
-        if dimensions is not None:
-            self.x = dimensions[0]
-            self.y = dimensions[1]
-            self.w = dimensions[2]
-            self.h = dimensions[3]
-
     def __text_anno_item(self):
         return dict({
             "@type": "RangeSelector",

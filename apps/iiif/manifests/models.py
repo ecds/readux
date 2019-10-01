@@ -3,7 +3,8 @@ import config.settings.local as settings
 from ..kollections.models import Collection
 from ..annotations.models import Annotation
 from django.contrib.postgres.fields import JSONField
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 import urllib.request
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
@@ -11,6 +12,9 @@ from json import JSONEncoder
 import uuid
 from uuid import UUID
 #trying to work with autocomplete
+
+User = get_user_model()
+
 JSONEncoder_olddefault = JSONEncoder.default
 def JSONEncoder_newdefault(self, o):
     if isinstance(o, UUID): return str(o)

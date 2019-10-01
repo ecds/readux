@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 import warnings
 from .views import AnnotationsForPage
 from .models import Annotation
@@ -9,6 +10,8 @@ from ..canvases.models import Canvas
 from ..manifests.models import Manifest
 from .apps import AnnotationsConfig
 import json
+
+User = get_user_model()
 
 class AnnotationTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -51,6 +54,7 @@ class AnnotationTests(TestCase):
         ocr.content = "Obviously you're not a golfer"
         ocr.save()
         assert ocr.content == "<span id='{pk}' style='height: 10px; width: 100px; font-size: 6.25px; letter-spacing: 0.3232758620689655px' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
+        assert ocr.owner == User.objects.get(username='ocr')
 
     def test_invalid_ocr(self):
         ocr = Annotation()
@@ -85,3 +89,11 @@ class AnnotationTests(TestCase):
         assert Annotation.FORMAT_CHOICES == (('text/plain', 'plain text'), ('text/html', 'html'))
         assert Annotation.TYPE_CHOICES == (('cnt:ContentAsText', 'ocr'), ('dctypes:Text', 'text'))
         assert Annotation.MOTIVATION_CHOICES == (('oa:commenting', 'commenting'), ('sc:painting', 'painting'))
+
+    def test_ocr_for_page(self):
+        kwargs = {'vol': self.volume.pid, 'page': self.canvas.pid, 'version': 'v2'}
+        url = reverse('ocr', kwargs=kwargs)
+        response = self.client.get(url)
+        annotations = json.loads(response.content.decode('UTF-8-sig'))['resources']
+        assert len(annotations) == self.canvas.annotation_set.filter(resource_type='cnt:ContentAsText', canvas=self.canvas).count()
+        assert response.status_code == 200

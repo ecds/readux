@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from .views import ManifestDetail, ManifestSitemap, ManifestRis, ManifestExport, JekyllExport
@@ -12,6 +11,8 @@ from iiif_prezi.loader import ManifestReader
 import json
 import logging
 import tempfile
+
+User = get_user_model()
 
 class ManifestTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']

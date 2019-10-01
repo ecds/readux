@@ -5,9 +5,9 @@ from django.conf import settings
 import warnings
 from .annotations import Annotations, AnnotationCrud
 # from .views import VolumesList
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.template import Context, Template
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
@@ -15,6 +15,8 @@ from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, Colle
 from urllib.parse import urlencode
 import json
 import re
+
+User = get_user_model()
 
 class AnnotationTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -341,7 +343,7 @@ class AnnotationTests(TestCase):
         view = CollectionDetail()
         for sort in view.SORT_OPTIONS:
             for order in view.ORDER_OPTIONS:
-                kwargs = {'sort': sort, 'order': order}
+                kwargs = {'sort': sort, 'order': order }
                 url = reverse('collection', kwargs={ 'collection': self.collection.pid })
                 response = self.client.get(url, data=kwargs)
                 context = response.context_data
@@ -359,3 +361,4 @@ class AnnotationTests(TestCase):
     def test_export_options_view(self):
         url = reverse('export', kwargs={'volume': self.manifest.pid})
         response = self.client.get(url)
+    

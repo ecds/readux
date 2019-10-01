@@ -93,8 +93,7 @@ class Serializer(JSONSerializer):
                   ]
             for user in User.objects.filter(userannotation__canvas=obj).distinct():
                 kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
-                url = reverse('user_annotations', kwargs=kwargs)
-                url = "%s/annotations/%s/%s/%s/list" % (settings.HOSTNAME, user.username, obj.manifest.pid, obj.pid)
+                url = "{h}{k}".format(h=settings.HOSTNAME, k=reverse('user_annotations', kwargs=kwargs))
                 user_endpoint = { 
                     "label": "Annotations by %s" % user.username,
                     "@type": "sc:AnnotationList",

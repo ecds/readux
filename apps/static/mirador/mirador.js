@@ -42603,7 +42603,7 @@ return /******/ (function(modules) { // webpackBootstrap
     // if (this.username == null) return;
     this.annotationsList = [];
     Vue.set(readux.$refs["rx-url-canvas"], "url", options.uri); // readux is the vue instance
-    Vue.set(readux.$refs["rx-url-canvas"], "label", "Stable Link for Canvas"); // readux is the vue instance
+    Vue.set(readux.$refs["rx-url-canvas"], "label", "Stable Canvas"); // readux is the vue instance
     this.volume = options.uri.split('/').reverse()[2];
     this.page = options.uri.split('/').reverse()[0];
     let _this = this;

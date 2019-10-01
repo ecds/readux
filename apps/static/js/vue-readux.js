@@ -37,7 +37,6 @@ Vue.component("v-info-content-url-single", {
       <div class="rx-info-content-label uk-flex-between rx-flex ">
         <span>{{label}}</span>
         <div>
-          <span class="rx-tooltip-hidden">Copied</span>
           <span class="uk-label rx-label-copy"
             v-clipboard:copy="url"
             v-clipboard:success="onCopy"
@@ -67,7 +66,6 @@ Vue.component("v-info-content-url-unit", {
       <a v-bind:href="url" class="rx-anchor"
         target="_blank">{{url}}</a>
       <div>
-        <span class="rx-tooltip-hidden">Copied</span>
         <span class="uk-label rx-label-copy"
           v-clipboard:copy="url"
           v-clipboard:success="onCopy"
@@ -113,7 +111,6 @@ Vue.component("v-info-content-url-external", {
       <div class="rx-info-content-label uk-flex-between rx-flex ">
         <span>{{label}}</span>
         <div>
-          <span class="rx-tooltip-hidden">Copied</span>
           <span class="uk-label rx-label-copy"
             v-clipboard:copy="url"
             v-clipboard:success="onCopy"

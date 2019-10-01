@@ -99,7 +99,47 @@ Vue.component("v-info-content-url-multiple", {
   `,
 });
 
-new Vue({
+// url copy component made for when the url is modified externally (outside Vue.js)
+Vue.component("v-info-content-url-external", {
+  props: ["refName"],
+  data: function() {
+    return {
+      url: "",
+      label: ""
+    };
+  },
+  template: `
+    <div class="rx-info-content">
+      <div class="rx-info-content-label uk-flex-between rx-flex ">
+        <span>{{label}}</span>
+        <div>
+          <span class="rx-tooltip-hidden">Copied</span>
+          <span class="uk-label rx-label-copy"
+            v-clipboard:copy="url"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError">Copy</span>
+        </div>
+      </div>
+      <div class="rx-info-content-value">
+        <a v-bind:href="url" class="rx-anchor" v-bind:ref="refName"
+          target="_blank">{{url}}</a>
+      </div>
+    </div>
+  `,
+  methods: {
+    onCopy() {
+      alert(`You have copied: ${this.url}`);
+    },
+    onError() {
+      alert(`Something went wrong with copy.`);
+    }
+  },
+  mounted() {
+    // this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
+  }
+});
+
+var readux = new Vue({
   el: "#v-readux",
   delimiters: ["[[", "]]"],
   component: {

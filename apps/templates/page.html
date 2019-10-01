@@ -190,33 +190,15 @@
 
         {% if page.pid is not None %}
 
-        <div class="rx-info-content">
-          <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span>Canvas</span>
-            <div>
-              <span class="rx-tooltip-hidden">Copied</span>
-              <span class="uk-label rx-label-copy">Copy</span></div>
-          </div>
-          <div class="rx-info-content-value">
-            <a href="#" class="rx-anchor" id="rx-url-canvas" target="_blank"></a>
-          </div>
-        </div>
+        <v-info-content-url-external 
+          ref="rx-url-canvas">
+        </v-info-content-url-external>
 
-        <div class="rx-info-content">
-          <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span>Stable Page</span>
-            <div>
-              <span class="rx-tooltip-hidden">Copied</span>
-              <span class="uk-label rx-label-copy">Copy</span></div>
-          </div>
-          <div class="rx-info-content-value">
-            <a href="#" class="rx-anchor" id="rx-url-stable-page" target="_blank"></a>
-          </div>
-        </div>
+        <v-info-content-url-external 
+          ref="rx-url-stable-page">
+        </v-info-content-url-external>
         {% endif %}
-
       </div>
-
     </div>
 
     <!-- start ocr el -->

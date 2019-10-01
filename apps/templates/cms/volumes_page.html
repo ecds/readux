@@ -28,7 +28,7 @@
   {% if volume.canvas_set.first.pid is null %}
   <div id="box">
     <div id="boxInner">
-      <img src='{% static '/images/image_not_found.jpg' %}' />
+      <v-volume-image></v-volume-image>
       <div id="innerContent">
         <p>
           <p>{{ volume.label|truncatechars:200 }}</p>
@@ -43,11 +43,18 @@
   <div id="box">
     <div id="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img
-          src="{{ canvas.thumbnail_crop_volume }}" {% elif forloop.last %}<img
-          src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
-          {% endif %}{% endfor %}alt="First page of {{volume.label}}"
-          onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';" />
+        {% for canvas in volume.canvas_set.all %}
+        {% if canvas.is_starting_page == 1 %}
+          <v-volume-image src-first="{{ canvas.thumbnail_crop_volume }}" is-starting-page="{{canvas.is_starting_page}}"
+            src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}" is-last-item="{{forloop.last|yesno}}"
+            volume-label="{{volume.label}}"></v-volume-image>
+        {% elif forloop.last %}
+          <v-volume-image src-first="{{ canvas.thumbnail_crop_volume }}" is-starting-page="{{canvas.is_starting_page}}"
+            src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}" is-last-item="{{forloop.last|yesno}}"
+            volume-label="{{volume.label}}"></v-volume-image>
+        {% endif %}
+        {% endfor %}
+
       </a>
       <div id="innerContent">
         <p>
@@ -73,7 +80,7 @@
   <div class="uk-width-1-2@m uk-grid-medium">
     <div class="uk-width-1-4@m rx-volume-image">
       <a class="nav-link" href="#">
-        <img src='{% static 'images/image_not_found.jpg' %}' />
+        <v-volume-image></v-volume-image>
       </a>
     </div>
     <div class="uk-width-3-4@m">
@@ -92,10 +99,23 @@
 
     <div class="uk-width-1-4@m rx-volume-image">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}"
-          {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}" {% endif %}{% endfor %}
-          alt="First page of {{volume.label}}"
-          onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
+        {% for canvas in volume.canvas_set.all %}
+          {% if canvas.is_starting_page == 1 %}
+          <v-volume-image 
+          src-first="{{ canvas.thumbnail_crop_volume }}" 
+          is-starting-page="{{canvas.is_starting_page}}"
+          src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
+          is-last-item="{{forloop.last|yesno}}"
+          volume-label="{{volume.label}}"></v-volume-image>
+          {% elif forloop.last %}
+          <v-volume-image 
+          src-first="{{ canvas.thumbnail_crop_volume }}" 
+          is-starting-page="{{canvas.is_starting_page}}"
+          src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
+          is-last-item="{{forloop.last|yesno}}"
+          volume-label="{{volume.label}}"></v-volume-image>
+          {% endif %}
+        {% endfor %}
       </a>
     </div>
     <div class="uk-width-3-4@m">

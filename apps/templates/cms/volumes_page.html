@@ -45,12 +45,10 @@
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
         {% for canvas in volume.canvas_set.all %}
         {% if canvas.is_starting_page == 1 %}
-          <v-volume-image src-first="{{ canvas.thumbnail_crop_volume }}" is-starting-page="{{canvas.is_starting_page}}"
-            src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}" is-last-item="{{forloop.last|yesno}}"
+          <v-volume-image img-src="{{ canvas.thumbnail_crop_volume }}" 
             volume-label="{{volume.label}}"></v-volume-image>
         {% elif forloop.last %}
-          <v-volume-image src-first="{{ canvas.thumbnail_crop_volume }}" is-starting-page="{{canvas.is_starting_page}}"
-            src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}" is-last-item="{{forloop.last|yesno}}"
+          <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
             volume-label="{{volume.label}}"></v-volume-image>
         {% endif %}
         {% endfor %}
@@ -102,18 +100,14 @@
         {% for canvas in volume.canvas_set.all %}
           {% if canvas.is_starting_page == 1 %}
           <v-volume-image 
-          src-first="{{ canvas.thumbnail_crop_volume }}" 
-          is-starting-page="{{canvas.is_starting_page}}"
-          src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
-          is-last-item="{{forloop.last|yesno}}"
-          volume-label="{{volume.label}}"></v-volume-image>
+            img-src="{{ canvas.thumbnail_crop_volume }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
           {% elif forloop.last %}
           <v-volume-image 
-          src-first="{{ canvas.thumbnail_crop_volume }}" 
-          is-starting-page="{{canvas.is_starting_page}}"
-          src-last="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
-          is-last-item="{{forloop.last|yesno}}"
-          volume-label="{{volume.label}}"></v-volume-image>
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
           {% endif %}
         {% endfor %}
       </a>

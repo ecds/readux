@@ -1,5 +1,5 @@
 Vue.component("v-volume-image", {
-  props: ["srcFirst", "srcLast", "isStartingPage", "isLastItem", "volumeLabel"],
+  props: ["imgSrc", "volumeLabel"],
   template: `
     <div class="uk-text-center rx-volume-na" v-cloak v-if="!hasImage">
       <span class="rx-item-na" uk-icon="icon: image; ratio: 2"></span>
@@ -10,7 +10,6 @@ Vue.component("v-volume-image", {
   data: function() {
     return {
       hasImage: true, // visibility of image from src
-      imgSrc: ""
     };
   },
   mounted() {
@@ -22,27 +21,12 @@ Vue.component("v-volume-image", {
     tester.addEventListener("error", function() {
       vm.hasImage = false;
     });
-
-    if (this.isStartingPage == 1) {
-      tester.src = this.srcFirst;
-      this.imgSrc = this.srcFirst;
-    } else if (this.isLastItem == "yes") {
-      tester.src = this.srcLast;
-      this.imgSrc = this.srcLast;
-    } else {
-      this.hasImage = false;
-    }
+    tester.src = this.imgSrc;
   },
   computed: {
     imgAlt() {
       return `First page of ${this.volumeLabel}`; 
     },
-    isFirst() {
-      return this.isStartingPage == 1;
-    },
-    isLast() {
-      return (this.isLastItem == "yes")
-    }
   }
 });
 

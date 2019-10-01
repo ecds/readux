@@ -30,9 +30,81 @@ Vue.component("v-volume-image", {
   }
 });
 
+Vue.component("v-info-content-url-single", {
+  props: ["label", "url"],
+  template: `
+    <div class="rx-info-content">
+      <div class="rx-info-content-label uk-flex-between rx-flex ">
+        <span>{{label}}</span>
+        <div>
+          <span class="rx-tooltip-hidden">Copied</span>
+          <span class="uk-label rx-label-copy"
+            v-clipboard:copy="url"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError">Copy</span>
+        </div>
+      </div>
+      <div class="rx-info-content-value">
+        <a v-bind:href="url" class="rx-anchor"
+          target="_blank">{{url}}</a>
+      </div>
+    </div>
+  `,
+  methods: {
+    onCopy() {
+      alert(`You have copied: ${this.url}`);
+    },
+    onError() {
+      alert(`Something went wrong with copy.`);
+    }
+  }
+});
+
+Vue.component("v-info-content-url-unit", {
+  props: ["url"],
+  template: `
+    <div class="rx-info-content-value uk-flex-between rx-flex">
+      <a v-bind:href="url" class="rx-anchor"
+        target="_blank">{{url}}</a>
+      <div>
+        <span class="rx-tooltip-hidden">Copied</span>
+        <span class="uk-label rx-label-copy"
+          v-clipboard:copy="url"
+          v-clipboard:success="onCopy"
+          v-clipboard:error="onError">Copy</span>
+      </div>
+    </div>
+  `,
+  methods: {
+    onCopy() {
+      alert(`You have copied: ${this.url}`);
+    },
+    onError() {
+      alert(`Something went wrong with copy.`);
+    }
+  }
+});
+
+Vue.component("v-info-content-url-multiple", {
+  props: ["label"],
+  template: `
+    <div class="rx-info-content">
+      <div class="rx-info-content-label">
+        <span>{{label}}</span>
+      </div>
+      <div>
+        <slot></slot>
+      </div>
+    </div>
+  `,
+});
+
 new Vue({
   el: "#v-readux",
   delimiters: ["[[", "]]"],
+  component: {
+    VueClipboard
+  },
   data: {
     options: ["title", "author", "date published", "date added"],
     searchPrefix: "?sort=",

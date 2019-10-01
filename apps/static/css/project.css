@@ -903,6 +903,7 @@ p {
   -moz-transition: opacity 150ms ease-in-out;
   -ms-transition: opacity 150ms ease-in-out;
   -o-transition: opacity 150ms ease-in-out;
+  font-weight: 600;
 }
 
 .rx-label-copy:hover {

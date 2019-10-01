@@ -173,48 +173,20 @@
       <div class="rx-info-title">URLs</div>
       <div class="rx-info-content-container">
 
-        <div class="rx-info-content">
-          <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span>Manifest</span>
-            <div>
-              <span class="rx-tooltip-hidden">Copied</span>
-              <span class="uk-label rx-label-copy">Copy</span>
-            </div>
-          </div>
-          <div class="rx-info-content-value">
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}" class="rx-anchor"
-              target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}</a>
-          </div>
-        </div>
+        <v-info-content-url-single
+          label="Manifest"
+          url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
+        </v-info-content-url-single>
 
-        <div class="rx-info-content">
-          <div class="rx-info-content-label uk-flex-between rx-flex">
-            <span>Collection Manifest</span>
-          </div>
-          <div class="rx-info-content-value uk-flex-between rx-flex">
-            {% for col in volume.collections.all %}
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}" class="rx-anchor"
-              target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}</a>
-            <div>
-              <span class="rx-tooltip-hidden">Copied</span>
-              <span class="uk-label rx-label-copy">Copy</span>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
+        <v-info-content-url-multiple label="Collection Manifest">
+          {% for col in volume.collections.all %}
+            <v-info-content-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}"></v-info-content-url-unit>
+          {% endfor %}
+        </v-info-content-url-multiple>
 
-        <div class="rx-info-content">
-          <div class="rx-info-content-label uk-flex-between rx-flex ">
-            <span>Stable Volume</span>
-            <div>
-              <span class="rx-tooltip-hidden">Copied</span>
-              <span class="uk-label rx-label-copy">Copy</span></div>
-          </div>
-          <div class="rx-info-content-value">
-            <a href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all" class="rx-anchor"
-              target="_blank">https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all</a>
-          </div>
-        </div>
+        <v-info-content-url-single label="Stable Volume"
+          url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+        </v-info-content-url-single>
 
         {% if page.pid is not None %}
 

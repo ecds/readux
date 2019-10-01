@@ -32,14 +32,16 @@
       <form class="uk-search uk-search-default" style="width: 100% !important;"
         action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
         <span uk-search-icon></span>
-        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q" value="{{request.GET.q}}">
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          value="{{request.GET.q}}">
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       {% else %}
       <form class="uk-search uk-search-default" style="width: calc(100% - 42px) !important;"
         action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
         <span uk-search-icon></span>
-        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q" value="{{request.GET.q}}">
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          value="{{request.GET.q}}">
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       {% endif %}
@@ -71,7 +73,8 @@
             <ul class="uk-switcher uk-margin-small rx-search-result">
               <li>
                 {% if qs1 %}
-                <ul class="uk-padding-remove">{% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
+                <ul class="uk-padding-remove">
+                  {% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
                   <li><a
                       href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
                       target="_blank">Canvas {{ answer.canvas.position }}</a></li>
@@ -81,7 +84,8 @@
               </li>
               <li>
                 {% if qs2 %}
-                <ul class="uk-padding-remove">{% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
+                <ul class="uk-padding-remove">
+                  {% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
                   <li><a
                       href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
                       target="_blank">Canvas {{ answer.canvas.position }}</a></li>

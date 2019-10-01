@@ -23,13 +23,13 @@
 {% include "snippets/sort_dropdown.html" %}
 
 {% if page.layout == 'Grid' %}
-<div id="wrap">
+<div class="wrap">
   {% for volume in volumespage %}
   {% if volume.canvas_set.first.pid is null %}
-  <div id="box">
-    <div id="boxInner">
+  <div class="box">
+    <div class="boxInner">
       <v-volume-image></v-volume-image>
-      <div id="innerContent">
+      <div class="innerContent">
         <p>
           <p>{{ volume.label|truncatechars:200 }}</p>
         </p>
@@ -40,8 +40,8 @@
     </div>
   </div>
   {% else %}
-  <div id="box">
-    <div id="boxInner">
+  <div class="box">
+    <div class="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
         {% for canvas in volume.canvas_set.all %}
         {% if canvas.is_starting_page == 1 %}
@@ -56,7 +56,7 @@
         {% endfor %}
 
       </a>
-      <div id="innerContent">
+      <div class="innerContent">
         <p>
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <p>{{ volume.label|truncatechars:200 }}</p>

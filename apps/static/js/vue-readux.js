@@ -1,8 +1,8 @@
 Vue.component("v-volume-image", {
   props: ["srcFirst", "srcLast", "isStartingPage", "isLastItem", "volumeLabel"],
   template: `
-    <div class="rx-card-image-container uk-text-center rx-volume-na" v-cloak v-if="!hasImage">
-      <span class="rx-item-na" uk-icon="icon: image; ratio: 3"></span>
+    <div class="uk-text-center rx-volume-na" v-cloak v-if="!hasImage">
+      <span class="rx-item-na" uk-icon="icon: image; ratio: 2"></span>
       <p>Volume is being added or cover is not available.</p>
     </div>
     <img v-else="hasImage" :src="imgSrc" :alt="imgAlt">

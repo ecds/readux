@@ -113,10 +113,7 @@
     {% if volume.canvas_set.first.pid is null %}
     <li>
       <article class="rx-article">
-        <div class="rx-card-image-container uk-text-center rx-volume-na">
-          <span class="rx-item-na" uk-icon="icon: image; ratio: 3"></span>
-          <p>Volume is being added or cover is not available.</p>
-        </div>
+        <v-volume-image></v-volume-image>
         <div class="rx-card-body">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
@@ -143,17 +140,15 @@
             style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;">
             {% for canvas in volume.canvas_set.all %}
             {% if canvas.is_starting_page == 1 %}
-            <img src="{{ canvas.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}" onerror="placeEmptyVolume();" />
+            <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
+            </v-volume-image>
             {% elif forloop.last %}
-            <img src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}"
-              onerror="placeEmptyVolume();" />
+            <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
+            </v-volume-image>
             {% endif %}
             {% endfor %}
           </a>
 
-          <!-- <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
-            href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
-            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a> -->
         </div>
         <div class="rx-card-body">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
@@ -183,10 +178,4 @@
     {% endif %}
   </div>
 </div>
-
-<script>
-function placeEmptyVolume() {
-  alert("got an error");
-}
-</script>
 {% endblock %}

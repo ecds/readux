@@ -6,10 +6,10 @@ from apps.iiif.canvases.models import Canvas
 import json
 
 class UserAnnotation(AbstractAnnotation):
-    start_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, related_name='start_selector', default=None)
-    end_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, related_name='end_selector', default=None)
-    start_offset = models.IntegerField(null=True, default=None)
-    end_offset = models.IntegerField(null=True, default=None)
+    start_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='start_selector', default=None)
+    end_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='end_selector', default=None)
+    start_offset = models.IntegerField(null=True, blank=True, default=None)
+    end_offset = models.IntegerField(null=True, blank=True, default=None)
 
     @property
     def item(self):

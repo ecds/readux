@@ -21,14 +21,14 @@ class TestUtils(TestCase):
     def test_timeout(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:
             fetch_url('http://archive.org', timeout=.1, verbosity=3)
-            self.assertEqual(cm.output[0], 'WARNING:apps.utils.fetch:Connection timeoutout for http://archive.org')
+            assert 'timeoutout' in cm.output[0]
     
     def test_connection_refused(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:
             fetch_url('http://localhost:666', verbosity=3)
-            assert 'WARNING:apps.utils.fetch:Connection failed for http://localhost:666. ' in cm.output[0]
+            assert 'failed' in cm.output[0]
         
     def test_response_bad_content(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:
             fetch_url('http://cnn.com', verbosity=3)
-            self.assertEqual(cm.output[0], 'WARNING:apps.utils.fetch:Server send success status with bad content http://cnn.com')
+            assert 'bad content' in cm.output[0]

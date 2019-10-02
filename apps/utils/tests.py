@@ -20,15 +20,18 @@ class TestUtils(TestCase):
     
     def test_timeout(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:
-            fetch_url('http://archive.org', timeout=.1, verbosity=3)
+            fetch_url('http://archive.org', timeout=.0000000001, verbosity=3)
             assert 'timeoutout' in cm.output[0]
+            assert 'WARNING' in cm.output[0]
     
     def test_connection_refused(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:
             fetch_url('http://localhost:666', verbosity=3)
             assert 'failed' in cm.output[0]
+            assert 'WARNING' in cm.output[0]
         
     def test_response_bad_content(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:
             fetch_url('http://cnn.com', verbosity=3)
             assert 'bad content' in cm.output[0]
+            assert 'WARNING' in cm.output[0]

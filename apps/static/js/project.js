@@ -57,3 +57,10 @@
         }
       });
     }
+
+
+    // use an a element to log out
+    function rxSignout() {
+      debugger;
+      $("#rx-sign-out-form").submit();
+    }

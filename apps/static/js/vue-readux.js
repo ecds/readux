@@ -190,7 +190,9 @@ var readux = new Vue({
   },
 
   mounted: function() {
-    this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
+    if (this.$refs["v-attr-sort"]) {
+      this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
+    }
   }
 });
 

@@ -48,20 +48,10 @@
       <!-- new search form -->
     </div>
 
-    {% if qs1 or qs2 %}
+    {% if "?q=" in request.get_full_path %}
     <div class="rx-info ">
       <div class="rx-info-content-container uk-padding-remove-vertical">
         <div class="rx-info-content">
-
-          <!--new-->
-          {% if user_annotation_count > 0 %}
-          <ul class="uk-subnav uk-subnav-pill" uk-switcher>
-            <li><a href="#">{{ user_annotation_count }} annotations in manifest</a></li>
-            <li><a href="#">{{ user_annotation_page_count }} annotations on page</a></li>
-          </ul>
-          <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
-          {% endif %}
-
           <div>
             <!-- nav head -->
             <ul class="uk-tab" uk-switcher>
@@ -96,23 +86,28 @@
             </ul>
             <!-- end of nav body -->
           </div>
-
-          <!--new-->
-          {% if user_annotation_count > 0 %}
-          <form action="{% url 'export' volume.pid %}" class="button_to" method="GET">
-            <div><input type="submit" value="Export" title="Export in a variety of formats" />{% csrf_token %}</div>
-          </form>
-          {% endif %}
         </div>
       </div>
     </div>
     {% endif %}
 
 
-
     <div class="rx-info">
       <div class="rx-info-title">Basic Information</div>
       <div class="rx-info-content-container">
+
+        <!--new-->
+        {% if user_annotation_count > 0 %}
+        <ul class="uk-subnav uk-subnav-pill" uk-switcher>
+          <li><a href="#">{{ user_annotation_count }} annotations in manifest</a></li>
+          <li><a href="#">{{ user_annotation_page_count }} annotations on page</a></li>
+        </ul>
+        <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
+        {% endif %}
+
+        <!--new-->
+        
+
         <div class="rx-info-content">
           <div class="rx-info-content-label">Authors</div>
           <div class="rx-info-content-value">{{ volume.author }}</div>
@@ -165,6 +160,16 @@
           <a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
             target="_blank">Export Citation in RIS</a>
         </div>
+
+        {% if user_annotation_count > 0 %}
+        <div class="rx-info-content">
+          <form action="{% url 'export' volume.pid %}" class="button_to" method="GET">
+            <input class="rx-action-btn rx-remove-default" type="submit" value="Export Annotation(s)" title="Export in a variety of formats" />
+            {% csrf_token %}
+          </form>
+        </div>
+        
+        {% endif %}
 
       </div>
     </div>

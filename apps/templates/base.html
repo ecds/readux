@@ -112,7 +112,10 @@
     
       {% if messages %}
           {% for message in messages %}
-              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+            <div class="uk-alert-{{ message.tags }}" uk-alert>
+              <a class="uk-alert-close" uk-close></a>
+              <p>{{ message }}</p>
+            </div>
           {% endfor %}
       {% endif %}
 

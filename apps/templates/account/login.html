@@ -7,25 +7,32 @@
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block inner %}
-
-<h1 class='uk-heading-primary'>{% trans "Sign In" %}</h1>
-
-{% get_providers as socialaccount_providers %}
-
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts.{% endblocktrans %}</p>
-
-<div class="socialaccount_ballot">
-
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
-
-
+<div class="rx-head-container uk-margin-remove-bottom">
+  <div class="rx-title-container">
+    <ul class="rx-breadcrumb uk-text-truncate">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item">My Account</li>
+    </ul>
+    <div class="rx-title">
+      {% trans "Sign In" %}
+    </div>
+    <div class="rx-title-tagline">
+    </div>
+  </div>
 </div>
 
-{% endif %}
+<div class="">
+  {% get_providers as socialaccount_providers %}
+  {% if socialaccount_providers %}
+    <p class="uk-margin-remove-top">{% blocktrans with site.name as site_name %}Please sign in with one
+    of your existing third party accounts.{% endblocktrans %}</p>
+    
+    <div class="socialaccount_ballot">
+      <ul class="socialaccount_providers">
+        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+      </ul>
+    </div>
+  {% endif %}
+</div>
 
 {% endblock %}
-

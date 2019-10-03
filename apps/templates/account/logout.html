@@ -27,7 +27,7 @@
     {% if redirect_field_value %}
     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
     {% endif %}
-    <a class="btn btn-primary" href="#" role="button" onclick="rxSignout();">
+    <a class="btn btn-primary" href="#" role="button" onclick="rxFormSubmit('rx-sign-out-form');">
       <div class="rx-btn rx-btn-extension">
         <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
         {% trans 'Sign Out' %}

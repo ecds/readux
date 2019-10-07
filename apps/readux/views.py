@@ -130,7 +130,13 @@ class CollectionDetail(TemplateView):
         context['volumes'] = q.all
         context['manifest_query_set'] = q
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
-        context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).count()
+        annocount_list = []
+        for volume in q:
+            user_annotation_count = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=volume.id).count()
+            annocount_list.append({volume.pid: user_annotation_count})
+            context['user_annotation_count'] = annocount_list
+            print(volume.pid)
+            print(user_annotation_count)
         value = 0
         context['value'] = value
         context.update({

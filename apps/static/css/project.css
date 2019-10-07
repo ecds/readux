@@ -265,6 +265,23 @@ ul > li > .collectionbox > .collectioncontainer > .collection-label a.nav-link s
     border-radius: 20px;
 }
 
+.count-icon {
+    display: inline-block;
+    position: relative;
+}
+
+.count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-top: 20%;
+    padding-right: 20%;
+    height: 10px;
+    width: 10px;
+    font-size: 10px;    
+    text-align: center;
+}
+
 #grid {
     display: grid;
     grid-template-columns: 260px auto;

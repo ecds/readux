@@ -123,7 +123,7 @@
       "mainMenuSettings" : {
         'show' : false,
         'buttons' : {
-          info: false
+          info: false,
         }
       },
       "layout": "1x1",
@@ -140,7 +140,7 @@
         loadedManifest: "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ volume.pid }}/manifest",
         annotationLayer: true,
         annotationCreation: true,
-        annotationState: 'annoOncreateOn',{% if page.pid is not None %}
+        annotationState: 'annoOncreateOn',{% if "/page/all" not in request.get_full_path %}
         canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ page.manifest.pid }}/canvas/{{ page.pid }}',{% endif %}
         displayLayout: false,
         sidePanel: false,

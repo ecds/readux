@@ -30,7 +30,14 @@
 <div><div id="grid"><div id="grid-image-volume">
     <img src='{% static 'images/image_not_found.jpg' %}'/>
   </div><div id="grid-metaforimage"><p>
-  {{ volume.label }} {% if user_annotation_count > 0 %}Anno: {{ user_annotation_count }}{% endif %}
+  {{ volume.label }} 
+ {% for value in user_annotation_count %}
+ {% if volume.pid in value %}
+ {% if "0" not in value|safe|slice:"-3:-1" %}
+ <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
+ {% endif %}
+ {% endif %}
+ {% endfor %}
 <br/>
 Author: {{volume.author}}<br/>
 Date: {{volume.published_date}}<br/>

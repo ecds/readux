@@ -154,6 +154,7 @@
         "availableAnnotationStylePickers": [],
       {% else %}
         username: '{{user.get_username}}',
+        usernamePretty: '{{user.name}}',
       {% endif %}
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });

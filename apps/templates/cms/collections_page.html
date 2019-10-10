@@ -18,6 +18,7 @@
   <p>{{ page.paragraph }}</p>
 </div>
 
+
 {% if page.layout == 'Banner' %}
 <div class="collectionswrapper">
   <ul>
@@ -38,27 +39,35 @@
   </ul>
 </div>
 {% endif %}
+
+
 {% if page.layout == 'Grid' %}
 <div class="rx-grid">
 {% for collection in page.collections %}
-<article class="rx-article rx-col">
+<article class="rx-grid-layout">
   <a class="nav-link" href="{% url 'collection' collection.pid %}">
-  <div class="rx-image-container">
-    <figure></figure>
+  <div class="rx-volume-in-grid">
+    <div class="rx-grid-image-container"><img src="/media/{{collection.thumbnail}}"></div>
+    <div class="rx-title-tagline uk-margin-small-top">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
+    <div class="rx-collection-title">{{ collection.label }}</div>
+  </div>
+  </a>
+  <!-- <div class="rx-image-container">
+    <figure style="background-image: url('/media/{{collection.thumbnail}}'"></figure>
     <p>{{ collection.label }}<br/>
       {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</p>
   </div>
-    <!-- <div class="rx-card-image-container">
+    <div class="rx-card-image-container">
       <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}" />
       <div class="rx-top-left">
     </div>
   </div> -->
-  </a>
 </article>
 {% endfor %}
 </div>
-
 {% endif %}
+
+
 {% if page.layout == 'List' %}
 <div class="collectionswrapper">
   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
@@ -83,4 +92,6 @@
   </div>
 </div>
 {% endif %}
+
+
 {% endblock content %}

@@ -1042,22 +1042,20 @@ p {
 
 .rx-grid {
   display: grid;
-  margin: 20px auto;
+  margin: 15px auto;
   max-width: 1400px;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-column-gap: 60px;
+  grid-column-gap: 30px;
   /* justify-content: space-between; */
 }
 
 
 .rx-grid-layout {
-  /* border: 1px solid black; */
-  /* text-align: center; */
-  height: 475px;
-  width: 300px;
-  margin: 15px;
+  height: 425px;
+  width: 275px;
   position: relative;
   background: white;
+  margin-bottom: 75px;
 }
 
 .rx-grid:hover {

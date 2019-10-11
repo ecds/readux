@@ -8,6 +8,7 @@ from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm
 from apps.readux.models import UserAnnotation
+from apps.cms.models import Page, CollectionsPage
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -126,6 +127,7 @@ class CollectionDetail(TemplateView):
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
 
+        context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
         context['volumes'] = q.all
         context['manifest_query_set'] = q

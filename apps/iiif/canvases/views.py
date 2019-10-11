@@ -25,9 +25,9 @@ class IIIFV2Detail(View):
         return JsonResponse(json.loads(serialize('canvas', self.get_queryset())))
         
 # TODO It should be okay to remove this.
-class StartingCanvas(View):
-    def get_queryset(self):
-        return Canvas.objects.filter(is_starting_page=True)
+# class StartingCanvas(View):
+#     def get_queryset(self):
+#         return Canvas.objects.filter(is_starting_page=True)
 
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), is_list=True)), safe=False)
+#     def get(self, request, *args, **kwargs):
+#         return JsonResponse(json.loads(serialize('startingcanvas', self.get_queryset(), is_list=True)), safe=False)

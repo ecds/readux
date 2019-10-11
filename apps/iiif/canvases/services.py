@@ -10,6 +10,7 @@ def get_canvas_info(canvas):
     """ Given a url, this function returns a dictionary of all collections."""
     return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
 
+# TODO figure out a way to test the fetch
 def fetch_positional_ocr(canvas):
     if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
         return fetch_url("https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(m=canvas.manifest.pid, p=canvas.pid.split('$')[-1]))
@@ -69,30 +70,31 @@ def add_positional_ocr(canvas, result):
     else:
         return None
 
-    def fetch_alto_ocr(canvas):
-        if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-            return None
-        else:
-            url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
-            print(url)
-            return fetch_url(url, format='text/plain')
+def fetch_alto_ocr(canvas):
+    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+        return None
+    else:
+        url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
+        return fetch_url(url, format='text/plain')
 
-    def add_alto_ocr(canvas, result):
-        if result == None:
-            return None
-        ocr = []
-        surface = ET.fromstring(result)[-1][0]
-        for zones in surface:
-            if 'zone' in zones.tag:
-                for line in zones:
-                    ocr.append({
-                        'content': line[-1].text,
-                        'h': int(line.attrib['lry']) - int(line.attrib['uly']),
-                        'w': int(line.attrib['lrx']) - int(line.attrib['ulx']),
-                        'x': int(line.attrib['ulx']),
-                        'y': int(line.attrib['uly'])
-                    })
-        if (ocr):
-            return ocr
-        else:
-            return None
+def add_alto_ocr(canvas, result):
+    if result == None:
+        return None
+    ocr = []
+    surface = ET.fromstring(result)[-1][0]
+    for zones in surface:
+        if 'zone' in zones.tag:
+            for line in zones:
+                if line[-1].text is None:
+                    continue
+                ocr.append({
+                    'content': line[-1].text,
+                    'h': int(line.attrib['lry']) - int(line.attrib['uly']),
+                    'w': int(line.attrib['lrx']) - int(line.attrib['ulx']),
+                    'x': int(line.attrib['ulx']),
+                    'y': int(line.attrib['uly'])
+                })
+    if (ocr):
+        return ocr
+    else:
+        return None

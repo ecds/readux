@@ -11,6 +11,7 @@ import io
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -54,18 +55,17 @@ class IiifManifestExport:
         page_count = manifest.canvas_set.count()
         now = datetime.utcnow()
         readux_url = settings.HOSTNAME
-        #annotations = Annotation.objects.filter(canvas__manifest__id=manifest.id)
-        annotators = User.objects.filter(annotation__canvas__manifest__id=manifest.id).distinct()
-        annotators_string = ', '.join([str(i.name) for i in annotators])
-        annotators_string = "Annotated by: " + annotators_string +"\n\n"
+        annotators = User.objects.filter(userannotation__canvas__manifest__id=manifest.id).distinct()
+        annotators_string = ', '.join([i.fullname() for i in annotators])
         # get the owner_id for each/all annotations
         # dedup the list of owners (although -- how to order?  alphabetical or by contribution count or ignore order)  .distinct()
         # turn the list of owners into a comma separated string of formal names instead of user ids
         readme = "Annotation export from Readux %(version)s at %(readux_url)s\nedition type: Readux IIIF Exported Edition\nexport date: %(now)s UTC\n\n" % locals()
         volume_data = "volume title: %(title)s\nvolume author: %(author)s\nvolume date: %(date)s\nvolume publisher: %(publisher)s\npages: %(page_count)s \n" % locals()
+        annotators_attribution_string = "Annotated by: " + annotators_string +"\n\n"
         boilerplate = "Readux is a platform developed by Emory University’s Center for Digital Scholarship for browsing, annotating, and publishing with digitized books. This zip file includes an International Image Interoperability Framework (IIIF) manifest for the digitized book and an annotation list for each page that includes both the encoded text of the book and annotations created by the user who created this export. This bundle can be used to archive the recognized text and annotations for preservation and future access.\n\n"
-        explanation = "Each canvas (\"sc:Canvas\") in the manifest represents a page of the work. Each canvas includes an \"otherContent\" field-set with information identifying that page's annotation list. This field-set includes an \"@id\" field and the label field (\"@type\") \"sc:AnnotationList\". The \"@id\" field contains the URL link at which the annotation list was created and originally hosted from the Readux site. In order to host this IIIF manifest and its annotation lists again to browse the book and annotations outside of Readux, these @id fields would need to be updated to the appropriate URLs for the annotation lists on the new host."
-        readme = readme + volume_data + annotators_string + boilerplate + explanation 
+        explanation = "Each canvas (\"sc:Canvas\") in the manifest represents a page of the work. Each canvas includes an \"otherContent\" field-set with information identifying that page's annotation lists. This field-set includes an \"@id\" field and the label field (\"@type\") \"sc:AnnotationList\" for each annotation list. The \"@id\" field contains the URL link at which the annotation list was created and originally hosted from the Readux site. In order to host this IIIF manifest and its annotation lists again to browse the book and annotations outside of Readux, these @id fields would need to be updated to the appropriate URLs for the annotation lists on the new host. Exported annotation lists replace nonword characters (where words are made up of alphanumerics and underscores) with underscores in the filename."
+        readme = readme + volume_data + annotators_attribution_string + boilerplate + explanation
         zf.writestr('README.txt', readme)
 
         # Next write the manifest
@@ -75,7 +75,9 @@ class IiifManifestExport:
                     serialize(
                         'manifest',
                         [manifest],
-                        version=version
+                        version=version,
+                        annotators=User.objects.get(id__in=owners).name,
+                        exportdate=now
                     )
                 ),
                 indent=4
@@ -85,42 +87,46 @@ class IiifManifestExport:
         # Then write the OCR annotations
         for canvas in manifest.canvas_set.all():
             if canvas.annotation_set.count() > 0:
-                annotation_file = "ocr_annotation_list_" + canvas.pid + ".json"
+                json_hash = json.loads(
+                  serialize(
+                      'annotation_list',
+                      [canvas],
+                      version=version,
+                      owners=owners
+                  )
+                )
+                anno_uri = json_hash['@id']
+
+                annotation_file = re.sub('\W','_', anno_uri) + ".json"
+
                 zf.writestr(
                     annotation_file,
                     json.dumps(
-                        json.loads(
-                            serialize(
-                                'annotation_list',
-                                [canvas],
-                                version=version,
-                                owners=owners
-                            )
-                         ),
-                        indent=4
+                      json_hash,
+                      indent=4
                     )
                 )
         # Then write the user annotations
         for canvas in manifest.canvas_set.all():
             if canvas.userannotation_set.count() > 0:
-                annotation_file = "user_annotation_list_" + canvas.pid + ".json"
-                # annotations = UserAnnotation.objects.filter(
-                #     owner=owners,
-                #     canvas=canvas
-                # )   
                 annotations = canvas.userannotation_set.filter(owner__in=owners).all()
+                json_hash = json.loads(
+                    serialize(
+                        'user_annotation_list',
+                        [canvas],
+                        version=version,
+                        is_list=False,
+                        owners=[User.objects.get(id__in=owners)]
+                    )
+                )
+                anno_uri = json_hash['@id']
+                annotation_file = re.sub('\W','_', anno_uri) + ".json"
+
                 zf.writestr(
                     annotation_file,
                     json.dumps(
-                        json.loads(
-                            serialize(
-                                'annotation',
-                                annotations,
-                                version=version,
-                                is_list=True
-                            )
-                         ),
-                        indent=4
+                      json_hash,
+                      indent=4
                     )
                 )
 

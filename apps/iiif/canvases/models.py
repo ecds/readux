@@ -9,9 +9,11 @@ from django.apps import apps
 from . import services
 import uuid
 
+# TODO add a test fixture that calls this.
 def get_default_iiif_setting():
   return "%s" % (settings.IIIF_IMAGE_SERVER_BASE)
 
+# TODO move this to the manifest model
 class IServer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     IIIF_IMAGE_SERVER_BASE = models.CharField(max_length=255, default=get_default_iiif_setting)
@@ -30,6 +32,13 @@ class Canvas(models.Model):
     width = models.IntegerField(default=0)
     IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
+    preferred_ocr = (
+        ('word', 'word'),
+        ('line', 'line'),
+        ('both', 'both')
+    )
+    # TODO move this to the mainfest level.
+    default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
 
     @property
     def identifier(self):
@@ -55,12 +64,13 @@ class Canvas(models.Model):
     def social_media(self):
         return "%s/%s/full/600,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
-    @property
-    def get_IIIF_IMAGE_SERVER_BASE(self):
-        return self.IIIF_IMAGE_SERVER_BASE
+    # @property
+    # def get_IIIF_IMAGE_SERVER_BASE(self):
+    #     return self.IIIF_IMAGE_SERVER_BASE
         
     @property
     def twitter_media1(self):
+        # TODO shouldn't this use `self.IIIF_IMAGE_SERVER_BASE`
         return "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.pid)
         
     @property
@@ -97,12 +107,13 @@ class Canvas(models.Model):
             return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
         else:
             # landscape
+            # TODO add a landscape image to tests
             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
-    @property
-    def result(self):
-        "Empty attribute to hold the result of requests to get OCR data."
-        return None
+    # @property
+    # def result(self):
+    #     "Empty attribute to hold the result of requests to get OCR data."
+    #     return None
 
     def __str__(self):
         return str(self.pid)
@@ -116,10 +127,17 @@ def set_dimensions(sender, instance, **kwargs):
       instance.width = instance.image_info['width']
       instance.height = instance.image_info['height']
 
+# TODO We need to support multiple OCR types for canvases.
 @receiver(signals.post_save, sender=Canvas)
 def add_ocr(sender, instance, **kwargs):
-    result = services.fetch_positional_ocr(instance)
-    ocr = services.add_positional_ocr(instance, result)
+    result = None
+    ocr = None
+    if instance.default_ocr == "line":
+        result = services.fetch_alto_ocr(instance)
+        ocr = services.add_alto_ocr(instance, result)
+    elif instance.default_ocr == "word" or instance.default_ocr == "both":
+        result = services.fetch_positional_ocr(instance)
+        ocr = services.add_positional_ocr(instance, result)
     word_order = 1
     if ocr is not None:
         for word in ocr:
@@ -135,7 +153,7 @@ def add_ocr(sender, instance, **kwargs):
             a.content = word['content']
             a.order = word_order
             a.save()
-            word_order += 1
+            word_order += 1           
 
 class Meta:
     # Translators: admin:skip

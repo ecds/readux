@@ -1,11 +1,11 @@
 /* Project specific Javascript goes here. */
-    $bannerInfo = $('.collection-image-info');
-
-    $bannerInfo.on('click',function(){
-        $(this).toggleClass('collasped');
+    $(document).ready(function() {
+      var bannerInfo = $(".collection-image-info");
+      bannerInfo.on("click", function() {
+        $(this).toggleClass("collasped");
+      });
     });
-
-
+    
     // Iterate through menu items and highlight the current page if it matches the URL
     $.each($(".rx-nav-item"), function(index, navItem) {
         var segmentsInURL = (location.pathname.split('/').length - 1) - (location.pathname[location.pathname.length - 1] == '/' ? 1 : 0);

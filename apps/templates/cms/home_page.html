@@ -54,8 +54,18 @@
       <article class="rx-article">
         <div class="rx-card-image-container">
           <a alt="First page of {{volume.label}}" class="rx-card-image"
-            href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
-            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;"></a>
+            href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            {% for canvas in volume.canvas_set.all %}
+            {% if canvas.is_starting_page == 1 %}
+            <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
+            </v-volume-image>
+            {% elif canvas.is_starting_page == 0 %}
+            {% elif forloop.last %}
+            <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
+            </v-volume-image>
+            {% endif %}
+            {% endfor %}
+          </a>
         </div>
         <div class="rx-card-body">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
@@ -136,12 +146,12 @@
     <li>
       <article class="rx-article">
         <div class="rx-card-image-container">
-          <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}"
-            style="background-image: url('{{ volume.canvas_set.first.thumbnail_crop_tallwide }}'); // background-position: 77% 52% !important;">
+          <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             {% for canvas in volume.canvas_set.all %}
             {% if canvas.is_starting_page == 1 %}
             <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
             </v-volume-image>
+            {% elif canvas.is_starting_page == 0 %}
             {% elif forloop.last %}
             <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
             </v-volume-image>

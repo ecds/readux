@@ -65,6 +65,7 @@
             {% if canvas.is_starting_page == 1 %}
               <v-volume-image img-src="{{ canvas.thumbnail }}" volume-label="First page of {{volume.label}}">
               </v-volume-image>
+            {% elif canvas.is_starting_page == 0 %}
             {% elif forloop.last %}
               <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail }}" volume-label="First page of {{volume.label}}">
               </v-volume-image>

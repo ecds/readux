@@ -47,6 +47,7 @@
         {% if canvas.is_starting_page == 1 %}
           <v-volume-image img-src="{{ canvas.thumbnail_crop_volume }}" 
             volume-label="{{volume.label}}"></v-volume-image>
+        {% elif canvas.is_starting_page == 0 %}
         {% elif forloop.last %}
           <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
             volume-label="{{volume.label}}"></v-volume-image>
@@ -100,12 +101,13 @@
         {% for canvas in volume.canvas_set.all %}
           {% if canvas.is_starting_page == 1 %}
           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_volume }}" 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
+          {% elif canvas.is_starting_page == 0 %}
           {% elif forloop.last %}
           <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
           {% endif %}

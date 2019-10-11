@@ -243,6 +243,7 @@ class PageDetail(TemplateView):
         context['page'] = canvas
         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['volume'] = manifest
+        context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         qs = Annotation.objects.all()

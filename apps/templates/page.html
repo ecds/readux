@@ -8,7 +8,7 @@
 <div class="rx-title-container">
   <ul class="rx-breadcrumb uk-text-truncate">
     <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-    <li class="rx-breadcrumb-item"><a href="/collections/" alt="Collections">Collections</a></li>
+    <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
     <li class="rx-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
         alt="Collections">{{ volume.collections.first.label }}</a></li>
   </ul>

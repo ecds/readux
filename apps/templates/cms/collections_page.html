@@ -20,23 +20,18 @@
 
 
 {% if page.layout == 'Banner' %}
-<div class="collectionswrapper">
-  <ul>
-    {% for collection in page.collections %}
-    <li>
-      <a class="nav-link" href="{% url 'collection' collection.pid %}">
-      <div class="collectionbox">
-        <div class="collectioncontainer">
-          <div class="collection-label">
-            {{ collection.label }}{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
-          </div>
-          <img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" />
-        </div>
-      </div>
-      </a>
-    </li>
-    {% endfor %}
-  </ul>
+<div class="rx-banner-layout">
+  {% for collection in page.collections %}
+  <div class="rx-volume-in-banner">
+    <a class="nav-link" href="{% url 'collection' collection.pid %}">
+    <div class="rx-banner-image-container"><img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}"></div>
+    <div class="rx-banner-text-container">
+      <div class="rx-title-tagline rx-title-tagline-banner">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
+      <div class="rx-collection-title rx-collection-title-banner">{{ collection.label }}</div>
+    </div>
+    </a>
+  </div>
+  {% endfor %}
 </div>
 {% endif %}
 

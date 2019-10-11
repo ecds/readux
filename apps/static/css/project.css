@@ -67,7 +67,7 @@
   z-index: 999;
 }
 
-.show-annotations a {
+.show-annotations span a {
     background: rgba(255, 20, 147, 0.5);
 }
 

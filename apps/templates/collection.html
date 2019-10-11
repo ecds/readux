@@ -33,8 +33,9 @@
   {% include "snippets/sort_dropdown.html" %}
   <!--TODO: include ascending/descending sort feature-->
 
-<div class="uk-container">
-{% for volume in volumes %}
+   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+   {% for volume in volumes %}
+  {% if volume.canvas_set.first.pid is null %}
       <div class="uk-width-1-2@m uk-grid-medium">
         <div class=" uk-width-1-4@m rx-volume-image">
           <a class="nav-link" href="#">

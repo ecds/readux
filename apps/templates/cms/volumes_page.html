@@ -69,7 +69,21 @@
       <p>
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
       {{ volume.label|truncatechars:200 }}
-  </a><br/>
+  </a>
+ {% for value in user_annotation_count %}
+ {% if volume.pid in value %}
+ {% if "0" not in value|safe|slice:"-3:-1" %}
+<!-- 
+ <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
+ -->
+ <span class="count-icon">
+ <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5" uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+ <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+ </span>
+ {% endif %}
+ {% endif %}
+ {% endfor %}
+  <br/>
   Author: {{volume.author|truncatechars:150}}<br/>
   Date Published: {{volume.published_date}}<br/>
   Added {{volume.created_at}}</p></div>

@@ -13,6 +13,13 @@
   }
 },
 {
+  "model": "canvases.iserver",
+  "pk": "7d1f0e32-b4e5-4e09-bc70-f692e3780cf7",
+  "fields": {
+      "IIIF_IMAGE_SERVER_BASE": "https://images.readux.ecds.emory/"
+  }
+},
+{
   "model": "canvases.canvas",
   "pk": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
   "fields": {
@@ -24,7 +31,7 @@
       "height": 3608,
       "width": 1976,
       "IIIF_IMAGE_SERVER_BASE": "02ac58b2-2c62-4f67-807e-7927ff191ace"
-  }
+    }
 },
 {
   "model": "canvases.canvas",
@@ -37,6 +44,7 @@
       "position": 96,
       "height": 3608,
       "width": 1976,
-      "IIIF_IMAGE_SERVER_BASE": "a7f1bd69-766c-4dd4-ab66-f4051fdd4cff"
+      "IIIF_IMAGE_SERVER_BASE": "a7f1bd69-766c-4dd4-ab66-f4051fdd4cff",
+      "is_starting_page": true
   }
 }]

@@ -33,60 +33,68 @@
   {% include "snippets/sort_dropdown.html" %}
   <!--TODO: include ascending/descending sort feature-->
 
-  <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
-    {% for volume in volumes %}
-    {% if volume.canvas_set.first.pid is null %}
+<div class="uk-container">
+{% for volume in volumes %}
 
-      <div class="uk-width-1-2@m uk-grid-medium">
-        <div class=" uk-width-1-4@m rx-volume-image">
-          <a class="nav-link" href="#">
-            <img src='{% static 'images/image_not_found.jpg' %}' />
-          </a>
-        </div>
-        <div class="uk-width-3-4@m">
-          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-            <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
-          </a>
-          <p>
-            <ul class="uk-padding-remove">
-              <li>Author: {{volume.author|truncatechars:150}}</li>
-              <li>Published: {{volume.published_date}}</li>
-              <li>Publisher: {{volume.publisher}}</li>
-              <li>Publication City: {{volume.published_city}}</li>
-              <li>Added: {{volume.created_at}}</li>
-            </ul>
-          </p>
-        </div>
-      </div>
 
-    {% else %}
-    <div class="uk-width-1-2@m uk-grid-medium">
-      <div class=" uk-width-1-4@m rx-volume-image">
-        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-          {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img
-            src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"
-            {% endif %}{% endfor %} alt="First page of {{volume.label}}"
-            onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
-        </a>
-      </div>
-      <div class="uk-width-3-4@m">
-        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-          <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
-        </a>
-        <p>
-          <ul class="uk-padding-remove">
-            <li>Author: {{volume.author|truncatechars:150}}</li>
-            <li>Published: {{volume.published_date}}</li>
-            <li>Publisher: {{volume.publisher}}</li>
-            <li>Publication City: {{volume.published_city}}</li>
-            <li>Added: {{volume.created_at}}</li>
-          </ul>
-        </p>
-      </div>
-    </div>
-    {% endif %}
-    {% endfor %}
-  </div>
+{% if volume.canvas_set.first.pid is null %}
+<div><div id="grid"><div id="grid-image-volume">
+    <img src='{% static 'images/image_not_found.jpg' %}'/>
+  </div><div id="grid-metaforimage"><p>
+  {{ volume.label }} 
+ {% for value in user_annotation_count %}
+ {% if volume.pid in value %}
+ {% if "0" not in value|safe|slice:"-3:-1" %}
+<!-- 
+ <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
+ -->
+ <span class="count-icon">
+ <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5" uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+ <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+ </span>
+ {% endif %}
+ {% endif %}
+ {% endfor %}
+<br/>
+Author: {{volume.author}}<br/>
+Date: {{volume.published_date}}<br/>
+Publisher: {{volume.publisher}}<br/>
+Publication City: {{volume.published_city}}</p>
+  </div></div>
+{% else %}
+<div><div id="grid"><div id="grid-image-volume">
+  <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+    {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
+  </a>
+  </div><div id="grid-metaforimage"><p>
+    <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+  {{ volume.label }}
+</a>
+ {% for value in user_annotation_count %}
+ {% if volume.pid in value %}
+ {% if "0" not in value|safe|slice:"-3:-1" %}
+<!-- 
+ <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
+ -->
+ <span class="count-icon">
+ <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5" uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+ <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+ </span>
+ {% endif %}
+ {% endif %}
+ {% endfor %}
+
+<br/>
+Author: {{volume.author}}<br/>
+Date: {{volume.published_date}}<br/>
+Publisher: {{volume.publisher}}<br/>
+Publication City: {{volume.published_city}}</p>
+  </div></div>
+  {% endif %}
+{% endfor %}
+
+
+</div>
 </div>
 
 {% endblock content %}

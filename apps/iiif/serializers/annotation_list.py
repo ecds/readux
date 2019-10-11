@@ -1,9 +1,12 @@
 from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 import config.settings.local as settings
 from django.core.serializers import serialize
 import json
+
+User = get_user_model()
 
 class Serializer(JSONSerializer):
     """
@@ -37,7 +40,7 @@ class Serializer(JSONSerializer):
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": "%s/iiif/v2/%s/list/%s" % (settings.HOSTNAME, obj.manifest.pid, obj.pid),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.annotation_set.filter(Q(owner=None) | Q(owner__in=self.owners)), is_list=True))
+                "resources": json.loads(serialize('annotation', obj.annotation_set.filter(Q(owner=User.objects.get(username='ocr')) | Q(owner__in=self.owners)), is_list=True))
             }
             return data
 
@@ -47,4 +50,4 @@ class Serializer(JSONSerializer):
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("geojson is a serialization-only serializer")
+        raise SerializerDoesNotExist("annotation_list is a serialization-only serializer")

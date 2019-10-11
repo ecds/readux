@@ -109,17 +109,17 @@ class Collection(models.Model):
 
         thefilename = thename + '_header' + theextension
 
-        if thumb_extension in ['.jpg', '.jpeg']:
-            FtTYPE = 'JPEG'
-        elif thumb_extension == '.gif':
-            FtTYPE = 'GIF'
-        elif thumb_extension == '.png':
-            FtTYPE = 'PNG'
-        else:
-            return False    # Unrecognized file type
+        # if thumb_extension in ['.jpg', '.jpeg']:
+        #     FtTYPE = 'JPEG'
+        # elif thumb_extension == '.gif':
+        #     FtTYPE = 'GIF'
+        # elif thumb_extension == '.png':
+        #     FtTYPE = 'PNG'
+        # else:
+        #     return False    # Unrecognized file type
 
         header_io = BytesIO()
-        cropped_image.save(header_io, format=FtTYPE)
+        cropped_image.save(header_io, format=FTYPE)
         header_io.seek(0)
         
         self.header.save(thefilename, ContentFile(header_io.read()), save=False)

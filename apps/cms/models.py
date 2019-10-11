@@ -12,6 +12,7 @@ from django.http.response import Http404
 from django.http import request
 
 from .blocks import BaseStreamBlock
+from apps.readux.models import UserAnnotation
 from ..iiif.kollections.models import Collection
 from ..iiif.manifests.models import Manifest
 from ..iiif.canvases.models import Canvas
@@ -124,6 +125,16 @@ class VolumesPage(Page):
             del order_url_params['order']
        
         context['volumespage'] = q.all
+        context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
+        annocount_list = []
+        for volume in q:
+            user_annotation_count = UserAnnotation.objects.filter(owner_id=request.user.id).filter(canvas__manifest__id=volume.id).count()
+            annocount_list.append({volume.pid: user_annotation_count})
+            context['user_annotation_count'] = annocount_list
+            print(volume.pid)
+            print(user_annotation_count)
+        value = 0
+        context['value'] = value
 #         canvasquery = Canvas.objects.filter(is_starting_page=1)
 
 #         context['firstthumbnail'] = canvasquery.all

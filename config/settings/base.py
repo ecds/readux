@@ -291,6 +291,7 @@ SERIALIZATION_MODULES = {
     "kollection": "apps.iiif.serializers.kollection",
     "collection_manifest": "apps.iiif.serializers.collection_manifest",
     "startingcanvas": "apps.iiif.serializers.startingcanvas",
+    "user_annotation_list": "apps.iiif.serializers.user_annotation_list",
 }
 
 WAGTAIL_SITE_NAME = 'Readux'

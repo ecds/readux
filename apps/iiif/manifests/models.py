@@ -3,7 +3,8 @@ import config.settings.local as settings
 from ..kollections.models import Collection
 from ..annotations.models import Annotation
 from django.contrib.postgres.fields import JSONField
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 import urllib.request
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
@@ -11,6 +12,9 @@ from json import JSONEncoder
 import uuid
 from uuid import UUID
 #trying to work with autocomplete
+
+User = get_user_model()
+
 JSONEncoder_olddefault = JSONEncoder.default
 def JSONEncoder_newdefault(self, o):
     if isinstance(o, UUID): return str(o)
@@ -45,13 +49,20 @@ class Manifest(ClusterableModel):
     def get_absolute_url(self):
         return "%s/volume/%s" % (settings.HOSTNAME, self.pid)
 
-    @property
-    def note_list(self):
-      self.note_set.values('label')[0]['label']
+    def get_volume_url(self):
+        return "%s/volume/%s/page/all" % (settings.HOSTNAME, self.pid)
+    
+    class Meta:
+        ordering = ['published_date']
+
+    # TODO is this needed?
+    # @property
+    # def note_list(self):
+    #   self.note_set.values('label')[0]['label']
 
     @property
     def publisher_bib(self):
-      "%s : %s" % (published_city, publisher)
+      return "%s : %s" % (self.published_city, self.publisher)
 
     @property
     def thumbnail_logo(self):
@@ -81,6 +92,7 @@ class Manifest(ClusterableModel):
 #         volume_annotation_count = notes.filter(owner_id=current_user).count()
 #         return volume_annotation_count
 
+# TODO is this needed?
 class Note(models.Model):
     label = models.CharField(max_length=255)
     language = models.CharField(max_length=10, default='en')

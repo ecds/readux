@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load readux_templatetags %}
+{% load wagtailcore_tags %}
 
 {% block content %}
 <div class="uk-child-width-expand@s uk-margin-large-top" uk-grid>
@@ -180,9 +181,13 @@
     {% endif %}
     {% endfor %}
 
-    <a class="nav-link" href="/volumes/">
+    {% for post in page.get_children %}
+    {% if 'vol' in post.slug %}
+    <a class="nav-link" href="{% pageurl post %}">
       <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
     </a>
+    {% endif %}
+    {% endfor %}
 
     {% include "footer.html" %}
     {% endif %}

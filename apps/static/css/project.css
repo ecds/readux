@@ -50,10 +50,10 @@
 
 .mirador-container .manifest-info {
     width: auto !important;
-    height: 40px;
     float: right;
     z-index: 2;
 }
+
 
 .mirador-container .window-manifest-navigation {
     float: right;
@@ -619,6 +619,11 @@ header#page-bg .collection-image-info.collasped .info {
   font-weight: 700;
 }
 
+#rx-sort {
+  position:sticky;
+  top: 72px;
+}
+
 .rx-card-title {
   font-size: 1.25em;
   font-weight: 700;
@@ -642,6 +647,9 @@ p {
 .rx-title-container {
   background: white;
   padding: 1em 0;
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }
 
 .rx-title {
@@ -787,16 +795,26 @@ p {
     left: 5%;
     right: 5%;
     background: white; */
+    /* position: sticky;
+    top: 0; */
+    background: white;
 }
 
 .rx-splash {
   /* position: fixed; */
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
+  justify-content: space-between;
+  height: calc(100vh - 200px);
 }
 
 .rx-splash-item {
+  
 }
+
 .rx-grid-right {
   margin-left: 50%;
 }
@@ -1005,7 +1023,7 @@ p {
 .rx-volume-na {
   /* border: 1px solid #afafaf; */
   background: #fff1e4;
-  padding: 1em;
+  padding: 15px;
   font-size: 14px;
   color: #ea7c0f;
 }
@@ -1143,4 +1161,45 @@ p {
 
 .rx-collection-title-banner {
   color: white;
+  font-size: 1.5rem;
+}
+
+
+.rx-sticky {
+  position: sticky;
+  top: 0;
+}
+
+
+/*mirador overrides*/
+
+.mirador-container .manifest-info {
+  padding: 0.5rem;
+  overflow: initial !important;
+}
+
+.mirador-container .window-manifest-navigation {
+  margin-left: initial;
+}
+
+
+.mirador-container .mirador-viewer a.mirador-icon-view-type, .mirador-container .mirador-viewer a.mirador-icon-metadata-view, .mirador-container .mirador-viewer a.mirador-osd-fullscreen {
+  display: flex;
+  flex-direction: row;
+
+}
+
+.mirador-container .mirador-viewer a.mirador-icon-view-type, .mirador-container .mirador-viewer a.mirador-icon-metadata-view, .mirador-container .mirador-viewer a.mirador-osd-fullscreen {
+  margin-right: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.mirador-btn {
+  padding: 0.5rem;
+}
+
+.window-manifest-navigation {
+  display: flex;
+  justify-content: space-between;
+  width: 55px;
 }

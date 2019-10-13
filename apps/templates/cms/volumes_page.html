@@ -5,18 +5,17 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
+<div class="rx-title-container">
+  <ul class="rx-breadcrumb uk-text-truncate">
+    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+    <li class="rx-breadcrumb-item">Volumes</li>
+  </ul>
+
+  <div class="rx-title">{{ page.page_title }}</div>
+  <div class="rx-title-tagline">{{page.tagline}}</div>
+</div>
 
 <div class="rx-head-container">
-  <div class="rx-title-container">
-    <ul class="rx-breadcrumb uk-text-truncate">
-      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-      <li class="rx-breadcrumb-item">Volumes</li>
-    </ul>
-
-    <div class="rx-title">{{ page.page_title }}</div>
-    <div class="rx-title-tagline">{{page.tagline}}</div>
-  </div>
-
   <p>{{ page.paragraph }}</p>
 </div>
 
@@ -47,7 +46,6 @@
         {% if canvas.is_starting_page == 1 %}
           <v-volume-image img-src="{{ canvas.thumbnail_crop_volume }}" 
             volume-label="{{volume.label}}"></v-volume-image>
-        {% elif canvas.is_starting_page == 0 %}
         {% elif forloop.last %}
           <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
             volume-label="{{volume.label}}"></v-volume-image>
@@ -72,11 +70,11 @@
 {% endif %}
 
 {% if page.layout == 'List' %}
-<div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in volumespage %}
   {% if volume.canvas_set.first.pid is null %}
   <div class="uk-width-1-2@m uk-grid-medium">
-    <div class="uk-width-1-4@m rx-volume-image">
+    <div class="uk-width-1-4@m">
       <a class="nav-link" href="#">
         <v-volume-image></v-volume-image>
       </a>
@@ -103,7 +101,6 @@
             img-src="{{ canvas.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
-          {% elif canvas.is_starting_page == 0 %}
           {% elif forloop.last %}
           <v-volume-image 
             img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
@@ -140,6 +137,8 @@
   {% endfor %}
 </div>
 
+    {% include "footer.html" %}
+    
 {% endif %}
 
 {% endblock content %}

@@ -7,28 +7,30 @@
 <div class="uk-child-width-expand@s uk-margin-large-top" uk-grid>
 
   <div class="rx-splash">
-    <ul class="readux-home-tagline uk-padding-remove-left">
+    <ul class="readux-home-tagline uk-padding-remove-left rx-splash-item">
       <li>Read.</li>
       <li>Annotate.</li>
       <li>Publish.</li>
     </ul>
-    <p class="">Engage with digitized print materials on an open source software platform and share new thinking.</p>
-    <img src="static/images/ecds.svg" class="readux-home-ecds">
+    <div class="rx-splash-item">
+      <p class="">Engage with digitized print materials on an open source software platform and share new thinking.</p>
+      <img src="static/images/ecds.svg" class="readux-home-ecds">
+    </div>
   </div>
 
-  <div>
+  <div class="rx-home-right-column">
     {% if page.featured_collections.all|length != 0  %}
     <div class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</div>
     <ul class="uk-padding-remove-left">
       {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
       <li>
         <article class="rx-article">
-          <div class="rx-card-image-container">
+          <div class="rx-card-image-container uk-width-1-4@m">
             <a alt="Thumbnail image for collection {{collection.label}}" class="rx-card-image"
               href="{% url 'collection' collection.pid %}"
               style="background-image: url('https://127.0.0.1:3000/media/{{collection.thumbnail}}'); // background-position: 77% 52% !important;"></a>
           </div>
-          <div class="rx-card-body">
+          <div class="rx-card-body uk-width-3-4@m">
             <a class="nav-link" href="{% url 'collection' collection.pid %}">
               <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
               <div class="rx-title-tagline">{{collection.manifests.all|length}}
@@ -53,14 +55,13 @@
     {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
     <li>
       <article class="rx-article">
-        <div class="rx-card-image-container">
+        <div class="rx-card-image-container uk-width-1-4@m">
           <a alt="First page of {{volume.label}}" class="rx-card-image"
             href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             {% for canvas in volume.canvas_set.all %}
             {% if canvas.is_starting_page == 1 %}
             <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
             </v-volume-image>
-            {% elif canvas.is_starting_page == 0 %}
             {% elif forloop.last %}
             <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
             </v-volume-image>
@@ -68,7 +69,7 @@
             {% endfor %}
           </a>
         </div>
-        <div class="rx-card-body">
+        <div class="rx-card-body uk-width-3-4@m">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
@@ -98,12 +99,12 @@
     <ul class="uk-padding-remove-left">
       {% for collection in page.collections|slice:":8" %}
       <li>
-        <article class="rx-article">
+        <article class="rx-article uk-width-1-4@m">
           <div class="rx-card-image-container">
             <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
               style="background-image: url('https://127.0.0.1:3000/media/{{collection.header}}'); // background-position: 77% 52% !important;"></a>
           </div>
-          <div class="rx-card-body">
+          <div class="rx-card-body uk-width-3-4@m">
             <a class="nav-link" href="{% url 'collection' collection.pid %}">
               <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
               <div class="rx-title-tagline">{{collection.manifests.all|length}}
@@ -124,8 +125,10 @@
     {% if volume.canvas_set.first.pid is null %}
     <li>
       <article class="rx-article">
-        <v-volume-image></v-volume-image>
-        <div class="rx-card-body">
+        <div class="uk-width-1-4@m">
+          <v-volume-image></v-volume-image>
+        </div>
+        <div class="rx-card-body uk-width-3-4@m">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
@@ -146,13 +149,12 @@
     {% else %}
     <li>
       <article class="rx-article">
-        <div class="rx-card-image-container">
+        <div class="rx-card-image-container uk-width-1-4@m">
           <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             {% for canvas in volume.canvas_set.all %}
             {% if canvas.is_starting_page == 1 %}
             <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
             </v-volume-image>
-            {% elif canvas.is_starting_page == 0 %}
             {% elif forloop.last %}
             <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
             </v-volume-image>
@@ -161,7 +163,7 @@
           </a>
 
         </div>
-        <div class="rx-card-body">
+        <div class="rx-card-body uk-width-3-4@m">
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>

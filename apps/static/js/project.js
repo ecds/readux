@@ -64,3 +64,15 @@
       $(`#${formId}`).submit();
     }
 
+
+    // component resize
+    $(document).ready(function() {
+      var offset = $(".rx-home-right-column").offset().top;
+      $(".rx-splash").css("top", offset);
+
+      if (document.URL.replace(/\/+$/, "") == window.location.origin) {
+        $("#rx-nav").addClass("rx-sticky");
+      } else {
+        $("#rx-nav").removeClass("rx-sticky");
+      }
+    });

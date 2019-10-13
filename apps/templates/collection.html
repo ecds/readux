@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="uk-container">
+<div>
 
   <header class="page-header" id="page-bg">
     <div class="container">
@@ -17,16 +17,17 @@
     </div>
   </header>
 
+  <div class="rx-title-container">
+    <ul class="rx-breadcrumb uk-text-truncate">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
+      <li class="rx-breadcrumb-item">{{ collection.label }}</li>
+    </ul>
+    <div class="rx-title">{{ collection.label }}</div>
+    <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
+  </div>
+
   <div class="rx-head-container">
-    <div class="rx-title-container">
-      <ul class="rx-breadcrumb uk-text-truncate">
-        <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-        <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
-        <li class="rx-breadcrumb-item">{{ collection.label }}</li>
-      </ul>
-      <div class="rx-title">{{ collection.label }}</div>
-      <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
-    </div>
     <p>{{ collection.summary }}</p>
   </div>
 
@@ -37,7 +38,7 @@
    {% for volume in volumes %}
   {% if volume.canvas_set.first.pid is null %}
       <div class="uk-width-1-2@m uk-grid-medium">
-        <div class=" uk-width-1-4@m rx-volume-image">
+        <div class=" uk-width-1-4@m rx-volume-na">
           <a class="nav-link" href="#">
             <v-volume-image></v-volume-image>
           </a>
@@ -77,7 +78,6 @@
             {% if canvas.is_starting_page == 1 %}
               <v-volume-image img-src="{{ canvas.thumbnail }}" volume-label="First page of {{volume.label}}">
               </v-volume-image>
-            {% elif canvas.is_starting_page == 0 %}
             {% elif forloop.last %}
               <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail }}" volume-label="First page of {{volume.label}}">
               </v-volume-image>
@@ -115,5 +115,7 @@
     {% endfor %}
   </div>
 </div>
+
+{% include "footer.html" %}
 
 {% endblock content %}

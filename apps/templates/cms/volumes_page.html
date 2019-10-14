@@ -42,16 +42,23 @@
   <div class="box">
     <div class="boxInner">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}
-        {% if canvas.is_starting_page == 1 %}
-          <v-volume-image img-src="{{ canvas.thumbnail_crop_volume }}" 
-            volume-label="{{volume.label}}"></v-volume-image>
-        {% elif forloop.last %}
-          <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"
-            volume-label="{{volume.label}}"></v-volume-image>
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_volume }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
         {% endif %}
-        {% endfor %}
-
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
       </a>
       <div class="innerContent">
         <p>
@@ -95,19 +102,23 @@
 
     <div class="uk-width-1-4@m rx-volume-image">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}
-          {% if canvas.is_starting_page == 1 %}
-          <v-volume-image 
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
             img-src="{{ canvas.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
-          {% elif forloop.last %}
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
           <v-volume-image 
             img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
-          {% endif %}
-        {% endfor %}
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
       </a>
     </div>
     <div class="uk-width-3-4@m">

@@ -28,7 +28,7 @@
           <div class="rx-card-image-container uk-width-1-4@m">
             <a alt="Thumbnail image for collection {{collection.label}}" class="rx-card-image"
               href="{% url 'collection' collection.pid %}"
-              style="background-image: url('https://127.0.0.1:3000/media/{{collection.thumbnail}}'); // background-position: 77% 52% !important;"></a>
+              style="background-image: url('/media/{{collection.thumbnail}}'); // background-position: 77% 52% !important;"></a>
           </div>
           <div class="rx-card-body uk-width-3-4@m">
             <a class="nav-link" href="{% url 'collection' collection.pid %}">

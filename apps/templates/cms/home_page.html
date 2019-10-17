@@ -1,102 +1,240 @@
 {% extends "base.html" %}
 {% load static %}
 {% load readux_templatetags %}
+{% load wagtailcore_tags %}
 
 {% block content %}
-<h1>{{page.title}}</h1>
-<p class="lead">{{page.tagline}}</p>
+<div class="uk-child-width-expand@s uk-margin-large-top" uk-grid>
 
-{% if page.featured_collections.all|length != 0  %}
-<h2>Featured Collection{{page.featured_collections.all|length|pluralize}}</h2>
-<ol>
-  {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
-  <li>
-    <div>
-      <img src="media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"/><br/>
-        <a class="nav-link" href="{% url 'collection' collection.pid %}">
-          {{ collection.label }}
-        </a>
-        {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
+  <div class="rx-splash">
+    <ul class="readux-home-tagline uk-padding-remove-left rx-splash-item">
+      <li>Read.</li>
+      <li>Annotate.</li>
+      <li>Publish.</li>
+    </ul>
+    <div class="rx-splash-item">
+      <p class="">Engage with digitized print materials on an open source software platform and share new thinking.</p>
+      <img src="static/images/ecds.svg" class="readux-home-ecds">
     </div>
-  </li>
-  {% endfor %}
-</ol>
-{% endif %}
+  </div>
 
-{% if page.featured_volumes.all|length != 0 %}
-<h2>Featured Volume{{page.featured_volumes.all|length|pluralize}}</h2>
-<ol>
+  <div class="rx-home-right-column">
+    {% if page.featured_collections.all|length != 0  %}
+    <div class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</div>
+    <ul class="uk-padding-remove-left">
+      {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
+      <li>
+        <article class="rx-article">
+          <div class="rx-card-image-container uk-width-1-4@m">
+            <a alt="Thumbnail image for collection {{collection.label}}" class="rx-card-image"
+              href="{% url 'collection' collection.pid %}"
+              style="background-image: url('https://127.0.0.1:3000/media/{{collection.thumbnail}}'); // background-position: 77% 52% !important;"></a>
+          </div>
+          <div class="rx-card-body uk-width-3-4@m">
+            <a class="nav-link" href="{% url 'collection' collection.pid %}">
+              <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+              <div class="rx-title-tagline">{{collection.manifests.all|length}}
+                volume{{collection.manifests.all|length|pluralize}}
+              </div>
+              <p class="rx-card-text">{{ collection.summary }}</p>
+            </a>
+          </div>
+        </article>
+      </li>
+      {% endfor %}
+      <a class="nav-link" href="#">
+        <div class="rx-btn rx-btn-extension">Show All Featured Collections <i class="fas fa-chevron-right"></i></div>
+      </a>
+    </ul>
+    {% endif %}
+
+
+
+    {% if page.featured_volumes.all|length != 0 %}
+    <div class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</div>
     {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
-  <li class="list">
-    <div><div id="grid"><div id="grid-image-volume">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-      </a></div><div id="grid-metaforimage">
-      <p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+    <li>
+      <article class="rx-article">
+        <div class="rx-card-image-container uk-width-1-4@m">
+          <a alt="First page of {{volume.label}}" class="rx-card-image"
+            href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+          </a>
+        </div>
+        <div class="rx-card-body uk-width-3-4@m">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
+            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
+          </a>
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
+            </h3>
+            <!-- <div class="rx-title-tagline">Expose annotation count when available</div> -->
+            <ul class="rx-card-text">
+              <li>Author: {{volume.author|truncatechars:100}}</li>
+              <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
+            </ul>
+          </a>
+        </div>
+      </article>
+    </li>
+    {% endfor %}
+    <a class="nav-link" href="#">
+      <div class="rx-btn rx-btn-extension">Show All Featured Volumes <i class="fas fa-chevron-right"></i></div>
+    </a>
+    {% endif %}
 
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  </a><br/>
-  Author: {{volume.author|truncatechars:100}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p>
-    </div></div></div>
-  </li>
-  {% endfor %}
-</ol>
-{% endif %}
 
-{% if page.content_display == 'Collections' %}
-<h2>All Collections</h2>
-<ul>
-  {% for collection in page.collections %}
-  <li>
-    <div class="collectioncontainer">
-      <img src="media/{{collection.header}}" alt="Banner image for collection {{collection.label}}" style="width:100%;"/><br />
-        <a class="nav-link" href="{% url 'collection' collection.pid %}">
-          {{ collection.label }}
-        </a>
-        {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
-    </div>
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
 
-{% if page.content_display == 'Volumes' %}
-<h2>All Volumes</h2>
-<ol>
-  {% for volume in page.volumes %}
-  {% if volume.canvas_set.first.pid is null %}
-    <li class="list">
-    <div><div id="grid"><div id="grid-image-volume">
-        <img src='{% static 'images/image_not_found.jpg' %}'/>
-      </div><div id="grid-metaforimage">
-      <p>
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  Author: {{volume.author|truncatechars:150}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-  </li>
-  {% else %}
-  <li class="list">
-    <div><div id="grid"><div id="grid-image-volume">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %}alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-      </a></div><div id="grid-metaforimage">
-      <p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  </a>
-  Author: {{volume.author|truncatechars:150}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-  </li>
-  {% endif %}
-  {% endfor %}
-</ol>
-{% endif %}
+    {% if page.content_display == 'Collections' %}
+    <div class="readux-group-title">All Collections</div>
 
+    <ul class="uk-padding-remove-left">
+      {% for collection in page.collections|slice:":8" %}
+      <li>
+        <article class="rx-article uk-width-1-4@m">
+          <div class="rx-card-image-container">
+            <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
+              style="background-image: url('https://127.0.0.1:3000/media/{{collection.header}}'); // background-position: 77% 52% !important;"></a>
+          </div>
+          <div class="rx-card-body uk-width-3-4@m">
+            <a class="nav-link" href="{% url 'collection' collection.pid %}">
+              <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+              <div class="rx-title-tagline">{{collection.manifests.all|length}}
+                volume{{collection.manifests.all|length|pluralize}}
+              </div>
+              <p class="rx-card-text">{{ collection.summary }}</p>
+            </a>
+          </div>
+        </article>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if page.content_display == 'Volumes' %}
+    <div class="readux-group-title">All Volumes</div>
+    {% for volume in page.volumes|slice:":8" %}
+    {% if volume.canvas_set.first.pid is null %}
+    <li>
+      <article class="rx-article">
+        <div class="uk-width-1-4@m">
+          <v-volume-image></v-volume-image>
+        </div>
+        <div class="rx-card-body uk-width-3-4@m">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
+            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
+          </a>
+          <a class="nav-link" href="#">
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">
+              {{ volume.label|truncatechars:200 }}
+            </h3>
+            <div class="rx-title-tagline"></div>
+            <ul class="rx-card-text">
+              <li>Author: {{volume.author|truncatechars:150}}</li>
+              <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+            </ul>
+          </a>
+        </div>
+      </article>
+    </li>
+
+    {% else %}
+    <li>
+      <article class="rx-article">
+        <div class="rx-card-image-container uk-width-1-4@m">
+          <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+          </a>
+
+        </div>
+        <div class="rx-card-body uk-width-3-4@m">
+          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
+            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
+          </a>
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
+            </h3>
+            <div class="rx-title-tagline">TBD</div>
+            <ul class="rx-card-text">
+              <li>Author: {{volume.author|truncatechars:150}}</li>
+              <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
+            </ul>
+          </a>
+        </div>
+      </article>
+    </li>
+
+    {% endif %}
+    {% endfor %}
+
+    {% for post in page.get_children %}
+    {% if 'vol' in post.slug %}
+    <a class="nav-link" href="{% pageurl post %}">
+      <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
+    </a>
+    {% endif %}
+    {% endfor %}
+
+    {% include "footer.html" %}
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

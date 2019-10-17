@@ -2,65 +2,25 @@
 {# uses selectize javascript plug-in for interactivity #}
 {# expects current sort as *sort*, sort options as *sort_options*, and any additional url arguments as *sort_url_params* #}
 {% load static i18n %}
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="{% static 'js/selectize.js' %}"></script>
-<footer class="pagination pagination-dropdown"> {# cheating: borrowing styles from eultheme pagination dropdown #}
-    <section>
-        <!--<h2 class="h4">Sort</h2>-->
-            <label class="sr-only" for="select-page">Sort:</label>
-            <select id="select-sort" class="select-sort" placeholder="Sort by...">
-                {% for i in sort_options %}
-                    <option {% if i == sort %}class="active" selected="selected"{% endif %} value="?{% if sort_url_params %}{{ sort_url_params }}&amp;{% endif %}sort={{ i }}">
-                        {{ i }}
-                    </option>
-                {% endfor %}
-            </select>
-            <a onclick="ascaddURL(this)" href=""><button>&uarr;</button></a><a onclick="descaddURL(this)" href=""><button>&darr;</button></a>
-            <p>
-    </section>
-</footer>
-<script type="text/javascript">
-$('.select-sort').selectize({
-    create: false,
-    highlight: true,
-    onChange: function(value){
-        if(window.location!==value){
-            window.location = value;
-        }
-    }
-})
-</script>
-<script>
-function ascaddURL(element)
-{
-    $(element).attr('href', function() {
-        if (window.location.search.length == 0) {
-        return this.href + '?sort=title&order=asc';
-        } else if (window.location.search.match(/[?&]order=asc/gi)) {
-        this.href = this.href.replace('order=asc', 'order=asc');
-        return this.href;
-        } else if (window.location.search.match(/[?&]order=desc/gi)) {
-        this.href = this.href.replace('order=desc', 'order=asc');
-        return this.href;
-        } else {
-        return this.href + '&order=asc';
-        }
-    });
-}
-function descaddURL(element)
-{
-    $(element).attr('href', function() {
-        if (window.location.search.length == 0) {
-        return this.href + '?sort=title&order=desc';
-        } else if (window.location.search.match(/[?&]order=asc/gi)) {
-        this.href = this.href.replace('order=asc', 'order=desc');
-        return this.href;
-        } else if (window.location.search.match(/[?&]order=desc/gi)) {
-        this.href = this.href.replace('order=desc', 'order=desc');
-        return this.href;
-        } else {
-        return this.href + '&order=desc';
-        }
-    });
-}
-</script>
+<div class="uk-margin-bottom uk-flex-between uk-flex" id="rx-sort">
+	<div>
+		<span ref="v-attr-sort" data-sort="{{ sort }}"></span>
+		<span class="rx-action-title">Sort by: </span> <a class="rx-action-btn">[[currentSelection]]</a>
+		<div uk-dropdown="mode: click">
+			<ul class="uk-nav uk-dropdown-nav">
+				<li v-for="(option, index) in options" v-bind:class="{ 'uk-active' : (option==currentSelection) }">
+					<a href="#" @click="sortBy(option)">
+						[[ option ]]
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div>
+		<a class="rx-icon-btn" onclick="ascaddURL(this)" uk-icon="icon: arrow-up" href=""
+			uk-tooltip="title: sort in ascending order"></a>
+		<a class="rx-icon-btn" onclick="descaddURL(this)" uk-icon="icon: arrow-down" href=""
+			uk-tooltip="title: sort in descending order"></a>
+	</div>
+</div>

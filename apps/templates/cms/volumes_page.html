@@ -5,93 +5,151 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h2 class='uk-heading-primary'>{{ page.page_title }}</h1>
-<h3>{{page.tagline}}</h3>
-<p class='text-lead'>{{ page.paragraph }}</p>
+<div class="rx-title-container">
+  <ul class="rx-breadcrumb uk-text-truncate">
+    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+    <li class="rx-breadcrumb-item">Volumes</li>
+  </ul>
+
+  <div class="rx-title">{{ page.page_title }}</div>
+  <div class="rx-title-tagline">{{page.tagline}}</div>
+</div>
+
+<div class="rx-head-container">
+  <p>{{ page.paragraph }}</p>
+</div>
 
 {% include "snippets/sort_dropdown.html" %}
 
 {% if page.layout == 'Grid' %}
-  <div id="wrap">
+<div class="wrap">
   {% for volume in volumespage %}
- {% if volume.canvas_set.first.pid is null %}
-    <div id="box">
-    <div id="boxInner">
-        <img src='{% static '/images/image_not_found.jpg' %}'/>
-      <div id="innerContent"><p>
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  </p>
-  <p><em>Author:</em> {{volume.author|truncatechars:150}}<br/>
-  <em>Date Published:</em> {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-{% else %}
-    <div id="box">
-    <div id="boxInner">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail_crop_volume }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}"{% endif %}{% endfor %}alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
-      </a>
-      <div id="innerContent"><p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      <p>{{ volume.label|truncatechars:200 }}</p>
-  </a></p>
-  <p><em>Author:</em> {{volume.author|truncatechars:150}}<br/>
-  <em>Date Published:</em> {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-    {% endif %}
-  {% endfor %}
+  {% if volume.canvas_set.first.pid is null %}
+  <div class="box">
+    <div class="boxInner">
+      <v-volume-image></v-volume-image>
+      <div class="innerContent">
+        <p>
+          <p>{{ volume.label|truncatechars:200 }}</p>
+        </p>
+        <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
+          <em>Date Published:</em> {{volume.published_date}}<br />
+          Added {{volume.created_at}}</p>
+      </div>
+    </div>
   </div>
+  {% else %}
+  <div class="box">
+    <div class="boxInner">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_volume }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+      </a>
+      <div class="innerContent">
+        <p>
+          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+            <p>{{ volume.label|truncatechars:200 }}</p>
+          </a></p>
+        <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
+          <em>Date Published:</em> {{volume.published_date}}<br />
+          Added {{volume.created_at}}</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
 {% endif %}
 
 {% if page.layout == 'List' %}
-<ol>
+<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in volumespage %}
-{% if volume.canvas_set.first.pid is null %}
-  <li class="list">
-    <div><div id="grid"><div id="grid-image-volume">
-        <img src='{% static 'images/image_not_found.jpg' %}'/>
-      </div><div id="grid-metaforimage">
-      <p>
-      {{ volume.label|truncatechars:200 }}
-  <br/>
-  Author: {{volume.author|truncatechars:150}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-  </li>
-{% else %}
-  <li class="list">
-    <div><div id="grid"><div id="grid-image-volume">
+  {% if volume.canvas_set.first.pid is null %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+    <div class="uk-width-1-4@m">
+      <a class="nav-link" href="#">
+        <v-volume-image></v-volume-image>
+      </a>
+    </div>
+    <div class="uk-width-3-4@m">
+      <a class="nav-link" href="#">
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove">
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}}</li>
+        <li>Added: {{volume.created_at}}</li>
+      </ul>
+    </div>
+  </div>
+  {% else %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+
+    <div class="uk-width-1-4@m rx-volume-image">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-      </a></div><div id="grid-metaforimage">
-      <p>
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+      </a>
+    </div>
+    <div class="uk-width-3-4@m">
       <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      {{ volume.label|truncatechars:200 }}
-  </a>
- {% for value in user_annotation_count %}
- {% if volume.pid in value %}
- {% if "0" not in value|safe|slice:"-3:-1" %}
-<!-- 
- <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
- -->
- <span class="count-icon">
- <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5" uk-tooltip="title: Number of your annotations; pos: bottom"></span>
- <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
- </span>
- {% endif %}
- {% endif %}
- {% endfor %}
-  <br/>
-  Author: {{volume.author|truncatechars:150}}<br/>
-  Date Published: {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-  </li>
-    {% endif %}
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  {% endif %}
   {% endfor %}
-</ol>
+</div>
+
+    {% include "footer.html" %}
+    
 {% endif %}
 
 {% endblock content %}

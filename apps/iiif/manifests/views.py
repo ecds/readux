@@ -72,7 +72,8 @@ class ManifestExport(View):
 
         return resp
 
-class JekyllExport(View):
+class JekyllExport(TemplateView):
+    template_name = "jekyll_export.html"
 
     form_class = JekyllExportForm
 
@@ -107,24 +108,23 @@ class JekyllExport(View):
 
         # TODO Actually use the git repo and export mode
         jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo='readux-test-export', export_mode='github', deep_zoom=deep_zoom, owners=owners, user=self.request.user, );
+        if export_mode == 'download':
+            zip = jekyll_export.get_zip()
+            resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
+            resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
+            return resp
+        else: #github exports
+            repo_url, ghpages_url, pr_url = jekyll_export.volume_export()
+            context = self.get_context_data()
+            context['repo_url'] = repo_url
+            context['ghpages_url'] = ghpages_url
+            context['pr_url'] = pr_url
+            return render(request, self.template_name, context)
+#            return JsonResponse(status=200, data=[repo_url, ghpages_url, pr_url], safe=False)
 
-        # TODO respond with some message if the user is not downloading a zip file
-        zip = jekyll_export.get_zip()
-        resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
-        resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
-
-        return resp
 
     def get_context_data(self, **kwargs):
-        context_data = super(JekyllSiteExport, self).get_context_data()
-        if not self.request.user.is_anonymous():
-            context_data['export_form'] = self.get_form()
-        raise "Helpz"
+        context_data = super(JekyllExport, self).get_context_data(**kwargs)
         return context_data
 
 
-    def render(self, request, **kwargs):
-        context_data = self.get_context_data()
-        raise "Helpz"
-        context_data.update(kwargs)
-        return render(request, self.template_name, context_data)

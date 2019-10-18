@@ -183,7 +183,7 @@ class JekyllSiteExport(object):
 
 
     def get_zip(self):
-        return self.volume_export()
+        return self.website_zip()
 
     def iiif_dir(self):
         return os.path.join(self.jekyll_site_dir, 'iiif_export')
@@ -704,58 +704,35 @@ class JekyllSiteExport(object):
     #                    download_tei=True, download_url=download_url)
 
     #     # check form data to see if github repo is requested
-        # elif export_mode == 'github':
-        if self.export_mode == 'github':
-            if not self.gitrepo_exists():
-                # create a new github repository with exported jekyll site
-                try:
-                    repo_url, ghpages_url = self.website_gitrepo()
+        repo_url = None
+        ghpages_url = None
+        pr_url = None
+        if not self.gitrepo_exists():
+            # create a new github repository with exported jekyll site
+            try:
+                repo_url, ghpages_url = self.website_gitrepo()
 
-                    logger.info('Exported %s to GitHub repo %s for user %s',
-                                manifest.pid, repo_url, self.user.username)
+                logger.info('Exported %s to GitHub repo %s for user %s',
+                            manifest.pid, repo_url, self.user.username)
 
-                    # # send success with urls to be displayed
-                    # notify_msg('Export to GitHub complete', 'status',
-                    #            github_export=True, repo_url=repo_url,
-                    #            ghpages_url=ghpages_url)
+                # # send success with urls to be displayed
+                # notify_msg('Export to GitHub complete', 'status',
+                #            github_export=True, repo_url=repo_url,
+                #            ghpages_url=ghpages_url)
 
-                except GithubExportException as err:
-                    logger.info('Export failed: %s' % err)
-            else:
-                # update an existing github repository with new branch and
-                # a pull request
-                try:
-                    pr_url = self.update_gitrepo()
+            except GithubExportException as err:
+                logger.info('Export failed: %s' % err)
+        else:
+            # update an existing github repository with new branch and
+            # a pull request
+            try:
+                pr_url = self.update_gitrepo()
 
-                    logger.info('GitHub jekyll site update completed')
-
-                except GithubExportException as err:
-                    notify_msg('Export failed: %s' % err, 'error')
-
-        elif export_mode == 'download':
-            # non github export: download a jekyll site as a zipfile
-#        try:
-            webzipfile = self.website_zip()
-    #             logger.info('Exported %s as jekyll zipfile for user %s',
-    #                         vol.pid, user.username)
-    #             notify_msg('Generated Jeyll zip file')
-
-    #             # upload the generated zipfile to an Amazon S3 bucket configured
-    #             # to auto-expire after 23 hours, so user can download
-    #             notify_msg('Uploading zip file to Amazon S3')
-    #             # include username in downlaod file label to avoid collisions
-    #             label = '%s_annotated_jekyll_site_%s' % (vol.noid, user.username)
-    #             download_url = s3_upload(webzipfile.name, label)
-
-    #             notify_msg('Zip file available for download', 'status',
-    #                        download=True, download_url=download_url)
-
-    #         except export.ExportException as err:
-    #             # display error to user
-    #             notify_msg('Export failed: %s' % err, 'error')
-        return webzipfile
-
-
-
+                logger.info('GitHub jekyll site update completed')
+                repo_url = 'https://github.com/%s/%s' % (self.github_username, self.github_repo)
+                ghpages_url = 'https://%s.github.io/%s/' % (self.github_username, self.github_repo)
+            except GithubExportException as err:
+                notify_msg('Export failed: %s' % err, 'error')
+        return [repo_url, ghpages_url, pr_url]
 
 

@@ -100,12 +100,15 @@ class JekyllExport(View):
         export_mode = export_form.cleaned_data['mode']
     #     image_hosting = cleaned_data['image_hosting']
     #     include_images = (image_hosting == 'independently_hosted')
+        # TODO parse out the git repo
         deep_zoom = export_form.cleaned_data['deep_zoom']
 
         owners = [request.user.id] # TODO switch to form group vs. solo control
 
+        # TODO Actually use the git repo and export mode
+        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo='readux-test-export', export_mode='github', deep_zoom=deep_zoom, owners=owners, user=self.request.user, );
 
-        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], deep_zoom=deep_zoom, owners=owners);
+        # TODO respond with some message if the user is not downloading a zip file
         zip = jekyll_export.get_zip()
         resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
         resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'

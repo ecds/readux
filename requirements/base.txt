@@ -29,6 +29,7 @@ git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocom
 
 #import-export
 django-import-export==1.2.0
+gitpython==3.0.3
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

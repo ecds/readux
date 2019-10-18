@@ -101,20 +101,20 @@ class JekyllExport(TemplateView):
         export_mode = export_form.cleaned_data['mode']
     #     image_hosting = cleaned_data['image_hosting']
     #     include_images = (image_hosting == 'independently_hosted')
-        # TODO parse out the git repo
-        deep_zoom = export_form.cleaned_data['deep_zoom']
+        # deep_zoom = export_form.cleaned_data['deep_zoom']
+        github_repo = export_form.cleaned_data['github_repo']
 
         owners = [request.user.id] # TODO switch to form group vs. solo control
 
         # TODO Actually use the git repo and export mode
-        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo='readux-test-export', export_mode='github', deep_zoom=deep_zoom, owners=owners, user=self.request.user, );
+        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo=github_repo, export_mode=export_mode, deep_zoom=False, owners=owners, user=self.request.user, );
         if export_mode == 'download':
             zip = jekyll_export.get_zip()
             resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
             resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
             return resp
         else: #github exports
-            repo_url, ghpages_url, pr_url = jekyll_export.volume_export()
+            repo_url, ghpages_url, pr_url = jekyll_export.github_export()
             context = self.get_context_data()
             context['repo_url'] = repo_url
             context['ghpages_url'] = ghpages_url

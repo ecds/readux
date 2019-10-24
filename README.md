@@ -95,13 +95,13 @@ pytest
 For dev:
 
 ~~~bash
-fab deploy_dev -H readux.ecdsdev.org
+fab deploy -H readux.ecdsdev.org
 ~~~
 
 For public alpha:
 
 ~~~bash
-fab deploy_alpha -H readux2.ecdsdev.org
+fab deploy -H readux2.ecdsdev.org
 ~~~
 
 Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.

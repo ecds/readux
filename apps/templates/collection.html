@@ -1,89 +1,129 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="uk-container">
-<header class="page-header" id="page-bg">
-  <div class="container">
-<img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}" style="width:100%;" />
-  </div>
-<div class="collection-image-info collasped">
+<div>
 
-        <h3>{{ collection.collection_image_title }}</h3>
-        <div class="info"> {% if collection.collection_image_summary %}
-          <p>{{ collection.collection_image_summary }}</p> {% endif %}
-          <p class="small credit">{{ collection.collection_image_creator }}</p>
+  <header class="page-header" id="page-bg">
+    <div class="container">
+      <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}"
+        style="width:100%;" />
+    </div>
+    <div class="collection-image-info collasped">
+      <h3>{{ collection.collection_image_title }}</h3>
+      <div class="info"> {% if collection.collection_image_summary %}
+        <p>{{ collection.collection_image_summary }}</p> {% endif %}
+        <p class="small credit">{{ collection.collection_image_creator }}</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="rx-title-container">
+    <ul class="rx-breadcrumb uk-text-truncate">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
+      <li class="rx-breadcrumb-item">{{ collection.label }}</li>
+    </ul>
+    <div class="rx-title">{{ collection.label }}</div>
+    <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
+  </div>
+
+  <div class="rx-head-container">
+    <p>{{ collection.summary }}</p>
+  </div>
+
+  {% include "snippets/sort_dropdown.html" %}
+  <!--TODO: include ascending/descending sort feature-->
+
+   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+   {% for volume in volumes %}
+  {% if volume.canvas_set.first.pid is null %}
+      <div class="uk-width-1-2@m uk-grid-medium">
+        <div class=" uk-width-1-4@m rx-volume-na">
+          <a class="nav-link" href="#">
+            <v-volume-image></v-volume-image>
+          </a>
         </div>
+        <div class="uk-width-3-4@m">
+          <a class="nav-link" href="#">
+            <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+          </a>
+          <ul class="uk-padding-remove rx-card-text">
+            <li>Author: {{volume.author|truncatechars:150}}</li>
+            <li>Published: {{volume.published_date}}</li>
+            <li>Publisher: {{volume.publisher}}</li>
+            <li>Publication City: {{volume.published_city}}</li>
+            <li>Added: {{volume.created_at}}</li>
+            <li>
+              {% for value in user_annotation_count %}
+              {% if volume.pid in value %}
+              {% if "0" not in value|safe|slice:"-3:-1" %}
+              <span class="count-icon">
+                <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+                  uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+                <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+              </span>
+              {% endif %}
+              {% endif %}
+              {% endfor %}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    {% else %}
+    <div class="uk-width-1-2@m uk-grid-medium">
+      <div class=" uk-width-1-4@m rx-volume-image">
+        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
+        {% if forloop.last %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+        </a>
+      </div>
+      <div class="uk-width-3-4@m">
+        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+          <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        </a>
+        <ul class="uk-padding-remove rx-card-text">
+          <li>Author: {{volume.author|truncatechars:150}}</li>
+          <li>Published: {{volume.published_date}}</li>
+          <li>Publisher: {{volume.publisher}}</li>
+          <li>Publication City: {{volume.published_city}}</li>
+          <li>Added: {{volume.created_at}}</li>
+          <li>
+            {% for value in user_annotation_count %}
+            {% if volume.pid in value %}
+            {% if "0" not in value|safe|slice:"-3:-1" %}
+            <span class="count-icon">
+              <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+                uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+              <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+            </span>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
   </div>
-<div class="collection-label"><h1><span>{{ collection.label }}</span></h1></div>
-</header>
-<p>{{ collection.summary }}</p>
-<h2>{{volumes|length}} volume{{volumes|length|pluralize}} in this collection</h2>
-
-{% include "snippets/sort_dropdown.html" %}
-<!--TODO: include ascending/descending sort feature-->
-
-<div class="uk-container">
-{% for volume in volumes %}
-
-
-{% if volume.canvas_set.first.pid is null %}
-<div><div id="grid"><div id="grid-image-volume">
-    <img src='{% static 'images/image_not_found.jpg' %}'/>
-  </div><div id="grid-metaforimage"><p>
-  {{ volume.label }} 
- {% for value in user_annotation_count %}
- {% if volume.pid in value %}
- {% if "0" not in value|safe|slice:"-3:-1" %}
-<!-- 
- <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
- -->
- <span class="count-icon">
- <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5" uk-tooltip="title: Number of your annotations; pos: bottom"></span>
- <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
- </span>
- {% endif %}
- {% endif %}
- {% endfor %}
-<br/>
-Author: {{volume.author}}<br/>
-Date: {{volume.published_date}}<br/>
-Publisher: {{volume.publisher}}<br/>
-Publication City: {{volume.published_city}}</p>
-  </div></div>
-{% else %}
-<div><div id="grid"><div id="grid-image-volume">
-  <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-    {% for canvas in volume.canvas_set.all %}{% if canvas.is_starting_page == 1 %}<img src="{{ canvas.thumbnail }}" {% elif forloop.last %}<img src="{{ volume.canvas_set.first.thumbnail }}"{% endif %}{% endfor %} alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"/>
-  </a>
-  </div><div id="grid-metaforimage"><p>
-    <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-  {{ volume.label }}
-</a>
- {% for value in user_annotation_count %}
- {% if volume.pid in value %}
- {% if "0" not in value|safe|slice:"-3:-1" %}
-<!-- 
- <button style="background-color:green;color:white;"> {{ value|safe|slice:"-3:-1" }} </button>
- -->
- <span class="count-icon">
- <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5" uk-tooltip="title: Number of your annotations; pos: bottom"></span>
- <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
- </span>
- {% endif %}
- {% endif %}
- {% endfor %}
-
-<br/>
-Author: {{volume.author}}<br/>
-Date: {{volume.published_date}}<br/>
-Publisher: {{volume.publisher}}<br/>
-Publication City: {{volume.published_city}}</p>
-  </div></div>
-  {% endif %}
-{% endfor %}
-
-
 </div>
-</div>
+
+{% include "footer.html" %}
 
 {% endblock content %}

@@ -70,59 +70,74 @@
 
   <body>
 
-    <div>
-      <nav class='uk-navbar-container uk-margin' uk-navbar>
-        <div class='uk-navbar-left'>
-        <a class='uk-navbar-item uk-logo' href="/">Readux</a>
-          <ul class='uk-navbar-nav'>
+    <div class="uk-container" id="v-readux">
+      <nav class="" uk-navbar id="rx-nav">
+        <div class="uk-navbar-left">
+          <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
+            <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
+          </a>
+          <ul class="uk-navbar-nav">
             <li>
-             {% main_menu %}
-           </li>
-            {% if request.user.is_authenticated %}
+              {% main_menu %}
+            </li>
+          </ul>
+        </div>
+        <div class="uk-navbar-right">
+          <ul class="uk-navbar-nav">
+              {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'users:detail' request.user.username  %}">{% trans "My Profile" %}</a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
+                  href="/admin/"><span class="uk-user" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: bottom"></span></a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %} active{% endif %}" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
+                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user" uk-tooltip="title: Your account; pos: bottom"></span></a>
               </li>
-            {% else %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" href="{% url 'account_logout' %}"><span class="uk-icon" uk-icon="icon: sign-out" uk-tooltip="title: Logout; pos: bottom"></span></a>
               </li>
-            {% endif %}
+              {% else %}
+              <li>
+                {# URL provided by django-allauth/account/urls.py #}
+                <a href="{% url 'account_login' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in" uk-tooltip="title: Login; pos: bottom"></span></a>
+              </li>
+              {% endif %}
           </ul>
         </div>
       </nav>
-
-    </div>
-
-
+    
       {% if messages %}
           {% for message in messages %}
-              <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+            <div class="uk-alert-{{ message.tags }}" uk-alert>
+              <a class="uk-alert-close" uk-close></a>
+              <p>{{ message }}</p>
+            </div>
           {% endfor %}
       {% endif %}
 
       {% block modal %}{% endblock modal %}
 
-      <div class="uk-container">
-        {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
-        {% endblock content %}
-      </div>
+      {% block content %}
+      <p>Use this document as a way to quick start any new project.</p>
+      {% endblock content %}
 
       {% block viewer %}{% endblock viewer %}
 
+    </div>
 
     {% block javascript %}
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit-icons.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+      <script src="{% static 'js/vue-clipboard.min.js' %}"></script>
       <script src="{% static 'js/selectize.js' %}"></script>
       <script src="{% static 'js/project.js' %}"></script>
+      <script src="{% static 'js/vue-readux.js' %}"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/js/uikit-icons.min.js"></script>
+      <script src="https://kit.fontawesome.com/2ebfe61a88.js" crossorigin="anonymous"></script>
     {% endblock javascript %}
     {% block extra_javascript %}{% endblock extra_javascript %}
     {% csrf_token%}

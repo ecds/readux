@@ -42535,9 +42535,8 @@ return /******/ (function(modules) { // webpackBootstrap
           this.popStateEvent = false;
         }
         // Wait until the history has been updated so `window.location` is accurate.
-        if (document.getElementById("mySpan") !== null) {
-          document.getElementById("mySpan").innerHTML = window.location.href;
-        }
+        Vue.set(readux.$refs["rx-url-stable-page"], "url", window.location.href); // readux is the vue instance
+        Vue.set(readux.$refs["rx-url-stable-page"], "label", "Stable Page"); // readux is the vue instance
       });
   },
   
@@ -42545,17 +42544,10 @@ return /******/ (function(modules) { // webpackBootstrap
   search: function(options, successCallback, errorCallback) {
     // if (this.username == null) return;
     this.annotationsList = [];
-    var linkContainer = document.getElementById("myLink");
-    var link = document.createElement('a');
-    var linkText = document.createTextNode(options.uri);
-    link.href = options.uri;
-    link.title = 'Stable link for canvas';
-    link.appendChild(linkText);
-    linkContainer.innerHTML='';
-    linkContainer.appendChild(link);
+    Vue.set(readux.$refs["rx-url-canvas"], "url", options.uri); // readux is the vue instance
+    Vue.set(readux.$refs["rx-url-canvas"], "label", "Stable Canvas"); // readux is the vue instance
     this.volume = options.uri.split('/').reverse()[2];
     this.page = options.uri.split('/').reverse()[0];
-
     let _this = this;
     
     //use options.uri
@@ -48635,7 +48627,7 @@ return /******/ (function(modules) { // webpackBootstrap
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
         // TODO move this
         // grabs the changed url when you click a thumbnail and updates the myLink variable to change the page url
-        document.getElementById("mySpan").innerHTML=canvasID;
+        document.getElementById("rx-url-stable-page").innerHTML=canvasID;
       });
     },
 

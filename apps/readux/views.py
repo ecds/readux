@@ -8,6 +8,7 @@ from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm
 from apps.readux.models import UserAnnotation
+from apps.cms.models import Page, CollectionsPage
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
@@ -126,17 +127,23 @@ class CollectionDetail(TemplateView):
         if 'sort' in sort_url_params:
             del sort_url_params['sort']
 
+        context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
         context['volumes'] = q.all
         context['manifest_query_set'] = q
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
         annocount_list = []
+        canvaslist = []
         for volume in q:
             user_annotation_count = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=volume.id).count()
             annocount_list.append({volume.pid: user_annotation_count})
             context['user_annotation_count'] = annocount_list
             print(volume.pid)
             print(user_annotation_count)
+            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+            canvasquery2 = list(canvasquery)
+            canvaslist.append({volume.pid: canvasquery2})
+            context['firstthumbnail'] = canvaslist
         value = 0
         context['value'] = value
         context.update({
@@ -241,6 +248,7 @@ class PageDetail(TemplateView):
         context['page'] = canvas
         manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['volume'] = manifest
+        context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
         qs = Annotation.objects.all()

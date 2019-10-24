@@ -69,7 +69,7 @@
             <div class="help-block">{{ field.help_text}}</div>
           </div>
         {% else %}
-          <div class="display-none form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}"{% if field.name == 'github_repo' or field.name == 'update_repo' %}style="display:none"{% endif %}>
+          <div class="form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
               <label for="{{ field.name }}">{{ field.label }}</label>
               {{ field }}
               <div class="help-block">{{ field.help_text}}</div>

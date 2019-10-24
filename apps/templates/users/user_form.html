@@ -4,14 +4,49 @@
 {% block title %}{{ user.username }}{% endblock %}
 
 {% block content %}
-  <h1>{{ user.username }}</h1>
-  <form class="form-horizontal" method="post" action="{% url 'users:update' %}">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <div class="control-group">
-      <div class="controls">
-        <button type="submit" class="btn">Update</button>
-      </div>
+<div class="rx-head-container uk-margin-remove-bottom">
+  <div class="rx-title-container">
+    <ul class="rx-breadcrumb uk-text-truncate">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item"><a href="{% url 'users:detail' request.user.username  %}" alt="Home">My Account</a>
+      </li>
+      <li class="rx-breadcrumb-item">Profile Update</li>
+    </ul>
+    <div class="rx-title">
+      {% if object.name %}
+      Hello, {{ object.name }}!
+      {% else %}
+      Hello!
+      {% endif %}
     </div>
-  </form>
+    <div class="rx-title-tagline">
+      {{ object.username }}
+    </div>
+  </div>
+</div>
+
+<form class="uk-form-stacked" method="post" action="{% url 'users:update' %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  {% for hidden_field in form.hidden_fields %}
+  {{ hidden_field.errors }}
+  {{ hidden_field }}
+  {% endfor %}
+
+  {% for field in form.visible_fields %}
+
+  <div class="uk-margin">
+    <label class="uk-form-label" for="form-horizontal-text">{{ field.label_tag }}</label>
+    <div class="uk-form-controls">
+      {{ field.errors }}
+      <input class="uk-input" id="form-horizontal-text" type="text" placeholder="{{ field.help_text }}" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}"
+        {% if form.name.value != None %}value="{{ form.name.value|stringformat:'s' }}" {% endif %}
+        maxlength="{{ form.name.field.max_length }}" {% if form.name.field.required %}required{% endif %}>
+    </div>
+  </div>
+  {% endfor %}
+
+  <button type="submit" class="btn rx-btn rx-btn-extension rx-btn-small">Update</button>
+</form>
 {% endblock %}

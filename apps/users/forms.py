@@ -34,11 +34,13 @@ class UserCreationForm(forms.UserCreationForm):
 
 class ReaduxSocialSignupForm(SignupForm):
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ['name']
+        
     name = CharField(max_length=30, label='User Name to associate with Annotations')
 
-    def signup(self):
-        user = super(MyCustomSocialSignupForm, self).save()
+    def signup(self, request, user):
+#         user = super(MyCustomSocialSignupForm, self).save()
         user.name = self.cleaned_data['name']
         user.save()
+        return user

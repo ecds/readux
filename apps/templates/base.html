@@ -69,7 +69,12 @@
   </head>
 
   <body>
-
+    {% if request.get_host == "readux2.ecdsdev.org" %}
+    <div style="background-color:red;width:100%;height:1.5em;color:white;text-align:center;font-size:1.8em;">
+    This website is in BETA! Go to the fully functioning 
+    <a href="https://readux.ecds.emory.edu/" style="color:lightblue;text-decoration:underline;">Readux</a>.
+    </div>
+    {% endif %}
     <div class="uk-container" id="v-readux">
       <nav class="" uk-navbar id="rx-nav">
         <div class="uk-navbar-left">

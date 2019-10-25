@@ -361,4 +361,10 @@ class AnnotationTests(TestCase):
     def test_export_options_view(self):
         url = reverse('export', kwargs={'volume': self.manifest.pid})
         response = self.client.get(url)
-    
+
+    def test_motivation_is_commeting_by_default(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        for anno in UserAnnotation.objects.all():
+            print(anno.motivation)
+        assert anno.motivation == 'oa:commenting'

@@ -26,4 +26,5 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         # (last argument)
         user = super(SocialAccountAdapter, self).save_user(request, user, form)
         user.name = form.cleaned_data.get('name')
+        user.agree = form.cleaned_data.get('agree')
         user.save()

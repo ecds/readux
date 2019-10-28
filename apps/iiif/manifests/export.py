@@ -439,6 +439,7 @@ class JekyllSiteExport(object):
         if self.update_callback is not None:
             self.update_callback('Cloning %s' % repo_url)
         repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
+        repo.remote().pull()
         # create and switch to a new branch and switch to it; using datetime
         # for uniqueness
         git_branch_name = 'readux-update-%s' % \
@@ -466,7 +467,8 @@ class JekyllSiteExport(object):
         # if self.include_images:
         #     self.save_page_images(tmpdir)
 
-        self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
+        # self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
+        self.jekyll_site_dir = tmpdir
 
         logger.debug('Exporting IIIF bundle')
         iiif_zip_stream = IiifManifestExport.get_zip(self.manifest, 'v2', owners=self.owners)
@@ -492,7 +494,7 @@ class JekyllSiteExport(object):
         repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
                         '_data/tags.yml', 'tags/*', 'iiif_export/*'])
         # TODO if deep zoom is added, we must add that directory as well
- 
+
         git_author = git.Actor(self.user.fullname(),
                                self.user.email)
         # commit all changes

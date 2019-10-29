@@ -58,15 +58,23 @@
         <div class="rx-card-image-container uk-width-1-4@m">
           <a alt="First page of {{volume.label}}" class="rx-card-image"
             href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-            {% for canvas in volume.canvas_set.all %}
-            {% if canvas.is_starting_page == 1 %}
-            <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
-            </v-volume-image>
-            {% elif forloop.last %}
-            <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
-            </v-volume-image>
-            {% endif %}
-            {% endfor %}
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
           </a>
         </div>
         <div class="rx-card-body uk-width-3-4@m">
@@ -80,6 +88,19 @@
             <ul class="rx-card-text">
               <li>Author: {{volume.author|truncatechars:100}}</li>
               <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
             </ul>
           </a>
         </div>
@@ -151,15 +172,23 @@
       <article class="rx-article">
         <div class="rx-card-image-container uk-width-1-4@m">
           <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-            {% for canvas in volume.canvas_set.all %}
-            {% if canvas.is_starting_page == 1 %}
-            <v-volume-image img-src="{{ canvas.thumbnail_crop_tallwide }}" volume-label="First page of {{volume.label}}">
-            </v-volume-image>
-            {% elif forloop.last %}
-            <v-volume-image img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
-            </v-volume-image>
-            {% endif %}
-            {% endfor %}
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
+        {% if forloop.first %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
           </a>
 
         </div>
@@ -174,6 +203,19 @@
             <ul class="rx-card-text">
               <li>Author: {{volume.author|truncatechars:150}}</li>
               <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
             </ul>
           </a>
         </div>

@@ -274,6 +274,12 @@ ACCOUNT_ADAPTER = 'apps.users.adapters.AccountAdapter'
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.SocialAccountAdapter'
 
+SOCIALACCOUNT_FORMS = {
+    'signup': 'apps.users.forms.ReaduxSocialSignupForm'
+}
+
+SOCIALACCOUNT_AUTO_SIGNUP = False
+
 
 # Translations
 # ------------------------------------------------------------------------------

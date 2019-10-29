@@ -14,10 +14,8 @@ class JekyllExportForm(forms.Form):
     mode = forms.ChoiceField(
         label='Export mode',
         choices=[
-#            ('tei', 'Download TEI facsimile with annotations'),
             ('download', 'Download Jekyll site'),
-            ('github', 'Publish Jekyll site on GitHub'),
-#            ('github_update', 'Update an existing Github repo')
+            ('github', 'Publish Jekyll site on GitHub')
         ],
         initial='none',
         widget=forms.RadioSelect,
@@ -26,9 +24,8 @@ class JekyllExportForm(forms.Form):
     #: help text for export mode choices
     mode_help = [
         'Download a zip file with all Jekyll site contents',
-        '''Create a new GitHub repository with the generated Jekyll
-            site content and publish it using Github Pages''',
-        # 'Update a Jekyll site in an existing GitHub repo'
+        '''Create or update a GitHub repository with the generated Jekyll
+            site content and publish it using Github Pages'''
     ]
 
     # #: which readux page should be 1 in the exported volume
@@ -64,30 +61,30 @@ class JekyllExportForm(forms.Form):
     # on the rights and permissions for the individual volume, and might
     # not be available for all content that can be exported.
 
-    deep_zoom = forms.ChoiceField(
-        label='Deep Zoom Images',
-        choices=[
-            ('include', 'Include Deep Zoom images in export'),
-            ('exclude', 'Exclude Deep Zoom images from export'),
-        ],
-        required=False,
-        initial='exclude',
-        # NOTE: could structure like export mode, but requires extra
-        # template work
-        # widget=forms.RadioSelect,
-        help_text='Deep zoom images can be included in your site to make ' +
-        'the site more functional as a standalone entity, but it will make ' +
-        'your site larger. (Including deep zoom images is only allowed ' +
-        'when page images are included.) Deep zoom images can be excluded ' +
-        'entirely so the exported site can standalone without including all ' +
-        'the images and storage required for deep zoom.'
-        )
+    # deep_zoom = forms.ChoiceField(
+    #     label='Deep Zoom Images',
+    #     choices=[
+    #         ('include', 'Include Deep Zoom images in export'),
+    #         ('exclude', 'Exclude Deep Zoom images from export'),
+    #     ],
+    #     required=False,
+    #     initial='exclude',
+    #     # NOTE: could structure like export mode, but requires extra
+    #     # template work
+    #     # widget=forms.RadioSelect,
+    #     help_text='Deep zoom images can be included in your site to make ' +
+    #     'the site more functional as a standalone entity, but it will make ' +
+    #     'your site larger. (Including deep zoom images is only allowed ' +
+    #     'when page images are included.) Deep zoom images can be excluded ' +
+    #     'entirely so the exported site can standalone without including all ' +
+    #     'the images and storage required for deep zoom.'
+    #     )
 
-    # #: github repository name to be created
-    # github_repo = forms.SlugField(
-    #     label='GitHub repository name', required=False,
-    #     help_text='Name of the repository to be created, which will also ' +
-    #     'determine the GitHub pages URL.')
+    #: github repository name to be created
+    github_repo = forms.SlugField(
+        label='GitHub repository name', required=False,
+        help_text='Name of the repository to be created or updated, which will also ' +
+        'determine the GitHub pages URL.')
     # #: github repository to be updated, if update is selected
     # update_repo = forms.CharField(
     #     label='GitHub repository to update', required=False,
@@ -99,7 +96,7 @@ class JekyllExportForm(forms.Form):
     #: options that are relevant to jekyll export but not to TEI
     jekyll_options = [
         # 'page_one', 
-        'deep_zoom', 
+        # 'deep_zoom', 
         # 'image_hosting'
     ]
     # used in the template to flag fields so javascript can hide them

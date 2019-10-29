@@ -26,6 +26,12 @@
   background: none !important;
 }
 
+@media (min-width: 768px) {
+.modal-dialog > .modal-content {
+  top: 200px;
+}
+}
+
 .mirador-container .mirador-viewer {
     top: -12px !important;
 }

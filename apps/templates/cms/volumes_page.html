@@ -49,8 +49,8 @@
             img-src="{{ canvas.thumbnail_crop_volume }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
-        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
-        {% if forloop.first %}
+        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
+        {% if forloop.last %}
           <v-volume-image 
             img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" 
             volume-label="{{volume.label}}">
@@ -109,8 +109,8 @@
             img-src="{{ canvas.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">
           </v-volume-image>
-        {% elif volume.pid in fir|safe and "[]" in fir|safe %}
-        {% if forloop.first %}
+        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
+        {% if forloop.last %}
           <v-volume-image 
             img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
             volume-label="{{volume.label}}">

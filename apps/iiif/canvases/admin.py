@@ -23,6 +23,7 @@ class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CanvasResource
     pass     
     list_display = ('id', 'pid', 'height', 'width', 'position', 'is_starting_page', 'manifest', 'label')
+    search_fields = ('pid', 'is_starting_page', 'manifest__pid', 'manifest__label')
     
 class IServerResource(resources.ModelResource):
     class Meta:

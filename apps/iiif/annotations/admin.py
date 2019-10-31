@@ -25,6 +25,6 @@ class AnnotationAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = AnnotationResource
     pass     
     list_display = ('id', 'canvas', 'order', 'content', 'x', 'y', 'w', 'h')
-    search_fields = ('content','oa_annotation')
+    search_fields = ('content','oa_annotation','canvas__pid')
     
 admin.site.register(Annotation, AnnotationAdmin)

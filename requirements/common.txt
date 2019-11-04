@@ -1,7 +1,0 @@
-# most requirements should go in minimum or dev
-
--r minimum.txt
-
-django-auth-ldap
-# not included in common because of an ldap install error on readthedocs.org
-

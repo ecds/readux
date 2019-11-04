@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<div class="rx-title-container">
+  <ul class="rx-breadcrumb uk-text-truncate">
+    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+    <li class="rx-breadcrumb-item">Collections</li>
+  </ul>
+
+  <div class="rx-title">{{ page.page_title }}</div>
+  <div class="rx-title-tagline">{{page.tagline}}</div>
+</div>
+
+<div class="rx-head-container">
+  <p>{{ page.paragraph }}</p>
+</div>
+
+
+{% if page.layout == 'Banner' %}
+<div class="rx-banner-layout">
+  {% for collection in page.collections %}
+  <div class="rx-volume-in-banner">
+    <a class="nav-link" href="{% url 'collection' collection.pid %}">
+    <div class="rx-banner-image-container"><img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}"></div>
+    <div class="rx-banner-text-container">
+      <div class="rx-title-tagline rx-title-tagline-banner">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
+      <div class="rx-collection-title rx-collection-title-banner">{{ collection.label }}</div>
+    </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+{% if page.layout == 'Grid' %}
+<div class="rx-grid">
+{% for collection in page.collections %}
+<article class="rx-grid-layout">
+  <a class="nav-link" href="{% url 'collection' collection.pid %}">
+  <div class="rx-volume-in-grid">
+    <div class="rx-grid-image-container"><img src="/media/{{collection.thumbnail}}"></div>
+    <div class="rx-title-tagline uk-margin-small-top">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
+    <div class="rx-collection-title">{{ collection.label }}</div>
+  </div>
+  </a>
+  <!-- <div class="rx-image-container">
+    <figure style="background-image: url('/media/{{collection.thumbnail}}'"></figure>
+    <p>{{ collection.label }}<br/>
+      {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</p>
+  </div>
+    <div class="rx-card-image-container">
+      <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}" />
+      <div class="rx-top-left">
+    </div>
+  </div> -->
+</article>
+{% endfor %}
+</div>
+{% endif %}
+
+
+{% if page.layout == 'List' %}
+<div class="collectionswrapper">
+  <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
+    {% for collection in page.collections %}
+    <div class="uk-width-1-2@m uk-grid-medium">
+      <div class=" uk-width-1-4@m">
+        <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}" />
+      </div>
+      <div class="uk-width-3-4@m">
+        <a class="nav-link" href="{% url 'collection' collection.pid %}">
+          <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
+        </a>
+        <div class="rx-title-tagline">
+          {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
+        </div>
+        <p>
+          {{collection.summary}}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% include "footer.html" %}
+
+
+{% endblock content %}

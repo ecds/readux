@@ -1,5 +1,0 @@
-# minimum requirements for generating documentation
-
--r minimum.txt
-
-Sphinx

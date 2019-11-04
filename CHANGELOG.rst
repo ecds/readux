@@ -2,6 +2,10 @@
 
 CHANGELOG
 =========
+Release 2.0.0-alpha.1
+---------------------
+Readux 2 is a total rewrite centered on using IIIF.
+
 Release 1.8.3 - Doc Fixes
 -------------------------
 **FINAL 1.X RELEASE**

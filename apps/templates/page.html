@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block extra_css %}
+<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
+{% if request.get_host == "readux2.ecdsdev.org" %}
+<style>
+#viewer {
+  width: 78%;
+  height: calc(100% - 193px - 2.5em);
+  position: absolute;
+  bottom: 0px;
+  background: none !important;
+}
+</style>
+{% elif request.get_host == "readux.ecdsdev.org" %}
+<style>
+#viewer {
+  width: 78%;
+  height: calc(100% - 193px - 2em);
+  position: absolute;
+  bottom: 0px;
+  background: none !important;
+}
+</style>
+{% endif %}
+{% endblock extra_css %}
+
+{% block content %}
+<div class="rx-title-container">
+  <ul class="rx-breadcrumb uk-text-truncate">
+    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+    <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+    <li class="rx-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
+        alt="Collections">{{ volume.collections.first.label }}</a></li>
+  </ul>
+  <div class="rx-title uk-text-truncate">{{volume.label}}</div>
+</div>
+
+{% endblock content %}
+
+{% block viewer %}
+
+<div class="uk-flex-middle" uk-grid data-uk-grid-match>
+  <div class="uk-width-2-3@m uk-flex-first">
+    <div id="viewer"></div>
+  </div>
+
+  <div class="uk-width-1-3@m rx-info-container">
+
+    <div class="rx-info">
+      <!-- new search form -->
+      {% if page.pid is not None %}
+      <form class="uk-search uk-search-default" style="width: 100% !important;"
+        action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          value="{{request.GET.q}}">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+      {% else %}
+      <form class="uk-search uk-search-default" style="width: calc(100% - 42px) !important;"
+        action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          value="{{request.GET.q}}">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+      {% endif %}
+      <!-- new search form -->
+    </div>
+
+    {% if "?q=" in request.get_full_path %}
+    <div class="rx-info ">
+      <div class="rx-info-content-container uk-padding-remove-vertical">
+        <div class="rx-info-content">
+          <div>
+            <!-- nav head -->
+            <ul class="uk-tab" uk-switcher>
+              <li><a href="#">{{ qs1|length }} hits in text</a></li>
+              <li><a href="#">{{ qs2|length }} hits in your annotations</a></li>
+            </ul>
+            <!-- end of nav head -->
+            <!-- nav body -->
+            <ul class="uk-switcher uk-margin-small rx-search-result">
+              <li>
+                {% if qs1 %}
+                <ul class="uk-padding-remove">
+                  {% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
+                      target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                  {% endif %}{% endfor %}</ul>
+                {% elif request.GET.q  and not qs1 %}
+                <p>No results in the text in this volume</p>{% endif %}
+              </li>
+              <li>
+                {% if qs2 %}
+                <ul class="uk-padding-remove">
+                  {% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
+                      target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                  {% endif %}{% endfor %}</ul>
+                {% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
+                {% endif %}
+              </li>
+            </ul>
+            <!-- end of nav body -->
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+
+    <div class="rx-info">
+      <div class="rx-info-title">Basic Information</div>
+      <div class="rx-info-content-container">
+
+        <!--new-->
+        {% if user_annotation_count > 0 %}
+        <ul class="uk-subnav uk-subnav-pill" uk-switcher>
+          <li><a href="#">{{ user_annotation_count }} annotations in manifest</a></li>
+          <li><a href="#">{{ user_annotation_page_count }} annotations on page</a></li>
+        </ul>
+        <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
+        {% endif %}
+
+        <!--new-->
+        
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Authors</div>
+          <div class="rx-info-content-value">{{ volume.author }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Publication Date</div>
+          <div class="rx-info-content-value">{{ volume.published_date }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Collections</div>
+          <div class="rx-info-content-value uk-margin-small-top">
+            {% for col in volume.collections.all %}
+            <a class="nav-link" href="{% url 'collection' col.pid %}">
+              <div class="rx-btn rx-btn-collection">{{ col.label }}</div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Publisher</div>
+          <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
+        </div>
+
+        {% if volume.note_set|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Notes</div>
+          <div class="rx-info-content-value">
+            <ul>
+              {% for note in volume.note_set.all %}
+              <li>{{ note.label }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="rx-info">
+      <div class="rx-info-title">Actions</div>
+      <div class="rx-info-content-container">
+        <div class="rx-info-content">
+          <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">View Volume PDF</a>
+        </div>
+        <div class="rx-info-content">
+          <a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
+            target="_blank">Export Citation in RIS</a>
+        </div>
+
+        {% if user_annotation_count > 0 %}
+        <div class="rx-info-content">
+          <form action="{% url 'export' volume.pid %}" class="button_to" method="GET" id="rx-annotation-export-form">
+            <a class="rx-action-btn" href="#" onclick="rxFormSubmit('rx-annotation-export-form');">Export Annotations</a>
+            {% csrf_token %}
+          </form>
+        </div>
+        
+        {% endif %}
+
+      </div>
+    </div>
+
+    <div class="rx-info">
+      <div class="rx-info-title">URLs</div>
+      <div class="rx-info-content-container">
+
+        <v-info-content-url-single
+          label="Manifest"
+          url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
+        </v-info-content-url-single>
+
+        <v-info-content-url-multiple label="Collection Manifest">
+          {% for col in volume.collections.all %}
+            <v-info-content-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}"></v-info-content-url-unit>
+          {% endfor %}
+        </v-info-content-url-multiple>
+
+        <v-info-content-url-single label="Stable Volume"
+          url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+        </v-info-content-url-single>
+
+        {% if page.pid is not None %}
+
+        {% if "/page/all" in request.get_full_path or "?q=" in request.get_full_path %}
+          <v-info-content-url-external 
+            ref="rx-url-canvas" v-show="false">
+          </v-info-content-url-external>
+        {% else %}
+        <v-info-content-url-external 
+          ref="rx-url-canvas">
+        </v-info-content-url-external>
+        {% endif %}
+
+        <v-info-content-url-external 
+          ref="rx-url-stable-page">
+        </v-info-content-url-external>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- start ocr el -->
+    <div id="ocr" style="opacity: 0;"></div>
+    <!-- end ocr el -->
+  </div>
+
+</div>
+
+
+
+{% if page.pid is not None %}
+
+<!-- 
+        <p id="test"></p>
+        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
+        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
+-->
+{% endif %}
+
+{% endblock viewer %}
+
+{% block extra_javascript %}
+<script src="{% static 'mirador/mirador.js' %}"></script>
+<script type="text/javascript">
+  $(function () {
+    Mirador({
+      "id": "viewer",
+      "mainMenuSettings" : {
+        'show' : false,
+        'buttons' : {
+          info: false,
+        }
+      },
+      "layout": "1x1",
+      "data": [
+        {
+          "manifestUri": "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ volume.pid }}/manifest", "location": "Emory University"
+        }
+      ],
+      'windowSettings': {
+        "overlay": true,
+        "canvasControls": {}
+      },
+      "windowObjects": [{
+        loadedManifest: "https://{{ request.META.HTTP_HOST }}/iiif/v2/{{ volume.pid }}/manifest",
+        annotationLayer: true,
+        annotationCreation: true,
+        annotationState: 'annoOncreateOn',{% if "/page/all" not in request.get_full_path %}
+        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ page.manifest.pid }}/canvas/{{ page.pid }}',{% endif %}
+        displayLayout: false,
+        sidePanel: false,
+        {% if "/page/all" in request.get_full_path or "?q=" in request.get_full_path %}
+        canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ volume.pid }}/canvas/{{ volume.canvas_set.pid.first }}',
+        viewType: "ThumbnailsView"
+        {% endif %}
+      }],
+  {% if user.is_anonymous %}
+  "availableAnnotationDrawingTools": [],
+    "availableAnnotationStylePickers": [],
+      {% else %}
+        username: '{{user.get_username}}',
+        usernamePretty: '{{user.name}}',
+      {% endif %}
+      "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
+    });
+  });
+
+</script>
+{% endblock extra_javascript %}

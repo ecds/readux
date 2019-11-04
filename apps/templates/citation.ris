@@ -1,0 +1,13 @@
+TY  - BOOK
+AU  - {{ volume.author|safe }}
+PY  - {{ volume.published_date|safe }}
+DA  - {{ volume.published_date|safe }}
+CY  - {{ volume.published_city|safe }}
+PB  - {{ volume.publisher|safe }}
+DB  - Readux
+DP  - Emory Center for Digital Scholarship
+AB  - {{ volume.summary|safe }}
+T1  - {{ volume.label|safe }}{% for col in volume.collections.all %}
+UR  - https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}{% endfor %}
+Y2  - {% now "F jS Y" %}
+ER  - 

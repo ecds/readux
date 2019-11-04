@@ -1,0 +1,32 @@
+language: python
+python:
+- '3.5'
+- 3.5-dev
+- '3.6'
+- 3.6-dev
+- '3.7'
+- 3.7-dev
+services: postgresql
+before_install:
+- export DATABASE_URL=postgres://postgres@localhost:5432/travisci
+- cp config/settings/local.dst config/settings/local.py
+- mkdir logs
+- touch logs/debug.log
+- gem install bundle
+- bundle install
+- sudo /etc/init.d/postgresql stop
+- wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key
+  add -
+- sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main
+  9.5" >> /etc/apt/sources.list.d/postgresql.list'
+- sudo apt-get update
+- sudo apt-get install postgresql-9.5
+install:
+- pip install -r requirements/local.txt
+script:
+- py.test --cov=./apps
+after_success:
+- coveralls
+notifications:
+  slack:
+    secure: RXQj/Zk+bbhJnO1ZVbgj6SmYBB1a7MD9gyjoEETGXVZBeP8qhtiLJFqNeAlUf0mXqyBWZvsKlFzPLzJn1o6EcB2eUJsKaTFsCmRUwcdMDRddvAlEkyNfQ0zJq91LGo8v78jmslZvMOA9HPVZvOmlIGdgGax189AC3UJ5Vk1Mmpc=

@@ -1,5 +1,0 @@
-<encodingDesc xmlns="http://www.tei-c.org/ns/1.0">
-      <p>Facsimile encoding includes selections of the source text highlighted by the annotator. Each selected area of a page is encoded as a <gi>zone</gi> placed at the end of the page's <gi>surface</gi> element. Each selected segment of text is contained by <gi>anchor</gi> elements.</p>
-      <p>Annotations are stored in the <gi>text</gi> using the <gi>note</gi> element with a <att>target</att> attribute that references the corresponding selection in the <gi>facsimile</gi>. Annotation content is contained by <gi>p</gi> elements and separately as raw Markdown in a <gi>code</gi> element.</p>
-      <p>Citations made in the annotations are stored in a <gi>listBibl</gi> at the end of the <gi>text</gi>.</p>
-</encodingDesc>

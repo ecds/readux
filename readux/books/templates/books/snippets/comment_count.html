@@ -1,9 +1,0 @@
-{# display comment count for a page or volume; expects item_url and annotation_count dict #}
-{% load readux_utils %}{% load humanize %}
-{% if item_url in annotation_count %}
-    {% with count=annotation_count|dict_item:item_url %}
-    <p class="comment-count" title="{{ count }} annotation{{ count|pluralize }}">
-        {{ count|intcomma }}
-    </p>
-    {% endwith %}
-{% endif %}

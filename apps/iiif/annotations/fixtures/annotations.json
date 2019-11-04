@@ -1,0 +1,150 @@
+[{
+  "model": "annotations.annotation",
+  "pk": "f8414e51-1f41-4d00-800c-de07012fe91f",
+  "fields": {
+      "x": 1146,
+      "y": 928,
+      "w": 22,
+      "h": 22,
+      "order": 54,
+      "content": "a",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f8414e51-1f41-4d00-800c-de07012fe91f"
+      },
+      "svg": "<span id='f8414e51-1f41-4d00-800c-de07012fe91f' style='font-family: monospace; height: 22px; width: 22px; font-size: 13.597033374536464px'>a</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f8425441-6056-4729-9933-15059643c3b3",
+  "fields": {
+      "x": 692,
+      "y": 1797,
+      "w": 99,
+      "h": 59,
+      "order": 122,
+      "content": "dio",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f8425441-6056-4729-9933-15059643c3b3"
+      },
+      "svg": "<span id='f8425441-6056-4729-9933-15059643c3b3' style='font-family: monospace; height: 59px; width: 99px; font-size: 36.464771322620514px'>dio</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f842fe71-e1da-49c3-865e-f3e62a5179ff",
+  "fields": {
+      "x": 951,
+      "y": 2014,
+      "w": 90,
+      "h": 59,
+      "order": 163,
+      "content": "de'",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f842fe71-e1da-49c3-865e-f3e62a5179ff"
+      },
+      "svg": "<span id='f842fe71-e1da-49c3-865e-f3e62a5179ff' style='font-family: monospace; height: 59px; width: 90px; font-size: 36.464771322620514px'>de'</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f8446c85-5b45-42bb-aa52-e8210f4b0d93",
+  "fields": {
+      "x": 738,
+      "y": 2844,
+      "w": 209,
+      "h": 83,
+      "order": 141,
+      "content": "Quef\u00eca",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f8446c85-5b45-42bb-aa52-e8210f4b0d93"
+      },
+      "svg": "<span id='f8446c85-5b45-42bb-aa52-e8210f4b0d93' style='font-family: monospace; height: 83px; width: 209px; font-size: 51.29789864029666px'>Quef\u00eca</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f844b87b-600a-4bb4-8ea4-4a6f49fe2fce",
+  "fields": {
+      "x": 1033,
+      "y": 1140,
+      "w": 142,
+      "h": 50,
+      "order": 61,
+      "content": "retto",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f844b87b-600a-4bb4-8ea4-4a6f49fe2fce"
+      },
+      "svg": "<span id='f844b87b-600a-4bb4-8ea4-4a6f49fe2fce' style='font-family: monospace; height: 50px; width: 142px; font-size: 30.90234857849196px'>retto</span>"
+  }
+},
+{
+  "model": "annotations.annotation",
+  "pk": "f846587c-1e1c-44d3-b1ce-20c0f7104dc5",
+  "fields": {
+      "x": 468,
+      "y": 1382,
+      "w": 17,
+      "h": 28,
+      "order": 95,
+      "content": ",",
+      "resource_type": "cnt:ContentAsText",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": null,
+      "oa_annotation": {
+          "annotatedBy": {
+              "name": "ocr"
+          },
+          "@id": "f846587c-1e1c-44d3-b1ce-20c0f7104dc5"
+      },
+      "svg": "<span id='f846587c-1e1c-44d3-b1ce-20c0f7104dc5' style='font-family: monospace; height: 28px; width: 17px; font-size: 17.305315203955498px'>,</span>"
+  }
+}]

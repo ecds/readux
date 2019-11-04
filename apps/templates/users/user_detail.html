@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User: {{ object.username }}{% endblock %}
+
+{% block content %}
+<div class="rx-head-container uk-margin-remove-bottom">
+  <div class="rx-title-container">
+    <ul class="rx-breadcrumb uk-text-truncate">
+      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+      <li class="rx-breadcrumb-item">My Account</li>
+    </ul>
+    <div class="rx-title">
+      {% if object.name %}
+      Hello, {{ object.name }}!
+      {% else %}
+      Hello!
+      {% endif %}
+    </div>
+    <div class="rx-title-tagline">
+      {{ object.username }}
+    </div>
+  </div>
+</div>
+
+{% if object == request.user %}
+<!-- Action buttons -->
+<div class="">
+  <p class="uk-margin-remove-top">You may update your personal information or E-mail below.</p>
+  <p>{{ page.paragraph }}</p>
+  <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">
+    <div class="rx-btn rx-btn-extension">
+      <i class="fas fa-info-circle" aria-hidden="true"></i>
+      My Profile
+    </div>
+  </a>
+  <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">
+    <div class="rx-btn rx-btn-extension">
+      <i class="fas fa-envelope" aria-hidden="true"></i>
+      My Email
+    </div>
+  </a>
+  <!-- Your Stuff: Custom user template urls -->
+</div>
+<!-- End Action buttons -->
+{% endif %}
+
+
+{% endblock content %}

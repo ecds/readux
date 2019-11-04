@@ -1,0 +1,33 @@
+[{
+  "model": "kollections.collection",
+  "pk": "1971fe1e-714f-40f1-9d35-ee0f7a301230",
+  "fields": {
+      "label": "Views of Rome",
+      "label_en": "Views of Rome",
+      "label_de": null,
+      "summary": "A collection proposed by Dr. Sarah McPhee and Dr. Eric Varner, Views of Rome includes books that chronicle the Eternal City in text and image over four centuries (16th-19th). These printed volumes document Rome's monuments through illustrations and maps combined with explanatory texts and constitute the primary way in which evolving assessments of the city were shared and disseminated prior to the advent of modern technologies.",
+      "summary_en": "A collection proposed by Dr. Sarah McPhee and Dr. Eric Varner, Views of Rome includes books that chronicle the Eternal City in text and image over four centuries (16th-19th). These printed volumes document Rome's monuments through illustrations and maps combined with explanatory texts and constitute the primary way in which evolving assessments of the city were shared and disseminated prior to the advent of modern technologies.",
+      "summary_de": "",
+      "pid": "views-of-rome",
+      "attribution": null,
+      "metadata": "[{}]",
+      "upload": "uploads/00000001.jp2",
+      "created_at": "2019-04-04T17:15:36.507Z"
+  }
+}, {
+  "model": "kollections.collection",
+  "pk": "1971fe1e-714f-8549-9d35-ee0f7a301230",
+  "fields": {
+      "label": "What a Collection",
+      "label_en": "What a Collection",
+      "label_de": null,
+      "summary": "A collection proposed by Dr. Sarah McPhee and Dr. Eric Varner, Views of Rome includes books that chronicle the Eternal City in text and image over four centuries (16th-19th). These printed volumes document Rome's monuments through illustrations and maps combined with explanatory texts and constitute the primary way in which evolving assessments of the city were shared and disseminated prior to the advent of modern technologies.",
+      "summary_en": "A collection proposed by Dr. Sarah McPhee and Dr. Eric Varner, Views of Rome includes books that chronicle the Eternal City in text and image over four centuries (16th-19th). These printed volumes document Rome's monuments through illustrations and maps combined with explanatory texts and constitute the primary way in which evolving assessments of the city were shared and disseminated prior to the advent of modern technologies.",
+      "summary_de": "",
+      "pid": "what-a-collection",
+      "attribution": null,
+      "metadata": "[{}]",
+      "upload": "uploads/00000001.jp2",
+      "created_at": "2019-04-04T17:15:36.507Z"
+  }
+}]

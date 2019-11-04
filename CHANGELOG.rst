@@ -2,6 +2,11 @@
 
 CHANGELOG
 =========
+Release 1.8.3 - Doc Fixes
+-------------------------
+**FINAL 1.X RELEASE**
+* Add publishing notes to README
+
 Release 1.8.2 - Bug Fixes
 -------------------------
 * Bugfix: When a page has many annotations (more than 10) some

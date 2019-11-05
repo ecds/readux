@@ -40,7 +40,7 @@ class Manifest(ClusterableModel):
     #collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name = 'manifest')
     collections = models.ManyToManyField(Collection, null=True, blank=True, related_name = 'manifests')
     pdf = models.URLField()
-    metadata = JSONField(default=dict, blank=False)
+    metadata = JSONField(default=dict, blank=True)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
     #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")

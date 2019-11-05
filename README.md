@@ -90,21 +90,23 @@ To run the tests, simply run:
 pytest
 ~~~
 
+Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
+
 ### Deploy
 
 For dev:
 
 ~~~bash
-fab deploy -H readux.ecdsdev.org
+fab deploy:branch=develop -H readux.ecdsdev.org
 ~~~
 
 For public alpha:
 
 ~~~bash
-fab deploy -H readux2.ecdsdev.org
+fab deploy:branch=master -H readux2.ecdsdev.org
 ~~~
 
-Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
+Note: if no branch is passed, the deploy will default to master.
 
 ## Contribute
 

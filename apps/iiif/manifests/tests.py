@@ -8,9 +8,13 @@ from .models import Manifest
 from ..canvases.models import Canvas
 from .export import IiifManifestExport, JekyllSiteExport
 from iiif_prezi.loader import ManifestReader
+import io
 import json
 import logging
+import os
+import re
 import tempfile
+import zipfile
 
 User = get_user_model()
 
@@ -73,9 +77,32 @@ class ManifestTests(TestCase):
         ris = ManifestRis()
         assert ris.get_context_data(volume=self.assumed_pid)['volume'] == self.volume
 
+    # Things I want to test:
+    # * Unzip the IIIF zip file
+    #   * Verify the directory layout is correct
+    #   * Open the manifest.json file
+    #   * Verify that the otherContent annotation list matches the annotationlist filename
+    #   * Verify that the annotationList filename matches the @id within the annotation
+    # * Verify the contents of the annotationList match the OCR (or the commenting annotation)
     def test_zip_creation(self):
         zip = IiifManifestExport.get_zip(self.volume, 'v2', owners=[self.user.id])
         assert isinstance(zip, bytes)
+        # unzip the file somewhere
+        tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-')
+        iiif_zip = zipfile.ZipFile(io.BytesIO(zip), "r")
+        iiif_zip.extractall(tmpdir)
+        manifest_path = os.path.join(tmpdir, 'manifest.json')
+        with open(manifest_path) as json_file:
+            manifest = json.load(json_file)
+
+        ocr_annotation_list_id = manifest['sequences'][0]['canvases'][0]['otherContent'][0]['@id']
+        ocr_annotation_list_path = os.path.join(tmpdir, re.sub('\W','_', ocr_annotation_list_id) + ".json")
+        assert os.path.exists(ocr_annotation_list_path) == 1
+
+        with open(ocr_annotation_list_path) as json_file:
+            ocr_annotation_list = json.load(json_file)
+        assert ocr_annotation_list['@id'] == ocr_annotation_list_id
+
 
     def test_jekyll_site_export(self):
         j = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id])
@@ -92,13 +119,22 @@ class ManifestTests(TestCase):
         assert 'tmp-rdx-export' in tempdir
         assert tempdir.endswith('/export')
 
-    def test_maifest_export(self):
+    def test_manifest_export(self):
         kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
         url = reverse('ManifestExport', kwargs=kwargs)
         request = self.factory.post(url, kwargs=kwargs)
         request.user = self.user
         response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
         assert isinstance(response.getvalue(), bytes)
+
+    # Things I want to test:
+    # * Unzip the IIIF zip file
+    #   * Verify the directory layout is correct
+    #   * Open the manifest.json file
+    #   * Verify that the otherContent annotation list matches the annotationlist filename
+    #   * Verify that the annotationList filename matches the @id within the annotation
+    # * Verify the contents of the annotationList match the OCR (or the commenting annotation)
+
 
     def test_jekyll_export_exclude_download(self):
         kwargs = { 'pid': self.volume.pid, 'version': 'v2' }

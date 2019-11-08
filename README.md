@@ -80,7 +80,7 @@ Readux uses Django's default test framework, but is configured to use pytest.
 
 Your database user will need to be able to create a database:
 
-~~~
+~~~bash
 alter user readux createdb;
 ~~~
 
@@ -91,6 +91,22 @@ pytest
 ~~~
 
 Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
+
+### Deploy
+
+For dev:
+
+~~~bash
+fab deploy:branch=develop -H readux.ecdsdev.org
+~~~
+
+For public alpha:
+
+~~~bash
+fab deploy:branch=master -H readux2.ecdsdev.org
+~~~
+
+Note: if no branch is passed, the deploy will default to master.
 
 ## Contribute
 

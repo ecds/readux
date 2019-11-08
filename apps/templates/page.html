@@ -2,6 +2,27 @@
 {% load static i18n %}
 {% block extra_css %}
 <link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
+{% if request.get_host == "readux2.ecdsdev.org" %}
+<style>
+#viewer {
+  width: 78%;
+  height: calc(100% - 193px - 2.5em);
+  position: absolute;
+  bottom: 0px;
+  background: none !important;
+}
+</style>
+{% elif request.get_host == "readux.ecdsdev.org" %}
+<style>
+#viewer {
+  width: 78%;
+  height: calc(100% - 193px - 2em);
+  position: absolute;
+  bottom: 0px;
+  background: none !important;
+}
+</style>
+{% endif %}
 {% endblock extra_css %}
 
 {% block content %}
@@ -21,7 +42,7 @@
 
 <div class="uk-flex-middle" uk-grid data-uk-grid-match>
   <div class="uk-width-2-3@m uk-flex-first">
-    <div id="viewer" style="max-height: 80vh"></div>
+    <div id="viewer"></div>
   </div>
 
   <div class="uk-width-1-3@m rx-info-container">
@@ -193,17 +214,18 @@
           url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
         </v-info-content-url-single>
 
-        {% if page.pid is not None %}
-
         {% if "/page/all" in request.get_full_path or "?q=" in request.get_full_path %}
           <v-info-content-url-external 
             ref="rx-url-canvas" v-show="false">
           </v-info-content-url-external>
+
+        <v-info-content-url-external 
+          ref="rx-url-stable-page" v-show="false">
+        </v-info-content-url-external>
         {% else %}
         <v-info-content-url-external 
           ref="rx-url-canvas">
         </v-info-content-url-external>
-        {% endif %}
 
         <v-info-content-url-external 
           ref="rx-url-stable-page">
@@ -276,7 +298,6 @@
       {% endif %}
       "annotationEndpoint": { "name":"Readux", "module": "ReaduxEndpoint" }
     });
-    
   });
 
 </script>

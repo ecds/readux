@@ -2,9 +2,15 @@ from django.core.serializers import serialize
 from .models import Manifest
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.canvases.models import Canvas
-from datetime import datetime
+from apps.iiif.manifests import github
+from apps.iiif.manifests.github import GithubApi
 from apps.users.models import User
 from apps.readux.models import UserAnnotation
+from datetime import datetime
+from urllib.parse import urlparse
+
+import git
+from git.cmd import Git
 import config.settings.local as settings
 import digitaledition_jekylltheme
 import io
@@ -15,7 +21,10 @@ import re
 import shutil
 import subprocess
 import tempfile
+import yaml
 import zipfile
+
+__version__="2.0.0"
 
 
 logger = logging.getLogger(__name__)
@@ -135,13 +144,15 @@ class IiifManifestExport:
         return byte_stream.getvalue()
 
 
+class GithubExportException(Exception):
+    pass
+
 class JekyllSiteExport(object):
-    def __init__(self, manifest, version, page_one=None, update_callback=None,
-                 include_images=False, deep_zoom='hosted', github_repo=None, owners=None):
+    def __init__(self, manifest, version, page_one=None, update_callback=None, export_mode='download',
+                 include_images=False, deep_zoom='hosted', github_repo=None, owners=None, user=None):
         # self.volume = volume
         self.manifest = manifest
         self.version = version
-        # self.tei = tei
         # self.page_one = page_one
         self.update_callback = update_callback
         # self.include_images = include_images
@@ -151,11 +162,14 @@ class JekyllSiteExport(object):
         # self.github_repo = github_repo
 
         # # initialize github connection values to None
-        # self.github = None
-        # self.github_username = None
-        # self.github_token = None
+        self.github = None
+        self.github_username = None
+        self.github_token = None
         self.jekyll_site_dir = None
         self.owners = owners
+        self.user = user
+        self.github_repo=github_repo
+        self.export_mode = export_mode
 
 
     def log_status(self, msg):
@@ -168,15 +182,14 @@ class JekyllSiteExport(object):
 
 
     def get_zip(self):
-        return self.volume_export()
+        return self.website_zip()
 
     def iiif_dir(self):
         return os.path.join(self.jekyll_site_dir, 'iiif_export')
 
     def import_iiif_jekyll(self, manifest, tmpdir):
-        # run the script to get a freash import of tei as jekyll site content
+        # run the script to get a fresh import of IIIF as jekyll site content
         self.log_status('Running jekyll import IIIF manifest script')
-        # jekyllimport_tei_script = settings.JEKYLLIMPORT_TEI_SCRIPT
         jekyllimport_manifest_script = settings.JEKYLLIMPORT_MANIFEST_SCRIPT
         import_command = [jekyllimport_manifest_script, '--local-directory', '-q', self.iiif_dir(), tmpdir]
         # TODO
@@ -206,7 +219,7 @@ class JekyllSiteExport(object):
 
     def generate_website(self):
         """Generate a jekyll website for a volume with annotations.
-        Creates a jekyll site and imports pages and annotations from the TEI,
+        Creates a jekyll site and imports pages and annotations from the IIIF,
         and then returns the directory for further use (e.g., packaging as
         a zipfile for download, or for creating a new GitHub repository).
         """
@@ -231,7 +244,7 @@ class JekyllSiteExport(object):
 
 
         # TODO
-        # # save image files if requested, and update image paths in tei
+        # # save image files if requested, and update image paths
         # # to use local references
         # if self.include_images:
         #     self.save_page_images(jekyll_site_dir)
@@ -239,10 +252,7 @@ class JekyllSiteExport(object):
         #     self.generate_deep_zoom(jekyll_site_dir)
 
 
-        # TODO -- equivalent to iiif zip export, which is probably unnecessary
-        # teifile = self.save_tei_file(tmpdir)
-
-        # run the script to import tei as jekyll site content
+        # run the script to import IIIF as jekyll site content
         self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
         # NOTE: putting export content in a separate dir to make it easy to create
@@ -252,11 +262,14 @@ class JekyllSiteExport(object):
 
         # rename the jekyll dir and move it into the export dir
         shutil.move(self.jekyll_site_dir,
-                    os.path.join(export_dir, '%s_annotated_jekyll_site' %
-                                 self.manifest.id))
+                    self.edition_dir(export_dir))
 
         return export_dir
 
+
+    def edition_dir(self,export_dir):
+        return os.path.join(export_dir, '%s_annotated_jekyll_site' %
+                     self.manifest.id)
 
 
     def website_zip(self):
@@ -288,227 +301,269 @@ class JekyllSiteExport(object):
 
 
 
+    def use_github(self, user):
+        # connect to github as the user in order to create the repository
+        self.github = GithubApi.connect_as_user(user)
+        self.github_username = GithubApi.github_username(user)
+        self.github_token = GithubApi.github_token(user)
+
+
+
+    def github_auth_repo(self, repo_name=None, repo_url=None):
+        """Generate a GitHub repo url with an oauth token in order to
+        push to GitHub on the user's behalf.  Takes either a repository
+        name or repository url.
+        """
+        if repo_name:
+            git_repo_url = 'github.com/%s/%s.git' % (self.github_username, repo_name)
+            github_scheme = 'https'
+        elif repo_url:
+            # parse github url to add oauth token for access
+            parsed_repo_url = urlparse(repo_url)
+            git_repo_url = '%s%s.git' % (parsed_repo_url.netloc, parsed_repo_url.path)
+            # probably https, but may as well pull from parsed url
+            github_scheme = parsed_repo_url.scheme
+
+        # use oauth token to push to github
+        # 'https://<token>@github.com/username/bar.git'
+        # For more information, see
+        # https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
+        return '%s://%s:x-oauth-basic@%s' % (github_scheme, self.github_token,
+                                             git_repo_url)
+
+    def gitrepo_exists(self):
+        current_repos = self.github.list_repos(self.github_username)
+        current_repo_names = [repo['name'] for repo in current_repos]
+        return self.github_repo in current_repo_names
+
+
+
+    def website_gitrepo(self):
+        '''Create a new GitHub repository and populate it with content from
+        a newly generated jekyll website export created via :meth:`website`.
+        :return: on success, returns a tuple of public repository url and
+            github pages url for the newly created repo and site
+        '''
+
+        # NOTE: github pages sites now default to https
+        github_pages_url = 'https://%s.github.io/%s/' % \
+            (self.github_username, self.github_repo)
+
+        # before even starting to generate the jekyll site,
+        # check if requested repo name already exists; if so, bail out with an error
+        logger.debug('Checking github repo %s for %s', self.github_repo,
+                     self.github_username)
+
+        if self.gitrepo_exists():
+            raise GithubExportException('GitHub repo %s already exists.' \
+                                        % self.github_repo)
+
+        export_dir = self.generate_website()
+
+        # jekyll dir is *inside* the export directory;
+        # for the jekyll site to display correctly, we need to commit what
+        # is in the directory, not the directory itself
+        jekyll_dir = self.edition_dir(export_dir) 
+
+        # modify the jekyll config for relative url on github.io
+        config_file_path = os.path.join(jekyll_dir, '_config.yml')
+        with open(config_file_path, 'r') as configfile:
+            config_data = yaml.load(configfile)
+
+        # split out github pages url into the site url and path
+        parsed_gh_url = urlparse(github_pages_url)
+        config_data['url'] = '%s://%s' % (parsed_gh_url.scheme,
+                                          parsed_gh_url.netloc)
+        config_data['baseurl'] = parsed_gh_url.path.rstrip('/')
+        with open(config_file_path, 'w') as configfile:
+            yaml.safe_dump(config_data, configfile,
+                           default_flow_style=False)
+            # using safe_dump to generate only standard yaml output
+            # NOTE: pyyaml requires default_flow_style=false to output
+            # nested collections in block format
+
+        logger.debug('Creating github repo %s for %s', self.github_repo,
+                     self.github_username)
+        if self.update_callback is not None:
+            self.update_callback('Creating GitHub repo %s' % self.github_repo)
+        self.github.create_repo(
+            self.github_repo, homepage=github_pages_url,
+            description='An annotated digital edition created with Readux')
+
+        # get auth repo url to use to push data
+        repo_url = self.github_auth_repo(repo_name=self.github_repo)
+
+        # add the jekyll site to github; based on these instructions:
+        # https://help.github.com/articles/adding-an-existing-project-to-github-using-the-command-line/
+
+        # initialize export dir as a git repo, and commit the contents
+        # NOTE: to debug git commands, print the git return to see git output
+
+        gitcmd = Git(jekyll_dir)
+        # initialize jekyll site as a git repo
+        gitcmd.init()
+        # add and commit all contents
+        gitcmd.add(['.'])
+        gitcmd.commit(
+            ['-m', 'Import Jekyll site generated by Readux %s' % __version__,
+             '--author="%s <%s>"' % (self.user.fullname(),
+                                     self.user.email)])
+        # push local master to the gh-pages branch of the newly created repo,
+        # using the user's oauth token credentials
+        self.log_status('Pushing content to GitHub')
+        gitcmd.push([repo_url, 'master:gh-pages'])
+
+        # clean up temporary files after push to github
+        shutil.rmtree(export_dir)
+
+        # generate public repo url for display to user
+        public_repo_url = 'https://github.com/%s/%s' % (self.github_username,
+                                                        self.github_repo)
+        return (public_repo_url, github_pages_url)
+
+    def update_gitrepo(self):
+        '''Update an existing GitHub repository previously created by
+        Readux export.  Checks out the repository, creates a new branch,
+        runs the iiif_to_jekyll import on that branch, pushes it to github,
+        and creates a pull request.  Returns the HTML url for the new
+        pull request on success.'''
+
+        repo_url = 'github.com/%s/%s.git' % (self.github_username, self.github_repo)
+
+        # get auth repo url to use to create branch
+        auth_repo_url = self.github_auth_repo(repo_name=self.github_repo)
+
+        # create a tmpdir to clone the git repo into
+        tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-update')
+        logger.debug('Cloning %s to %s', repo_url, tmpdir)
+        if self.update_callback is not None:
+            self.update_callback('Cloning %s' % repo_url)
+        repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
+        repo.remote().pull()
+        # create and switch to a new branch and switch to it; using datetime
+        # for uniqueness
+        git_branch_name = 'readux-update-%s' % \
+            datetime.now().strftime('%Y%m%d-%H%M%S')
+        update_branch = repo.create_head(git_branch_name)
+        update_branch.checkout()
+
+        logger.debug('Updating export for %s in %s', self.manifest.pid, tmpdir)
+
+        # remove all annotations and tag pages so that if an annotation is removed
+        # or a tag is no longer used in readux, it will be removed in the export
+        # (annotations and tags that are unchanged will be restored by the IIIF
+        # jekyll import, and look unchanged to git if no different)
+        try:
+            repo.index.remove(['_annotations/*', 'tags/*', 'iiif_export/*'])
+        except git.GitCommandError:
+            # it's possible that an export has no annotations or tags
+            # (although unlikely to occur anywhere but development & testing)
+            # if there's an error on removal, ignore it
+            pass
+
+        # save image files if requested, and update image paths
+        # to use local references
+        # TODO
+        # if self.include_images:
+        #     self.save_page_images(tmpdir)
+
+        # self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
+        self.jekyll_site_dir = tmpdir
+
+        logger.debug('Exporting IIIF bundle')
+        iiif_zip_stream = IiifManifestExport.get_zip(self.manifest, 'v2', owners=self.owners)
+        iiif_zip = zipfile.ZipFile(io.BytesIO(iiif_zip_stream), "r")
+
+        iiif_zip.extractall(self.iiif_dir())        
+
+
+
+        # TODO
+        # # save image files if requested, and update image paths
+        # # to use local references
+        # if self.include_images:
+        #     self.save_page_images(jekyll_site_dir)
+        # if self.include_deep_zoom:
+        #     self.generate_deep_zoom(jekyll_site_dir)
+
+
+        # run the script to import IIIF as jekyll site content
+        self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
+
+        # add any files that could be updated to the git index
+        repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
+                        '_data/tags.yml', 'tags/*', 'iiif_export/*'])
+        # TODO if deep zoom is added, we must add that directory as well
+
+        git_author = git.Actor(self.user.fullname(),
+                               self.user.email)
+        # commit all changes
+        repo.index.commit('Updated Jekyll site by Readux %s' % __version__,
+                          author=git_author)
+
+        # push the update to a new branch on github
+        repo.remotes.origin.push('%(branch)s:%(branch)s' %
+                                 {'branch': git_branch_name})
+        # convert repo url to form needed to generate pull request
+        repo = repo_url.replace('github.com/', '').replace('.git', '')
+        # if self.update_callback is not None:
+        #     self.update_callback('Creating pull request with updates')
+        pullrequest = self.github.create_pull_request(
+            repo, 'Updated export', git_branch_name, 'gh-pages')
+
+        # clean up local checkout after successful push
+        shutil.rmtree(tmpdir)
+
+        # return the html url for the new pull request
+        return pullrequest['html_url']
+
 # from readux/books/consumers.py in Readux 1.
-
-
-
-
 
     # This is essentially view code from readux 1's consumers.py, which parses
     # the export form, kicks off various exports, and handles S3 or Github 
     # integration.  It may need to be moved to the view for the initial pass.
-    def volume_export(self, export_mode='download'):
-    #     '''Consumer method to handle volume export form submission via
-    #     websockets.  Initializes :class:`readux.books.export.VolumeExport`
-    #     and then calls the appropriate method based on the requested export
-    #     mode.
-    #     '''
+    def github_export(self):
+        user_has_github = False
+        if not self.user == None:
+            # check if user has a github account linked
+            try:
+                github.GithubApi.github_account(self.user)
+            except github.GithubAccountNotFound:
+                logger.info(AnnotatedVolumeExport.github_account_msg, 'warning')
 
-    #     username = message.content['user']
-    #     user = get_user_model().objects.get(username=username)
-    #     pid = message.content['formdata']['pid']
-    #     # NOTE: for some reason, reply channel is not set on this message
-    #     # using a group notification based on username rather than
-    #     # relying on current websocket
-    #     notify = Group(u"notify-%s" % user.username)
+        # connect to github as the user in order to create the repository
+        self.use_github(self.user)
 
-    #     def notify_msg(text, msg_type=None, **data):
-    #         msg_data = {'message': text}
-    #         if msg_type is not None:
-    #             msg_data['type'] = msg_type
-    #         msg_data.update(data)
-    #         # breaking changes as of channels 1.0
-    #         # need to specify immediately=True to send messages before the consumer completes to the end
-    #         notify.send({'text': json.dumps(msg_data)}, immediately=True)
+        # check that oauth token has sufficient permission
+        # to do needed export steps
+        if 'repo' not in self.github.oauth_scopes():
+            logger.error('TOOO bad scope message')
+            return
 
-    #     notify_msg('Export started')
+        repo_url = None
+        ghpages_url = None
+        pr_url = None
+        if not self.gitrepo_exists():
+            # create a new github repository with exported jekyll site
+            try:
+                repo_url, ghpages_url = self.website_gitrepo()
 
-    #     user_has_github = False
-    #     if not user.is_anonymous():
-    #         # check if user has a github account linked
-    #         try:
-    #             github.GithubApi.github_account(user)
-    #             user_has_github = True
-    #         except github.GithubAccountNotFound:
-    #             notify_msg(AnnotatedVolumeExport.github_account_msg, 'warning')
+                logger.info('Exported %s to GitHub repo %s for user %s',
+                            self.manifest.pid, repo_url, self.user.username)
 
-    #     export_form = VolumeExport(user, user_has_github,
-    #                                message.content['formdata'])
+            except GithubExportException as err:
+                logger.info('Export failed: %s' % err)
+        else:
+            # update an existing github repository with new branch and
+            # a pull request
+            try:
+                pr_url = self.update_gitrepo()
 
-    #     if not export_form.is_valid():
-    #         notify_msg('Form is not valid; please modify and resubmit',
-    #                    'error', form_errors=export_form.errors)
-    #         logger.debug("Export form is not valid: %s", export_form.errors)
-    #         # bail out
-    #         return
-
-    #     # if form is valid, then proceed with the export
-    #     cleaned_data = export_form.cleaned_data
-    #     export_mode = cleaned_data['mode']
-    #     image_hosting = cleaned_data['image_hosting']
-    #     include_images = (image_hosting == 'independently_hosted')
-    #     deep_zoom = cleaned_data['deep_zoom']
-    #     include_deep_zoom = (deep_zoom == 'include')
-    #     no_deep_zoom = (deep_zoom == 'exclude')
-    #     # This gets set below if exporting to GitHub.
-    #     github_repo = None
-    #     # deep zoom can't be included without including page images
-    #     # this should be caught by form validation, but in case it isn't,
-    #     # just assume include images is true if we get to this point
-    #     if include_deep_zoom and not include_images:
-    #         include_images = True
-
-    #     # if github export or update is requested, make sure user
-    #     # has a github account available to use for access
-    #     # and add the repo name to the parameters
-        # if export_mode in ['github', 'github_update']:
-    #         try:
-    #             github.GithubApi.github_account(user)
-    #             github_repo = cleaned_data['github_repo']
-    #         except github.GithubAccountNotFound:
-    #             notify_msg(AnnotatedVolumeExport.github_account_msg, 'error')
-    #             return
-
-    #         # check that oauth token has sufficient permission
-    #         # to do needed export steps
-    #         gh = github.GithubApi.connect_as_user(user)
-    #         # note: repo would also work here, but currently asking for public_repo
-    #         if 'public_repo' not in gh.oauth_scopes():
-    #             notify_msg(AnnotatedVolumeExport.github_scope_msg, 'error')
-    #             return
-
-    #     repo = Repository()
-    #     vol = repo.get_object(pid, type=Volume)
-
-    #     # determine which annotations should be loaded
-    #     if cleaned_data['annotations'] == 'user':
-    #         # annotations *by* this user
-    #         # (NOT all annotations the user can view)
-    #         annotations = vol.annotations().filter(user=user)
-    #     elif cleaned_data['annotations'].startswith('group:'):
-    #         # all annotations visible to a group this user belongs to
-    #         group_id = cleaned_data['annotations'][len('group:'):]
-    #         # NOTE: object not found error should not occur here,
-    #         # because only valid group ids should be valid choices
-    #         group = AnnotationGroup.objects.get(pk=group_id)
-    #         annotations = vol.annotations().visible_to_group(group)
-
-    #     notify_msg('Collected %d annotations' % annotations.count(),
-    #                'status')
-    #     # NOTE: could update message to indicate if using IIIF image urls
-    #     notify_msg('Generating volume TEI', 'status')
-    #     tei = vol.generate_volume_tei()
-    #     notify_msg('Finished generating volume TEI', 'status')
-
-    #     # if user requests images included, the image paths in the tei
-    #     # need to be updated and the images need to be downloaded
-    #     # to the local package (which doesn't exist yet...)
-    #     if include_images:
-    #         notify_msg('Updating image references in TEI', 'status')
-    #         for i in range(len(tei.page_list)):
-    #             teipage = tei.page_list[i]
-    #             page = vol.pages[i]
-    #             # convert from readux image url to
-    #             # IIIF image url, so it can be downloaded and converted to
-    #             # an image path local to the site
-    #             for graphic in teipage.graphics:
-    #                 # NOTE: some redundancy here with mode checks
-    #                 # and modes in the page image view
-    #                 if graphic.rend == 'full':
-    #                     graphic.url = unicode(page.iiif)
-    #                 elif graphic.rend == 'page':
-    #                     graphic.url = unicode(page.iiif.page_size())
-    #                 elif graphic.rend == 'thumbnail':
-    #                     graphic.url = unicode(page.iiif.thumbnail())
-    #                 elif graphic.rend == 'small-thumbnail':
-    #                     graphic.url = unicode(page.iiif.mini_thumbnail())
-    #                 elif graphic.rend == 'json':
-    #                     graphic.url = unicode(page.iiif.info())
-
-    #                 # TODO: canonicalize image urls *before* saving/referencing
-
-        # generate annotated tei
-    #     tei = annotate.annotated_tei(tei, annotations)
-    #     notify_msg('Annotated TEI')
-
-    #     exporter = export.VolumeExport(
-    #         vol, tei, page_one=cleaned_data['page_one'],
-    #         update_callback=notify_msg, include_images=include_images,
-    #         deep_zoom=deep_zoom, github_repo=github_repo)
-
-    #     # NOTE: passing in notify_msg method so that export methods
-    #     # can also report on progress
-
-    #     # exporting annotated tei only
-        # if export_mode == 'tei':
-    #         # reuse volume exporter logic to serialize the file to disk
-    #         teifile = exporter.save_tei_file()
-    #         # upload to temporary S3 bucket and send link to the user
-    #         # - include username to avoid collisions with different users
-    #         # exporting the same valume
-    #         filename = '%s_annotated_tei_%s.xml' % (vol.noid, user.username)
-    #         content_disposition = 'attachment;filename="%s"' % filename
-
-    #         download_url = s3_upload(teifile.name, filename,
-    #                                  content_disposition=content_disposition)
-    #         notify_msg('TEI file available for download', 'status',
-    #                    download_tei=True, download_url=download_url)
-
-    #     # check form data to see if github repo is requested
-        # elif export_mode == 'github':
-    #         # create a new github repository with exported jekyll site
-    #         try:
-    #             repo_url, ghpages_url = exporter.website_gitrepo(
-    #                 user, cleaned_data['github_repo'])
-
-    #             logger.info('Exported %s to GitHub repo %s for user %s',
-    #                         vol.pid, repo_url, user.username)
-
-    #             # send success with urls to be displayed
-    #             notify_msg('Export to GitHub complete', 'status',
-    #                        github_export=True, repo_url=repo_url,
-    #                        ghpages_url=ghpages_url)
-
-    #         except export.GithubExportException as err:
-    #             notify_msg('Export failed: %s' % err, 'error')
-
-        # elif export_mode == 'github_update':
-    #         # update an existing github repository with new branch and
-    #         # a pull request
-    #         try:
-    #             pr_url = exporter.update_gitrepo(user, cleaned_data['update_repo'])
-
-    #             notify_msg('GitHub jekyll site update completed', 'status',
-    #                        github_update=True, pullrequest_url=pr_url,
-    #                        repo_url=cleaned_data['update_repo'])
-
-    #         except export.GithubExportException as err:
-    #             notify_msg('Export failed: %s' % err, 'error')
-
-        # elif export_mode == 'download':
-            # non github export: download a jekyll site as a zipfile
-#        try:
-        webzipfile = self.website_zip()
-    #             logger.info('Exported %s as jekyll zipfile for user %s',
-    #                         vol.pid, user.username)
-    #             notify_msg('Generated Jeyll zip file')
-
-    #             # upload the generated zipfile to an Amazon S3 bucket configured
-    #             # to auto-expire after 23 hours, so user can download
-    #             notify_msg('Uploading zip file to Amazon S3')
-    #             # include username in downlaod file label to avoid collisions
-    #             label = '%s_annotated_jekyll_site_%s' % (vol.noid, user.username)
-    #             download_url = s3_upload(webzipfile.name, label)
-
-    #             notify_msg('Zip file available for download', 'status',
-    #                        download=True, download_url=download_url)
-
-    #         except export.ExportException as err:
-    #             # display error to user
-    #             notify_msg('Export failed: %s' % err, 'error')
-        return webzipfile
-
-
-
+                logger.info('GitHub jekyll site update completed')
+                repo_url = 'https://github.com/%s/%s' % (self.github_username, self.github_repo)
+                ghpages_url = 'https://%s.github.io/%s/' % (self.github_username, self.github_repo)
+            except GithubExportException as err:
+                notify_msg('Export failed: %s' % err, 'error')
+        return [repo_url, ghpages_url, pr_url]
 
 

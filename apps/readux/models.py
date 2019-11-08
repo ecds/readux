@@ -21,6 +21,8 @@ class UserAnnotation(AbstractAnnotation):
             return None
 
     def parse_mirador_annotation(self):
+        self.motivation = AbstractAnnotation.COMMENTING
+
         if (type(self.oa_annotation) == str):
             self.oa_annotation = json.loads(self.oa_annotation)
 

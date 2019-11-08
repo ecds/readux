@@ -19,10 +19,10 @@ import zipfile
 User = get_user_model()
 
 class ManifestExportTests(TestCase):
-    fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+    fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json', 'userannotation.json']
 
     def setUp(self):
-        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json', 'userannotation.json']
         self.user = get_user_model().objects.get(pk=1)
         self.factory = RequestFactory()
         self.client = Client()
@@ -59,6 +59,7 @@ class ManifestExportTests(TestCase):
         with open(ocr_annotation_list_path) as json_file:
             ocr_annotation_list = json.load(json_file)
         assert ocr_annotation_list['@id'] == ocr_annotation_list_id
+        [1,2]['a']
 
 
     def test_jekyll_site_export(self):

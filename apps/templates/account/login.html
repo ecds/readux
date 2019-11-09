@@ -32,6 +32,8 @@
         {% include "socialaccount/snippets/provider_list.html" with process="login" %}
       </ul>
     </div>
+    <p class="uk-margin-remove-top">{% blocktrans with site.name as site_name %}You can only be logged
+     into one social media account at a time with Readux. {% endblocktrans %}</p>
   {% endif %}
 </div>
 

@@ -74,6 +74,24 @@ class ManifestExportTests(TestCase):
         assert web_zip.name.endswith('.zip')
         assert 'tmp-rdx-export' in tempdir
         assert tempdir.endswith('/export')
+        tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-')
+        jekyll_zip = zipfile.ZipFile(zip, "r")
+        jekyll_zip.extractall(tmpdir)
+        jekyll_dir = os.listdir(tmpdir)[0]
+        jekyll_path = os.path.join(tmpdir, jekyll_dir)
+        # verify the iiif export is embedded
+        iiif_path = os.path.join(jekyll_path, 'iiif_export')
+        manifest_path = os.path.join(iiif_path, 'manifest.json')
+        assert os.path.exists(manifest_path)
+        # verify page count is correct
+        assert len(os.listdir(os.path.join(jekyll_path, '_volume_pages'))) == 2
+        # verify ocr annotation count is correct
+        with open(os.path.join(jekyll_path, '_volume_pages', '0000.html')) as page_file:
+            contents = page_file.read()
+        assert contents.count('ocr-line') == 6
+        # verify user annotation count is correct
+        assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
+
 
     def test_manifest_export(self):
         kwargs = { 'pid': self.volume.pid, 'version': 'v2' }

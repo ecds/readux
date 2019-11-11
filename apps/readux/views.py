@@ -326,12 +326,34 @@ class VolumeSearch(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        q = self.get_queryset()
-        context['volumes'] = q.all
+        qs = self.get_queryset()
+        try:
+          search_string = self.request.GET['q']
+          if search_string:
+              query = SearchQuery(search_string)
+              vector = SearchVector('canvas__annotation__content')
+              qs = qs.annotate(search=vector).filter(search=query)
+              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+#               qs = qs.annotate(rank=SearchRank(vector, query)).values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
+#               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+#               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+#               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+#               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+          else:
+              qs = ''
+          context['qs'] = qs
+#               qs1 = ''
+#               qs2 = ''
+#           context['qs1'] = qs1
+#           context['qs2'] = qs2
+        except MultiValueDictKeyError:
+          q = ''
+
+        context['volumes'] = qs.all
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
         annocount_list = []
         canvaslist = []
-        for volume in q:
+        for volume in qs:
             user_annotation_count = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=volume.id).count()
             annocount_list.append({volume.pid: user_annotation_count})
             context['user_annotation_count'] = annocount_list

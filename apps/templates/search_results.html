@@ -7,10 +7,55 @@
 {% block content %}
 <h1 class='uk-heading-hero uk-text-center'>Readux</h1>
 <h2 class='uk-heading-primary uk-text-center'>Read. Annotate. Publish.</h2>
-<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
+<p class='uk-text-lead uk-text-center'>See results of a full text search of all volumes below.</p>
 
+      <div>
+      <form class="uk-search uk-search-default" style="width: 100% !important;"
+        action="{% url 'search' %}" method="get" accept-charset="utf-8">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          value="{{request.GET.q}}">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+      </div>
+
+
+<!-- 
+    {% if "?q=" in request.get_full_path %}
+    <div class="rx-info ">
+      <div class="rx-info-content-container uk-padding-remove-vertical">
+        <div class="rx-info-content">
+          <div>
+            <!~~ nav head ~~>
+            <ul class="uk-tab" uk-switcher>
+              <li><a href="#">{{ qs|length }} hits in text</a></li>
+            </ul>
+            <!~~ end of nav head ~~>
+            <!~~ nav body ~~>
+            <ul class="uk-switcher uk-margin-small rx-search-result">
+              <li>
+                {% if qs %}
+                <ul class="uk-padding-remove">
+                  {% for answer in qs %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' answer.pid %}/page/all"
+                      target="_blank">{{ answer.label }}</a></li>
+                  {% endfor %}</ul>
+                {% elif request.GET.q  and not qs1 %}
+                <p>No results in the text in this volume</p>{% endif %}
+              </li>
+            </ul>
+            <!~~ end of nav body ~~>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+ -->
+ 
+    {% if "?q=" in request.get_full_path %}      
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
-  {% for volume in volumes %}
+  {% for volume in qs %}
   {% if volume.canvas_set.first.pid is null %}
   <div class="uk-width-1-2@m uk-grid-medium">
     <div class="uk-width-1-4@m">
@@ -79,4 +124,6 @@
   {% endif %}
   {% endfor %}
   </div>
+      {% endif %}
 {% endblock content %}
+

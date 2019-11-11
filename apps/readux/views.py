@@ -315,3 +315,32 @@ class ExportOptions(TemplateView, FormMixin):
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['export_form'] = self.get_form()
         return context
+        
+class VolumeSearch(ListView):
+    '''Search across all volumes.'''
+    template_name = 'search_results.html'
+
+    def get_queryset(self):
+        return Manifest.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        q = self.get_queryset()
+        context['volumes'] = q.all
+        context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
+        annocount_list = []
+        canvaslist = []
+        for volume in q:
+            user_annotation_count = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=volume.id).count()
+            annocount_list.append({volume.pid: user_annotation_count})
+            context['user_annotation_count'] = annocount_list
+            print(volume.pid)
+            print(user_annotation_count)
+            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+            canvasquery2 = list(canvasquery)
+            canvaslist.append({volume.pid: canvasquery2})
+            context['firstthumbnail'] = canvaslist
+        value = 0
+        context['value'] = value
+        return context

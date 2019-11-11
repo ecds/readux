@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<h1 class='uk-heading-hero uk-text-center'>Readux</h1>
+<h2 class='uk-heading-primary uk-text-center'>Read. Annotate. Publish.</h2>
+<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
+
+<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
+  {% for volume in volumes %}
+  {% if volume.canvas_set.first.pid is null %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+    <div class="uk-width-1-4@m">
+      <a class="nav-link" href="#">
+        <v-volume-image></v-volume-image>
+      </a>
+    </div>
+    <div class="uk-width-3-4@m">
+      <a class="nav-link" href="#">
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove">
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}}</li>
+        <li>Added: {{volume.created_at}}</li>
+      </ul>
+    </div>
+  </div>
+  {% else %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+
+    <div class="uk-width-1-4@m rx-volume-image">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      {% for fir in firstthumbnail %}
+      {% for canvas in volume.canvas_set.all %}
+        {% if canvas.pid in fir|safe %}
+           <v-volume-image 
+            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
+        {% if forloop.last %}
+          <v-volume-image 
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+            volume-label="{{volume.label}}">
+          </v-volume-image>
+        {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+      </a>
+    </div>
+    <div class="uk-width-3-4@m">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+  </div>
+{% endblock content %}

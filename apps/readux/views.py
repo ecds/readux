@@ -13,7 +13,7 @@ from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.datastructures import MultiValueDictKeyError
-from django.db.models import Q
+from django.db.models import Q, Count
 
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']
@@ -260,7 +260,8 @@ class PageDetail(TemplateView):
               query = SearchQuery(search_string)
               vector = SearchVector('content')
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
-              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+#              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs = qs.annotate(rank=SearchRank(vector, query)).values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')

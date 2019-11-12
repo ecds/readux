@@ -32,11 +32,12 @@
                 <p>No results in the text in this volume</p>{% endif %}
  -->
 
+{% if search_string %}
 <div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
 {% for option in COL_LIST %}
 <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ search_string }}&collection={{ option.collections__pid }}"><button>{{ option.collections__label }}</button></a>  
 {% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ search_string }}"><button>ALL</button></a>
-</div>
+</div>{% endif %}
 <br/>
 <br/>
     {% if "?q=" in request.get_full_path %}      
@@ -61,6 +62,9 @@
     </div>
   </div>
   {% endfor %}
+  {% if not qs1 %}
+  <div><span class="results" style="background:#fff1e4;font-size:2em;"> There were no results for <em>{{ request.GET.q }}</em>.</span></div>
+  {% endif %}
   </div>
       {% endif %}
 {% endblock content %}

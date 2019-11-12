@@ -52,76 +52,38 @@
     </div>
     {% endif %}
  -->
- 
+                 {% if qs1 %}
+                 <ul class="uk-padding-remove">
+                  {% for answer in qs1 %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' answer.pid %}"
+                      target="_blank">{{ answer.label }} - number of results {{ answer.pidcount }}</a></li>
+                  {% endfor %}</ul>
+                {% elif request.GET.q  and not qs1 %}
+                <p>No results in the text in this volume</p>{% endif %}
+
+
     {% if "?q=" in request.get_full_path %}      
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
-  {% for volume in qs %}
-  {% if volume.canvas_set.first.pid is null %}
-  <div class="uk-width-1-2@m uk-grid-medium">
-    <div class="uk-width-1-4@m">
-      <a class="nav-link" href="#">
-        <v-volume-image></v-volume-image>
-      </a>
-    </div>
-    <div class="uk-width-3-4@m">
-      <a class="nav-link" href="#">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
-      </a>
-      <ul class="uk-padding-remove uk-margin-remove">
-        <li>Author: {{volume.author|truncatechars:150}}</li>
-        <li>Published: {{volume.published_date}}</li>
-        <li>Added: {{volume.created_at}}</li>
-      </ul>
-    </div>
-  </div>
-  {% else %}
+  {% for volume in qs1 %}
   <div class="uk-width-1-2@m uk-grid-medium">
 
-    <div class="uk-width-1-4@m rx-volume-image">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      {% for fir in firstthumbnail %}
-      {% for canvas in volume.canvas_set.all %}
-        {% if canvas.pid in fir|safe %}
-           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
-            volume-label="{{volume.label}}">
-          </v-volume-image>
-        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
-        {% if forloop.last %}
-          <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
-            volume-label="{{volume.label}}">
-          </v-volume-image>
-        {% endif %}
-        {% endif %}
-      {% endfor %}
-      {% endfor %}
-      </a>
+    <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}" target="_blank">
+<img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+      </a>{% endif %}{% endfor %}
     </div>
     <div class="uk-width-3-4@m">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}" target="_blank">
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
+        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Results</span></li>
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-        <li>
-          {% for value in user_annotation_count %}
-          {% if volume.pid in value %}
-          {% if "0" not in value|safe|slice:"-3:-1" %}
-          <span class="count-icon">
-            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
-          </span>
-          {% endif %}
-          {% endif %}
-          {% endfor %}
-        </li>
       </ul>
     </div>
   </div>
-  {% endif %}
   {% endfor %}
   </div>
       {% endif %}

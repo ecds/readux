@@ -325,6 +325,10 @@ class VolumeSearch(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        collection = self.request.GET.get('collection', None)
+        COLSET = self.get_queryset().values_list('collections__pid', flat=True)
+        COL_OPTIONS = list(COLSET)
+        COL_LIST = self.get_queryset().values('collections__pid', 'collections__label').order_by('collections__label').distinct('collections__label')
         
         qs = self.get_queryset()
         try:
@@ -336,6 +340,21 @@ class VolumeSearch(ListView):
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
               qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
+              print(collection)
+              print(COL_OPTIONS)
+              print(COL_LIST)
+              if collection not in COL_OPTIONS:
+                  print(collection)
+                  print(1)
+                  collection = None
+        
+              if collection is not None:
+                  print(collection)
+                  qs1 = qs1.filter(collections__pid = collection)
+
+              col_url_params = self.request.GET.copy()
+              if 'collection' in col_url_params:
+                  del col_url_params['collection']
 #               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
 #               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
 #               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
@@ -368,4 +387,9 @@ class VolumeSearch(ListView):
 #             context['firstthumbnail'] = canvaslist
 #         value = 0
 #         context['value'] = value
+        context.update({
+            'col_url_params': urlencode(col_url_params),
+            'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
+            'COL_LIST': COL_LIST, 'search_string': search_string
+        })
         return context

@@ -62,7 +62,13 @@
                 {% elif request.GET.q  and not qs1 %}
                 <p>No results in the text in this volume</p>{% endif %}
 
-
+<div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
+{% for option in COL_LIST %}
+<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ search_string }}&collection={{ option.collections__pid }}"><button>{{ option.collections__label }}</button></a>  
+{% endfor %}
+</div>
+<br/>
+<br/>
     {% if "?q=" in request.get_full_path %}      
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs1 %}
@@ -78,7 +84,7 @@
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
-        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Results</span></li>
+        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Results for <em>{{ request.GET.q }}</em></span></li>
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
       </ul>

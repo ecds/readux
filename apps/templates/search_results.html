@@ -21,37 +21,6 @@
 
 
 <!-- 
-    {% if "?q=" in request.get_full_path %}
-    <div class="rx-info ">
-      <div class="rx-info-content-container uk-padding-remove-vertical">
-        <div class="rx-info-content">
-          <div>
-            <!~~ nav head ~~>
-            <ul class="uk-tab" uk-switcher>
-              <li><a href="#">{{ qs|length }} hits in text</a></li>
-            </ul>
-            <!~~ end of nav head ~~>
-            <!~~ nav body ~~>
-            <ul class="uk-switcher uk-margin-small rx-search-result">
-              <li>
-                {% if qs %}
-                <ul class="uk-padding-remove">
-                  {% for answer in qs %}
-                  <li><a
-                      href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' answer.pid %}/page/all"
-                      target="_blank">{{ answer.label }}</a></li>
-                  {% endfor %}</ul>
-                {% elif request.GET.q  and not qs1 %}
-                <p>No results in the text in this volume</p>{% endif %}
-              </li>
-            </ul>
-            <!~~ end of nav body ~~>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
- -->
                  {% if qs1 %}
                  <ul class="uk-padding-remove">
                   {% for answer in qs1 %}
@@ -61,11 +30,12 @@
                   {% endfor %}</ul>
                 {% elif request.GET.q  and not qs1 %}
                 <p>No results in the text in this volume</p>{% endif %}
+ -->
 
 <div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
 {% for option in COL_LIST %}
 <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ search_string }}&collection={{ option.collections__pid }}"><button>{{ option.collections__label }}</button></a>  
-{% endfor %}
+{% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ search_string }}"><button>ALL</button></a>
 </div>
 <br/>
 <br/>

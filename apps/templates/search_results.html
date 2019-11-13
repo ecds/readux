@@ -33,6 +33,7 @@
  -->
 
 {% if search_string %}
+{% if qs1.count > 0 %}<br/><div><span class="results" style="background:#fff1e4;font-size:1.5em;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em>.</span></div>{% endif %}<br/>
 <div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
 {% for option in COL_LIST %}
 <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ search_string }}&collection={{ option.collections__pid }}"><button>{{ option.collections__label }}</button></a>  
@@ -55,7 +56,7 @@
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
-        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Results for <em>{{ request.GET.q }}</em></span></li>
+        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Result{{ volume.pidcount|pluralize }} for <em>{{ request.GET.q }}</em></span></li>
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
       </ul>

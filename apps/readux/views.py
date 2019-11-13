@@ -378,6 +378,7 @@ class VolumeSearch(ListView):
 #               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           else:
               search_string = ''
+              search_strings = ''
               qs1 = ''
               qs2 = ''
           context['qs1'] = qs1
@@ -389,6 +390,7 @@ class VolumeSearch(ListView):
         except MultiValueDictKeyError:
           q = ''
           search_string = ''
+          search_strings = ''
 
         context['volumes'] = qs.all
 #         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)

@@ -36,8 +36,8 @@
 {% if qs1.count > 0 %}<br/><div><span class="results" style="background:#fff1e4;font-size:1.5em;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em>.</span></div>{% endif %}<br/>
 <div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
 {% for option in COL_LIST %}
-<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.collections__pid }}"><button>{{ option.collections__label }}</button></a>  
-{% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}"><button>ALL</button></a>
+<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.collections__pid }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.collections__label }}</button></a>  
+{% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
 </div>{% endif %}
 <br/>
 <br/>

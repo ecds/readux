@@ -236,6 +236,19 @@ class AnnotationsCount(TemplateView):
 #         return context
 
 # TODO is this still needed? Yes.
+class MySearchQuery(SearchQuery):
+    def as_sql(self, compiler, connection):
+        params = [self.value]
+        if self.config:
+            config_sql, config_params = compiler.compile(self.config)
+            template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)
+            params = config_params + [self.value]
+        else:
+            template = 'to_tsquery(%s)'
+        if self.invert:
+            template = '!!({})'.format(template)
+        return template, params
+        
 class PageDetail(TemplateView):
     template_name = "page.html"
 
@@ -257,7 +270,7 @@ class PageDetail(TemplateView):
         try:
           search_string = self.request.GET['q']
           if search_string:
-              query = SearchQuery(search_string)
+              query = MySearchQuery(search_string)
               vector = SearchVector('content')
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
 #              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
@@ -335,7 +348,7 @@ class VolumeSearch(ListView):
         try:
           search_string = self.request.GET['q']
           if search_string:
-              query = SearchQuery(search_string)
+              query = MySearchQuery(search_string)
               vector = SearchVector('canvas__annotation__content')
               qs1 = qs.annotate(search=vector).filter(search=query)
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')

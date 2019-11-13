@@ -271,9 +271,12 @@ class PageDetail(TemplateView):
         qs2 = UserAnnotation.objects.all()
 
         try:
-          search_string = self.request.GET['q']
-          if search_string:
-              query = MySearchQuery(search_string)
+          search_strings = self.request.GET['q'].split()
+          if search_strings:
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  print(query)
               vector = SearchVector('content')
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
 #              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
@@ -349,9 +352,12 @@ class VolumeSearch(ListView):
         
         qs = self.get_queryset()
         try:
-          search_string = self.request.GET['q']
-          if search_string:
-              query = MySearchQuery(search_string)
+          search_strings = self.request.GET['q'].split()
+          if search_strings:
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  print(query)
               vector = SearchVector('canvas__annotation__content')
               qs1 = qs.annotate(search=vector).filter(search=query)
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')
@@ -403,6 +409,6 @@ class VolumeSearch(ListView):
         context.update({
             'collection_url_params': urlencode(collection_url_params),
             'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
-            'COL_LIST': COL_LIST, 'search_string': search_string
+            'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
         })
         return context

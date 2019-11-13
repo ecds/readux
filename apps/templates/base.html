@@ -94,6 +94,9 @@
         </div>
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
+              <li>
+                <a href="/search/"><span class="uk-icon" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: bottom"></span></a>
+              </li>
               {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}

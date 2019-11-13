@@ -1209,3 +1209,7 @@ p {
   justify-content: space-between;
   width: 55px;
 }
+
+em {
+  color:inherit;
+}

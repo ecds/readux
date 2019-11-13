@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.core.serializers import serialize
 from .models import Manifest
 from apps.iiif.annotations.models import Annotation
@@ -564,6 +565,14 @@ class JekyllSiteExport(object):
                 ghpages_url = 'https://%s.github.io/%s/' % (self.github_username, self.github_repo)
             except GithubExportException as err:
                 notify_msg('Export failed: %s' % err, 'error')
+
+        send_mail(
+            'Subject here',
+            'Here is the message.',
+            'benwbrum@gmail.com',
+            ['benwbrum@gmail.com'],
+            fail_silently=False,
+        )
         return [repo_url, ghpages_url, pr_url]
 
 

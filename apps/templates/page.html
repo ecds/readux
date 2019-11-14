@@ -85,10 +85,10 @@
               <li>
                 {% if qs1 %}
                 <ul class="uk-padding-remove">
-                  {% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
+                  {% for answer in qs1 %}{% if answer.canvas__manifest__label in volume.label %}
                   <li><a
-                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
-                      target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas__pid }}"
+                      target="_blank">Canvas {{ answer.canvas__position }} - number of results {{ answer.canvas__position__count }}{{ answer.rank }}</a></li>
                   {% endif %}{% endfor %}</ul>
                 {% elif request.GET.q  and not qs1 %}
                 <p>No results in the text in this volume</p>{% endif %}

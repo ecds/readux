@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.http import HttpResponse
+from django.shortcuts import render
+from django.template import Context
+from django.template.loader import get_template
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
@@ -14,6 +17,7 @@ from apps.users.models import User
 from datetime import datetime
 import json
 import logging
+import config.settings.local as settings
 
 logger = logging.getLogger(__name__)
 
@@ -119,6 +123,23 @@ class JekyllExport(TemplateView):
             context['repo_url'] = repo_url
             context['ghpages_url'] = ghpages_url
             context['pr_url'] = pr_url
+
+            # context =  Context({ 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url })
+            # context =  { 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url }
+            context['request'] = request
+            email_contents = get_template('jekyll_export_email.html').render(context)
+            text_contents = get_template('jekyll_export_email.txt').render(context)
+
+            send_mail(
+                'Your Readux site export is ready!',
+                text_contents,
+                settings.READUX_EMAIL_SENDER,
+                [request.user.email],
+                fail_silently=False,
+                html_message=email_contents
+            )
+
+
             return render(request, self.template_name, context)
 #            return JsonResponse(status=200, data=[repo_url, ghpages_url, pr_url], safe=False)
 

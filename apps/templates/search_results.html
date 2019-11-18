@@ -39,8 +39,8 @@
 <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.collections__pid }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.collections__label }}</button></a>  
 {% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
 </div>{% endif %}
-<br/>
-<br/>
+<h3>In Full Text</h3>
+<hr/>
     {% if "?q=" in request.get_full_path %}      
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs1 %}
@@ -68,5 +68,35 @@
   {% endif %}
   </div>
       {% endif %}
+<h3>In Title/Author/Summary</h3>
+<hr/>
+    {% if "?q=" in request.get_full_path %}      
+<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
+  {% for volume in qs3 %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+
+    <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}" target="_blank">
+<img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+      </a>{% endif %}{% endfor %}
+    </div>
+    <div class="uk-width-3-4@m">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}" target="_blank">
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
+        <li><span class="results" style="background:#fff1e4;font-size:2em;"> Results for <em>{{ request.GET.q }}</em></span></li>
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+      </ul>
+    </div>
+  </div>
+  {% endfor %}
+  {% if not qs3 %}
+  <div><span class="results" style="background:#fff1e4;font-size:2em;"> There were no results for <em>{{ request.GET.q }}</em>.</span></div>
+  {% endif %}
+  </div>
+      {% endif %}
+
 {% endblock content %}
 

@@ -33,7 +33,7 @@
     <li class="rx-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
         alt="Collections">{{ volume.collections.first.label }}</a></li>
   </ul>
-  <div class="rx-title uk-text-truncate">{{volume.label}}</div>
+  <div class="rx-title uk-text-truncate" title="{{ volume.label }}">{{volume.label}}</div>
 </div>
 
 {% endblock content %}
@@ -153,6 +153,11 @@
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
           <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Summary</div>
+          <div class="rx-info-content-value">{{ volume.summary }}</div>
         </div>
 
         {% if volume.note_set|length %}

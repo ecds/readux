@@ -236,6 +236,22 @@ class AnnotationsCount(TemplateView):
 #         return context
 
 # TODO is this still needed? Yes.
+
+# This replaces plainto_tsquery with to_tsquery so that operators ( | for or and :* for end of word) can be used. 
+# If we upgrade to Django 2.2 from 2.1 we can add the operator search_type="raw" to the standard SearchQuery, and it should do the same thing.
+class MySearchQuery(SearchQuery):
+    def as_sql(self, compiler, connection):
+        params = [self.value]
+        if self.config:
+            config_sql, config_params = compiler.compile(self.config)
+            template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)
+            params = config_params + [self.value]
+        else:
+            template = 'to_tsquery(%s)'
+        if self.invert:
+            template = '!!({})'.format(template)
+        return template, params
+        
 class PageDetail(TemplateView):
     template_name = "page.html"
 
@@ -255,9 +271,12 @@ class PageDetail(TemplateView):
         qs2 = UserAnnotation.objects.all()
 
         try:
-          search_string = self.request.GET['q']
-          if search_string:
-              query = SearchQuery(search_string)
+          search_strings = self.request.GET['q'].split()
+          if search_strings:
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  print(query)
               vector = SearchVector('content')
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
 #              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
@@ -333,13 +352,20 @@ class VolumeSearch(ListView):
         
         qs = self.get_queryset()
         try:
-          search_string = self.request.GET['q']
-          if search_string:
-              query = SearchQuery(search_string)
+          search_strings = self.request.GET['q'].split()
+          if search_strings:
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  print(query)
               vector = SearchVector('canvas__annotation__content')
               qs1 = qs.annotate(search=vector).filter(search=query)
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
+              qs3 = qs.annotate(search=vector2).filter(search=query)
+              qs3 = qs3.annotate(rank=SearchRank(vector2, query)).order_by('-rank')
+              qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')
               qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
               if collection not in COL_OPTIONS:
                   collection = None
@@ -347,6 +373,7 @@ class VolumeSearch(ListView):
               if collection is not None:
                   print(collection)
                   qs1 = qs1.filter(collections__pid = collection)
+                  qs3 = qs3.filter(collections__pid = collection)
 
               if 'collection' in collection_url_params:
                   del collection_url_params['collection']
@@ -356,10 +383,13 @@ class VolumeSearch(ListView):
 #               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           else:
               search_string = ''
+              search_strings = ''
               qs1 = ''
               qs2 = ''
+              qs3 = ''
           context['qs1'] = qs1
           context['qs2'] = qs2
+          context['qs3'] = qs3
 #               qs1 = ''
 #               qs2 = ''
 #           context['qs1'] = qs1
@@ -367,6 +397,7 @@ class VolumeSearch(ListView):
         except MultiValueDictKeyError:
           q = ''
           search_string = ''
+          search_strings = ''
 
         context['volumes'] = qs.all
 #         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
@@ -387,6 +418,6 @@ class VolumeSearch(ListView):
         context.update({
             'collection_url_params': urlencode(collection_url_params),
             'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
-            'COL_LIST': COL_LIST, 'search_string': search_string
+            'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
         })
         return context

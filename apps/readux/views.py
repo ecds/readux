@@ -358,7 +358,7 @@ class VolumeSearch(ListView):
               for search_string in search_strings:
                   query = query | SearchQuery(search_string)
                   print(query)
-              vector = SearchVector('canvas__annotation__content')
+              vector = SearchVector('canvas__annotation__content', weight='D') + SearchVector('label', weight='A') + SearchVector('summary', weight='c') + SearchVector('author', weight='B')
               qs1 = qs.annotate(search=vector).filter(search=query)
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')

@@ -1,0 +1,29 @@
+{{volume.label}}    
+
+Static Site Export
+
+{% if pr_url %}
+GitHub jekyll site update succeeded.
+
+A new pull request has been created on your GitHub repository 
+with all the latest changes.  You can review the changes and 
+merge them into your published edition.
+
+Review your pull request: {{ pr_url }}
+Your repository: {{ repo_url }}
+Your published edition: {{ ghpages_url }}
+{% else %}
+GitHub Jekyll site export succeeded.
+
+Your website export has been generated and saved to a new GitHub repository.
+
+After a few minutes, your annotated web edition should be accessible via 
+GitHub Pages.
+
+Your repository: {{ repo_url }}
+Your published edition: {{ ghpages_url }}
+
+For more information on using and customizing your site, see the
+Github Pages help documentation at:
+https://help.github.com/categories/github-pages-basics/
+{% endif %}

@@ -31,8 +31,8 @@ class UserAnnotation(AbstractAnnotation):
         elif isinstance(self.oa_annotation['on'], dict):
             anno_on = self.oa_annotation['on']
 
-
-        self.canvas = Canvas.objects.get(pid=anno_on['full'].split('/')[-1])
+        if self.canvas == None:
+            self.canvas = Canvas.objects.get(pid=anno_on['full'].split('/')[-1])
 
         mirador_item = anno_on['selector']['item']
 

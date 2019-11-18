@@ -39,9 +39,9 @@
 <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.collections__pid }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.collections__label }}</button></a>  
 {% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
 </div>{% endif %}
+    {% if "?q=" in request.get_full_path %}      
 <h3>In Full Text</h3>
 <hr/>
-    {% if "?q=" in request.get_full_path %}      
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs1 %}
   <div class="uk-width-1-2@m uk-grid-medium">
@@ -68,9 +68,9 @@
   {% endif %}
   </div>
       {% endif %}
+    {% if "?q=" in request.get_full_path %}      
 <h3>In Title/Author/Summary</h3>
 <hr/>
-    {% if "?q=" in request.get_full_path %}      
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs3 %}
   <div class="uk-width-1-2@m uk-grid-medium">

@@ -1,3 +1,4 @@
+import config.settings.local as settings
 from urllib.parse import urlencode
 from django.shortcuts import render
 from django.views.generic import ListView
@@ -267,6 +268,7 @@ class PageDetail(TemplateView):
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        context['mirador_url'] = settings.MIRADOR_URL
         qs = Annotation.objects.all()
         qs2 = UserAnnotation.objects.all()
 

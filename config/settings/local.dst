@@ -19,6 +19,8 @@ ALLOWED_HOSTS = [
 
 BASE_DIR = ROOT_DIR
 
+MIRADOR_URL = 'https://cdn.jsdelivr.net/gh/ecds/mirador@develop/build/mirador/'
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 

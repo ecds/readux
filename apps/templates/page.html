@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static i18n %}
 {% block extra_css %}
-<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
+<link href="{{ mirador_url }}css/mirador-combined.css" rel="stylesheet">
 {% if request.get_host == "readux2.ecdsdev.org" %}
 <style>
 #viewer {
@@ -260,7 +260,7 @@
 {% endblock viewer %}
 
 {% block extra_javascript %}
-<script src="{% static 'mirador/mirador.js' %}"></script>
+<script src="{{ mirador_url}}mirador.js"></script>
 <script type="text/javascript">
   $(function () {
     Mirador({

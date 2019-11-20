@@ -68,7 +68,7 @@
   </div>
       {% endif %}
     {% if "?q=" in request.get_full_path %}      
-{% if qs3.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Title/Author/Summary.</div></span>{% endif %}
+{% if qs3.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Title/Author/Summary.</span><span style="font-size:0.8em;color:#707070;"> (ordered by relevance)</span></div>{% endif %}
 <hr/>
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs3 %}
@@ -84,9 +84,21 @@
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
-        <li><span class="results" style="background:#fff1e4;font-size:2em;"> Results for <em>{{ request.GET.q }}</em></span></li>
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
       </ul>
     </div>
   </div>

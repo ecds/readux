@@ -423,8 +423,6 @@ class VolumeSearch(ListView):
             user_annotation_count = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=volume.id).count()
             annocount_list.append({volume.pid: user_annotation_count})
             context['user_annotation_count'] = annocount_list
-            print(volume.pid)
-            print(user_annotation_count)
             canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
             canvasquery2 = list(canvasquery)
             canvaslist.append({volume.pid: canvasquery2})

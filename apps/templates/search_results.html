@@ -58,6 +58,19 @@
         <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Result{{ volume.pidcount|pluralize }} for <em>{{ request.GET.q }}</em></span></li>
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
       </ul>
     </div>
   </div>

@@ -347,9 +347,9 @@ class VolumeSearch(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         collection = self.request.GET.get('collection', None)
-        COLSET = self.get_queryset().values_list('collections__pid', flat=True)
+        COLSET = Collection.objects.values_list('pid', flat=True)
         COL_OPTIONS = list(COLSET)
-        COL_LIST = self.get_queryset().values('collections__pid', 'collections__label').order_by('collections__label').distinct('collections__label')
+        COL_LIST = Collection.objects.values('pid', 'label').order_by('label').distinct('label')
         collection_url_params = self.request.GET.copy()
         
         qs = self.get_queryset()
@@ -362,18 +362,15 @@ class VolumeSearch(ListView):
                   print(query)
               vector = SearchVector('canvas__annotation__content')
               qs1 = qs.annotate(search=vector).filter(search=query)
-              qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
               vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
               qs3 = qs.annotate(search=vector2).filter(search=query)
-              qs3 = qs3.annotate(rank=SearchRank(vector2, query)).order_by('-rank')
               qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')
               qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
               if collection not in COL_OPTIONS:
                   collection = None
         
               if collection is not None:
-                  print(collection)
                   qs1 = qs1.filter(collections__pid = collection)
                   qs3 = qs3.filter(collections__pid = collection)
 

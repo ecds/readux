@@ -35,7 +35,7 @@
 {% if search_string %}
 <div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
 {% for option in COL_LIST %}
-<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.collections__pid }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.collections__label }}</button></a>  
+<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.pid }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.label }}</button></a>  
 {% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
 </div>{% endif %}
     {% if "?q=" in request.get_full_path %}      

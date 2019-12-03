@@ -115,6 +115,7 @@
 
     <div class="rx-info">
       <div class="rx-info-title">Basic Information</div>
+
       <div class="rx-info-content-container">
 
         <!--new-->
@@ -127,7 +128,7 @@
         {% endif %}
 
         <!--new-->
-        
+
 
         <div class="rx-info-content">
           <div class="rx-info-content-label">Authors</div>
@@ -194,8 +195,13 @@
             {% csrf_token %}
           </form>
         </div>
-        
+
         {% endif %}
+
+        <div class="rx-info-content">
+          <a class="rx-action-btn" href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
+            target="_blank">Send to Voyant</a>
+        </div>
 
       </div>
     </div>
@@ -220,19 +226,19 @@
         </v-info-content-url-single>
 
         {% if "/page/all" in request.get_full_path or "?q=" in request.get_full_path %}
-          <v-info-content-url-external 
+          <v-info-content-url-external
             ref="rx-url-canvas" v-show="false">
           </v-info-content-url-external>
 
-        <v-info-content-url-external 
+        <v-info-content-url-external
           ref="rx-url-stable-page" v-show="false">
         </v-info-content-url-external>
         {% else %}
-        <v-info-content-url-external 
+        <v-info-content-url-external
           ref="rx-url-canvas">
         </v-info-content-url-external>
 
-        <v-info-content-url-external 
+        <v-info-content-url-external
           ref="rx-url-stable-page">
         </v-info-content-url-external>
         {% endif %}
@@ -250,7 +256,7 @@
 
 {% if page.pid is not None %}
 
-<!-- 
+<!--
         <p id="test"></p>
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
         <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>

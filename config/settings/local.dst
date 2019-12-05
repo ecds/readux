@@ -46,16 +46,16 @@ EMAIL_HOST = 'localhost'
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
 EMAIL_PORT = 1025
 # Actually send emails rather than printing to standard output
-# EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend" 
-# 
+# EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+#
 # Email address to use as "From" for automated emails.
 READUX_EMAIL_SENDER='readux@ecds.emory.edu'
 
-# For developer testing with gmail, use the following: 
-# EMAIL_PORT=587 
-# EMAIL_HOST="smtp.gmail.com" 
-# EMAIL_USE_TLS=True 
-# EMAIL_HOST_USER="your Gmail username without @gmail.com" 
+# For developer testing with gmail, use the following:
+# EMAIL_PORT=587
+# EMAIL_HOST="smtp.gmail.com"
+# EMAIL_USE_TLS=True
+# EMAIL_HOST_USER="your Gmail username without @gmail.com"
 # EMAIL_HOST_PASSWORD="your Gmail password"
 # In addition, you will need to edit your Gmail account to let less-secure apps connect at:
 # https://myaccount.google.com/lesssecureapps
@@ -160,4 +160,3 @@ LOGGING = {
         },
  },
 }
-

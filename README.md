@@ -18,7 +18,7 @@ Administrators can organize digitized books into collections, facilitating user 
 
 ### Build status
 
-[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
 
 ## Installation (development)
 

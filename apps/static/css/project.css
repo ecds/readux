@@ -98,9 +98,9 @@
   z-index: 999;
 }
 
-.show-annotations span a {
+/* .show-annotations span a {
     background: rgba(255, 20, 147, 0.5);
-}
+} */
 
 .openseadragon-container span {
     /* background: rgba(0, 255, 255, 0.33); */

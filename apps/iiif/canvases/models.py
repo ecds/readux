@@ -10,11 +10,11 @@ from . import services
 import uuid
 from bs4 import BeautifulSoup
 
-# TODO add a test fixture that calls this.
+# TODO: add a test fixture that calls this.
 def get_default_iiif_setting():
   return "%s" % (settings.IIIF_IMAGE_SERVER_BASE)
 
-# TODO move this to the manifest model
+# TODO: move this to the manifest model
 class IServer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     IIIF_IMAGE_SERVER_BASE = models.CharField(max_length=255, default=get_default_iiif_setting)
@@ -38,7 +38,7 @@ class Canvas(models.Model):
         ('line', 'line'),
         ('both', 'both')
     )
-    # TODO move this to the mainfest level.
+    # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
 
     @property

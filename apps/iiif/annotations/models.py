@@ -49,8 +49,9 @@ class AbstractAnnotation(models.Model):
     language = models.CharField(max_length=10, default='en')
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
-    # TODO Should we keep this for annotations from Mirador, or just get rid of it?
+    # TODO: Should we keep this for annotations from Mirador, or just get rid of it?
     svg = models.TextField(blank=True, null=True)
+    style = models.CharField(max_length=1000, blank=True, null=True)
     item = None
 
     ordering = ['order']
@@ -86,7 +87,8 @@ def set_span_element(sender, instance, **kwargs):
             # This is used by OpenSeadragon. OSD will update the letter spacing relative to
             # the width of the overlayed element when someone zooms in and out.
             relative_letter_spacing = letter_spacing / instance.w
-            instance.content = "<span id='{pk}' style='height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {s}px' data-letter-spacing='{p}'>{content}</span>".format(pk=instance.pk, h=str(instance.h), w=str(instance.w), content=instance.content, f=str(font_size), s=str(letter_spacing), p=str(relative_letter_spacing))
+            instance.content = "<span id='{pk}' data-letter-spacing='{p}'>{content}</span>".format(pk=instance.pk, content=instance.content, p=str(relative_letter_spacing))
+            instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size))
         # TODO Is this actually how this should be handeled? If not, remove the import of `IntegrityError`
         except (ValueError, ZeroDivisionError, IntegrityError) as error:
             instance.content = ''

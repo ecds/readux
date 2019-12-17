@@ -13,6 +13,7 @@ from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
 from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions
 from urllib.parse import urlencode
+from cssutils import parseString
 import json
 import re
 
@@ -68,6 +69,10 @@ class AnnotationTests(TestCase):
                     "format": "text/html",
                     "@type": "dctypes:Text"
                 }],
+                "stylesheet": {
+                    "value": ".anno-049e4a47-1d9e-4d52-8d30-fb9047d34481 { background: rgba(0, 128, 0, 0.5); }",
+                    "type": "CssStylesheet"
+                },
                 "on": [{
                     "full": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
                     "@type": "oa:SpecificResource",
@@ -104,7 +109,7 @@ class AnnotationTests(TestCase):
     }
 
     def setUp(self):
-        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+        # fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
         self.user_a = get_user_model().objects.get(pk=1)
         self.user_b = get_user_model().objects.get(pk=2)
         self.factory = RequestFactory()
@@ -368,3 +373,28 @@ class AnnotationTests(TestCase):
         for anno in UserAnnotation.objects.all():
             print(anno.motivation)
         assert anno.motivation == 'oa:commenting'
+    
+    def test_style_attribute_adds_id_to_class_selector(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        assert str(anno.id) in anno.style
+
+    def test_style_attribute_is_valid_css(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        style = parseString(anno.style)
+        assert style.cssRules[0].valid
+
+    def test_stylesheet_is_serialized(self):
+        self.create_user_annotations(1, self.user_a)
+        kwargs = {'username': self.user_a.username, 'volume': self.manifest.pid, 'canvas': self.canvas.pid}
+        url = reverse('user_annotations', kwargs=kwargs)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = self.view(request, username=self.user_a.username, volume=self.manifest.pid, canvas=self.canvas.pid)
+        annotation = self.load_anno(response)[0]
+        assert 'stylesheet' in annotation
+        assert 'value' in annotation['stylesheet']
+        assert 'type' in annotation['stylesheet']
+        assert annotation['@id'] in annotation['stylesheet']['value']
+        assert annotation['stylesheet']['type'] == 'CssStylesheet'

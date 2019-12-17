@@ -47,6 +47,10 @@
           "format": "text/html"
         }
       ],
+      "stylesheet": {
+        "value": ".anno-0ace875c-033e-400a-a4a4-3cb857369239 { background: rgba(0, 128, 0, 0.5); }",
+        "type": "CssStylesheet"
+      },
       "motivation": [
         "oa:commenting"
       ]

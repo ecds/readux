@@ -35,6 +35,8 @@ temp_data
 asset/collect/*
 !asset/collect/index.html
 
+apps/static/mirador
+
 # C extensions
 *.so
 

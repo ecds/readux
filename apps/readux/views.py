@@ -273,16 +273,20 @@ class PageDetail(TemplateView):
         qs2 = UserAnnotation.objects.all()
 
         try:
+          search_string = self.request.GET['q']
           search_strings = self.request.GET['q'].split()
           if search_strings:
+              qq = Q()
               query = SearchQuery('')
               for search_string in search_strings:
                   query = query | SearchQuery(search_string)
+                  qq |= Q(content__icontains=search_string)
                   print(query)
               vector = SearchVector('content')
-              qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
+#               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
 #              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-              qs = qs.annotate(rank=SearchRank(vector, query)).values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
+              qs = qs.values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')

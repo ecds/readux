@@ -354,15 +354,20 @@ class VolumeSearch(ListView):
         
         qs = self.get_queryset()
         try:
+          search_string = self.request.GET['q']
           search_strings = self.request.GET['q'].split()
           if search_strings:
+              qq = Q()
               query = SearchQuery('')
               for search_string in search_strings:
                   query = query | SearchQuery(search_string)
+                  qq |= Q(canvas__annotation__content__icontains=search_string)
                   print(query)
-              vector = SearchVector('canvas__annotation__content')
-              qs1 = qs.annotate(search=vector).filter(search=query)
-              qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+#               vector = SearchVector('canvas__annotation__content')
+#               qs1 = qs.annotate(search=vector).filter(search=query)
+#               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              qs1 = qs.filter(qq)
+              qs1 = qs1.values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
               vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
               qs3 = qs.annotate(search=vector2).filter(search=query)
               qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')

@@ -14,7 +14,7 @@ from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.datastructures import MultiValueDictKeyError
-from django.db.models import Q, Count, F
+from django.db.models import Q, Count
 
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']
@@ -360,9 +360,9 @@ class VolumeSearch(ListView):
               for search_string in search_strings:
                   query = query | SearchQuery(search_string)
                   print(query)
-              vector = self.request.POST.get('search')  
-#               qs1 = qs.annotate(search=vector).filter(search=query)
-              qs1 = qs.annotate(rank=SearchRank(F('search_vector'), vector)).filter(search_vector=vector).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              vector = SearchVector('canvas__annotation__content')
+              qs1 = qs.annotate(search=vector).filter(search=query)
+              qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
               vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
               qs3 = qs.annotate(search=vector2).filter(search=query)
               qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')

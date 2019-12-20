@@ -399,7 +399,7 @@ class VolumeSearch(ListView):
               qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
               if collection not in COL_OPTIONS:
                   collection = None
-        
+    
               if collection is not None:
                   qs1 = qs1.filter(collections__pid = collection)
                   qs3 = qs3.filter(collections__pid = collection)

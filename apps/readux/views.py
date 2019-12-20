@@ -274,13 +274,32 @@ class PageDetail(TemplateView):
 
         try:
           search_string = self.request.GET['q']
+          search_type = self.request.GET['type']
+          print(search_type)
           search_strings = self.request.GET['q'].split()
           if search_strings:
+            if search_type == 'partial':
               qq = Q()
               query = SearchQuery('')
               for search_string in search_strings:
                   query = query | SearchQuery(search_string)
                   qq |= Q(content__icontains=search_string)
+                  print(query)
+              vector = SearchVector('content')
+              qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
+#               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+#              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs = qs.values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
+              qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+            elif search_type == 'exact':
+              qq = Q()
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  qq |= Q(content__contains=search_string)
                   print(query)
               vector = SearchVector('content')
               qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
@@ -359,13 +378,44 @@ class VolumeSearch(ListView):
         qs = self.get_queryset()
         try:
           search_string = self.request.GET['q']
+          search_type = self.request.GET['type']
           search_strings = self.request.GET['q'].split()
           if search_strings:
+            if search_type == 'partial':
               qq = Q()
               query = SearchQuery('')
               for search_string in search_strings:
                   query = query | SearchQuery(search_string)
                   qq |= Q(canvas__annotation__content__icontains=search_string)
+                  print(query)
+#               vector = SearchVector('canvas__annotation__content')
+#               qs1 = qs.annotate(search=vector).filter(search=query)
+#               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              qs1 = qs.filter(qq)
+              qs1 = qs1.values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
+              qs3 = qs.annotate(search=vector2).filter(search=query)
+              qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')
+              qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
+              if collection not in COL_OPTIONS:
+                  collection = None
+        
+              if collection is not None:
+                  qs1 = qs1.filter(collections__pid = collection)
+                  qs3 = qs3.filter(collections__pid = collection)
+
+              if 'collection' in collection_url_params:
+                  del collection_url_params['collection']
+#               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+#               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+#               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+#               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+            elif search_type == 'exact':
+              qq = Q()
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  qq |= Q(canvas__annotation__content__contains=search_string)
                   print(query)
 #               vector = SearchVector('canvas__annotation__content')
 #               qs1 = qs.annotate(search=vector).filter(search=query)

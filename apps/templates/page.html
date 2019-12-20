@@ -50,11 +50,15 @@
     <div class="rx-info">
       <!-- new search form -->
       {% if page.pid is not None %}
-      <form class="uk-search uk-search-default" style="width: 100% !important;"
+      <form class="uk-search uk-search-default" style="width: 100% !important; display: flex;"
         action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
         <span uk-search-icon></span>
         <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-          value="{{request.GET.q}}">
+          value="{{request.GET.q}}">        
+        <span style="margin-top: 10px;" title="Click to include partial matches">Partial</span>
+        <input type="radio" style="margin-top: 10px;" name="type" aria-label="include partial" value="partial" checked>
+        <span style="margin-top: 10px;" title="Click for exact matches only">Exact</span>
+        <input type="radio" style="margin-top: 10px;" name="type" aria-label="exact only" value="exact">
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       {% else %}

@@ -564,6 +564,7 @@ class JekyllSiteExport(object):
                 ghpages_url = 'https://%s.github.io/%s/' % (self.github_username, self.github_repo)
             except GithubExportException as err:
                 notify_msg('Export failed: %s' % err, 'error')
+
         return [repo_url, ghpages_url, pr_url]
 
 

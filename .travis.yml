@@ -12,7 +12,7 @@ before_install:
 - cp config/settings/local.dst config/settings/local.py
 - mkdir logs
 - touch logs/debug.log
-- gem install bundle
+- gem install bundler -v 2.1.0
 - bundle install
 - sudo /etc/init.d/postgresql stop
 - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key

@@ -14,6 +14,7 @@ pytest-cov==2.7.1
 requests==2.22.0
 iiif-prezi==0.2.9 # https://github.com/iiif-prezi/iiif-prezi
 httpretty==0.9.6 # https://pypi.org/project/httpretty/
+cssutils==1.0.2 # https://pypi.org/project/cssutils/
 
 # Code quality
 # ------------------------------------------------------------------------------

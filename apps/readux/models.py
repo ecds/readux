@@ -4,6 +4,7 @@ from django.db.models import signals
 from django.dispatch import receiver
 from apps.iiif.canvases.models import Canvas
 import json
+import re
 
 class UserAnnotation(AbstractAnnotation):
     start_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='start_selector', default=None)
@@ -31,8 +32,8 @@ class UserAnnotation(AbstractAnnotation):
         elif isinstance(self.oa_annotation['on'], dict):
             anno_on = self.oa_annotation['on']
 
-
-        self.canvas = Canvas.objects.get(pid=anno_on['full'].split('/')[-1])
+        if self.canvas == None:
+            self.canvas = Canvas.objects.get(pid=anno_on['full'].split('/')[-1])
 
         mirador_item = anno_on['selector']['item']
 
@@ -53,6 +54,11 @@ class UserAnnotation(AbstractAnnotation):
         elif isinstance(self.oa_annotation['resource'], dict):
             self.content = self.oa_annotation['resource']['chars']
             self.resource_type = self.oa_annotation['resource']['@type']
+        
+        # Replace the ID given by Mirador with the Readux given ID
+        if ('stylesheet' in self.oa_annotation):
+            uuid_pattern = re.compile(r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}')
+            self.style = uuid_pattern.sub(str(self.id), self.oa_annotation['stylesheet']['value'])
 
     def __is_text_annotation(self):
         return all([

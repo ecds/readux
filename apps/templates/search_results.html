@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<h1 class='uk-heading-hero uk-text-center'>Readux</h1>
+<p class='uk-text-lead uk-text-center'>See results of a full text search of all volumes below.</p>
+<p class='uk-text-lead uk-text-center uk-text-small'> Search for individual whole keywords. Multiple words will be searched as 'or' (e.g. Rome London = Rome or London). Stopwords (e.g. in, the) will be dropped.</p>
+
+      <div>
+      <form class="uk-search uk-search-default" style="width: 100% !important;"
+        action="{% url 'search' %}" method="get" accept-charset="utf-8">
+        <span uk-search-icon></span>
+        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
+          value="{{request.GET.q}}" style="width: 80%;">
+        <span title="Click to include partial matches">Partial</span>
+        <input type="radio" name="type" aria-label="include partial" value="partial" checked>
+        <span title="Click for exact matches only">Exact</span>
+        <input type="radio" name="type" aria-label="exact only" value="exact">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+      </div>
+
+
+<!-- 
+                 {% if qs1 %}
+                 <ul class="uk-padding-remove">
+                  {% for answer in qs1 %}
+                  <li><a
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' answer.pid %}"
+                      target="_blank">{{ answer.label }} - number of results {{ answer.pidcount }}</a></li>
+                  {% endfor %}</ul>
+                {% elif request.GET.q  and not qs1 %}
+                <p>No results in the text in this volume</p>{% endif %}
+ -->
+
+{% if search_string %}
+<div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
+{% for option in COL_LIST %}
+<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.pid }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.label }}</button></a>  
+{% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
+</div>{% endif %}
+    {% if "?q=" in request.get_full_path %}      
+{% if qs1.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em> in Full Text.</div></span>{% endif %}
+<hr/>
+<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
+  {% for volume in qs1 %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+
+    <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+<img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+      </a>{% endif %}{% endfor %}
+    </div>
+    <div class="uk-width-3-4@m">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
+        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Result{{ volume.pidcount|pluralize }} for <em>{{ request.GET.q }}</em></span></li>
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  {% endfor %}
+  {% if not qs1 %}
+  <div><span class="results" style="background:#fff1e4;font-size:2em;"> There were no results for <em>{{ request.GET.q }}</em>.</span></div>
+  {% endif %}
+  </div>
+      {% endif %}
+    {% if "?q=" in request.get_full_path %}      
+{% if qs3.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Title/Author/Summary.</span><span style="font-size:0.8em;color:#707070;"> (ordered by relevance)</span></div>{% endif %}
+<hr/>
+<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
+  {% for volume in qs3 %}
+  <div class="uk-width-1-2@m uk-grid-medium">
+
+    <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+<img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+      </a>{% endif %}{% endfor %}
+    </div>
+    <div class="uk-width-3-4@m">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+      </a>
+      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
+        <li>Author: {{volume.author|truncatechars:150}}</li>
+        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
+        <li>
+          {% for value in user_annotation_count %}
+          {% if volume.pid in value %}
+          {% if "0" not in value|safe|slice:"-3:-1" %}
+          <span class="count-icon">
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
+            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+          </span>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  {% endfor %}
+  {% if not qs3 %}
+  <div><span class="results" style="background:#fff1e4;font-size:2em;color:#707070;"> There were no results for <em>{{ request.GET.q }}</em>.</span></div>
+  {% endif %}
+  </div>
+      {% endif %}
+
+{% endblock content %}
+

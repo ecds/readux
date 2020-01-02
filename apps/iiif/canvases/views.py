@@ -20,7 +20,7 @@ class IIIFV2List(View):
 class IIIFV2Detail(View):
     def get_queryset(self):
         return Canvas.objects.filter(pid=self.kwargs['pid'])
-    
+
     def get(self, request, *args, **kwargs):
         return JsonResponse(json.loads(serialize('canvas', self.get_queryset())))
         

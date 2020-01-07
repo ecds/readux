@@ -38,4 +38,4 @@ DEPENDENCIES
   iiif_to_jekyll (= 0.3.0)!
 
 BUNDLED WITH
-   2.0.2
+   2.1.0

@@ -1,3 +1,4 @@
+import config.settings.local as settings
 from urllib.parse import urlencode
 from django.shortcuts import render
 from django.views.generic import ListView
@@ -236,6 +237,22 @@ class AnnotationsCount(TemplateView):
 #         return context
 
 # TODO is this still needed? Yes.
+
+# This replaces plainto_tsquery with to_tsquery so that operators ( | for or and :* for end of word) can be used. 
+# If we upgrade to Django 2.2 from 2.1 we can add the operator search_type="raw" to the standard SearchQuery, and it should do the same thing.
+class MySearchQuery(SearchQuery):
+    def as_sql(self, compiler, connection):
+        params = [self.value]
+        if self.config:
+            config_sql, config_params = compiler.compile(self.config)
+            template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)
+            params = config_params + [self.value]
+        else:
+            template = 'to_tsquery(%s)'
+        if self.invert:
+            template = '!!({})'.format(template)
+        return template, params
+        
 class PageDetail(TemplateView):
     template_name = "page.html"
 
@@ -251,17 +268,44 @@ class PageDetail(TemplateView):
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__id=canvas.id).count()
         context['user_annotation_count'] = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=manifest.id).count()
+        context['mirador_url'] = settings.MIRADOR_URL
         qs = Annotation.objects.all()
         qs2 = UserAnnotation.objects.all()
 
         try:
           search_string = self.request.GET['q']
-          if search_string:
-              query = SearchQuery(search_string)
+          search_type = self.request.GET['type']
+          print(search_type)
+          search_strings = self.request.GET['q'].split()
+          if search_strings:
+            if search_type == 'partial':
+              qq = Q()
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  qq |= Q(content__icontains=search_string)
+                  print(query)
               vector = SearchVector('content')
+              qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
+#               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+#              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs = qs.values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
+              qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+              qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+              qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+              qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+            elif search_type == 'exact':
+              qq = Q()
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  qq |= Q(content__contains=search_string)
+                  print(query)
+              vector = SearchVector('content')
+#               qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
               qs = qs.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
 #              qs = qs.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-              qs = qs.annotate(rank=SearchRank(vector, query)).values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
+              qs = qs.values('canvas__position', 'canvas__manifest__label', 'canvas__pid').annotate(Count('canvas__position')).order_by('canvas__position')
               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
@@ -326,27 +370,68 @@ class VolumeSearch(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         collection = self.request.GET.get('collection', None)
-        COLSET = self.get_queryset().values_list('collections__pid', flat=True)
+        COLSET = Collection.objects.values_list('pid', flat=True)
         COL_OPTIONS = list(COLSET)
-        COL_LIST = self.get_queryset().values('collections__pid', 'collections__label').order_by('collections__label').distinct('collections__label')
+        COL_LIST = Collection.objects.values('pid', 'label').order_by('label').distinct('label')
         collection_url_params = self.request.GET.copy()
         
         qs = self.get_queryset()
         try:
           search_string = self.request.GET['q']
-          if search_string:
-              query = SearchQuery(search_string)
+          search_type = self.request.GET['type']
+          search_strings = self.request.GET['q'].split()
+          if search_strings:
+            if search_type == 'partial':
+              qq = Q()
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  qq |= Q(canvas__annotation__content__icontains=search_string)
+                  print(query)
+#               vector = SearchVector('canvas__annotation__content')
+#               qs1 = qs.annotate(search=vector).filter(search=query)
+#               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              qs1 = qs.filter(qq)
+              qs1 = qs1.values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
+              qs3 = qs.annotate(search=vector2).filter(search=query)
+              qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')
+              qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
+              if collection not in COL_OPTIONS:
+                  collection = None
+    
+              if collection is not None:
+                  qs1 = qs1.filter(collections__pid = collection)
+                  qs3 = qs3.filter(collections__pid = collection)
+
+              if 'collection' in collection_url_params:
+                  del collection_url_params['collection']
+#               qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+#               qs2 = qs2.annotate(search=vector).filter(search=query).filter(canvas__manifest__label=manifest.label)
+#               qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+#               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+            elif search_type == 'exact':
+              qq = Q()
+              query = SearchQuery('')
+              for search_string in search_strings:
+                  query = query | SearchQuery(search_string)
+                  qq |= Q(canvas__annotation__content__exact=search_string)
+                  print(query)
               vector = SearchVector('canvas__annotation__content')
               qs1 = qs.annotate(search=vector).filter(search=query)
-              qs1 = qs1.annotate(rank=SearchRank(vector, query)).order_by('-rank')
               qs1 = qs1.annotate(rank=SearchRank(vector, query)).values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+#               qs1 = qs.filter(qq)
+#               qs1 = qs1.values('pid', 'label', 'author', 'published_date', 'created_at').annotate(pidcount = Count('pid')).order_by('-pidcount')
+              vector2 = SearchVector('label', weight='A') + SearchVector('author', weight='B') + SearchVector('summary', weight='C')
+              qs3 = qs.annotate(search=vector2).filter(search=query)
+              qs3 = qs3.annotate(rank=SearchRank(vector2, query)).values('pid', 'label', 'author', 'published_date', 'created_at').order_by('-rank')
               qs2 = qs.values('canvas__pid', 'pid', 'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE').order_by('pid').distinct('pid')
               if collection not in COL_OPTIONS:
                   collection = None
         
               if collection is not None:
-                  print(collection)
                   qs1 = qs1.filter(collections__pid = collection)
+                  qs3 = qs3.filter(collections__pid = collection)
 
               if 'collection' in collection_url_params:
                   del collection_url_params['collection']
@@ -356,10 +441,13 @@ class VolumeSearch(ListView):
 #               qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
           else:
               search_string = ''
+              search_strings = ''
               qs1 = ''
               qs2 = ''
+              qs3 = ''
           context['qs1'] = qs1
           context['qs2'] = qs2
+          context['qs3'] = qs3
 #               qs1 = ''
 #               qs2 = ''
 #           context['qs1'] = qs1
@@ -367,6 +455,7 @@ class VolumeSearch(ListView):
         except MultiValueDictKeyError:
           q = ''
           search_string = ''
+          search_strings = ''
 
         context['volumes'] = qs.all
 #         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
@@ -384,9 +473,19 @@ class VolumeSearch(ListView):
 #             context['firstthumbnail'] = canvaslist
 #         value = 0
 #         context['value'] = value
+        annocount_list = []
+        canvaslist = []
+        for volume in qs:
+            user_annotation_count = UserAnnotation.objects.filter(owner_id=self.request.user.id).filter(canvas__manifest__id=volume.id).count()
+            annocount_list.append({volume.pid: user_annotation_count})
+            context['user_annotation_count'] = annocount_list
+            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+            canvasquery2 = list(canvasquery)
+            canvaslist.append({volume.pid: canvasquery2})
+            context['firstthumbnail'] = canvaslist
         context.update({
             'collection_url_params': urlencode(collection_url_params),
             'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
-            'COL_LIST': COL_LIST, 'search_string': search_string
+            'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
         })
         return context

@@ -2,6 +2,22 @@
 
 CHANGELOG
 =========
+Release 2.0.0-alpha.4
+---------------------
+* Full text search of volumes
+* Adds option for partial or exact match searches
+* Adds style information to annotations
+* Adds ability to send to Voyant
+* Fixes bug for links to current volume, page, etc.
+
+Release 2.0.0-alpha.3
+---------------------
+* Add Zenodo integration
+
+Release 2.0.0-alpha.2
+---------------------
+* Add branch option for deployment.
+
 Release 2.0.0-alpha.1
 ---------------------
 Readux 2 is a total rewrite centered on using IIIF.

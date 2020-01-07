@@ -8,12 +8,13 @@ from ..annotations.models import Annotation
 from django.apps import apps
 from . import services
 import uuid
+from bs4 import BeautifulSoup
 
-# TODO add a test fixture that calls this.
+# TODO: add a test fixture that calls this.
 def get_default_iiif_setting():
   return "%s" % (settings.IIIF_IMAGE_SERVER_BASE)
 
-# TODO move this to the manifest model
+# TODO: move this to the manifest model
 class IServer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     IIIF_IMAGE_SERVER_BASE = models.CharField(max_length=255, default=get_default_iiif_setting)
@@ -37,7 +38,7 @@ class Canvas(models.Model):
         ('line', 'line'),
         ('both', 'both')
     )
-    # TODO move this to the mainfest level.
+    # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
 
     @property
@@ -67,12 +68,12 @@ class Canvas(models.Model):
     # @property
     # def get_IIIF_IMAGE_SERVER_BASE(self):
     #     return self.IIIF_IMAGE_SERVER_BASE
-        
+
     @property
     def twitter_media1(self):
         # TODO shouldn't this use `self.IIIF_IMAGE_SERVER_BASE`
         return "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.pid)
-        
+
     @property
     def twitter_media2(self):
         # TODO shouldn't this use `self.IIIF_IMAGE_SERVER_BASE`
@@ -110,10 +111,17 @@ class Canvas(models.Model):
             # TODO add a landscape image to tests
             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
 
-    # @property
-    # def result(self):
+    @property
+    def result(self):
     #     "Empty attribute to hold the result of requests to get OCR data."
     #     return None
+        words = Annotation.objects.filter(canvas=self.id).order_by('order')
+        # NOTE: The above query really should have a filter for resource_type=OCR but it currently returns an empty set with this parameter set.
+        clean_words = []
+        for word in words:
+            clean_word = BeautifulSoup(word.content).text
+            clean_words.append(clean_word)
+        return ' '.join(clean_words)
 
     def __str__(self):
         return str(self.pid)
@@ -153,7 +161,7 @@ def add_ocr(sender, instance, **kwargs):
             a.content = word['content']
             a.order = word_order
             a.save()
-            word_order += 1           
+            word_order += 1
 
 class Meta:
     # Translators: admin:skip

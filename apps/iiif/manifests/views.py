@@ -9,6 +9,8 @@ from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
+from ..annotations.models import Annotation
+from ..canvases.models import Canvas
 from .models import Manifest
 from .export import IiifManifestExport
 from .export import JekyllSiteExport
@@ -54,7 +56,7 @@ class ManifestSitemap(Sitemap):
 class ManifestRis(TemplateView):
     content_type = 'application/x-research-info-systems; charset=UTF-8'
     template_name = "citation.ris"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
@@ -155,4 +157,13 @@ class JekyllExport(TemplateView):
         context_data = super(JekyllExport, self).get_context_data(**kwargs)
         return context_data
 
+class PlainExport(View):
+    def get_queryset(self):
+        manifest = Manifest.objects.get(pid=self.kwargs['pid'])
+        return Canvas.objects.filter(manifest=manifest.id).order_by('position')
 
+    def get(self, request, *args, **kwargs):
+        annotations = []
+        for canvas in self.get_queryset() :
+            annotations.append(canvas.result)
+        return HttpResponse(' '.join(annotations))

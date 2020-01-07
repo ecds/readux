@@ -115,7 +115,7 @@ class JekyllExport(TemplateView):
 
         # TODO Actually use the git repo and export mode
         if export_mode == 'download':
-            jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user=self.request.user);
+            jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo=github_repo, deep_zoom=False, owners=owners, user=self.request.user);
             zip = jekyll_export.get_zip()
             resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
             resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'

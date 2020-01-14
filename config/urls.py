@@ -24,7 +24,7 @@ sitemaps = {
     #'volumes': ManifestSitemap,
     #'volume-pages': VolumePageSitemap,
     #'pages': PageSitemap,
-    'readux-collection': CollectionsSitemap,
+    'readux-collections': CollectionsSitemap,
     'readux-volumes': ManifestsSitemap,
     'pages': Sitemap
 }

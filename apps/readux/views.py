@@ -13,8 +13,11 @@ from apps.cms.models import Page, CollectionsPage
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q, Count
+from wagtail.core import urls as wagtail_urls
 
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']
@@ -489,3 +492,23 @@ class VolumeSearch(ListView):
             'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
         })
         return context
+
+class ManifestsSitemap(Sitemap):
+    limit = 5
+    # priority unknown
+    def items(self):
+        return Manifest.objects.all()
+
+    def location(self, item):
+        return reverse('volumeall', kwargs={'volume': item.pid})
+
+class CollectionsSitemap(Sitemap):
+    # priority unknown
+    def items(self):
+        return Collection.objects.all()
+
+    def location(self, item):
+        return reverse('collection', kwargs={'collection': item.pid})
+
+
+

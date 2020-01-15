@@ -228,6 +228,7 @@
     {% endif %}
     {% endfor %}
 
+<!-- 
     {% for post in page.get_children %}
     {% if 'vol' in post.slug %}
     <a class="nav-link" href="{% pageurl post %}">
@@ -235,6 +236,11 @@
     </a>
     {% endif %}
     {% endfor %}
+ -->
+    <a class="nav-link" href="/{{ volumesurl.slug }}">
+      <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
+    </a>
+
 
     {% include "footer.html" %}
     {% endif %}

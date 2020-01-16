@@ -14,6 +14,7 @@ from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
+from django.db.models import Max
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q, Count
@@ -502,13 +503,18 @@ class ManifestsSitemap(Sitemap):
     def location(self, item):
         return reverse('volumeall', kwargs={'volume': item.pid})
 
+    def lastmod(self, item):
+        return item.created_at
+
 class CollectionsSitemap(Sitemap):
     # priority unknown
     def items(self):
-        return Collection.objects.all()
+        return Collection.objects.all().annotate(modified_at=Max('manifests__created_at'))
 
     def location(self, item):
         return reverse('collection', kwargs={'collection': item.pid})
 
+    def lastmod(self, item):
+        return item.modified_at 
 
 

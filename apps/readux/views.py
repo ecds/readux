@@ -504,12 +504,12 @@ class ManifestsSitemap(Sitemap):
         return reverse('volumeall', kwargs={'volume': item.pid})
 
     def lastmod(self, item):
-        return item.created_at
+        return item.updated_at
 
 class CollectionsSitemap(Sitemap):
     # priority unknown
     def items(self):
-        return Collection.objects.all().annotate(modified_at=Max('manifests__created_at'))
+        return Collection.objects.all().annotate(modified_at=Max('manifests__updated_at'))
 
     def location(self, item):
         return reverse('collection', kwargs={'collection': item.pid})

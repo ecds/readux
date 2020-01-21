@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 import urllib.request
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
-from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.indexes import GinIndex
 from json import JSONEncoder
 import uuid
@@ -50,9 +50,11 @@ class Manifest(ClusterableModel):
     metadata = JSONField(default=dict, blank=True)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")
     autocomplete_search_field = 'label'
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, editable=False)
+    objects = ManifestManager()
 
     def get_absolute_url(self):
         return "%s/volume/%s" % (settings.HOSTNAME, self.pid)

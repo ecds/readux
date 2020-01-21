@@ -11,6 +11,7 @@ from wagtailautocomplete.edit_handlers import AutocompletePanel
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.indexes import GinIndex
 from json import JSONEncoder
+from django.contrib.postgres.aggregates import StringAgg
 import uuid
 from uuid import UUID
 #trying to work with autocomplete
@@ -25,7 +26,7 @@ JSONEncoder.default = JSONEncoder_newdefault
 
 class ManifestManager(models.Manager):
     def with_documents(self):
-        vector = SearchVector('canvas__annotation__content')
+        vector = SearchVector(StringAgg('canvas__annotation__content', delimiter=' '))
         return self.get_queryset().annotate(document=vector)
     
 class Manifest(ClusterableModel):

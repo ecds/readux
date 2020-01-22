@@ -68,6 +68,7 @@ DJANGO_APPS = [
     'import_export',
 ]
 THIRD_PARTY_APPS = [
+    'background_task',
     'corsheaders',
     'crispy_forms',
     'allauth',

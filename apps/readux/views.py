@@ -1,13 +1,16 @@
 import config.settings.local as settings
 from urllib.parse import urlencode
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView
+from django.views.generic.base import View
 from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm
+from ..iiif.manifests.export import JekyllSiteExport
 from apps.readux.models import UserAnnotation
 from apps.cms.models import Page, CollectionsPage
 from django.views.generic.base import RedirectView
@@ -359,6 +362,23 @@ class ExportOptions(TemplateView, FormMixin):
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['export_form'] = self.get_form()
         return context
+
+class ExportDownload(TemplateView):
+    template_name = "export_download.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context['filename'] = kwargs['filename']
+        return context
+
+class ExportDownloadZip(View):
+    def get(self, request, *args, **kwargs):
+        jekyll_export = JekyllSiteExport(None, "v2", github_repo=None, deep_zoom=False, owners=[self.request.user.id], user=self.request.user);
+        zip = jekyll_export.get_zip_file(kwargs['filename'])
+        resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
+        resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
+        return resp
         
 class VolumeSearch(ListView):
     '''Search across all volumes.'''

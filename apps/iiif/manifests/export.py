@@ -184,6 +184,12 @@ class JekyllSiteExport(object):
     def get_zip(self):
         return self.website_zip()
 
+    def get_zip_file(self, filename):
+        f=open(os.path.join(tempfile.gettempdir(), filename),"rb")
+        data=f.read()
+        f.close()
+        return data
+
     def iiif_dir(self):
         return os.path.join(self.jekyll_site_dir, 'iiif_export')
 
@@ -283,7 +289,8 @@ class JekyllSiteExport(object):
         # (using tempfile for automatic cleanup after use)
         webzipfile = tempfile.NamedTemporaryFile(
             suffix='.zip',
-            prefix='%s_annotated_site_' % self.manifest.id)
+            prefix='%s_annotated_site_' % self.manifest.id,
+            delete=False)
         shutil.make_archive(
             # name of the zipfile to create without .zip
             os.path.splitext(webzipfile.name)[0],
@@ -585,3 +592,29 @@ class JekyllSiteExport(object):
         return [repo_url, ghpages_url, pr_url]
 
 
+    def download_export(self, user_email, volume):
+        logger.debug('Background download export started.')
+        user_email="benwbrum@gmail.com"  #TODO !
+ 
+        zipfile=self.website_zip()
+        context = {}
+        context["filename"]=os.path.basename(zipfile.name)
+        context["volume"]=volume
+        context["hostname"]=settings.HOSTNAME
+
+        # context =  Context({ 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url })
+        # context =  { 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url }
+        email_contents = get_template('download_export_email.html').render(context)
+        text_contents = get_template('download_export_email.txt').render(context)
+
+        send_mail(
+            'Your Readux site export is ready!',
+            text_contents,
+            settings.READUX_EMAIL_SENDER,
+            [user_email],
+            fail_silently=False,
+            html_message=email_contents
+        )
+
+
+        return

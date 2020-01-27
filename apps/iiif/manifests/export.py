@@ -4,6 +4,7 @@ from django.core.serializers import serialize
 from django.template.loader import get_template
 
 from .models import Manifest
+
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests import github
@@ -616,5 +617,4 @@ class JekyllSiteExport(object):
             html_message=email_contents
         )
 
-
-        return
+        return zipfile.name

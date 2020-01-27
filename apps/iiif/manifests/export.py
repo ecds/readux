@@ -213,7 +213,6 @@ class JekyllSiteExport(object):
             output = subprocess.check_output(' '.join(import_command), shell=True, stderr=subprocess.STDOUT)
             logger.debug('Jekyll import output:')
             logger.debug(output.decode('utf-8'))
-#            subprocess.check_call(import_command, cwd=tmpdir)
         except subprocess.CalledProcessError as e:
             logger.debug('Jekyll import error:')
             logger.debug(e.output)
@@ -474,7 +473,6 @@ class JekyllSiteExport(object):
         # if self.include_images:
         #     self.save_page_images(tmpdir)
 
-        # self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
         self.jekyll_site_dir = tmpdir
 
         logger.debug('Exporting IIIF bundle')
@@ -575,8 +573,6 @@ class JekyllSiteExport(object):
         context['ghpages_url'] = ghpages_url
         context['pr_url'] = pr_url
 
-        # context =  Context({ 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url })
-        # context =  { 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url }
         email_contents = get_template('jekyll_export_email.html').render(context)
         text_contents = get_template('jekyll_export_email.txt').render(context)
 
@@ -594,7 +590,6 @@ class JekyllSiteExport(object):
 
 
     def download_export(self, user_email, volume):
-        #user_email = "saracarl@gmail.com"
         logger.debug('Background download export started.  Sending email to ' + user_email)
  
         zipfile=self.website_zip()
@@ -603,8 +598,6 @@ class JekyllSiteExport(object):
         context["volume"]=volume
         context["hostname"]=settings.HOSTNAME
 
-        # context =  Context({ 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url })
-        # context =  { 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url }
         email_contents = get_template('download_export_email.html').render(context)
         text_contents = get_template('download_export_email.txt').render(context)
 

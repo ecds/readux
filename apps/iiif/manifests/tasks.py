@@ -32,7 +32,7 @@ def download_export_task(manifest_pid, version, github_repo=None, user_email=Non
     delete_download_task(zipfile_name)
     logger.info('Background download export finished.')
 
-@background(schedule=30)
+@background(schedule=86400)
 def delete_download_task(download_path):
     logger.info('Background download deletion started.')
     os.remove(download_path)

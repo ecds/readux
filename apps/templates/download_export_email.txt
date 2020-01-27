@@ -1,0 +1,9 @@
+{{volume.label}}    
+
+Static Site Export
+
+Downloadable site export succeeded.
+
+Your website export has been generated and saved.  You can download it at 
+{% url 'export_download' volume.pid filename %}
+

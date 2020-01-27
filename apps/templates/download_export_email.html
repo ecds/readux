@@ -1,0 +1,22 @@
+
+{% block content %}
+
+<h1 class='uk-text-truncate'>
+  {{volume.label}}    
+</h1>
+{% endblock content %}
+{% block viewer %}
+  <div class='uk-flex-center' uk-grid>
+    <div class='uk-width-3-4'>
+      <div class='uk-padding'>
+        <h3>Static Site Export</h3>
+
+          <div class="alert alert-success">Downloadable site export succeeded.</div>
+          <p>Your website export has been generated and saved.  You can download it at 
+            <a class="repo-url" href="{{ hostname }}{% url 'export_download' volume.pid filename %}">{{ hostname }}{% url 'export_download' volume.pid filename %}</a>.<br/>
+          </p>
+      </div>
+
+    </div>
+  </div>
+{% endblock viewer %}

@@ -22,8 +22,12 @@
       </div>
       <div class='uk-padding'>
         <h3>Download Export</h3>
-        <p>Download exported static site for publishing or preservation.</p>
-        <form action="{% url 'export_download_zip' filename %}" class="button_to" method="GET"><div><input type="submit" value="Download Export"  title="Download exported static site for publishing or preservation."/>{% csrf_token %}</div></form>
+        {% if file_exists %}
+          <p>Download exported static site for publishing or preservation.</p>
+          <form action="{% url 'export_download_zip' filename %}" class="button_to" method="GET"><div><input type="submit" value="Download Export"  title="Download exported static site for publishing or preservation."/>{% csrf_token %}</div></form>
+        {% else %}
+          <p>Your download has expired.  Please request a new one in Readux.</p>
+        {% endif %}
       </div>
     </div>
   </div>

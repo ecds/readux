@@ -18,6 +18,7 @@ from django.views.generic.edit import FormMixin
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Q, Count
+from os import path
 
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']
@@ -369,7 +370,14 @@ class ExportDownload(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
-        context['filename'] = kwargs['filename']
+        filename = kwargs['filename']
+        context['filename'] = filename
+        # check to see if the file exists
+        if path.exists(filename):
+            context['file_exists'] = True
+        else:
+            context['file_exists'] = False
+
         return context
 
 class ExportDownloadZip(View):

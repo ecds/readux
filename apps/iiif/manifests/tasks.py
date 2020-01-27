@@ -27,5 +27,5 @@ def download_export_task(manifest_pid, version, github_repo=None, user_email=Non
     manifest = Manifest.objects.get(pid=manifest_pid)
     user = User.objects.get(id=user_id)
     jekyll_exporter = JekyllSiteExport(manifest, version, github_repo=github_repo, deep_zoom=deep_zoom, owners=owner_ids, user=user);
-    jekyll_exporter.download_export(user_email, manifest)
+    jekyll_exporter.download_export(user.email, manifest)
     logger.info('Background download export finished.')

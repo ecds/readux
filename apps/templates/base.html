@@ -36,10 +36,6 @@
     <meta property="og:image:width" content="600" />
     {% endif %}{% endfor %}
     {% else %}
-<!-- 
-    <meta property="og:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
-    <meta name="twitter:title" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
- -->
     <meta property="og:title" content="{{ page.title }}" />
     <meta name="twitter:title" content="{{ page.title }}" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
@@ -48,9 +44,6 @@
     <!--<meta property="og:url" content="https://readux.ecds.emory.edu" />-->
     {% endif %}
     <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
-<!-- 
-    <meta property="og:site_name" content="Readux - Emory Center for Digital scholarship - Read, Annotate, Publish" />
- -->
     <meta property="og:site_name" content="{{ request.site.site_name }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@emorycds" />

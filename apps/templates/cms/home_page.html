@@ -200,7 +200,9 @@
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
+<!-- 
             <div class="rx-title-tagline">TBD</div>
+ -->
             <ul class="rx-card-text">
               <li>Author: {{volume.author|truncatechars:150}}</li>
               <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>

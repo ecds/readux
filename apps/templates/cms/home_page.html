@@ -8,9 +8,7 @@
 
   <div class="rx-splash">
     <ul class="readux-home-tagline uk-padding-remove-left rx-splash-item">
-      <li>Read.</li>
-      <li>Annotate.</li>
-      <li>Publish.</li>
+      <li>{{ page.tagline|richtext }}</li>
     </ul>
     <div class="rx-splash-item">
      {% if request.get_host == "readux2.ecdsdev.org" %}

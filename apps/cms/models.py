@@ -151,7 +151,7 @@ class VolumesPage(Page):
 
 
 class HomePage(Page):
-    tagline = models.TextField(blank=True)
+    tagline = RichTextField(blank=True)
     content_display = models.CharField(max_length=20, choices = (("Collections", "Collections"),
             ("Volumes", "Volumes"),),
             default = "Collections",

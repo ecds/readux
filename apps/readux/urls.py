@@ -14,6 +14,8 @@ urlpatterns = [
   # TODO: find another way to resolve this conflict
   path('volume/<volume>/page/<page>', views.PageDetail.as_view(), name='page' ),
   path('volume/<volume>/export', views.ExportOptions.as_view(), name='export' ),
+  path('volume/<volume>/<filename>/export_download', views.ExportDownload.as_view(), name='export_download' ),
+  path('volume/<filename>/export_download_zip', views.ExportDownloadZip.as_view(), name='export_download_zip' ),
   path('annotations/', annotations.Annotations.as_view(), name='post_user_annotations' ),
   path('annotations/<username>/<volume>/list/<canvas>', annotations.Annotations.as_view(), name='user_annotations' ),
   path('annotations-crud/', annotations.AnnotationCrud.as_view(), name='crud_user_annotation' ),

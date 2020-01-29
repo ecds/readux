@@ -16,9 +16,17 @@
         <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
           value="{{request.GET.q}}" style="width: 80%;">
         <span title="Click to include partial matches">Partial</span>
+        {% if "exact" in request.GET.type %}
+        <input type="radio" name="type" aria-label="include partial" value="partial">
+        {% else %}
         <input type="radio" name="type" aria-label="include partial" value="partial" checked>
+        {% endif %}
         <span title="Click for exact matches only">Exact</span>
+        {% if "exact" in request.GET.type %}
+        <input type="radio" name="type" aria-label="exact only" value="exact" checked>
+        {% else %}
         <input type="radio" name="type" aria-label="exact only" value="exact">
+        {% endif %}
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       </div>

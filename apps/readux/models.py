@@ -3,14 +3,29 @@ from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from django.db.models import signals
 from django.dispatch import receiver
 from apps.iiif.canvases.models import Canvas
+from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
 import json
 import re
 
+class TaggedUserAnnotations(TaggedItemBase):
+    content_object = models.ForeignKey('UserAnnotation', on_delete=models.CASCADE)
+
 class UserAnnotation(AbstractAnnotation):
+    COMMENTING = 'oa:commenting'
+    PAINTING = 'sc:painting'
+    TAGGING = '%s, oa:tagging' % COMMENTING
+    MOTIVATION_CHOICES = (
+        (COMMENTING, 'commenting'),
+        (PAINTING, 'painting'),
+        (TAGGING, 'tagging and commenting')
+    )
+
     start_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='start_selector', default=None)
     end_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='end_selector', default=None)
     start_offset = models.IntegerField(null=True, blank=True, default=None)
     end_offset = models.IntegerField(null=True, blank=True, default=None)
+    tags = TaggableManager(through=TaggedUserAnnotations)
 
     @property
     def item(self):
@@ -22,6 +37,11 @@ class UserAnnotation(AbstractAnnotation):
             return None
 
     def parse_mirador_annotation(self):
+        # TODO: Should we use multiple motivations? 
+        # if(type(self.oa_annotation.resource), list):
+        #     self.motivation = self.TAGGING
+        # else:
+        #     self.motivation = AbstractAnnotation.COMMENTING
         self.motivation = AbstractAnnotation.COMMENTING
 
         if (type(self.oa_annotation) == str):
@@ -48,12 +68,20 @@ class UserAnnotation(AbstractAnnotation):
             self.end_offset = mirador_item['endSelector']['refinedBy']['end']
             self.__set_xywh_text_anno()
 
-        if isinstance(self.oa_annotation['resource'], list):
-            self.content = self.oa_annotation['resource'][0]['chars']
-            self.resource_type = self.oa_annotation['resource'][0]['@type']
-        elif isinstance(self.oa_annotation['resource'], dict):
+        if isinstance(self.oa_annotation['resource'], dict):
             self.content = self.oa_annotation['resource']['chars']
             self.resource_type = self.oa_annotation['resource']['@type']
+        elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) == 1:
+            self.content = self.oa_annotation['resource'][0]['chars']
+            self.resource_type = self.oa_annotation['resource'][0]['@type']
+        elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) > 1:
+            # Assume tags
+            self.motivation = self.TAGGING
+            for resource in self.oa_annotation['resource']:
+                if resource['@type'] == 'oa:Tag':
+                    self.tags.add(resource['chars'])
+                elif resource['@type'] == 'dctypes:Text':
+                    self.content = resource['chars']
         
         # Replace the ID given by Mirador with the Readux given ID
         if ('stylesheet' in self.oa_annotation):

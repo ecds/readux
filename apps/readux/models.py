@@ -14,7 +14,7 @@ class TaggedUserAnnotations(TaggedItemBase):
 class UserAnnotation(AbstractAnnotation):
     COMMENTING = 'oa:commenting'
     PAINTING = 'sc:painting'
-    TAGGING = '%s, oa:tagging' % COMMENTING
+    TAGGING = '%s,oa:tagging' % COMMENTING
     MOTIVATION_CHOICES = (
         (COMMENTING, 'commenting'),
         (PAINTING, 'painting'),

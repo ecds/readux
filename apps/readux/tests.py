@@ -105,6 +105,66 @@ class AnnotationTests(TestCase):
                     }
                 }]
             }'''
+        },
+        'tag':{
+            'oa_annotation': '''{
+                "@type": "oa:Annotation",
+                "motivation": ["oa:commenting"],
+                "annotatedBy": {
+                    "name": "Me"
+                },
+                "@context": "http://iiif.io/api/presentation/2/context.json",
+                "resource": [
+                    {
+                        "chars": "<p>mcoewmewom</p>",
+                        "format": "text/html",
+                        "@type": "dctypes:Text"
+                    },
+                    {
+                        "@type": "oa:Tag",
+                        "chars": "tag"
+                    },
+                    {
+                        "@type": "oa:Tag",
+                        "chars": "other tag"
+                    }
+                ],
+                "stylesheet": {
+                    "value": ".anno-049e4a47-1d9e-4d52-8d30-fb9047d34481 { background: rgba(0, 128, 0, 0.5); }",
+                    "type": "CssStylesheet"
+                },
+                "on": [{
+                    "full": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
+                    "@type": "oa:SpecificResource",
+                    "selector": {
+                        "item": {
+                            "@type": "RangeSelector",
+                            "endSelector": {
+                                "@type": "XPathSelector",
+                                "value": "//*[@id='f842fe71-e1da-49c3-865e-f3e62a5179ff']",
+                                "refinedBy": {
+                                    "@type": "TextPositionSelector",
+                                    "end": 2
+                                }
+                            },
+                            "value": "xywh=2971,453,28,39",
+                            "startSelector": {
+                                "@type": "XPathSelector",
+                                "value": "//*[@id='f846587c-1e1c-44d3-b1ce-20c0f7104dc5']",
+                                "refinedBy": {
+                                    "@type": "TextPositionSelector",
+                                    "start": 0
+                                }
+                            }
+                        },
+                        "@type": "oa:FragmentSelector"
+                    },
+                    "within": {
+                    "@type": "sc:Manifest",
+                    "@id": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/manifest"
+                    }
+                }]
+            }'''
         }
     }
 
@@ -398,3 +458,25 @@ class AnnotationTests(TestCase):
         assert 'type' in annotation['stylesheet']
         assert annotation['@id'] in annotation['stylesheet']['value']
         assert annotation['stylesheet']['type'] == 'CssStylesheet'
+
+    def test_annotation_creation_with_tags(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        anno.oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        anno.save()
+        assert anno.tags.exists()
+        assert anno.tags.count() == 2
+        assert anno.motivation == UserAnnotation.TAGGING
+
+    def test_annotation_serialization_with_tags(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        anno.oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        anno.save()
+        kwargs = {'username': self.user_a.username, 'volume': anno.canvas.manifest.pid, 'canvas': anno.canvas.pid}
+        url = reverse('user_annotations', kwargs=kwargs)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = self.view(request, username=self.user_a.username, volume=self.manifest.pid, canvas=self.canvas.pid)
+        annotation = self.load_anno(response)[0]
+        assert isinstance(annotation['resource'], list)

@@ -92,6 +92,7 @@ class Serializer(JSONSerializer):
                 data['on']['selector']['item'] = {'@type': 'oa:FragmentSelector'}
 
             if hasattr(obj, 'tags') and obj.tags.exists():
+                data['motivation'] = data['motivation'].split(',')
                 data['resource'] = [data['resource']]
                 for tag in obj.tags.all():
                     wa_tag = {

@@ -480,3 +480,6 @@ class AnnotationTests(TestCase):
         response = self.view(request, username=self.user_a.username, volume=self.manifest.pid, canvas=self.canvas.pid)
         annotation = self.load_anno(response)[0]
         assert isinstance(annotation['resource'], list)
+        assert isinstance(annotation['motivation'], list)
+        assert 'oa:tagging' in annotation['motivation']
+        assert 'oa:commenting' in annotation['motivation']

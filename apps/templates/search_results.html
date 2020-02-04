@@ -15,13 +15,13 @@
         <span uk-search-icon></span>
         <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
           value="{{request.GET.q}}" style="width: 80%;">
-        <span title="Click to include partial matches">Partial</span>
+        <span title="Click to include partial matches" class="tooltip">Partial<span class="tooltiptext">Searches for your term within any word (end matches end and bend). More specific words work better.</span></span>
         {% if "exact" in request.GET.type %}
         <input type="radio" name="type" aria-label="include partial" value="partial">
         {% else %}
         <input type="radio" name="type" aria-label="include partial" value="partial" checked>
         {% endif %}
-        <span title="Click for exact matches only">Exact</span>
+        <span title="Click for exact matches only" class="tooltip">Exact<span class="tooltiptext">Searches for your exact term and stems the ending (ends matches end, ends, ended).</span></span>
         {% if "exact" in request.GET.type %}
         <input type="radio" name="type" aria-label="exact only" value="exact" checked>
         {% else %}

@@ -36,6 +36,13 @@ class UserAnnotation(AbstractAnnotation):
         else:
             return None
 
+    @property
+    def tag_list(self):
+        if self.tags.exists():
+            return [tag.name for tag in self.tags.all()]
+        else:
+            return []
+
     def parse_mirador_annotation(self):
         # TODO: Should we use multiple motivations? 
         # if(type(self.oa_annotation.resource), list):
@@ -74,14 +81,35 @@ class UserAnnotation(AbstractAnnotation):
         elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) == 1:
             self.content = self.oa_annotation['resource'][0]['chars']
             self.resource_type = self.oa_annotation['resource'][0]['@type']
+            if self.tags.exists():
+                for tag in self.tags.all():
+                    self.tags.remove(tag.name)
         elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) > 1:
             # Assume tags
             self.motivation = self.TAGGING
+            incoming_tags = []
+            # Get the tags from the incoming annotation.
             for resource in self.oa_annotation['resource']:
-                if resource['@type'] == 'oa:Tag':
-                    self.tags.add(resource['chars'])
-                elif resource['@type'] == 'dctypes:Text':
+                # Set the non-tag resource
+                if resource['@type'] == 'dctypes:Text':
                     self.content = resource['chars']
+                    self.resource_type = resource['@type']
+                elif resource['@type'] == 'oa:Tag': # and resource['chars'] not in self.tag_list:
+                    # Add the tag to the annotation
+                    self.tags.add(resource['chars'])
+                    # Make a list of incoming tags to compare with list of saved tags.
+                    incoming_tags.append(resource['chars'])
+            
+            # Check if any tags have been removed
+            if len(self.tag_list) > 0:
+                for existing_tag in self.tag_list:
+                    if existing_tag not in incoming_tags:
+                        self.tags.remove(existing_tag)
+            
+            # If all the tags have been removed, revert to a single resource and motivation.
+            if self.tags.count() == 0:
+                self.oa_annotation['resource'] = [self.oa_annotation['resource'][0]]
+                self.motivation = self.COMMENTING
         
         # Replace the ID given by Mirador with the Readux given ID
         if ('stylesheet' in self.oa_annotation):

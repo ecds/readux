@@ -8,6 +8,7 @@ from .annotations import Annotations, AnnotationCrud
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.template import Context, Template
+from django.core.serializers import serialize
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from .models import UserAnnotation
@@ -69,6 +70,66 @@ class AnnotationTests(TestCase):
                     "format": "text/html",
                     "@type": "dctypes:Text"
                 }],
+                "stylesheet": {
+                    "value": ".anno-049e4a47-1d9e-4d52-8d30-fb9047d34481 { background: rgba(0, 128, 0, 0.5); }",
+                    "type": "CssStylesheet"
+                },
+                "on": [{
+                    "full": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
+                    "@type": "oa:SpecificResource",
+                    "selector": {
+                        "item": {
+                            "@type": "RangeSelector",
+                            "endSelector": {
+                                "@type": "XPathSelector",
+                                "value": "//*[@id='f842fe71-e1da-49c3-865e-f3e62a5179ff']",
+                                "refinedBy": {
+                                    "@type": "TextPositionSelector",
+                                    "end": 2
+                                }
+                            },
+                            "value": "xywh=2971,453,28,39",
+                            "startSelector": {
+                                "@type": "XPathSelector",
+                                "value": "//*[@id='f846587c-1e1c-44d3-b1ce-20c0f7104dc5']",
+                                "refinedBy": {
+                                    "@type": "TextPositionSelector",
+                                    "start": 0
+                                }
+                            }
+                        },
+                        "@type": "oa:FragmentSelector"
+                    },
+                    "within": {
+                    "@type": "sc:Manifest",
+                    "@id": "https://readux-dev.org:3000/iiif/v2/readux:st7r6/manifest"
+                    }
+                }]
+            }'''
+        },
+        'tag':{
+            'oa_annotation': '''{
+                "@type": "oa:Annotation",
+                "motivation": ["oa:commenting"],
+                "annotatedBy": {
+                    "name": "Me"
+                },
+                "@context": "http://iiif.io/api/presentation/2/context.json",
+                "resource": [
+                    {
+                        "chars": "<p>mcoewmewom</p>",
+                        "format": "text/html",
+                        "@type": "dctypes:Text"
+                    },
+                    {
+                        "@type": "oa:Tag",
+                        "chars": "tag"
+                    },
+                    {
+                        "@type": "oa:Tag",
+                        "chars": "other tag"
+                    }
+                ],
                 "stylesheet": {
                     "value": ".anno-049e4a47-1d9e-4d52-8d30-fb9047d34481 { background: rgba(0, 128, 0, 0.5); }",
                     "type": "CssStylesheet"
@@ -221,7 +282,7 @@ class AnnotationTests(TestCase):
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
-        assert response.status_code == 201
+        assert response.status_code == 200
         assert annotation['resource']['chars'] == 'updated annotation'
 
     def test_update_someone_elses_annotation(self):
@@ -359,8 +420,6 @@ class AnnotationTests(TestCase):
         url = reverse('volume', kwargs={'volume': self.manifest.pid})
         response = self.client.get(url)
         assert response.context_data['volume'] == self.manifest
-        # for key, value in response.context_data.items() :
-        #     print(key, value)
 
     # TODO This view maybe not needed?
     def test_export_options_view(self):
@@ -370,8 +429,6 @@ class AnnotationTests(TestCase):
     def test_motivation_is_commeting_by_default(self):
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
-        for anno in UserAnnotation.objects.all():
-            print(anno.motivation)
         assert anno.motivation == 'oa:commenting'
     
     def test_style_attribute_adds_id_to_class_selector(self):
@@ -398,3 +455,61 @@ class AnnotationTests(TestCase):
         assert 'type' in annotation['stylesheet']
         assert annotation['@id'] in annotation['stylesheet']['value']
         assert annotation['stylesheet']['type'] == 'CssStylesheet'
+
+    def test_annotation_creation_with_tags(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        anno.oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        anno.save()
+        assert anno.tags.exists()
+        assert anno.tags.count() == 2
+        assert anno.motivation == UserAnnotation.TAGGING
+        assert 'tag' in anno.tag_list
+        assert 'other tag' in anno.tag_list
+    
+    def test_deleting_tags(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        anno.oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        anno.save()
+        assert anno.tags.count() == 2
+        assert len(anno.oa_annotation['resource']) == 3
+        # Remove one tag
+        for index, resource in enumerate(anno.oa_annotation['resource']): 
+            if resource['@type'] == 'oa:Tag': 
+                del anno.oa_annotation['resource'][index]
+                break
+        anno.save()
+        serialized_anno = json.loads(serialize('annotation', [anno]))
+        assert isinstance(serialized_anno['resource'], list)
+        assert anno.tags.count() == 1
+        assert anno.motivation == UserAnnotation.TAGGING
+        
+        # Remove any remaining tags.
+        for index, resource in enumerate(anno.oa_annotation['resource']):
+            if resource['@type'] == 'oa:Tag': 
+                del anno.oa_annotation['resource'][index]
+        # anno.oa_annotation['resource'] = [anno.oa_annotation['resource'][0]]
+        anno.save()
+        serialized_anno = json.loads(serialize('annotation', [anno]))
+        assert isinstance(serialized_anno['resource'], dict)
+        assert isinstance(serialized_anno['motivation'], str)
+        assert anno.tags.count() == 0
+        assert anno.tag_list == []
+        assert anno.motivation == UserAnnotation.COMMENTING
+
+    def test_annotation_serialization_with_tags(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        anno.oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        anno.save()
+        kwargs = {'username': self.user_a.username, 'volume': anno.canvas.manifest.pid, 'canvas': anno.canvas.pid}
+        url = reverse('user_annotations', kwargs=kwargs)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = self.view(request, username=self.user_a.username, volume=self.manifest.pid, canvas=self.canvas.pid)
+        annotation = self.load_anno(response)[0]
+        assert isinstance(annotation['resource'], list)
+        assert isinstance(annotation['motivation'], list)
+        assert 'oa:tagging' in annotation['motivation']
+        assert 'oa:commenting' in annotation['motivation']

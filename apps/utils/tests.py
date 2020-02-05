@@ -8,14 +8,12 @@ class TestUtils(TestCase):
     def test_fetching_url_text(self):
         httpretty.register_uri(httpretty.GET, 'http://readux.org', body='The best thing ever!')
         response = fetch_url('http://readux.org', format='text')
-        print(response)
         assert response == 'The best thing ever!'
 
     @httpretty.activate
     def test_fetching_url_json(self):
         httpretty.register_uri(httpretty.GET, 'http://readux.org', body='{"key": "value"}')
         response = fetch_url('http://readux.org')
-        print(response)
         assert response == json.loads('{"key": "value"}')
     
     def test_timeout(self):

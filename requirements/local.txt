@@ -19,7 +19,7 @@ cssutils==1.0.2 # https://pypi.org/project/cssutils/
 # Code quality
 # ------------------------------------------------------------------------------
 flake8==3.6.0  # https://github.com/PyCQA/flake8
-coverage==4.5.1  # https://github.com/nedbat/coveragepy
+coverage==5.0.3  # https://github.com/nedbat/coveragepy
 coveralls
 
 # Django

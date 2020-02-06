@@ -46,7 +46,7 @@ class Manifest(ClusterableModel):
     logo = models.ImageField(upload_to='logos/', null=True, blank=True, default="logos/lits-logo-web.png", help_text="Upload the Logo of the institution holding the manifest.")
     license = models.CharField(max_length=255, null=True, blank=True, default="https://creativecommons.org/publicdomain/zero/1.0/", help_text="Only enter a URI to a license statement.")
     #collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name = 'manifest')
-    collections = models.ManyToManyField(Collection, null=True, blank=True, related_name = 'manifests')
+    collections = models.ManyToManyField(Collection, blank=True, related_name = 'manifests')
     pdf = models.URLField()
     metadata = JSONField(default=dict, blank=True)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")

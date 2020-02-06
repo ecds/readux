@@ -69,7 +69,7 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'background_task',
-    # 'corsheaders',
+    'corsheaders',
     'crispy_forms',
     'allauth',
     'allauth.account',
@@ -162,7 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

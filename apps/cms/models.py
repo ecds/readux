@@ -154,13 +154,13 @@ class HomePage(Page):
             ("Volumes", "Volumes"),),
             default = "Collections",
             help_text="Select to show all collections or all volumes on the home page")
-    featured_collections = ParentalManyToManyField(Collection, null=True, blank=True)
+    featured_collections = ParentalManyToManyField(Collection, blank=True)
     featured_collections_sort_order = models.CharField(max_length=20, choices = (
             ("label", "Title"),
             ("created_at", "Input Date"),),
             default = "label",
             help_text="Select order to sort collections on home page")
-    featured_volumes = ParentalManyToManyField(Manifest, null=True, blank=True)
+    featured_volumes = ParentalManyToManyField(Manifest, blank=True)
     featured_volumes_sort_order = models.CharField(max_length=20, choices = (
             ("label", "Title"),
             ("created_at", "Input Date"),

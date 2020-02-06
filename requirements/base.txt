@@ -20,9 +20,9 @@ django-taggit==1.2.0 # https://github.com/jazzband/django-taggit
 
 # TODO: are we still using any DRF code? Can we get rid of this?
 # Django REST Framework
-djangorestframework==3.11.0  # https://github.com/encode/django-rest-framework
+#djangorestframework==3.11.0  # https://github.com/encode/django-rest-framework
 coreapi==2.3.3  # https://github.com/core-api/python-client
-django-cors-headers===2.4.0 # https://github.com/ottoyiu/django-cors-headers
+#django-cors-headers===3.2.1 #2.4.0 # https://github.com/ottoyiu/django-cors-headers
 
 # Wagtail
 wagtail==2.8

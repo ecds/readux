@@ -69,7 +69,7 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'background_task',
-    'corsheaders',
+    # 'corsheaders',
     'crispy_forms',
     'allauth',
     'allauth.account',
@@ -78,7 +78,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    'rest_framework',
+    # 'rest_framework',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -162,7 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

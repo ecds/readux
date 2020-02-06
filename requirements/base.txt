@@ -26,7 +26,7 @@ django-cors-headers===2.4.0 # https://github.com/ottoyiu/django-cors-headers
 
 # Wagtail
 wagtail==2.8
-wagtailmenus==2.13
+wagtailmenus==3.0
 wagtail-condensedinlinepanel==0.5.2
 git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1

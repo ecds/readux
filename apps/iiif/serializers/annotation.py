@@ -90,7 +90,19 @@ class Serializer(JSONSerializer):
                 data['on']['selector']['item'] = self.__serialize_item(obj)
             else:
                 data['on']['selector']['item'] = {'@type': 'oa:FragmentSelector'}
+
+            if hasattr(obj, 'tags') and obj.tags.exists():
+                data['motivation'] = data['motivation'].split(',')
+                data['resource'] = [data['resource']]
+                for tag in obj.tags.all():
+                    wa_tag = {
+                        "@type": "oa:Tag",
+                        "chars": tag.name
+                    }
+                    data['resource'].append(wa_tag)
+
             return data
+
         elif (self.version == 'v3'):
             # TODO: write serializer for v3 of the IIIF Presentation API.
             return None

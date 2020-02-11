@@ -1,11 +1,8 @@
 language: python
 python:
 - '3.5'
-- 3.5-dev
 - '3.6'
-- 3.6-dev
 - '3.7'
-- 3.7-dev
 services: postgresql
 before_install:
 - export DATABASE_URL=postgres://postgres@localhost:5432/travisci
@@ -22,7 +19,6 @@ before_install:
 - sudo apt-get update
 - sudo apt-get install postgresql-9.5
 install:
-- python -m pip install --user --upgrade pip
 - pip install -r requirements/local.txt
 script:
 - py.test --cov=./apps

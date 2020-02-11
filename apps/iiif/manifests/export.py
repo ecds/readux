@@ -524,7 +524,6 @@ class JekyllSiteExport(object):
 
     def github_export(self, user_email):
         logger.debug('Background export started.')
-        user_email="benwbrum@gmail.com"  #TODO !
         user_has_github = False
         if not self.user == None:
             # check if user has a github account linked
@@ -575,7 +574,6 @@ class JekyllSiteExport(object):
 
         email_contents = get_template('jekyll_export_email.html').render(context)
         text_contents = get_template('jekyll_export_email.txt').render(context)
-
         send_mail(
             'Your Readux site export is ready!',
             text_contents,

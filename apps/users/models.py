@@ -16,3 +16,10 @@ class User(AbstractUser):
 
     def fullname(self):
     	return str(self.first_name) + " " + str(self.last_name)
+
+    @property
+    def socialaccount_list(self):
+        if self.socialaccount_set.all().exists():
+            return [account.provider for account in self.socialaccount_set.all()]
+        else:
+            return []

@@ -114,6 +114,35 @@
     outline-color: blue; */
 }
 
+/* Social Auth Buttons */
+
+a.rdx-provider-button {
+  color: #fff;
+  padding: 1rem;
+}
+
+a.rdx-provider-button:hover {
+  color: lightgrey;
+}
+
+.rdx-provider-button.facebook {
+  background-color: #4267b2;
+}
+
+.rdx-provider-button.google {
+  background-color: #EA4335;
+}
+
+.rdx-provider-button.twitter {
+  background-color: #1DA1F2;
+}
+
+.rdx-provider-button.github {
+  background-color: #24292e;
+}
+
+
+
 /* Wagtail embedded objects */
 .rich-text img {
   max-width: 100%;

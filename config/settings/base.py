@@ -281,6 +281,13 @@ SOCIALACCOUNT_FORMS = {
 
 SOCIALACCOUNT_AUTO_SIGNUP = False
 
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email', 'public_profile']
+    }
+}
 
 # Translations
 # ------------------------------------------------------------------------------

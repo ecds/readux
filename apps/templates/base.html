@@ -105,8 +105,8 @@
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
-                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user" uk-tooltip="title: Your account; pos: bottom"></span></a>
+                <a href="#signin-modal" uk-toggle>
+                  <span class="uk-icon" uk-icon="icon: user" uk-tooltip="title: Your account; pos: bottom"></span>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
@@ -115,7 +115,10 @@
               {% else %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a href="{% url 'account_login' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in" uk-tooltip="title: Login; pos: bottom"></span></a>
+                <!-- <a href="{% url 'account_login' %}"> -->
+                <a href="#signin-modal" uk-toggle>
+                  <span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in" uk-tooltip="title: Login; pos: bottom"></span>
+                </a>
               </li>
               {% endif %}
           </ul>
@@ -131,11 +134,15 @@
           {% endfor %}
       {% endif %}
 
-      {% block modal %}{% endblock modal %}
+      {% block modal %}
+      {% endblock modal %}
 
       {% block content %}
       <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
+
+      {% include "snippets/signin_modal.html" %}
+
 
       {% block viewer %}{% endblock viewer %}
 

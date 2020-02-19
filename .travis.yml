@@ -21,6 +21,6 @@ before_install:
 install:
 - pip install -r requirements/local.txt
 script:
-- pytest apps/ --cov=./apps
+- py.test --cov=./apps
 after_success:
 - coveralls

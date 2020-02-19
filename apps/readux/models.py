@@ -105,11 +105,6 @@ class UserAnnotation(AbstractAnnotation):
                 for existing_tag in self.tag_list:
                     if existing_tag not in incoming_tags:
                         self.tags.remove(existing_tag)
-            
-            # If all the tags have been removed, revert to a single resource and motivation.
-            if self.tags.count() == 0:
-                self.oa_annotation['resource'] = [self.oa_annotation['resource'][0]]
-                self.motivation = self.COMMENTING
         
         # Replace the ID given by Mirador with the Readux given ID
         if ('stylesheet' in self.oa_annotation):
@@ -178,8 +173,8 @@ class UserAnnotation(AbstractAnnotation):
         dimensions = None
         if 'default' in self.oa_annotation['on'][0]['selector'].keys():
             dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
-        elif 'value' in self.oa_annotation['on'][0]['selector']['item'].keys():
-            dimensions = self.oa_annotation['on'][0]['selector']['item']['value'].split('=')[-1].split(',')
+        # elif 'value' in self.oa_annotation['on'][0]['selector']['item'].keys():
+        #     dimensions = self.oa_annotation['on'][0]['selector']['item']['value'].split('=')[-1].split(',')
         if dimensions is not None:
             self.x = dimensions[0]
             self.y = dimensions[1]

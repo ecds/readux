@@ -86,7 +86,7 @@ alter user readux createdb;
 To run the tests, simply run:
 
 ~~~bash
-pytest
+pytest apps/
 ~~~
 
 Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
@@ -106,6 +106,16 @@ fab deploy:branch=master -H readux2.ecdsdev.org
 ~~~
 
 Note: if no branch is passed, the deploy will default to master.
+
+### Start Background Job
+
+A background job needs to be started to handel creating the static site zip export and notify the person when the export is ready to be downloaded. The job also cleans up the export after 24 hours.
+
+There are many ways to background a job. For example:
+
+~~~bash
+nohup python manage.py process_tasks &
+~~~
 
 ## Contribute
 

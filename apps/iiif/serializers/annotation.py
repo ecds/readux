@@ -132,4 +132,4 @@ class Serializer(JSONSerializer):
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("iiif.annotation is a serialization-only serializer")
+        raise SerializerDoesNotExist("annotation is a serialization-only serializer")

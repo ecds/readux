@@ -35,9 +35,9 @@ class AnnotationTests(TestCase):
                             "value": "<svg></svg>"
                         },
                     "default": {
-                            "@type": "oa:FragmentSelector",
-                            "value": "xywh=535,454,681,425"
-                            }
+                        "@type": "oa:FragmentSelector",
+                        "value": "xywh=535,454,681,425"
+                    }
                 },
                 "within": {
                     "@type": "sc:Manifest",
@@ -230,6 +230,16 @@ class AnnotationTests(TestCase):
 
     def test_mirador_text_annotation_creation(self):
         request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['text']), content_type="application/json")
+        request.user = self.user_a
+        response = self.crud_view(request)
+        annotation = self.load_anno(response)
+        assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
+        assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
+        assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
+        assert response.status_code == 201
+
+    def test_creating_annotation_from_string(self):
+        request = self.factory.post('/annotations-crud/', data=self.valid_mirador_annotations['text'], content_type="application/json")
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
@@ -513,3 +523,7 @@ class AnnotationTests(TestCase):
         assert isinstance(annotation['motivation'], list)
         assert 'oa:tagging' in annotation['motivation']
         assert 'oa:commenting' in annotation['motivation']
+
+    def test_item_none(self):
+        anno = UserAnnotation()
+        assert anno.item is None

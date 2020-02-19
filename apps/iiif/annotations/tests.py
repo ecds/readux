@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
 from django.urls import reverse
+from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
 import warnings
 from .views import AnnotationsForPage
@@ -109,3 +110,8 @@ class AnnotationTests(TestCase):
         serialized_anno = json.loads(response.content.decode('UTF-8-sig'))['resources'][0]
         assert serialized_anno['stylesheet']['type'] == 'CssStylesheet'
         assert serialized_anno['stylesheet']['value'].startswith(".anno-{id}".format(id=serialized_anno['@id']))
+
+    def test_serialize_list_of_annotations(self):
+        data = json.loads(serialize('annotation_list', [self.canvas], is_list = True, owners = User.objects.all()))
+        assert data[0]['@type'] == 'sc:AnnotationList'
+        assert isinstance(data, list)

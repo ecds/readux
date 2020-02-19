@@ -15,6 +15,12 @@ class TestUtils(TestCase):
         httpretty.register_uri(httpretty.GET, 'http://readux.org', body='{"key": "value"}')
         response = fetch_url('http://readux.org')
         assert response == json.loads('{"key": "value"}')
+
+    @httpretty.activate
+    def test_returning_non_text_and_non_json_content(self):
+        httpretty.register_uri(httpretty.GET, 'http://foo.info', body='hello')
+        response = fetch_url('http://foo.info', format='other')
+        assert response.decode('UTF-8') == 'hello'
     
     def test_timeout(self):
         with self.assertLogs('apps.utils', level='WARN') as cm:

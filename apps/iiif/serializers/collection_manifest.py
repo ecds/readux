@@ -41,4 +41,4 @@ class Serializer(JSONSerializer):
 
 class Deserializer:
     def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("collection is a serialization-only serializer")
+        raise SerializerDoesNotExist("collection_manifest is a serialization-only serializer")

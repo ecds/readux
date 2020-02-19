@@ -118,3 +118,9 @@ class KollectionTests(TestCase):
         manifest = json.loads(serialize('collection_manifest', Manifest.objects.all(), is_list = True))
         assert manifest[0]['@type'] == 'sc:Manifest'
         assert isinstance(manifest, list)
+    
+
+    def test_serialize_list_of_collections(self):
+        collection = json.loads(serialize('kollection', Collection.objects.all(), is_list = True))
+        assert collection[0]['@type'] == 'sc:Collection'
+        assert isinstance(collection, list)

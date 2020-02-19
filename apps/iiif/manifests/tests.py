@@ -74,3 +74,9 @@ class ManifestTests(TestCase):
     def test_ris_view(self):
         ris = ManifestRis()
         assert ris.get_context_data(volume=self.assumed_pid)['volume'] == self.volume
+
+    def test_autocomplete_label(self):
+        assert Manifest.objects.all().first().autocomplete_label() == Manifest.objects.all().first().label
+
+    def test_absolute_url(self):
+        assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)

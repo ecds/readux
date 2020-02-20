@@ -124,3 +124,8 @@ class KollectionTests(TestCase):
         collection = json.loads(serialize('kollection', Collection.objects.all(), is_list = True))
         assert collection[0]['@type'] == 'sc:Collection'
         assert isinstance(collection, list)
+
+    def test_serialize_single_object(self):
+        collection = json.loads(serialize('kollection', [Collection.objects.all().first()]))
+        assert collection['@type'] == 'sc:Collection'
+        assert isinstance(collection, dict)

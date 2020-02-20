@@ -103,9 +103,9 @@ class Serializer(JSONSerializer):
 
             return data
 
-        elif (self.version == 'v3'):
-            # TODO: write serializer for v3 of the IIIF Presentation API.
-            return None
+        # TODO: write serializer for v3 of the IIIF Presentation API.
+        # elif (self.version == 'v3'):
+        #     return None
 
     def handle_field(self, obj, field):
         super().handle_field(obj, field)

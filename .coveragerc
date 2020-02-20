@@ -2,7 +2,6 @@
 omit =
   *tests.py
   apps/cms/*
-  apps/users/*
   apps/contrib/*
   *migrations*
   *__init__.py

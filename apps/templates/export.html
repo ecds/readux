@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block extra_css %}
-<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
-{% endblock extra_css %}
 
 {% block content %}
 
@@ -82,7 +79,7 @@
                       <div class="uk-width-expand">
                         {{ field }}
                       </div>
-                      <div class="uk-width-1-1 help-block">{{ field.help_text}}</div>
+                      <div class="uk-width-1-1 help-block uk-margin-remove">{{ field.help_text}}</div>
                       <div class="uk-width-1-1 text-warning {{ field.name }}-errors">{{ field.errors }}</div>
                     </div>
                   </div>

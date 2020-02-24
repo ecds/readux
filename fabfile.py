@@ -10,7 +10,7 @@ VERSION = datetime.now().strftime("%Y%m%d%H%M%S")
 env.user = 'deploy'
 
 def deploy(branch='master'):
-    version_folder = '{rp}/{vf}'.format(rp=ROOT_PATH, vf=VERSION)
+    version_folder = '{rp}/releases/{vf}'.format(rp=ROOT_PATH, vf=VERSION)
     run('mkdir -p {p}'.format(p=version_folder))  
     with cd(version_folder):
         # _create_new_dir() 
@@ -31,7 +31,7 @@ def _update_virtualenv():
     if not exists('{v}/bin/pip'.format(v=VENV_PATH)):  
         run('python3 -m venv {v}'.format(v=VENV_PATH))
     run('{v}/bin/pip install -r requirements/local.txt'.format(v=VENV_PATH))
-    run('~/.rbenv/shims/gem install bundler')
+    run('~/.rbenv/shims/gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"')
     run('~/.rbenv/shims/bundle install')
 
 def _create_or_update_settings():

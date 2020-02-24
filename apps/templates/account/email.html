@@ -59,11 +59,11 @@
           {% endfor %}
 
           <div class="uk-margin-small">
-            <button class="secondaryAction rx-btn-extension rx-btn-small" type="submit"
+            <button class="uk-button uk-button-primary uk-button-small" type="submit"
               name="action_primary">{% trans 'Make Primary' %}</button>
-            <button class="secondaryAction rx-btn-extension rx-btn-small" type="submit"
+            <button class="uk-button uk-button-primary uk-button-small" type="submit"
               name="action_send">{% trans 'Re-send Verification' %}</button>
-            <button class="primaryAction rx-btn-extension rx-btn-small" type="submit"
+            <button class="uk-button uk-button-primary uk-button-small" type="submit"
               name="action_remove">{% trans 'Remove' %}</button>
           </div>
 
@@ -87,7 +87,7 @@
       <form method="post" action="{% url 'account_email' %}" class="add_email">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="rx-btn rx-btn-extension rx-btn-small" name="action_add" type="submit">{% trans "Add E-mail" %}</button>
+        <button class="uk-button uk-button-primary uk-button-small" name="action_add" type="submit">{% trans "Add E-mail" %}</button>
     </form>
 </div>
 

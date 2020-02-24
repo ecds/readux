@@ -1,5 +1,9 @@
 /* These styles are generated from project.scss. */
 
+body {
+  font-size: 18px;
+}
+
 .alert-debug {
   color: black;
   background-color: white;
@@ -141,7 +145,27 @@ a.rdx-provider-button:hover {
   background-color: #24292e;
 }
 
+.rdx-indented-help-block {
+  text-indent: 1.25rem;
+}
 
+.uk-input {
+  border-width: 3px;
+  width: 50%
+}
+
+.uk-button-primary {
+  background-color: #ea7c0f;
+}
+
+.uk-button-primary:hover,
+.uk-buton-primary:active {
+  background-color: #e79544;
+}
+
+.uk-button-default {
+  font-size: 1.25rem;
+}
 
 /* Wagtail embedded objects */
 .rich-text img {

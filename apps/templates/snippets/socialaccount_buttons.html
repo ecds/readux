@@ -1,0 +1,17 @@
+{% load socialaccount %}
+{% get_providers as socialaccount_providers %}
+<ul class="uk-list uk-child-width-1-1 uk-grid-large uk-margin" uk-grid>
+  {% for provider in socialaccount_providers %}
+    <li class="uk-margin-small">
+      {% if provider.id not in user.socialaccount_list or user.is_anonymous %}
+        <a href="{% provider_login_url provider.id next=request.path process="login" %}" title="Sign in with {{ provider.name }}" class="rdx-provider-button {{ provider.id }} uk-text-center@s uk-text-left@m uk-text-large uk-button uk-button-default uk-button-large uk-width-expand">
+          <i class="fab fa-{{ provider.id }}"></i><span class="uk-visible@m"> {{ provider.name }}</span>
+        </a>
+      {% elif provider.id not in user.socialaccount_list and use.is_authenticated %}
+        <a href="{% provider_login_url provider.id next=request.path process="connect" %}" title="Sign in with {{ provider.name }}" class="rdx-provider-button {{ provider.id }} uk-text-center@s uk-text-left@m uk-text-large uk-button uk-button-default uk-button-large uk-width-expand">
+          <i class="fab fa-{{ provider.id }}"></i><span class="uk-visible@m"> {{ provider.name }}</span>
+        </a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

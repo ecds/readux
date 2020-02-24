@@ -1,5 +1,5 @@
 from typing import Any, Sequence
-
+from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth import get_user_model
 from factory import DjangoModelFactory, Faker, post_generation
 
@@ -27,3 +27,10 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = get_user_model()
         django_get_or_create = ["username"]
+
+class SocialAccountFactory(DjangoModelFactory):
+    provider = Faker("user_name")
+    uid = Faker("postalcode")
+
+    class Meta:
+        model = SocialAccount

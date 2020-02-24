@@ -8,7 +8,7 @@ class User(AbstractUser):
 
     # First Name and Last Name do not cover name patterns
     # around the globe.
-    name = CharField(_("Name of User"), blank=True, max_length=255)
+    name = CharField(_("Name of User"), blank=True, max_length=255, help_text="User Name to associate with Annotations")
     agree = BooleanField(blank=True, null=True)
 
     def get_absolute_url(self):
@@ -16,3 +16,10 @@ class User(AbstractUser):
 
     def fullname(self):
     	return str(self.first_name) + " " + str(self.last_name)
+
+    @property
+    def socialaccount_list(self):
+        if self.socialaccount_set.all().exists():
+            return [account.provider for account in self.socialaccount_set.all()]
+        else:
+            return []

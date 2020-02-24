@@ -343,7 +343,6 @@ class PageDetail(TemplateView):
 #         page = Manifest.canvas_set.first()
 #         return super().get_redirect_url(*args, **kwargs)
 
-# TODO is this needed?
 class ExportOptions(TemplateView, FormMixin):
     template_name = "export.html"
     form_class = JekyllExportForm

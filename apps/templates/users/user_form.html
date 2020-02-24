@@ -8,8 +8,8 @@
   <div class="rx-title-container">
     <ul class="rx-breadcrumb uk-text-truncate">
       <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-      <li class="rx-breadcrumb-item"><a href="{% url 'users:detail' request.user.username  %}" alt="Home">My Account</a>
-      </li>
+      <!-- <li class="rx-breadcrumb-item"><a href="{% url 'users:detail' request.user.username  %}" alt="Home">My Account</a>
+        </li> -->
       <li class="rx-breadcrumb-item">Profile Update</li>
     </ul>
     <div class="rx-title">
@@ -18,9 +18,6 @@
       {% else %}
       Hello!
       {% endif %}
-    </div>
-    <div class="rx-title-tagline">
-      {{ object.username }}
     </div>
   </div>
 </div>
@@ -34,19 +31,48 @@
   {{ hidden_field }}
   {% endfor %}
 
-  {% for field in form.visible_fields %}
+  <div class="" uk-grid>
+    {% for field in form.visible_fields %}
+    <div class="uk-width-auto">
+      {{ field.label }}
+    </div>
 
-  <div class="uk-margin">
-    <label class="uk-form-label" for="form-horizontal-text">{{ field.label_tag }}</label>
-    <div class="uk-form-controls">
-      {{ field.errors }}
-      <input class="uk-input" id="form-horizontal-text" type="text" placeholder="{{ field.help_text }}" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}"
-        {% if form.name.value != None %}value="{{ form.name.value|stringformat:'s' }}" {% endif %}
-        maxlength="{{ form.name.field.max_length }}" {% if form.name.field.required %}required{% endif %}>
+    <div class="uk-width-expand uk-margin-remove">
+      <div class="uk-form-controls">
+        {{ field.errors }}
+        {{field}}
+      </div>
+    </div>
+    <div class="uk-width-1-1 uk-margin-remove-top">
+      {{ field.help_text}}
+    </div>
+    {% endfor %}
+    <div class="uk-width-1-1 uk-inline">
+      <button type="submit" class="uk-button uk-button-default uk-button-primary">
+        <i class="fas fa-save"></i>
+        Update Name
+      </button>
+      <hr>
+    </div>
+    <div class="uk-width-1-1"></div>
+    {% if "github" not in request.user.socialaccount_list %}
+    <div class="uk-width-1-1">
+      {% include "../snippets/github_authorize.html" %}
+    </div>
+    {% endif %}
+    <div class="uk-width-auto uk-margin">
+      <a class="uk-margin uk-button uk-button-default uk-button-primary" href="{% url 'account_email' %}" role="button">
+        <i class="fas fa-envelope" aria-hidden="true"></i>
+        Manage Email
+      </a>
+    </div>
+    <div class="uk-width-expand uk-margin">
+      <a class="uk-margin uk-button uk-button-default uk-button-primary" href="{% url 'socialaccount_connections' %}"
+        role="button">
+        <i class="fas fa-share-alt" aria-hidden="true"></i>
+        Mange Account Connections
+      </a>
     </div>
   </div>
-  {% endfor %}
-
-  <button type="submit" class="btn rx-btn rx-btn-extension rx-btn-small">Update</button>
 </form>
 {% endblock %}

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from allauth.socialaccount.forms import SignupForm
-from django.forms import CharField, BooleanField
+from django.forms import CharField, BooleanField, TextInput
 
 User = get_user_model()
 
@@ -11,6 +11,25 @@ class UserChangeForm(forms.UserChangeForm):
 
     class Meta(forms.UserChangeForm.Meta):
         model = User
+
+class ReduxUserChangeForm(UserChangeForm):
+    password = None
+    # username = CharField(
+    #     widget=TextInput(attrs={'class': 'rdx-input uk-input'})
+    # )
+    # first_name = CharField(
+    #     widget=TextInput(attrs={'class': 'rdx-input uk-input'})
+    # )
+    # last_name = CharField(
+    #     widget=TextInput(attrs={'class': 'rdx-input uk-input'})
+    # )
+    name = CharField(
+        widget=TextInput(attrs={'class': 'rdx-input uk-input'}),
+        help_text="User Name to associate with Annotations"
+    )
+    class Meta:
+        model = User
+        fields = []
 
 
 class UserCreationForm(forms.UserCreationForm):

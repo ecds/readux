@@ -1,0 +1,9 @@
+{% load socialaccount %}
+<p class="uk-margin">
+Exporting your Jekyll site to GitHub requires access to your GitHub account.
+</p>
+<p class="uk-margin">
+  <a href="{% provider_login_url "github" next=request.path process="connect" %}" role="button" title="Authorize access to GitHub account" class="rdx-provider-button github uk-text-center uk-button uk-button-default uk-padding-remove-top uk-padding-remove-bottom">
+    <i class="fab fa-github"></i><span class="uk-visible@m"> Authorize GitHub Access</span>
+  </a>
+</p>

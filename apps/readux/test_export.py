@@ -92,6 +92,13 @@ class ManifestExportTests(TestCase):
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 
+    def test_get_zip_file(self):
+        # Make an empty file
+        dummy_file = os.path.join(tempfile.tempdir, 'file.txt')
+        open(dummy_file, 'a').close()
+        j = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id])
+        zip_file = j.get_zip_file(dummy_file)
+        assert isinstance(zip_file, bytes)
 
     def test_manifest_export(self):
         kwargs = { 'pid': self.volume.pid, 'version': 'v2' }

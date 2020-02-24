@@ -431,10 +431,13 @@ class AnnotationTests(TestCase):
         response = self.client.get(url)
         assert response.context_data['volume'] == self.manifest
 
-    # TODO This view maybe not needed?
     def test_export_options_view(self):
-        url = reverse('export', kwargs={'volume': self.manifest.pid})
-        response = self.client.get(url)
+        kwargs = {'volume': self.manifest.pid}
+        url = reverse('export', kwargs=kwargs)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = ExportOptions.as_view()(request, username=self.user_a.username, volume=self.manifest.pid)
+        assert response.status_code == 200
 
     def test_motivation_is_commeting_by_default(self):
         self.create_user_annotations(1, self.user_a)

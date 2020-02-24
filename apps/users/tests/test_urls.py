@@ -5,17 +5,17 @@ from django.urls import reverse, resolve
 pytestmark = pytest.mark.django_db
 
 
-# def test_detail(user: settings.AUTH_USER_MODEL):
-#     assert (
-#         reverse("users:detail", kwargs={"username": user.username})
-#         == f"/users/{user.username}/"
-#     )
-#     assert resolve(f"/users/{user.username}/").view_name == "users:detail"
+def test_detail(user: settings.AUTH_USER_MODEL):
+    assert (
+        reverse("users:detail", kwargs={"username": user.username})
+        == f"/users/{user.username}/"
+    )
+    assert resolve(f"/users/{user.username}/").view_name == "users:detail"
 
 
-def test_list():
-    assert reverse("users:list") == "/users/"
-    assert resolve("/users/").view_name == "users:list"
+# def test_list():
+#     assert reverse("users:list") == "/users/"
+#     assert resolve("/users/").view_name == "users:list"
 
 
 def test_update():

@@ -9,7 +9,8 @@ def test_detail(user: settings.AUTH_USER_MODEL):
     # TODO: use f-strings once 3.5 support is dropped.
     # assert reverse("users:detail", kwargs={"username": user.username}) == f"/users/{user.username}/"
     assert reverse("users:detail", kwargs={"username": user.username}) == "/users/{u}/".format(u=user.username)
-    assert resolve(f"/users/{user.username}/").view_name == "users:detail"
+    # assert resolve(f"/users/{user.username}/").view_name == "users:detail"
+    assert resolve("/users/{u}/".format(u=user.username)).view_name == "users:detail"
 
 
 # def test_list():

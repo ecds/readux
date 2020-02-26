@@ -181,6 +181,7 @@ class UserAnnotation(AbstractAnnotation):
             self.w = dimensions[2]
             self.h = dimensions[3]
 
+# TODO: Override the save method and move this there.
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
     instance.parse_mirador_annotation()

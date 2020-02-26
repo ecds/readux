@@ -3,7 +3,7 @@ from django.test import RequestFactory
 from django.conf import settings
 # from django.core.management import call_command
 import warnings
-from .annotations import Annotations, AnnotationCrud
+from ..annotations import Annotations, AnnotationCrud
 # from .views import VolumesList
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -11,7 +11,7 @@ from django.template import Context, Template
 from django.core.serializers import serialize
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
-from .models import UserAnnotation
+from ..models import UserAnnotation
 from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions
 from urllib.parse import urlencode
 from cssutils import parseString

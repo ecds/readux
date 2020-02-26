@@ -50,10 +50,10 @@ def _update_database():
     run('{v}/bin/python manage.py migrate --noinput'.format(v=VENV_PATH))
 
 def _update_symlink():
-    with cd('../'):
+    with cd(ROOT_PATH):
         if exists('{rp}/current'.format(rp=ROOT_PATH)):
             run('rm {rp}/current'.format(rp=ROOT_PATH))
-        run('ln -s {rp}/{v} current'.format(rp=ROOT_PATH, v=VERSION))
+        run('ln -s {rp}/releases/{v} current'.format(rp=ROOT_PATH, v=VERSION))
 
 def _restart_webserver():
     run('sudo service apache2 restart')

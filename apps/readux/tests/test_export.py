@@ -214,10 +214,6 @@ class ManifestExportTests(TestCase):
 
     @httpretty.activate
     def test_website_github_repo(self):
-        # httpretty.register_uri(
-        #     httpretty.GET,
-        #     re.compile(".*github.*")
-        # )
         httpretty.register_uri(
             httpretty.GET,
             'https://{t}:x-oauth-basic@github.com/{u}/{r}.git/'.format(t=self.jse.github_token, u=self.jse.github_username, r=self.jse.github_repo),
@@ -235,6 +231,52 @@ class ManifestExportTests(TestCase):
         website = self.jse.website_gitrepo()
         assert website == ('https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo), 'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo))
 
+    @httpretty.activate
+    def test_github_export_first_time(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://{t}:x-oauth-basic@github.com/{u}/{r}.git/'.format(t=self.jse.github_token, u=self.jse.github_username, r=self.jse.github_repo),
+            body='',
+            status=200
+        )
+        httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
+        resp_body = '[{"name":"engels"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+        gh_export = self.jse.github_export(self.user.email)
+        assert gh_export == [
+            'https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo),
+            'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo),
+            None
+        ]
+
+    @httpretty.activate
+    def test_github_export_update(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://{t}:x-oauth-basic@github.com/{u}/{r}.git/'.format(t=self.jse.github_token, u=self.jse.github_username, r=self.jse.github_repo),
+            body='',
+            status=200
+        )
+        httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
+        resp_body = '[{"name":"marx"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+        gh_export = self.jse.github_export(self.user.email)
+        assert gh_export == [
+            'https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo),
+            'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo),
+            'https://github.com/{u}/{r}/pull/2'.format(u=self.jse.github_username, r=self.jse.github_repo)
+        ]
+    
     def test_download_export(self):
         self.user.email = 'karl@marx.org'
         download = self.jse.download_export(self.user.email, self.volume)

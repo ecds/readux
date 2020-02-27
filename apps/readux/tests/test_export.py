@@ -6,7 +6,9 @@ from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.views import ManifestExport, JekyllExport
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport
+from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport, GithubExportException
+from apps.iiif.manifests.github import GithubApi
+from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 from iiif_prezi.loader import ManifestReader
 import io
 import json
@@ -15,6 +17,7 @@ import os
 import re
 import tempfile
 import zipfile
+import httpretty
 
 User = get_user_model()
 
@@ -32,6 +35,25 @@ class ManifestExportTests(TestCase):
         self.assumed_pid = 'readux:st7r6'
         self.manifest_export_view = ManifestExport.as_view()
         self.jekyll_export_view = JekyllExport.as_view()
+        self.sa_app = SocialAppFactory.create(
+            provider = 'github',
+            name = 'GitHub'
+        )
+        self.sa_acct = SocialAccountFactory.create(
+            provider='github',
+            user_id=self.user.pk,
+            extra_data={'login': self.user.username}
+        )
+        self.sa_token = SocialTokenFactory.create(
+            app_id = self.sa_app.pk,
+            account_id = self.sa_acct.pk
+        )
+        self.jse = JekyllSiteExport(self.volume, 'v2')
+        self.jse.user = self.user
+        self.jse.use_github(self.user)
+        self.jse.github_repo = 'marx'
+        self.jse.is_testing = True
+        self.jse.owners = [self.user.id]
 
     def test_zip_creation(self):
         zip = IiifManifestExport.get_zip(self.volume, 'v2', owners=[self.user.id])
@@ -88,7 +110,7 @@ class ManifestExportTests(TestCase):
         # verify ocr annotation count is correct
         with open(os.path.join(jekyll_path, '_volume_pages', '0000.html')) as page_file:
             contents = page_file.read()
-        assert contents.count('ocr-line') == 6
+        assert contents.count('ocr-line') == 6 or contents.count('ocr-line') == 4
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 
@@ -107,6 +129,9 @@ class ManifestExportTests(TestCase):
         request.user = self.user
         response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
         assert isinstance(response.getvalue(), bytes)
+
+    def test_setting_jekyll_site_dir(self):
+        self.jse
 
     # Things I want to test:
     # * Unzip the IIIF zip file
@@ -136,3 +161,81 @@ class ManifestExportTests(TestCase):
         request.user = self.user       
         response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
         assert isinstance(response.getvalue(), bytes)
+    
+    def test_use_github(self):
+        assert isinstance(self.jse.github, GithubApi)
+        assert self.jse.github_username == self.sa_acct.extra_data['login']
+        assert self.jse.github_token == self.sa_token.token
+    
+    def test_github_auth_repo_given_name(self):
+        auth_repo = self.jse.github_auth_repo(repo_name=self.jse.github_repo)
+        assert auth_repo == "https://{t}:x-oauth-basic@github.com/{u}/{r}.git".format(t=self.sa_token.token, u=self.jse.github_username, r=self.jse.github_repo)
+
+    def test_github_auth_repo_given_url(self):
+        auth_repo = self.jse.github_auth_repo(repo_url='https://github.com/karl/{r}'.format(r=self.jse.github_repo))
+        assert auth_repo == "https://{t}:x-oauth-basic@github.com/karl/{r}.git".format(t=self.sa_token.token, r=self.jse.github_repo)
+    
+    @httpretty.activate
+    def test_github_exists(self):
+        resp_body = '[{"name":"marx"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+
+        assert self.jse.gitrepo_exists()
+
+    @httpretty.activate
+    def test_github_does_not_exists(self):
+        resp_body = '[{"name":"engels"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+
+        assert self.jse.gitrepo_exists() is False
+
+    @httpretty.activate
+    def test_create_website_gitrepo_when_repo_already_exists(self):
+        # self.jse.github_repo = 'engels'
+        resp_body = '[{"name":"marx"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+        with self.assertRaisesMessage(GithubExportException, 'GitHub repo {r} already exists.'.format(r=self.jse.github_repo)):
+            self.jse.website_gitrepo()
+
+    @httpretty.activate
+    def test_website_github_repo(self):
+        # httpretty.register_uri(
+        #     httpretty.GET,
+        #     re.compile(".*github.*")
+        # )
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://{t}:x-oauth-basic@github.com/{u}/{r}.git/'.format(t=self.jse.github_token, u=self.jse.github_username, r=self.jse.github_repo),
+            body='',
+            status=200
+        )
+        httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
+        resp_body = '[{"name":"foo"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+        website = self.jse.website_gitrepo()
+        assert website == ('https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo), 'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo))
+
+    def test_download_export(self):
+        self.user.email = 'karl@marx.org'
+        download = self.jse.download_export(self.user.email, self.volume)
+        assert download.endswith('.zip')

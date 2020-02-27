@@ -45,12 +45,43 @@ class TestGithubApi(TestCase):
         assert isinstance(gh, GithubApi)
 
     @httpretty.activate
+    def test_get_oauth_scopes(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/user',
+            adding_headers={"X-OAuth-Scopes": "repo, user"},
+            body='hallo'
+        )
+        scopes = self.gh.oauth_scopes(test=True)
+        assert scopes == ['repo', 'user']
+
+    @httpretty.activate
     def test_create_repo(self):
         httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
-        assert self.gh.create_repo(name='name')
+        assert self.gh.create_repo(name='name', description='desc', homepage='page')
 
     @httpretty.activate
     def test_list_repos(self):
+        resp_body = '[{},{},{}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/karl/repos?per_page=3',
+            body=resp_body,
+            content_type="text/json",
+            adding_headers={"Link": '<https://api.github.com/users/repos?page=2>; rel="next"'},
+        )
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/repos?page=2',
+            body=resp_body,
+            content_type="text/json"
+        )
+
+        repos = self.gh.list_repos('karl')
+        assert len(repos) == 6
+        
+    @httpretty.activate
+    def test_list_user_repos(self):
         resp_body = '[{},{},{}]'
         httpretty.register_uri(
             httpretty.GET,

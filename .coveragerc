@@ -1,6 +1,7 @@
 [report]
 omit =
   *tests.py
+  *tests/*
   apps/cms/*
   apps/contrib/*
   *migrations*

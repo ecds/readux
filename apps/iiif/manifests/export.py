@@ -152,6 +152,11 @@ class IiifManifestExport:
 class GithubExportException(Exception):
     pass
 
+'''
+Args
+    manifest (apps.iiif.manifests.models.Manifest) Manifest object
+    version (str) IIIF API version eg 'v2'
+'''
 class JekyllSiteExport(object):
     def __init__(self, manifest, version, page_one=None,
                  include_images=False, deep_zoom='hosted', github_repo=None, owners=None, user=None):
@@ -173,6 +178,7 @@ class JekyllSiteExport(object):
         self.owners = owners
         self.user = user
         self.github_repo=github_repo
+        self.is_testing = False
 
 
     def log_status(self, msg):
@@ -419,7 +425,8 @@ class JekyllSiteExport(object):
         # push local master to the gh-pages branch of the newly created repo,
         # using the user's oauth token credentials
         self.log_status('Pushing new content to GitHub')
-        gitcmd.push([repo_url, 'master:gh-pages'])
+        if self.is_testing is False:
+            gitcmd.push([repo_url, 'master:gh-pages'])
 
         # clean up temporary files after push to github
         shutil.rmtree(export_dir)

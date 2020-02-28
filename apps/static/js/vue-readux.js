@@ -147,6 +147,7 @@ var readux = new Vue({
     searchPrefix: "?sort=",
     currentSelection: null,
     itemNotFound: false,
+    showMoreInfo: false,
   },
   methods: {
     sortBy: function(selection) {
@@ -154,8 +155,12 @@ var readux = new Vue({
       if (window.location !== value) {
         window.location = value;
       }
-    }
+    },
 
+    toggleMoreInfo: function(){
+      this.showMoreInfo = !this.showMoreInfo
+    }
+    
     // ascaddURL: function(element) {
     // 	$(element).attr('href', function () {
     // 		if (window.location.search.length == 0) {
@@ -191,7 +196,9 @@ var readux = new Vue({
 
   mounted: function() {
     if (this.$refs["v-attr-sort"]) {
-      this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
+      this.currentSelection = this.$refs["v-attr-sort"].getAttribute(
+        "data-sort"
+      );
     }
   }
 });

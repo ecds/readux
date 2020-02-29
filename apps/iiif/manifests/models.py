@@ -8,7 +8,10 @@ from django.contrib.auth import get_user_model
 import urllib.request
 from modelcluster.models import ClusterableModel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
+from django.contrib.postgres.search import SearchVectorField, SearchVector
+from django.contrib.postgres.indexes import GinIndex
 from json import JSONEncoder
+from django.contrib.postgres.aggregates import StringAgg
 import uuid
 from uuid import UUID
 #trying to work with autocomplete
@@ -21,6 +24,11 @@ def JSONEncoder_newdefault(self, o):
     return JSONEncoder_olddefault(self, o)
 JSONEncoder.default = JSONEncoder_newdefault
 
+class ManifestManager(models.Manager):
+    def with_documents(self):
+        vector = SearchVector(StringAgg('canvas__annotation__content', delimiter=' '))
+        return self.get_queryset().annotate(document=vector)
+    
 class Manifest(ClusterableModel):
     DIRECTIONS = (
         ('left-to-right', 'Left to Right'),
@@ -38,13 +46,16 @@ class Manifest(ClusterableModel):
     logo = models.ImageField(upload_to='logos/', null=True, blank=True, default="logos/lits-logo-web.png", help_text="Upload the Logo of the institution holding the manifest.")
     license = models.CharField(max_length=255, null=True, blank=True, default="https://creativecommons.org/publicdomain/zero/1.0/", help_text="Only enter a URI to a license statement.")
     #collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name = 'manifest')
-    collections = models.ManyToManyField(Collection, null=True, blank=True, related_name = 'manifests')
+    collections = models.ManyToManyField(Collection, blank=True, related_name = 'manifests')
     pdf = models.URLField()
-    metadata = JSONField(default=dict, blank=False)
+    metadata = JSONField(default=dict, blank=True)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     #starting_page = models.ForeignKey('canvases.Canvas', related_name="first", on_delete=models.SET_NULL, null=True, blank=True, help_text="Choose the page that will show on loading.")
     autocomplete_search_field = 'label'
+    search_vector = SearchVectorField(null=True, editable=False)
+    objects = ManifestManager()
 
     def get_absolute_url(self):
         return "%s/volume/%s" % (settings.HOSTNAME, self.pid)
@@ -54,6 +65,7 @@ class Manifest(ClusterableModel):
     
     class Meta:
         ordering = ['published_date']
+        indexes = [GinIndex(fields=['search_vector'])]
 
     # TODO is this needed?
     # @property
@@ -72,16 +84,29 @@ class Manifest(ClusterableModel):
     def baseurl(self):
         return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
 
+    # TODO: Maybe this should return the canvas object so we can replace
+    # the logic in the serializer that basically makes this same query
+    # to get the thumbnail.
     @property
     def start_canvas(self):
         first = self.canvas_set.all().exclude(is_starting_page=False).first()
         return first.identifier if first else self.canvas_set.all().first().identifier
     
+    # TODO: Is this needed? It doesn't seem to be called anywhere. Seems 
+    # we could just use the label as is?
     def autocomplete_label(self):
         return self.label
 
     def __str__(self):
         return self.label
+
+    #update search_vector every time the entry updates
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
+            instance = self._meta.default_manager.with_documents().get(pk=self.pk)
+            instance.search_vector = instance.document
+            instance.save(update_fields=['search_vector'])
         
   
 #     def volume_annotation_count(request):

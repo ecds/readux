@@ -8,11 +8,12 @@
 
   <div class="rx-splash">
     <ul class="readux-home-tagline uk-padding-remove-left rx-splash-item">
-      <li>Read.</li>
-      <li>Annotate.</li>
-      <li>Publish.</li>
+      <li>{{ page.tagline|richtext }}</li>
     </ul>
     <div class="rx-splash-item">
+     {% if request.get_host == "readux2.ecdsdev.org" %}
+      <iframe width="320" height="180" src="https://player.vimeo.com/video/374786964?x" frameborder="0" allow="fullscreen" allowfullscreen style="margin-top:0.5em;"></iframe>
+     {% endif %}
       <p class="">Engage with digitized print materials on an open source software platform and share new thinking.</p>
       <img src="static/images/ecds.svg" class="readux-home-ecds">
     </div>
@@ -199,7 +200,9 @@
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
+<!-- 
             <div class="rx-title-tagline">TBD</div>
+ -->
             <ul class="rx-card-text">
               <li>Author: {{volume.author|truncatechars:150}}</li>
               <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
@@ -225,6 +228,7 @@
     {% endif %}
     {% endfor %}
 
+<!-- 
     {% for post in page.get_children %}
     {% if 'vol' in post.slug %}
     <a class="nav-link" href="{% pageurl post %}">
@@ -232,6 +236,11 @@
     </a>
     {% endif %}
     {% endfor %}
+ -->
+    <a class="nav-link" href="/{{ volumesurl.slug }}">
+      <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
+    </a>
+
 
     {% include "footer.html" %}
     {% endif %}

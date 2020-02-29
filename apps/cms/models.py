@@ -132,8 +132,6 @@ class VolumesPage(Page):
             user_annotation_count = UserAnnotation.objects.filter(owner_id=request.user.id).filter(canvas__manifest__id=volume.id).count()
             annocount_list.append({volume.pid: user_annotation_count})
             context['user_annotation_count'] = annocount_list
-            print(volume.pid)
-            print(user_annotation_count)
             canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
             canvasquery2 = list(canvasquery)
             canvaslist.append({volume.pid: canvasquery2})
@@ -151,18 +149,18 @@ class VolumesPage(Page):
 
 
 class HomePage(Page):
-    tagline = models.TextField(blank=True)
+    tagline = RichTextField(blank=True)
     content_display = models.CharField(max_length=20, choices = (("Collections", "Collections"),
             ("Volumes", "Volumes"),),
             default = "Collections",
             help_text="Select to show all collections or all volumes on the home page")
-    featured_collections = ParentalManyToManyField(Collection, null=True, blank=True)
+    featured_collections = ParentalManyToManyField(Collection, blank=True)
     featured_collections_sort_order = models.CharField(max_length=20, choices = (
             ("label", "Title"),
             ("created_at", "Input Date"),),
             default = "label",
             help_text="Select order to sort collections on home page")
-    featured_volumes = ParentalManyToManyField(Manifest, null=True, blank=True)
+    featured_volumes = ParentalManyToManyField(Manifest, blank=True)
     featured_volumes_sort_order = models.CharField(max_length=20, choices = (
             ("label", "Title"),
             ("created_at", "Input Date"),
@@ -191,14 +189,13 @@ class HomePage(Page):
 
         context['volumespage'] = q.all
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
+        context['volumesurl'] = Page.objects.type(VolumesPage).first()
         annocount_list = []
         canvaslist = []
         for volume in q:
             user_annotation_count = UserAnnotation.objects.filter(owner_id=request.user.id).filter(canvas__manifest__id=volume.id).count()
             annocount_list.append({volume.pid: user_annotation_count})
             context['user_annotation_count'] = annocount_list
-            print(volume.pid)
-            print(user_annotation_count)
             canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
             canvasquery2 = list(canvasquery)
             canvaslist.append({volume.pid: canvasquery2})

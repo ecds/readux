@@ -100,7 +100,7 @@ class AnnotationCrud(View):
                     )
                 ),
                 safe=False,
-                status=201
+                status=200
             )
         else:
             return self.__unauthorized()

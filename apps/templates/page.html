@@ -1,14 +1,44 @@
 {% extends "base.html" %}
 {% load static i18n %}
 {% block extra_css %}
-<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
+<link href="{{ mirador_url }}css/mirador-combined.css" rel="stylesheet">
+{% if request.get_host == "readux2.ecdsdev.org" %}
+<style>
+#viewer {
+  width: 78%;
+  height: calc(100% - 193px - 2.5em);
+  position: absolute;
+  bottom: 0px;
+  background: none !important;
+}
+</style>
+{% elif request.get_host == "readux.ecdsdev.org" %}
+<style>
+#viewer {
+  width: 78%;
+  height: calc(100% - 193px - 2em);
+  position: absolute;
+  bottom: 0px;
+  background: none !important;
+}
+</style>
+{% endif %}
 {% endblock extra_css %}
 
 {% block content %}
+<!-- <div class="rx-title-container">
+  <ul class="rx-breadcrumb uk-text-truncate">
+    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+    <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+    <li class="rx-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
+        alt="Collections">{{ volume.collections.first.label }}</a></li>
+  </ul>
+  <div class="rx-title uk-text-truncate" title="{{ volume.label }}">{{volume.label}}</div>
+</div> -->
 
   <nav class="" uk-navbar id="rx-nav">
-    <div class="uk-navbar-left" style="flex-wrap: nowrap; flex: 0 0 auto;">
-      <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
+    <div class="uk-navbar-left" style="flex-wrap: unset;">
+      <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
         <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
       </a>
       <div class="uk-navbar-nav">
@@ -24,7 +54,7 @@
       </div>
     </div>
     <div class="uk-navbar-right">
-      <a type="button" @click="toggleMoreInfo" class="no-selection rx-btn-main" v-bind:class="{ 'rx-btn-main-active' : showMoreInfo  }">
+      <a type="button" @click="toggleMoreInfo" class="rx-btn-secondary" v-bind:class="{ 'rx-btn-main-active' : showMoreInfo  }">
           more info 
       </a>
     </div>
@@ -34,11 +64,15 @@
     <div class="rx-info">
       <!-- new search form -->
       {% if page.pid is not None %}
-      <form class="uk-search uk-search-default" style="width: 100% !important;"
+      <form class="uk-search uk-search-default" style="width: 100% !important; display: flex;"
         action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
         <span uk-search-icon></span>
         <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-          value="{{request.GET.q}}">
+          value="{{request.GET.q}}">        
+        <span style="margin-top: 10px;" title="Click to include partial matches">Partial</span>
+        <input type="radio" style="margin-top: 6px;" name="type" aria-label="include partial" value="partial" checked>
+        <span style="margin-top: 10px;" title="Click for exact matches only">Exact</span>
+        <input type="radio" style="margin-top: 6px;" name="type" aria-label="exact only" value="exact">
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
       </form>
       {% else %}
@@ -69,10 +103,10 @@
               <li>
                 {% if qs1 %}
                 <ul class="uk-padding-remove">
-                  {% for answer in qs1 %}{% if answer.canvas.manifest.label in volume.label %}
+                  {% for answer in qs1 %}{% if answer.canvas__manifest__label in volume.label %}
                   <li><a
-                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}"
-                      target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas__pid }}"
+                      target="_blank">Canvas {{ answer.canvas__position }} - number of results {{ answer.canvas__position__count }}{{ answer.rank }}</a></li>
                   {% endif %}{% endfor %}</ul>
                 {% elif request.GET.q  and not qs1 %}
                 <p>No results in the text in this volume</p>{% endif %}
@@ -99,6 +133,7 @@
 
     <div class="rx-info">
       <div class="rx-info-title">Basic Information</div>
+
       <div class="rx-info-content-container">
 
         <!--new-->
@@ -135,6 +170,11 @@
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
           <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Summary</div>
+          <div class="rx-info-content-value">{{ volume.summary }}</div>
         </div>
 
         {% if volume.note_set|length %}
@@ -175,6 +215,11 @@
 
         {% endif %}
 
+        <div class="rx-info-content">
+          <a class="rx-action-btn" href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
+            target="_blank">Send to Voyant</a>
+        </div>
+
       </div>
     </div>
 
@@ -197,15 +242,18 @@
           url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
         </v-info-content-url-single>
 
-        {% if page.pid is not None %}
-
         {% if "/page/all" in request.get_full_path or "?q=" in request.get_full_path %}
-        <v-info-content-url-external ref="rx-url-canvas" v-show="false">
+          <v-info-content-url-external
+            ref="rx-url-canvas" v-show="false">
+          </v-info-content-url-external>
+
+        <v-info-content-url-external
+          ref="rx-url-stable-page" v-show="false">
         </v-info-content-url-external>
         {% else %}
-        <v-info-content-url-external ref="rx-url-canvas">
+        <v-info-content-url-external
+          ref="rx-url-canvas">
         </v-info-content-url-external>
-        {% endif %}
 
         <v-info-content-url-external ref="rx-url-stable-page">
         </v-info-content-url-external>
@@ -230,7 +278,7 @@
 
 {% if page.pid is not None %}
 
-<!-- 
+<!--
         <p id="test"></p>
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
         <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
@@ -240,7 +288,7 @@
 {% endblock viewer %}
 
 {% block extra_javascript %}
-<script src="{% static 'mirador/mirador.js' %}"></script>
+<script src="{{ mirador_url}}mirador.js"></script>
 <script type="text/javascript">
   $(function () {
     Mirador({

@@ -3,14 +3,20 @@ from django.test import RequestFactory
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from .views import ManifestDetail, ManifestSitemap, ManifestRis, ManifestExport, JekyllExport
+from allauth.socialaccount.models import SocialAccount
+from .views import ManifestDetail, ManifestSitemap, ManifestRis
 from .models import Manifest
+from .forms import JekyllExportForm
 from ..canvases.models import Canvas
 from .export import IiifManifestExport, JekyllSiteExport
 from iiif_prezi.loader import ManifestReader
+import io
 import json
 import logging
+import os
+import re
 import tempfile
+import zipfile
 
 User = get_user_model()
 
@@ -27,8 +33,6 @@ class ManifestTests(TestCase):
         self.default_start_canvas = self.volume.canvas_set.filter(is_starting_page=False).first()
         self.assumed_label = ' Descrizione del Palazzo Apostolico Vaticano '
         self.assumed_pid = 'readux:st7r6'
-        self.manifest_export_view = ManifestExport.as_view()
-        self.jekyll_export_view = JekyllExport.as_view()
 
     def test_validate_iiif(self):
         view = ManifestDetail.as_view()
@@ -73,49 +77,20 @@ class ManifestTests(TestCase):
         ris = ManifestRis()
         assert ris.get_context_data(volume=self.assumed_pid)['volume'] == self.volume
 
-    def test_zip_creation(self):
-        zip = IiifManifestExport.get_zip(self.volume, 'v2', owners=[self.user.id])
-        assert isinstance(zip, bytes)
+    def test_autocomplete_label(self):
+        assert Manifest.objects.all().first().autocomplete_label() == Manifest.objects.all().first().label
 
-    def test_jekyll_site_export(self):
-        j = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id])
-        zip = j.get_zip()
-        tempdir = j.generate_website()
-        web_zip = j.website_zip()
-        # j.import_iiif_jekyll(j.manifest, j.jekyll_site_dir)
-        assert isinstance(zip, tempfile._TemporaryFileWrapper)
-        assert "%s_annotated_site_" % (str(self.volume.pk)) in zip.name
-        assert zip.name.endswith('.zip')
-        assert isinstance(web_zip, tempfile._TemporaryFileWrapper)
-        assert "%s_annotated_site_" % (str(self.volume.pk)) in web_zip.name
-        assert web_zip.name.endswith('.zip')
-        assert 'tmp-rdx-export' in tempdir
-        assert tempdir.endswith('/export')
+    def test_absolute_url(self):
+        assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)
 
-    def test_maifest_export(self):
-        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
-        url = reverse('ManifestExport', kwargs=kwargs)
-        request = self.factory.post(url, kwargs=kwargs)
-        request.user = self.user
-        response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
-        assert isinstance(response.getvalue(), bytes)
+    def test_form_mode_choices_no_github(self):
+        form = JekyllExportForm(user=self.user)
+        assert len(form.fields['mode'].choices) == 1
+        assert form.fields['mode'].choices[0] != 'github'
 
-    def test_jekyll_export_exclude_download(self):
-        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
-        url = reverse('JekyllExport', kwargs=kwargs)
-        kwargs['deep_zoom'] = 'exclude'
-        kwargs['mode'] = 'download'
-        request = self.factory.post(url, data=kwargs) 
-        request.user = self.user       
-        response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
-        assert isinstance(response.getvalue(), bytes)
-
-    def test_jekyll_export_include_download(self):
-        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
-        url = reverse('JekyllExport', kwargs=kwargs)
-        kwargs['deep_zoom'] = 'include'
-        kwargs['mode'] = 'download'
-        request = self.factory.post(url, data=kwargs) 
-        request.user = self.user       
-        response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
-        assert isinstance(response.getvalue(), bytes)
+    def test_form_mode_choices_with_github(self):
+        sa = SocialAccount(provider='github', user=self.user)
+        sa.save()
+        form = JekyllExportForm(user=self.user)
+        assert len(form.fields['mode'].choices) == 2
+        assert form.fields['mode'].choices[1][0] == 'github'

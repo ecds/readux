@@ -60,9 +60,15 @@ class GithubApi(object):
         '''
         return cls(cls.github_token(user))
 
-    def oauth_scopes(self):
+    def oauth_scopes(self, test=False):
         'Get a list of scopes available for the current oauth token'
-        response = self.session.head('%s/user' % self.url)
+        # TODO: httpretty does not like the HEAD method, so this is a quick
+        # workaround for testing. It might be fine to just use GET.
+        if test:
+            response = self.session.get('%s/user' % self.url)
+        else:
+            response = self.session.head('%s/user' % self.url)
+
         if response.status_code == requests.codes.ok:
             return response.headers['x-oauth-scopes'].split(', ')
 
@@ -80,14 +86,33 @@ class GithubApi(object):
         return response.status_code == requests.codes.created
 
     def list_repos(self, user):
-        'Get a list of a repositories by user'
+        '''Get a list of a repositories by user'''
         # could get current user repos at: /user/repos
         # but that includes org repos user has access to
         # could specify type, but default of owner is probably fine for now
-        response = self.session.get('%s/users/%s/repos' % (self.url, user))
 
-        if response.status_code == requests.codes.ok:
-            return response.json()
+        repos = []
+        page_url = '%s/users/%s/repos?per_page=3' % (self.url, user)
+        response = self.session.get(page_url)
+        repos += response.json()
+
+
+        headers = response.headers
+        while 'link' in headers and 'next' in headers['link']:
+            links = {}
+            linkHeaders = headers["link"].split(", ")
+            for linkHeader in linkHeaders:
+                (url, rel) = linkHeader.split("; ")
+                url = url[1:-1]
+                rel = rel[5:-1]
+                links[rel] = url
+        
+            page_url = links.get('next')
+            response = self.session.get(page_url)
+            repos += response.json()
+            headers = response.headers
+    
+        return repos
 
     def list_user_repos(self):
         '''Get a list of the current user's repositories'''

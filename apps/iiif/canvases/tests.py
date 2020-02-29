@@ -6,6 +6,7 @@ from .models import Canvas, IServer
 from . import services
 from apps.iiif.canvases.apps import CanvasesConfig
 import json
+import httpretty
 
 
 class CanvasTests(TestCase):
@@ -82,6 +83,10 @@ class CanvasTests(TestCase):
             assert type(word['y']) == int
             assert type(word['content']) == str
 
+        canvas.save()
+        # ocr_anno = canvas.annotation_set.first()
+        # assert ocr_anno.w == ocr[0]['w']
+
     def test_fedora_ocr_creation(self):
         valid_fedora_positional_response = """523\t 116\t 151\t  45\tDistillery\r\n 704\t 117\t 148\t  52\tplaid,"\r\n""".encode('UTF-8-sig')
         
@@ -107,6 +112,22 @@ class CanvasTests(TestCase):
         assert ocr[1]['w'] == 461
         assert ocr[1]['x'] == 814
         assert ocr[1]['y'] == 185
+
+    @httpretty.activate
+    def test_line_by_line_from_alto(self):
+        alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
+        url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=self.canvas.pid.replace('fedora:',''))
+        httpretty.register_uri(httpretty.GET, url, body=alto)
+        self.canvas.default_ocr = 'line'
+        self.canvas.annotation_set.all().delete()
+        self.canvas.save()
+        updated_canvas = Canvas.objects.get(pk=self.canvas.pk)
+        ocr = updated_canvas.annotation_set.first()
+        assert 'mm' in ocr.content
+        assert ocr.h == 26
+        assert ocr.w == 90
+        assert ocr.x == 916
+        assert ocr.y == 0
 
     def test_ocr_from_tsv(self):
         iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
@@ -162,4 +183,19 @@ class CanvasTests(TestCase):
         assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
         assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
 
-    # def test_default_ocr_line(self):
+    def test_wide_image_crops(self):
+        pid = '15210893.5622.emory.edu$95'
+        canvas = Canvas.objects.get(pid=pid)
+        assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
+        assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
+        assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
+    
+    def test_result_property(self):
+        assert self.canvas.result == "a retto , dio Quef\u00eca de'"
+
+    def test_get_image_info(self):
+        self.canvas.IIIF_IMAGE_SERVER_BASE = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='http://fake.info')
+        self.canvas.save()
+        updated_canvas = Canvas.objects.get(pk=self.canvas.pk)
+        assert updated_canvas.image_info['height'] == 3000
+        assert updated_canvas.image_info['width'] == 3000

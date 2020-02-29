@@ -1,91 +1,103 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block extra_css %}
-<link href="{% static 'mirador/css/mirador-combined.css' %}" rel="stylesheet">
-{% endblock extra_css %}
 
 {% block content %}
 
 <h1 class='uk-text-truncate'>
-  {{volume.label}}    
+  {{volume.label}}
 
 </h1>
 {% endblock content %}
 {% block viewer %}
-  <div class='uk-flex-center' uk-grid>
-    <div class='uk-width-3-4'>
-      <div class='uk-padding'>
-        <b>Author:</b> {{ volume.author }}
-        <br />
-        <b>Publication Date:</b> {{ volume.published_date }}
-        <br />{% for col in volume.collections.all %}
-        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
-        <br />
-        <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
-      </div>
-      <div class='uk-padding'>
-        <h3>IIIF Export</h3>
-        <p>Export volume and annotations as a IIIF bundle for preservation.  (Note this is different than the IIIF Manifest URL for reuse.)</p>
-        <form action="{% url 'ManifestExport' 'v2' volume.pid %}" class="button_to" method="POST"><div><input type="submit" value="Export IIIF Bundle" title="Export volume and annotations as a IIIF bundle for preservation."/>{% csrf_token %}</div></form>
-      </div>
+<div class='uk-flex-center' uk-grid>
+  <div class='uk-width-3-4'>
+    <div class='uk-padding'>
+      <b>Author:</b> {{ volume.author }}
+      <br />
+      <b>Publication Date:</b> {{ volume.published_date }}
+      <br />{% for col in volume.collections.all %}
+      <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
+      <br />
+      <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
+    </div>
+    <div class='uk-padding'>
+      <h3>IIIF Export</h3>
+      <p>Export volume and annotations as a IIIF bundle for preservation. (Note this is different than the IIIF Manifest
+        URL for reuse.)</p>
+      <form action="{% url 'ManifestExport' 'v2' volume.pid %}" class="button_to" method="POST">
+        <div><input type="submit" class="uk-button uk-button-primary" value="Export IIIF Bundle"
+            title="Export volume and annotations as a IIIF bundle for preservation." />{% csrf_token %}</div>
+      </form>
+    </div>
 
-      <div class='uk-padding'>
-        <h3>Static Site Export</h3>
-        <p>Export volume and annotations as static digital edition.</p>
+    <div class='uk-padding'>
+      <h3>Static Site Export</h3>
+      <p>Export volume and annotations as static digital edition.</p>
 
 
-        <form class="volume-webexport"  action="{% url 'JekyllExport' 'v2' volume.pid %}"  method="POST">
+      <form class="volume-webexport" action="{% url 'JekyllExport' 'v2' volume.pid %}" method="POST">
+        <fieldset class="uk-fieldset">
           {% csrf_token %}
           <div class="text-danger form-errors">
             {{ export_form.non_field_errors }}
           </div>
           {# include volume pid as a hidden field so it is included in websocket form submission #}
-          <input type="hidden" name="pid" value="{{ volume.pid }}"/>
+          <input type="hidden" name="pid" value="{{ volume.pid }}" />
 
-   {% for field in export_form %}
-        {% if field.name == 'mode' %}
-          <div class="export-title">export mode</div>
-          {% for radio in field %}
-            <div class="radio">
-              <label for="{{ radio.id_for_label }}">
-                  {{ radio.tag }} {{ radio.choice_label}}
-              </label>
-              {% with forloop.counter|cut:' ' as index %}
-                <div class="help-block indented-help-block">{{ export_form.mode_help|slice:index|last }}</div>
-              {% endwith %}
-            </div>
+          {% for field in export_form %}
+            {% if field.name == 'mode' %}
+              <legend class="uk-legend">Select Export Mode</legend>
+              {% for radio in field %}
+                <div class="radio uk-margin uk-grid-small uk-grid-collapse uk-child-width-1-1" uk-grid>
+                  <label for="{{ radio.id_for_label }}">
+                    {{ radio.tag }} {{ radio.choice_label}}
+                  </label>
+                  {% with forloop.counter|cut:' ' as index %}
+                    <div class="rdx-indented-help-block uk-margin-small uk-text-small">{{ export_form.mode_help|slice:index|last }}</div>
+                    <hr class="uk-divider-small">
+                  {% endwith %}
+                </div>
+              {% endfor %}
+              <div class="text-danger mode-errors">{{ field.errors }}</div>
+              {% elif field.name == 'annotations' and export_form.hide_annotation_choice %}
+              {# hide annotation choice when flag is set (i.e., only one choice available) #}
+              {# field|add_class:"hidden" #}
+              
+              {% elif field.field.is_checkbox %}
+                {# bootstrap styles for checkbox input #}
+                <div class="display-none checkbox {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
+                  <label>
+                    {{ field }} {{ field.label }}
+                  </label>
+                  <div class="help-block">{{ field.help_text}}</div>
+                </div>
+              {% else %}
+                {% if 'github' in user.socialaccount_list %}
+                  <div class="uk-margin-small form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
+                    <div uk-grid>
+                      <label class="uk-width-auto" for="{{ field.name }}">{{ field.label }}</label>
+                      <div class="uk-width-expand">
+                        {{ field }}
+                      </div>
+                      <div class="uk-width-1-1 help-block uk-margin-remove">{{ field.help_text}}</div>
+                      <div class="uk-width-1-1 text-warning {{ field.name }}-errors">{{ field.errors }}</div>
+                    </div>
+                  </div>
+                {% else %}
+                <div class="help-block">
+                  {% include "snippets/github_authorize.html" %}
+                </div>
+              {% endif %}
+            {% endif %}
           {% endfor %}
-          <div class="text-danger mode-errors">{{ field.errors }}</div>
-        {% elif field.name == 'annotations' and export_form.hide_annotation_choice %}
-          {# hide annotation choice when flag is set (i.e., only one choice available) #}
-            {# field|add_class:"hidden" #}
-
-        {% elif field.field.is_checkbox %}
-          {# bootstrap styles for checkbox input #}
-          <div class="display-none checkbox {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
-            <label>
-              {{ field }} {{ field.label }}
-            </label>
-            <div class="help-block">{{ field.help_text}}</div>
+          <div class="form-group export-form-group">
+            <button type="submit" class="uk-button uk-button-primary" id="export-button">
+              Export Static Site
+            </button>
           </div>
-        {% else %}
-          <div class="form-group export-form-group{% if field.errors %} has-error{% endif %} {% if field.name in export_form.jekyll_options %}jekyll-only{% endif %}">
-              <label for="{{ field.name }}">{{ field.label }}</label>
-              {{ field }}
-              <div class="help-block">{{ field.help_text}}</div>
-              <div class="text-warning {{ field.name }}-errors">{{ field.errors }}</div>
-          </div>
-        {% endif %}
-    {% endfor %}
-
-
-            <div class="form-group export-form-group" >
-              <button type="submit" class="btn btn-primary center-block export-btn" id="export-button"><i class="fa fa-download" aria-hidden="true"></i> Export</button>
-            </div>
-        </form>
-
-      </div>
-
+        </fieldset>
+      </form>
     </div>
   </div>
+</div>
 {% endblock viewer %}

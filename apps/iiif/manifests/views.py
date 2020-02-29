@@ -1,19 +1,27 @@
-from django.shortcuts import render
+from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.http import HttpResponse
+from django.shortcuts import render
+from django.template import Context
+from django.template.loader import get_template
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
+from ..annotations.models import Annotation
+from ..canvases.models import Canvas
 from .models import Manifest
 from .export import IiifManifestExport
 from .export import JekyllSiteExport
 from .forms import JekyllExportForm
+from .tasks import github_export_task
+from .tasks import download_export_task
 from apps.users.models import User
 from datetime import datetime
 import json
 import logging
+import config.settings.local as settings
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +57,7 @@ class ManifestSitemap(Sitemap):
 class ManifestRis(TemplateView):
     content_type = 'application/x-research-info-systems; charset=UTF-8'
     template_name = "citation.ris"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
@@ -107,18 +115,43 @@ class JekyllExport(TemplateView):
         owners = [request.user.id] # TODO switch to form group vs. solo control
 
         # TODO Actually use the git repo and export mode
-        jekyll_export = JekyllSiteExport(manifest, kwargs['version'], github_repo=github_repo, export_mode=export_mode, deep_zoom=False, owners=owners, user=self.request.user, );
         if export_mode == 'download':
-            zip = jekyll_export.get_zip()
-            resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
-            resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
-            return resp
-        else: #github exports
-            repo_url, ghpages_url, pr_url = jekyll_export.github_export()
             context = self.get_context_data()
-            context['repo_url'] = repo_url
-            context['ghpages_url'] = ghpages_url
-            context['pr_url'] = pr_url
+            manifest_pid = manifest.pid
+            task = download_export_task(manifest_pid, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user_id=self.request.user.id);
+            context['email'] = request.user.email
+            context['mode'] = "download"
+            return render(request, self.template_name, context)
+
+        else: #github exports
+            context = self.get_context_data()
+            manifest_pid = manifest.pid
+            task = github_export_task(manifest_pid, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user_id=self.request.user.id);
+
+            # TODO replace this template with a note explaining that they will receive email
+            # TODO move email sending to the background task
+            #repo_url, ghpages_url, pr_url = ['foo', 'bar', 'baz']
+            #context['repo_url'] = repo_url
+            #context['ghpages_url'] = ghpages_url
+            #context['pr_url'] = pr_url
+
+            # context =  Context({ 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url })
+            # context =  { 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url }
+            #context['request'] = request
+            #email_contents = get_template('jekyll_export_email.html').render(context)
+            #text_contents = get_template('jekyll_export_email.txt').render(context)
+
+            # send_mail(
+            #     'Your Readux site export is ready!',
+            #     text_contents,
+            #     settings.READUX_EMAIL_SENDER,
+            #     [request.user.email],
+            #     fail_silently=False,
+            #     html_message=email_contents
+            # )
+
+            context['email'] = request.user.email
+            context['mode'] = "github"
             return render(request, self.template_name, context)
 #            return JsonResponse(status=200, data=[repo_url, ghpages_url, pr_url], safe=False)
 
@@ -127,4 +160,13 @@ class JekyllExport(TemplateView):
         context_data = super(JekyllExport, self).get_context_data(**kwargs)
         return context_data
 
+class PlainExport(View):
+    def get_queryset(self):
+        manifest = Manifest.objects.get(pid=self.kwargs['pid'])
+        return Canvas.objects.filter(manifest=manifest.id).order_by('position')
 
+    def get(self, request, *args, **kwargs):
+        annotations = []
+        for canvas in self.get_queryset() :
+            annotations.append(canvas.result)
+        return HttpResponse(' '.join(annotations))

@@ -1,5 +1,7 @@
 # Readux
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
+
 Readux is a platform developed by the Emory Center for Digital Scholarship which allows users to read, take notes on, and publish with digitized texts from libraries’ archival collections. With Readux, users are able to:
 -	browse digitized page images, 
 -	search and select the texts of these digitized books, 
@@ -16,9 +18,6 @@ Administrators can organize digitized books into collections, facilitating user 
 
 ...
 
-### Build status
-
-[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
 
 ## Installation (development)
 
@@ -87,24 +86,36 @@ alter user readux createdb;
 To run the tests, simply run:
 
 ~~~bash
-pytest
+pytest apps/
 ~~~
+
+Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
 
 ### Deploy
 
 For dev:
 
 ~~~bash
-fab deploy -H readux.ecdsdev.org
+fab deploy:branch=develop -H readux.ecdsdev.org
 ~~~
 
 For public alpha:
 
 ~~~bash
-fab deploy -H readux2.ecdsdev.org
+fab deploy:branch=master -H readux2.ecdsdev.org
 ~~~
 
-Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
+Note: if no branch is passed, the deploy will default to master.
+
+### Start Background Job
+
+A background job needs to be started to handel creating the static site zip export and notify the person when the export is ready to be downloaded. The job also cleans up the export after 24 hours.
+
+There are many ways to background a job. For example:
+
+~~~bash
+nohup python manage.py process_tasks &
+~~~
 
 ## Contribute
 

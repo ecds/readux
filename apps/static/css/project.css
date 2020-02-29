@@ -1,5 +1,9 @@
 /* These styles are generated from project.scss. */
 
+body {
+  font-size: 18px;
+}
+
 .alert-debug {
   color: black;
   background-color: white;
@@ -96,9 +100,9 @@
   z-index: 999;
 }
 
-.show-annotations span a {
-  background: rgba(255, 20, 147, 0.5);
-}
+/* .show-annotations span a {
+    background: rgba(255, 20, 147, 0.5);
+} */
 
 .openseadragon-container span {
   /* background: rgba(0, 255, 255, 0.33); */
@@ -110,6 +114,55 @@
   white-space: nowrap;
   /* outline-style: solid;
     outline-color: blue; */
+}
+
+/* Social Auth Buttons */
+
+a.rdx-provider-button {
+  color: #fff;
+  padding: 1rem;
+}
+
+a.rdx-provider-button:hover {
+  color: lightgrey;
+}
+
+.rdx-provider-button.facebook {
+  background-color: #4267b2;
+}
+
+.rdx-provider-button.google {
+  background-color: #EA4335;
+}
+
+.rdx-provider-button.twitter {
+  background-color: #1DA1F2;
+}
+
+.rdx-provider-button.github {
+  background-color: #24292e;
+}
+
+.rdx-indented-help-block {
+  text-indent: 1.25rem;
+}
+
+.uk-input {
+  border-width: 3px;
+  width: 50%
+}
+
+.uk-button-primary {
+  background-color: #ea7c0f;
+}
+
+.uk-button-primary:hover,
+.uk-button-primary:active {
+  background-color: #e79544;
+}
+
+.uk-button-default {
+  font-size: 1.25rem;
 }
 
 /* Wagtail embedded objects */
@@ -664,7 +717,9 @@ p {
 
 .rx-breadcrumb,
 .rx-action-title,
-.rx-action-btn {
+.rx-action-btn,
+.rx-page-breadcrumb-item,
+.rx-page-breadcrumb {
   text-transform: uppercase;
   font-weight: bold;
   letter-spacing: 0.1em;
@@ -673,12 +728,37 @@ p {
   margin: 0;
 }
 
-.rx-breadcrumb-item:not(:last-child)::after {
+.rx-page-breadcrumb {
+  white-space: nowrap;
+}
+
+
+@media only screen and (min-width: 600px) {
+  .rx-page-breadcrumb {
+    display: none;
+  }
+  .rx-page-title-container {
+    padding-left: 0;
+  }
+}
+
+.rx-page-logo {
+  display: none;
+}
+
+.rx-breadcrumb-item:not(:last-child)::after,
+.rx-page-breadcrumb-item:not(:last-child)::after {
   content: "-";
-  padding: 0.5em;
+  padding: 0 0.5em;
+}
+
+.rx-page-title-container {
+  padding: 0 15px;
+  overflow-wrap: anywhere;
 }
 
 .rx-breadcrumb-item > a,
+.rx-page-breadcrumb-item > a,
 .rx-action-btn,
 .rx-icon-btn,
 .uk-dropdown-nav > li > a:hover {
@@ -691,6 +771,7 @@ p {
 }
 
 .rx-breadcrumb-item > a:hover,
+.rx-page-breadcrumb-item > a:hover,
 .rx-action-btn:hover,
 .rx-icon-btn:hover,
 .uk-dropdown-nav > li.uk-active > a {
@@ -1203,4 +1284,61 @@ p {
   display: flex;
   justify-content: space-between;
   width: 55px;
+}
+
+em {
+  color:inherit;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: 150%;
+  left: 50%;
+  margin-left: -60px;
+  font-size: 14px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.rx-btn-secondary {
+  border: 3px solid orange;
+  padding: .35em 1em;
+  color: orange;
+  opacity: 0.75;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rx-btn-secondary:hover {
+  color: orange;
+  opacity: 1;
+  transition: all ease-in-out 100ms;
 }

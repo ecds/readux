@@ -68,6 +68,7 @@ DJANGO_APPS = [
     'import_export',
 ]
 THIRD_PARTY_APPS = [
+    'background_task',
     'corsheaders',
     'crispy_forms',
     'allauth',
@@ -77,7 +78,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    'rest_framework',
+    # 'rest_framework',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -280,6 +281,13 @@ SOCIALACCOUNT_FORMS = {
 
 SOCIALACCOUNT_AUTO_SIGNUP = False
 
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email', 'public_profile']
+    }
+}
 
 # Translations
 # ------------------------------------------------------------------------------

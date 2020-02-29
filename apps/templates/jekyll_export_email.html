@@ -1,0 +1,38 @@
+
+{% block content %}
+
+<h1 class='uk-text-truncate'>
+  {{volume.label}}    
+</h1>
+{% endblock content %}
+{% block viewer %}
+  <div class='uk-flex-center' uk-grid>
+    <div class='uk-width-3-4'>
+      <div class='uk-padding'>
+        <h3>Static Site Export</h3>
+
+
+        {% if pr_url %}
+          <div class="alert alert-success">GitHub jekyll site update succeeded.</div>
+
+          <p>A new <a class="pullrequest-url" href="{{ pr_url }}">pull request</a> has been created
+          on your <a class="repo-url" href="{{ repo_url }}">GitHub repository</a> with all the latest
+          changes.  You can review the changes and merge them into <a href="{{ ghpages_url }}">your
+          published edition</a>.</p>
+        {% else %}
+          <div class="alert alert-success">GitHub Jekyll site export succeeded.</div>
+          <p>Your website export has been generated and saved to a new
+          GitHub repository at <a class="repo-url" href="{{ repo_url }}">{{ repo_url }}</a>.<br/>
+          After a few minutes, your annotated web edition should be accessible via GitHub Pages
+          at <a class="ghpages-url" href="{{ ghpages_url }}">{{ ghpages_url }}</a>.</p>
+
+          <p>For more information on using and customizing your site,
+          see the
+          <a href="https://help.github.com/categories/github-pages-basics/">Github
+          Pages help documentation</a>.</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+{% endblock viewer %}

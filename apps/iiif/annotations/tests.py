@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
 from django.urls import reverse
+from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
 import warnings
 from .views import AnnotationsForPage
@@ -53,7 +54,7 @@ class AnnotationTests(TestCase):
         ocr.h = 10
         ocr.content = "Obviously you're not a golfer"
         ocr.save()
-        assert ocr.content == "<span id='{pk}' style='height: 10px; width: 100px; font-size: 6.25px; letter-spacing: 0.3232758620689655px' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
+        assert ocr.content == "<span id='{pk}' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
         assert ocr.owner == User.objects.get(username='ocr')
 
     def test_invalid_ocr(self):
@@ -97,3 +98,20 @@ class AnnotationTests(TestCase):
         annotations = json.loads(response.content.decode('UTF-8-sig'))['resources']
         assert len(annotations) == self.canvas.annotation_set.filter(resource_type='cnt:ContentAsText', canvas=self.canvas).count()
         assert response.status_code == 200
+    
+    def test_annotation_style(self):
+        anno = Annotation.objects.all().first()
+        assert anno.style == ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(c=(anno.pk), h=str(anno.h), w=str(anno.w), f=str(anno.h / 1.6))
+
+    def test_annotation_style_serialization(self):
+        kwargs = {'vol': self.volume.pid, 'page': self.canvas.pid, 'version': 'v2'}
+        url = reverse('ocr', kwargs=kwargs)
+        response = self.client.get(url)
+        serialized_anno = json.loads(response.content.decode('UTF-8-sig'))['resources'][0]
+        assert serialized_anno['stylesheet']['type'] == 'CssStylesheet'
+        assert serialized_anno['stylesheet']['value'].startswith(".anno-{id}".format(id=serialized_anno['@id']))
+
+    def test_serialize_list_of_annotations(self):
+        data = json.loads(serialize('annotation_list', [self.canvas], is_list = True, owners = User.objects.all()))
+        assert data[0]['@type'] == 'sc:AnnotationList'
+        assert isinstance(data, list)

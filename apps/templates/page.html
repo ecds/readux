@@ -37,11 +37,11 @@
 </div> -->
 
   <nav class="" uk-navbar id="rx-nav">
-    <div class="uk-navbar-left" style="flex-wrap: unset;">
+    <div class="uk-navbar-left rx-page-navbar-left" style="flex-wrap: unset;">
       <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
         <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
       </a>
-      <div class="uk-navbar-nav">
+      <div class="uk-navbar-nav rx-page-navbar-nav">
         <div class="rx-page-title-container" style="flex: 2 2 auto; align-self: center;">
           <ul class="rx-page-breadcrumb" style="font-size: 0.75em;">
             <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
@@ -53,7 +53,7 @@
         </div>
       </div>
     </div>
-    <div class="uk-navbar-right">
+    <div class="uk-navbar-right rx-page-navbar-right">
       <a type="button" @click="toggleMoreInfo" class="rx-btn-secondary" v-bind:class="{ 'rx-btn-main-active' : showMoreInfo  }">
           more info 
       </a>

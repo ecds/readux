@@ -18,7 +18,7 @@ body {
 
 #viewer {
   width: 100%;
-  height: calc(100% - 193px);
+  height: calc(100% - 120px);
   position: absolute;
   left: 0;
   bottom: 0px;
@@ -72,10 +72,6 @@ body {
     box-sizing: border-box;
     z-index: -1;
 } */
-
-.uk-search-default {
-  width: 95% !important;
-}
 
 .manifest-info > a,
 .manifest-info > h3 {
@@ -723,13 +719,6 @@ p {
   white-space: nowrap;
 }
 
-
-
-
-.rx-page-navbar-left, .rx-page-navbar-nav, .rx-page-navbar-right {
-  align-items: flex-start;
-}
-
 .rx-page-logo {
   min-width: 65px;
 }
@@ -775,6 +764,10 @@ p {
   margin: 0em 0 3em;
 }
 
+.rx-info {
+  margin: 1rem 0;
+}
+
 .rx-info-title {
   border: 0.5px solid #e2e2e2;
   padding: 0.7em 1em 0.5em;
@@ -793,6 +786,7 @@ p {
 
 .rx-info-content {
   padding: 0.5em 0;
+  font-size: 0.9rem;
 }
 
 .rx-info-content-label {
@@ -1306,13 +1300,17 @@ em {
   visibility: visible;
 }
 
-.rx-btn-secondary {
-  border: 3px solid #e79544;
-  padding: .35em 1em;
+.rx-page-info-btn, .rx-btn-secondary, .rx-page-info-btn > .uk-icon-button {
   color: #e79544;
   opacity: 0.75;
   font-size: 1rem;
   font-weight: 600;
+}
+
+
+.rx-btn-secondary {
+  border: 3px solid #e79544;
+  padding: .35em 1em;
   white-space: nowrap;
 }
 
@@ -1321,6 +1319,12 @@ em {
   background-color: #e79544;
   opacity: 1;
   transition: all ease-in-out 100ms;
+}
+
+.rx-page-info-btn:hover {
+  opacity: 1;
+  transition: all ease-in-out 100ms;
+  color: #e79544;
 }
 
 .rx-btn-secondary:active {
@@ -1332,15 +1336,50 @@ em {
   .rx-page-logo {
     display: none;
   }
-
   .rx-page-title-container {
     padding: 0 15px 0 0;
     font-size: 0.9rem;
   }
-  .rx-btn-secondary {
-    border: 2px solid #e79544;
-    padding: .2em 0.75em;
-    color: #e79544;
-    font-weight: 500;
+
+}
+
+.rx-info-container {
+  position: absolute;
+  background: white;
+  padding: 2rem;
+  z-index: 2;
+  right: 0;
+  width: 50%;
+  bottom: 0;
+  overflow: scroll;
+  top: 0;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.rx-search-input {
+  border: none !important;
+}
+
+.rx-page-search-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rx-page-search-options {
+  display: block;
+}
+
+.rx-page-search-option-label {
+  display: block;
+}
+
+@media (max-width: 950px) {
+  .rx-info-container {
+    width: 100%;
+    left: 0;
+    right: 0;
+    padding: 0;
   }
 }

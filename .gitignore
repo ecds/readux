@@ -69,6 +69,7 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+.coveragerc
 # Packages
 *.egg
 *.egg-info
@@ -129,6 +130,7 @@ local.py
 venv
 cert*
 *.bk
+.ruby-version
 
 # Sphinx documentation
 docs/_build/

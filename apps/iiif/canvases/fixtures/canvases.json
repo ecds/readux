@@ -20,6 +20,13 @@
   }
 },
 {
+  "model": "canvases.iserver",
+  "pk": "ad697f1b-766c-4dd4-ab66-f40cff51fdd4",
+  "fields": {
+      "IIIF_IMAGE_SERVER_BASE": "http://fake.info"
+  }
+},
+{
   "model": "canvases.canvas",
   "pk": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
   "fields": {
@@ -42,8 +49,8 @@
       "summary": null,
       "manifest": "464d82f6-6ae5-4503-9afc-8e3cdd92a3f1",
       "position": 96,
-      "height": 3608,
-      "width": 1976,
+      "height": 1976,
+      "width": 3608,
       "IIIF_IMAGE_SERVER_BASE": "a7f1bd69-766c-4dd4-ab66-f4051fdd4cff",
       "is_starting_page": true
   }

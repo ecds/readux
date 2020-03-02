@@ -95,27 +95,34 @@
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
               <li>
-                <a href="/search/"><span class="uk-icon" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: bottom"></span></a>
+                <a href="/search/" title="Site Search"><span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: right"></span></a>
               </li>
               {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
-                  href="/admin/"><span class="uk-user" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: bottom"></span></a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}" title="Access Django Admin Site" href="/admin/">
+                  <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: right"></span>
+                </a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}"
-                  href="{% url 'users:detail' request.user.username  %}"><span class="uk-icon" uk-icon="icon: user" uk-tooltip="title: Your account; pos: bottom"></span></a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}" title="Your Account Details" href="{% url 'users:update'  %}">
+                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user" uk-tooltip="title: Your account; pos: right"></span>
+                </a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" href="{% url 'account_logout' %}"><span class="uk-icon" uk-icon="icon: sign-out" uk-tooltip="title: Logout; pos: bottom"></span></a>
+                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" title="Signout" href="{% url 'account_logout' %}">
+                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out" uk-tooltip="title: Logout; pos: right"></span>
+                </a>
               </li>
               {% else %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a href="{% url 'account_login' %}"><span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-in" uk-tooltip="title: Login; pos: bottom"></span></a>
+                <!-- <a href="{% url 'account_login' %}"> -->
+                <a href="#signin-modal" title="Sign in" uk-toggle>
+                  <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in" uk-tooltip="title: Sign in; pos: right"></span>
+                </a>
               </li>
               {% endif %}
           </ul>
@@ -131,11 +138,29 @@
           {% endfor %}
       {% endif %}
 
-      {% block modal %}{% endblock modal %}
+      {% block modal %}
+      {% endblock modal %}
 
       {% block content %}
       <p>Use this document as a way to quick start any new project.</p>
       {% endblock content %}
+
+      {# Modal for signin #}
+       <div id="signin-modal" class="uk-flex-top" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+          <button class="uk-modal-close-default" type="button" uk-close></button>
+          <section class="uk-modal-header">
+            <h2 class="uk-modal-title uk-text-center">
+            {% if user.is_authenticated %}
+                Connect Accounts
+            {% else %}
+              Sign in
+            {% endif %}
+            </h2>
+          </section>
+          {% include "snippets/socialaccount_buttons.html" %}
+        </div>
+      </div>
 
       {% block viewer %}{% endblock viewer %}
 

@@ -24,6 +24,3 @@ script:
 - py.test --cov=./apps
 after_success:
 - coveralls
-notifications:
-  slack:
-    secure: RXQj/Zk+bbhJnO1ZVbgj6SmYBB1a7MD9gyjoEETGXVZBeP8qhtiLJFqNeAlUf0mXqyBWZvsKlFzPLzJn1o6EcB2eUJsKaTFsCmRUwcdMDRddvAlEkyNfQ0zJq91LGo8v78jmslZvMOA9HPVZvOmlIGdgGax189AC3UJ5Vk1Mmpc=

@@ -31,6 +31,7 @@ class Canvas(models.Model):
     position = models.IntegerField()
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
+    # TODO: make this lowercase
     IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
     preferred_ocr = (
@@ -119,7 +120,7 @@ class Canvas(models.Model):
         # NOTE: The above query really should have a filter for resource_type=OCR but it currently returns an empty set with this parameter set.
         clean_words = []
         for word in words:
-            clean_word = BeautifulSoup(word.content).text
+            clean_word = BeautifulSoup(word.content, 'html.parser').text
             clean_words.append(clean_word)
         return ' '.join(clean_words)
 

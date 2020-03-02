@@ -14,11 +14,11 @@ class JekyllExportForm(forms.Form):
     mode = forms.ChoiceField(
         label='Export mode',
         choices=[
-            ('download', 'Download Jekyll site'),
+            ('download', 'Download Jekyll site export'),
             ('github', 'Publish Jekyll site on GitHub')
         ],
         initial='none',
-        widget=forms.RadioSelect,
+        widget=forms.RadioSelect(attrs={'class': 'uk-radio'}),
         help_text='Choose how to export your annotated volume.'
     )
     #: help text for export mode choices
@@ -83,6 +83,7 @@ class JekyllExportForm(forms.Form):
     #: github repository name to be created
     github_repo = forms.SlugField(
         label='GitHub repository name', required=False,
+        widget=forms.TextInput(attrs={'class': 'rdx-input uk-input'}),
         help_text='Name of the repository to be created or updated, which will also ' +
         'determine the GitHub pages URL.')
     # #: github repository to be updated, if update is selected
@@ -111,7 +112,11 @@ class JekyllExportForm(forms.Form):
 
         # initialize normally
         super(JekyllExportForm, self).__init__(*args, **kwargs)
-
+        # If the person has not aughorized GitHub access, remove the GitHub
+        # options and select download by default.
+        if 'github' not in user.socialaccount_list:
+            self.fields['mode'].choices = self.fields['mode'].choices[:1]
+            self.fields['mode'].widget.attrs={'class': 'uk-radio', 'checked': True}
         # # set annotation choices and default
         # self.fields['annotations'].choices = self.annotation_authors()
         # self.fields['annotations'].default = 'user'
@@ -119,9 +124,6 @@ class JekyllExportForm(forms.Form):
         # if len(self.fields['annotations'].choices) == 1:
         #     self.hide_annotation_choice = True
 
-        # if not user_has_github:
-            # would be nice to mark github options as disabled
-            # TODO: mark github radio button options as disabled
 
     def clean(self):
         super(JekyllExportForm, self).clean()

@@ -84,11 +84,16 @@ class Manifest(ClusterableModel):
     def baseurl(self):
         return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
 
+    # TODO: Maybe this should return the canvas object so we can replace
+    # the logic in the serializer that basically makes this same query
+    # to get the thumbnail.
     @property
     def start_canvas(self):
         first = self.canvas_set.all().exclude(is_starting_page=False).first()
         return first.identifier if first else self.canvas_set.all().first().identifier
     
+    # TODO: Is this needed? It doesn't seem to be called anywhere. Seems 
+    # we could just use the label as is?
     def autocomplete_label(self):
         return self.label
 

@@ -5,9 +5,21 @@ from django.conf import settings
 from apps.utils.fetch import fetch_url
 import config.settings.local as local_settings
 import xml.etree.ElementTree as ET
+import httpretty
+
+# Method to mock a response for testing.
+@httpretty.activate
+def get_fake_canvas_info(canvas):
+    iiif_image_info = '{"@context": "http://iiif.io/api/image/2/context.json", "@id": "https://images.readux.ecds.emory.edu:8443/cantaloupe/iiif/2/osh-formal-mir_OSH-cover1.jpg", "protocol": "http://iiif.io/api/image", "width": 3000, "height": 3000, "sizes": [{"width": 122, "height": 106}, {"width": 245, "height": 212}, {"width": 490, "height": 423}, {"width": 979, "height": 847}, {"width": 1958, "height": 1694}, {"width": 3916, "height": 3387}], "tiles": [{"width": 979, "height": 847, "scaleFactors": [1, 2, 4, 8, 16, 32]}], "profile": ["http://iiif.io/api/image/2/level2.json", {"formats": ["jpg", "tif", "gif", "png"], "maxArea": 400000000, "qualities": ["bitonal", "default", "gray", "color"], "supports": ["regionByPx", "sizeByW", "sizeByWhListed", "cors", "regionSquare", "sizeByDistortedWh", "sizeAboveFull", "canonicalLinkHeader", "sizeByConfinedWh", "sizeByPct", "jsonldMediaType", "regionByPct", "rotationArbitrary", "sizeByH", "baseUriRedirect", "rotationBy90s", "profileLinkHeader", "sizeByForcedWh", "sizeByWh", "mirroring"]}]}'
+    httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
+    response = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    return response
 
 def get_canvas_info(canvas):
     """ Given a url, this function returns a dictionary of all collections."""
+    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+        return get_fake_canvas_info(canvas)
+
     return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
 
 # TODO figure out a way to test the fetch

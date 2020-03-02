@@ -45,10 +45,6 @@ class Collection(models.Model):
         super(Collection, self).save(*args, **kwargs)
 
     def make_thumbnail(self):
-
-#         THUMB_SIZE = (400, 500)
-#         image = Image.open(self.original)
-#         image.thumbnail(THUMB_SIZE, Image.ANTIALIAS)
         # If height is higher we resize vertically, if not we resize horizontally
         size = (400, 500)
         image = Image.open(self.original)
@@ -109,15 +105,6 @@ class Collection(models.Model):
 
         thefilename = thename + '_header' + theextension
 
-        # if thumb_extension in ['.jpg', '.jpeg']:
-        #     FtTYPE = 'JPEG'
-        # elif thumb_extension == '.gif':
-        #     FtTYPE = 'GIF'
-        # elif thumb_extension == '.png':
-        #     FtTYPE = 'PNG'
-        # else:
-        #     return False    # Unrecognized file type
-
         header_io = BytesIO()
         cropped_image.save(header_io, format=FTYPE)
         header_io.seek(0)
@@ -127,55 +114,3 @@ class Collection(models.Model):
         temp_thumb.close()
                 
         return True
-
-#     @property
-#     def thumbnail_crop_volume(self):
-#         if self.height > self.width:
-#             # portrait
-#             return "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
-#         else:
-#             # landscape
-#             return "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
-
-
-#     def make_header(self):
-#         x = (0)
-#         y = (0)
-#         w = (1000)
-#         h = (200)
-# 
-#         images = Image.open(self.original)
-#         images = images.crop((x, y, w+x, h+y))
-# 
-#         header_io = BytesIO()
-#         if thumb_extension in ['.jpg', '.jpeg']:
-#             FtTYPE = 'JPEG'
-#         elif thumb_extension == '.gif':
-#             FtTYPE = 'GIF'
-#         elif thumb_extension == '.png':
-#             FtTYPE = 'PNG'
-#         else:
-#             return False    # Unrecognized file type
-# 
-#         thename, theextension = os.path.splitext(self.original.name)
-#         theextension = theextension.lower()
-# 
-#         thefilename = thename + '_header' + theextension
-# 
-#         images.save(header_io, format=FtTYPE)
-#         header_file = InMemoryUploadedFile(header_io, None, thefilename, FtTYPE, header_io.len, None)
-#         self.header.save(thefilename, ContentFile(header_io.read()), save=False)
-#         header_io.close()
-#                 
-#         return True
-    #upload = models.FileField(upload_to='uploads/', null=True)
-    #created_at = models.DateTimeField()
- #    
-#     def __str__(self):
-#         return self.label
-#     
-#     def save(self, *args, **kwargs):
-#         ''' On create, set create time '''
-#         if not self.id:
-#             self.created_at = timezone.now()
-#         return super(User, self).save(*args, **kwargs)

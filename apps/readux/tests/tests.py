@@ -530,3 +530,20 @@ class AnnotationTests(TestCase):
     def test_item_none(self):
         anno = UserAnnotation()
         assert anno.item is None
+
+    def test_parse_mirador_anno_from_string(self):
+        anno = UserAnnotation(oa_annotation=self.valid_mirador_annotations['text']['oa_annotation'])
+        anno.save()
+        assert anno.content == '<p>mcoewmewom</p>'
+    
+    def test_parse_mirador_anno_when_on_is_dict(self):
+        oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        oa_annotation['on'] = oa_annotation['on'][0]
+        assert isinstance(oa_annotation['on'], dict)
+        anno = UserAnnotation(oa_annotation=oa_annotation)
+        anno.save()
+        assert anno.content == '<p>mcoewmewom</p>'
+
+    # def test_user_anno_with_no_oa_annotation(self):
+    #     anno = UserAnnotation()
+    #     anno.save()

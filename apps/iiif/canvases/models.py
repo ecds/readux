@@ -117,7 +117,7 @@ class Canvas(models.Model):
     #     "Empty attribute to hold the result of requests to get OCR data."
     #     return None
         words = Annotation.objects.filter(canvas=self.id).order_by('order')
-        # NOTE: The above query really should have a filter for resource_type=OCR but it currently returns an empty set with this parameter set.
+        # TODO: The above query really should have a filter for resource_type=OCR but it currently returns an empty set with this parameter set.
         clean_words = []
         for word in words:
             clean_word = BeautifulSoup(word.content, 'html.parser').text

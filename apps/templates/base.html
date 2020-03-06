@@ -95,24 +95,24 @@
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
               <li>
-                <a href="/search/" title="Site Search"><span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: right"></span></a>
+                <a href="/search/" aria-label="full site search" title="Site Search"><span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: right"></span></a>
               </li>
               {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}" title="Access Django Admin Site" href="/admin/">
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}" aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
                   <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: right"></span>
                 </a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}" title="Your Account Details" href="{% url 'users:update'  %}">
+                <a class="{% if url_name == 'index' %}uk-active{% endif %}" aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
                   <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user" uk-tooltip="title: Your account; pos: right"></span>
                 </a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" title="Signout" href="{% url 'account_logout' %}">
+                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
                   <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out" uk-tooltip="title: Logout; pos: right"></span>
                 </a>
               </li>
@@ -120,7 +120,7 @@
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <!-- <a href="{% url 'account_login' %}"> -->
-                <a href="#signin-modal" title="Sign in" uk-toggle>
+                <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-toggle>
                   <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in" uk-tooltip="title: Sign in; pos: right"></span>
                 </a>
               </li>

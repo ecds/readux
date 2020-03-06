@@ -1303,3 +1303,12 @@ em {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+legend {
+}
+
+fieldset {
+  margin: inherit;
+  border: 0;
+  padding: inherit;
+}

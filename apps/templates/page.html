@@ -100,7 +100,7 @@
                   {% for answer in qs1 %}{% if answer.canvas__manifest__label in volume.label %}
                   <li><a
                       href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas__pid }}?q={{ request.GET.q }}&type={{ request.GET.type }}"
-                      target="_blank">Canvas {{ answer.canvas__position }} - number of results {{ answer.canvas__position__count }}{{ answer.rank }}</a></li>
+                      target="">Canvas {{ answer.canvas__position }} - number of results {{ answer.canvas__position__count }}{{ answer.rank }}</a></li>
                   {% endif %}{% endfor %}</ul>
                 {% elif request.GET.q  and not qs1 %}
                 <p>No results in the text in this volume</p>{% endif %}
@@ -111,7 +111,7 @@
                   {% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
                   <li><a
                        href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}?q={{ request.GET.q }}&type={{ request.GET.type }}"
-                       target="_blank">Canvas {{ answer.canvas.position }}</a></li>
+                       target="">Canvas {{ answer.canvas.position }}</a></li>
                   {% endif %}{% endfor %}</ul>
                 {% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
                 {% endif %}

@@ -92,7 +92,7 @@ class UserAnnotation(AbstractAnnotation):
         elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) > 1:
             # Assume tagging
             self.motivation = self.TAGGING
-            text = [resource for resource in self.oa_annotation['resource'] if resource['@type'] is 'dctypes:Text']
+            text = [resource for resource in self.oa_annotation['resource'] if resource['@type'] == 'dctypes:Text']
             if len(text) > 0:
                 self.content = text[0]['chars']
         
@@ -174,6 +174,7 @@ class UserAnnotation(AbstractAnnotation):
 # TODO: Override the save method and move this there.
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
+    # if service.validate_oa_annotation(instance.oa_annotation):
     instance.parse_mirador_annotation()
 
 @receiver(signals.post_save, sender=UserAnnotation)

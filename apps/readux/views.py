@@ -371,7 +371,7 @@ class ExportDownload(TemplateView):
         filename = kwargs['filename']
         context['filename'] = filename
         # check to see if the file exists
-        if path.exists(filename):
+        if path.exists(JekyllSiteExport.get_zip_path(filename)):
             context['file_exists'] = True
         else:
             context['file_exists'] = False

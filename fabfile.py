@@ -62,8 +62,7 @@ def _restart_webserver():
     run('sudo service apache2 restart')
 
 def _restart_export_task():
-    run('kill $(<{rp}/export.pid)').format(rp=ROOT_PATH)
-    run('nohup {v}/bin/python manage.py process_tasks > /dev/null 2>&1 & echo $! > {rp}/export.pid').format(v=VENV_PATH, rp=ROOT_PATH)
+    run('bash {rp}/restart_export_task.sh'.format(rp=ROOT_PATH))
 
 def _clean_old_builds():
     with cd(RELEASE_PATH):

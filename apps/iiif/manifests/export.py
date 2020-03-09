@@ -185,8 +185,11 @@ class JekyllSiteExport(object):
     def get_zip(self):
         return self.website_zip()
 
+    def get_zip_path(filename):
+        return os.path.join(tempfile.gettempdir(), filename)
+
     def get_zip_file(self, filename):
-        f=open(os.path.join(tempfile.gettempdir(), filename),"rb")
+        f=open(JekyllSiteExport.get_zip_path(filename),"rb")
         data=f.read()
         f.close()
         return data

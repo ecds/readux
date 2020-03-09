@@ -1,5 +1,9 @@
 /* These styles are generated from project.scss. */
 
+body {
+  font-size: 18px;
+}
+
 .alert-debug {
   color: black;
   background-color: white;
@@ -112,6 +116,55 @@
     white-space: nowrap;
     /* outline-style: solid;
     outline-color: blue; */
+}
+
+/* Social Auth Buttons */
+
+a.rdx-provider-button {
+  color: #fff;
+  padding: 1rem;
+}
+
+a.rdx-provider-button:hover {
+  color: lightgrey;
+}
+
+.rdx-provider-button.facebook {
+  background-color: #4267b2;
+}
+
+.rdx-provider-button.google {
+  background-color: #EA4335;
+}
+
+.rdx-provider-button.twitter {
+  background-color: #1DA1F2;
+}
+
+.rdx-provider-button.github {
+  background-color: #24292e;
+}
+
+.rdx-indented-help-block {
+  text-indent: 1.25rem;
+}
+
+.uk-input {
+  border-width: 3px;
+  width: 50%
+}
+
+.uk-button-primary {
+  background-color: #ea7c0f;
+}
+
+.uk-button-primary:hover,
+.uk-button-primary:active {
+  background-color: #e79544;
+}
+
+.uk-button-default {
+  font-size: 1.25rem;
 }
 
 /* Wagtail embedded objects */

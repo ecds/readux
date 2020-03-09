@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}User: {{ object.username }}{% endblock %}
 
@@ -26,6 +27,10 @@
 {% if object == request.user %}
 <!-- Action buttons -->
 <div class="">
+  {% if "github" not in request.user.socialaccount_list %}
+    {% include "../snippets/github_authorize.html" %}
+  {% endif %}
+
   <p class="uk-margin-remove-top">You may update your personal information or E-mail below.</p>
   <p>{{ page.paragraph }}</p>
   <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">
@@ -38,6 +43,13 @@
     <div class="rx-btn rx-btn-extension">
       <i class="fas fa-envelope" aria-hidden="true"></i>
       My Email
+    </div>
+  </a>
+  <a class="btn btn-primary" href="{% url 'socialaccount_connections' %}" role="button">
+    <div class="rx-btn rx-btn-extension">
+      <i class="" aria-hidden="true"></i>
+      <i class="fas fa-share-alt" aria-hidden="true"></i>
+      Mange Account Connections
     </div>
   </a>
   <!-- Your Stuff: Custom user template urls -->

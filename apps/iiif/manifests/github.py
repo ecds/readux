@@ -60,9 +60,15 @@ class GithubApi(object):
         '''
         return cls(cls.github_token(user))
 
-    def oauth_scopes(self):
+    def oauth_scopes(self, test=False):
         'Get a list of scopes available for the current oauth token'
-        response = self.session.head('%s/user' % self.url)
+        # TODO: httpretty does not like the HEAD method, so this is a quick
+        # workaround for testing. It might be fine to just use GET.
+        if test:
+            response = self.session.get('%s/user' % self.url)
+        else:
+            response = self.session.head('%s/user' % self.url)
+
         if response.status_code == requests.codes.ok:
             return response.headers['x-oauth-scopes'].split(', ')
 

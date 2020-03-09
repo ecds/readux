@@ -3,8 +3,10 @@ from django.test import RequestFactory
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from .views import ManifestDetail, ManifestSitemap, ManifestRis
+from allauth.socialaccount.models import SocialAccount
+from .views import ManifestDetail, ManifestSitemap, ManifestRis, JekyllExport
 from .models import Manifest
+from .forms import JekyllExportForm
 from ..canvases.models import Canvas
 from .export import IiifManifestExport, JekyllSiteExport
 from iiif_prezi.loader import ManifestReader
@@ -33,7 +35,7 @@ class ManifestTests(TestCase):
         self.assumed_pid = 'readux:st7r6'
 
     def test_validate_iiif(self):
-        view = ManifestDetail.as_view()
+        # view = ManifestDetail.as_view()
         volume = Manifest.objects.all().first()
         kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
         url = reverse('ManifestRender', kwargs=kwargs)
@@ -75,8 +77,32 @@ class ManifestTests(TestCase):
         ris = ManifestRis()
         assert ris.get_context_data(volume=self.assumed_pid)['volume'] == self.volume
 
+    def test_plain_export_view(self):
+        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
+        url = reverse('PlainExport', kwargs=kwargs)
+        response = self.client.get(url)
+        assert response.status_code == 200
+
     def test_autocomplete_label(self):
         assert Manifest.objects.all().first().autocomplete_label() == Manifest.objects.all().first().label
 
     def test_absolute_url(self):
         assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)
+
+    def test_form_mode_choices_no_github(self):
+        form = JekyllExportForm(user=self.user)
+        assert len(form.fields['mode'].choices) == 1
+        assert form.fields['mode'].choices[0] != 'github'
+
+    def test_form_mode_choices_with_github(self):
+        sa = SocialAccount(provider='github', user=self.user)
+        sa.save()
+        form = JekyllExportForm(user=self.user)
+        assert len(form.fields['mode'].choices) == 2
+        assert form.fields['mode'].choices[1][0] == 'github'
+
+    def test_manifest_search_vector_exists(self):
+        assert self.volume.search_vector is None
+        self.volume.save()
+        self.volume.refresh_from_db()
+        assert self.volume.search_vector is not None

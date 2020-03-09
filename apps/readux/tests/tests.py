@@ -3,7 +3,7 @@ from django.test import RequestFactory
 from django.conf import settings
 # from django.core.management import call_command
 import warnings
-from .annotations import Annotations, AnnotationCrud
+from ..annotations import Annotations, AnnotationCrud
 # from .views import VolumesList
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -11,7 +11,7 @@ from django.template import Context, Template
 from django.core.serializers import serialize
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
-from .models import UserAnnotation
+from ..models import UserAnnotation
 from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions
 from urllib.parse import urlencode
 from cssutils import parseString
@@ -431,10 +431,13 @@ class AnnotationTests(TestCase):
         response = self.client.get(url)
         assert response.context_data['volume'] == self.manifest
 
-    # TODO This view maybe not needed?
     def test_export_options_view(self):
-        url = reverse('export', kwargs={'volume': self.manifest.pid})
-        response = self.client.get(url)
+        kwargs = {'volume': self.manifest.pid}
+        url = reverse('export', kwargs=kwargs)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = ExportOptions.as_view()(request, username=self.user_a.username, volume=self.manifest.pid)
+        assert response.status_code == 200
 
     def test_motivation_is_commeting_by_default(self):
         self.create_user_annotations(1, self.user_a)
@@ -527,3 +530,20 @@ class AnnotationTests(TestCase):
     def test_item_none(self):
         anno = UserAnnotation()
         assert anno.item is None
+
+    def test_parse_mirador_anno_from_string(self):
+        anno = UserAnnotation(oa_annotation=self.valid_mirador_annotations['text']['oa_annotation'])
+        anno.save()
+        assert anno.content == '<p>mcoewmewom</p>'
+    
+    def test_parse_mirador_anno_when_on_is_dict(self):
+        oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        oa_annotation['on'] = oa_annotation['on'][0]
+        assert isinstance(oa_annotation['on'], dict)
+        anno = UserAnnotation(oa_annotation=oa_annotation)
+        anno.save()
+        assert anno.content == '<p>mcoewmewom</p>'
+
+    # def test_user_anno_with_no_oa_annotation(self):
+    #     anno = UserAnnotation()
+    #     anno.save()

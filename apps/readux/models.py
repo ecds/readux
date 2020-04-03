@@ -93,8 +93,8 @@ class UserAnnotation(AbstractAnnotation):
             # Assume tagging
             self.motivation = self.TAGGING
             text = [resource for resource in self.oa_annotation['resource'] if resource['@type'] == 'dctypes:Text']
-            if len(text) > 0:
-                self.content = text[0]['chars']
+            # if len(text) > 0:
+            self.content = text[0]['chars']
         
         # Replace the ID given by Mirador with the Readux given ID
         if ('stylesheet' in self.oa_annotation):

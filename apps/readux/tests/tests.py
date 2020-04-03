@@ -1,10 +1,8 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
-# from django.core.management import call_command
 import warnings
 from ..annotations import Annotations, AnnotationCrud
-# from .views import VolumesList
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.template import Context, Template
@@ -12,7 +10,7 @@ from django.core.serializers import serialize
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from ..models import UserAnnotation
-from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions
+from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions, AnnotationsCount
 from urllib.parse import urlencode
 from cssutils import parseString
 import json
@@ -477,9 +475,20 @@ class AnnotationTests(TestCase):
         assert anno.tags.exists()
         assert anno.tags.count() == 2
         assert anno.motivation == UserAnnotation.TAGGING
+        assert anno.content == '<p>mcoewmewom</p>'
         assert 'tag' in anno.tag_list
         assert 'other tag' in anno.tag_list
-    
+
+    def test_updating_annotation_with_tags(self):
+        self.create_user_annotations(1, self.user_a)
+        anno = UserAnnotation.objects.all().first()
+        anno.oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
+        anno.save()
+        anno.oa_annotation = json.loads(serialize('annotation', [anno]))
+        anno.save()
+        anno = UserAnnotation.objects.get(pk=anno.pk)
+        assert anno.tags.count() == 2
+        
     def test_deleting_tags(self):
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
@@ -544,6 +553,14 @@ class AnnotationTests(TestCase):
         anno.save()
         assert anno.content == '<p>mcoewmewom</p>'
 
-    # def test_user_anno_with_no_oa_annotation(self):
-    #     anno = UserAnnotation()
-    #     anno.save()
+    def test_user_annotation_count(self):
+        self.create_user_annotations(3, self.user_a)
+        kwargs = {'volume': self.manifest.pid, 'page': self.canvas.pid}
+        url = reverse('_anno_count', kwargs=kwargs)
+        request = self.factory.get(url)
+        request.user = self.user_a
+        response = AnnotationsCount.as_view()(request, volume=self.manifest.pid, page=self.canvas.pid)
+        assert response.context_data['volume'] == self.manifest
+        assert response.context_data['page'] == self.canvas
+        assert response.context_data['user_annotation_page_count'] == 3
+        assert response.context_data['user_annotation_count'] == 3

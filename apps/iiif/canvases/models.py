@@ -123,9 +123,33 @@ class Canvas(models.Model):
             clean_word = BeautifulSoup(word.content, 'html.parser').text
             clean_words.append(clean_word)
         return ' '.join(clean_words)
+    
+    def save(self, *args, **kwargs):
+        if self._state.adding or not self.annotation_set.all().exists():
+            self.__add_ocr()
+        super(Canvas, self).save(*args, **kwargs)
 
     def __str__(self):
         return str(self.pid)
+    
+    def __add_ocr(self):
+        word_order = 1
+        ocr = services.get_ocr(self)
+        if ocr is not None:
+            for word in ocr:
+                if word == '' or 'content' not in word or not word['content'] or word['content'].isspace():
+                    continue
+                a = Annotation()
+                a.canvas = self
+                a.x = word['x']
+                a.y = word['y']
+                a.w = word['w']
+                a.h = word['h']
+                a.resource_type = a.OCR
+                a.content = word['content']
+                a.order = word_order
+                a.save()
+                word_order += 1
 
     class Meta:
         ordering = ['position']
@@ -136,36 +160,8 @@ def set_dimensions(sender, instance, **kwargs):
       instance.width = instance.image_info['width']
       instance.height = instance.image_info['height']
 
-# TODO We need to support multiple OCR types for canvases.
-@receiver(signals.post_save, sender=Canvas)
-def add_ocr(sender, instance, **kwargs):
-    result = None
-    ocr = None
-    if instance.default_ocr == "line":
-        result = services.fetch_alto_ocr(instance)
-        ocr = services.add_alto_ocr(instance, result)
-    elif instance.default_ocr == "word" or instance.default_ocr == "both":
-        result = services.fetch_positional_ocr(instance)
-        ocr = services.add_positional_ocr(instance, result)
-    word_order = 1
-    if ocr is not None:
-        for word in ocr:
-            if word == '':
-                continue
-            a = Annotation()
-            a.canvas = instance
-            a.x = word['x']
-            a.y = word['y']
-            a.w = word['w']
-            a.h = word['h']
-            a.resource_type = a.OCR
-            a.content = word['content']
-            a.order = word_order
-            a.save()
-            word_order += 1
-
 class Meta:
-    # Translators: admin:skip
+        # Translators: admin:skip
     verbose_name = 'canvas'
     # Translators: admin:skip
     verbose_name_plural = 'canvases'

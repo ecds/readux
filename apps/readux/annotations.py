@@ -3,13 +3,14 @@ from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
+from django.contrib.auth import get_user_model
 from .models import UserAnnotation
-from ..iiif.canvases.models import Canvas
-from ..iiif.canvases.models import Manifest
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.canvases.models import Manifest
 import json
 import uuid
-from ..users.models import User
 
+User = get_user_model()
 
 class Annotations(ListView):
 

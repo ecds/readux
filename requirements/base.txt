@@ -9,7 +9,7 @@ progress
 
 # Django
 # ------------------------------------------------------------------------------
-Django==2.1.15  # https://www.djangoproject.com/
+Django==2.2.10  # https://www.djangoproject.com/
 django-environ==0.4.5  # https://github.com/joke2k/django-environ
 django-model-utils==3.1.2  # https://github.com/jazzband/django-model-utils
 django-allauth==0.41.0  # https://github.com/pennersr/django-allauth

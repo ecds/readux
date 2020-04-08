@@ -1,31 +1,35 @@
+'''
+'''
+import json
+from datetime import datetime
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.core.serializers import serialize
 from allauth.socialaccount.models import SocialAccount
-from .views import ManifestDetail, ManifestSitemap, ManifestRis, JekyllExport
-from .models import Manifest
-from .forms import JekyllExportForm
-from ..canvases.models import Canvas
-from .export import IiifManifestExport, JekyllSiteExport
 from iiif_prezi.loader import ManifestReader
-import io
-import json
-import logging
-import os
-import re
-import tempfile
-import zipfile
+from apps.iiif.manifests.views import ManifestSitemap, ManifestRis
+from apps.iiif.manifests.models import Manifest
+from apps.iiif.manifests.forms import JekyllExportForm
+from apps.iiif.manifests.tests.factories import ManifestFactory
+from apps.iiif.canvases.tests.factories import CanvasFactory
 
 User = get_user_model()
 
 class ManifestTests(TestCase):
-    fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+    fixtures = [
+        'users.json',
+        'kollections.json',
+        'manifests.json',
+        'canvases.json',
+        'annotations.json'
+    ]
 
     def setUp(self):
-        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-        self.user = get_user_model().objects.get(pk=1)
+        # fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+        self.user = get_user_model().objects.get(pk=111)
         self.factory = RequestFactory()
         self.client = Client()
         self.volume = Manifest.objects.get(pk='464d82f6-6ae5-4503-9afc-8e3cdd92a3f1')
@@ -106,3 +110,19 @@ class ManifestTests(TestCase):
         self.volume.save()
         self.volume.refresh_from_db()
         assert self.volume.search_vector is not None
+
+    def test_multiple_starting_canvases(self):
+        volume = ManifestFactory.create()
+        for num in range(4):
+            CanvasFactory.create(manifest=volume, is_starting_page=True)
+        manifest = json.loads(
+            serialize(
+                'manifest',
+                [volume],
+                version='v2',
+                annotators='Tom',
+                exportdate=datetime.utcnow()
+            )
+        )
+        first_canvas = volume.canvas_set.all().first()
+        assert manifest['thumbnail']['@id'] == '{b}/{p}/full/600,/0/default.jpg'.format(b=first_canvas.IIIF_IMAGE_SERVER_BASE, p=first_canvas.pid)

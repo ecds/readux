@@ -15,10 +15,10 @@ class JekyllExportForm(forms.Form):
         label='Export mode',
         choices=[
             ('download', 'Download Jekyll site export'),
-            ('github', 'Publish Jekyll site on GitHub')
+            ('github', 'Publish Jekyll site on GitHub'),
         ],
-        initial='none',
-        widget=forms.RadioSelect(attrs={'class': 'uk-radio'}),
+        # initial='none',
+        # widget=forms.RadioSelect(attrs={'class': 'uk-radio'}),
         help_text='Choose how to export your annotated volume.'
     )
     #: help text for export mode choices

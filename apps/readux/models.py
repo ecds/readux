@@ -115,8 +115,8 @@ class UserAnnotation(AbstractAnnotation):
         return self.svg is not None
 
     def __set_xywh_text_anno(self):
-        if (self.__is_text_annotation() is None):
-            return None
+        # if (self.__is_text_annotation() is None):
+        #     return None
         start_position = self.start_selector.order
         end_position = self.end_selector.order
         text = Annotation.objects.filter(

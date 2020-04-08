@@ -1,3 +1,6 @@
+from datetime import datetime
+import json
+import logging
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -18,9 +21,6 @@ from .forms import JekyllExportForm
 from .tasks import github_export_task
 from .tasks import download_export_task
 from apps.users.models import User
-from datetime import datetime
-import json
-import logging
 import config.settings.local as settings
 
 logger = logging.getLogger(__name__)
@@ -123,36 +123,14 @@ class JekyllExport(TemplateView):
             context['mode'] = "download"
             return render(request, self.template_name, context)
 
-        else: #github exports
-            context = self.get_context_data()
-            manifest_pid = manifest.pid
-            task = github_export_task(manifest_pid, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user_id=self.request.user.id);
+        #github exports
+        context = self.get_context_data()
+        manifest_pid = manifest.pid
+        task = github_export_task(manifest_pid, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user_id=self.request.user.id);
 
-            # TODO replace this template with a note explaining that they will receive email
-            # TODO move email sending to the background task
-            #repo_url, ghpages_url, pr_url = ['foo', 'bar', 'baz']
-            #context['repo_url'] = repo_url
-            #context['ghpages_url'] = ghpages_url
-            #context['pr_url'] = pr_url
-
-            # context =  Context({ 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url })
-            # context =  { 'repo_url': repo_url, 'ghpages_url': ghpages_url, 'pr_url': pr_url }
-            #context['request'] = request
-            #email_contents = get_template('jekyll_export_email.html').render(context)
-            #text_contents = get_template('jekyll_export_email.txt').render(context)
-
-            # send_mail(
-            #     'Your Readux site export is ready!',
-            #     text_contents,
-            #     settings.READUX_EMAIL_SENDER,
-            #     [request.user.email],
-            #     fail_silently=False,
-            #     html_message=email_contents
-            # )
-
-            context['email'] = request.user.email
-            context['mode'] = "github"
-            return render(request, self.template_name, context)
+        context['email'] = request.user.email
+        context['mode'] = "github"
+        return render(request, self.template_name, context)
 #            return JsonResponse(status=200, data=[repo_url, ghpages_url, pr_url], safe=False)
 
 

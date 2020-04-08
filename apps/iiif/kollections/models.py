@@ -19,6 +19,7 @@ class Collection(models.Model):
     metadata = JSONField(null=True)
     upload = models.FileField(upload_to='uploads/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     original = models.ImageField(upload_to='originals/', null=True, help_text="Upload the Original Image and the Thumbnail and Banner will be created automatically!")
     header = models.ImageField(upload_to='headers/', null=True, blank=True, help_text="You do not need to upload this file.")
     thumbnail = models.ImageField(upload_to='thumbnails/', null=True, blank=True, help_text="You do not need to upload this file.")

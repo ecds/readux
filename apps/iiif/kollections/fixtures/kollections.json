@@ -12,7 +12,8 @@
       "attribution": null,
       "metadata": "[{}]",
       "upload": "uploads/00000001.jp2",
-      "created_at": "2019-04-04T17:15:36.507Z"
+      "created_at": "2019-04-04T17:15:36.507Z",
+      "updated_at": "2019-04-04T17:15:36.507Z"
   }
 }, {
   "model": "kollections.collection",
@@ -28,6 +29,7 @@
       "attribution": null,
       "metadata": "[{}]",
       "upload": "uploads/00000001.jp2",
-      "created_at": "2019-04-04T17:15:36.507Z"
+      "created_at": "2019-04-04T17:15:36.507Z",
+      "updated_at": "2019-04-04T17:15:36.507Z"
   }
 }]

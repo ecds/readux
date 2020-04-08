@@ -2,13 +2,13 @@ from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
 from django.core.management import call_command
-import config.settings.local as settings
-from .models import Canvas, IServer
-from . import services
-from .factories import CanvasFactory
+from apps.iiif.canvases.models import Canvas, IServer
+from apps.iiif.canvases import services
+from apps.iiif.canvases.tests.factories import CanvasFactory
 from apps.iiif.canvases.apps import CanvasesConfig
 from apps.iiif.manifests.models import Manifest
 from io import StringIO
+import config.settings.local as settings
 import json
 import httpretty
 import re
@@ -234,3 +234,24 @@ class CanvasTests(TestCase):
         out = StringIO()
         call_command('rebuild_ocr', stdout=out)
         assert 'ERROR: your must provide a manifest or canvas pid' in out.getvalue()
+
+    # def test_command_rebuild_ocr(self):
+    #     iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
+    #     self.canvas.IIIF_IMAGE_SERVER_BASE = iiif_server
+    #     self.canvas.save()
+    #     out = StringIO()
+    #     self.canvas.label = 'karl'
+    #     call_command('rebuild_ocr', canvas=self.canvas.pid, testing=True, stdout=out)
+    #     assert 'yup' in out.getvalue()
+    #     # ocr = canvas.annotation_set.all().first()
+    #     # assert ocr.h == 43
+    #     # assert ocr.w == 89
+    #     # assert ocr.x == 459
+    #     # assert ocr.y == 391
+    #     # assert 'Jordan' in ocr.content
+    #     # assert len(canvas.annotation_set.all()) == 1
+    
+    def test_no_alto_for_internet_archive(self):
+        iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://iiif.archivelab.org/iiif/')
+        canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE=iiif_server, manifest=self.canvas.manifest)
+        assert services.fetch_alto_ocr(canvas) is None

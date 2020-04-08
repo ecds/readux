@@ -2,9 +2,9 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers import serialize
-from .views import ManifestsForCollection, CollectionSitemap
-from .models import Collection
-from ..manifests.models import Manifest
+from apps.iiif.kollections.views import ManifestsForCollection, CollectionSitemap
+from apps.iiif.kollections.models import Collection
+from apps.iiif.manifests.models import Manifest
 import config.settings.local as settings
 from os import path
 from PIL import Image

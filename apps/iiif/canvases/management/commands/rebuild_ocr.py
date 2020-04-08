@@ -5,6 +5,7 @@ from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases import services
 from progress.bar import Bar
+import httpretty
 
 User = get_user_model()
 
@@ -20,8 +21,18 @@ class Command(BaseCommand):
             '--manifest',
             help='Rebuild OCR for entire manifest/volume with supplied pid.',
         )
+        parser.add_argument(
+            '--testing',
+            help='Tells command to mock http requests with testing',
+            default=False
+        )
 
     def handle(self, *args, **options):
+    #     self.stdout.write(self.style.ERROR('$$$$$$$$$$$$$$$$$$$$$'))
+    #     self.stdout.write(self.style.ERROR(options['testing']))
+    #     self.stdout.write(self.style.ERROR('$$$$$$$$$$$$$$$$$$$$$')  )
+    #     if options['testing']:
+    #         self.stdout.write('yup, testing')
         if options['manifest']:
             try:
                 manifest = Manifest.objects.get(pid = options['manifest'])
@@ -32,17 +43,16 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR('ERROR: manifest not found with pid {m}'.format(m=options['manifest'])))
         elif options['canvas']:
             try:
-                canvas = Canvas.objects.get(pid=options['canvas'])
-                self.__rebuild(canvas)
+                canvas = Canvas.objects.get(pid=options['canvas'])                    
+
+                self.__rebuild(canvas, options['testing'])
                 self.stdout.write(self.style.SUCCESS('OCR rebuilt for canvas {c}'.format(c=options['canvas'])))
             except Canvas.DoesNotExist:
                 self.stdout.write(self.style.ERROR('ERROR: canvas not found with pid {p}'.format(p=options['canvas'])))
         else:
             self.stdout.write(self.style.ERROR('ERROR: your must provide a manifest or canvas pid'))
-
-            # self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))
     
-    def __rebuild(self, canvas):
+    def __rebuild(self, canvas, testing=False):
         if not canvas.annotation_set.exists():
             canvas.save()
         else:
@@ -52,32 +62,32 @@ class Command(BaseCommand):
 
             word_order = 1
             self.stdout.write('Adding OCR for canvas {c}'.format(c=canvas.pid))
-            with Bar('Processing', max=len(ocr)) as bar:
+            with Bar('Processing', max=len(ocr)) as prog_bar:
                 for word in ocr:
                     if word == '' or 'content' not in word or not word['content'] or word['content'].isspace():
-                        contintue
+                        continue
                     anno = None
                     try:
                         anno = Annotation.objects.get(
-                            w = word['w'],
-                            h = word['h'],
-                            x = word['x'],
-                            y = word['y'],
-                            owner = User.objects.get(username='ocr'),
-                            canvas = canvas
+                            w=word['w'],
+                            h=word['h'],
+                            x=word['x'],
+                            y=word['y'],
+                            owner=User.objects.get(username='ocr'),
+                            canvas=canvas
                         )
                     except Annotation.DoesNotExist:
                         anno = Annotation(
-                            w = word['w'],
-                            h = word['h'],
-                            x = word['x'],
-                            y = word['y'],
-                            canvas = canvas,
-                            owner = User.objects.get(username='ocr'),
-                            resource_type = Annotation.OCR
+                            w=word['w'],
+                            h=word['h'],
+                            x=word['x'],
+                            y=word['y'],
+                            canvas=canvas,
+                            owner=User.objects.get(username='ocr'),
+                            resource_type=Annotation.OCR
                         )
                     word_order += 1
                     anno.content = word['content']
                     anno.save()
-                    bar.next()
-                bar.finish()
+                    prog_bar.next()
+                prog_bar.finish()

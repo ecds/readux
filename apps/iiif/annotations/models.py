@@ -81,29 +81,29 @@ def set_span_element(sender, instance, **kwargs):
     if instance.content.startswith('<span'):
         instance.content = BeautifulSoup(instance.content, 'html.parser').span.string
     if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation['annotatedBy']['name'] == "ocr"):
-        try:
-            instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
-            instance.owner = User.objects.get_or_create(username='ocr', name='OCR')[0]
-            character_count = len(instance.content)
-            # 1.6 is a "magic number" that seems to work pretty well ¯\_(ツ)_/¯
-            font_size = instance.h / 1.6
-            # Assuming a character's width is half the height. This was my first guess.
-            # This should give us how long all the characters will be.
-            string_width = (font_size / 2) * character_count
-            letter_spacing = 0
-            relative_letter_spacing = 0
-            if instance.w > 0:
-                # And this is what we're short.
-                space_to_fill = instance.w - string_width
-                # Divide up the space to fill and space the letters.
-                letter_spacing = space_to_fill / character_count
-                # Percent of letter spacing of overall width.
-                # This is used by OpenSeadragon. OSD will update the letter spacing relative to
-                # the width of the overlayed element when someone zooms in and out.
-                relative_letter_spacing = letter_spacing / instance.w
-            instance.content = "<span id='{pk}' data-letter-spacing='{p}'>{content}</span>".format(pk=instance.pk, content=instance.content, p=str(relative_letter_spacing))
-            instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size))
+        # try:
+        instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
+        instance.owner = User.objects.get_or_create(username='ocr', name='OCR')[0]
+        character_count = len(instance.content)
+        # 1.6 is a "magic number" that seems to work pretty well ¯\_(ツ)_/¯
+        font_size = instance.h / 1.6
+        # Assuming a character's width is half the height. This was my first guess.
+        # This should give us how long all the characters will be.
+        string_width = (font_size / 2) * character_count
+        letter_spacing = 0
+        relative_letter_spacing = 0
+        if instance.w > 0:
+            # And this is what we're short.
+            space_to_fill = instance.w - string_width
+            # Divide up the space to fill and space the letters.
+            letter_spacing = space_to_fill / character_count
+            # Percent of letter spacing of overall width.
+            # This is used by OpenSeadragon. OSD will update the letter spacing relative to
+            # the width of the overlayed element when someone zooms in and out.
+            relative_letter_spacing = letter_spacing / instance.w
+        instance.content = "<span id='{pk}' data-letter-spacing='{p}'>{content}</span>".format(pk=instance.pk, content=instance.content, p=str(relative_letter_spacing))
+        instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size))
         # TODO Is this actually how this should be handeled? If not, remove the import of `IntegrityError`
-        except (ValueError, ZeroDivisionError, IntegrityError) as error:
-            instance.content = ''
-            logger.warning("WARNING: {e}".format(e=error))
+        # except (ValueError, ZeroDivisionError, IntegrityError) as error:
+        #     instance.content = ''
+        #     logger.warning("WARNING: {e}".format(e=error))

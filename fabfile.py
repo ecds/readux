@@ -5,12 +5,13 @@ from fabric.api import cd, env, local, run
 REPO_URL = 'https://github.com/ecds/readux.git'
 ROOT_PATH = '/data/readux'
 VENV_PATH = '{rp}/venv'.format(rp=ROOT_PATH)
+RELEASE_PATH = '{rp}/releases'.format(rp=ROOT_PATH)
 VERSION = datetime.now().strftime("%Y%m%d%H%M%S")
 
 env.user = 'deploy'
 
 def deploy(branch='master'):
-    version_folder = '{rp}/releases/{vf}'.format(rp=ROOT_PATH, vf=VERSION)
+    version_folder = '{rp}/{vf}'.format(rp=RELEASE_PATH, vf=VERSION)
     run('mkdir -p {p}'.format(p=version_folder))  
     with cd(version_folder):
         # _create_new_dir() 
@@ -22,6 +23,8 @@ def deploy(branch='master'):
         _update_database()
         _update_symlink()
         _restart_webserver()
+        _restart_export_task()
+        _clean_old_builds()
 
 def _get_latest_source(branch):
     run('git clone {r} .'.format(r=REPO_URL))
@@ -57,3 +60,10 @@ def _update_symlink():
 
 def _restart_webserver():
     run('sudo service apache2 restart')
+
+def _restart_export_task():
+    run('bash {rp}/restart_export_task.sh'.format(rp=ROOT_PATH))
+
+def _clean_old_builds():
+    with cd(RELEASE_PATH):
+        run('rm -rf $(ls -1t . | tail -n +6)')

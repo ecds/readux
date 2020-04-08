@@ -26,9 +26,12 @@ import re
 import shutil
 import subprocess
 import tempfile
-import yaml
 import zipfile
-
+from yaml import load, dump, safe_dump
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
 __version__="2.0.0"
 
 
@@ -111,7 +114,7 @@ class IiifManifestExport:
                 )
                 anno_uri = json_hash['@id']
 
-                annotation_file = re.sub('\W','_', anno_uri) + ".json"
+                annotation_file = re.sub(r'\W','_', anno_uri) + ".json"
 
                 zf.writestr(
                     annotation_file,
@@ -134,7 +137,7 @@ class IiifManifestExport:
                     )
                 )
                 anno_uri = json_hash['@id']
-                annotation_file = re.sub('\W','_', anno_uri) + ".json"
+                annotation_file = re.sub(r'\W','_', anno_uri) + ".json"
 
                 zf.writestr(
                     annotation_file,
@@ -191,8 +194,11 @@ class JekyllSiteExport(object):
     def get_zip(self):
         return self.website_zip()
 
+    def get_zip_path(filename):
+        return os.path.join(tempfile.gettempdir(), filename)
+
     def get_zip_file(self, filename):
-        f=open(os.path.join(tempfile.gettempdir(), filename),"rb")
+        f=open(JekyllSiteExport.get_zip_path(filename),"rb")
         data=f.read()
         f.close()
         return data
@@ -381,7 +387,7 @@ class JekyllSiteExport(object):
         # modify the jekyll config for relative url on github.io
         config_file_path = os.path.join(jekyll_dir, '_config.yml')
         with open(config_file_path, 'r') as configfile:
-            config_data = yaml.load(configfile)
+            config_data = load(configfile, Loader=Loader)
 
         # split out github pages url into the site url and path
         parsed_gh_url = urlparse(github_pages_url)
@@ -389,7 +395,7 @@ class JekyllSiteExport(object):
                                           parsed_gh_url.netloc)
         config_data['baseurl'] = parsed_gh_url.path.rstrip('/')
         with open(config_file_path, 'w') as configfile:
-            yaml.safe_dump(config_data, configfile,
+            safe_dump(config_data, configfile,
                            default_flow_style=False)
             # using safe_dump to generate only standard yaml output
             # NOTE: pyyaml requires default_flow_style=false to output
@@ -451,8 +457,16 @@ class JekyllSiteExport(object):
         # create a tmpdir to clone the git repo into
         tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-update')
         logger.debug('Cloning %s to %s', repo_url, tmpdir)
-        repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
-        repo.remote().pull()
+        repo = None
+        if self.is_testing:
+            repo = git.Repo.init(tmpdir)
+            yml_config_path = os.path.join(tmpdir, '_config.yml')
+            open(yml_config_path, 'a').close()
+            repo.index.commit('initial commit')
+            repo.git.checkout('HEAD', b='gh-pages')                                              
+        else:
+            repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
+            repo.remote().pull()
         # create and switch to a new branch and switch to it; using datetime
         # for uniqueness
         git_branch_name = 'readux-update-%s' % \
@@ -498,14 +512,14 @@ class JekyllSiteExport(object):
         # if self.include_deep_zoom:
         #     self.generate_deep_zoom(jekyll_site_dir)
 
+        if self.is_testing is False:
+            # run the script to import IIIF as jekyll site content
+            self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
-        # run the script to import IIIF as jekyll site content
-        self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
-
-        # add any files that could be updated to the git index
-        repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
-                        '_data/tags.yml', 'tags/*', 'iiif_export/*'])
-        # TODO if deep zoom is added, we must add that directory as well
+            # add any files that could be updated to the git index
+            repo.index.add(['_config.yml', '_volume_pages/*', '_annotations/*',
+                            '_data/tags.yml', 'tags/*', 'iiif_export/*'])
+            # TODO: if deep zoom is added, we must add that directory as well
 
         git_author = git.Actor(self.user.fullname(),
                                self.user.email)
@@ -513,9 +527,10 @@ class JekyllSiteExport(object):
         repo.index.commit('Updated Jekyll site by Readux %s' % __version__,
                           author=git_author)
 
-        # push the update to a new branch on github
-        repo.remotes.origin.push('%(branch)s:%(branch)s' %
-                                 {'branch': git_branch_name})
+        if self.is_testing is False:
+            # push the update to a new branch on github
+            repo.remotes.origin.push('%(branch)s:%(branch)s' %
+                                    {'branch': git_branch_name})
         # convert repo url to form needed to generate pull request
         repo = repo_url.replace('github.com/', '').replace('.git', '')
         pullrequest = self.github.create_pull_request(

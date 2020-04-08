@@ -4,7 +4,7 @@ import csv
 from django.conf import settings
 from apps.utils.fetch import fetch_url
 import config.settings.local as local_settings
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 import httpretty
 
 # Method to mock a response for testing.
@@ -14,6 +14,14 @@ def get_fake_canvas_info(canvas):
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
     response = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
     return response
+
+def get_ocr(canvas):
+    if canvas.default_ocr == "line":
+        result = fetch_alto_ocr(canvas)
+        return add_alto_ocr(canvas, result)
+    elif canvas.default_ocr == "word" or canvas.default_ocr == "both":
+        result = fetch_positional_ocr(canvas)
+        return add_positional_ocr(canvas, result)
 
 def get_canvas_info(canvas):
     """ Given a url, this function returns a dictionary of all collections."""
@@ -54,16 +62,19 @@ def add_positional_ocr(canvas, result):
             reader = csv.DictReader(result.split('\n'), dialect=include_quotes_dialect)
             for row in reader:
                 content = row['content']
+                # # Skip empty strings
+                # if content.isspace() or not content:
+                #     continue
                 w = int(row['w'])
                 h = int(row['h'])
                 x = int(row['x'])
                 y = int(row['y'])
                 ocr.append({
-                'content': content,
-                'w': w,
-                'h': h,
-                'x': x,
-                'y': y,
+                    'content': content,
+                    'w': w,
+                    'h': h,
+                    'x': x,
+                    'y': y,
                 })
     else:
         if result is not None:
@@ -93,7 +104,7 @@ def add_alto_ocr(canvas, result):
     if result == None:
         return None
     ocr = []
-    surface = ET.fromstring(result)[-1][0]
+    surface = ElementTree.fromstring(result)[-1][0]
     for zones in surface:
         if 'zone' in zones.tag:
             for line in zones:

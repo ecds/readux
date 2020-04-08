@@ -1,6 +1,8 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.management import call_command
 from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
@@ -10,6 +12,8 @@ from .models import Annotation
 from ..canvases.models import Canvas
 from ..manifests.models import Manifest
 from .apps import AnnotationsConfig
+from bs4 import BeautifulSoup
+from io import StringIO
 import json
 
 User = get_user_model()
@@ -58,6 +62,7 @@ class AnnotationTests(TestCase):
         assert ocr.owner == User.objects.get(username='ocr')
 
     def test_invalid_ocr(self):
+        annotation_count = len(Annotation.objects.all())
         ocr = Annotation()
         ocr.oa_annotation = {"annotatedBy": {"name": "ocr"}}
         ocr.x = 100
@@ -65,9 +70,10 @@ class AnnotationTests(TestCase):
         ocr.w = 100
         ocr.h = 10
         ocr.format = Annotation.HTML
-        ocr.save()
-        assert ocr.content == ''
-        assert ocr.format == 'text/html'
+        with self.assertRaisesMessage(ValidationError, 'Content cannot be empty'):
+            ocr.save()
+        assert annotation_count == len(Annotation.objects.all())
+        
     
     def test_annotation_string(self):
         anno = Annotation.objects.all().first()
@@ -115,3 +121,46 @@ class AnnotationTests(TestCase):
         data = json.loads(serialize('annotation_list', [self.canvas], is_list = True, owners = User.objects.all()))
         assert data[0]['@type'] == 'sc:AnnotationList'
         assert isinstance(data, list)
+
+    def test_ocr_char_with_zero_width(self):
+        ocr = Annotation()
+        ocr.oa_annotation = {"annotatedBy": {"name": "ocr"}}
+        ocr.x = 100
+        ocr.y = 10
+        ocr.w = 0
+        ocr.h = 10
+        ocr.content = 'nice marmot'
+        ocr.format = Annotation.HTML
+        ocr.save()
+        assert ocr.content == "<span id='{a}' data-letter-spacing='0'>nice marmot</span>".format(a=ocr.id)
+        assert ocr.style == ".anno-{a}: {{ height: 10px; width: 0px; font-size: 6.25px; }}".format(a=ocr.id)
+        assert ocr.format == 'text/html'
+
+    def test_ocr_char_with_zero_height(self):
+        ocr = Annotation()
+        ocr.oa_annotation = {"annotatedBy": {"name": "ocr"}}
+        ocr.x = 100
+        ocr.y = 10
+        ocr.w = 10
+        ocr.h = 0
+        ocr.content = 'nice marmot'
+        ocr.format = Annotation.HTML
+        ocr.save()
+        assert ocr.content == "<span id='{a}' data-letter-spacing='0.09090909090909091'>nice marmot</span>".format(a=ocr.id)
+        assert ocr.style == ".anno-{a}: {{ height: 0px; width: 10px; font-size: 0.0px; }}".format(a=ocr.id)
+        assert ocr.format == 'text/html'
+
+    def test_command_output_remove_empty_ocr(self):
+        out = StringIO()
+        call_command('remove_empty_ocr', stdout=out)
+        assert 'Empty OCR annotations have been removed' in out.getvalue()
+
+    def test_resaving_ocr_annotation(self):
+        # Span should not change
+        anno = Annotation.objects.all().first()
+        orig_span = anno.content
+        anno.save()
+        anno.refresh_from_db()
+        assert orig_span == anno.content
+        assert anno.content.startswith('<span')
+        assert BeautifulSoup(anno.content, 'html.parser').span.span is None

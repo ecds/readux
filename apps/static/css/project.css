@@ -1383,3 +1383,9 @@ em {
     padding: 0;
   }
 }
+
+fieldset {
+  margin: inherit;
+  border: 0;
+  padding: inherit;
+}

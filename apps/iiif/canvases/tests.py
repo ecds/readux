@@ -1,12 +1,17 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
+from django.core.management import call_command
 import config.settings.local as settings
 from .models import Canvas, IServer
 from . import services
+from .factories import CanvasFactory
 from apps.iiif.canvases.apps import CanvasesConfig
+from apps.iiif.manifests.models import Manifest
+from io import StringIO
 import json
 import httpretty
+import re
 
 
 class CanvasTests(TestCase):
@@ -129,16 +134,21 @@ class CanvasTests(TestCase):
         assert ocr.x == 916
         assert ocr.y == 0
 
+    @httpretty.activate
     def test_ocr_from_tsv(self):
+        tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
+        url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(m=self.canvas.manifest.pid)
+
+        httpretty.register_uri(httpretty.GET, url, body=tsv)
         iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
-        self.canvas.IIIF_IMAGE_SERVER_BASE = iiif_server
-        tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n"""
-        ocr = services.add_positional_ocr(self.canvas, tsv)
-        assert ocr[0]['content'] == 'Jordan'
-        assert ocr[0]['h'] == 43
-        assert ocr[0]['w'] == 89
-        assert ocr[0]['x'] == 459
-        assert ocr[0]['y'] == 391
+        canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE = iiif_server, manifest = self.canvas.manifest, pid = 'boo')
+        ocr = canvas.annotation_set.all().first()
+        assert ocr.h == 43
+        assert ocr.w == 89
+        assert ocr.x == 459
+        assert ocr.y == 391
+        assert 'Jordan' in ocr.content
+        assert len(canvas.annotation_set.all()) == 1
 
     def test_no_alto_from_empty_result(self):
         ocr = services.add_alto_ocr(self.canvas, None)
@@ -199,3 +209,28 @@ class CanvasTests(TestCase):
         updated_canvas = Canvas.objects.get(pk=self.canvas.pk)
         assert updated_canvas.image_info['height'] == 3000
         assert updated_canvas.image_info['width'] == 3000
+    
+    def test_command_output_rebuild_canvas(self):
+        out = StringIO()
+        call_command('rebuild_ocr', canvas=Canvas.objects.all().first().pid, stdout=out)
+        assert 'OCR rebuilt for canvas' in out.getvalue()
+
+    def test_command_output_rebuild_manifest(self):
+        out = StringIO()
+        call_command('rebuild_ocr', manifest=Manifest.objects.all().first().pid, stdout=out)
+        assert 'OCR rebuilt for manifest' in out.getvalue()
+
+    def test_command_output_rebuild_canvas_not_found(self):
+        out = StringIO()
+        call_command('rebuild_ocr', canvas='barco', stdout=out)
+        assert 'ERROR: canvas not found' in out.getvalue()
+
+    def test_command_output_rebuild_manifest_not_found(self):
+        out = StringIO()
+        call_command('rebuild_ocr', manifest='josef', stdout=out)
+        assert 'ERROR: manifest not found' in out.getvalue()
+
+    def test_command_output_rebuild_pid_not_given(self):
+        out = StringIO()
+        call_command('rebuild_ocr', stdout=out)
+        assert 'ERROR: your must provide a manifest or canvas pid' in out.getvalue()

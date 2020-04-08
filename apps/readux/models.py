@@ -43,6 +43,11 @@ class UserAnnotation(AbstractAnnotation):
         else:
             return []
 
+    # def save(self, *args, **kwargs):
+    #     if self.oa_annotation is not None:
+    #         self.parse_mirador_annotation()
+    #     super().save(*args, **kwargs)
+
     def parse_mirador_annotation(self):
         # TODO: Should we use multiple motivations? 
         # if(type(self.oa_annotation.resource), list):
@@ -81,35 +86,22 @@ class UserAnnotation(AbstractAnnotation):
         elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) == 1:
             self.content = self.oa_annotation['resource'][0]['chars']
             self.resource_type = self.oa_annotation['resource'][0]['@type']
+            # Assume all tags have been removed.
             if self.tags.exists():
-                for tag in self.tags.all():
-                    self.tags.remove(tag.name)
+                self.tags.clear()
         elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) > 1:
-            # Assume tags
+            # Assume tagging
             self.motivation = self.TAGGING
-            incoming_tags = []
-            # Get the tags from the incoming annotation.
-            for resource in self.oa_annotation['resource']:
-                # Set the non-tag resource
-                if resource['@type'] == 'dctypes:Text':
-                    self.content = resource['chars']
-                    self.resource_type = resource['@type']
-                elif resource['@type'] == 'oa:Tag': # and resource['chars'] not in self.tag_list:
-                    # Add the tag to the annotation
-                    self.tags.add(resource['chars'])
-                    # Make a list of incoming tags to compare with list of saved tags.
-                    incoming_tags.append(resource['chars'])
-            
-            # Check if any tags have been removed
-            if len(self.tag_list) > 0:
-                for existing_tag in self.tag_list:
-                    if existing_tag not in incoming_tags:
-                        self.tags.remove(existing_tag)
+            text = [resource for resource in self.oa_annotation['resource'] if resource['@type'] == 'dctypes:Text']
+            # if len(text) > 0:
+            self.content = text[0]['chars']
         
         # Replace the ID given by Mirador with the Readux given ID
         if ('stylesheet' in self.oa_annotation):
             uuid_pattern = re.compile(r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}')
             self.style = uuid_pattern.sub(str(self.id), self.oa_annotation['stylesheet']['value'])
+
+        return True
 
     def __is_text_annotation(self):
         return all([
@@ -173,8 +165,6 @@ class UserAnnotation(AbstractAnnotation):
         dimensions = None
         if 'default' in self.oa_annotation['on'][0]['selector'].keys():
             dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
-        # elif 'value' in self.oa_annotation['on'][0]['selector']['item'].keys():
-        #     dimensions = self.oa_annotation['on'][0]['selector']['item']['value'].split('=')[-1].split(',')
         if dimensions is not None:
             self.x = dimensions[0]
             self.y = dimensions[1]
@@ -184,4 +174,23 @@ class UserAnnotation(AbstractAnnotation):
 # TODO: Override the save method and move this there.
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
+    # if service.validate_oa_annotation(instance.oa_annotation):
     instance.parse_mirador_annotation()
+
+@receiver(signals.post_save, sender=UserAnnotation)
+def set_tags(sender, instance, **kwargs):
+    if instance.motivation == sender.TAGGING:
+        incoming_tags = []
+        # Get the tags from the incoming annotation.
+        tags = [resource for resource in instance.oa_annotation['resource'] if resource['@type'] == 'oa:Tag']
+        for tag in tags:
+            # Add the tag to the annotation
+            instance.tags.add(tag['chars'])
+            # Make a list of incoming tags to compare with list of saved tags.
+            incoming_tags.append(tag['chars'])
+        
+        # Check if any tags have been removed
+        if len(instance.tag_list) > 0:
+            for existing_tag in instance.tag_list:
+                if existing_tag not in incoming_tags:
+                    instance.tags.remove(existing_tag)

@@ -67,7 +67,7 @@ class ManifestExportTests(TestCase):
             manifest = json.load(json_file)
 
         ocr_annotation_list_id = manifest['sequences'][0]['canvases'][0]['otherContent'][0]['@id']
-        ocr_annotation_list_path = os.path.join(tmpdir, re.sub('\W','_', ocr_annotation_list_id) + ".json")
+        ocr_annotation_list_path = os.path.join(tmpdir, re.sub(r'\W','_', ocr_annotation_list_id) + ".json")
         assert os.path.exists(ocr_annotation_list_path) == 1
 
         with open(ocr_annotation_list_path) as json_file:
@@ -75,7 +75,7 @@ class ManifestExportTests(TestCase):
         assert ocr_annotation_list['@id'] == ocr_annotation_list_id
 
         comment_annotation_list_id = manifest['sequences'][0]['canvases'][0]['otherContent'][1]['@id']
-        comment_annotation_list_path = os.path.join(tmpdir, re.sub('\W','_', comment_annotation_list_id) + ".json")
+        comment_annotation_list_path = os.path.join(tmpdir, re.sub(r'\W','_', comment_annotation_list_id) + ".json")
         assert os.path.exists(comment_annotation_list_path) == 1
 
         with open(comment_annotation_list_path) as json_file:
@@ -188,7 +188,7 @@ class ManifestExportTests(TestCase):
         assert self.jse.gitrepo_exists()
 
     @httpretty.activate
-    def test_github_does_not_exists(self):
+    def test_github_does_not_exist(self):
         resp_body = '[{"name":"engels"}]'
         httpretty.register_uri(
             httpretty.GET,
@@ -230,6 +230,31 @@ class ManifestExportTests(TestCase):
         )
         website = self.jse.website_gitrepo()
         assert website == ('https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo), 'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo))
+    
+    @httpretty.activate
+    def test_update_githubrepo(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://{t}:x-oauth-basic@github.com/{u}/{r}.git/'.format(t=self.jse.github_token, u=self.jse.github_username, r=self.jse.github_repo),
+            body='',
+            status=200
+        )
+        pull_response_body = '{"html_url":"https://github.com/%s/%s/pull/2"}' % (self.jse.github_username, self.jse.github_repo)
+        httpretty.register_uri(
+            httpretty.POST,
+            re.compile('https://api.github.com/.*/pulls'),
+            status=201,
+            body=pull_response_body
+        )
+        resp_body = '[{"name":"marx"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body=resp_body,
+            content_type="text/json"
+        )
+        new_pull = self.jse.update_gitrepo()
+        assert new_pull == 'https://github.com/{u}/{r}/pull/2'.format(u=self.jse.github_username, r=self.jse.github_repo)
 
     @httpretty.activate
     def test_github_export_first_time(self):

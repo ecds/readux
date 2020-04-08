@@ -30,6 +30,35 @@ Vue.component("v-volume-image", {
   }
 });
 
+Vue.component("v-volume-annotations", {
+  props: ["manifestCount", "pageCount"],
+  template: `
+  <ul class="uk-subnav uk-subnav-pill" uk-switcher v-cloak v-if="!hasImage">
+    <li><a href="#" id="rx-annotation-manifest"> {{manifestCount}} annotations in manifest</a></li>
+    <li><a href="#" id="rx-annotation-page"> {{pageCount}} annotations on page</a></li>
+  </ul>
+  `,
+  data: function () {
+    return {
+      hasImage: false, // visibility of image from src
+    };
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener('canvasswitch', function (event) {
+      if (event.detail.annotationsOnPage) {
+        vm.pageCount = event.detail.annotationsOnPage;
+      }
+    });
+  },
+  computed: {
+    imgAlt() {
+      return ``;
+    },
+  },
+});
+
+
 Vue.component("v-info-content-url-single", {
   props: ["label", "url"],
   template: `

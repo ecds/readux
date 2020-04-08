@@ -161,10 +161,11 @@
       <div class="rx-info-content-container">
 
         <!--new-->
+        <v-volume-annotations :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}"></v-volume-annotations>
         {% if user_annotation_count > 0 %}
         <ul class="uk-subnav uk-subnav-pill" uk-switcher>
-          <li><a href="#">{{ user_annotation_count }} annotations in manifest</a></li>
-          <li><a href="#">{{ user_annotation_page_count }} annotations on page</a></li>
+          <li><a href="#" id="rx-annotation-manifest">{{ user_annotation_count }} annotations in manifest</a></li>
+          <li><a href="#" id="rx-annotation-page"> annotations on page</a></li>
         </ul>
         <!-- The my annotations elements will need to be cleaned up when the annotation model changes are fully finished. -->
         {% endif %}
@@ -236,7 +237,6 @@
             {% csrf_token %}
           </form>
         </div>
-
         {% endif %}
 
         <div class="rx-info-content">
@@ -271,16 +271,16 @@
             ref="rx-url-canvas" v-show="false">
           </v-info-content-url-external>
 
-        <v-info-content-url-external
-          ref="rx-url-stable-page" v-show="false">
-        </v-info-content-url-external>
+          <v-info-content-url-external
+            ref="rx-url-stable-page" v-show="false">
+          </v-info-content-url-external>
         {% else %}
-        <v-info-content-url-external
-          ref="rx-url-canvas">
-        </v-info-content-url-external>
+          <v-info-content-url-external
+            ref="rx-url-canvas">
+          </v-info-content-url-external>
 
-        <v-info-content-url-external ref="rx-url-stable-page">
-        </v-info-content-url-external>
+          <v-info-content-url-external ref="rx-url-stable-page">
+          </v-info-content-url-external>
         {% endif %}
       </div>
     </div>

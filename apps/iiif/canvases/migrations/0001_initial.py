@@ -3,6 +3,7 @@
 import apps.iiif.canvases.models
 from django.db import migrations, models
 import django.db.models.deletion
+import config.settings.local as settings
 import uuid
 
 
@@ -34,7 +35,7 @@ class Migration(migrations.Migration):
             name='IServer',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('IIIF_IMAGE_SERVER_BASE', models.CharField(default=apps.iiif.canvases.models.get_default_iiif_setting, max_length=255)),
+                ('IIIF_IMAGE_SERVER_BASE', models.CharField(default=settings.IIIF_IMAGE_SERVER_BASE, max_length=255)),
             ],
         ),
         migrations.AddField(

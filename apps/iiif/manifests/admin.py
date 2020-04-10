@@ -1,34 +1,37 @@
+"""Django admin module for maninfests"""
 from django.contrib import admin
-
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
-from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
-from apps.iiif.manifests.models import Manifest, Note
-from apps.iiif.canvases.models import Canvas
-from apps.iiif.kollections.models import Collection
+from import_export.widgets import ManyToManyWidget
+from .models import Manifest, Note
+from ..kollections.models import Collection
 
 class ManifestResource(resources.ModelResource):
-    collectionid = fields.Field(
+    """Django admin manifest resource."""
+    collection_id = fields.Field(
         column_name='collections',
         attribute='collections',
         widget=ManyToManyWidget(Collection, field='label'))
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Manifest
         import_id_fields = ('id',)
-        fields = ('id', 'pid', 'label','summary','author', 'published_city','published_date', 'publisher', 'pdf', 'metadata', 'viewingDirection', 'collectionid')
-
+        fields = (
+            'id', 'pid', 'label', 'summary', 'author',
+            'published_city', 'published_date', 'publisher',
+            'pdf', 'metadata', 'viewingDirection', 'collection_id'
+        )
 
 class ManifestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    """Django admin configuration for manifests"""
     resource_class = ManifestResource
-    pass     
     filter_horizontal = ('collections',)
     list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
-    search_fields = ('id', 'label','author','published_date')
+    search_fields = ('id', 'label', 'author', 'published_date')
 
-    
 class NoteAdmin(admin.ModelAdmin):
-    class Meta:
+    """Django admin configuration for a note."""
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Note
-        
+
 admin.site.register(Manifest, ManifestAdmin)
 admin.site.register(Note, NoteAdmin)

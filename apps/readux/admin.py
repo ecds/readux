@@ -17,7 +17,7 @@ class UserAnnotationResource(resources.ModelResource):
         attribute='oa_annotation',
         column_name='oa_annotation',
         widget=JSONWidget)
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = UserAnnotation
         fields = ('id', 'x','y','w','h','order','content','resource_type','motivation','format','canvas_link', 'language', 'oa_annotation')
 

@@ -1,9 +1,10 @@
-from django.conf.urls import url, include
+"""
+URL patterns for `apps.iiif.canvases`
+"""
 from django.urls import path
-from . import views
+from .views import IIIFV2Detail, IIIFV2List
 
 urlpatterns = [
-  path('iiif/<manifest>/canvas', views.IIIFV2List.as_view(), name='RenderCanvasList' ),
-  path('iiif/<manifest>/canvas/<pid>', views.IIIFV2Detail.as_view(), name='RenderCanvasDetail' ),
-  # path('iiif/<manifest>/startingcanvas/<pid>', views.StartingCanvas.as_view(), name='StartingCanvasManifest' )
+    path('iiif/<manifest>/canvas', IIIFV2List.as_view(), name='RenderCanvasList'),
+    path('iiif/<manifest>/canvas/<pid>', IIIFV2Detail.as_view(), name='RenderCanvasDetail'),
 ]

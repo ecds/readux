@@ -1,11 +1,15 @@
+"""
+Django admin module for kollections
+"""
 from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-from apps.iiif.kollections.models import Collection
-from apps.iiif.manifests.models import Manifest
+from .models import Collection
+from ..manifests.models import Manifest
 
 class CollectionResource(resources.ModelResource):
-    class Meta:
+    """Django admin collection resource"""
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Collection
         fields = (
             'id', 'label', 'summary', 'pid', 'attribution',
@@ -14,6 +18,7 @@ class CollectionResource(resources.ModelResource):
         )
 
 class ManifestInline(admin.TabularInline):
+    """Django admin inline configuration for a manifest."""
     model = Manifest.collections.through
     fields = ('manifest', 'manifest_pid')
     autocomplete_fields = ('manifest',)
@@ -22,11 +27,17 @@ class ManifestInline(admin.TabularInline):
 
     # TODO: Test this
     def manifest_pid(self, instance):
+        """Convenience method to get manifest pid.
+
+        :return: [description]
+        :rtype: str
+        """
         return instance.manifest.pid
 
     manifest_pid.short_description = 'Manifest Local ID'
 
 class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    """Django admin configuration for a collection."""
     inlines = [
         ManifestInline,
     ]

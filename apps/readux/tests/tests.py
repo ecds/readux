@@ -281,12 +281,12 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = json.loads(self.valid_mirador_annotations['svg']['oa_annotation'])
-        data['@id'] = existing_anno.id
+        data['@id'] = str(existing_anno.id)
         data = { 'oa_annotation': data }
         resource = data['oa_annotation']['resource'][0]
         resource['chars'] = 'updated annotation'
         data['oa_annotation']['resource'] = resource 
-        data['id'] = existing_anno.id
+        data['id'] = str(existing_anno.id)
         request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         request.user = self.user_a
         response = self.crud_view(request)
@@ -309,7 +309,7 @@ class AnnotationTests(TestCase):
     def test_update_someone_elses_annotation(self):
         self.create_user_annotations(4, self.user_a)
         rando_anno = self.rando_anno()
-        data = { 'id': rando_anno.pk }
+        data = {'id': str(rando_anno.pk)}
         request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         request.user = self.user_b
         response = self.crud_view(request)
@@ -320,11 +320,11 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = json.loads(self.valid_mirador_annotations['svg']['oa_annotation'])
-        data['@id'] = existing_anno.id
-        data = { 'oa_annotation': data }
+        data['@id'] = str(existing_anno.id)
+        data = {'oa_annotation': data}
         resource = data['oa_annotation']['resource'][0]
-        data['oa_annotation']['resource'] = resource 
-        data['id'] = existing_anno.id
+        data['oa_annotation']['resource'] = resource
+        data['id'] = str(existing_anno.id)
         request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         response = self.crud_view(request)
         message = self.load_anno(response)
@@ -342,7 +342,7 @@ class AnnotationTests(TestCase):
     def test_delete_non_existant_user_annotation(self):
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
-        data = {'id': existing_anno.pk}
+        data = {'id': str(existing_anno.pk)}
         request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         request.user = self.user_a
         response = self.crud_view(request)
@@ -353,7 +353,7 @@ class AnnotationTests(TestCase):
     def test_delete_someone_elses_annotation(self):
         self.create_user_annotations(1, self.user_a)
         rando_anno = self.rando_anno()
-        data = { 'id': rando_anno.pk }
+        data = {'id': str(rando_anno.pk)}
         request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         request.user = self.user_b
         response = self.crud_view(request)
@@ -364,7 +364,7 @@ class AnnotationTests(TestCase):
     def test_delete_annotation_unauthenticated(self):
         self.create_user_annotations(1, self.user_a)
         rando_anno = self.rando_anno()
-        data = { 'id': rando_anno.pk }
+        data = {'id': str(rando_anno.pk)}
         request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         response = self.crud_view(request)
         message = self.load_anno(response)

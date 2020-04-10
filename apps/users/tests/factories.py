@@ -24,14 +24,14 @@ class UserFactory(DjangoModelFactory):
         )
         self.set_password(password)
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = get_user_model()
         django_get_or_create = ["username"]
 
 class SocialAccountFactory(DjangoModelFactory):
     provider = Faker("user_name")
     uid = Faker("uuid4")
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = SocialAccount
 
 class SocialAppFactory(DjangoModelFactory):
@@ -40,7 +40,7 @@ class SocialAppFactory(DjangoModelFactory):
     client_id = Faker('ssn')
     secret = Faker("postalcode")
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = SocialApp
         django_get_or_create = ["provider"]
 
@@ -48,5 +48,5 @@ class SocialTokenFactory(DjangoModelFactory):
     token = Faker('postalcode')
     token_secret = Faker('ssn')
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = SocialToken

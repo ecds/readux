@@ -1,19 +1,22 @@
-from factory import DjangoModelFactory, Faker, LazyAttribute
-from factory.django import ImageField
-from apps.iiif.kollections.models import Collection
-from django.core.files.base import ContentFile
+"""
+Factory to create collestions for testing.
+"""
 import random
+from factory import DjangoModelFactory, Faker
+from factory.django import ImageField
+from ..models import Collection
 
 class CollectionFactory(DjangoModelFactory):
+    """
+    Factory for mocking `apps.iiif.kollections.models.Collection` objects.
+    """
     pid = str(random.randrange(2000, 5000))
     label = Faker("name")
-    original = LazyAttribute(
-        lambda _: ContentFile(
-            ImageField()._make_data(
-                {'width': 1024, 'height': 768}
-            ), 'example.jpg'
-        )
+    original = ImageField(
+        width=1024,
+        height=728,
+        filename='example.jpg'
     )
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Collection

@@ -6,7 +6,7 @@ from django.views.generic import ListView
 from django.views.generic.base import TemplateView
 from django.views.generic.base import View
 from ..iiif.kollections.models import Collection
-from ..iiif.canvases.models import Canvas
+from apps.iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm

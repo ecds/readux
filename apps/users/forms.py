@@ -27,7 +27,7 @@ class ReduxUserChangeForm(UserChangeForm):
         widget=TextInput(attrs={'class': 'rdx-input uk-input'}),
         help_text="User Name to associate with Annotations"
     )
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = User
         fields = []
 
@@ -52,7 +52,7 @@ class UserCreationForm(forms.UserCreationForm):
         raise ValidationError(self.error_messages["duplicate_username"])
 
 class ReaduxSocialSignupForm(SignupForm):
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = User
         fields = ['name']
         

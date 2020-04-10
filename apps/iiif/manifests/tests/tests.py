@@ -10,13 +10,13 @@ from django.urls import reverse
 from django.core.serializers import serialize
 from allauth.socialaccount.models import SocialAccount
 from iiif_prezi.loader import ManifestReader
-from apps.iiif.manifests.views import ManifestSitemap, ManifestRis
-from apps.iiif.manifests.models import Manifest
-from apps.iiif.manifests.forms import JekyllExportForm
-from apps.iiif.manifests.tests.factories import ManifestFactory
-from apps.iiif.canvases.tests.factories import CanvasFactory
+from ..views import ManifestSitemap, ManifestRis
+from ..models import Manifest
+from ..forms import JekyllExportForm
+from .factories import ManifestFactory
+from ...canvases.tests.factories import CanvasFactory
 
-User = get_user_model()
+USER = get_user_model()
 
 class ManifestTests(TestCase):
     fixtures = [

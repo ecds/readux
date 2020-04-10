@@ -1,24 +1,24 @@
+"""
+Test cases for `apps.iiif.canvases`
+"""
+import json
+from io import StringIO
+import httpretty
 from django.test import TestCase, Client
-from django.test import RequestFactory
 from django.urls import reverse
 from django.core.management import call_command
-from apps.iiif.canvases.models import Canvas, IServer
-from apps.iiif.canvases import services
-from apps.iiif.canvases.tests.factories import CanvasFactory
-from apps.iiif.canvases.apps import CanvasesConfig
-from apps.iiif.manifests.models import Manifest
-from io import StringIO
 import config.settings.local as settings
-import json
-import httpretty
-import re
+from ..models import Canvas, IServer
+from .. import services
+from .factories import CanvasFactory
+from ..apps import CanvasesConfig
+from ...manifests.models import Manifest
 
 
 class CanvasTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-  
+
     def setUp(self):
-        fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
         self.client = Client()
         self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
         self.manifest = self.canvas.manifest
@@ -82,11 +82,11 @@ class CanvasTests(TestCase):
             assert 'x' in word
             assert 'y' in word
             assert 'content' in word
-            assert type(word['w']) == int
-            assert type(word['h']) == int
-            assert type(word['x']) == int
-            assert type(word['y']) == int
-            assert type(word['content']) == str
+            assert isinstance(word['w'], int)
+            assert isinstance(word['h'], int)
+            assert isinstance(word['x'], int)
+            assert isinstance(word['y'], int)
+            assert isinstance(word['content'], str)
 
         canvas.save()
         # ocr_anno = canvas.annotation_set.first()
@@ -111,7 +111,7 @@ class CanvasTests(TestCase):
 
     def test_ocr_from_alto(self):
         alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
-        ocr = services.add_alto_ocr(self.canvas, alto)
+        ocr = services.add_alto_ocr(alto)
         assert ocr[1]['content'] == 'AEN DEN LESIIU'
         assert ocr[1]['h'] == 28
         assert ocr[1]['w'] == 461
@@ -121,8 +121,19 @@ class CanvasTests(TestCase):
     @httpretty.activate
     def test_line_by_line_from_alto(self):
         alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
-        url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=self.canvas.pid.replace('fedora:',''))
+        url = "{p}{c}/datastreams/tei/content".format(
+            p=settings.DATASTREAM_PREFIX,
+            c=self.canvas.pid.replace('fedora:', '')
+        )
         httpretty.register_uri(httpretty.GET, url, body=alto)
+        httpretty.register_uri(
+            httpretty.GET,
+            '{b}/{p}'.format(
+                b=self.canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE,
+                p=self.canvas.pid
+            ),
+            body=''
+        )
         self.canvas.default_ocr = 'line'
         self.canvas.annotation_set.all().delete()
         self.canvas.save()
@@ -137,11 +148,13 @@ class CanvasTests(TestCase):
     @httpretty.activate
     def test_ocr_from_tsv(self):
         tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
-        url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(m=self.canvas.manifest.pid)
+        url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
+            m=self.canvas.manifest.pid
+        )
 
         httpretty.register_uri(httpretty.GET, url, body=tsv)
         iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
-        canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE = iiif_server, manifest = self.canvas.manifest, pid = 'boo')
+        canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE=iiif_server, manifest=self.canvas.manifest, pid='boo')
         ocr = canvas.annotation_set.all().first()
         assert ocr.h == 43
         assert ocr.w == 89
@@ -151,12 +164,12 @@ class CanvasTests(TestCase):
         assert len(canvas.annotation_set.all()) == 1
 
     def test_no_alto_from_empty_result(self):
-        ocr = services.add_alto_ocr(self.canvas, None)
+        ocr = services.add_alto_ocr(None)
         assert ocr is None
-    
+
     def test_from_bad_alto(self):
         alto = open('apps/iiif/canvases/fixtures/bad_alto.xml', 'r').read()
-        ocr = services.add_alto_ocr(self.canvas, alto)
+        ocr = services.add_alto_ocr(alto)
         assert ocr is None
 
     def test_canvas_detail(self):
@@ -164,7 +177,6 @@ class CanvasTests(TestCase):
         url = reverse('RenderCanvasDetail', kwargs=kwargs)
         response = self.client.get(url)
         serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
-        
         assert response.status_code == 200
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)

@@ -149,8 +149,8 @@ class ManifestExportTests(TestCase):
         url = reverse('JekyllExport', kwargs=kwargs)
         kwargs['deep_zoom'] = 'exclude'
         kwargs['mode'] = 'download'
-        request = self.factory.post(url, data=kwargs) 
-        request.user = self.user       
+        request = self.factory.post(url, data=kwargs)
+        request.user = self.user
         response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
         assert isinstance(response.getvalue(), bytes)
 
@@ -186,12 +186,12 @@ class ManifestExportTests(TestCase):
             content_type="application/x-www-form-urlencoded"
         )
         assert response.status_code == 200
-    
+
     def test_use_github(self):
         assert isinstance(self.jse.github, GithubApi)
         assert self.jse.github_username == self.sa_acct.extra_data['login']
         assert self.jse.github_token == self.sa_token.token
-    
+
     def test_github_auth_repo_given_name(self):
         auth_repo = self.jse.github_auth_repo(repo_name=self.jse.github_repo)
         assert auth_repo == "https://{t}:x-oauth-basic@github.com/{u}/{r}.git".format(t=self.sa_token.token, u=self.jse.github_username, r=self.jse.github_repo)
@@ -199,7 +199,7 @@ class ManifestExportTests(TestCase):
     def test_github_auth_repo_given_url(self):
         auth_repo = self.jse.github_auth_repo(repo_url='https://github.com/karl/{r}'.format(r=self.jse.github_repo))
         assert auth_repo == "https://{t}:x-oauth-basic@github.com/karl/{r}.git".format(t=self.sa_token.token, r=self.jse.github_repo)
-    
+
     @httpretty.activate
     def test_github_exists(self):
         resp_body = '[{"name":"marx"}]'
@@ -255,7 +255,7 @@ class ManifestExportTests(TestCase):
         )
         website = self.jse.website_gitrepo()
         assert website == ('https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo), 'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo))
-    
+
     @httpretty.activate
     def test_update_githubrepo(self):
         httpretty.register_uri(
@@ -326,8 +326,11 @@ class ManifestExportTests(TestCase):
             'https://{u}.github.io/{r}/'.format(u=self.jse.github_username, r=self.jse.github_repo),
             'https://github.com/{u}/{r}/pull/2'.format(u=self.jse.github_username, r=self.jse.github_repo)
         ]
-    
+
     def test_download_export(self):
         self.user.email = 'karl@marx.org'
         download = self.jse.download_export(self.user.email, self.volume)
         assert download.endswith('.zip')
+
+    def test_notify_message(self):
+        self.jse.notify_msg('hey')

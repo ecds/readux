@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 )
         elif options['canvas']:
             try:
-                canvas = Canvas.objects.get(pid=options['canvas'])                    
+                canvas = Canvas.objects.get(pid=options['canvas'])
 
                 self.__rebuild(canvas, options['testing'])
                 self.stdout.write(
@@ -107,7 +107,8 @@ class Command(BaseCommand):
                             y=word['y'],
                             canvas=canvas,
                             owner=USER.objects.get(username='ocr'),
-                            resource_type=Annotation.OCR
+                            resource_type=Annotation.OCR,
+                            order=word_order
                         )
                     word_order += 1
                     anno.content = word['content']

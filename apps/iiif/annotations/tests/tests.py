@@ -1,5 +1,5 @@
 # pylint: disable = missing-function-docstring, invalid-name, line-too-long
-"""Test cases for `apps.iiif.annotations`."""
+"""Test cases for :class:`apps.iiif.annotations`."""
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings

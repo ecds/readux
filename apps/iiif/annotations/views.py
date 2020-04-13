@@ -1,4 +1,4 @@
-"""Django views for `apps.iiif.annotations`"""
+"""Django views for :class:`apps.iiif.annotations`"""
 import json
 from django.views import View
 from django.core.serializers import serialize

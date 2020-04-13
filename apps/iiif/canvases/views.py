@@ -70,5 +70,6 @@ class IIIFV2Detail(View):
                     'canvas',
                     self.get_queryset()
                 )
-            )
+            ),
+            safe=False
         )

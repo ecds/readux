@@ -45,7 +45,7 @@ class IiifManifestExport:
 
     :return: Return bytes containing the entire contents of the buffer.
     :rtype: bytes
-    """    
+    """
     @classmethod
     def get_zip(self, manifest, version, owners=[]):
         """Generate zipfile of manifest.
@@ -58,7 +58,7 @@ class IiifManifestExport:
         :type owners: list, optional
         :return: Return bytes containing the entire contents of the buffer.
         :rtype: bytes
-        """        
+        """
         # zip_subdir = manifest.label
         # zip_filename = "iiif_export.zip"
 
@@ -194,7 +194,7 @@ class JekyllSiteExport(object):
                  include_images=False, deep_zoom='hosted',
                  github_repo=None, owners=None, user=None):
         """Init JekyllSiteExport
-        
+
         :param manifest: Manifest to be exported
         :type manifest: apps.iiif.manifests.models.Manifest
         :param version: IIIF API version eg 'v2'
@@ -255,7 +255,7 @@ class JekyllSiteExport(object):
     # Why not just call `website_zip` directly?
     def get_zip(self):
         """Get the zip file of the export.
-        
+
         :return: Exported site in zip file
         :rtype: bytes
         """
@@ -513,7 +513,7 @@ class JekyllSiteExport(object):
         # jekyll dir is *inside* the export directory;
         # for the jekyll site to display correctly, we need to commit what
         # is in the directory, not the directory itself
-        jekyll_dir = self.edition_dir(export_dir) 
+        jekyll_dir = self.edition_dir(export_dir)
 
         # modify the jekyll config for relative url on github.io
         config_file_path = os.path.join(jekyll_dir, '_config.yml')
@@ -576,8 +576,8 @@ class JekyllSiteExport(object):
         # push local master to the gh-pages branch of the newly created repo,
         # using the user's oauth token credentials
         self.log_status('Pushing new content to GitHub')
-        if self.is_testing is False:
-            gitcmd.push([repo_url, 'master:gh-pages'])
+        if self.is_testing is False: # pragma: no cover
+            gitcmd.push([repo_url, 'master:gh-pages']) # pragma: no cover
 
         # clean up temporary files after push to github
         shutil.rmtree(export_dir)
@@ -621,7 +621,7 @@ class JekyllSiteExport(object):
             repo.git.checkout('HEAD', b='gh-pages')
         else:
             repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
-            repo.remote().pull()
+            repo.remote().pull()  # pragma: no cover
         # create and switch to a new branch and switch to it; using datetime
         # for uniqueness
         git_branch_name = 'readux-update-%s' % \
@@ -677,7 +677,7 @@ class JekyllSiteExport(object):
             self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
             # add any files that could be updated to the git index
-            repo.index.add([
+            repo.index.add([ # pragma: no cover
                 '_config.yml', '_volume_pages/*', '_annotations/*',
                 '_data/tags.yml', 'tags/*', 'iiif_export/*'
             ])
@@ -697,7 +697,7 @@ class JekyllSiteExport(object):
 
         if self.is_testing is False:
             # push the update to a new branch on github
-            repo.remotes.origin.push(
+            repo.remotes.origin.push( # pragma: no cover
                 '{b}s:{b}s'.format(b=git_branch_name)
             )
         # convert repo url to form needed to generate pull request
@@ -740,7 +740,7 @@ class JekyllSiteExport(object):
         # making the request because the Head method is not implemented.
         if self.is_testing is False and 'repo' not in self.github.oauth_scopes():
             LOGGER.error('TODO: bad scope message')
-            return None
+            return None # pragma: no cover
 
         repo_url = None
         ghpages_url = None
@@ -759,10 +759,10 @@ class JekyllSiteExport(object):
             # update an existing github repository with new branch and
             # a pull request
             try:
-                # TODO: How to highjack the request to 
+                # TODO: How to highjack the request to
                 # https://58816:x-oauth-basic@github.com/zaphod/marx.git/ when testing.
                 if self.is_testing is False:
-                    pr_url = self.update_gitrepo()
+                    pr_url = self.update_gitrepo() # pragma: no cover
                 else:
                     pr_url = 'https://github.com/{u}/{r}/pull/2'.format(
                         u=self.github_username,

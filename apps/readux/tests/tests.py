@@ -373,9 +373,9 @@ class AnnotationTests(TestCase):
 
     def test_user_annotations_on_canvas(self):
         # fetch a manifest with no user annotations
-        kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
+        kwargs = {'manifest': self.manifest.pid, 'pid': self.canvas.pid}
         url = reverse('RenderCanvasDetail', kwargs=kwargs)
-        response = self.client.get(url)
+        response = self.client.get(url, data=kwargs)
         serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
         assert len(serialized_canvas['otherContent']) == 1
 
@@ -394,13 +394,13 @@ class AnnotationTests(TestCase):
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)
         assert len(serialized_canvas['otherContent']) == 3
-    
+
     def test_volume_list_view_no_kwargs(self):
         response = self.client.get(reverse('volumes list'))
         context = response.context_data
         assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
         assert context['object_list'].count() == Manifest.objects.all().count()
-    
+
     def test_volume_list_invalid_kwargs(self):
         kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
         response = self.client.get(reverse('volumes list'), data=kwargs)

@@ -8,7 +8,7 @@ from ..models import Collection
 
 class CollectionFactory(DjangoModelFactory):
     """
-    Factory for mocking `apps.iiif.kollections.models.Collection` objects.
+    Factory for mocking :class:`apps.iiif.kollections.models.Collection` objects.
     """
     pid = str(random.randrange(2000, 5000))
     label = Faker("name")

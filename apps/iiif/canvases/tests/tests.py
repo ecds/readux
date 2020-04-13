@@ -1,9 +1,10 @@
 """
-Test cases for `apps.iiif.canvases`
+Test cases for :class:`apps.iiif.canvases`
 """
 import json
 from io import StringIO
 import httpretty
+from bs4 import BeautifulSoup
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.management import call_command
@@ -29,7 +30,7 @@ class CanvasTests(TestCase):
     def test_default_iiif_image_server_url(self):
         i_server = IServer()
         assert i_server.IIIF_IMAGE_SERVER_BASE == settings.IIIF_IMAGE_SERVER_BASE
-    
+
     def test_app_config(self):
         assert CanvasesConfig.verbose_name == 'Canvases'
         assert CanvasesConfig.name == 'apps.iiif.canvases'
@@ -94,7 +95,7 @@ class CanvasTests(TestCase):
 
     def test_fedora_ocr_creation(self):
         valid_fedora_positional_response = """523\t 116\t 151\t  45\tDistillery\r\n 704\t 117\t 148\t  52\tplaid,"\r\n""".encode('UTF-8-sig')
-        
+
         ocr = services.add_positional_ocr(self.canvas, valid_fedora_positional_response)
         assert len(ocr) == 2
         for word in ocr:
@@ -145,6 +146,9 @@ class CanvasTests(TestCase):
         assert ocr.x == 916
         assert ocr.y == 0
 
+        for num, anno in enumerate(updated_canvas.annotation_set.all(), start=1):
+            assert anno.order == num
+
     @httpretty.activate
     def test_ocr_from_tsv(self):
         tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
@@ -173,7 +177,7 @@ class CanvasTests(TestCase):
         assert ocr is None
 
     def test_canvas_detail(self):
-        kwargs = { 'manifest': self.manifest.pid, 'pid': self.canvas.pid }
+        kwargs = {'manifest': self.manifest.pid, 'pid': self.canvas.pid}
         url = reverse('RenderCanvasDetail', kwargs=kwargs)
         response = self.client.get(url)
         serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
@@ -211,7 +215,7 @@ class CanvasTests(TestCase):
         assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
         assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
         assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
-    
+
     def test_result_property(self):
         assert self.canvas.result == "a retto , dio Quef\u00eca de'"
 
@@ -221,10 +225,16 @@ class CanvasTests(TestCase):
         updated_canvas = Canvas.objects.get(pk=self.canvas.pk)
         assert updated_canvas.image_info['height'] == 3000
         assert updated_canvas.image_info['width'] == 3000
-    
+
     def test_command_output_rebuild_canvas(self):
         out = StringIO()
         call_command('rebuild_ocr', canvas=Canvas.objects.all().first().pid, stdout=out)
+        assert 'OCR rebuilt for canvas' in out.getvalue()
+
+    def test_command_output_rebuild_canvas_with_no_existing_annotations(self):
+        canvas = CanvasFactory.create(manifest=self.manifest)
+        out = StringIO()
+        call_command('rebuild_ocr', canvas=canvas.pid, stdout=out)
         assert 'OCR rebuilt for canvas' in out.getvalue()
 
     def test_command_output_rebuild_manifest(self):
@@ -247,22 +257,69 @@ class CanvasTests(TestCase):
         call_command('rebuild_ocr', stdout=out)
         assert 'ERROR: your must provide a manifest or canvas pid' in out.getvalue()
 
-    # def test_command_rebuild_ocr(self):
-    #     iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
-    #     self.canvas.IIIF_IMAGE_SERVER_BASE = iiif_server
-    #     self.canvas.save()
-    #     out = StringIO()
-    #     self.canvas.label = 'karl'
-    #     call_command('rebuild_ocr', canvas=self.canvas.pid, testing=True, stdout=out)
-    #     assert 'yup' in out.getvalue()
-    #     # ocr = canvas.annotation_set.all().first()
-    #     # assert ocr.h == 43
-    #     # assert ocr.w == 89
-    #     # assert ocr.x == 459
-    #     # assert ocr.y == 391
-    #     # assert 'Jordan' in ocr.content
-    #     # assert len(canvas.annotation_set.all()) == 1
-    
+    def test_command_rebuild_ocr_canvas(self):
+        original_anno_count = self.canvas.annotation_set.all().count()
+        # Check the OCR attributes before rebuilding.
+        first_anno = self.canvas.annotation_set.all().first()
+        assert first_anno.h == 22
+        assert first_anno.w == 22
+        assert first_anno.x == 1146
+        assert first_anno.y == 928
+        original_span = BeautifulSoup(first_anno.content, 'html.parser')
+        assert 'Dope' not in original_span.string
+        assert original_span.span is not None
+        assert original_span.span.span is None
+        self.canvas.IIIF_IMAGE_SERVER_BASE = IServer.objects.get(
+            IIIF_IMAGE_SERVER_BASE='http://fake.info'
+        )
+        self.canvas.save()
+        out = StringIO()
+        call_command('rebuild_ocr', canvas=self.canvas.pid, testing=True, stdout=out)
+        assert 'OCR rebuilt for canvas' in out.getvalue()
+        ocr = self.canvas.annotation_set.all().first()
+        assert ocr.h == 22
+        assert ocr.w == 22
+        assert ocr.x == 1146
+        assert ocr.y == 928
+        new_span = BeautifulSoup(ocr.content, 'html.parser')
+        assert 'Dope' in new_span.string
+        assert original_span.string not in new_span.string
+        assert new_span.span is not None
+        assert new_span.span.span is None
+        assert len(self.canvas.annotation_set.all()) == original_anno_count + 1
+
+    def test_command_rebuild_ocr_manifest(self):
+        canvas = Canvas.objects.get(pk='a7f1bd69-766c-4dd4-ab66-f4051fdd4cff')
+        original_anno_count = canvas.annotation_set.all().count()
+        # Check the OCR attributes before rebuilding.
+        first_anno = canvas.annotation_set.all().first()
+        assert first_anno.h == 22
+        assert first_anno.w == 22
+        assert first_anno.x == 1146
+        assert first_anno.y == 928
+        original_span = BeautifulSoup(first_anno.content, 'html.parser')
+        assert 'southernplayalisticadillacmuzik' not in original_span.string
+        assert original_span.span is not None
+        assert original_span.span.span is None
+        canvas.IIIF_IMAGE_SERVER_BASE = IServer.objects.get(
+            IIIF_IMAGE_SERVER_BASE='http://fake.info'
+        )
+        canvas.save()
+        out = StringIO()
+        call_command('rebuild_ocr', manifest=canvas.manifest.pid, testing=True, stdout=out)
+        assert 'OCR rebuilt for manifest' in out.getvalue()
+        ocr = canvas.annotation_set.all().first()
+        assert ocr.h == 22
+        assert ocr.w == 22
+        assert ocr.x == 1146
+        assert ocr.y == 928
+        new_span = BeautifulSoup(ocr.content, 'html.parser')
+        assert 'Dope' in new_span.string
+        assert original_span.string not in new_span.string
+        assert new_span.span is not None
+        assert new_span.span.span is None
+        assert len(canvas.annotation_set.all()) == original_anno_count + 1
+
     def test_no_alto_for_internet_archive(self):
         iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://iiif.archivelab.org/iiif/')
         canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE=iiif_server, manifest=self.canvas.manifest)

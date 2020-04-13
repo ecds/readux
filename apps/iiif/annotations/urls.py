@@ -1,4 +1,4 @@
-"""Url patterns for `apps.iiif.annotations`"""
+"""Url patterns for :class:`apps.iiif.annotations`"""
 from django.urls import path
 from . import views
 

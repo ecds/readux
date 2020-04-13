@@ -66,7 +66,7 @@ class GithubApi(object):
 
     def oauth_scopes(self, test=False):
         """Get a list of scopes available for the current oauth token
-        
+
         :param test: Flag for if code is being executed for testing, defaults to False
         :type test: bool, optional
         :return: List of OAuth headers
@@ -77,7 +77,7 @@ class GithubApi(object):
         if test:
             response = self.session.get('%s/user' % self.url)
         else:
-            response = self.session.head('%s/user' % self.url)
+            response = self.session.head('%s/user' % self.url) # pragma: no cover
 
         if response.status_code == requests.codes.ok:
             return response.headers['x-oauth-scopes'].split(', ')
@@ -85,7 +85,7 @@ class GithubApi(object):
 
     def create_repo(self, name, description=None, homepage=None):
         """Create a new user repository with the specified name.
-        
+
         :param name: Repo name
         :type name: str
         :param description: Repo description, defaults to None
@@ -110,7 +110,7 @@ class GithubApi(object):
 
     def list_repos(self, user):
         """Get a list of a repositories by person
-        
+
         :param user: GitHub username
         :type user: str
         :return: List of person's repositories.
@@ -190,4 +190,3 @@ class GithubApi(object):
             pass
 
         raise GithubApiException(error_message)
-    

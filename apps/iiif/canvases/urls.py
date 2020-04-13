@@ -1,5 +1,5 @@
 """
-URL patterns for `apps.iiif.canvases`
+URL patterns for :class:`apps.iiif.canvases`
 """
 from django.urls import path
 from .views import IIIFV2Detail, IIIFV2List

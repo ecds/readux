@@ -1,4 +1,4 @@
-"""Django admin module for `apps.iiif.annotations`"""
+"""Django admin module for :class:`apps.iiif.annotations`"""
 from django.contrib import admin
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin

@@ -11,6 +11,7 @@ from django.core.serializers import serialize
 import config.settings.local as settings
 from ..views import CollectionSitemap
 from ..models import Collection
+from ..admin import CollectionAdmin, ManifestInline
 from ...manifests.models import Manifest
 
 class KollectionTests(TestCase):
@@ -168,3 +169,11 @@ class KollectionTests(TestCase):
         collection = json.loads(serialize('kollection', [Collection.objects.all().first()]))
         assert collection['@type'] == 'sc:Collection'
         assert isinstance(collection, dict)
+
+    def test_collection_admin_inlines(self):
+        pid = Manifest.collections.through.objects.all().first().manifest.pid
+        admin_pid = CollectionAdmin.inlines[0].manifest_pid(
+            ManifestInline,
+            Manifest.collections.through.objects.all().first()
+        )
+        assert pid == admin_pid

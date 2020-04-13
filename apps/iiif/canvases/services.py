@@ -28,6 +28,44 @@ def get_fake_canvas_info(canvas):
     response = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
     return response
 
+def get_fake_ocr():
+    return [
+        {
+            "h": 22,
+            "w": 22,
+            "x": 1146,
+            "y": 928,
+            "content": "Dope"
+        },
+        {
+            "h": 222,
+            "w": 222,
+            "x": 11462,
+            "y": 9282,
+            "content": ""
+        },
+        {
+            "h": 21,
+            "w": 21,
+            "x": 1141,
+            "y": 9281,
+            "content": "southernplayalisticadillacmuzik"
+        },
+        {
+            "h": 213,
+            "w": 213,
+            "x": 11413,
+            "y": 92813
+        },
+        {
+            "h": 214,
+            "w": 214,
+            "x": 11414,
+            "y": 92814,
+            "content": " "
+        }
+    ]
+
 def get_ocr(canvas):
     """Function to determine method for fetching OCR for a canvas.
 
@@ -36,6 +74,8 @@ def get_ocr(canvas):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
+    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+        return get_fake_ocr()
     if canvas.default_ocr == "line":
         result = fetch_alto_ocr(canvas)
         return add_alto_ocr(result)
@@ -178,8 +218,8 @@ def add_alto_ocr(result):
     for zones in surface:
         if 'zone' in zones.tag:
             for line in zones:
-                if line[-1].text is None:
-                    continue
+                # if line[-1].text is None:
+                #     continue
                 ocr.append({
                     'content': line[-1].text,
                     'h': int(line.attrib['lry']) - int(line.attrib['uly']),

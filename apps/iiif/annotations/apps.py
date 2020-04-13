@@ -1,4 +1,4 @@
-"""Configuration for `apps.iiif.annotations`"""
+"""Configuration for :class:`apps.iiif.annotations`"""
 from django.apps import AppConfig
 
 class AnnotationsConfig(AppConfig):

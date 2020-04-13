@@ -1,101 +1,35 @@
+# pylint: disable = attribute-defined-outside-init, too-few-public-methods
+"""Module for serializing IIIF Canvas"""
 from django.core.serializers.base import SerializerDoesNotExist
-from django.core.serializers.json import Serializer as JSONSerializer
-from ...users.models import User
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 import config.settings.local as settings
+from apps.iiif.serializers.base import Serializer as JSONSerializer
 
-
-"""
-V2
-{
-  // Metadata about this canvas
-  "@context": "http://iiif.io/api/presentation/2/context.json",
-  "@id": "https://example.org/iiif/book1/canvas/p1",
-  "@type": "sc:Canvas",
-  "label": "p. 1",
-  "height": 1000,
-  "width": 750,
-  "thumbnail" : {
-    "@id" : "https://example.org/iiif/book1/canvas/p1/thumb.jpg",
-    "@type": "dctypes:Image",
-    "height": 200,
-    "width": 150
-  },
-  "images": [
-    {
-      "@type": "oa:Annotation"
-      // Link from Image to canvas should be included here, as below
-    }
-  ],
-  "otherContent": [
-    {
-      // Reference to list of other Content resources, _not included directly_
-      "@id": "https://example.org/iiif/book1/list/p1",
-      "@type": "sc:AnnotationList"
-    }
-  ]
-
-}
-
-V3
-{
-  // Metadata about this canvas
-  "id": "https://example.org/iiif/book1/canvas/p1",
-  "type": "Canvas",
-  "label": { "@none": [ "p. 1" ] },
-  "height": 1000,
-  "width": 750,
-
-  "items": [
-    {
-      "id": "https://example.org/iiif/book1/page/p1/1",
-      "type": "AnnotationPage",
-      "items": [
-        // Content Annotations on the Canvas are included here
-      ]
-    }
-  ]
-}
-"""
+USER = get_user_model()
 
 class Serializer(JSONSerializer):
     """
     Convert a queryset to IIIF Canvas
     """
-    def _init_options(self):
-        super()._init_options()
-        self.version = self.json_kwargs.pop('version', 'v2')
-        self.is_list = self.json_kwargs.pop('is_list', False)
-
-    def start_serialization(self):
-        self._init_options()
-        if (self.is_list):
-          self.stream.write('[')
-        else:
-          self.stream.write('')
-
-    def end_serialization(self):
-        if (self.is_list):
-          self.stream.write(']')
-        else:
-          self.stream.write('')
-
-    def start_object(self, obj):
-        super().start_object(obj)
-
     def get_dump_object(self, obj):
         obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
-            otherContent = [ 
-                    { "@id" : "%s/list/%s" % (obj.manifest.baseurl, obj.pid),
-                      "@type": "sc:AnnotationList",
-                      "label": "OCR Text" }
-                  ]
-            for user in User.objects.filter(userannotation__canvas=obj).distinct():
+            otherContent = [ # pylint: disable=invalid-name
+                {
+                    "@id": '{m}/list/{c}'.format(m=obj.manifest.baseurl, c=obj.pid),
+                    "@type": "sc:AnnotationList",
+                    "label": "OCR Text"
+                }
+            ]
+            for user in USER.objects.filter(userannotation__canvas=obj).distinct():
                 kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
-                url = "{h}{k}".format(h=settings.HOSTNAME, k=reverse('user_annotations', kwargs=kwargs))
-                user_endpoint = { 
-                    "label": "Annotations by %s" % user.username,
+                url = "{h}{k}".format(
+                    h=settings.HOSTNAME,
+                    k=reverse('user_annotations', kwargs=kwargs)
+                )
+                user_endpoint = {
+                    "label": 'Annotations by {u}'.format(u=user.username),
                     "@type": "sc:AnnotationList",
                     "@id": url
                 }
@@ -108,25 +42,25 @@ class Serializer(JSONSerializer):
                 "height": obj.height,
                 "width": obj.width,
                 "images": [
-                  {
-                    "@context": "http://iiif.io/api/presentation/2/context.json",
-                    "@id": "%s" % (obj.anno_id),
-                    "@type": "oa:Annotation",
-                    "motivation": "sc:painting",
-                    "resource": {
-                      "@id": "%s/full/full/0/default.jpg" % (obj.service_id),
-                      "@type": "dctypes:Image",
-                      "format": "image/jpeg",
-                      "height": obj.height,
-                      "width": obj.width,
-                      "service": {
-                        "@context": "https://iiif.io/api/image/2/context.json",
-                        "@id": obj.service_id,
-                        "profile": "https://iiif.io/api/image/2/level2.json"
-                      }
-                    },
-                    "on": obj.identifier,
-                  }
+                    {
+                        "@context": "http://iiif.io/api/presentation/2/context.json",
+                        "@id": str(obj.anno_id),
+                        "@type": "oa:Annotation",
+                        "motivation": "sc:painting",
+                        "resource": {
+                            "@id": '{id}/full/full/0/default.jpg'.format(id=obj.service_id),
+                            "@type": "dctypes:Image",
+                            "format": "image/jpeg",
+                            "height": obj.height,
+                            "width": obj.width,
+                            "service": {
+                                "@context": "https://iiif.io/api/image/2/context.json",
+                                "@id": obj.service_id,
+                                "profile": "https://iiif.io/api/image/2/level2.json"
+                            }
+                        },
+                        "on": obj.identifier,
+                    }
                 ],
                 "thumbnail" : {
                     "@id" : obj.thumbnail,
@@ -136,11 +70,13 @@ class Serializer(JSONSerializer):
                 "otherContent" : otherContent
             }
             return data
-
-    def handle_field(self, obj, field):
-        super().handle_field(obj, field)
-
+        # TODO: Should probably return a helpful error.
+        return None
 
 class Deserializer:
+    """Deserialize IIIF Annotation List
+
+    :raises SerializerDoesNotExist: Not yet implemented.
+    """
     def __init__(self, *args, **kwargs):
         raise SerializerDoesNotExist("canvas is a serialization-only serializer")

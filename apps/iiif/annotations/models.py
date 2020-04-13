@@ -1,4 +1,4 @@
-"""Django models for `apps.iiif.annotations`"""
+"""Django models for :class:`apps.iiif.annotations`"""
 from django.contrib.postgres.fields import JSONField
 from django.db import models, IntegrityError
 from django.conf import settings

@@ -34,8 +34,8 @@ Vue.component("v-volume-annotations", {
   props: ["manifestCount", "pageCount"],
   template: `
   <ul class="uk-subnav uk-subnav-pill" uk-switcher v-cloak v-if="!hasImage">
-    <li><a href="#" id="rx-annotation-manifest"> {{manifestCount}} annotations in manifest</a></li>
-    <li><a href="#" id="rx-annotation-page"> {{pageCount}} annotations on page</a></li>
+    <li><a href="#" class="rx-btn-annotation"> {{manifestCount}} annotations in manifest</a></li>
+    <li><a href="#" class="rx-btn-annotation"> {{pageCount}} annotations on page</a></li>
   </ul>
   `,
   data: function () {
@@ -45,7 +45,7 @@ Vue.component("v-volume-annotations", {
   },
   mounted() {
     var vm = this;
-    window.addEventListener('canvasswitch', function (event) {
+    window.addEventListener("canvasswitch", function (event) {
       if (event.detail.annotationsOnPage) {
         vm.pageCount = event.detail.annotationsOnPage;
       }

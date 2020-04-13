@@ -948,6 +948,15 @@ p {
   cursor: pointer;
 }
 
+.rx-btn-annotation {
+  font-weight: bold;
+}
+
+.uk-active > .rx-btn-annotation {
+  background-color: #ff7f00 !important;
+  color: white;
+}
+
 .uk-navbar-nav {
   font-weight: bold;
 }

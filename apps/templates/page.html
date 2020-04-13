@@ -267,17 +267,16 @@
         </v-info-content-url-single>
 
          {% if "/page/all" in request.get_full_path in request.get_full_path %}
-          <v-info-content-url-external
+          <!-- <v-info-content-url-external
             ref="rx-url-canvas" v-show="false">
-          </v-info-content-url-external>
+          </v-info-content-url-external> -->
 
-          <v-info-content-url-external
-            ref="rx-url-stable-page" v-show="false">
+          <v-info-content-url-external ref="rx-url-stable-page" v-show="false">
           </v-info-content-url-external>
         {% else %}
-          <v-info-content-url-external
+          <!-- <v-info-content-url-external
             ref="rx-url-canvas">
-          </v-info-content-url-external>
+          </v-info-content-url-external> -->
 
           <v-info-content-url-external ref="rx-url-stable-page">
           </v-info-content-url-external>

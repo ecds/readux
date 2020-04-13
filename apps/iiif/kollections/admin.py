@@ -1,15 +1,17 @@
 from django.contrib import admin
-from django import forms
-from import_export import resources, fields
+from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
 from apps.iiif.kollections.models import Collection
-from apps.iiif.manifests.models import Manifest, Note      
+from apps.iiif.manifests.models import Manifest
 
 class CollectionResource(resources.ModelResource):
     class Meta:
         model = Collection
-        fields = ('id', 'label','summary', 'pid', 'attribution', 'metadata', 'original', 'collection_image_title', 'collection_image_creator', 'collection_image_summary')
+        fields = (
+            'id', 'label', 'summary', 'pid', 'attribution',
+            'metadata', 'original', 'collection_image_title',
+            'collection_image_creator', 'collection_image_summary'
+        )
 
 class ManifestInline(admin.TabularInline):
     model = Manifest.collections.through
@@ -29,8 +31,7 @@ class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         ManifestInline,
     ]
     resource_class = CollectionResource
-    pass     
     list_display = ('id', 'pid', 'metadata', 'summary', 'label')
-    search_fields = ('label','summary','pid')
-    
+    search_fields = ('label', 'summary', 'pid')
+
 admin.site.register(Collection, CollectionAdmin)

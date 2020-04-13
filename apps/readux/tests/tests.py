@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
-import warnings
 from ..annotations import Annotations, AnnotationCrud
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -13,8 +12,10 @@ from ..models import UserAnnotation
 from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions, AnnotationsCount
 from urllib.parse import urlencode
 from cssutils import parseString
+import warnings
 import json
 import re
+import uuid
 
 User = get_user_model()
 
@@ -169,8 +170,8 @@ class AnnotationTests(TestCase):
 
     def setUp(self):
         # fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-        self.user_a = get_user_model().objects.get(pk=1)
-        self.user_b = get_user_model().objects.get(pk=2)
+        self.user_a = get_user_model().objects.get(pk=111)
+        self.user_b = get_user_model().objects.get(pk=222)
         self.factory = RequestFactory()
         self.client = Client()
         self.view = Annotations.as_view()
@@ -292,6 +293,18 @@ class AnnotationTests(TestCase):
         annotation = self.load_anno(response)
         assert response.status_code == 200
         assert annotation['resource']['chars'] == 'updated annotation'
+    
+    def test_update_non_existing_user_annotation(self):
+        self.create_user_annotations(1, self.user_a)
+        data = json.loads(self.valid_mirador_annotations['svg']['oa_annotation'])
+        new_id = str(uuid.uuid4())
+        data['@id'] = new_id
+        data['id'] = new_id
+        request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request.user = self.user_a
+        response = self.crud_view(request)
+        annotation = self.load_anno(response)
+        assert response.status_code == 404
 
     def test_update_someone_elses_annotation(self):
         self.create_user_annotations(4, self.user_a)
@@ -301,7 +314,7 @@ class AnnotationTests(TestCase):
         request.user = self.user_b
         response = self.crud_view(request)
         annotation = self.load_anno(response)
-        assert response.status_code == 404
+        assert response.status_code == 401
 
     def test_updating_annotation_unauthenticated(self):
         self.create_user_annotations(1, self.user_a)
@@ -320,6 +333,14 @@ class AnnotationTests(TestCase):
 
     def test_delete_user_annotation_as_owner(self):
         self.create_user_annotations(1, self.user_a)
+        data = {'id': str(uuid.uuid4())}
+        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request.user = self.user_a
+        response = self.crud_view(request)
+        assert response.status_code == 404
+
+    def test_delete_non_existant_user_annotation(self):
+        self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = {'id': existing_anno.pk}
         request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
@@ -337,8 +358,8 @@ class AnnotationTests(TestCase):
         request.user = self.user_b
         response = self.crud_view(request)
         message = self.load_anno(response)
-        assert response.status_code == 404
-        assert message['message'] == 'Annotation not found.'
+        assert response.status_code == 401
+        assert message['message'] == 'You are not the owner of this annotation.'
 
     def test_delete_annotation_unauthenticated(self):
         self.create_user_annotations(1, self.user_a)

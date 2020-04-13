@@ -13,15 +13,20 @@ import uuid
 User = get_user_model()
 
 class Annotations(ListView):
-
+    """
+    Display a list of UserAnnotations for a specific user.
+    Returns
+    -------
+    json
+    """
     def get_queryset(self):
         return Canvas.objects.filter(pid=self.kwargs['canvas'])
-    
+
     def get(self, request, *args, **kwargs):
         username = kwargs['username']
         try:
             owner = User.objects.get(username=username)
-            if self.request.user == owner: 
+            if self.request.user == owner:
                 return JsonResponse(
                     json.loads(
                         serialize(
@@ -32,13 +37,12 @@ class Annotations(ListView):
                     ),
                     safe=False
                 )
-            else:
-                return JsonResponse(status=401, data={"Permission to see annotations not allowed for logged in user.": username})
+            return JsonResponse(status=401, data={"Permission to see annotations not allowed for logged in user.": username})
 
         except ObjectDoesNotExist:
             # attempt to get annotations for non-existent user
             return JsonResponse(status=404, data={"User not found.": username})
-        return JsonResponse(status=200, data={})
+        # return JsonResponse(status=200, data={})
 
 
 class AnnotationCrud(View):
@@ -55,8 +59,7 @@ class AnnotationCrud(View):
     def get_queryset(self):
         try:
             return UserAnnotation.objects.get(
-                pk=self.payload['id'],
-                owner=self.request.user
+                pk=self.payload['id']
             )
         except UserAnnotation.DoesNotExist:
             return None

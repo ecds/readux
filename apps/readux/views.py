@@ -184,6 +184,7 @@ class AnnotationsCount(TemplateView):
 
 # This replaces plainto_tsquery with to_tsquery so that operators ( | for or and :* for end of word) can be used. 
 # If we upgrade to Django 2.2 from 2.1 we can add the operator search_type="raw" to the standard SearchQuery, and it should do the same thing.
+# TODO: This does not seem to be called anywhere. Is it actually needed?
 class MySearchQuery(SearchQuery):
     def as_sql(self, compiler, connection):
         params = [self.value]
@@ -448,6 +449,6 @@ class CollectionsSitemap(Sitemap):
         return reverse('collection', kwargs={'collection': item.pid})
 
     def lastmod(self, item):
-        return item.modified_at 
+        return item.updated_at 
 
 

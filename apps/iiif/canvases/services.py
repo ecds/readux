@@ -1,10 +1,10 @@
+from django.conf import settings
+from apps.utils.fetch import fetch_url
+from xml.etree import ElementTree
 import requests
 import json
 import csv
-from django.conf import settings
-from apps.utils.fetch import fetch_url
 import config.settings.local as local_settings
-from xml.etree import ElementTree
 import httpretty
 
 # Method to mock a response for testing.
@@ -57,7 +57,7 @@ def add_positional_ocr(canvas, result):
             # include the quote marks in content
             class include_quotes_dialect(csv.Dialect):
                 lineterminator = '\n'
-                delimiter= '\t'
+                delimiter = '\t'
                 quoting = csv.QUOTE_NONE # perform no special processing of quote characters
             reader = csv.DictReader(result.split('\n'), dialect=include_quotes_dialect)
             for row in reader:
@@ -65,10 +65,10 @@ def add_positional_ocr(canvas, result):
                 # # Skip empty strings
                 # if content.isspace() or not content:
                 #     continue
-                w = int(row['w'])
-                h = int(row['h'])
-                x = int(row['x'])
-                y = int(row['y'])
+                w=int(row['w'])
+                h=int(row['h'])
+                x=int(row['x'])
+                y=int(row['y'])
                 ocr.append({
                     'content': content,
                     'w': w,
@@ -80,7 +80,7 @@ def add_positional_ocr(canvas, result):
         if result is not None:
             # What comes back from fedora is 8-bit bytes
             for index, word in enumerate(result.decode('UTF-8-sig').strip().split('\r\n')):
-                if (len(word.split('\t')) == 5):
+                if len(word.split('\t')) == 5:
                     ocr.append({
                         'content': word.split('\t')[4],
                         'w': int(word.split('\t')[2]),
@@ -88,20 +88,21 @@ def add_positional_ocr(canvas, result):
                         'x': int(word.split('\t')[0]),
                         'y': int(word.split('\t')[1])
                     })
-    if (ocr):
+    if ocr:
         return ocr
-    else:
-        return None
+    return None
 
 def fetch_alto_ocr(canvas):
     if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
         return None
-    else:
-        url = "{p}{c}/datastreams/tei/content".format(p=settings.DATASTREAM_PREFIX, c=canvas.pid.replace('fedora:',''))
-        return fetch_url(url, format='text/plain')
+    url = "{p}{c}/datastreams/tei/content".format(
+        p=settings.DATASTREAM_PREFIX,
+        c=canvas.pid.replace('fedora:', '')
+    )
+    return fetch_url(url, format='text/plain')
 
 def add_alto_ocr(canvas, result):
-    if result == None:
+    if result is None:
         return None
     ocr = []
     surface = ElementTree.fromstring(result)[-1][0]
@@ -119,5 +120,4 @@ def add_alto_ocr(canvas, result):
                 })
     if (ocr):
         return ocr
-    else:
-        return None
+    return None

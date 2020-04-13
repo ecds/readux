@@ -25,7 +25,7 @@ class ManifestExportTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json', 'userannotation.json']
 
     def setUp(self):
-        self.user = get_user_model().objects.get(pk=1)
+        self.user = get_user_model().objects.get(pk=111)
         self.factory = RequestFactory()
         self.client = Client()
         self.volume = Manifest.objects.get(pk='464d82f6-6ae5-4503-9afc-8e3cdd92a3f1')
@@ -36,8 +36,8 @@ class ManifestExportTests(TestCase):
         self.manifest_export_view = ManifestExport.as_view()
         self.jekyll_export_view = JekyllExport.as_view()
         self.sa_app = SocialAppFactory.create(
-            provider = 'github',
-            name = 'GitHub'
+            provider='github',
+            name='GitHub'
         )
         self.sa_acct = SocialAccountFactory.create(
             provider='github',
@@ -110,7 +110,9 @@ class ManifestExportTests(TestCase):
         # verify ocr annotation count is correct
         with open(os.path.join(jekyll_path, '_volume_pages', '0000.html')) as page_file:
             contents = page_file.read()
-        assert contents.count('ocr-line') == 6 or contents.count('ocr-line') == 4
+        # Depending on the order the tests are run, there might be more or less in the database.
+        # TODO: Why does the database not get reset?
+        assert 4 <= contents.count('ocr-line') <= 6
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 
@@ -153,14 +155,37 @@ class ManifestExportTests(TestCase):
         assert isinstance(response.getvalue(), bytes)
 
     def test_jekyll_export_include_download(self):
-        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
+        kwargs = {'pid': self.volume.pid, 'version': 'v2'}
         url = reverse('JekyllExport', kwargs=kwargs)
         kwargs['deep_zoom'] = 'include'
         kwargs['mode'] = 'download'
-        request = self.factory.post(url, data=kwargs) 
-        request.user = self.user       
-        response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
+        request = self.factory.post(url, data=kwargs)
+        request.user = self.user
+        response = self.jekyll_export_view(
+            request,
+            pid=self.volume.pid,
+            version='v2',
+            content_type='x-www-form-urlencoded'
+        )
         assert isinstance(response.getvalue(), bytes)
+
+    def test_jekyll_export_to_github(self):
+        '''
+        Docstring
+        '''
+        kwargs = {'pid': self.volume.pid, 'version': 'v2'}
+        url = reverse('JekyllExport', kwargs=kwargs)
+        kwargs['deep_zoom'] = 'exclude'
+        kwargs['mode'] = 'github'
+        request = self.factory.post(url, data=kwargs)
+        request.user = self.user
+        response = self.jekyll_export_view(
+            request,
+            pid=self.volume.pid,
+            version='v2',
+            content_type="application/x-www-form-urlencoded"
+        )
+        assert response.status_code == 200
     
     def test_use_github(self):
         assert isinstance(self.jse.github, GithubApi)

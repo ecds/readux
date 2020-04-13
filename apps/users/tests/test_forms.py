@@ -1,12 +1,12 @@
 import pytest
-
-from apps.users.forms import UserCreationForm
-from apps.users.tests.factories import UserFactory
+from django.test import RequestFactory
+from apps.users.tests.factories import UserFactory, SocialAccountFactory
+from apps.users.forms import UserCreationForm, ReaduxSocialSignupForm
 
 pytestmark = pytest.mark.django_db
 
 
-class TestUserCreationForm:
+class TestUserForm:
 
     def test_clean_username(self):
         # A user with proto_user params does not exist yet.
@@ -39,3 +39,28 @@ class TestUserCreationForm:
         assert not form.is_valid()
         assert len(form.errors) == 1
         assert "username" in form.errors
+
+# class TestUserCreationForm:
+
+    def test_signup(self):
+        factory = RequestFactory()
+        request = factory.get('/')
+        proto_user = UserFactory.build()
+        proto_sa = SocialAccountFactory.build(user = proto_user)
+        form = ReaduxSocialSignupForm(
+            {
+                "name": proto_user.name,
+                "agree": True,
+                "sociallogin": proto_sa,
+                "email": proto_user.email,
+                "username": proto_user.username
+            },
+            sociallogin=proto_sa
+        )
+        assert form.is_valid()
+        proto_user.save()
+        proto_sa.user = proto_user
+        saved_sa = form.signup(request, proto_sa)
+        saved_sa = form.signup(request, proto_sa)
+        assert not saved_sa._state.adding
+        assert saved_sa.user == proto_user

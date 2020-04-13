@@ -1,8 +1,8 @@
+import json
 from django.core.serializers.base import SerializerDoesNotExist
 from django.core.serializers.json import Serializer as JSONSerializer
 from django.core.serializers import serialize
-import json
-
+from apps.iiif.canvases.models import Canvas
 """
 V2
 {
@@ -77,15 +77,16 @@ class Serializer(JSONSerializer):
         super().start_object(obj)
 
     def get_dump_object(self, obj):
-        startpage = obj.canvas_set.all().filter(is_starting_page=1)
+        startpage = obj.canvas_set.all().filter(is_starting_page=True)
+        # TODO: Raise error if version is not v2 or v3
         if ((self.version == 'v2') or (self.version is None)):
           within = []
           for col in obj.collections.all():
             within.append(col.get_absolute_url())
-          if (startpage.count() > 0):
-            thumbnail="%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid)
-          else:
-            thumbnail="%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid)
+          try:
+            thumbnail = "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().get(is_starting_page=1).pid)
+          except Canvas.MultipleObjectsReturned:
+            thumbnail = "%s/%s" % (obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, obj.canvas_set.all().first().pid)
           data = {
             "@context": "http://iiif.io/api/presentation/2/context.json",
             "@id": "%s/manifest" % (obj.baseurl),

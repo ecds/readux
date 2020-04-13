@@ -6,14 +6,14 @@ from django.core.management import call_command
 from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
-import warnings
-from .views import AnnotationsForPage
-from .models import Annotation
-from ..canvases.models import Canvas
-from ..manifests.models import Manifest
-from .apps import AnnotationsConfig
+from apps.iiif.annotations.views import AnnotationsForPage
+from apps.iiif.annotations.models import Annotation
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.manifests.models import Manifest
+from apps.iiif.annotations.apps import AnnotationsConfig
 from bs4 import BeautifulSoup
 from io import StringIO
+import warnings
 import json
 
 User = get_user_model()
@@ -151,9 +151,14 @@ class AnnotationTests(TestCase):
         assert ocr.format == 'text/html'
 
     def test_command_output_remove_empty_ocr(self):
+        anno_count = self.annotations.count()
+        # anno = self.annotations[1]
+        # anno.content = ' '
+        # anno.save()
         out = StringIO()
         call_command('remove_empty_ocr', stdout=out)
         assert 'Empty OCR annotations have been removed' in out.getvalue()
+        # assert anno_count > self.annotations.count()
 
     def test_resaving_ocr_annotation(self):
         # Span should not change

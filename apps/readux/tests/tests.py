@@ -188,14 +188,14 @@ class AnnotationTests(TestCase):
                 owner=user
             )
             text_anno.save()
-    
+
     def load_anno(self, response):
         annotation_list = json.loads(response.content.decode('UTF-8-sig'))
         if 'resources' in annotation_list:
             return annotation_list['resources']
         else:
             return annotation_list
-    
+
     def rando_anno(self):
         return UserAnnotation.objects.order_by("?").first()
 
@@ -285,7 +285,7 @@ class AnnotationTests(TestCase):
         data = { 'oa_annotation': data }
         resource = data['oa_annotation']['resource'][0]
         resource['chars'] = 'updated annotation'
-        data['oa_annotation']['resource'] = resource 
+        data['oa_annotation']['resource'] = resource
         data['id'] = str(existing_anno.id)
         request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
         request.user = self.user_a
@@ -293,7 +293,7 @@ class AnnotationTests(TestCase):
         annotation = self.load_anno(response)
         assert response.status_code == 200
         assert annotation['resource']['chars'] == 'updated annotation'
-    
+
     def test_update_non_existing_user_annotation(self):
         self.create_user_annotations(1, self.user_a)
         data = json.loads(self.valid_mirador_annotations['svg']['oa_annotation'])
@@ -379,7 +379,7 @@ class AnnotationTests(TestCase):
         serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
         assert len(serialized_canvas['otherContent']) == 1
 
-        # add annotations to the manifest    
+        # add annotations to the manifest
         self.create_user_annotations(1, self.user_a)
         self.create_user_annotations(2, self.user_b)
         existing_anno_a = UserAnnotation.objects.all()[0]
@@ -425,7 +425,7 @@ class AnnotationTests(TestCase):
         context = response.context_data
         assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
         assert context['object_list'].count() == Manifest.objects.all().count()
-    
+
     def test_collection_detail_invalid_kwargs(self):
         kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
         response = self.client.get(reverse('volumes list'), data=kwargs)
@@ -462,7 +462,7 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         assert anno.motivation == 'oa:commenting'
-    
+
     def test_style_attribute_adds_id_to_class_selector(self):
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
@@ -509,7 +509,7 @@ class AnnotationTests(TestCase):
         anno.save()
         anno = UserAnnotation.objects.get(pk=anno.pk)
         assert anno.tags.count() == 2
-        
+
     def test_deleting_tags(self):
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
@@ -518,8 +518,8 @@ class AnnotationTests(TestCase):
         assert anno.tags.count() == 2
         assert len(anno.oa_annotation['resource']) == 3
         # Remove one tag
-        for index, resource in enumerate(anno.oa_annotation['resource']): 
-            if resource['@type'] == 'oa:Tag': 
+        for index, resource in enumerate(anno.oa_annotation['resource']):
+            if resource['@type'] == 'oa:Tag':
                 del anno.oa_annotation['resource'][index]
                 break
         anno.save()
@@ -527,10 +527,10 @@ class AnnotationTests(TestCase):
         assert isinstance(serialized_anno['resource'], list)
         assert anno.tags.count() == 1
         assert anno.motivation == UserAnnotation.TAGGING
-        
+
         # Remove any remaining tags.
         for index, resource in enumerate(anno.oa_annotation['resource']):
-            if resource['@type'] == 'oa:Tag': 
+            if resource['@type'] == 'oa:Tag':
                 del anno.oa_annotation['resource'][index]
         # anno.oa_annotation['resource'] = [anno.oa_annotation['resource'][0]]
         anno.save()
@@ -565,7 +565,7 @@ class AnnotationTests(TestCase):
         anno = UserAnnotation(oa_annotation=self.valid_mirador_annotations['text']['oa_annotation'])
         anno.save()
         assert anno.content == '<p>mcoewmewom</p>'
-    
+
     def test_parse_mirador_anno_when_on_is_dict(self):
         oa_annotation = json.loads(self.valid_mirador_annotations['tag']['oa_annotation'])
         oa_annotation['on'] = oa_annotation['on'][0]
@@ -580,7 +580,9 @@ class AnnotationTests(TestCase):
         url = reverse('_anno_count', kwargs=kwargs)
         request = self.factory.get(url)
         request.user = self.user_a
-        response = AnnotationsCount.as_view()(request, volume=self.manifest.pid, page=self.canvas.pid)
+        response = AnnotationsCount.as_view()(
+            request, volume=self.manifest.pid, page=self.canvas.pid
+        )
         assert response.context_data['volume'] == self.manifest
         assert response.context_data['page'] == self.canvas
         assert response.context_data['user_annotation_page_count'] == 3

@@ -22,4 +22,6 @@ ratings:
   - "**.py"
 exclude_paths:
   - "sitemedia/ext/**"
+  - "apps/static/**/**"
+  - "**tests*.py"
 

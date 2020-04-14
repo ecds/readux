@@ -169,6 +169,7 @@ class VolumeDetail(TemplateView):
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         return context
 
+# FIXME: What is this used for? The template does not exist.
 class AnnotationsCount(TemplateView):
     """Django Template View for :class:`apps.readux.models.UserAnnotation`"""
     template_name = "count.html"

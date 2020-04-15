@@ -14,6 +14,7 @@ from ..views import ManifestSitemap, ManifestRis
 from ..models import Manifest
 from ..forms import JekyllExportForm
 from .factories import ManifestFactory
+from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
 
 USER = get_user_model()
@@ -63,7 +64,7 @@ class ManifestTests(TestCase):
         assert self.volume.thumbnail_logo.endswith("/%s/%s" % ("media", "awesome.png"))
         assert self.volume.baseurl.endswith("/iiif/v2/%s" % (self.volume.pid))
         assert self.volume.start_canvas.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
-    
+
     def test_default_start_canvas(self):
         self.start_canvas.is_starting_page = False
         self.start_canvas.save()
@@ -125,4 +126,18 @@ class ManifestTests(TestCase):
             )
         )
         first_canvas = volume.canvas_set.all().first()
-        assert manifest['thumbnail']['@id'] == '{b}/{p}/full/600,/0/default.jpg'.format(b=first_canvas.IIIF_IMAGE_SERVER_BASE, p=first_canvas.pid)
+        assert first_canvas.pid in manifest['thumbnail']['@id']
+
+    def test_no_starting_canvases(self):
+        manifest = ManifestFactory.create()
+        try:
+            manifest.canvas_set.all().get(is_starting_page=True)
+        except Canvas.DoesNotExist as error:
+            assert str(error) == 'Canvas matching query does not exist.'
+        serialized_manifest = json.loads(
+            serialize(
+                'manifest',
+                [manifest]
+            )
+        )
+        assert manifest.canvas_set.all().first().pid in serialized_manifest['thumbnail']['@id']

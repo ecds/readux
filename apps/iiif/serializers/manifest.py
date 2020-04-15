@@ -35,9 +35,9 @@ class Serializer(JSONSerializer):
             try:
                 thumbnail = '{h}/{p}'.format(
                     h=obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
-                    p=obj.canvas_set.all().get(is_starting_page=1).pid
+                    p=obj.canvas_set.all().get(is_starting_page=True).pid
                 )
-            except Canvas.MultipleObjectsReturned:
+            except (Canvas.MultipleObjectsReturned, Canvas.DoesNotExist):
                 thumbnail = '{h}/{p}'.format(
                     h=obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
                     p=obj.canvas_set.all().first().pid

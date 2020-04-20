@@ -952,6 +952,22 @@ p {
   font-weight: bold;
 }
 
+.rx-annotation-badge {
+  border-radius: 3px;
+  background: #707070;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 0.1rem .5rem;
+  font-size: 0.75rem;
+  display: inline-block;
+  cursor: default;
+}
+
+.rx-padding-bottom-10 {
+  padding-bottom: 10px;
+}
+
 .uk-active > .rx-btn-annotation {
   background-color: #ff7f00 !important;
   color: white;

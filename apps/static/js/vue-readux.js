@@ -30,6 +30,37 @@ Vue.component("v-volume-image", {
   }
 });
 
+Vue.component("v-volume-export-annotation-btn", {
+  props: ["manifestCount"],
+  template: `
+  <div class="rx-info-content" v-if="isExportVisible">
+    <slot></slot>
+  </div>
+  `,
+  data: function () {
+    return {
+      localManifestCount: this.manifestCount,
+      isExportVisible: false,
+    };
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail.annotationsOnPage) {
+        if (event.detail.annotationAdded) {
+          vm.localManifestCount++;
+        }
+        if (event.detail.annotationDeleted) {
+          vm.localManifestCount--;
+        }
+        vm.isExportVisible = vm.localManifestCount >= 1 ? true : false;
+      }
+    });
+    vm.isExportVisible = vm.localManifestCount >= 1 ? true : false;
+  },
+});
+
+
 Vue.component("v-volume-annotations", {
   props: ["manifestCount", "pageCount"],
   template: `

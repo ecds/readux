@@ -87,8 +87,7 @@ class ManifestExportTests(TestCase):
         zip_file = j.get_zip()
         tempdir = j.generate_website()
         web_zip = j.website_zip()
-        # j.import_iiif_jekyll(j.manifest, j.jekyll_site_dir)
-        assert isinstance(zip, tempfile._TemporaryFileWrapper)
+        assert isinstance(zip_file, tempfile._TemporaryFileWrapper)
         assert "%s_annotated_site_" % (str(self.volume.pk)) in zip_file.name
         assert zip_file.name.endswith('.zip')
         assert isinstance(web_zip, tempfile._TemporaryFileWrapper)

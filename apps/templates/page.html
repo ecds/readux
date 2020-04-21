@@ -7,27 +7,6 @@
     display: none;
   }
 </style>
-{% if request.get_host == "readux2.ecdsdev.org" %}
-<style>
-#viewer {
-  width: 78%;
-  height: calc(100% - 193px - 2.5em);
-  position: absolute;
-  bottom: 0px;
-  background: none !important;
-}
-</style>
-{% elif request.get_host == "readux.ecdsdev.org" %}
-<style>
-#viewer {
-  width: 78%;
-  height: calc(100% - 193px - 2em);
-  position: absolute;
-  bottom: 0px;
-  background: none !important;
-}
-</style>
-{% endif %}
 {% endblock extra_css %}
 
 {% block content %}

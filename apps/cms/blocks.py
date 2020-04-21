@@ -1,3 +1,4 @@
+"""Custom `StructBlock` classes."""
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.embeds.blocks import EmbedBlock
 from wagtail.core.blocks import (
@@ -14,7 +15,7 @@ class ImageBlock(StructBlock):
     caption = CharBlock(required=False)
     attribution = CharBlock(required=False)
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         icon = 'image'
         template = "blocks/image_block.html"
 
@@ -31,7 +32,7 @@ class HeadingBlock(StructBlock):
         ('h4', 'H4')
     ], blank=True, required=False)
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         icon = "title"
         template = "blocks/heading_block.html"
 
@@ -44,7 +45,7 @@ class BlockQuote(StructBlock):
     attribute_name = CharBlock(
         blank=True, required=False, label='e.g. Mary Berry')
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         icon = "fa-quote-left"
         template = "blocks/blockquote.html"
 

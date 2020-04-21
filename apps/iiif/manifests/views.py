@@ -1,36 +1,41 @@
-from datetime import datetime
+"""Django views for manifests"""
 import json
 import logging
-from django.core.mail import send_mail
+from datetime import datetime
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.template import Context
-from django.template.loader import get_template
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from ..annotations.models import Annotation
+from apps.users.models import User
 from ..canvases.models import Canvas
 from .models import Manifest
 from .export import IiifManifestExport
-from .export import JekyllSiteExport
 from .forms import JekyllExportForm
 from .tasks import github_export_task
 from .tasks import download_export_task
-from apps.users.models import User
-import config.settings.local as settings
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 class ManifestDetail(View):
-
+    """Endpoint for a specific IIIF manifest."""
     def get_queryset(self):
+        """Get requested manifest object.
+
+        :return: Manifest object
+        :rtype: django.db.models.QuerySet
+        """
         return Manifest.objects.filter(pid=self.kwargs['pid'])
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs): # pylint: disable = unused-argument
+        """Responds to HTTP GET request for specific manifest.
+
+        :return: IIIF representation of a manifest/volume
+        :rtype: JSON
+        """
         manifest = self.get_queryset()[0].id
         annotators = User.objects.filter(annotation__canvas__manifest__id=manifest).distinct()
         annotators_string = ', '.join([str(i.name) for i in annotators])
@@ -43,10 +48,11 @@ class ManifestDetail(View):
                     annotators=annotators_string,
                     exportdate=datetime.utcnow()
                 )
-            )
-        , safe=False)
+            ),
+            safe=False)
 
 class ManifestSitemap(Sitemap):
+    """Django site map for mainfests"""
     # priority unknown
     def items(self):
         return Manifest.objects.all()
@@ -55,21 +61,40 @@ class ManifestSitemap(Sitemap):
         return reverse('ManifestRender', kwargs={'version': 'v2', 'pid': item.pid})
 
 class ManifestRis(TemplateView):
+    """Manifest Ris"""
     content_type = 'application/x-research-info-systems; charset=UTF-8'
     template_name = "citation.ris"
 
     def get_context_data(self, **kwargs):
+        """Context data for view
+
+        :return: [description]
+        :rtype: [type]
+        """
         context = super().get_context_data(**kwargs)
         context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
         return context
 
 
 class ManifestExport(View):
+    """View for maifest export."""
 
     def get_queryset(self):
+        """Get requested manifest
+
+        :return: Manifest object to be exported.
+        :rtype: django.db.models.QuerySet
+        """
         return Manifest.objects.filter(pid=self.kwargs['pid'])
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs): # pylint: disable = unused-argument
+        """[summary]
+
+        :param request: [description]
+        :type request: [type]
+        :return: [description]
+        :rtype: [type]
+        """
         # we should probably move this out of the view, into a library
         manifest = self.get_queryset()[0]
         owners = [request.user.id]
@@ -81,35 +106,35 @@ class ManifestExport(View):
         return resp
 
 class JekyllExport(TemplateView):
+    """Jekyll Export view"""
     template_name = "jekyll_export.html"
 
     form_class = JekyllExportForm
 
     def get_queryset(self):
+        """Get requested manifest.
+
+        :return: Manifest to be exported.
+        :rtype: apps.iiif.manifests.models.Manifest
+        """
         return Manifest.objects.filter(pid=self.kwargs['pid'])
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs): # pylint: disable = unused-argument
+        """HTTP POST for manifest export."""
         # we should probably move this out of the view, into a library
         manifest = self.get_queryset()[0]
-        logger.debug(request.POST)
-        logger.debug(dir(self.args))
+        LOGGER.debug(request.POST)
+        LOGGER.debug(dir(self.args))
 
         export_form = JekyllExportForm(self.request.user, data=request.POST)
 
         # FIXME this needs to return an error.
         if not export_form.is_valid():
-            logger.debug("Export form is not valid: %s", export_form.errors)
-        #     # bail out
-        #     return
-
-        # if form is valid, then proceed with the export
+            LOGGER.debug("Export form is not valid: %s", export_form.errors)
         cleaned_data = export_form.clean()
-        logger.debug("Cleaned Data: %s", dir(cleaned_data))
+        LOGGER.debug("Cleaned Data: %s", dir(cleaned_data))
 
         export_mode = export_form.cleaned_data['mode']
-    #     image_hosting = cleaned_data['image_hosting']
-    #     include_images = (image_hosting == 'independently_hosted')
-        # deep_zoom = export_form.cleaned_data['deep_zoom']
         github_repo = export_form.cleaned_data['github_repo']
 
         owners = [request.user.id] # TODO switch to form group vs. solo control
@@ -118,7 +143,14 @@ class JekyllExport(TemplateView):
         if export_mode == 'download':
             context = self.get_context_data()
             manifest_pid = manifest.pid
-            task = download_export_task(manifest_pid, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user_id=self.request.user.id);
+            download_export_task(
+                manifest_pid,
+                kwargs['version'],
+                github_repo=github_repo,
+                deep_zoom=False,
+                owner_ids=owners,
+                user_id=self.request.user.id
+            )
             context['email'] = request.user.email
             context['mode'] = "download"
             return render(request, self.template_name, context)
@@ -126,24 +158,39 @@ class JekyllExport(TemplateView):
         #github exports
         context = self.get_context_data()
         manifest_pid = manifest.pid
-        task = github_export_task(manifest_pid, kwargs['version'], github_repo=github_repo, deep_zoom=False, owner_ids=owners, user_id=self.request.user.id);
+        github_export_task(
+            manifest_pid,
+            kwargs['version'],
+            github_repo=github_repo,
+            deep_zoom=False,
+            owner_ids=owners,
+            user_id=self.request.user.id
+        )
 
         context['email'] = request.user.email
         context['mode'] = "github"
         return render(request, self.template_name, context)
-#            return JsonResponse(status=200, data=[repo_url, ghpages_url, pr_url], safe=False)
-
 
     def get_context_data(self, **kwargs):
         context_data = super(JekyllExport, self).get_context_data(**kwargs)
         return context_data
 
 class PlainExport(View):
+    """Plain export"""
     def get_queryset(self):
+        """Get requested manifest
+
+        :return: Manifest to be exported.
+        :rtype: apps.iiif.manifests.models.Manifest
+        """
         manifest = Manifest.objects.get(pid=self.kwargs['pid'])
         return Canvas.objects.filter(manifest=manifest.id).order_by('position')
 
     def get(self, request, *args, **kwargs):
+        """HTTP GET endpoint for plain export.
+
+        :rtype: django.http.HttpResponse
+        """
         annotations = []
         for canvas in self.get_queryset() :
             annotations.append(canvas.result)

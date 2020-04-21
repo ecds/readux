@@ -1,51 +1,44 @@
-from django.core.serializers.base import SerializerDoesNotExist
-from django.core.serializers.json import Serializer as JSONSerializer
-from django.db.models import Q
-import config.settings.local as settings
-from django.core.serializers import serialize
+# pylint: disable = attribute-defined-outside-init, too-few-public-methods
+"""Module for serializing IIIF User Annotation Lists"""
 import json
-from apps.users.models import User
+from django.core.serializers.base import SerializerDoesNotExist
+from django.core.serializers import serialize
+from apps.iiif.serializers.annotation_list import Serializer as IIIFAnnotationListSerializer
+import config.settings.local as settings
 
-class Serializer(JSONSerializer):
+class Serializer(IIIFAnnotationListSerializer):
     """
     IIIF V2 Annotation List https://iiif.io/api/presentation/2.1/#annotation-list
     """
-    def _init_options(self):
-        super()._init_options()
-        self.version = self.json_kwargs.pop('version', 'v2')
-        self.is_list = self.json_kwargs.pop('is_list', False)
-        self.owners = self.json_kwargs.pop('owners', 0)
-
-    def start_serialization(self):
-        self._init_options()
-        if (self.is_list):
-          self.stream.write('[')
-        else:
-          self.stream.write('')
-
-    def end_serialization(self):
-        if (self.is_list):
-          self.stream.write(']')
-        else:
-          self.stream.write('')
-
-    def start_object(self, obj):
-        super().start_object(obj)
 
     def get_dump_object(self, obj):
         if ((self.version == 'v2') or (self.version is None)):
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
-                "@id": "%s/annotations/%s/%s/list/%s" % (settings.HOSTNAME, self.owners[0].username, obj.manifest.pid, obj.pid),
+                "@id": '{h}/annotations/{u}/{m}/list/{c}'.format(
+                    h=settings.HOSTNAME,
+                    u=self.owners[0].username,
+                    m=obj.manifest.pid,
+                    c=obj.pid
+                ),
                 "@type": "sc:AnnotationList",
-                "resources": json.loads(serialize('annotation', obj.userannotation_set.filter(owner__in=[self.owners[0].id]), is_list=True))
+                "resources": json.loads(
+                    serialize(
+                        'annotation',
+                        obj.userannotation_set.filter(
+                            owner__in=[self.owners[0].id]
+                        ),
+                        is_list=True
+                    )
+                )
             }
             return data
-
-    def handle_field(self, obj, field):
-        super().handle_field(obj, field)
-
+        return None
 
 class Deserializer:
+    """Deserialize IIIF Annotation List
+
+    :raises SerializerDoesNotExist: Not yet implemented.
+    """
     def __init__(self, *args, **kwargs):
         raise SerializerDoesNotExist("user_annotation_list is a serialization-only serializer")

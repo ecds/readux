@@ -1,3 +1,5 @@
+# pylint: disable = missing-function-docstring, invalid-name, line-too-long
+"""Test cases for :class:`apps.iiif.annotations`."""
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
@@ -6,21 +8,22 @@ from django.core.management import call_command
 from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
-from apps.iiif.annotations.views import AnnotationsForPage
-from apps.iiif.annotations.models import Annotation
-from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.models import Manifest
-from apps.iiif.annotations.apps import AnnotationsConfig
+from ..views import AnnotationsForPage
+from ..models import Annotation
+from ..apps import AnnotationsConfig
+from ...canvases.models import Canvas
+from ...manifests.models import Manifest
 from bs4 import BeautifulSoup
 from io import StringIO
 import warnings
 import json
 
-User = get_user_model()
+USER = get_user_model()
 
 class AnnotationTests(TestCase):
+    """Annotation test cases."""
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
-    
+
     def setUp(self):
         self.factory = RequestFactory()
         self.client = Client()
@@ -28,8 +31,8 @@ class AnnotationTests(TestCase):
         self.volume = Manifest.objects.get(pid='readux:st7r6')
         self.canvas = Canvas.objects.get(pid='fedora:emory:5622')
         self.annotations = Annotation.objects.filter(canvas=self.canvas)
-    
-    def test_app_config(self):
+
+    def test_app_config(self): # pylint: disable = no-self-use
         assert AnnotationsConfig.verbose_name == 'Annotations'
         assert AnnotationsConfig.name == 'apps.iiif.annotations'
 
@@ -43,7 +46,7 @@ class AnnotationTests(TestCase):
 
     def test_order(self):
         a = []
-        for o in self.annotations.values('order'): 
+        for o in self.annotations.values('order'):
             a.append(o['order'])
         b = a.copy()
         a.sort()
@@ -59,7 +62,7 @@ class AnnotationTests(TestCase):
         ocr.content = "Obviously you're not a golfer"
         ocr.save()
         assert ocr.content == "<span id='{pk}' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
-        assert ocr.owner == User.objects.get(username='ocr')
+        assert ocr.owner == USER.objects.get(username='ocr')
 
     def test_invalid_ocr(self):
         annotation_count = len(Annotation.objects.all())
@@ -73,8 +76,7 @@ class AnnotationTests(TestCase):
         with self.assertRaisesMessage(ValidationError, 'Content cannot be empty'):
             ocr.save()
         assert annotation_count == len(Annotation.objects.all())
-        
-    
+
     def test_annotation_string(self):
         anno = Annotation.objects.all().first()
         assert anno.__str__() == str(anno.pk)
@@ -104,7 +106,7 @@ class AnnotationTests(TestCase):
         annotations = json.loads(response.content.decode('UTF-8-sig'))['resources']
         assert len(annotations) == self.canvas.annotation_set.filter(resource_type='cnt:ContentAsText', canvas=self.canvas).count()
         assert response.status_code == 200
-    
+
     def test_annotation_style(self):
         anno = Annotation.objects.all().first()
         assert anno.style == ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(c=(anno.pk), h=str(anno.h), w=str(anno.w), f=str(anno.h / 1.6))
@@ -118,7 +120,7 @@ class AnnotationTests(TestCase):
         assert serialized_anno['stylesheet']['value'].startswith(".anno-{id}".format(id=serialized_anno['@id']))
 
     def test_serialize_list_of_annotations(self):
-        data = json.loads(serialize('annotation_list', [self.canvas], is_list = True, owners = User.objects.all()))
+        data = json.loads(serialize('annotation_list', [self.canvas], is_list=True, owners=USER.objects.all()))
         assert data[0]['@type'] == 'sc:AnnotationList'
         assert isinstance(data, list)
 
@@ -169,3 +171,4 @@ class AnnotationTests(TestCase):
         assert orig_span == anno.content
         assert anno.content.startswith('<span')
         assert BeautifulSoup(anno.content, 'html.parser').span.span is None
+    

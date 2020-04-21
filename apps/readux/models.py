@@ -1,17 +1,20 @@
-from django.db import models
-from apps.iiif.annotations.models import AbstractAnnotation, Annotation
-from django.db.models import signals
-from django.dispatch import receiver
-from apps.iiif.canvases.models import Canvas
-from taggit.managers import TaggableManager
-from taggit.models import TaggedItemBase
+"""Django Models for Readux"""
 import json
 import re
+from taggit.managers import TaggableManager
+from taggit.models import TaggedItemBase
+from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
+from apps.iiif.annotations.models import AbstractAnnotation, Annotation
+from apps.iiif.canvases.models import Canvas
 
 class TaggedUserAnnotations(TaggedItemBase):
+    """Model for tagging :class:`UserAnnotation`s using Django Taggit."""
     content_object = models.ForeignKey('UserAnnotation', on_delete=models.CASCADE)
 
 class UserAnnotation(AbstractAnnotation):
+    """Model for User Annotations."""
     COMMENTING = 'oa:commenting'
     PAINTING = 'sc:painting'
     TAGGING = '%s,oa:tagging' % COMMENTING
@@ -21,8 +24,22 @@ class UserAnnotation(AbstractAnnotation):
         (TAGGING, 'tagging and commenting')
     )
 
-    start_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='start_selector', default=None)
-    end_selector = models.ForeignKey(Annotation, on_delete=models.CASCADE, null=True, blank=True, related_name='end_selector', default=None)
+    start_selector = models.ForeignKey(
+        Annotation,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='start_selector',
+        default=None
+    )
+    end_selector = models.ForeignKey(
+        Annotation,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='end_selector',
+        default=None
+    )
     start_offset = models.IntegerField(null=True, blank=True, default=None)
     end_offset = models.IntegerField(null=True, blank=True, default=None)
     tags = TaggableManager(through=TaggedUserAnnotations)
@@ -43,20 +60,10 @@ class UserAnnotation(AbstractAnnotation):
         else:
             return []
 
-    # def save(self, *args, **kwargs):
-    #     if self.oa_annotation is not None:
-    #         self.parse_mirador_annotation()
-    #     super().save(*args, **kwargs)
-
     def parse_mirador_annotation(self):
-        # TODO: Should we use multiple motivations? 
-        # if(type(self.oa_annotation.resource), list):
-        #     self.motivation = self.TAGGING
-        # else:
-        #     self.motivation = AbstractAnnotation.COMMENTING
         self.motivation = AbstractAnnotation.COMMENTING
 
-        if (type(self.oa_annotation) == str):
+        if type(self.oa_annotation) == str:
             self.oa_annotation = json.loads(self.oa_annotation)
 
         if isinstance(self.oa_annotation['on'], list):
@@ -69,13 +76,17 @@ class UserAnnotation(AbstractAnnotation):
 
         mirador_item = anno_on['selector']['item']
 
-        if (mirador_item['@type'] == 'oa:SvgSelector'):
+        if mirador_item['@type'] == 'oa:SvgSelector':
             self.svg = mirador_item['value']
             self.__set_xywh_svg_anno()
 
-        elif (mirador_item['@type'] == 'RangeSelector'):
-            self.start_selector = Annotation.objects.get(pk=mirador_item['startSelector']['value'].split("'")[1])
-            self.end_selector = Annotation.objects.get(pk=mirador_item['endSelector']['value'].split("'")[1])
+        elif mirador_item['@type'] == 'RangeSelector':
+            self.start_selector = Annotation.objects.get(
+                pk=mirador_item['startSelector']['value'].split("'")[1]
+            )
+            self.end_selector = Annotation.objects.get(
+                pk=mirador_item['endSelector']['value'].split("'")[1]
+            )
             self.start_offset = mirador_item['startSelector']['refinedBy']['start']
             self.end_offset = mirador_item['endSelector']['refinedBy']['end']
             self.__set_xywh_text_anno()
@@ -89,21 +100,30 @@ class UserAnnotation(AbstractAnnotation):
             # Assume all tags have been removed.
             if self.tags.exists():
                 self.tags.clear()
-        elif isinstance(self.oa_annotation['resource'], list) and len(self.oa_annotation['resource']) > 1:
+        elif (
+                isinstance(self.oa_annotation['resource'], list) and
+                len(self.oa_annotation['resource']) > 1
+        ):
             # Assume tagging
             self.motivation = self.TAGGING
-            text = [resource for resource in self.oa_annotation['resource'] if resource['@type'] == 'dctypes:Text']
-            # if len(text) > 0:
+            text = [res for res in self.oa_annotation['resource'] if res['@type'] == 'dctypes:Text']
             self.content = text[0]['chars']
-        
+
         # Replace the ID given by Mirador with the Readux given ID
-        if ('stylesheet' in self.oa_annotation):
-            uuid_pattern = re.compile(r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}')
+        if 'stylesheet' in self.oa_annotation:
+            uuid_pattern = re.compile(
+                r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}'
+            )
             self.style = uuid_pattern.sub(str(self.id), self.oa_annotation['stylesheet']['value'])
 
         return True
 
     def __is_text_annotation(self):
+        """Check if annotation is for text.
+
+        :return: True if annotation is for text.
+        :rtype: bool
+        """
         return all([
             isinstance(self.end_offset, int),
             isinstance(self.start_offset, int),
@@ -112,11 +132,15 @@ class UserAnnotation(AbstractAnnotation):
         ])
 
     def __is_svg_annotation(self):
+        """Check if annotation is for image region.
+
+        :return: True if annotation is for image region.
+        :rtype: bool
+        """
         return self.svg is not None
 
+    # pylint: disable = invalid-name
     def __set_xywh_text_anno(self):
-        # if (self.__is_text_annotation() is None):
-        #     return None
         start_position = self.start_selector.order
         end_position = self.end_selector.order
         text = Annotation.objects.filter(
@@ -128,6 +152,7 @@ class UserAnnotation(AbstractAnnotation):
         self.y = max(text.values_list('y', flat=True))
         self.h = max(text.values_list('h', flat=True))
         self.w = text.last().x + text.last().w - self.x
+    # pylint: enable = invalid-name
 
     def __text_anno_item(self):
         return dict({
@@ -164,7 +189,7 @@ class UserAnnotation(AbstractAnnotation):
     def __set_xywh_svg_anno(self):
         dimensions = None
         if 'default' in self.oa_annotation['on'][0]['selector'].keys():
-            dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',')
+            dimensions = self.oa_annotation['on'][0]['selector']['default']['value'].split('=')[-1].split(',') # pylint: disable = line-too-long
         if dimensions is not None:
             self.x = dimensions[0]
             self.y = dimensions[1]
@@ -179,16 +204,20 @@ def parse_payload(sender, instance, **kwargs):
 
 @receiver(signals.post_save, sender=UserAnnotation)
 def set_tags(sender, instance, **kwargs):
+    """
+    Finds tags in the oa_annotation and applies them to
+    the annotation.
+    """
     if instance.motivation == sender.TAGGING:
         incoming_tags = []
         # Get the tags from the incoming annotation.
-        tags = [resource for resource in instance.oa_annotation['resource'] if resource['@type'] == 'oa:Tag']
+        tags = [res for res in instance.oa_annotation['resource'] if res['@type'] == 'oa:Tag']
         for tag in tags:
             # Add the tag to the annotation
             instance.tags.add(tag['chars'])
             # Make a list of incoming tags to compare with list of saved tags.
             incoming_tags.append(tag['chars'])
-        
+
         # Check if any tags have been removed
         if len(instance.tag_list) > 0:
             for existing_tag in instance.tag_list:

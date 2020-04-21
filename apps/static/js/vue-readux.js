@@ -274,6 +274,10 @@ var readux = new Vue({
         "data-sort"
       );
     }
+
+    if (window.location.href.includes("?q=")) {
+      this.showMoreInfo = true;
+    }
   }
 });
 

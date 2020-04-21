@@ -84,20 +84,20 @@ class ManifestExportTests(TestCase):
 
     def test_jekyll_site_export(self):
         j = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id])
-        zip = j.get_zip()
+        zip_file = j.get_zip()
         tempdir = j.generate_website()
         web_zip = j.website_zip()
         # j.import_iiif_jekyll(j.manifest, j.jekyll_site_dir)
         assert isinstance(zip, tempfile._TemporaryFileWrapper)
-        assert "%s_annotated_site_" % (str(self.volume.pk)) in zip.name
-        assert zip.name.endswith('.zip')
+        assert "%s_annotated_site_" % (str(self.volume.pk)) in zip_file.name
+        assert zip_file.name.endswith('.zip')
         assert isinstance(web_zip, tempfile._TemporaryFileWrapper)
         assert "%s_annotated_site_" % (str(self.volume.pk)) in web_zip.name
         assert web_zip.name.endswith('.zip')
         assert 'tmp-rdx-export' in tempdir
         assert tempdir.endswith('/export')
         tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-')
-        jekyll_zip = zipfile.ZipFile(zip, "r")
+        jekyll_zip = zipfile.ZipFile(zip_file, "r")
         jekyll_zip.extractall(tmpdir)
         jekyll_dir = os.listdir(tmpdir)[0]
         jekyll_path = os.path.join(tmpdir, jekyll_dir)

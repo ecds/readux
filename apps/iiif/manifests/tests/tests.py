@@ -40,23 +40,30 @@ class ManifestTests(TestCase):
         self.assumed_pid = 'readux:st7r6'
 
     def test_validate_iiif(self):
-        # view = ManifestDetail.as_view()
         volume = Manifest.objects.all().first()
-        kwargs = { 'pid': self.volume.pid, 'version': 'v2' }
-        url = reverse('ManifestRender', kwargs=kwargs)
-        response = self.client.get(url)
-        manifest = json.loads(response.content.decode('UTF-8-sig'))
-        reader = ManifestReader(response.content, version='2.1')
+        manifest = json.loads(
+            serialize(
+                'manifest',
+                [volume],
+                version='v2',
+                annotators='Tom',
+                exportdate=datetime.utcnow()
+            )
+        )
+        reader = ManifestReader(json.dumps(manifest), version='2.1')
         try:
-            mf = reader.read()
-            assert mf.toJSON()
+            manifest_reader = reader.read()
+            assert manifest_reader.toJSON()
         except Exception as error:
             raise Exception(error)
 
         assert manifest['@id'] == "%s/manifest" % (self.volume.baseurl)
         assert manifest['label'] == self.volume.label
         assert manifest['description'] == volume.summary
-        assert manifest['thumbnail']['@id'] == "%s/%s/full/600,/0/default.jpg" % (self.volume.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE, self.start_canvas.pid)
+        assert manifest['thumbnail']['@id'] == '{h}/{c}/full/600,/0/default.jpg'.format(
+            h=self.volume.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
+            c=self.start_canvas.pid
+        )
         assert manifest['sequences'][0]['startCanvas'] == self.volume.start_canvas
 
     def test_properties(self):

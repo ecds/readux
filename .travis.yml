@@ -20,6 +20,7 @@ before_install:
 - sudo apt-get install postgresql-9.5
 install:
 - pip install -r requirements/local.txt
+- pip install pyld==1.0.5
 script:
 - py.test --cov=./apps
 after_success:

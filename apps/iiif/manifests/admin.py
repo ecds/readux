@@ -3,6 +3,7 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget
+from django_summernote.admin import SummernoteModelAdmin
 from .models import Manifest, Note
 from ..kollections.models import Collection
 
@@ -21,12 +22,13 @@ class ManifestResource(resources.ModelResource):
             'pdf', 'metadata', 'viewingDirection', 'collection_id'
         )
 
-class ManifestAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdmin):
     """Django admin configuration for manifests"""
     resource_class = ManifestResource
     filter_horizontal = ('collections',)
     list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
     search_fields = ('id', 'label', 'author', 'published_date')
+    summernote_fields = ('summary',)
 
 class NoteAdmin(admin.ModelAdmin):
     """Django admin configuration for a note."""

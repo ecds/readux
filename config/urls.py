@@ -60,6 +60,7 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     url(r'^', include('apps.readux.urls')),
     re_path(r'', include(wagtail_urls)),
+    path('summernote/', include('django_summernote.urls')),
 
 
 

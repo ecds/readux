@@ -95,6 +95,7 @@ THIRD_PARTY_APPS = [
     'taggit',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',
+    'django_summernote'
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',

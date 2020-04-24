@@ -178,7 +178,7 @@
 
         <div class="rx-info-content">
           <div class="rx-info-content-label">Summary</div>
-          <div class="rx-info-content-value">{{ volume.summary }}</div>
+          <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
         </div>
 
         {% if volume.note_set|length %}

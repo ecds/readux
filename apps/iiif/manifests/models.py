@@ -4,16 +4,20 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.indexes import GinIndex
+from json import JSONEncoder
+import uuid
+from uuid import UUID
 from django.contrib.postgres.aggregates import StringAgg
 from modelcluster.models import ClusterableModel
 import config.settings.local as settings
 from ..kollections.models import Collection
 
-# JSONEncoder_olddefault = JSONEncoder.default
-# def JSONEncoder_newdefault(self, o):
-#     if isinstance(o, UUID): return str(o)
-#     return JSONEncoder_olddefault(self, o)
-# JSONEncoder.default = JSONEncoder_newdefault
+"""This JSONEncoder makes Wagtail autocomplete run - do not delete."""
+JSONEncoder_olddefault = JSONEncoder.default
+def JSONEncoder_newdefault(self, o):
+    if isinstance(o, UUID): return str(o)
+    return JSONEncoder_olddefault(self, o)
+JSONEncoder.default = JSONEncoder_newdefault
 
 class ManifestManager(models.Manager):
     """Model manager for searches."""

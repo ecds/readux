@@ -12,9 +12,10 @@
       <div>
       <form class="uk-search uk-search-default" style="width: 100% !important;"
         action="{% url 'search' %}" method="get" accept-charset="utf-8">
-        <span uk-search-icon></span>
+        <fieldset>
+        <legend aria-label="search"><span uk-search-icon></span></legend>
         <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-          value="{{request.GET.q}}" style="width: 80%;">
+          value="{{request.GET.q}}" style="width: 80%; padding-left:40px;">
         <span title="Click to include partial matches" class="tooltip">Partial<span class="tooltiptext">Searches for your term within any word (end matches end and bend). More specific words work better.</span></span>
         {% if "exact" in request.GET.type %}
         <input type="radio" name="type" aria-label="include partial" value="partial">
@@ -28,6 +29,7 @@
         <input type="radio" name="type" aria-label="exact only" value="exact">
         {% endif %}
         <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+        </fieldset>
       </form>
       </div>
 
@@ -58,12 +60,12 @@
   <div class="uk-width-1-2@m uk-grid-medium">
 
     <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
 <img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
       </a>{% endif %}{% endfor %}
     </div>
     <div class="uk-width-3-4@m">
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
@@ -100,12 +102,12 @@
   <div class="uk-width-1-2@m uk-grid-medium">
 
     <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
 <img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
       </a>{% endif %}{% endfor %}
     </div>
     <div class="uk-width-3-4@m">
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="_blank">
+     <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">

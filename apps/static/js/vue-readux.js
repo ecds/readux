@@ -30,6 +30,70 @@ Vue.component("v-volume-image", {
   }
 });
 
+Vue.component("v-volume-export-annotation-btn", {
+  props: ["manifestCount"],
+  template: `
+  <div class="rx-info-content" v-if="isExportVisible">
+    <slot></slot>
+  </div>
+  `,
+  data: function () {
+    return {
+      localManifestCount: this.manifestCount,
+      isExportVisible: false,
+    };
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail.annotationsOnPage) {
+        if (event.detail.annotationAdded) {
+          vm.localManifestCount++;
+        }
+        if (event.detail.annotationDeleted) {
+          vm.localManifestCount--;
+        }
+        vm.isExportVisible = vm.localManifestCount >= 1 ? true : false;
+      }
+    });
+    vm.isExportVisible = vm.localManifestCount >= 1 ? true : false;
+  },
+});
+
+
+Vue.component("v-volume-annotations", {
+  props: ["manifestCount", "pageCount"],
+  template: `
+  <div class="rx-info-content">
+    <div class="rx-info-content-label rx-padding-bottom-10">Annotation Counts</div>
+    <div class="rx-info-content-value rx-annotation-badge">{{localManifestCount}} in manifest</div>
+    <div class="rx-info-content-value rx-annotation-badge">{{localPageCount}} on page</div>
+  </div>
+  `,
+  data: function () {
+    return {
+      hasImage: false, // visibility of image from src
+      localManifestCount: this.manifestCount,
+      localPageCount: this.pageCount,
+    };
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail.annotationsOnPage) {
+        if (event.detail.annotationAdded) {
+          vm.localManifestCount++;
+        }
+        if (event.detail.annotationDeleted) {
+          vm.localManifestCount--;
+        }
+        vm.localPageCount = event.detail.annotationsOnPage;
+      }
+    });
+  },
+});
+
+
 Vue.component("v-info-content-url-single", {
   props: ["label", "url"],
   template: `
@@ -99,11 +163,10 @@ Vue.component("v-info-content-url-multiple", {
 
 // url copy component made for when the url is modified externally (outside Vue.js)
 Vue.component("v-info-content-url-external", {
-  props: ["refName"],
-  data: function() {
+  props: ["label", "url"],
+  data: function () {
     return {
-      url: "",
-      label: ""
+      localUrl: this.url,
     };
   },
   template: `
@@ -112,28 +175,39 @@ Vue.component("v-info-content-url-external", {
         <span>{{label}}</span>
         <div>
           <span class="uk-label rx-label-copy"
-            v-clipboard:copy="url"
+            v-clipboard:copy="localUrl"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError">Copy</span>
         </div>
       </div>
       <div class="rx-info-content-value">
-        <a v-bind:href="url" class="rx-anchor" v-bind:ref="refName"
-          target="_blank">{{url}}</a>
+        <a v-bind:href="localUrl" class="rx-anchor"
+          target="_blank">{{localUrl}}</a>
       </div>
     </div>
   `,
   methods: {
     onCopy() {
-      alert(`You have copied: ${this.url}`);
+      alert(`You have copied: ${this.localUrl}`);
     },
     onError() {
       alert(`Something went wrong with copy.`);
-    }
+    },
   },
   mounted() {
-    // this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
-  }
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail) {
+        var protocol = window.location.protocol;
+        var host = window.location.host;
+        var canvas = event.detail.canvas;
+        var volume = event.detail.volume;
+        var url =
+          protocol + "//" + host + "/volume/" + volume + "/page/" + canvas;
+        vm.localUrl = url;
+      }
+    });
+  },
 });
 
 var readux = new Vue({
@@ -147,6 +221,7 @@ var readux = new Vue({
     searchPrefix: "?sort=",
     currentSelection: null,
     itemNotFound: false,
+    showMoreInfo: false,
   },
   methods: {
     sortBy: function(selection) {
@@ -154,8 +229,12 @@ var readux = new Vue({
       if (window.location !== value) {
         window.location = value;
       }
-    }
+    },
 
+    toggleMoreInfo: function(){
+      this.showMoreInfo = !this.showMoreInfo
+    }
+    
     // ascaddURL: function(element) {
     // 	$(element).attr('href', function () {
     // 		if (window.location.search.length == 0) {
@@ -191,7 +270,13 @@ var readux = new Vue({
 
   mounted: function() {
     if (this.$refs["v-attr-sort"]) {
-      this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort");
+      this.currentSelection = this.$refs["v-attr-sort"].getAttribute(
+        "data-sort"
+      );
+    }
+
+    if (window.location.href.includes("?q=")) {
+      this.showMoreInfo = true;
     }
   }
 });

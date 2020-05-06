@@ -1,4 +1,4 @@
-{% load static i18n %}<!DOCTYPE html>
+{% load static file_exists_check i18n %}<!DOCTYPE html>
 {% load menu_tags %}
 <html lang="en">
   <head>
@@ -61,6 +61,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.20/css/uikit.min.css" />
     <link href="{% static 'css/selectize.css' %}" rel="stylesheet">
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
+    {% if "css/custom.css"|static_file_exists %}
+      <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+    {% endif %}
 
 
     {% endblock %}
@@ -71,12 +74,12 @@
   <body>
     {% if request.get_host == "readux2.ecdsdev.org" %}
     <div style="background-color:red;width:100%;height:1.5em;color:white;text-align:center;font-size:1.8em;">
-    This website is in BETA! Go to the fully functioning 
+    This website is in BETA! Go to the fully functioning
     <a href="https://readux.ecds.emory.edu/" style="color:lightblue;text-decoration:underline;">Readux</a>.
     </div>
     {% elif request.get_host == "readux.ecdsdev.org" %}
     <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
-    DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning 
+    DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning
     <a href="https://readux.ecds.emory.edu/" style="color:darkblue;text-decoration:underline;">Readux</a>.
     </div>
     {% endif %}
@@ -95,24 +98,24 @@
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
               <li>
-                <a href="/search/" title="Site Search"><span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: right"></span></a>
+                 <a href="/search/" aria-label="full site search" title="Site Search"><span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search" uk-tooltip="title: Site Search; pos: right"></span></a>
               </li>
               {% if request.user.is_authenticated %}
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}" title="Access Django Admin Site" href="/admin/">
+                 <a class="{% if url_name == 'index' %}uk-active{% endif %}" aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
                   <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: right"></span>
                 </a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %}" title="Your Account Details" href="{% url 'users:update'  %}">
+                 <a class="{% if url_name == 'index' %}uk-active{% endif %}" aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
                   <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user" uk-tooltip="title: Your account; pos: right"></span>
                 </a>
               </li>
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
-                <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" title="Signout" href="{% url 'account_logout' %}">
+                 <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
                   <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out" uk-tooltip="title: Logout; pos: right"></span>
                 </a>
               </li>
@@ -120,7 +123,7 @@
               <li>
                 {# URL provided by django-allauth/account/urls.py #}
                 <!-- <a href="{% url 'account_login' %}"> -->
-                <a href="#signin-modal" title="Sign in" uk-toggle>
+                 <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-toggle>
                   <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in" uk-tooltip="title: Sign in; pos: right"></span>
                 </a>
               </li>
@@ -128,7 +131,7 @@
           </ul>
         </div>
       </nav>
-    
+
       {% if messages %}
           {% for message in messages %}
             <div class="uk-alert-{{ message.tags }}" uk-alert>

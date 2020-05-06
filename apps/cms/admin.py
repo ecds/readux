@@ -1,22 +1,28 @@
+"""Admin module for managing pages."""
 from django.contrib import admin
 from apps.cms.models import ContentPage, HomePage, CollectionsPage, VolumesPage
 
 class HomePageAdmin(admin.ModelAdmin):
+    """Home page admin class."""
     search_fields = ('featured_volumes', 'featured_collections')
     autocomplete_fields = ('featured_volumes',)
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = HomePage
 
 class ContentPageAdmin(admin.ModelAdmin):
-    class Meta:
+    """Content page admin class."""
+    # TODO: What are content pages? Add description to docstring above.
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = ContentPage
         
 class CollectionsPageAdmin(admin.ModelAdmin):
-    class Meta:
+    """Collections page admin class."""
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = CollectionsPage
 
 class VolumesPageAdmin(admin.ModelAdmin):
-    class Meta:
+    """Volumes page admin class."""
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = VolumesPage
 
 admin.site.register(ContentPage, ContentPageAdmin)

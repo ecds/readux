@@ -1,6 +1,6 @@
 [{
   "model": "users.user",
-  "pk": 1,
+  "pk": 111,
   "fields": {
     "password": "argon2$argon2i$v=19$m=512,t=2,p=2$MnkxU1B6anVTSzhh$bQe05wjeuhFVy/6266HGNA",
     "last_login": "2019-04-02T18:24:53.963Z",
@@ -18,7 +18,7 @@
   }
 }, {
   "model": "users.user",
-  "pk": 2,
+  "pk": 222,
   "fields": {
     "password": "argon2$argon2i$v=19$m=512,t=2,p=2$WWpzVG84b2tzN2lw$A6WTNoktIMmitgVEj8lt9A",
     "last_login": "2019-04-01T21:38:05.845Z",

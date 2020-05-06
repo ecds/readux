@@ -27,7 +27,7 @@ class ReduxUserChangeForm(UserChangeForm):
         widget=TextInput(attrs={'class': 'rdx-input uk-input'}),
         help_text="User Name to associate with Annotations"
     )
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = User
         fields = []
 
@@ -52,15 +52,15 @@ class UserCreationForm(forms.UserCreationForm):
         raise ValidationError(self.error_messages["duplicate_username"])
 
 class ReaduxSocialSignupForm(SignupForm):
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = User
         fields = ['name']
         
     name = CharField(max_length=30, label='User Name to associate with Annotations')
-    agree = BooleanField(label='Check this box to confirm. By creating an account on Readux, I acknowledge that: Any information I personally create and enter (from here "Data") will be stored and may be accessible to site administrators. My Data will not be publicly accessible unless I elect to make my Data public. The host of this site and the makers of Readux are not responsible for ensuring the stability or privacy of my Data.')
+    agree = BooleanField(label='Check this box to confirm that you agree to the full Readux Terms of Service found on the Terms of Service page. By creating an account on Readux, you acknowledge that: Any information I personally create and enter (from here "Data") will be stored and may be accessible to site administrators. My Data will not be publicly accessible unless I elect to make my Data public. The host of this site and the makers of Readux are not responsible for ensuring the stability or privacy of my Data. I agree to the full Readux Terms of Service.')
 
     def signup(self, request, user):
-#         user = super(MyCustomSocialSignupForm, self).save()
+        # user = super(ReaduxSocialSignupForm, self).save()
         user.name = self.cleaned_data['name']
         user.save()
         return user

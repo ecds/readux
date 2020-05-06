@@ -1,26 +1,31 @@
+"""Django Views for USER Annotations."""
+import json
+import uuid
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
+from django.contrib.auth import get_user_model
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.canvases.models import Manifest
 from .models import UserAnnotation
-from ..iiif.canvases.models import Canvas
-from ..iiif.canvases.models import Manifest
-import json
-import uuid
-from ..users.models import User
 
+USER = get_user_model()
 
 class Annotations(ListView):
-
+    """
+    Display a list of UserAnnotations for a specific user.
+    :rtype: json
+    """
     def get_queryset(self):
         return Canvas.objects.filter(pid=self.kwargs['canvas'])
-    
+
     def get(self, request, *args, **kwargs):
         username = kwargs['username']
         try:
-            owner = User.objects.get(username=username)
-            if self.request.user == owner: 
+            owner = USER.objects.get(username=username)
+            if self.request.user == owner:
                 return JsonResponse(
                     json.loads(
                         serialize(
@@ -31,36 +36,43 @@ class Annotations(ListView):
                     ),
                     safe=False
                 )
-            else:
-                return JsonResponse(status=401, data={"Permission to see annotations not allowed for logged in user.": username})
+            return JsonResponse(
+                status=401,
+                data={"Permission to see annotations not allowed for logged in user.": username}
+            )
 
         except ObjectDoesNotExist:
-            # attempt to get annotations for non-existent user
-            return JsonResponse(status=404, data={"User not found.": username})
-        return JsonResponse(status=200, data={})
-
+            return JsonResponse(status=404, data={"USER not found.": username})
 
 class AnnotationCrud(View):
-
+    """Endpoint for User Annotation CRUD."""
     def dispatch(self, request, *args, **kwargs):
         # Don't do anything if no user is authenticated.
         if hasattr(request, 'user') is False or request.user.is_authenticated is False:
             return self.__unauthorized()
-        
+
         # Get the payload from the request body.
         self.payload = json.loads(self.request.body.decode('utf-8'))
-        return super(AnnotationCrud, self).dispatch(request, *args, **kwargs)   
+        return super(AnnotationCrud, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
+        """Fetch requested :class:`apps.readux.models.UserAnnotation`
+
+        :rtype: :class:`django.db.models.QuerySet`
+        """
         try:
             return UserAnnotation.objects.get(
-                pk=self.payload['id'],
-                owner=self.request.user
+                pk=self.payload['id']
             )
         except UserAnnotation.DoesNotExist:
             return None
 
     def post(self, request):
+        """HTTP POST endpoint for creating annotations.
+
+        :return: Newly created annotation as IIIF Annotation.
+        :rtype: json
+        """
         oa_annotation = json.loads(self.payload['oa_annotation'])
         annotation = UserAnnotation()
         annotation.oa_annotation = oa_annotation
@@ -80,6 +92,11 @@ class AnnotationCrud(View):
         )
 
     def put(self, request):
+        """HTTP PUT endpoint for updating annotations.
+
+        :return: Updated IIIF Annotation
+        :rtype: json
+        """
         # if hasattr(request, 'user') is False or request.user.is_authenticated is False:
         #     return self.__unauthorized()
 

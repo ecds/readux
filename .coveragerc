@@ -5,8 +5,13 @@ omit =
   apps/cms/*
   apps/contrib/*
   *migrations*
+  # Exclude tasks
+  *tasks.py
   *__init__.py
 exclude_lines =
     # Ignore imports
     from
     import
+    logger
+    LOGGER
+    pragma: no cover

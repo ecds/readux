@@ -4,7 +4,7 @@ Base settings to build other settings files upon.
 
 import environ
 
-ROOT_DIR = environ.Path(__file__) - 3  # (readux/config/settings/base.py - 3 = readux/)
+ROOT_DIR = environ.Path(__file__) - 3  # (readux/config/settings/base.py - 3 = /)
 APPS_DIR = ROOT_DIR.path('apps')
 
 env = environ.Env()
@@ -95,6 +95,7 @@ THIRD_PARTY_APPS = [
     'taggit',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',
+    'django_summernote'
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',
@@ -103,7 +104,8 @@ LOCAL_APPS = [
     'apps.iiif.kollections.apps.KollectionsConfig',
     'apps.iiif.manifests.apps.ManifestsConfig',
     'apps.readux.apps.ReaduxConfig',
-    'apps.cms.apps.CmsConfig'
+    'apps.cms.apps.CmsConfig',
+    'apps.templates',
     # 'apps.readux.collection.apps.CollectionAppConfig',
     # 'apps.readux.volumes.apps.VolumesAppConfig',
 ]
@@ -183,6 +185,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [
     str(APPS_DIR.path('static')),
+    str(ROOT_DIR.path('customizations')),
 ]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [

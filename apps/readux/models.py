@@ -9,6 +9,15 @@ from django.dispatch import receiver
 from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from apps.iiif.canvases.models import Canvas
 
+class SiteInformation(models.Model):
+    """Django model for IIIF image server info. Each canvas has one IServer"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sitename = models.CharField(max_length=255)
+    original = models.ImageField(upload_to='originals/', null=True, help_text="Upload your site social media icon.")
+    
+    def __str__(self):
+        return "%s" % (self.sitename)
+
 class TaggedUserAnnotations(TaggedItemBase):
     """Model for tagging :class:`UserAnnotation`s using Django Taggit."""
     content_object = models.ForeignKey('UserAnnotation', on_delete=models.CASCADE)

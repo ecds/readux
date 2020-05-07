@@ -1,11 +1,13 @@
 """Django Models for Readux"""
 import json
 import re
+import uuid
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
+from django.core.validators import FileExtensionValidator
 from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from apps.iiif.canvases.models import Canvas
 
@@ -13,7 +15,8 @@ class SiteInformation(models.Model):
     """Django model for IIIF image server info. Each canvas has one IServer"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sitename = models.CharField(max_length=255)
-    original = models.ImageField(upload_to='originals/', null=True, help_text="Upload your site social media icon.")
+    socialmediaicon = models.ImageField(upload_to='icons/', null=True, help_text='Upload your site social media icon.')
+    sitelogo = models.FileField(upload_to='icons/', null=True, default='../../static/images/readux.svg', help_text='Upload the site logo in svg (png or jpg accepted).', validators=[FileExtensionValidator(['svg','png','jpg'])])
     
     def __str__(self):
         return "%s" % (self.sitename)

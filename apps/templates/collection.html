@@ -4,6 +4,7 @@
 <div>
 
   <header class="page-header" id="page-bg">
+  {% if collection.header %}
     <div class="container">
       <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}"
         style="width:100%;" />
@@ -15,6 +16,7 @@
         <p class="small credit">{{ collection.collection_image_creator }}</p>
       </div>
     </div>
+    {% else %}{% endif %}
   </header>
 
   <div class="rx-title-container">

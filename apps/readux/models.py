@@ -22,6 +22,9 @@ class SiteInformation(models.Model):
     def __str__(self):
         return "%s" % (self.sitename)
 
+    class Meta:
+        verbose_name_plural = "Site information"
+
 class TaggedUserAnnotations(TaggedItemBase):
     """Model for tagging :class:`UserAnnotation`s using Django Taggit."""
     content_object = models.ForeignKey('UserAnnotation', on_delete=models.CASCADE)

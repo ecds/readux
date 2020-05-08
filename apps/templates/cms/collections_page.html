@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
+{% load static %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -24,7 +25,11 @@
   {% for collection in page.collections %}
   <div class="rx-volume-in-banner">
     <a class="nav-link" href="{% url 'collection' collection.pid %}">
+    {% if collection.header %}
     <div class="rx-banner-image-container"><img src="/media/{{collection.header}}" alt="Banner image for collection {{collection.label}}"></div>
+    {% else %}
+    <div class="rx-banner-image-container"><img src="{% static '/images/banner_placeholder.png' %}" alt="Banner image for collection {{collection.label}}"></div>
+    {% endif %}
     <div class="rx-banner-text-container">
       <div class="rx-title-tagline rx-title-tagline-banner">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
       <div class="rx-collection-title rx-collection-title-banner">{{ collection.label }}</div>
@@ -42,7 +47,11 @@
 <article class="rx-grid-layout">
   <a class="nav-link" href="{% url 'collection' collection.pid %}">
   <div class="rx-volume-in-grid">
+    {% if collection.thumbnail %}
     <div class="rx-grid-image-container"><img src="/media/{{collection.thumbnail}}"></div>
+    {% else %}
+    <div class="rx-grid-image-container"><img src="{% static '/images/grid_placeholder.png' %}"></div>
+    {% endif %}
     <div class="rx-title-tagline uk-margin-small-top">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
     <div class="rx-collection-title">{{ collection.label }}</div>
   </div>
@@ -69,7 +78,11 @@
     {% for collection in page.collections %}
     <div class="uk-width-1-2@m uk-grid-medium">
       <div class=" uk-width-1-4@m">
+        {% if collection.thumbnail %}
         <img src="/media/{{collection.thumbnail}}" alt="Banner image for collection {{collection.label}}" />
+        {% else %}
+        <img src="{% static '/images/grid_placeholder.png' %}" alt="Banner image for collection {{collection.label}}" />
+        {% endif %}
       </div>
       <div class="uk-width-3-4@m">
         <a class="nav-link" href="{% url 'collection' collection.pid %}">

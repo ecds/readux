@@ -1,5 +1,7 @@
 {% load static file_exists_check i18n %}<!DOCTYPE html>
 {% load menu_tags %}
+{% load readux_templatetags %}
+{% load load_readux_model %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -11,7 +13,13 @@
     {% if collection.label %}
     <meta property="og:title" content="Readux collection: {{ collection.label }}" />
     <meta name="twitter:title" content="Readux collection: {{ collection.label }}" />
+    {% if collection.thumbnail %}
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
+    {% else %}
+    {% load_readux_model %}
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ info.sitename }}" />
+    {% endfor %}
+    {% endif %}
     <meta property="og:description" content="{{ collection.summary }}" />
     <meta name="twitter:description" content="{{ collection.summary }}" />
     <meta property="og:type" content="website" />

@@ -15,9 +15,9 @@ from apps.iiif.canvases.models import Canvas
 class SiteInformation(models.Model):
     """Django model for IIIF image server info. Each canvas has one IServer"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    sitename = models.CharField(max_length=255)
-    socialmediaicon = models.ImageField(upload_to='icons/', null=True, help_text='Upload your site social media icon.')
-    sitelogo = models.FileField(upload_to='icons/', null=True, default='{static}/images/readux.svg' .format(static=settings.STATIC_ROOT), help_text='Upload the site logo in svg (png or jpg accepted).', validators=[FileExtensionValidator(['svg','png','jpg'])])
+    sitename = models.CharField(max_length=255, verbose_name="site name")
+    socialmediaicon = models.ImageField(upload_to='icons/', null=True, help_text='Upload your site social media icon.', verbose_name="social media icon")
+    sitelogo = models.FileField(upload_to='icons/', null=True, default='../static/images/readux.svg', verbose_name="Site logo", help_text='Leave blank for Readux logo or upload your site logo in svg (png or jpg accepted).', validators=[FileExtensionValidator(['svg','png','jpg'])])
     
     def __str__(self):
         return "%s" % (self.sitename)

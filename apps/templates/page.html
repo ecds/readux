@@ -38,20 +38,18 @@
       </div>
     </div>
     <div class="uk-navbar-right rx-page-navbar-right">
-      <a type="button" @click="toggleMoreInfo" class="rx-btn-secondary" v-bind:class="{ 'rx-btn-main-active' : showMoreInfo  }">
+      <!--@click="toggleMoreInfo"-->
+      <a type="button"  class="rx-btn-secondary" uk-toggle="target: #offcanvas-usage">
           more info 
       </a>
     </div>
   </nav>
 
-  <div class="rx-info-container" v-show="showMoreInfo">
+  <div  id="offcanvas-usage" uk-offcanvas="flip: true">
+    <div class="uk-offcanvas-bar rx-offcanvas-bar">
 
     <div class="rx-info">
-      <a type="button" @click="toggleMoreInfo" class="rx-page-info-btn"
-        v-bind:class="{ 'rx-btn-main-active' : showMoreInfo  }">
-        <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: close"
-          uk-tooltip="title: Close this panel; pos: right"></span> close
-      </a>
+      <a type="button" class="uk-offcanvas-close rx-offcanvas-close rx-page-info-btn">close</a>
     </div>
 
     <div class="rx-info">
@@ -62,7 +60,7 @@
             <form class="uk-search uk-search-default uk-search-navbar rx-page-search-container" 
               action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
               <div>
-                <span uk-search-icon></span>
+                <span uk-search-icon class="rx-search-icon"></span>
                 <input class="uk-search-input rx-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
                 value="{{request.GET.q}}">
               </div>
@@ -256,6 +254,8 @@
     <!-- start ocr el -->
     <div id="ocr" style="opacity: 0;"></div>
     <!-- end ocr el -->
+
+    </div>
   </div>
 
 

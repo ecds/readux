@@ -1,5 +1,4 @@
 /* These styles are generated from project.scss. */
-
 body {
   font-size: 18px;
 }
@@ -140,12 +139,12 @@ a.rdx-provider-button:hover {
 }
 
 .uk-button-primary {
-  background-color: #ea7c0f;
+  background-color: #950953;
 }
 
 .uk-button-primary:hover,
 .uk-button-primary:active {
-  background-color: #e79544;
+  background-color: #950952;
 }
 
 .uk-button-default {
@@ -747,12 +746,10 @@ p {
 .rx-action-btn,
 .rx-icon-btn,
 .uk-dropdown-nav > li > a:hover {
-  color: #ea7c0f !important;
+  color: #950953 !important;
   opacity: 0.75;
-  -webkit-transition: opacity 150ms ease-in-out;
-  -moz-transition: opacity 150ms ease-in-out;
-  -ms-transition: opacity 150ms ease-in-out;
-  -o-transition: opacity 150ms ease-in-out;
+  transition: all ease-in-out 100ms;
+
 }
 
 .rx-breadcrumb-item > a:hover,
@@ -760,12 +757,10 @@ p {
 .rx-action-btn:hover,
 .rx-icon-btn:hover,
 .uk-dropdown-nav > li.uk-active > a {
-  color: #ea7c0f;
+  color: #950953;
   opacity: 1;
-  -webkit-transition: opacity 150ms ease-in-out;
-  -moz-transition: opacity 150ms ease-in-out;
-  -ms-transition: opacity 150ms ease-in-out;
-  -o-transition: opacity 150ms ease-in-out;
+  transition: all ease-in-out 100ms;
+
 }
 
 .rx-head-container {
@@ -898,8 +893,8 @@ p {
 
 .rx-btn {
   border-radius: 3px;
-  border: solid 1px #707070;
-  color: #707070;
+  border: solid 1px #950952;
+  color: #950952;
   font-family: HelveticaNeue, Helvetica, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
@@ -913,16 +908,18 @@ p {
 }
 
 .rx-btn:hover {
-  border: solid 1px #707070;
+  border: solid 1px #950952;
   color: white;
-  background: #707070;
-  transition: 0.1s ease-in-out;
+  background: #950952;
+  transition: all ease-in-out 100ms;
+
+  cursor: pointer;
 }
 
 .rx-btn-extension {
   border-radius: 3px;
-  border: solid 1px #707070;
-  color: #707070;
+  border: solid 1px #950952;
+  color: white;
   font-family: HelveticaNeue, Helvetica, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
@@ -934,24 +931,16 @@ p {
   text-align: center;
   padding: 8px 16px;
   display: inline-block;
-  background: #ea7c0f;
+  background: #950953;
   color: white;
-  border: solid 1px #ea7c0f;
-}
-
-.rx-btn:hover {
-  border: solid 1px #707070;
-  color: white;
-  background: #707070;
-  transition: 0.1s ease-in-out;
-  cursor: pointer;
+  border: solid 1px #950953;
 }
 
 .rx-btn-extension:hover {
-  background: #ff7f00;
+  background: #5E0035;
   color: white;
-  border: solid 1px #ff7f00;
-  transition: 0.1s ease-in-out;
+  border: solid 1px #5E0035;
+  transition: all ease-in-out 100ms;
   opacity: 1;
   cursor: pointer;
 }
@@ -977,7 +966,7 @@ p {
 }
 
 .uk-active > .rx-btn-annotation {
-  background-color: #ff7f00 !important;
+  background-color: #950951 !important;
   color: white;
 }
 
@@ -998,7 +987,7 @@ p {
 .rx-footer > a {
   padding: 1rem;
   color: #999;
-  transition: ease-in-out;
+  transition: all ease-in-out 100ms;
 }
 
 .rx-footer > a:first-child {
@@ -1010,16 +999,13 @@ p {
 }
 
 .rx-anchor {
-  color: #ea7c0f !important;
+  color: #950953 !important;
   opacity: 0.75;
-  -webkit-transition: opacity 150ms ease-in-out;
-  -moz-transition: opacity 150ms ease-in-out;
-  -ms-transition: opacity 150ms ease-in-out;
-  -o-transition: opacity 150ms ease-in-out;
+  transition: all ease-in-out 100ms;
 }
 
 .rx-anchor:hover {
-  color: #ea7c0f;
+  color: #950953;
   opacity: 1;
 }
 
@@ -1035,22 +1021,19 @@ p {
 
 .rx-label-copy {
   background: white;
-  color: #ea7c0f !important;
-  border: #ea7c0f 1px solid;
+  color: #950953 !important;
+  border: #950953 1px solid;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
   opacity: 0.75;
   cursor: pointer;
-  -webkit-transition: opacity 150ms ease-in-out;
-  -moz-transition: opacity 150ms ease-in-out;
-  -ms-transition: opacity 150ms ease-in-out;
-  -o-transition: opacity 150ms ease-in-out;
+  transition: all ease-in-out 100ms;
   font-weight: 600;
 }
 
 .rx-label-copy:hover {
-  background: #ea7c0f;
-  color: white;
+  background: #950953;
+  color: white !important;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
   cursor: pointer;
@@ -1120,10 +1103,10 @@ p {
 
 .rx-volume-na {
   /* border: 1px solid #afafaf; */
-  background: #fff1e4;
+  background: #fbecf9;
   padding: 15px;
   font-size: 14px;
-  color: #ea7c0f;
+  color: #950953;
 }
 
 .rx-nav-item.uk-active {
@@ -1153,22 +1136,20 @@ p {
 }
 
 .rx-search-result a {
-  color: #ea7c0f !important;
+  color: #950953 !important;
   opacity: 0.7;
 }
 
 .rx-search-result a:hover {
-  color: #ea7c0f !important;
+  color: #950953 !important;
   opacity: 1;
-  -webkit-transition: opacity 150ms ease-in-out;
-  -moz-transition: opacity 150ms ease-in-out;
-  -ms-transition: opacity 150ms ease-in-out;
-  -o-transition: opacity 150ms ease-in-out;
+  transition: all ease-in-out 100ms;
+
 }
 
 .uk-tab > .uk-active > a {
-  border-color: #ea7c0f !important;
-  color: #ea7c0f;
+  border-color: #950953 !important;
+  color: #950953;
 }
 
 .rx-collection-title {
@@ -1334,7 +1315,7 @@ em {
 }
 
 .rx-page-info-btn, .rx-btn-secondary, .rx-page-info-btn > .uk-icon-button {
-  color: #e79544 !important;
+  color: #950952 !important;
   opacity: 0.75;
   font-size: 1rem;
   font-weight: 600;
@@ -1348,22 +1329,22 @@ em {
   position: relative;
   top: 0;
   right: 0;
-  color: #e79544 !important;
+  color: #950952 !important;
 }
 
 .rx-offcanvas-close:hover {
-  color: #e79544 !important;
+  color: #950952 !important;
 }
 
 .rx-btn-secondary {
-  border: 3px solid #e79544;
+  border: 3px solid #950952;
   padding: .35em 1em;
   white-space: nowrap;
 }
 
 .rx-btn-secondary:hover {
   color: white;
-  background-color: #e79544;
+  background-color: #950952;
   opacity: 1;
   transition: all ease-in-out 100ms;
 }
@@ -1371,7 +1352,7 @@ em {
 .rx-page-info-btn:hover {
   opacity: 1;
   transition: all ease-in-out 100ms;
-  color: #e79544;
+  color: #950952;
 }
 
 .rx-btn-secondary:active {

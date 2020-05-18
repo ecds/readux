@@ -679,6 +679,14 @@ a:hover {
   text-decoration: initial !important;
 }
 
+.rx-offcanvas-bar {
+  background: white;
+  width: 750px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
+}
+
+
 .rx-title-tagline {
   font-size: 14px;
   color: #afafaf;
@@ -739,7 +747,7 @@ p {
 .rx-action-btn,
 .rx-icon-btn,
 .uk-dropdown-nav > li > a:hover {
-  color: #ea7c0f;
+  color: #ea7c0f !important;
   opacity: 0.75;
   -webkit-transition: opacity 150ms ease-in-out;
   -moz-transition: opacity 150ms ease-in-out;
@@ -1002,7 +1010,7 @@ p {
 }
 
 .rx-anchor {
-  color: #ea7c0f;
+  color: #ea7c0f !important;
   opacity: 0.75;
   -webkit-transition: opacity 150ms ease-in-out;
   -moz-transition: opacity 150ms ease-in-out;
@@ -1027,7 +1035,7 @@ p {
 
 .rx-label-copy {
   background: white;
-  color: #ea7c0f;
+  color: #ea7c0f !important;
   border: #ea7c0f 1px solid;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
@@ -1326,12 +1334,26 @@ em {
 }
 
 .rx-page-info-btn, .rx-btn-secondary, .rx-page-info-btn > .uk-icon-button {
-  color: #e79544;
+  color: #e79544 !important;
   opacity: 0.75;
   font-size: 1rem;
   font-weight: 600;
 }
 
+.rx-page-info-btn:hover, .rx-btn-secondary:hover, .rx-page-info-btn > .uk-icon-button:hover {
+  color: white !important;
+}
+
+.rx-offcanvas-close {
+  position: relative;
+  top: 0;
+  right: 0;
+  color: #e79544 !important;
+}
+
+.rx-offcanvas-close:hover {
+  color: #e79544 !important;
+}
 
 .rx-btn-secondary {
   border: 3px solid #e79544;
@@ -1383,6 +1405,19 @@ em {
 
 .rx-search-input {
   border: none !important;
+  color: #707070 !important;
+}
+
+.uk-checkbox, .uk-radio {
+  border: 1px solid #ccc !important;
+}
+
+.rx-search-icon {
+  color: #707070 !important;
+}
+
+.rx-search-input::placeholder {
+  color: #999 !important;
 }
 
 .rx-page-search-container {
@@ -1390,6 +1425,7 @@ em {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: #707070 !important;
 }
 
 .rx-page-search-options {
@@ -1408,6 +1444,12 @@ em {
     padding: 0;
   }
 }
+
+/* @media (max-width: 950px) {
+  .rx-offcanvas-bar {
+    width: 100%;
+  }
+} */
 
 fieldset {
   margin: inherit;

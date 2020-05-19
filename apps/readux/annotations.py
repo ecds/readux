@@ -38,7 +38,7 @@ class Annotations(ListView):
                 )
             return JsonResponse(
                 status=401,
-                data={"Permission to see annotations not allowed for logged in user.": username}
+                data={"Permission to see annotations not allowed for logged in account.": username}
             )
 
         except ObjectDoesNotExist:

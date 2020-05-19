@@ -56,18 +56,20 @@ class ManifestExportTests(TestCase):
         self.jse.owners = [self.user.id]
 
     def test_zip_creation(self):
-        zip = IiifManifestExport.get_zip(self.volume, 'v2', owners=[self.user.id])
-        assert isinstance(zip, bytes)
+        zip_file = IiifManifestExport.get_zip(self.volume, 'v2', owners=[self.user.id])
+        assert isinstance(zip_file, bytes)
         # unzip the file somewhere
         tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-')
-        iiif_zip = zipfile.ZipFile(io.BytesIO(zip), "r")
+        iiif_zip = zipfile.ZipFile(io.BytesIO(zip_file), "r")
         iiif_zip.extractall(tmpdir)
         manifest_path = os.path.join(tmpdir, 'manifest.json')
         with open(manifest_path) as json_file:
             manifest = json.load(json_file)
-
         ocr_annotation_list_id = manifest['sequences'][0]['canvases'][0]['otherContent'][0]['@id']
-        ocr_annotation_list_path = os.path.join(tmpdir, re.sub(r'\W','_', ocr_annotation_list_id) + ".json")
+        ocr_annotation_list_path = os.path.join(
+            tmpdir,
+            re.sub(r'\W', '_', ocr_annotation_list_id) + ".json"
+        )
         assert os.path.exists(ocr_annotation_list_path) == 1
 
         with open(ocr_annotation_list_path) as json_file:
@@ -75,7 +77,10 @@ class ManifestExportTests(TestCase):
         assert ocr_annotation_list['@id'] == ocr_annotation_list_id
 
         comment_annotation_list_id = manifest['sequences'][0]['canvases'][0]['otherContent'][1]['@id']
-        comment_annotation_list_path = os.path.join(tmpdir, re.sub(r'\W','_', comment_annotation_list_id) + ".json")
+        comment_annotation_list_path = os.path.join(
+            tmpdir,
+            re.sub(r'\W', '_', comment_annotation_list_id) + ".json"
+        )
         assert os.path.exists(comment_annotation_list_path) == 1
 
         with open(comment_annotation_list_path) as json_file:

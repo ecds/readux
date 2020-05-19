@@ -8,11 +8,11 @@
       <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}"
         style="width:100%;" />
     </div>
-    <div class="collection-image-info collasped">
+    <div class="collection-image-info collasped"  tabindex="0" aria-label="about this collection" uk-tooltip="title: About this collection; pos: right">
       <h3>{{ collection.collection_image_title }}</h3>
       <div class="info"> {% if collection.collection_image_summary %}
         <p>{{ collection.collection_image_summary }}</p> {% endif %}
-        <p class="small credit">{{ collection.collection_image_creator }}</p>
+        <p>{{ collection.collection_image_creator }}</p>
       </div>
     </div>
   </header>
@@ -23,7 +23,7 @@
       <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
       <li class="rx-breadcrumb-item">{{ collection.label }}</li>
     </ul>
-    <div class="rx-title">{{ collection.label }}</div>
+    <div class="rx-title" id="main">{{ collection.label }}</div>
     <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
   </div>
 
@@ -43,7 +43,7 @@
             <v-volume-image></v-volume-image>
           </a>
         </div>
-        <div class="uk-width-3-4@m">
+        <div class="uk-width-3-4@m" tabindex="0">
           <a class="nav-link" href="#">
             <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
           </a>
@@ -77,14 +77,14 @@
       {% for fir in firstthumbnail %}
       {% for canvas in volume.canvas_set.all %}
         {% if canvas.pid in fir|safe %}
-           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+           <v-volume-image
+            img-src="{{ canvas.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
         {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
         {% if forloop.last %}
-          <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+          <v-volume-image
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
         {% endif %}
@@ -93,7 +93,7 @@
       {% endfor %}
         </a>
       </div>
-      <div class="uk-width-3-4@m">
+      <div class="uk-width-3-4@m" tabindex="0" aria-label="Volume Information">
         <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
           <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
         </a>

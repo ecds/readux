@@ -33,14 +33,14 @@
             <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
                 alt="Collections">{{ volume.collections.first.label }}</a></li>
           </ul>
-          <div class="rx-page-title">{{volume.label}}</div>
+          <div id="main" class="rx-page-title">{{volume.label}}</div>
         </div>
       </div>
     </div>
     <div class="uk-navbar-right rx-page-navbar-right">
       <!--@click="toggleMoreInfo"-->
       <a type="button"  class="rx-btn-secondary" uk-toggle="target: #offcanvas-usage">
-          more info 
+          more info
       </a>
     </div>
   </nav>
@@ -57,7 +57,7 @@
       <nav class="uk-navbar-container" uk-navbar>
           <div class="uk-navbar-item" style="width: 100%;">
             {% if page.pid is not None %}
-            <form class="uk-search uk-search-default uk-search-navbar rx-page-search-container" 
+            <form class="uk-search uk-search-default uk-search-navbar rx-page-search-container"
               action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
               <div>
                 <span uk-search-icon class="rx-search-icon"></span>
@@ -252,7 +252,7 @@
     </div>
 
     <!-- start ocr el -->
-    <div id="ocr" style="opacity: 0;"></div>
+    <div id="ocr" style="opacity: 0;"  role="region" aria-live="polite"></div>
     <!-- end ocr el -->
 
     </div>
@@ -263,8 +263,8 @@
 
 {% block viewer %}
 
-<div id="viewer"></div>
-  
+<div id="viewer" role="region"></div>
+
 
 
 

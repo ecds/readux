@@ -393,7 +393,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 200
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)
-        assert len(serialized_canvas['otherContent']) == 3
+        assert len(serialized_canvas['otherContent']) == 1
 
     def test_volume_list_view_no_kwargs(self):
         response = self.client.get(reverse('volumes list'))
@@ -442,8 +442,18 @@ class AnnotationTests(TestCase):
                 url = reverse('collection', kwargs={ 'collection': self.collection.pid })
                 response = self.client.get(url, data=kwargs)
                 context = response.context_data
+                assert context['sort'] == sort
+                assert context['order'] == order
                 assert context['order_url_params'] == urlencode({'sort': sort, 'order': order})
                 assert context['manifest_query_set'].ordered
+
+    def test_collection_detail_view_with_no_sort_or_order_specified(self):
+        url = reverse('collection', kwargs={ 'collection': self.collection.pid })
+        response = self.client.get(url)
+        context = response.context_data
+        assert context['sort'] == 'title'
+        assert context['order'] == 'asc'
+        assert context['manifest_query_set'].ordered
 
     def test_volume_detail_view(self):
         url = reverse('volume', kwargs={'volume': self.manifest.pid})

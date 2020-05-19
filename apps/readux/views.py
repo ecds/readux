@@ -100,9 +100,9 @@ class CollectionDetail(TemplateView):
 
         q = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests
 
-        if sort not in SORT_OPTIONS:
+        if sort is None:
             sort = 'title'
-        if order not in ORDER_OPTIONS:
+        if order is None:
             order = 'asc'
 
         if sort == 'title':
@@ -195,19 +195,19 @@ class AnnotationsCount(TemplateView):
 # This replaces plain to_tsquery with to_tsquery so that operators ( | for or and :* for end of word) can be used.
 # If we upgrade to Django 2.2 from 2.1 we can add the operator search_type="raw" to the standard SearchQuery, and it should do the same thing.
 # TODO: This does not seem to be called anywhere. Is it actually needed?
-class MySearchQuery(SearchQuery):
-    """View for Search Query"""
-    def as_sql(self, compiler, connection):
-        params = [self.value]
-        if self.config:
-            config_sql, config_params = compiler.compile(self.config)
-            template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)
-            params = config_params + [self.value]
-        else:
-            template = 'to_tsquery(%s)'
-        if self.invert:
-            template = '!!({})'.format(template)
-        return template, params
+# class MySearchQuery(SearchQuery):
+#     """View for Search Query"""
+#     def as_sql(self, compiler, connection):
+#         params = [self.value]
+#         if self.config:
+#             config_sql, config_params = compiler.compile(self.config)
+#             template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)
+#             params = config_params + [self.value]
+#         else:
+#             template = 'to_tsquery(%s)'
+#         if self.invert:
+#             template = '!!({})'.format(template)
+#         return template, params
 
 class PageDetail(TemplateView):
     """Django Template View for :class:`apps.iiif.canvases.models.Canvas`"""
@@ -215,12 +215,12 @@ class PageDetail(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        manifest = Manifest.objects.get(pid=kwargs['volume'])
         if 'page' in kwargs:
             canvas = Canvas.objects.filter(pid=kwargs['page']).first()
         else:
-            canvas = Canvas.objects.filter(position='1').first()
+            canvas = manifest.canvas_set.all().first()
         context['page'] = canvas
-        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
         context['volume'] = manifest
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(
@@ -238,6 +238,7 @@ class PageDetail(TemplateView):
         qs2 = UserAnnotation.objects.all()
 
         try:
+            # TODO: Write tests after rewrite.
             search_string = self.request.GET['q']
             search_type = self.request.GET['type']
             search_strings = self.request.GET['q'].split()

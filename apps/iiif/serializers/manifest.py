@@ -16,6 +16,7 @@ class Serializer(JSONSerializer):
         self.annotators = self.json_kwargs.pop('annotators', 0)
         # if 'exportdate' in self.json_kwargs:
         self.exportdate = self.json_kwargs.pop('exportdate', datetime.utcnow())
+        self.current_user = self.json_kwargs.pop('current_user', None)
         # else:
         #      self.exportdate =
 
@@ -116,7 +117,8 @@ class Serializer(JSONSerializer):
                             serialize(
                                 'canvas',
                                 obj.canvas_set.all(),
-                                is_list=True
+                                is_list=True,
+                                current_user=self.current_user
                             )
                         )
                     }

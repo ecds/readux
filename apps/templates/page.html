@@ -323,4 +323,17 @@
     })
   });
 </script>
+<script type="text/javascript">
+  /* Add jQuery function `icontains` for case insensitive version of
+     jQuery's contains method.
+     https://stackoverflow.com/a/8747204/1792144
+     Usage `$( "span:icontains('woRd')")`
+     Add it after Mirador loads.
+     We can use this to highlight text when it is searched.
+  */
+  jQuery.expr[':'].icontains = function(a, i, m) {
+    return jQuery(a).text().toUpperCase()
+        .indexOf(m[3].toUpperCase()) >= 0;
+  };
+</script>
 {% endblock extra_javascript %}

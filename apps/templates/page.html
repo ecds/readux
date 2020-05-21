@@ -31,7 +31,11 @@
             <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
             <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
             <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-                alt="Collections">{{ volume.collections.first.label }}</a></li>
+                alt="Collections">{{ volume.collections.first.label }}</a>
+            </li>
+            <li>
+              {{ request.GET.type }}
+            </li>
           </ul>
           <div id="main" class="rx-page-title">{{volume.label}}</div>
         </div>
@@ -61,17 +65,19 @@
             <form class="uk-search uk-search-default uk-search-navbar rx-page-search-container"
               id="manifest-search-form" uk-grid>
               <div class="uk-width-3-4">
-                <input type="hidden" value={{ volume.pid }} name="volume-pid" />
+                <input type="hidden" value={{ volume.pid }} name="volume-pid" id="search-volume-pid" />
                 <span uk-search-icon class="rx-search-icon"></span>
                 <input class="uk-search-input uk-input-remove rx-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="query"
-                value="{{request.GET.q}}" model="searchString" />
+                value="{{request.GET.q}}" id="search-query-text"/>
               </div>
               <div class="uk-margin uk-grid-small uk-width-expand uk-child-width-auto uk-grid rx-page-search-options">
                 <label title="Click to include partial matches" class="rx-page-search-option-label">
-                  <input class="uk-radio" type="radio" checked aria-label="include partial" value="partial" name="search-type"> Partial
+                  <input class="uk-radio" type="radio" {%if 'exact' not in request.GET.type %}checked{% endif %} aria-label="include partial" value="partial" name="search-type">
+                  Partial
                 </label>
                 <label title="Click for exact matches only" class="rx-page-search-option-label">
-                  <input class="uk-radio" type="radio" aria-label="exact only" value="exact" name="search-type"> Exact
+                  <input class="uk-radio" type="radio" {%if 'exact' in request.GET.type %}checked{% endif %} aria-label="exact only" value="exact" name="search-type" id="search-exact">
+                  Exact
                 </label>
               </div>
             </form>
@@ -295,7 +301,7 @@
         canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ page.manifest.pid }}/canvas/{{ page.pid }}',{% endif %}
         displayLayout: false,
         sidePanel: false,
-        {% if "/page/all" in request.get_full_path in request.get_full_path %}
+        {% if "/page/all" in request.get_full_path %}
         canvasID: 'https://{{ request.META.HTTP_HOST }}/iiif/{{ volume.pid }}/canvas/{{ volume.canvas_set.pid.first }}',
         viewType: "ThumbnailsView"
         {% endif %}
@@ -313,17 +319,6 @@
 
 </script>
 <script type="text/javascript">
-  $(function () {
-    window.addEventListener('popstate', function() {
-      {% if "?q=" in request.get_full_path %}
-        alert('hello')
-      {% else %}
-      console.log()
-      {% endif %}
-    })
-  });
-</script>
-<script type="text/javascript">
   /* Add jQuery function `icontains` for case insensitive version of
      jQuery's contains method.
      https://stackoverflow.com/a/8747204/1792144
@@ -335,5 +330,13 @@
     return jQuery(a).text().toUpperCase()
         .indexOf(m[3].toUpperCase()) >= 0;
   };
+
+
+  {% if request.GET.q in request.get_full_path %}
+    UIkit.offcanvas($('#offcanvas-usage')).show();
+    fetchResults();
+    // document.getElementById('manifest-search-form').submit();
+
+  {% endif %}
 </script>
 {% endblock extra_javascript %}

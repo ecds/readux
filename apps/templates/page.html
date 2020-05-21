@@ -39,17 +39,18 @@
     </div>
     <div class="uk-navbar-right rx-page-navbar-right">
       <!--@click="toggleMoreInfo"-->
-      <a type="button"  class="rx-btn-secondary" uk-toggle="target: #offcanvas-usage">
+      <button type="button" role="button" tabindex="0" class="rx-btn-secondary" uk-toggle="target: #offcanvas-usage">
           more info
-      </a>
+      </button>
     </div>
   </nav>
 
+  <!-- Start Off-canvas More Info Side Bar -->
   <div  id="offcanvas-usage" uk-offcanvas="flip: true">
     <div class="uk-offcanvas-bar rx-offcanvas-bar">
 
     <div class="rx-info">
-      <a type="button" class="uk-offcanvas-close rx-offcanvas-close rx-page-info-btn">close</a>
+      <a type="button" role="button" tabindex="0" class="uk-offcanvas-close rx-offcanvas-close rx-page-info-btn">close</a>
     </div>
 
     <div class="rx-info">
@@ -58,28 +59,30 @@
           <div class="uk-navbar-item" style="width: 100%;">
             {% if page.pid is not None %}
             <form class="uk-search uk-search-default uk-search-navbar rx-page-search-container"
-              action="{% url 'page' volume.pid page.pid %}" method="get" accept-charset="utf-8">
-              <div>
+              id="manifest-search-form" uk-grid>
+              <div class="uk-width-3-4">
+                <input type="hidden" value={{ volume.pid }} name="volume-pid" />
                 <span uk-search-icon class="rx-search-icon"></span>
-                <input class="uk-search-input rx-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-                value="{{request.GET.q}}">
+                <input class="uk-search-input uk-input-remove rx-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="query"
+                value="{{request.GET.q}}" model="searchString" />
               </div>
-              <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid rx-page-search-options">
-                <label title="Click to include partial matches" class="rx-page-search-option-label"><input class="uk-radio" type="radio" name="type" checked
-                    aria-label="include partial" value="partial"> Partial</label>
-                <label title="Click for exact matches only" class="rx-page-search-option-label"><input class="uk-radio" type="radio" name="type" aria-label="exact only"
-                    value="exact"> Exact</label>
+              <div class="uk-margin uk-grid-small uk-width-expand uk-child-width-auto uk-grid rx-page-search-options">
+                <label title="Click to include partial matches" class="rx-page-search-option-label">
+                  <input class="uk-radio" type="radio" checked aria-label="include partial" value="partial" name="search-type"> Partial
+                </label>
+                <label title="Click for exact matches only" class="rx-page-search-option-label">
+                  <input class="uk-radio" type="radio" aria-label="exact only" value="exact" name="search-type"> Exact
+                </label>
               </div>
-              <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
             </form>
             {% else %}
-            <form class="uk-search uk-search-default"
+            <!-- <form class="uk-search uk-search-default"
               action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
+              {% csrf_token %}
               <span uk-search-icon></span>
               <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
                 value="{{request.GET.q}}">
-              <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
-            </form>
+            </form> -->
 
             {% endif %}
           </div>
@@ -88,40 +91,25 @@
       <!-- new search form -->
     </div>
 
-    {% if "?q=" in request.get_full_path %}
-    <div class="rx-info ">
+    <div class="rx-info uk-hidden" id="rdx-search-results">
       <div class="rx-info-content-container uk-padding-remove-vertical">
         <div class="rx-info-content">
           <div>
             <!-- nav head -->
             <ul class="uk-tab" uk-switcher>
-              <li><a href="#">{{ qs1|length }} hits in text</a></li>
-              <li><a href="#">{{ qs2|length }} hits in your annotations</a></li>
+              <li><a href="#"><span id="annotation-count"></span> hits in text</a></li>
+              <li><a href="#"><span id="user-annotation-count"></span> hits in your annotations</a></li>
             </ul>
             <!-- end of nav head -->
             <!-- nav body -->
             <ul class="uk-switcher uk-margin-small rx-search-result">
               <li>
-                {% if qs1 %}
-                <ul class="uk-padding-remove">
-                  {% for answer in qs1 %}{% if answer.canvas__manifest__label in volume.label %}
-                  <li><a
-                      href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas__pid }}?q={{ request.GET.q }}&type={{ request.GET.type }}"
-                      target="">Canvas {{ answer.canvas__position }} - number of results {{ answer.canvas__position__count }}{{ answer.rank }}</a></li>
-                  {% endif %}{% endfor %}</ul>
-                {% elif request.GET.q  and not qs1 %}
-                <p>No results in the text in this volume</p>{% endif %}
+                <!-- Search results list are populated by project.js -->
+                <ul class="uk-padding-remove" id="ocr-annotation-results"></ul>
               </li>
               <li>
-                {% if qs2 %}
-                <ul class="uk-padding-remove">
-                  {% for answer in qs2 %}{% if answer.canvas.manifest.label in volume.label %}
-                  <li><a
-                       href="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ answer.canvas.pid }}?q={{ request.GET.q }}&type={{ request.GET.type }}"
-                       target="">Canvas {{ answer.canvas.position }}</a></li>
-                  {% endif %}{% endfor %}</ul>
-                {% elif request.GET.q  and not qs2 %}<p>No results in your annotations in this volume</p>
-                {% endif %}
+                <!-- Search results list are populated by project.js -->
+                <ul class="uk-padding-remove" id="user-annotation-results"></ul>
               </li>
             </ul>
             <!-- end of nav body -->
@@ -129,7 +117,6 @@
         </div>
       </div>
     </div>
-    {% endif %}
 
 
     <div class="rx-info">
@@ -266,8 +253,6 @@
 <div id="viewer" role="region"></div>
 
 
-
-
 {% if page.pid is not None %}
 
 <!--
@@ -280,6 +265,7 @@
 {% endblock viewer %}
 
 {% block extra_javascript %}
+
 <script src="{{ mirador_url}}mirador.js"></script>
 <script type="text/javascript">
   $(function () {
@@ -325,5 +311,16 @@
     });
   });
 
+</script>
+<script type="text/javascript">
+  $(function () {
+    window.addEventListener('popstate', function() {
+      {% if "?q=" in request.get_full_path %}
+        alert('hello')
+      {% else %}
+      console.log()
+      {% endif %}
+    })
+  });
 </script>
 {% endblock extra_javascript %}

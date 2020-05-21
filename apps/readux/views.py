@@ -234,79 +234,79 @@ class PageDetail(TemplateView):
             canvas__manifest__id=manifest.id
         ).count()
         context['mirador_url'] = settings.MIRADOR_URL
-        qs = Annotation.objects.all()
-        qs2 = UserAnnotation.objects.all()
+        # qs = Annotation.objects.all()
+        # qs2 = UserAnnotation.objects.all()
 
-        try:
-            # TODO: Write tests after rewrite.
-            search_string = self.request.GET['q']
-            search_type = self.request.GET['type']
-            search_strings = self.request.GET['q'].split()
-            if search_strings:
-                if search_type == 'partial':
-                    qq = Q()
-                    query = SearchQuery('')
-                    for search_string in search_strings:
-                        query = query | SearchQuery(search_string)
-                        qq |= Q(content__icontains=search_string)
-                    vector = SearchVector('content')
-                    qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
-                    qs = qs.values(
-                        'canvas__position',
-                        'canvas__manifest__label',
-                        'canvas__pid'
-                    ).annotate(
-                        Count(
-                            'canvas__position')
-                        ).order_by('canvas__position')
-                    qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-                    qs2 = qs2.annotate(
-                        search=vector
-                    ).filter(
-                        search=query
-                    ).filter(
-                        canvas__manifest__label=manifest.label
-                    )
-                    qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-                    qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
-                elif search_type == 'exact':
-                    qq = Q()
-                    query = SearchQuery('')
-                    for search_string in search_strings:
-                        query = query | SearchQuery(search_string)
-                        qq |= Q(content__contains=search_string)
-                    vector = SearchVector('content')
-                    qs = qs.annotate(
-                        search=vector
-                    ).filter(
-                        search=query
-                    ).filter(
-                        canvas__manifest__label=manifest.label
-                    )
-                    qs = qs.values(
-                        'canvas__position',
-                        'canvas__manifest__label',
-                        'canvas__pid'
-                    ).annotate(
-                        Count('canvas__position')
-                    ).order_by('canvas__position')
-                    qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-                    qs2 = qs2.annotate(
-                        search=vector
-                    ).filter(
-                        search=query
-                    ).filter(
-                        canvas__manifest__label=manifest.label
-                    )
-                    qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-                    qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
-            else:
-                qs1 = ''
-                qs2 = ''
-            context['qs1'] = qs1
-            context['qs2'] = qs2
-        except MultiValueDictKeyError:
-            q = ''
+        # try:
+        #     # TODO: Write tests after rewrite.
+        #     search_string = self.request.GET['q']
+        #     search_type = self.request.GET['type']
+        #     search_strings = self.request.GET['q'].split()
+        #     if search_strings:
+        #         if search_type == 'partial':
+        #             qq = Q()
+        #             query = SearchQuery('')
+        #             for search_string in search_strings:
+        #                 query = query | SearchQuery(search_string)
+        #                 qq |= Q(content__icontains=search_string)
+        #             vector = SearchVector('content')
+        #             qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
+        #             qs = qs.values(
+        #                 'canvas__position',
+        #                 'canvas__manifest__label',
+        #                 'canvas__pid'
+        #             ).annotate(
+        #                 Count(
+        #                     'canvas__position')
+        #                 ).order_by('canvas__position')
+        #             qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+        #             qs2 = qs2.annotate(
+        #                 search=vector
+        #             ).filter(
+        #                 search=query
+        #             ).filter(
+        #                 canvas__manifest__label=manifest.label
+        #             )
+        #             qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+        #             qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+        #         elif search_type == 'exact':
+        #             qq = Q()
+        #             query = SearchQuery('')
+        #             for search_string in search_strings:
+        #                 query = query | SearchQuery(search_string)
+        #                 qq |= Q(content__contains=search_string)
+        #             vector = SearchVector('content')
+        #             qs = qs.annotate(
+        #                 search=vector
+        #             ).filter(
+        #                 search=query
+        #             ).filter(
+        #                 canvas__manifest__label=manifest.label
+        #             )
+        #             qs = qs.values(
+        #                 'canvas__position',
+        #                 'canvas__manifest__label',
+        #                 'canvas__pid'
+        #             ).annotate(
+        #                 Count('canvas__position')
+        #             ).order_by('canvas__position')
+        #             qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
+        #             qs2 = qs2.annotate(
+        #                 search=vector
+        #             ).filter(
+        #                 search=query
+        #             ).filter(
+        #                 canvas__manifest__label=manifest.label
+        #             )
+        #             qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+        #             qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
+        #     else:
+        #         qs1 = ''
+        #         qs2 = ''
+        #     context['qs1'] = qs1
+        #     context['qs2'] = qs2
+        # except MultiValueDictKeyError:
+        #     q = ''
 
         return context
 

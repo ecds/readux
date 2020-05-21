@@ -237,7 +237,7 @@ header#page-bg .collection-image-info {
   cursor: pointer;
 }
 
-/* 
+/*
 header#page-bg .collection-label {
     display: block;
     background: rgba(0, 0, 0, 0.62);
@@ -286,7 +286,7 @@ ol > li {
 ul.listing-thumbs > li > img.thumbnail-image {
   height: 150px;
 }
-/* 
+/*
 ol > li.list {
   #height: 300px;
 }
@@ -1147,9 +1147,17 @@ p {
 
 }
 
+.rx-info-content .uk-tab a {
+  color: #999;
+}
+
+.rx-info-content .uk-tab a:hover {
+  color: #666;
+}
+
 .uk-tab > .uk-active > a {
   border-color: #950953 !important;
-  color: #950953;
+  color: #950953 !important;
 }
 
 .rx-collection-title {
@@ -1436,4 +1444,9 @@ fieldset {
   margin: inherit;
   border: 0;
   padding: inherit;
+}
+
+.uk-offcanvas {
+  top: -80px;
+  position: inherit;
 }

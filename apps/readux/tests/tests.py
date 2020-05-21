@@ -9,7 +9,7 @@ from django.core.serializers import serialize
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
 from ..models import UserAnnotation
-from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, CollectionDetail, Collection, ExportOptions, AnnotationsCount
+from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, Collection, ExportOptions, AnnotationsCount
 from urllib.parse import urlencode
 from cssutils import parseString
 import warnings

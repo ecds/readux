@@ -5,7 +5,7 @@
         $(this).toggleClass("collasped");
       });
     });
-    
+
     // Iterate through menu items and highlight the current page if it matches the URL
     $.each($(".rx-nav-item"), function(index, navItem) {
         var segmentsInURL = (location.pathname.split('/').length - 1) - (location.pathname[location.pathname.length - 1] == '/' ? 1 : 0);
@@ -74,5 +74,75 @@
         $("#rx-nav").addClass("rx-sticky");
       } else {
         $("#rx-nav").removeClass("rx-sticky");
+      }
+
+      // if (window.location.href.includes("?q=")) {
+      //   UIkit.offcanvas($('#offcanvas-usage')).show();
+      // }
+    });
+
+    $(document).ready(function() {
+      const searchForm = document.getElementById('manifest-search-form');
+      const resultsPane = document.getElementById('rdx-search-results');
+      if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const volumePid  = e.target[0].value;
+          const query  = e.target[1].value;
+          let searchType = 'partial';
+          if (e.target[3].checked) {
+            searchType = 'exact';
+          }
+          url = `/search/volume/pages?volume=${volumePid}&query=${query}&type=${searchType}`;
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              ocrAnnotationCount = data.ocr_annotations.length;
+              userAnnotationCount = data.user_annotations.length;
+              ocrAnnotationUL = document.getElementById('ocr-annotation-results');
+              ocrAnnotationUL.innerHTML = '';
+              userAnnotationUL = document.getElementById('user-annotation-results');
+              userAnnotationUL.innerHTML = '';
+
+              document.getElementById('annotation-count').innerText = `${ocrAnnotationCount}`;
+              document.getElementById('user-annotation-count').innerText = `${userAnnotationCount}`;
+
+
+              if (ocrAnnotationCount > 0) {
+                data.ocr_annotations.forEach(result => {
+                  const anno = JSON.parse(result);
+                  const resultLi = document.createElement('li');
+                  const resultA = document.createElement('a');
+                  resultA.href = `/volume/${anno.canvas__manifest__pid}/page/${anno.canvas__pid}`;
+                  resultA.innerText = `Canvas ${anno.canvas__position} - number of results ${anno.canvas__position__count}`;
+                  resultLi.appendChild(resultA);
+                  ocrAnnotationUL.appendChild(resultLi);
+                });
+              } else {
+                const noResultsP = document.createElement('p');
+                noResultsP.innerText = 'No results in the text in this volume';
+                ocrAnnotationUL.appendChild(noResultsP);
+              }
+
+              if (userAnnotationCount > 0) {
+                data.user_annotations.forEach(result => {
+                  const anno = JSON.parse(result);
+                  const resultLi = document.createElement('li');
+                  const resultA = document.createElement('a');
+                  resultA.href = `/volume/${anno.canvas__manifest__pid}/page/${anno.canvas__pid}`;
+                  resultA.innerText = `Canvas ${anno.canvas__position}`;
+                  resultLi.appendChild(resultA);
+                  userAnnotationUL.appendChild(resultLi);
+                });
+              } else {
+                const noResultsP = document.createElement('p');
+                noResultsP.innerText = 'No results in your annotations in this volume';
+                userAnnotationUL.appendChild(noResultsP);
+              }
+              resultsPane.classList.remove('uk-hidden');
+
+            });
+        });
       }
     });

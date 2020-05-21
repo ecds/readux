@@ -14,6 +14,7 @@ class TestCustomStyle(TestCase):
         """
         When an inactive style is saved as active. Any styles
         marked active should become inactive.
+        Note: a default style is created by the migration.
         """
         style = Style.objects.all().first()
         other_style = StyleFactory.create()
@@ -22,6 +23,7 @@ class TestCustomStyle(TestCase):
         other_style.active = True
         other_style.save()
         style.refresh_from_db()
+        other_style.refresh_from_db()
         assert style.active is False
         assert other_style.active
 
@@ -42,7 +44,7 @@ class TestCustomStyle(TestCase):
         The `css` property should be css based other properties.
         """
         style = Style.objects.all().first()
-        assert style.css == ':root{.primary-color:#FFFFFF;}'
+        assert style.css == ':root{--link-color:#950953;}'
 
     def test_model_string_value(self):
         """
@@ -62,7 +64,7 @@ class TestCustomStyle(TestCase):
         req = RequestFactory()
         context_css = add_custom_style(req)
         assert isinstance(context_css, dict)
-        assert context_css['css'] == ':root{.primary-color:#00000;}'
+        assert context_css['css'] == ':root{--link-color:#00000;}'
         assert style.css == context_css['css']
 
     def test_no_style_exists(self):

@@ -45,6 +45,7 @@ class SearchManifestCanvas(View):
         search_type = self.request.GET['type']
         search_strings = self.request.GET['query'].split()
         results = {
+            'search_terms': search_strings,
             'ocr_annotations': [],
             'user_annotations': []
         }

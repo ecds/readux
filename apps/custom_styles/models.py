@@ -19,7 +19,7 @@ class Style(models.Model):
         :rtype: str
         """
         tag = """:root {{
-                .primary-color: {p};
+                --link-color: {p};
               }}"""
 
         return tag.format(
@@ -28,7 +28,7 @@ class Style(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Override save to ensure only one objects is the active one.
+        Override save to ensure only one object is the active one.
         """
         if self.active:
             active_style = Style.objects.get(active=True)

@@ -73,6 +73,7 @@ class TestReaduxPageDetailSearch(TestCase):
         search_results = self.load_results(response)
         assert len(search_results['ocr_annotations']) == 2
         assert len(search_results['user_annotations']) == 0
+        assert search_results['search_terms'] == 'stank'.split()
         assert json.loads(search_results['ocr_annotations'][0])['canvas__position'] == 1
         assert json.loads(search_results['ocr_annotations'][1])['canvas__position'] == 2
         assert json.loads(search_results['ocr_annotations'][0])['canvas__position__count'] == 2

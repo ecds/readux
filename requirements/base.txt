@@ -3,7 +3,7 @@ python-slugify==4.0.0  # https://github.com/un33k/python-slugify
 Pillow==7.1.1  # https://github.com/python-pillow/Pillow
 argon2-cffi==18.3.0  # https://github.com/hynek/argon2_cffi
 redis>=2.10.5  # https://github.com/antirez/redis
-bs4	
+bs4
 pyyaml
 progress
 
@@ -20,6 +20,12 @@ django-modeltranslation==0.14.4 # https://github.com/deschler/django-modeltransl
 django-taggit==1.2.0 # https://github.com/jazzband/django-taggit
 #coreapi==2.3.3  # https://github.com/core-api/python-client
 django-cors-headers===3.2.1 # https://github.com/ottoyiu/django-cors-headers
+
+# SCSS Support
+#--------------------------------------------------------------------------------
+libsass
+django-compressor
+django-sass-processor
 
 # Wagtail
 wagtail==2.8.1

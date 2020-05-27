@@ -712,7 +712,7 @@ p {
 .rx-title {
   font-size: 2em;
   font-weight: bold;
-  color: #707070;
+  color: var(--link-color);
 }
 
 .rx-breadcrumb,
@@ -720,12 +720,18 @@ p {
 .rx-action-btn,
 .rx-page-breadcrumb-item,
 .rx-page-breadcrumb {
+  color: var(--link-color);
+  filter: brightness(0.4%);
   text-transform: uppercase;
   font-weight: bold;
   letter-spacing: 0.1em;
   display: inline-flex;
   padding: 0;
   margin: 0;
+}
+
+.rx-page-breadcrumb-item a {
+  color: var(--link-color);
 }
 
 .rx-page-breadcrumb {
@@ -753,6 +759,7 @@ p {
 .rx-icon-btn,
 .uk-dropdown-nav > li > a:hover {
   color: var(--link-color) !important;
+  filter: brightness(1);
   opacity: 0.75;
   transition: all ease-in-out 100ms;
 
@@ -1119,8 +1126,13 @@ p {
   color: var(--link-color);
 }
 
+a.rx-nav-item {
+  color: var(--link-color) !important;
+}
+
 .rx-nav-item.uk-active {
-  color: #666;
+  color: var(--link-color);
+  /* filter: brightness(0.4) */
 }
 
 .rx-title-2 {

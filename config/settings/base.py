@@ -66,11 +66,10 @@ DJANGO_APPS = [
     'modeltranslation',
     'django.contrib.admin',
     'import_export',
+    'django_summernote',
+
 ]
 THIRD_PARTY_APPS = [
-    'background_task',
-    'corsheaders',
-    'crispy_forms',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -78,7 +77,12 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    # 'rest_framework',
+    'background_task',
+    'corsheaders',
+    'crispy_forms',
+    'modelcluster',
+    'sass_processor',
+    'taggit',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -91,11 +95,8 @@ THIRD_PARTY_APPS = [
     'wagtail.admin',
     'wagtail.core',
     'wagtailautocomplete',
-    'modelcluster',
-    'taggit',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',
-    'django_summernote'
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',
@@ -191,7 +192,12 @@ STATICFILES_DIRS = [
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
 
 # MEDIA
 # ------------------------------------------------------------------------------

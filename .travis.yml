@@ -7,7 +7,7 @@ python:
 services: postgresql
 before_install:
 - export DATABASE_URL=postgres://postgres@localhost:5432/travisci
-- cp config/settings/local.dst config/settings/local.py
+- cp config/settings/local.travis config/settings/local.py
 - mkdir logs
 - touch logs/debug.log
 - gem update --system

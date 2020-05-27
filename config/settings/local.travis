@@ -1,0 +1,167 @@
+import logging
+from .base import *  # noqa
+from .base import env
+
+# GENERAL
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#debug
+DEBUG = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
+SECRET_KEY = env('DJANGO_SECRET_KEY', default='jsWgyIINUn6jVnfmG90aSPmaN084903dnXIMYJ4indp9MUDDioRAL9Avmr')
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",
+    "127.0.0.1",
+    "192.168.26.128",
+    "readux-dev.org"
+]
+
+BASE_DIR = ROOT_DIR
+
+MIRADOR_URL = 'https://cdn.jsdelivr.net/gh/ecds/mirador@develop/build/mirador/'
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
+TEST_RUNNER = "django.test.runner.DiscoverRunner"
+
+# CACHES
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#caches
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': ''
+    }
+}
+
+# TEMPLATES
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#templates
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG  # noqa F405
+
+# EMAIL
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-host
+EMAIL_HOST = 'localhost'
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-port
+EMAIL_PORT = 1025
+# Actually send emails rather than printing to standard output
+# EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+#
+# Email address to use as "From" for automated emails.
+READUX_EMAIL_SENDER='readux@ecds.emory.edu'
+
+# For developer testing with gmail, use the following:
+# EMAIL_PORT=587
+# EMAIL_HOST="smtp.gmail.com"
+# EMAIL_USE_TLS=True
+# EMAIL_HOST_USER="your Gmail username without @gmail.com"
+# EMAIL_HOST_PASSWORD="your Gmail password"
+# In addition, you will need to edit your Gmail account to let less-secure apps connect at:
+# https://myaccount.google.com/lesssecureapps
+
+
+
+# django-debug-toolbar
+# ------------------------------------------------------------------------------
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
+INSTALLED_APPS += ['debug_toolbar']  # noqa F405
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']  # noqa F405
+# https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
+DEBUG_TOOLBAR_CONFIG = {
+    'DISABLE_PANELS': [
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ],
+    'SHOW_TEMPLATE_CONTEXT': True,
+}
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
+INTERNAL_IPS = ['127.0.0.1', '10.0.2.2']
+
+
+# django-extensions
+# ------------------------------------------------------------------------------
+# https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
+INSTALLED_APPS += ['django_extensions']  # noqa F405
+
+# Your stuff...
+# ------------------------------------------------------------------------------
+HTTP_REQUEST_TIMEOUT = 5
+IIIF_IMAGE_SERVER_BASE = 'https://loris.library.emory.edu'
+
+HOSTNAME = 'https://localhost:3000'
+
+# Add your Google Analytics ID here. For help, please see https://support.google.com/analytics/answer/1008080
+# Once you are set up, uncomment the next line and replace the example with your ID. It should look something like UA-XXXXXX-Y
+GOOGLE_ANALYTICS_ID = 'UA-XXXXXX-Y'
+
+
+DATASTREAM_PREFIX = 'http://repo.library.emory.edu/fedora/objects/'
+DATASTREAM_SUFFIX = '/datastreams/position/content'
+
+JEKYLLIMPORT_MANIFEST_SCRIPT='bundle exec iiif_to_jekyll'
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': [
+            'user',
+            'repo',
+            'read:org',
+        ]
+    },
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email'
+        ],
+        'EXCHANGE_TOKEN': True,
+        # 'LOCALE_FUNC': 'path.to.callable',
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.12',
+    },
+    'twitter': {
+        'SCOPE': ['email']
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'basic': {
+            'format': '[%(asctime)s] %(levelname)s:%(name)s::%(message)s',
+            'datefmt': '%d/%b/%Y %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/debug.log',
+            'formatter': 'basic'
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'formatter': 'basic'
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'apps': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+ },
+}

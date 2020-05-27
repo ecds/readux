@@ -6,14 +6,15 @@ from apps.iiif.manifests.tests.factories import ManifestFactory
 from apps.iiif.kollections.tests.factories import CollectionFactory
 from apps.iiif.kollections.models import Collection
 from apps.iiif.canvases.models import Canvas
-from wagtail.core.models import Page
 from apps.users.tests.factories import UserFactory
 import config.settings.local as settings
 
 pytestmark = pytest.mark.django_db
 
+# FACTORY = RequestFactory()
+# VOLUME = ManifestFactory.create()
+
 class TestReaduxViews:
-    
     def test_page_detail_context(self):
         factory = RequestFactory()
         user = UserFactory.create()
@@ -33,6 +34,18 @@ class TestReaduxViews:
         assert isinstance(data['user_annotation_page_count'], int)
         assert isinstance(data['user_annotation_count'], int)
         assert data['mirador_url'] == settings.MIRADOR_URL
+
+    def test_page_detail_context_with_no_page_in_kwargs(self):
+        factory = RequestFactory()
+        request = factory.get('/')
+        user = UserFactory.create()
+        request.user = user
+        volume = ManifestFactory.create()
+        view = PageDetail(request=request)
+        data = view.get_context_data(volume=volume.pid)
+        assert data['volume'].pid == volume.pid
+        assert data['page'].pid == volume.canvas_set.all().first().pid
+
 
     def test_manifests_sitemap(self):
         for n in range(5):

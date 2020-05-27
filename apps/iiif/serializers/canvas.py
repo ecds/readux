@@ -12,6 +12,10 @@ class Serializer(JSONSerializer):
     """
     Convert a queryset to IIIF Canvas
     """
+    def _init_options(self):
+        super()._init_options()
+        self.current_user = self.json_kwargs.pop('current_user', None)
+
     def get_dump_object(self, obj):
         obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
@@ -22,18 +26,48 @@ class Serializer(JSONSerializer):
                     "label": "OCR Text"
                 }
             ]
-            for user in USER.objects.filter(userannotation__canvas=obj).distinct():
-                kwargs = {'username': user.username, 'volume': obj.manifest.pid, 'canvas': obj.pid}
+            #
+            # Only list annotation lists for current user. I'm going to leave the code below
+            # for when eventually implement groups.
+            #
+            # for user in USER.objects.filter(userannotation__canvas=obj).distinct():
+            #     kwargs = {
+            #       'username': user.username,
+            #       'volume': obj.manifest.pid,
+            #       'canvas': obj.pid
+            #     }
+            #     url = "{h}{k}".format(
+            #         h=settings.HOSTNAME,
+            #         k=reverse('user_annotations', kwargs=kwargs)
+            #     )
+            #     user_endpoint = {
+            #         "label": 'Annotations by {u}'.format(u=user.username),
+            #         "@type": "sc:AnnotationList",
+            #         "@id": url
+            #     }
+            #     otherContent.append(user_endpoint)
+            current_user_has_annotations = (
+                self.current_user
+                and self.current_user.is_authenticated
+                and self.current_user.userannotation_set.filter(canvas=obj).exists()
+            )
+            if current_user_has_annotations:
+                kwargs = {
+                    'username': self.current_user.username,
+                    'volume': obj.manifest.pid,
+                    'canvas': obj.pid
+                }
                 url = "{h}{k}".format(
                     h=settings.HOSTNAME,
                     k=reverse('user_annotations', kwargs=kwargs)
                 )
-                user_endpoint = {
-                    "label": 'Annotations by {u}'.format(u=user.username),
-                    "@type": "sc:AnnotationList",
-                    "@id": url
-                }
-                otherContent.append(user_endpoint)
+                otherContent.append(
+                    {
+                        "label": 'Annotations by {u}'.format(u=self.current_user.username),
+                        "@type": "sc:AnnotationList",
+                        "@id": url
+                    }
+                )
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,

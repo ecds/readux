@@ -1,6 +1,8 @@
+# pylint: disable = not-context-manager
+"""Module to deploy Readux to webserver."""
 from datetime import datetime
-from fabric.contrib.files import append, exists
-from fabric.api import cd, env, local, run
+from fabric.contrib.files import exists
+from fabric.api import cd, env, run
 
 REPO_URL = 'https://github.com/ecds/readux.git'
 ROOT_PATH = '/data/readux'
@@ -11,13 +13,20 @@ VERSION = datetime.now().strftime("%Y%m%d%H%M%S")
 env.user = 'deploy'
 
 def deploy(branch='master'):
+    """Execute group of tasks for deployment.
+
+    :param branch: Git branch to clone, defaults to 'master'
+    :type branch: str, optional
+    """
+
     version_folder = '{rp}/{vf}'.format(rp=RELEASE_PATH, vf=VERSION)
-    run('mkdir -p {p}'.format(p=version_folder))  
+    run('mkdir -p {p}'.format(p=version_folder))
+
     with cd(version_folder):
-        # _create_new_dir() 
+        # _create_new_dir()
         _get_latest_source(branch)
         _update_virtualenv()
-        _create_or_update_settings()
+        _link_settings()
         _create_static_media_symlinks()
         _update_static_files()
         _update_database()
@@ -27,17 +36,26 @@ def deploy(branch='master'):
         _clean_old_builds()
 
 def _get_latest_source(branch):
+    """Clones latest commit from given git branch.
+
+    :param branch: Git branch to clone.
+    :type branch: str
+    """
     run('git clone {r} .'.format(r=REPO_URL))
     run('git checkout {b}'.format(b=branch))
 
 def _update_virtualenv():
-    if not exists('{v}/bin/pip'.format(v=VENV_PATH)):  
+    """Set up python virtual environment.
+    """
+    if not exists('{v}/bin/pip'.format(v=VENV_PATH)):
         run('python3 -m venv {v}'.format(v=VENV_PATH))
     run('{v}/bin/pip install -r requirements/local.txt'.format(v=VENV_PATH))
-    run('~/.rbenv/shims/gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"')
+    run('~/.rbenv/shims/gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"') # pylint: disable = line-too-long
     run('~/.rbenv/shims/bundle install')
 
-def _create_or_update_settings():
+def _link_settings():
+    """Make sym link to settings file stored on the server.
+    """
     with cd('config/settings'):
         run('ln -s {rp}/local.py local.py'.format(rp=ROOT_PATH))
 

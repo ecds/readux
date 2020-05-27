@@ -89,7 +89,12 @@ INSTALLED_APPS += ['django_extensions']  # noqa F405
 HTTP_REQUEST_TIMEOUT = 5
 IIIF_IMAGE_SERVER_BASE = 'https://loris.library.emory.edu'
 
-HOSTNAME = 'https://readux-dev.org:3000'
+HOSTNAME = 'https://localhost:3000'
+
+# Add your Google Analytics ID here. For help, please see https://support.google.com/analytics/answer/1008080
+# Once you are set up, uncomment the next line and replace the example with your ID. It should look something like UA-XXXXXX-Y
+# GOOGLE_ANALYTICS_ID = 'UA-XXXXXX-Y'
+
 
 DATASTREAM_PREFIX = 'http://repo.library.emory.edu/fedora/objects/'
 DATASTREAM_SUFFIX = '/datastreams/position/content'

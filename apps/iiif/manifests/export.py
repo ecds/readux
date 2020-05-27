@@ -105,6 +105,7 @@ class IiifManifestExport:
         explanation = "Each canvas (\"sc:Canvas\") in the manifest represents a page of the work. Each canvas includes an \"otherContent\" field-set with information identifying that page's annotation lists. This field-set includes an \"@id\" field and the label field (\"@type\") \"sc:AnnotationList\" for each annotation list. The \"@id\" field contains the URL link at which the annotation list was created and originally hosted from the Readux site. In order to host this IIIF manifest and its annotation lists again to browse the book and annotations outside of Readux, these @id fields would need to be updated to the appropriate URLs for the annotation lists on the new host. Exported annotation lists replace nonword characters (where words are made up of alphanumerics and underscores) with underscores in the filename."
         readme = readme + volume_data + annotators_attribution_string + boilerplate + explanation
         zip_file.writestr('README.txt', readme)
+        current_user = User.objects.get(id__in=owners)
 
         # pylint: enable = line-too-long
 
@@ -117,8 +118,9 @@ class IiifManifestExport:
                         'manifest',
                         [manifest],
                         version=version,
-                        annotators=User.objects.get(id__in=owners).name,
-                        exportdate=now
+                        annotators=current_user.name,
+                        exportdate=now,
+                        current_user=current_user
                     )
                 ),
                 indent=4
@@ -149,7 +151,9 @@ class IiifManifestExport:
                 )
         # Then write the user annotations
         for canvas in manifest.canvas_set.all():
-            if canvas.userannotation_set.count() > 0:
+            user_annotations = current_user.userannotation_set.filter(canvas=canvas)
+
+            if user_annotations.count() > 0:
                 # annotations = canvas.userannotation_set.filter(owner__in=owners).all()
                 json_hash = json.loads(
                     serialize(
@@ -157,11 +161,11 @@ class IiifManifestExport:
                         [canvas],
                         version=version,
                         is_list=False,
-                        owners=[User.objects.get(id__in=owners)]
+                        owners=[current_user]
                     )
                 )
                 anno_uri = json_hash['@id']
-                annotation_file = re.sub(r'\W','_', anno_uri) + ".json"
+                annotation_file = re.sub(r'\W', '_', anno_uri) + ".json"
 
                 zip_file.writestr(
                     annotation_file,

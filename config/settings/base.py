@@ -106,6 +106,7 @@ LOCAL_APPS = [
     'apps.readux.apps.ReaduxConfig',
     'apps.cms.apps.CmsConfig',
     'apps.templates',
+    'apps.custom_styles.apps.CustomStylesConfig'
     # 'apps.readux.collection.apps.CollectionAppConfig',
     # 'apps.readux.volumes.apps.VolumesAppConfig',
 ]
@@ -185,7 +186,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [
     str(APPS_DIR.path('static')),
-    str(ROOT_DIR.path('customizations')),
 ]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
@@ -232,6 +232,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
                 'wagtailmenus.context_processors.wagtailmenus',
+                'apps.custom_styles.context_processors.add_custom_style',
+                'apps.templates.context_processors.has_ga_tracking_id',
+                'apps.templates.context_processors.ga_tracking_id',
             ],
         },
     },

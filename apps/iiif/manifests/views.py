@@ -36,8 +36,11 @@ class ManifestDetail(View):
         :return: IIIF representation of a manifest/volume
         :rtype: JSON
         """
-        manifest = self.get_queryset()[0].id
-        annotators = User.objects.filter(annotation__canvas__manifest__id=manifest).distinct()
+        # manifest = self.get_queryset()[0].id
+        # annotators = User.objects.filter(annotation__canvas__manifest__id=manifest).distinct()
+        annotators = []
+        if request.user.is_authenticated:
+            annotators.append(request.user)
         annotators_string = ', '.join([str(i.name) for i in annotators])
         return JsonResponse(
             json.loads(
@@ -46,7 +49,8 @@ class ManifestDetail(View):
                     self.get_queryset(),
                     version=kwargs['version'],
                     annotators=annotators_string,
-                    exportdate=datetime.utcnow()
+                    exportdate=datetime.utcnow(),
+                    current_user=request.user
                 )
             ),
             safe=False)

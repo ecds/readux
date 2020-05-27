@@ -200,6 +200,8 @@ class UserAnnotation(AbstractAnnotation):
 @receiver(signals.pre_save, sender=UserAnnotation)
 def parse_payload(sender, instance, **kwargs):
     # if service.validate_oa_annotation(instance.oa_annotation):
+    if isinstance(instance.oa_annotation, dict) and 'on' not in instance.oa_annotation.keys():
+        return None
     instance.parse_mirador_annotation()
 
 @receiver(signals.post_save, sender=UserAnnotation)

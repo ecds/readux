@@ -72,8 +72,28 @@ class TestCustomStyle(TestCase):
         If no active style is found, the context dict's css value
         will be an empty string.
         """
-        for style in Style.objects.all():
-            style.delete()
+        Style.objects.all().delete()
         req = RequestFactory()
         context_css = add_custom_style(req)
         assert context_css['css'] == ''
+
+    def test_setting_style_to_active_when_no_active_style_currently_exists(self):
+        Style.objects.all().delete()
+        assert Style.objects.all().count() == 0
+        style1 = StyleFactory.create()
+        assert style1.active
+        style2 = StyleFactory.create()
+        assert style2.active is False
+        style1.delete()
+        assert Style.objects.filter(active=True).count() == 0
+        assert Style.objects.all().count() == 1
+        style3 = StyleFactory.create()
+        assert style3.active
+
+    def test_making_new_style_active_when_no_active_style_currently_exists(self):
+        Style.objects.all().delete()
+        for num in [1, 2]:
+            StyleFactory.create()
+        Style.objects.get(active=True).delete()
+        style = StyleFactory.create()
+        assert style.active

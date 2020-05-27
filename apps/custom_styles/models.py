@@ -30,13 +30,14 @@ class Style(models.Model):
         """
         Override save to ensure only one object is the active one.
         """
-        if self.active:
+
+        if Style.objects.all().count() == 0 or Style.objects.filter(active=True).count() == 0:
+            self.active = True
+        elif self.active:
             active_style = Style.objects.get(active=True)
             if self != active_style:
                 active_style.active = False
                 active_style.save()
-        if Style.objects.all().count() == 0:
-            self.active = True
 
         super(Style, self).save(*args, **kwargs)
 

@@ -4,13 +4,7 @@ from django.db import migrations
 from ..tests.factories import StyleFactory
 
 def create_initial_style(apps, schema_editor):
-    # Style = apps.get_model("custom_styles", "Style")
-    # initial_style = Style(
-    #     primary_color='#FFFFFF',
-    #     active=True
-    # )
-    # initial_style.save()
-    StyleFactory.create()
+    StyleFactory.create(active=True)
 
 class Migration(migrations.Migration):
 

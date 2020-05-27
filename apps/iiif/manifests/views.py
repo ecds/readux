@@ -36,7 +36,7 @@ class ManifestDetail(View):
         :return: IIIF representation of a manifest/volume
         :rtype: JSON
         """
-        manifest = self.get_queryset()[0].id
+        # manifest = self.get_queryset()[0].id
         # annotators = User.objects.filter(annotation__canvas__manifest__id=manifest).distinct()
         annotators = []
         if request.user.is_authenticated:
@@ -50,7 +50,7 @@ class ManifestDetail(View):
                     version=kwargs['version'],
                     annotators=annotators_string,
                     exportdate=datetime.utcnow(),
-                    current_user = request.user
+                    current_user=request.user
                 )
             ),
             safe=False)

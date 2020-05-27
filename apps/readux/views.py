@@ -220,6 +220,8 @@ class PageDetail(TemplateView):
             canvas = Canvas.objects.filter(pid=kwargs['page']).first()
         else:
             canvas = manifest.canvas_set.all().first()
+        if 'page' in kwargs and kwargs['page'] == 'all':
+            context['all'] = True
         context['page'] = canvas
         context['volume'] = manifest
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()

@@ -1494,6 +1494,12 @@ fieldset {
   }
 }
 
+  .rx-title-image {
+    object-fit: cover;
+    height: 150px;
+    width: 100%;
+  }
+
 @media (max-width: 959px) and (min-width: 320px) {
   .readux-home-ecds {
     display: none;
@@ -1509,12 +1515,12 @@ fieldset {
 
   .rx-title-image {
     object-fit: cover;
-    height: 100%;
+    height: 150px;
     width: 100%;
   }
 
   .rx-card-image-container {
-    height: 100px;
+    height: 150px;
     width: 100%;
   }
 

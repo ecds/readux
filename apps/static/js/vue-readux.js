@@ -5,9 +5,9 @@ Vue.component("v-volume-image", {
       <span class="rx-item-na" uk-icon="icon: image; ratio: 2"></span>
       <p>Volume is being added or cover is not available.</p>
     </div>
-    <img v-else="hasImage" :src="imgSrc" :alt="imgAlt">
+    <img class="rx-title-image" v-else="hasImage" :src="imgSrc" :alt="imgAlt">
   `,
-  data: function() {
+  data: function () {
     return {
       hasImage: true, // visibility of image from src
     };
@@ -15,19 +15,19 @@ Vue.component("v-volume-image", {
   mounted() {
     var vm = this;
     var tester = new Image();
-    tester.addEventListener("load", function() {
+    tester.addEventListener("load", function () {
       vm.hasImage = true;
     });
-    tester.addEventListener("error", function() {
+    tester.addEventListener("error", function () {
       vm.hasImage = false;
     });
     tester.src = this.imgSrc;
   },
   computed: {
     imgAlt() {
-      return `First page of ${this.volumeLabel}`; 
+      return `First page of ${this.volumeLabel}`;
     },
-  }
+  },
 });
 
 Vue.component("v-volume-export-annotation-btn", {

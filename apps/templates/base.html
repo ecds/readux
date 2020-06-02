@@ -86,14 +86,31 @@
     <div class="uk-container" id="v-readux">
       <nav class="" uk-navbar id="rx-nav">
         <div class="uk-navbar-left">
-          <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
+          <a class="uk-navbar-item uk-logo uk-padding-remove-left uk-visible@s" href="/">
             <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
           </a>
-          <ul class="uk-navbar-nav">
+
+          <ul class="uk-navbar-nav uk-visible@s">
             <li>
               {% main_menu %}
             </li>
           </ul>
+
+          <a class="uk-navbar-toggle uk-hidden@s" uk-toggle="target: #sidenav" uk-navbar-toggle-icon></a>
+
+          <div id="sidenav" uk-offcanvas="" class="uk-offcanvas">
+            <div class="uk-offcanvas-bar">
+              <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
+                <img src="{% static 'images/readux-white.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
+              </a>
+              <ul class="uk-navbar-nav">
+                <li>
+                  {% main_menu %}
+                </li>
+              </ul>
+            </div>
+          </div>
+          
         </div>
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
@@ -149,7 +166,7 @@
       {% endblock content %}
 
       {# Modal for signin #}
-       <div id="signin-modal" class="uk-flex-top" uk-modal>
+      <div id="signin-modal" class="uk-flex-top" uk-modal>
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
           <button class="uk-modal-close-default" type="button" uk-close></button>
           <section class="uk-modal-header">

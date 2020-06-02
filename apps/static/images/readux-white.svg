@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.1.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="Layer_1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 245.8 272.7"
+	 style="enable-background:new 0 0 245.8 272.7;" xml:space="preserve">
+<style type="text/css">
+	.st0{clip-path:url(#SVGID_2_);}
+	.st1{fill:#FFFFFF;}
+	.st2{font-family:'Helvetica-Bold';}
+	.st3{font-size:74.6748px;}
+	.st4{fill:#F4F4F4;}
+	.st5{fill:#C9CBCB;}
+	.st6{fill:#4F5052;}
+	.st7{fill:#848688;}
+</style>
+<g id="g18">
+	<g>
+		<defs>
+			<rect id="SVGID_1_" width="245.8" height="272.7"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		</clipPath>
+		<g id="site-logo" class="st0">
+			<text transform="matrix(1 0 0 1 -7.019043e-04 254.0278)" class="st1 st2 st3">readux</text>
+			<g id="logo" transform="translate(24.085 0)">
+				<rect id="bg" x="16.4" class="st4" width="167.9" height="167.9"/>
+				<path id="Path_1" class="st5" d="M50.8,0v80l49.6,77l49.6-79V0H50.8z"/>
+				<path id="Path_2" class="st6" d="M102,129.9V0h-2.3v129.6c-2.2,0.3-3.8,2.2-3.8,4.4c0,2.5,2,4.5,4.5,4.5c2.5,0,4.5-1.9,4.5-4.4
+					c0,0,0-0.1,0-0.1C104.9,132.2,103.7,130.6,102,129.9z"/>
+				<path id="Path_3" class="st7" d="M94.8,2.1h-41v77.2l41,64.3L94.8,2.1z"/>
+			</g>
+		</g>
+	</g>
+</g>
+</svg>

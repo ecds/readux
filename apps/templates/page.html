@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load static i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+
 {% block extra_css %}
 <link href="{{ mirador_url }}css/mirador-combined.css" rel="stylesheet">
 <style>
@@ -20,6 +23,27 @@
   <div class="rx-title uk-text-truncate" title="{{ volume.label }}">{{volume.label}}</div>
 </div> -->
 
+{% block inner %}
+
+<!-- This is the modal -->
+<div id="rx-page-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <section class="uk-modal-header">
+      <h2 class="uk-modal-title uk-text-center">
+        {% if user.is_authenticated %}
+        Connect Accounts
+        {% else %}
+        Sign in
+        {% endif %}
+      </h2>
+    </section>
+    {% include "snippets/socialaccount_buttons.html" %}
+  </div>
+</div>
+{% endblock %}
+
+
   <nav class="" uk-navbar id="rx-page-info-panel">
     <div class="uk-navbar-left rx-page-navbar-left" style="flex-wrap: unset;">
       <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
@@ -39,13 +63,16 @@
     </div>
     <div class="uk-navbar-right rx-page-navbar-right">
       <!--@click="toggleMoreInfo"-->
+      <a type="button" class="rx-btn-secondary" uk-toggle="target: #rx-page-modal">
+        login
+      </a>
       <a type="button"  class="rx-btn-secondary" uk-toggle="target: #offcanvas-usage">
-          more info 
+        more info 
       </a>
     </div>
   </nav>
 
-  <div  id="offcanvas-usage" uk-offcanvas="flip: true">
+  <div id="offcanvas-usage" uk-offcanvas="flip: true">
     <div class="uk-offcanvas-bar rx-offcanvas-bar">
 
     <div class="rx-info">

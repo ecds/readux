@@ -66,11 +66,10 @@ DJANGO_APPS = [
     'modeltranslation',
     'django.contrib.admin',
     'import_export',
+    'django_summernote',
+
 ]
 THIRD_PARTY_APPS = [
-    'background_task',
-    'corsheaders',
-    'crispy_forms',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -78,7 +77,12 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    # 'rest_framework',
+    'background_task',
+    'corsheaders',
+    'crispy_forms',
+    'modelcluster',
+    'sass_processor',
+    'taggit',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
     'wagtail.embeds',
@@ -91,11 +95,8 @@ THIRD_PARTY_APPS = [
     'wagtail.admin',
     'wagtail.core',
     'wagtailautocomplete',
-    'modelcluster',
-    'taggit',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',
-    'django_summernote'
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',
@@ -106,6 +107,7 @@ LOCAL_APPS = [
     'apps.readux.apps.ReaduxConfig',
     'apps.cms.apps.CmsConfig',
     'apps.templates',
+    'apps.custom_styles.apps.CustomStylesConfig'
     # 'apps.readux.collection.apps.CollectionAppConfig',
     # 'apps.readux.volumes.apps.VolumesAppConfig',
 ]
@@ -185,13 +187,17 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [
     str(APPS_DIR.path('static')),
-    str(ROOT_DIR.path('customizations')),
 ]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -232,6 +238,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
                 'wagtailmenus.context_processors.wagtailmenus',
+                'apps.custom_styles.context_processors.add_custom_style',
+                'apps.templates.context_processors.has_ga_tracking_id',
+                'apps.templates.context_processors.ga_tracking_id',
             ],
         },
     },

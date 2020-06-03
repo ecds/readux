@@ -1,4 +1,9 @@
 /* These styles are generated from project.scss. */
+:root {
+  --link-color: #950953;
+  --contrast: 200%;
+}
+
 body {
   font-size: 18px;
 }
@@ -139,12 +144,13 @@ a.rdx-provider-button:hover {
 }
 
 .uk-button-primary {
-  background-color: #950953;
+  background-color: var(--link-color);
 }
 
 .uk-button-primary:hover,
 .uk-button-primary:active {
-  background-color: #510029;
+  background-color: var(--link-color);
+  filter: contrast(var(--contrast));
 }
 
 .uk-button-default {
@@ -237,7 +243,7 @@ header#page-bg .collection-image-info {
   cursor: pointer;
 }
 
-/* 
+/*
 header#page-bg .collection-label {
     display: block;
     background: rgba(0, 0, 0, 0.62);
@@ -286,7 +292,7 @@ ol > li {
 ul.listing-thumbs > li > img.thumbnail-image {
   height: 150px;
 }
-/* 
+/*
 ol > li.list {
   #height: 300px;
 }
@@ -678,7 +684,7 @@ a:hover {
   text-decoration: initial !important;
 }
 
-.rx-offcanvas-bar {
+.rx-offcanvas-bar, .rx-offcanvas-base {
   background: white;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -704,7 +710,7 @@ p {
 .rx-title {
   font-size: 2em;
   font-weight: bold;
-  color: #707070;
+  color: var(--link-color);
 }
 
 .rx-breadcrumb,
@@ -712,12 +718,18 @@ p {
 .rx-action-btn,
 .rx-page-breadcrumb-item,
 .rx-page-breadcrumb {
+  color: var(--link-color);
+  filter: brightness(0.4%);
   text-transform: uppercase;
   font-weight: bold;
   letter-spacing: 0.1em;
   display: inline-flex;
   padding: 0;
   margin: 0;
+}
+
+.rx-page-breadcrumb-item a {
+  color: var(--link-color);
 }
 
 .rx-page-breadcrumb {
@@ -744,7 +756,8 @@ p {
 .rx-action-btn,
 .rx-icon-btn,
 .uk-dropdown-nav > li > a:hover {
-  color: #950953 !important;
+  color: var(--link-color) !important;
+  filter: brightness(1);
   opacity: 0.75;
   transition: all ease-in-out 100ms;
 
@@ -755,7 +768,7 @@ p {
 .rx-action-btn:hover,
 .rx-icon-btn:hover,
 .uk-dropdown-nav > li.uk-active > a {
-  color: #950953;
+  color: var(--link-color);
   opacity: 1;
   transition: all ease-in-out 100ms;
 
@@ -874,8 +887,10 @@ p {
 
 .rx-btn {
   border-radius: 3px;
-  border: solid 1px #950953;
-  color: #950953;
+  border: solid 1px var(--link-color);
+  filter: contrast(var(--contrast));
+  color: var(--link-color);
+  filter: contrast(var(--contrast));
   font-family: HelveticaNeue, Helvetica, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
@@ -889,9 +904,10 @@ p {
 }
 
 .rx-btn:hover {
-  border: solid 1px #950953;
+  border: solid 1px var(--link-color);
   color: white;
-  background: #950953;
+  background: var(--link-color);
+  filter: contrast(var(--contrast));
   transition: all ease-in-out 100ms;
 
   cursor: pointer;
@@ -899,7 +915,8 @@ p {
 
 .rx-btn-extension {
   border-radius: 3px;
-  border: solid 1px #950953;
+  border: solid 1px var(--link-color);
+  filter: contrast(var(--contrast));
   color: white;
   font-family: HelveticaNeue, Helvetica, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
@@ -912,9 +929,9 @@ p {
   text-align: center;
   padding: 8px 16px;
   display: inline-block;
-  background: #950953;
+  background: var(--link-color);
   color: white;
-  border: solid 1px #950953;
+  border: solid 1px var(--link-color);
 }
 
 .rx-btn-extension:hover {
@@ -980,13 +997,13 @@ p {
 }
 
 .rx-anchor {
-  color: #950953 !important;
+  color: var(--link-color) !important;
   opacity: 0.75;
   transition: all ease-in-out 100ms;
 }
 
 .rx-anchor:hover {
-  color: #950953;
+  color: var(--link-color);
   opacity: 1;
 }
 
@@ -1002,8 +1019,8 @@ p {
 
 .rx-label-copy {
   background: white;
-  color: #950953 !important;
-  border: #950953 1px solid;
+  color: var(--link-color) !important;
+  border: var(--link-color) 1px solid;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
   opacity: 0.75;
@@ -1017,7 +1034,7 @@ p {
 }
 
 .rx-label-copy:hover {
-  background: #950953;
+  background: var(--link-color);
   color: white !important;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
@@ -1091,11 +1108,16 @@ p {
   background: #fbecf9;
   padding: 15px;
   font-size: 14px;
-  color: #950953;
+  color: var(--link-color);
+}
+
+a.rx-nav-item {
+  color: var(--link-color) !important;
 }
 
 .rx-nav-item.uk-active {
-  color: #666;
+  color: var(--link-color);
+  /* filter: brightness(0.4) */
 }
 
 .rx-title-2 {
@@ -1121,20 +1143,28 @@ p {
 }
 
 .rx-search-result a {
-  color: #950953 !important;
+  color: var(--link-color) !important;
   opacity: 0.7;
 }
 
 .rx-search-result a:hover {
-  color: #950953 !important;
+  color: var(--link-color) !important;
   opacity: 1;
   transition: all ease-in-out 100ms;
 
 }
 
+.rx-info-content .uk-tab a {
+  color: #999;
+}
+
+.rx-info-content .uk-tab a:hover {
+  color: #666;
+}
+
 .uk-tab > .uk-active > a {
-  border-color: #950953 !important;
-  color: #950953;
+  border-color: var(--link-color) !important;
+  color: var(--link-color) !important;
 }
 
 .rx-collection-title {
@@ -1221,6 +1251,7 @@ p {
 .rx-sticky {
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 
 /*mirador overrides*/
@@ -1300,7 +1331,8 @@ em {
 }
 
 .rx-page-info-btn, .rx-btn-secondary, .rx-page-info-btn > .uk-icon-button {
-  color: #950953 !important;
+  color: var(--link-color) !important;
+  filter: contrast(var(--contrast));
   opacity: 0.75;
   font-size: 1rem;
   font-weight: 600;
@@ -1314,22 +1346,26 @@ em {
   position: relative;
   top: 0;
   right: 0;
-  color: #950953 !important;
+  color: var(--link-color) !important;
+  filter: contrast(var(--contrast));
 }
 
 .rx-offcanvas-close:hover {
-  color: #950953 !important;
+  color: var(--link-color) !important;
+  filter: contrast(var(--contrast));
 }
 
 .rx-btn-secondary {
-  border: 3px solid #950953;
+  border: 3px solid var(--link-color);
+  filter: contrast(var(--contrast));
   padding: .35em 1em;
   white-space: nowrap;
 }
 
 .rx-btn-secondary:hover {
   color: white;
-  background-color: #950953;
+  background-color: var(--link-color);
+  filter: contrast(var(--contrast));
   opacity: 1;
   transition: all ease-in-out 100ms;
 }
@@ -1337,12 +1373,14 @@ em {
 .rx-page-info-btn:hover {
   opacity: 1;
   transition: all ease-in-out 100ms;
-  color: #950953;
+  color: var(--link-color);
+  filter: contrast(var(--contrast));
 }
 
 .rx-btn-secondary:active {
-  background-color: #510029;
-  border-color: #510029;
+  background-color: var(--link-color);
+  border-color: var(--link-color);
+  filter: brightness(75%);
 }
 
 @media (max-width: 750px) {
@@ -1546,5 +1584,8 @@ fieldset {
     padding: 2rem 0 0 0 !important;
   }
 
+}
 
+#sidenav {
+  background: white;
 }

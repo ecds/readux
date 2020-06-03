@@ -1,6 +1,7 @@
 """URL patterns for the Readux app"""
 from django.urls import path
 from . import views, annotations
+from .search import SearchManifestCanvas
 
 urlpatterns = [
     path('collection/', views.CollectionsList.as_view(), name='collections list'),
@@ -30,5 +31,6 @@ urlpatterns = [
     ),
     path('annotations-crud/', annotations.AnnotationCrud.as_view(), name='crud_user_annotation'),
     path('search/', views.VolumeSearch.as_view(), name='search'),
-    path('_anno_count/<volume>/<page>', views.AnnotationsCount.as_view(), name='_anno_count')
+    path('_anno_count/<volume>/<page>', views.AnnotationsCount.as_view(), name='_anno_count'),
+    path('search/volume/pages', SearchManifestCanvas.as_view(), name='search_pages'),
 ]

@@ -3,14 +3,17 @@ python:
 - '3.5'
 - '3.6'
 - '3.7'
+- '3.8'
 services: postgresql
 before_install:
 - export DATABASE_URL=postgres://postgres@localhost:5432/travisci
-- cp config/settings/local.dst config/settings/local.py
+- cp config/settings/local.travis config/settings/local.py
 - mkdir logs
 - touch logs/debug.log
-- gem install bundler -v 2.1.0
+- gem update --system
+- gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
 - bundle install
+- gem install sass
 - sudo /etc/init.d/postgresql stop
 - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key
   add -

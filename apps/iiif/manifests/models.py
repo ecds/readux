@@ -1,25 +1,25 @@
 """Django models for IIIF manifests"""
-from uuid import uuid4
+from uuid import uuid4, UUID
+from json import JSONEncoder
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.indexes import GinIndex
-from json import JSONEncoder
-import uuid
-from uuid import UUID
 from django.contrib.postgres.aggregates import StringAgg
 from modelcluster.models import ClusterableModel
 import config.settings.local as settings
 from ..kollections.models import Collection
 
-"""This JSONEncoder makes Wagtail autocomplete run - do not delete."""
-JSONEncoder_olddefault = JSONEncoder.default
-def JSONEncoder_newdefault(self, o):
-    if isinstance(o, UUID): return str(o)
+JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
+
+def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
+    """This JSONEncoder makes Wagtail autocomplete run - do not delete."""
+    if isinstance(o, UUID):
+        return str(o)
     return JSONEncoder_olddefault(self, o)
 JSONEncoder.default = JSONEncoder_newdefault
 
-class ManifestManager(models.Manager):
+class ManifestManager(models.Manager): # pylint: disable = too-few-public-methods
     """Model manager for searches."""
     def with_documents(self):
         """[summary]
@@ -116,6 +116,7 @@ class Manifest(ClusterableModel):
 
     @property
     def baseurl(self):
+        """Convenience method to provide the base URL for a manifest."""
         return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
 
     # TODO: Maybe this should return the canvas object so we can replace

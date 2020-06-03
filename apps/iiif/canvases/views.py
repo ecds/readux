@@ -68,7 +68,8 @@ class IIIFV2Detail(View):
             json.loads(
                 serialize(
                     'canvas',
-                    self.get_queryset()
+                    self.get_queryset(),
+
                 )
             ),
             safe=False

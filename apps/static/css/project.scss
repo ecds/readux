@@ -6,7 +6,6 @@ $rx-color-grey-1: #737373;
   --contrast: 200%;
 }
 
-
 .uk-input {
   border-width: 3px;
   width: 50%
@@ -25,7 +24,6 @@ $rx-color-grey-1: #737373;
 .uk-button-default {
   font-size: 1.25rem;
 }
-
 
 .alert-debug {
   color: black;
@@ -171,25 +169,15 @@ header.page-header .container img {
   width: 100%;
 }
 
-h1 {
-  color: $rx-color-grey-1;
-}
-
-h2 {
+h1, h2, h3, p.text-lead {
   color: $rx-color-grey-1;
 }
 
 h3 {
   font-size: 2.2rem;
-  color: $rx-color-grey-1;
-}
-
-p.text-lead {
-  color: $rx-color-grey-1;
 }
 
 header#page-bg .collection-image-info {
-  float: right;
   display: inline-block;
   background: rgba(0, 0, 0, 0.62);
   position: absolute;
@@ -210,22 +198,6 @@ header#page-bg .collection-image-info {
   cursor: pointer;
 }
 
-/*
-header#page-bg .collection-label {
-    display: block;
-    background: rgba(0, 0, 0, 0.62);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 0.7em 0.7em 0.3em 0.7em;
-    color: #DEDEDE;
-    max-width: 80%;
-    min-height: 25%;
-    max-height: 40%;
-}
- */
-
 header#page-bg .collection-label h1 {
   font-size: 3em;
   color: #dedede;
@@ -238,10 +210,6 @@ header#page-bg .collection-label h1 {
   flex-direction: column;
   align-items: center;
   display: flex;
-}
-
-.collectionswrapper > ul {
-  padding-left: 0;
 }
 
 ol {
@@ -259,11 +227,6 @@ ol > li {
 ul.listing-thumbs > li > img.thumbnail-image {
   height: 150px;
 }
-/*
-ol > li.list {
-  #height: 300px;
-}
- */
 
 ul > li > .collectionbox {
   width: 100%;
@@ -330,28 +293,6 @@ ul
   width: 10px;
   font-size: 10px;
   text-align: center;
-}
-
-#grid {
-  display: grid;
-  grid-template-columns: 260px auto;
-  height: 320px;
-  grid-auto-rows: 320px;
-}
-
-#grid-image {
-  display: grid;
-  margin-bottom: 10px;
-  align-self: center;
-}
-
-#grid-image-volume {
-  display: grid;
-  margin-bottom: 10px;
-}
-
-#grid-metaforimage {
-  display: grid;
 }
 
 .uk-container ul {

@@ -1,12 +1,31 @@
-/* These styles are generated from project.scss. */
+// Colors
+$rx-color-grey-1: #737373;
+
 :root {
   --link-color: #950953;
   --contrast: 200%;
 }
 
-body {
-  font-size: 18px;
+
+.uk-input {
+  border-width: 3px;
+  width: 50%
 }
+
+.uk-button-primary {
+  background-color: var(--link-color);
+}
+
+.uk-button-primary:hover,
+.uk-button-primary:active {
+  background-color: var(--link-color);
+  filter: contrast(var(--contrast));
+}
+
+.uk-button-default {
+  font-size: 1.25rem;
+}
+
 
 .alert-debug {
   color: black;
@@ -35,23 +54,12 @@ body {
   }
 }
 
+// mirrador
 .mirador-container .mirador-viewer {
   top: -12px !important;
 }
 .mirador-container .workspace-container {
   left: -3px !important;
-}
-
-.layout-slot {
-  margin: 0 !important;
-}
-.workspace-container {
-  margin: 0 !important;
-}
-
-
-.readux-metadata {
-  word-wrap: break-word;
 }
 
 .mirador-container .manifest-info {
@@ -65,35 +73,17 @@ body {
   margin-left: 1em;
 }
 
-/* .mirador-container .view-container.focus-max-width {
-    margin-left: 0px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-    margin-top: 34px;
-    box-sizing: border-box;
-    z-index: -1;
-} */
+// end of mirrador
 
 .manifest-info > a,
 .manifest-info > h3 {
   display: none !important;
 }
 
-/* .mirador-container .mirador-osd-context-controls {
-    top: -34px !important;
-} */
-
 #ocr-layer {
   position: absolute !important;
   z-index: 999;
 }
-
-/* .show-annotations span a {
-    background: rgba(255, 20, 147, 0.5);
-} */
 
 .openseadragon-container span {
   /* background: rgba(0, 255, 255, 0.33); */
@@ -108,7 +98,6 @@ body {
 }
 
 /* Social Auth Buttons */
-
 a.rdx-provider-button {
   color: #fff;
   padding: 1rem;
@@ -138,24 +127,7 @@ a.rdx-provider-button:hover {
   text-indent: 1.25rem;
 }
 
-.uk-input {
-  border-width: 3px;
-  width: 50%
-}
-
-.uk-button-primary {
-  background-color: var(--link-color);
-}
-
-.uk-button-primary:hover,
-.uk-button-primary:active {
-  background-color: var(--link-color);
-  filter: contrast(var(--contrast));
-}
-
-.uk-button-default {
-  font-size: 1.25rem;
-}
+/* End of Social Auth Buttons */
 
 /* Wagtail embedded objects */
 .rich-text img {
@@ -184,11 +156,6 @@ a.rdx-provider-button:hover {
   overflow-y: scroll;
 }
 
-body .uk-container {
-  width: 90%;
-  max-width: 90%;
-}
-
 .breadcrumbs {
   font-size: 80%;
   margin: 0;
@@ -205,20 +172,20 @@ header.page-header .container img {
 }
 
 h1 {
-  color: #737373;
+  color: $rx-color-grey-1;
 }
 
 h2 {
-  color: #737373;
+  color: $rx-color-grey-1;
 }
 
 h3 {
   font-size: 2.2rem;
-  color: #737373;
+  color: $rx-color-grey-1;
 }
 
 p.text-lead {
-  color: #737373;
+  color: $rx-color-grey-1;
 }
 
 header#page-bg .collection-image-info {

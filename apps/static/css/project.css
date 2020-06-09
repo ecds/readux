@@ -1,11 +1,26 @@
-/* These styles are generated from project.scss. */
 :root {
   --link-color: #950953;
   --contrast: 200%;
 }
 
-body {
-  font-size: 18px;
+.uk-input {
+  border-width: 3px;
+  width: 50%;
+}
+
+.uk-button-primary {
+  background-color: var(--link-color);
+}
+
+.uk-button-primary:hover,
+.uk-button-primary:active {
+  background-color: var(--link-color);
+  -webkit-filter: contrast(var(--contrast));
+          filter: contrast(var(--contrast));
+}
+
+.uk-button-default {
+  font-size: 1.25rem;
 }
 
 .alert-debug {
@@ -43,18 +58,6 @@ body {
   left: -3px !important;
 }
 
-.layout-slot {
-  margin: 0 !important;
-}
-
-.workspace-container {
-  margin: 0 !important;
-}
-
-.readux-metadata {
-  word-wrap: break-word;
-}
-
 .mirador-container .manifest-info {
   width: auto !important;
   float: right;
@@ -66,33 +69,16 @@ body {
   margin-left: 1em;
 }
 
-/* .mirador-container .view-container.focus-max-width {
-    margin-left: 0px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-    margin-top: 34px;
-    box-sizing: border-box;
-    z-index: -1;
-} */
 .manifest-info > a,
 .manifest-info > h3 {
   display: none !important;
 }
 
-/* .mirador-container .mirador-osd-context-controls {
-    top: -34px !important;
-} */
 #ocr-layer {
   position: absolute !important;
   z-index: 999;
 }
 
-/* .show-annotations span a {
-    background: rgba(255, 20, 147, 0.5);
-} */
 .openseadragon-container span {
   /* background: rgba(0, 255, 255, 0.33); */
   color: transparent;
@@ -137,26 +123,7 @@ a.rdx-provider-button:hover {
   text-indent: 1.25rem;
 }
 
-.uk-input {
-  border-width: 3px;
-  width: 50%;
-}
-
-.uk-button-primary {
-  background-color: var(--link-color);
-}
-
-.uk-button-primary:hover,
-.uk-button-primary:active {
-  background-color: var(--link-color);
-  -webkit-filter: contrast(var(--contrast));
-          filter: contrast(var(--contrast));
-}
-
-.uk-button-default {
-  font-size: 1.25rem;
-}
-
+/* End of Social Auth Buttons */
 /* Wagtail embedded objects */
 .rich-text img {
   max-width: 100%;
@@ -182,11 +149,6 @@ a.rdx-provider-button:hover {
   height: 200px;
   overflow: hidden;
   overflow-y: scroll;
-}
-
-body .uk-container {
-  width: 90%;
-  max-width: 90%;
 }
 
 .breadcrumbs {

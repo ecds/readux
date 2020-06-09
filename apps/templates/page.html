@@ -44,36 +44,99 @@
 {% endblock %}
 
 
-  <nav class="" uk-navbar id="rx-page-info-panel">
-    <div class="uk-navbar-left rx-page-navbar-left" style="flex-wrap: unset;">
+  <nav class="rx-flex-parent" uk-navbar id="rx-page-info-panel">
+    
+    <div class="rx-flex-child">
       <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
         <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
       </a>
-      <div class="uk-navbar-nav rx-page-navbar-nav">
-        <div class="rx-page-title-container" style="flex: 2 2 auto; align-self: center;">
-          <ul class="rx-page-breadcrumb" style="font-size: 0.75em;">
-            <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-            <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-            <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-                alt="Collections">{{ volume.collections.first.label }}</a>
-            </li>
-            <li>
-              {{ request.GET.type }}
-            </li>
-          </ul>
-          <div id="main" class="rx-page-title">{{volume.label}}</div>
+    </div>
+
+    <div class="rx-flex-child uk-navbar-nav rx-page-navbar-nav long-and-truncated">
+      <div class="rx-page-title-container long-and-truncated">
+        <ul class="rx-page-breadcrumb long-and-truncated">
+          <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+          <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+          <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
+              alt="Collections">{{ volume.collections.first.label }}</a>
+          </li>
+          <!-- <li>
+            {{ request.GET.type }}
+          </li> -->
+        </ul>
+
+        <!-- This is the modal -->
+        <div id="rx-volume-title" uk-modal>
+          <div class="uk-modal-dialog uk-modal-body">
+            <ul class="rx-page-breadcrumb">
+              <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
+              <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+              <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
+                  alt="Collections">{{ volume.collections.first.label }}</a>
+              </li>
+              <!-- <li>
+                        {{ request.GET.type }}
+                      </li> -->
+            </ul>
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <p>{{volume.label}}</p>
+          </div>
         </div>
+
+        <a href="#rx-volume-title" class="rx-nav-item" uk-toggle>
+          <div id="main" class="rx-page-title long-and-truncated" >{{volume.label}}</div>
+        </a>
       </div>
     </div>
-    <div class="uk-navbar-right rx-page-navbar-right">
-      <!--@click="toggleMoreInfo"-->
-      <a type="button" class="rx-btn-secondary" uk-toggle="target: #rx-page-modal">
-        login
-      </a>
-      <a type="button"  class="rx-btn-secondary" uk-toggle="target: #offcanvas-usage">
-        more info 
-      </a>
+
+    <div class="rx-flex-child short-and-fixed">
+      <ul class="uk-navbar-nav">
+        <li>
+          <a href="/search/" aria-label="full site search" title="Full Site Search"
+            uk-tooltip="title: Full Site Search; pos: right">
+            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search"></span>
+          </a>
+        </li>
+        {% if request.user.is_authenticated %}
+        <li>
+          {# URL provided by django-allauth/account/urls.py #}
+          <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right"
+            aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
+            <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog"></span>
+          </a>
+        </li>
+        <li>
+          {# URL provided by django-allauth/account/urls.py #}
+          <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right"
+            aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
+            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user"></span>
+          </a>
+        </li>
+        <li>
+          {# URL provided by django-allauth/account/urls.py #}
+          <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right"
+            uk-tooltip="title: Logout; pos: right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
+            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out"></span>
+          </a>
+        </li>
+        {% else %}
+        <li>
+          {# URL provided by django-allauth/account/urls.py #}
+          <!-- <a href="{% url 'account_login' %}"> -->
+          <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-tooltip="title: Sign in; pos: right" uk-toggle>
+            <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in"></span>
+          </a>
+        </li>
+        {% endif %}
+        <li>
+          <a href="#" aria-label="Page options" title="Page options" uk-tooltip="title: Page options; pos: right"
+            uk-toggle="target: #offcanvas-usage">
+            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: menu"></span>
+          </a>
+        </li>
+      </ul>
     </div>
+      
   </nav>
 
   <div id="offcanvas-usage" uk-offcanvas="flip: true">

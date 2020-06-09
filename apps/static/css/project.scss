@@ -749,6 +749,7 @@ p {
 .rx-page-title-container {
   padding: 0 15px;
   overflow-wrap: anywhere;
+  align-self: center;
 }
 
 .rx-breadcrumb-item > a,
@@ -1589,3 +1590,33 @@ fieldset {
 #sidenav {
   background: white;
 }
+
+
+  .flex-parent {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-align: center;
+            align-items: center;
+    padding: 10px;
+    margin: 30px 0;
+  }
+
+  .long-and-truncated {
+    -webkit-box-flex: 1;
+            flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .short-and-fixed {
+    white-space: nowrap;
+  }
+  
+  .short-and-fixed > div {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    background: lightgreen;
+    display: inline-block;
+  }

@@ -762,6 +762,11 @@ p {
   color: white;
 }
 
+.uk-offcanvas {
+  top: -80px;
+  position: inherit;
+}
+
 .readux-group-title:not(:first-child) {
   margin-top: 3rem;
 }
@@ -1349,6 +1354,7 @@ fieldset {
   }
   #offcanvas-usage {
     width: 100%;
+    left: 0;
   }
 }
 
@@ -1377,6 +1383,7 @@ fieldset {
   }
   #offcanvas-usage {
     width: 50%;
+    left: 50%;
   }
 }
 

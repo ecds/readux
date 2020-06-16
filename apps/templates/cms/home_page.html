@@ -79,10 +79,10 @@
       {% endfor %}
           </a>
         </div>
-        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
+        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">{% if volume.collections.first.pid %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-          </a>
+          </a>{% endif %}
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
@@ -151,10 +151,10 @@
         <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
           <v-volume-image></v-volume-image>
         </div>
-        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
+        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">{% if volume.collections.first.pid %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-          </a>
+          </a>{% endif %}
           <a class="nav-link" href="#">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">
               {{ volume.label|truncatechars:200 }}
@@ -194,10 +194,10 @@
           </a>
 
         </div>
-        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
+        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">{% if volume.collections.first.pid %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-          </a>
+          </a>{% endif %}
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>

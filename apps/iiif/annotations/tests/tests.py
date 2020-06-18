@@ -61,7 +61,7 @@ class AnnotationTests(TestCase):
         ocr.h = 10
         ocr.content = "Obviously you're not a golfer"
         ocr.save()
-        assert ocr.content == "<span id='{pk}' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
+        assert ocr.content == "<span id='{pk}' class='anno-{pk}' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
         assert ocr.owner == USER.objects.get(username='ocr')
 
     def test_invalid_ocr(self):
@@ -109,7 +109,7 @@ class AnnotationTests(TestCase):
 
     def test_annotation_style(self):
         anno = Annotation.objects.all().first()
-        assert anno.style == ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(c=(anno.pk), h=str(anno.h), w=str(anno.w), f=str(anno.h / 1.6))
+        assert anno.style == ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: 15.125px;}}".format(c=(anno.pk), h=str(anno.h), w=str(anno.w), f=str(anno.h / 1.6))
 
     def test_annotation_style_serialization(self):
         kwargs = {'vol': self.volume.pid, 'page': self.canvas.pid, 'version': 'v2'}
@@ -134,8 +134,8 @@ class AnnotationTests(TestCase):
         ocr.content = 'nice marmot'
         ocr.format = Annotation.HTML
         ocr.save()
-        assert ocr.content == "<span id='{a}' data-letter-spacing='0'>nice marmot</span>".format(a=ocr.id)
-        assert ocr.style == ".anno-{a}: {{ height: 10px; width: 0px; font-size: 6.25px; }}".format(a=ocr.id)
+        assert ocr.content == "<span id='{a}' class='anno-{a}' data-letter-spacing='0'>nice marmot</span>".format(a=ocr.id)
+        assert ocr.style == ".anno-{a}: {{ height: 10px; width: 0px; font-size: 6.25px; letter-spacing: 0px;}}".format(a=ocr.id)
         assert ocr.format == 'text/html'
 
     def test_ocr_char_with_zero_height(self):
@@ -148,8 +148,8 @@ class AnnotationTests(TestCase):
         ocr.content = 'nice marmot'
         ocr.format = Annotation.HTML
         ocr.save()
-        assert ocr.content == "<span id='{a}' data-letter-spacing='0.09090909090909091'>nice marmot</span>".format(a=ocr.id)
-        assert ocr.style == ".anno-{a}: {{ height: 0px; width: 10px; font-size: 0.0px; }}".format(a=ocr.id)
+        assert ocr.content == "<span id='{a}' class='anno-{a}' data-letter-spacing='0.09090909090909091'>nice marmot</span>".format(a=ocr.id)
+        assert ocr.style == ".anno-{a}: {{ height: 0px; width: 10px; font-size: 0.0px; letter-spacing: 0.9090909090909091px;}}".format(a=ocr.id)
         assert ocr.format == 'text/html'
 
     def test_command_output_remove_empty_ocr(self):
@@ -171,4 +171,3 @@ class AnnotationTests(TestCase):
         assert orig_span == anno.content
         assert anno.content.startswith('<span')
         assert BeautifulSoup(anno.content, 'html.parser').span.span is None
-    

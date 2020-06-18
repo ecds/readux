@@ -63,14 +63,14 @@
       {% for fir in firstthumbnail %}
       {% for canvas in volume.canvas_set.all %}
         {% if canvas.pid in fir|safe %}
-           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+           <v-volume-image
+            img-src="{{ canvas.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
         {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
         {% if forloop.last %}
-          <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+          <v-volume-image
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
         {% endif %}
@@ -80,9 +80,11 @@
           </a>
         </div>
         <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
+          {% if volume.collections.count > 0 %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
+          {% endif %}
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
@@ -152,9 +154,11 @@
           <v-volume-image></v-volume-image>
         </div>
         <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
+          {% if volume.collections.count > 0 %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
+          {% endif %}
           <a class="nav-link" href="#">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">
               {{ volume.label|truncatechars:200 }}
@@ -177,14 +181,14 @@
       {% for fir in firstthumbnail %}
       {% for canvas in volume.canvas_set.all %}
         {% if canvas.pid in fir|safe %}
-           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+           <v-volume-image
+            img-src="{{ canvas.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
         {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
         {% if forloop.last %}
-          <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
+          <v-volume-image
+            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
         {% endif %}
@@ -195,13 +199,15 @@
 
         </div>
         <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
+          {% if volume.collections.count > 0 %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
+          {% endif %}
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>
-<!-- 
+<!--
             <div class="rx-title-tagline">TBD</div>
  -->
             <ul class="rx-card-text">
@@ -229,7 +235,7 @@
     {% endif %}
     {% endfor %}
 
-<!-- 
+<!--
     {% for post in page.get_children %}
     {% if 'vol' in post.slug %}
     <a class="nav-link" href="{% pageurl post %}">

@@ -111,9 +111,9 @@ def set_span_element(sender, instance, **kwargs):
             # This is used by OpenSeadragon. OSD will update the letter spacing relative to
             # the width of the overlayed element when someone zooms in and out.
             relative_letter_spacing = letter_spacing / instance.w
-        instance.content = "<span id='{pk}' data-letter-spacing='{p}'>{content}</span>".format(
+        instance.content = "<span id='{pk}' class='anno-{pk}' data-letter-spacing='{p}'>{content}</span>".format(
             pk=instance.pk, content=instance.content, p=str(relative_letter_spacing)
         )
-        instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; }}".format(
-            c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size)
+        instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {ls}px;}}".format(
+            c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size), ls=str(letter_spacing)
         )

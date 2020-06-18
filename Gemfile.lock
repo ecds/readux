@@ -1,35 +1,33 @@
 GIT
   remote: https://github.com/ecds/iiif-to-jekyll.git
-  revision: f164c81a99b63db402d95d6410103f06e30ea036
+  revision: 35f6e9b7ef5b53eb17bc04ba5a68975b4bc318ef
   specs:
-    iiif_to_jekyll (0.8)
+    iiif_to_jekyll (0.9)
       iiif-presentation (~> 0.2.0)
       openssl
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.0.2.2)
+    activesupport (6.0.3.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-      zeitwerk (~> 2.2)
+      zeitwerk (~> 2.2, >= 2.2.2)
     concurrent-ruby (1.1.6)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
-    i18n (1.8.2)
+    i18n (1.8.3)
       concurrent-ruby (~> 1.0)
     iiif-presentation (0.2.0)
       activesupport (>= 3.2.18)
       faraday (>= 0.9)
       json
-    ipaddr (1.2.2)
     json (2.3.0)
-    minitest (5.14.0)
+    minitest (5.14.1)
     multipart-post (2.1.1)
-    openssl (2.1.2)
-      ipaddr
+    openssl (2.2.0)
     thread_safe (0.3.6)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
@@ -39,7 +37,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  iiif_to_jekyll (= 0.8)!
+  iiif_to_jekyll (= 0.9)!
 
 BUNDLED WITH
    2.1.4

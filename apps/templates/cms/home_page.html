@@ -79,19 +79,12 @@
       {% endfor %}
           </a>
         </div>
-<<<<<<< HEAD
         <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
           {% if volume.collections.count > 0 %}
           <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
             <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
           </a>
           {% endif %}
-=======
-        <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">{% if volume.collections.first.pid %}
-          <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
-            <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-          </a>{% endif %}
->>>>>>> fb5c7fb03807e3217888f21c5640f3a6d574f7e7
           <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
             <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
             </h3>

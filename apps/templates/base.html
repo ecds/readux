@@ -90,11 +90,9 @@
             <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
           </a>
 
-          <ul class="uk-navbar-nav uk-visible@s">
-            <li>
-              {% main_menu %}
-            </li>
-          </ul>
+          <div class="uk-visible@s">
+            {% main_menu %}
+          </div>
 
           <a class="uk-navbar-toggle uk-hidden@s" uk-toggle="target: #sidenav" uk-navbar-toggle-icon></a>
 
@@ -103,11 +101,7 @@
               <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
                 <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
               </a>
-              <ul class="uk-navbar-nav">
-                <li>
-                  {% main_menu %}
-                </li>
-              </ul>
+              {% main_menu %}
             </div>
           </div>
 

@@ -1358,6 +1358,12 @@ fieldset {
     width: 100%;
     left: 0;
   }
+  .rx-navbar-nav {
+    display: block;
+  }
+  .uk-logo {
+    padding: 0;
+  }
 }
 
 @media (min-width: 640px) {

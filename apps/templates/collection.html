@@ -28,7 +28,7 @@
   </div>
 
   <div class="rx-head-container">
-    <p>{{ collection.summary }}</p>
+    <p>{{ collection.summary|safe }}</p>
   </div>
 
   {% include "snippets/sort_dropdown.html" %}

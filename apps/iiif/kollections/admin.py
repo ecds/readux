@@ -4,6 +4,7 @@ Django admin module for kollections
 from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
+from django_summernote.admin import SummernoteModelAdmin
 from .models import Collection
 from ..manifests.models import Manifest
 
@@ -36,7 +37,7 @@ class ManifestInline(admin.TabularInline):
 
     manifest_pid.short_description = 'Manifest Local ID'
 
-class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class CollectionAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdmin):
     """Django admin configuration for a collection."""
     inlines = [
         ManifestInline,
@@ -44,5 +45,6 @@ class CollectionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = CollectionResource
     list_display = ('id', 'pid', 'metadata', 'summary', 'label')
     search_fields = ('label', 'summary', 'pid')
+    summernote_fields = ('summary',)
 
 admin.site.register(Collection, CollectionAdmin)

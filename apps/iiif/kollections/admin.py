@@ -45,6 +45,6 @@ class CollectionAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelA
     resource_class = CollectionResource
     list_display = ('id', 'pid', 'metadata', 'summary', 'label')
     search_fields = ('label', 'summary', 'pid')
-    summernote_fields = ('summary',)
+    summernote_fields = ('summary', 'summary_en',)
 
 admin.site.register(Collection, CollectionAdmin)

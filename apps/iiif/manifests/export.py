@@ -326,7 +326,7 @@ class JekyllSiteExport(object):
             LOGGER.debug(error.output)
             err_msg = "Error running jekyll import on IIIF manifest!\n{cmd}\n{err}".format(
                 cmd=' '.join(import_command),
-                err=e.output.decode('utf-8')
+                err=error.output.decode('utf-8')
             )
             LOGGER.error(err_msg)
             raise ExportException(err_msg)

@@ -1,3 +1,10 @@
+import io
+import json
+import os
+import re
+import tempfile
+import zipfile
+import httpretty
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
@@ -10,16 +17,9 @@ from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport, Git
 from apps.iiif.manifests.github import GithubApi
 from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 from iiif_prezi.loader import ManifestReader
-import io
-import json
-import logging
-import os
-import re
-import tempfile
-import zipfile
-import httpretty
 
 User = get_user_model()
+
 
 class ManifestExportTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json', 'userannotation.json']
@@ -116,7 +116,7 @@ class ManifestExportTests(TestCase):
             contents = page_file.read()
         # Depending on the order the tests are run, there might be more or less in the database.
         # TODO: Why does the database not get reset?
-        assert 4 <= contents.count('ocr-line') <= 6
+        assert 4 <= contents.count('<span') <= 6
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 

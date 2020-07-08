@@ -67,7 +67,7 @@ class Manifest(ClusterableModel):
         default="https://creativecommons.org/publicdomain/zero/1.0/",
         help_text="Only enter a URI to a license statement."
     )
-    collections = models.ManyToManyField(Collection, blank=True, related_name = 'manifests')
+    collections = models.ManyToManyField(Collection, blank=True, related_name='manifests')
     pdf = models.URLField()
     metadata = JSONField(default=dict, blank=True)
     viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
@@ -76,6 +76,13 @@ class Manifest(ClusterableModel):
     autocomplete_search_field = 'label'
     search_vector = SearchVectorField(null=True, editable=False)
     objects = ManifestManager()
+    start_canvas = models.ForeignKey(
+        'canvases.Canvas',
+        on_delete=models.DO_NOTHING,
+        related_name='start_canvas',
+        blank=True,
+        null=True
+    )
 
     def get_absolute_url(self):
         """Absolute URL for manifest
@@ -122,14 +129,14 @@ class Manifest(ClusterableModel):
     # TODO: Maybe this should return the canvas object so we can replace
     # the logic in the serializer that basically makes this same query
     # to get the thumbnail.
-    @property
-    def start_canvas(self):
-        """Identifier for first canvas for manifest.
+    # @property
+    # def start_canvas(self):
+    #     """Identifier for first canvas for manifest.
 
-        :rtype: str
-        """
-        first = self.canvas_set.all().exclude(is_starting_page=False).first()
-        return first.identifier if first else self.canvas_set.all().first().identifier
+    #     :rtype: str
+    #     """
+    #     first = self.canvas_set.all().exclude(is_starting_page=False).first()
+    #     return first.identifier if first else self.canvas_set.all().first().identifier
 
     # TODO: Is this needed? It doesn't seem to be called anywhere.
     # Could we just use the label as is?
@@ -143,9 +150,23 @@ class Manifest(ClusterableModel):
     def __str__(self):
         return self.label
 
+    # FIXME: This creates a circular dependency - Importing UserAnnotation here.
+    # Furthermore, we shouldn't have any of the IIIF apps depend on Readux. Need
+    # to figure out a different, but still efficient way of doing this.
+    def user_annotation_count(self, user=None):
+        if user is None:
+            return None
+
+        from apps.readux.models import UserAnnotation
+        return UserAnnotation.objects.filter(owner=user).filter(canvas__manifest=self).count()
+
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
+        if self.start_canvas is None and self.canvas_set.exists():
+            self.start_canvas = self.canvas_set.first()
+
         super().save(*args, **kwargs)
+
         if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
             instance = self._meta.default_manager.with_documents().get(pk=self.pk)
             instance.search_vector = instance.document

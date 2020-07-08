@@ -1,6 +1,7 @@
 '''
 '''
 import json
+import random
 from datetime import datetime
 from django.test import TestCase, Client
 from django.test import RequestFactory
@@ -33,18 +34,28 @@ class ManifestTests(TestCase):
         self.user = get_user_model().objects.get(pk=111)
         self.factory = RequestFactory()
         self.client = Client()
-        self.volume = Manifest.objects.get(pk='464d82f6-6ae5-4503-9afc-8e3cdd92a3f1')
-        self.start_canvas = self.volume.canvas_set.filter(is_starting_page=True).first()
+        self.volume = ManifestFactory.create(
+            publisher='ECDS',
+            published_city='Atlanta'
+        )
+        for num in [1, 2, 3]:
+            CanvasFactory.create(
+                pid=str(random.randrange(2000, 5000)),
+                manifest=self.volume,
+                position=num
+            )
+        self.volume.save()
+        self.start_canvas = self.volume.start_canvas
         self.default_start_canvas = self.volume.canvas_set.filter(is_starting_page=False).first()
-        self.assumed_label = ' Descrizione del Palazzo Apostolico Vaticano '
-        self.assumed_pid = 'readux:st7r6'
+        self.assumed_label = self.volume.label
+        self.assumed_pid = self.volume.pid
 
     def test_validate_iiif(self):
-        volume = Manifest.objects.all().first()
+        # volume = Manifest.objects.all().first()
         manifest = json.loads(
             serialize(
                 'manifest',
-                [volume],
+                [self.volume],
                 version='v2',
                 annotators='Tom',
                 exportdate=datetime.utcnow()
@@ -59,23 +70,24 @@ class ManifestTests(TestCase):
 
         assert manifest['@id'] == "%s/manifest" % (self.volume.baseurl)
         assert manifest['label'] == self.volume.label
-        assert manifest['description'] == volume.summary
+        assert manifest['description'] == self.volume.summary
         assert manifest['thumbnail']['@id'] == '{h}/{c}/full/600,/0/default.jpg'.format(
             h=self.volume.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
             c=self.start_canvas.pid
         )
-        assert manifest['sequences'][0]['startCanvas'] == self.volume.start_canvas
+        assert manifest['sequences'][0]['startCanvas'] == self.volume.start_canvas.identifier
 
     def test_properties(self):
-        assert self.volume.publisher_bib == "In Roma : Appresso Niccol\u00f2, e Marco Pagliarini ..."
-        assert self.volume.thumbnail_logo.endswith("/%s/%s" % ("media", "awesome.png"))
+        assert self.volume.publisher_bib == "Atlanta : ECDS"
+        assert self.volume.thumbnail_logo.endswith('/media/logos/ecds.png')
         assert self.volume.baseurl.endswith("/iiif/v2/%s" % (self.volume.pid))
-        assert self.volume.start_canvas.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
+        assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
 
     def test_default_start_canvas(self):
-        self.start_canvas.is_starting_page = False
-        self.start_canvas.save()
-        assert self.volume.start_canvas.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.default_start_canvas.pid))
+        self.volume.start_canvas = None
+        self.volume.save()
+        # self.start_canvas.save()
+        assert self.volume.start_canvas.id == self.volume.canvas_set.first().id
 
     def test_meta(self):
         assert str(self.volume) == self.assumed_label

@@ -1,5 +1,9 @@
 """Django Forms for export."""
 from django import forms
+from .models import Manifest
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 # add is_checkbox method to all form fields, to enable template logic.
 # thanks to:
@@ -62,24 +66,17 @@ class JekyllExportForm(forms.Form):
             self.fields['mode'].widget.attrs = {'class': 'uk-radio', 'checked': True}
 
 
-    # def clean(self):
-    #     super(JekyllExportForm, self).clean()
-        # image_hosting = cleaned_data.get("image_hosting")
-        # deep_zoom = cleaned_data.get("deep_zoom")
-        # mode = cleaned_data.get("mode")
+class ManifestAdminForm(forms.ModelForm):
+    class Meta:
+        model = Manifest
+        fields = (
+            'id', 'pid', 'label', 'summary', 'author',
+            'published_city', 'published_date', 'publisher',
+            'pdf', 'metadata', 'viewingDirection', 'collections',
+            'start_canvas'
+        )
+    def __init__(self, *args, **kwargs):
+        super(ManifestAdminForm, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            self.fields['start_canvas'].queryset = kwargs['instance'].canvas_set.all()
 
-        # if deep_zoom == "included" and not image_hosting == "independently_hosted":
-        #     raise forms.ValidationError(
-        #         'Including Deep Zoom images in your export requires that ' +
-        #         ' you also include page images'
-        #     )
-
-    # def annotation_authors(self):
-    #     # choices for annotations to be exported:
-    #     # individual user, or annotations visible by group
-    #     choices = [('user', 'Authored by me')]
-    #     for group in self.user.groups.all():
-    #         if group.annotationgroup:
-    #             choices.append((group.annotationgroup.annotation_id,
-    #                             'All annotations shared with %s' % group.name))
-    #     return choices

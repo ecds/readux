@@ -21,18 +21,20 @@ class TestReaduxPageDetailSearch(TestCase):
         self.search_manifest_view = SearchManifestCanvas.as_view()
         self.request = RequestFactory()
         self.volume = ManifestFactory.create()
-        # Delete the canvas created by the ManifestFactory to ensure a clean set.
-        self.volume.canvas_set.all().first().delete()
+        original_canvas = self.volume.canvas_set.first()
         self.user = UserFactory.create()
         self.ocr_user = UserFactory.create(username='ocr', name='OCR')
         canvas_position = 1
         for _ in repeat(None, randrange(5, 10)):
             CanvasFactory.create(manifest=self.volume, position=canvas_position)
             canvas_position += 1
-        # pylint: disable = unused-variable
-        for num in [1, 2]:
+        self.volume.start_canvas = self.volume.canvas_set.all()[1]
+        self.volume.save()
+        # # Delete the canvas created by the ManifestFactory to ensure a clean set.
+        original_canvas.delete()
+        for _ in [1, 2]:
             self.add_annotations(self.volume.canvas_set.get(position=1))
-        for num in [1, 2, 3]:
+        for _ in [1, 2, 3]:
             self.add_annotations(self.volume.canvas_set.get(position=2))
 
         # pylint: enable = unused-variable

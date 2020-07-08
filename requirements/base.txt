@@ -21,6 +21,9 @@ django-taggit==1.2.0 # https://github.com/jazzband/django-taggit
 #coreapi==2.3.3  # https://github.com/core-api/python-client
 django-cors-headers===3.2.1 # https://github.com/ottoyiu/django-cors-headers
 
+#wysiwyg
+django-summernote===0.8.11.6 # https://github.com/summernote/django-summernote
+
 # SCSS Support
 #--------------------------------------------------------------------------------
 libsass
@@ -39,9 +42,6 @@ git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocom
 django-import-export==2.0.2
 gitpython==3.0.5
 gitdb2==2.0.6
-
-#wysiwyg
-django-summernote
 
 django-background-tasks==1.2.5
 

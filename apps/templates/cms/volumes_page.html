@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
 {% load static %}
+{% load has_user_annotations %}
+{% load user_annotation_count %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -24,7 +26,7 @@
 {% if page.layout == 'Grid' %}
 <div class="wrap">
   {% for volume in volumespage %}
-  {% if volume.canvas_set.first.pid is null %}
+  {% if volume.start_canvas.pid is null %}
   <div class="box">
     <div class="boxInner">
       <v-volume-image></v-volume-image>
@@ -41,28 +43,15 @@
   {% else %}
   <div class="box">
     <div class="boxInner">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      {% for fir in firstthumbnail %}
-      {% for canvas in volume.canvas_set.all %}
-        {% if canvas.pid in fir|safe %}
-           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_volume }}" 
+      <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
+          <v-volume-image
+            img-src="{{ volume.start_canvas.thumbnail_crop_volume }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
-        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
-        {% if forloop.last %}
-          <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" 
-            volume-label="{{volume.label}}">
-          </v-volume-image>
-        {% endif %}
-        {% endif %}
-      {% endfor %}
-      {% endfor %}
       </a>
       <div class="innerContent">
         <p>
-          <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+          <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
             <p>{{ volume.label|truncatechars:200 }}</p>
           </a></p>
         <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
@@ -79,7 +68,7 @@
 {% if page.layout == 'List' %}
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in volumespage %}
-  {% if volume.canvas_set.first.pid is null %}
+  {% if volume.start_canvas.pid is null %}
   <div class="uk-width-1-2@m uk-grid-medium">
     <div class="uk-width-1-4@m">
       <a class="nav-link" href="#">
@@ -101,45 +90,29 @@
   <div class="uk-width-1-2@m uk-grid-medium">
 
     <div class="uk-width-1-4@m rx-volume-image">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      {% for fir in firstthumbnail %}
-      {% for canvas in volume.canvas_set.all %}
-        {% if canvas.pid in fir|safe %}
-           <v-volume-image 
-            img-src="{{ canvas.thumbnail_crop_tallwide }}" 
+      <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
+          <v-volume-image
+            img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}"
             volume-label="{{volume.label}}">
           </v-volume-image>
-        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
-        {% if forloop.last %}
-          <v-volume-image 
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}" 
-            volume-label="{{volume.label}}">
-          </v-volume-image>
-        {% endif %}
-        {% endif %}
-      {% endfor %}
-      {% endfor %}
       </a>
     </div>
     <div class="uk-width-3-4@m">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
+      <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
         <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
         <li>
-          {% for value in user_annotation_count %}
-          {% if volume.pid in value %}
-          {% if "0" not in value|safe|slice:"-3:-1" %}
+          {% has_user_annotations volume user as result %}
+          {% if result %}
           <span class="count-icon">
             <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
               uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
+            <span class="count">{% user_annotation_count volume user %}</span>
           </span>
           {% endif %}
-          {% endif %}
-          {% endfor %}
         </li>
       </ul>
     </div>
@@ -149,7 +122,7 @@
 </div>
 
     {% include "footer.html" %}
-    
+
 {% endif %}
 
 {% endblock content %}

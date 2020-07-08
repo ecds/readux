@@ -5,6 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget
 from django_summernote.admin import SummernoteModelAdmin
 from .models import Manifest, Note
+from .forms import ManifestAdminForm
 from ..kollections.models import Collection
 
 class ManifestResource(resources.ModelResource):
@@ -29,6 +30,7 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
     list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
     search_fields = ('id', 'label', 'author', 'published_date')
     summernote_fields = ('summary',)
+    form = ManifestAdminForm
 
 class NoteAdmin(admin.ModelAdmin):
     """Django admin configuration for a note."""

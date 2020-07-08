@@ -33,7 +33,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['manifest']:
             try:
-                manifest = Manifest.objects.get(pid = options['manifest'])
+                manifest = Manifest.objects.get(pid=options['manifest'])
                 for canvas in manifest.canvas_set.all():
                     self.__rebuild(canvas)
                 self.stdout.write(

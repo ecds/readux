@@ -35,14 +35,17 @@ class Serializer(JSONSerializer):
                 within.append(col.get_absolute_url())
             try:
                 thumbnail = '{h}/{p}'.format(
-                    h=obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
-                    p=obj.canvas_set.all().get(is_starting_page=True).pid
+                    h=obj.start_canvas.IIIF_IMAGE_SERVER_BASE,
+                    p=obj.start_canvas.pid
                 )
             except (Canvas.MultipleObjectsReturned, Canvas.DoesNotExist):
                 thumbnail = '{h}/{p}'.format(
                     h=obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
                     p=obj.canvas_set.all().first().pid
                 )
+
+            if obj.metadata == {}:
+                obj.metadata = None;
 
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
@@ -112,7 +115,7 @@ class Serializer(JSONSerializer):
                         "@id": "%s/sequence/normal" % (obj.baseurl),
                         "@type": "sc:Sequence",
                         "label": "Current Page Order",
-                        "startCanvas": obj.start_canvas,
+                        "startCanvas": obj.start_canvas.identifier,
                         "canvases": json.loads(
                             serialize(
                                 'canvas',

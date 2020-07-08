@@ -61,7 +61,7 @@ class VolumesPage(Page):
         help_text="Select to show all volumes as a list or a grid of icons."
     )
     collections = Collection.objects.all
-    volumes = Manifest.objects.all
+    volumes = Manifest.objects.all()
     content_panels = Page.content_panels + [
         FieldPanel('page_title', classname="full"),
         FieldPanel('tagline', classname="full"),
@@ -74,7 +74,7 @@ class VolumesPage(Page):
         context = super().get_context(request)
         sort = request.GET.get('sort', None)
         order = request.GET.get('order', None)
-        query_set = Manifest.objects.all()
+        query_set = self.volumes
 
         sort_options = ['title', 'author', 'date published', 'date added']
         order_options = ['asc', 'desc']
@@ -119,18 +119,18 @@ class VolumesPage(Page):
 
         context['volumespage'] = query_set.all
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
-        annocount_list = []
-        canvaslist = []
-        for volume in query_set:
-            user_annotation_count = UserAnnotation.objects.filter(owner_id=request.user.id).filter(canvas__manifest__id=volume.id).count()
-            annocount_list.append({volume.pid: user_annotation_count})
-            context['user_annotation_count'] = annocount_list
-            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-            canvasquery2 = list(canvasquery)
-            canvaslist.append({volume.pid: canvasquery2})
-            context['firstthumbnail'] = canvaslist
-        value = 0
-        context['value'] = value
+        # annocount_list = []
+        # canvaslist = []
+        # for volume in query_set:
+        #     user_annotation_count = UserAnnotation.objects.filter(owner_id=request.user.id).filter(canvas__manifest__id=volume.id).count()
+            # annocount_list.append({volume.pid: user_annotation_count})
+            # context['user_annotation_count'] = annocount_list
+        #     canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+        #     canvasquery2 = list(canvasquery)
+        #     canvaslist.append({volume.pid: canvasquery2})
+        #     context['firstthumbnail'] = canvaslist
+        # value = 0
+        # context['value'] = value
 
         context.update({
             'sort_url_params': urlencode(sort_url_params),
@@ -175,8 +175,8 @@ class HomePage(Page):
         default="label",
         help_text="Select order to sort volumes on home page"
     )
-    collections = Collection.objects.all
-    volumes = Manifest.objects.all
+    collections = Collection.objects.all()[:8]
+    volumes = Manifest.objects.all()[:8]
 
     content_panels = Page.content_panels + [
         FieldPanel('tagline', classname="full"),
@@ -187,29 +187,34 @@ class HomePage(Page):
         FieldPanel('featured_volumes_sort_order', classname="full"),
     ]
 
+    def featured_volume_count(self):
+        return self.featured_volumes.all().count()
+
+    def has_featured_volume(self):
+        return self.featured_volume_count() > 0
 
     def get_context(self, request):
         """Function that returns context"""
         context = super().get_context(request)
-        query_set = Manifest.objects.all()
+        query_set = self.volumes
 
-        context['volumespage'] = query_set.all
-        context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
+        # context['volumespage'] = query_set.all
+        # context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
         context['volumesurl'] = Page.objects.type(VolumesPage).first()
-        annocount_list = []
-        canvaslist = []
-        for volume in query_set:
-            user_annotation_count = UserAnnotation.objects.filter(
-                owner_id=request.user.id
-            ).filter(
-                canvas__manifest__id=volume.id
-            ).count()
-            annocount_list.append({volume.pid: user_annotation_count})
-            context['user_annotation_count'] = annocount_list
-            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-            canvasquery2 = list(canvasquery)
-            canvaslist.append({volume.pid: canvasquery2})
-            context['firstthumbnail'] = canvaslist
-        value = 0
-        context['value'] = value
+        # annocount_list = []
+        # canvaslist = []
+        # for volume in query_set:
+        #     user_annotation_count = UserAnnotation.objects.filter(
+        #         owner_id=request.user.id
+        #     ).filter(
+        #         canvas__manifest__id=volume.id
+        #     ).count()
+        #     annocount_list.append({volume.pid: user_annotation_count})
+        #     context['user_annotation_count'] = annocount_list
+        #     canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+        #     canvasquery2 = list(canvasquery)
+        #     canvaslist.append({volume.pid: canvasquery2})
+        #     context['firstthumbnail'] = canvaslist
+        # value = 0
+        # context['value'] = value
         return context

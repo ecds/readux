@@ -138,7 +138,7 @@
       <li>
         <article class="uk-grid rx-article">
           <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
-            <v-volume-image></v-volume-image>
+            <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}"></v-volume-image>
           </div>
           <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
             {% if volume.collections.exists %}

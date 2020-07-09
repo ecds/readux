@@ -143,7 +143,7 @@ def add_positional_ocr(canvas, result):
     """
     ocr = []
     if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        if 'ocr' in result and result['ocr'] is not None:
+        if result is not None and 'ocr' in result and result['ocr'] is not None:
             for index, word in enumerate(result['ocr']): # pylint: disable=unused-variable
                 if len(word) > 0:
                     for w in word:

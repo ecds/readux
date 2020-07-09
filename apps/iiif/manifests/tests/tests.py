@@ -1,5 +1,6 @@
-'''
-'''
+"""
+Test class for IIIF Manifests
+"""
 import json
 import random
 from datetime import datetime
@@ -20,7 +21,9 @@ from ...canvases.tests.factories import CanvasFactory
 
 USER = get_user_model()
 
+# FIXME: Extend `TestCase` to mock all HTTP requests.
 class ManifestTests(TestCase):
+    """Tests for IIIF Manifests"""
     fixtures = [
         'users.json',
         'kollections.json',
@@ -84,10 +87,12 @@ class ManifestTests(TestCase):
         assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
 
     def test_default_start_canvas(self):
-        self.volume.start_canvas = None
-        self.volume.save()
-        # self.start_canvas.save()
-        assert self.volume.start_canvas.id == self.volume.canvas_set.first().id
+        manifest = Manifest()
+        manifest.save()
+        assert manifest.start_canvas is None
+        canvas = CanvasFactory.create(manifest=manifest)
+        canvas.save()
+        assert manifest.start_canvas == canvas
 
     def test_meta(self):
         assert str(self.volume) == self.assumed_label

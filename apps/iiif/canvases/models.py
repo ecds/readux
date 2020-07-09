@@ -172,9 +172,16 @@ class Canvas(models.Model):
         return ' '.join(clean_words)
 
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
-        """Override save function to add OCR on save."""
-        if self._state.adding or not self.annotation_set.all().exists():
+        """
+        Override save function to add OCR and set as manifest's
+        `start_canvas` if manifest does not have one.
+        """
+        if self._state.adding or not self.annotation_set.exists():
             self.__add_ocr()
+
+        if self.manifest and self.manifest.start_canvas is None:
+            self.manifest.save()
+
         super(Canvas, self).save(*args, **kwargs)
 
     def __str__(self):

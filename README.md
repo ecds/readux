@@ -3,11 +3,11 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
 
 Readux is a platform developed by the Emory Center for Digital Scholarship which allows users to read, take notes on, and publish with digitized texts from libraries’ archival collections. With Readux, users are able to:
--	browse digitized page images, 
--	search and select the texts of these digitized books, 
--	annotate text or illustrations in these works, and then 
--	publish digital copies of the texts with their annotations. 
-Administrators can organize digitized books into collections, facilitating user access to digitized books available through the platform. Since its release, Readux has proved to be an innovative research and pedagogy tool for scholars and faculty at Emory University and beyond, with an array of use-cases ranging from teaching to publishing. 
+-	browse digitized page images,
+-	search and select the texts of these digitized books,
+-	annotate text or illustrations in these works, and then
+-	publish digital copies of the texts with their annotations.
+Administrators can organize digitized books into collections, facilitating user access to digitized books available through the platform. Since its release, Readux has proved to be an innovative research and pedagogy tool for scholars and faculty at Emory University and beyond, with an array of use-cases ranging from teaching to publishing.
 
 
 ## Motivation
@@ -102,10 +102,10 @@ fab deploy:branch=develop -H readux.ecdsdev.org
 For public alpha:
 
 ~~~bash
-fab deploy:branch=master -H readux2.ecdsdev.org
+fab deploy:branch=release -H readux2.ecdsdev.org
 ~~~
 
-Note: if no branch is passed, the deploy will default to master.
+Note: if no branch is passed, the deploy will default to release.
 
 ### Start Background Job
 

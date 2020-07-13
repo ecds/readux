@@ -42,7 +42,7 @@
                 <div class="rx-title-tagline">{{collection.manifests.all|length}}
                   volume{{collection.manifests.all|length|pluralize}}
                 </div>
-                <p class="rx-card-text">{{ collection.summary|safe }}</p>
+                <p class="rx-card-text">{{ collection.summary|truncatewords_html:30|safe }}</p>
               </a>
             </div>
           </article>

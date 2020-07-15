@@ -73,7 +73,7 @@ python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 
 ### Running the tests
 
-[![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=develop)](https://coveralls.io/github/ecds/readux?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=release)](https://coveralls.io/github/ecds/readux?branch=release)
 
 Readux uses Django's default test framework, but is configured to use pytest.
 
@@ -89,7 +89,7 @@ To run the tests, simply run:
 pytest apps/
 ~~~
 
-Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
+Readux is configured to use [Travis CI](https://api.travis-ci.com/ecds/readux.svg?branch=release). Any push will trigger build.
 
 ### Deploy
 

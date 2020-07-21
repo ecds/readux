@@ -13,7 +13,7 @@
     <li class="rx-breadcrumb-item">Volumes</li>
   </ul>
 
-  <div class="rx-title">{{ page.page_title }}</div>
+  <div><h2 class="rx-title" style="margin-bottom:0;line-height: 1.5;">{{ page.page_title }}</h2></div>
   <div class="rx-title-tagline">{{page.tagline}}</div>
 </div>
 
@@ -93,7 +93,7 @@
       <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
           <v-volume-image
             img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label}}">
+            volume-label="{{volume.label|truncatechars:50}}">
           </v-volume-image>
       </a>
     </div>

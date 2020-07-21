@@ -163,7 +163,7 @@ h1,
 h2,
 h3,
 p.text-lead {
-  color: #737373;
+  color: #595959;
 }
 
 h3 {
@@ -488,7 +488,7 @@ header#page-bg .collection-image-info.collasped .info {
 .rx-card-title {
   font-size: 1.25em;
   font-weight: 700;
-  color: #737373;
+  color: #595959;
   line-height: 1.25em;
 }
 
@@ -504,7 +504,7 @@ a:hover {
 }
 
 p {
-  color: #737373 !important;
+  color: #595959 !important;
 }
 
 .rx-breadcrumb,
@@ -586,7 +586,7 @@ p {
 .rx-info-title {
   border: 0.5px solid #e2e2e2;
   padding: 0.7em 1em 0.5em;
-  color: #737373;
+  color: #595959;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   font-size: 0.875em;
@@ -605,13 +605,13 @@ p {
 }
 
 .rx-info-content-label {
-  color: #737373;
+  color: #595959;
   font-weight: 600;
   line-height: 1em;
 }
 
 .rx-info-content-value {
-  color: #737373;
+  color: #595959;
   line-height: 1.5;
 }
 
@@ -644,7 +644,7 @@ p {
 
 .rx-card-text {
   padding: 0;
-  color: #737373;
+  color: #595959;
   margin: 0.5em 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -743,7 +743,7 @@ p {
 
 .rx-annotation-badge {
   border-radius: 3px;
-  background: #737373;
+  background: #595959;
   color: white;
   text-transform: uppercase;
   font-weight: bold;
@@ -781,7 +781,7 @@ p {
 
 .rx-footer > a {
   padding: 1rem;
-  color: #999999;
+  color: #737373;
   -webkit-transition: all ease-in-out 100ms;
   transition: all ease-in-out 100ms;
 }
@@ -807,11 +807,11 @@ p {
 }
 
 ::-moz-selection {
-  background-color: #737373;
+  background-color: #595959;
 }
 
 ::selection {
-  background-color: #737373;
+  background-color: #595959;
 }
 
 .rx-label-copy {
@@ -920,7 +920,7 @@ a.rx-nav-item {
 }
 
 .rx-info-content .uk-tab a {
-  color: #999999;
+  color: #737373;
 }
 
 .rx-info-content .uk-tab a:hover {
@@ -929,7 +929,7 @@ a.rx-nav-item {
 
 .rx-collection-title {
   font-weight: bold;
-  color: #737373;
+  color: #595959;
 }
 
 /* Grid layout */
@@ -1226,7 +1226,7 @@ fieldset {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  color: #737373 !important;
+  color: #595959 !important;
 }
 
 .rx-page-search-options,
@@ -1267,16 +1267,16 @@ fieldset {
 }
 
 .rx-search-icon {
-  color: #737373 !important;
+  color: #595959 !important;
 }
 
 .rx-search-input {
   border: none !important;
-  color: #737373 !important;
+  color: #595959 !important;
 }
 
 .rx-search-input:placeholder {
-  color: #999999 !important;
+  color: #737373 !important;
 }
 
 .rx-search-result {
@@ -1313,12 +1313,12 @@ fieldset {
 .rx-title-2 {
   font-size: 1.5em;
   font-weight: bold;
-  color: #737373;
+  color: #595959;
 }
 
 .rx-title-tagline {
   font-size: 14px;
-  color: #999999;
+  color: #737373;
 }
 
 .rx-title-tagline-banner {

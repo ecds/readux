@@ -19,13 +19,13 @@
         {% endif %}
         <p class="">Engage with digitized print materials on an open source software platform and share new thinking.
         </p>
-        <img src="static/images/ecds.svg" class="readux-home-ecds">
+        <img src="static/images/ecds.svg" alt="ECDS logo" class="readux-home-ecds">
       </div>
     </div>
 
     <div class="rx-home-right-column">
       {% if page.featured_collections.all|length != 0  %}
-      <div class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</div>
+      <h2 class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</h2>
       <ul class="uk-padding-remove-left">
         {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
         <li>
@@ -33,7 +33,7 @@
             <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
               <a alt="Thumbnail image for collection {{collection.label}}" class="rx-card-image"
                 href="{% url 'collection' collection.pid %}">
-                <img class="rx-title-image" src="/media/{{collection.thumbnail}}">
+                <img class="rx-title-image" alt="Thumbnail image for collection {{collection.label}}" src="/media/{{collection.thumbnail}}">
               </a>
             </div>
             <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
@@ -56,14 +56,14 @@
 
       {# FIXME: NEED BETTER WAY #}
       {% if page.featured_volumes.all|length != 0 %}
-      <div class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</div>
+      <h2 class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</h2>
       {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
         <li>
           <article class="uk-grid rx-article">
             <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
               <a alt="First page of {{volume.label}}" class="rx-card-image"
                 href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-                  <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
+                  <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}" volume-label="{{volume.label}}">
                   </v-volume-image>
               </a>
             </div>
@@ -106,7 +106,7 @@
 
 
       {% if page.content_display == 'Collections' %}
-      <div class="readux-group-title">All Collections</div>
+      <h2 class="readux-group-title">All Collections</h2>
 
       <ul>
         {% for collection in page.collections %}
@@ -132,7 +132,7 @@
       {% endif %}
 
       {% if page.content_display == 'Volumes' %}
-      <div class="readux-group-title">All Volumes</div>
+      <h2 class="readux-group-title">All Volumes</h2>
       {% for volume in page.volumes %}
       {% if volume.canvas_set.first.pid is null %}
       <li>

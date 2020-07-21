@@ -162,7 +162,7 @@ class Manifest(ClusterableModel):
 
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
-        if self.start_canvas is None and self.canvas_set.exists():
+        if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
             self.start_canvas = self.canvas_set.first()
 
         super().save(*args, **kwargs)

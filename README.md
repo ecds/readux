@@ -3,11 +3,11 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
 
 Readux is a platform developed by the Emory Center for Digital Scholarship which allows users to read, take notes on, and publish with digitized texts from libraries’ archival collections. With Readux, users are able to:
--	browse digitized page images, 
--	search and select the texts of these digitized books, 
--	annotate text or illustrations in these works, and then 
--	publish digital copies of the texts with their annotations. 
-Administrators can organize digitized books into collections, facilitating user access to digitized books available through the platform. Since its release, Readux has proved to be an innovative research and pedagogy tool for scholars and faculty at Emory University and beyond, with an array of use-cases ranging from teaching to publishing. 
+-	browse digitized page images,
+-	search and select the texts of these digitized books,
+-	annotate text or illustrations in these works, and then
+-	publish digital copies of the texts with their annotations.
+Administrators can organize digitized books into collections, facilitating user access to digitized books available through the platform. Since its release, Readux has proved to be an innovative research and pedagogy tool for scholars and faculty at Emory University and beyond, with an array of use-cases ranging from teaching to publishing.
 
 
 ## Motivation
@@ -73,7 +73,7 @@ python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 
 ### Running the tests
 
-[![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=develop)](https://coveralls.io/github/ecds/readux?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/ecds/readux/badge.svg?branch=release)](https://coveralls.io/github/ecds/readux?branch=release)
 
 Readux uses Django's default test framework, but is configured to use pytest.
 
@@ -89,7 +89,7 @@ To run the tests, simply run:
 pytest apps/
 ~~~
 
-Readux is configured to use [Travis CI](https://travis-ci.org/ecds/readux). Any push will trigger build.
+Readux is configured to use [Travis CI](https://api.travis-ci.com/ecds/readux.svg?branch=release). Any push will trigger build.
 
 ### Deploy
 
@@ -102,10 +102,10 @@ fab deploy:branch=develop -H readux.ecdsdev.org
 For public alpha:
 
 ~~~bash
-fab deploy:branch=master -H readux2.ecdsdev.org
+fab deploy:branch=release -H readux2.ecdsdev.org
 ~~~
 
-Note: if no branch is passed, the deploy will default to master.
+Note: if no branch is passed, the deploy will default to release.
 
 ### Start Background Job
 

@@ -23,7 +23,7 @@
       <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
       <li class="rx-breadcrumb-item">{{ collection.label }}</li>
     </ul>
-    <div class="rx-title" id="main">{{ collection.label }}</div>
+    <h2 class="rx-title" id="main">{{ collection.label }}</h2>
     <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
   </div>
 
@@ -79,13 +79,13 @@
         {% if canvas.pid in fir|safe %}
            <v-volume-image
             img-src="{{ canvas.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label}}">
+            volume-label="{{volume.label|truncatechars:50}}">
           </v-volume-image>
         {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
         {% if forloop.last %}
           <v-volume-image
             img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label}}">
+            volume-label="{{volume.label|truncatechars:50}}">
           </v-volume-image>
         {% endif %}
         {% endif %}

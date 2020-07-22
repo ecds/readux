@@ -8,6 +8,15 @@
   width: 50%;
 }
 
+.uk-link, a {
+  color: var(--link-color);
+  text-decoration: underline dotted;
+}
+
+a.nav-link {
+  text-decoration: none;
+}
+
 .uk-button-primary {
   background-color: var(--link-color);
 }

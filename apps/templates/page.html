@@ -28,7 +28,7 @@
 <!-- This is the modal -->
 <div id="rx-page-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
     <section class="uk-modal-header">
       <h2 class="uk-modal-title uk-text-center">
         {% if user.is_authenticated %}
@@ -78,7 +78,7 @@
                         {{ request.GET.type }}
                       </li> -->
             </ul>
-            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <button class="uk-modal-close-default" aria-label="close the modal" type="button" uk-close></button>
             <p>{{volume.label}}</p>
           </div>
         </div>
@@ -159,7 +159,8 @@
                 <input class="uk-search-input uk-input-remove rx-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="query"
                 value="{{request.GET.q}}" id="search-query-text"/>
               </div>
-              <div class="uk-margin uk-grid-small uk-width-expand uk-child-width-auto uk-grid rx-page-search-options">
+              <fieldset class="uk-margin uk-grid-small uk-width-expand uk-child-width-auto uk-grid rx-page-search-options" style="border:0;">
+                <legend style="display:none;">Search Type:</legend>
                 <label title="Click to include partial matches" class="rx-page-search-option-label">
                   <input class="uk-radio" type="radio" {%if 'exact' not in request.GET.type %}checked{% endif %} aria-label="include partial" value="partial" name="search-type">
                   Partial
@@ -168,7 +169,7 @@
                   <input class="uk-radio" type="radio" {%if 'exact' in request.GET.type %}checked{% endif %} aria-label="exact only" value="exact" name="search-type" id="search-exact">
                   Exact
                 </label>
-              </div>
+              </fieldset>
             </form>
             {% else %}
             <!-- <form class="uk-search uk-search-default"

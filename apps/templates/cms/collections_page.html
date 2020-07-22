@@ -79,7 +79,7 @@
           {{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}
         </div>
         <p>
-          {{collection.summary|safe}}
+          {{collection.summary|truncatewords_html:50|safe}}
         </p>
       </div>
     </div>

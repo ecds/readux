@@ -110,19 +110,19 @@
 
       <ul>
         {% for collection in page.collections %}
-        <li class="uk-grid">
-          <article class="rx-article uk-width-1-1">
-            <div class="rx-card-image-container">
+        <li class="uk-grid" style="margin-top:0;">
+          <article class="rx-article uk-width-1-1" style="padding-left:5px;margin-top:1.5em;margin-bottom:1.5em;">
+            <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
               <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
                 style="background-image: url('https://127.0.0.1:3000/media/{{collection.header}}'); // background-position: 77% 52% !important;"></a>
             </div>
-            <div class="rx-card-body uk-width-3-1">
+            <div class="rx-card-body uk-width-3-1" style="padding-left: 40px;">
               <a class="nav-link" href="{% url 'collection' collection.pid %}">
                 <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
                 <div class="rx-title-tagline">{{collection.manifests.all|length}}
                   volume{{collection.manifests.all|length|pluralize}}
                 </div>
-                <p class="rx-card-text">{{ collection.summary|safe }}</p>
+                <p class="rx-card-text">{{ collection.summary|truncatewords_html:40|safe }}</p>
               </a>
             </div>
           </article>
@@ -165,7 +165,7 @@
         <article class="uk-grid rx-article">
           <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
             <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-              <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
+              <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label|truncatechars:50}}">
               </v-volume-image>
             </a>
 

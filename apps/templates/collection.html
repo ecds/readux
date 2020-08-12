@@ -34,8 +34,28 @@
   {% include "snippets/sort_dropdown.html" %}
   <!--TODO: include ascending/descending sort feature-->
 
+  <!--TODO: move inline styles into project CSS-->
+  <div class="pagination" style="margin-bottom:20px">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?page=1" style="margin-right:5px;">&laquo; first</a>
+              <a href="?page={{ page_obj.previous_page_number }}" style="margin-right:5px;">previous</a>
+          {% endif %}
+
+          <span class="current" style="margin:0px,5px;">
+              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+          </span>
+
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}" style="margin-left:5px;">next</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}" style="margin-left:5px;">last &raquo;</a>
+          {% endif %}
+      </span>
+  </div>
+
+
    <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
-   {% for volume in volumes %}
+   {% for volume in page_obj %}
   {% if volume.canvas_set.first.pid is null %}
       <div class="uk-width-1-2@m uk-grid-medium">
         <div class=" uk-width-1-4@m">

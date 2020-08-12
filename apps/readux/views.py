@@ -87,11 +87,16 @@ class VolumesList(ListView):
         })
         return context
 
-class CollectionDetail(TemplateView):
+class CollectionDetail(ListView):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""
     template_name = "collection.html"
     SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
     ORDER_OPTIONS = ['asc', 'desc']
+    paginate_by = 10
+
+    def get_queryset(self):
+        self.object_list = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests.all()
+        return self.object_list
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -132,7 +137,7 @@ class CollectionDetail(TemplateView):
             del sort_url_params['sort']
 
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
-        context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
+        context['collection'] = Collection.objects.filter(pid=self.kwargs['collection']).first()
         context['volumes'] = q.all
         context['manifest_query_set'] = q
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)

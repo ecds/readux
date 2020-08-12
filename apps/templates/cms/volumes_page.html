@@ -105,6 +105,7 @@
         <li>Author: {{volume.author|truncatechars:150}}</li>
         <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
         <li>
+        {% if user.is_authenticated %}
           {% has_user_annotations volume user as result %}
           {% if result %}
           <span class="count-icon">
@@ -113,6 +114,7 @@
             <span class="count">{% user_annotation_count volume user %}</span>
           </span>
           {% endif %}
+        {% endif %}
         </li>
       </ul>
     </div>

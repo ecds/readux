@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load url_replace %}
 {% block content %}
 <div>
 
@@ -38,8 +39,8 @@
   <div class="pagination" style="margin-bottom:20px">
       <span class="step-links">
           {% if page_obj.has_previous %}
-              <a href="?page=1" style="margin-right:5px;">&laquo; first</a>
-              <a href="?page={{ page_obj.previous_page_number }}" style="margin-right:5px;">previous</a>
+              <a href="?{% url_replace page=page %}" style="margin-right:5px;">&laquo; first</a>
+              <a href="?{% url_replace page=page_obj.previous_page_number %}" style="margin-right:5px;">previous</a>
           {% endif %}
 
           <span class="current" style="margin:0px,5px;">
@@ -47,8 +48,8 @@
           </span>
 
           {% if page_obj.has_next %}
-              <a href="?page={{ page_obj.next_page_number }}" style="margin-left:5px;">next</a>
-              <a href="?page={{ page_obj.paginator.num_pages }}" style="margin-left:5px;">last &raquo;</a>
+              <a href="?{% url_replace page=page_obj.next_page_number %}" style="margin-left:5px;">next</a>
+              <a href="?{% url_replace page=page_obj.num_pages %}" style="margin-left:5px;">last &raquo;</a>
           {% endif %}
       </span>
   </div>

@@ -95,8 +95,37 @@ class CollectionDetail(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        self.object_list = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests.all()
-        return self.object_list
+        sort = self.request.GET.get('sort', None)
+        order = self.request.GET.get('order', None)
+        q = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests.all()
+
+        if sort is None:
+            sort = 'title'
+        if order is None:
+            order = 'asc'
+
+        if sort == 'title':
+            if order == 'asc':
+                q = q.order_by('label')
+            elif order == 'desc':
+                q = q.order_by('-label')
+        elif sort == 'author':
+            if order == 'asc':
+                q = q.order_by('author')
+            elif order == 'desc':
+                q = q.order_by('-author')
+        elif sort == 'date published':
+            if order == 'asc':
+                q = q.order_by('published_date')
+            elif order == 'desc':
+                q = q.order_by('-published_date')
+        elif sort == 'date added':
+            if order == 'asc':
+                q = q.order_by('created_at')
+            elif order == 'desc':
+                q = q.order_by('-created_at')
+
+        return 	q
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -133,8 +162,8 @@ class CollectionDetail(ListView):
 
         sort_url_params = self.request.GET.copy()
         order_url_params = self.request.GET.copy()
-        if 'sort' in sort_url_params:
-            del sort_url_params['sort']
+#         if 'sort' in sort_url_params:
+#             del sort_url_params['sort']
 
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['collection'] = Collection.objects.filter(pid=self.kwargs['collection']).first()

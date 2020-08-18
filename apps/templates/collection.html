@@ -39,7 +39,7 @@
   <div class="pagination" style="margin-bottom:20px">
       <span class="step-links">
           {% if page_obj.has_previous %}
-              <a href="?{% url_replace page=page %}" style="margin-right:5px;">&laquo; first</a>
+              <a href="?{% url_replace page=page_obj %}" style="margin-right:5px;">&laquo; first</a>
               <a href="?{% url_replace page=page_obj.previous_page_number %}" style="margin-right:5px;">previous</a>
           {% endif %}
 

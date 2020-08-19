@@ -23,7 +23,7 @@ class CanvasResource(resources.ModelResource):
         fields = (
             'id', 'pid', 'position', 'height', 'width',
             'IIIF_IMAGE_SERVER_BASElink', 'manifest_id',
-            'label', 'summary', 'default_ocr'
+            'label', 'summary', 'default_ocr', 'ocr_offset'
         )
 
 class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):

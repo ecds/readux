@@ -78,7 +78,7 @@ class Manifest(ClusterableModel):
     objects = ManifestManager()
     start_canvas = models.ForeignKey(
         'canvases.Canvas',
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         related_name='start_canvas',
         blank=True,
         null=True

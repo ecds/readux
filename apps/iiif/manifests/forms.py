@@ -1,7 +1,8 @@
 """Django Forms for export."""
 from django import forms
-from .models import Manifest
 import logging
+from .models import Manifest
+from ..canvases.models import Canvas
 
 LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +78,10 @@ class ManifestAdminForm(forms.ModelForm):
         )
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
+        if (
+                'instance' in kwargs and
+                hasattr(kwargs['instance'], 'canvas_set') and kwargs['instance'].canvas_set.exists()
+        ):
             self.fields['start_canvas'].queryset = kwargs['instance'].canvas_set.all()
-
+        else:
+            self.fields['start_canvas'].queryset = Canvas.objects.none()

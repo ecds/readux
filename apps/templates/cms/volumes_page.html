@@ -24,8 +24,25 @@
 {% include "snippets/sort_dropdown.html" %}
 
 {% if page.layout == 'Grid' %}
+<div class="pagination" style="margin-bottom:20px">
+    <span class="step-links">
+        {% if volumes.has_previous %}
+            <a href="?page=1" style="margin-right:5px;">&laquo; first</a>
+            <a href="?page={{ volumes.previous_page_number }}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
+        </span>
+
+        {% if volumes.has_next %}
+            <a href="?page={{ volumes.next_page_number }}" style="margin-left:5px;">next</a>
+            <a href="?page={{ volumes.paginator.num_pages }}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 <div class="wrap">
-  {% for volume in volumespage %}
+  {% for volume in volumes %}
   {% if volume.start_canvas.pid is null %}
   <div class="box">
     <div class="boxInner">
@@ -66,8 +83,26 @@
 {% endif %}
 
 {% if page.layout == 'List' %}
+<div class="pagination" style="margin-bottom:20px">
+    <span class="step-links">
+        {% if volumes.has_previous %}
+            <a href="?page=1" style="margin-right:5px;">&laquo; first</a>
+            <a href="?page={{ volumes.previous_page_number }}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
+        </span>
+
+        {% if volumes.has_next %}
+            <a href="?page={{ volumes.next_page_number }}" style="margin-left:5px;">next</a>
+            <a href="?page={{ volumes.paginator.num_pages }}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
-  {% for volume in volumespage %}
+  {% for volume in volumes %}
   {% if volume.start_canvas.pid is null %}
   <div class="uk-width-1-2@m uk-grid-medium">
     <div class="uk-width-1-4@m">

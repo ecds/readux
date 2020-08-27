@@ -11,6 +11,8 @@ from apps.readux.models import UserAnnotation
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import Canvas
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
 
 class ContentPage(Page):
     """Content page"""
@@ -75,6 +77,21 @@ class VolumesPage(Page):
         sort = request.GET.get('sort', None)
         order = request.GET.get('order', None)
         query_set = self.volumes
+
+        paginator = Paginator(query_set, 10) # Show 10 volumes per page
+
+        page = request.GET.get('page')
+        try:
+            volumes = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            volumes = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            volumes = paginator.page(paginator.num_pages)
+
+        # make the variable 'volumes' available on the template
+        context['volumes'] = volumes
 
         sort_options = ['title', 'author', 'date published', 'date added']
         order_options = ['asc', 'desc']

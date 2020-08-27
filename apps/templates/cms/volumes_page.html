@@ -3,6 +3,7 @@
 {% load static %}
 {% load has_user_annotations %}
 {% load user_annotation_count %}
+{% load url_replace %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -27,8 +28,8 @@
 <div class="pagination" style="margin-bottom:20px">
     <span class="step-links">
         {% if volumes.has_previous %}
-            <a href="?page=1" style="margin-right:5px;">&laquo; first</a>
-            <a href="?page={{ volumes.previous_page_number }}" style="margin-right:5px;">previous</a>
+            <a href="?{% url_replace page=volumes %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
         {% endif %}
 
         <span class="current" style="margin:0px,5px;">
@@ -36,8 +37,8 @@
         </span>
 
         {% if volumes.has_next %}
-            <a href="?page={{ volumes.next_page_number }}" style="margin-left:5px;">next</a>
-            <a href="?page={{ volumes.paginator.num_pages }}" style="margin-left:5px;">last &raquo;</a>
+            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=volumes.num_pages %}" style="margin-left:5px;">last &raquo;</a>
         {% endif %}
     </span>
 </div>
@@ -86,8 +87,8 @@
 <div class="pagination" style="margin-bottom:20px">
     <span class="step-links">
         {% if volumes.has_previous %}
-            <a href="?page=1" style="margin-right:5px;">&laquo; first</a>
-            <a href="?page={{ volumes.previous_page_number }}" style="margin-right:5px;">previous</a>
+            <a href="?{% url_replace page=volumes %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
         {% endif %}
 
         <span class="current" style="margin:0px,5px;">
@@ -95,8 +96,8 @@
         </span>
 
         {% if volumes.has_next %}
-            <a href="?page={{ volumes.next_page_number }}" style="margin-left:5px;">next</a>
-            <a href="?page={{ volumes.paginator.num_pages }}" style="margin-left:5px;">last &raquo;</a>
+            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=volumes.num_pages %}" style="margin-left:5px;">last &raquo;</a>
         {% endif %}
     </span>
 </div>

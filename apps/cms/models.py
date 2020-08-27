@@ -78,20 +78,6 @@ class VolumesPage(Page):
         order = request.GET.get('order', None)
         query_set = self.volumes
 
-        paginator = Paginator(query_set, 10) # Show 10 volumes per page
-
-        page = request.GET.get('page')
-        try:
-            volumes = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            volumes = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            volumes = paginator.page(paginator.num_pages)
-
-        # make the variable 'volumes' available on the template
-        context['volumes'] = volumes
 
         sort_options = ['title', 'author', 'date published', 'date added']
         order_options = ['asc', 'desc']
@@ -134,7 +120,21 @@ class VolumesPage(Page):
         elif 'order' in order_url_params:
             del order_url_params['order']
 
-        context['volumespage'] = query_set.all
+        paginator = Paginator(query_set, 10) # Show 10 volumes per page
+
+        page = request.GET.get('page')
+        try:
+            volumes = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            volumes = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            volumes = paginator.page(paginator.num_pages)
+
+        # make the variable 'volumes' available on the template
+        context['volumes'] = volumes
+#        context['volumespage'] = query_set.all
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
         # annocount_list = []
         # canvaslist = []

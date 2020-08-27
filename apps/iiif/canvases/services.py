@@ -110,7 +110,7 @@ def fetch_positional_ocr(canvas):
         return fetch_url(
             "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
                 m=canvas.manifest.pid,
-                p=canvas.pid.split('$')[-1]
+                p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
             )
         )
     if 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:

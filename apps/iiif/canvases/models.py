@@ -35,6 +35,7 @@ class Canvas(models.Model):
     position = models.IntegerField()
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
+    ocr_offset = models.IntegerField(default=0)
     # TODO: make this lowercase
     IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)

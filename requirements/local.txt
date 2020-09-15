@@ -15,7 +15,7 @@ requests==2.22.0
 iiif-prezi==0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty==1.0.2 # https://pypi.org/project/httpretty/
 cssutils==1.0.2 # https://pypi.org/project/cssutils/
-pytest-django==3.8.0  # https://github.com/pytest-dev/pytest-django
+pytest-django==3.10.0  # https://github.com/pytest-dev/pytest-django
 
 # Code quality
 # ------------------------------------------------------------------------------

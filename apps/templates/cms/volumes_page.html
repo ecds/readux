@@ -87,7 +87,7 @@
 <div class="pagination" style="margin-bottom:20px">
     <span class="step-links">
         {% if volumes.has_previous %}
-            <a href="?{% url_replace page=volumes %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
             <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
         {% endif %}
 
@@ -97,7 +97,7 @@
 
         {% if volumes.has_next %}
             <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
-            <a href="?{% url_replace page=volumes.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+            <a href="?{% url_replace page=volumes.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
         {% endif %}
     </span>
 </div>

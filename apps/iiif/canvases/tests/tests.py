@@ -8,7 +8,7 @@ from django.urls import reverse
 import config.settings.local as settings
 from ..models import Canvas, IServer
 from .. import services
-from .factories import CanvasFactory
+from .factories import CanvasFactory, IServerFactory
 from ..apps import CanvasesConfig
 
 
@@ -145,15 +145,8 @@ class CanvasTests(TestCase):
         for num, anno in enumerate(updated_canvas.annotation_set.all(), start=1):
             assert anno.order == num
 
-    @httpretty.activate
     def test_ocr_from_tsv(self):
-        tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
-        url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
-            m=self.canvas.manifest.pid
-        )
-
-        httpretty.register_uri(httpretty.GET, url, body=tsv)
-        iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory/')
+        iiif_server = IServerFactory(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory.fake/')
         canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE=iiif_server, manifest=self.canvas.manifest, pid='boo')
         ocr = canvas.annotation_set.all().first()
         assert ocr.h == 43
@@ -192,7 +185,9 @@ class CanvasTests(TestCase):
         assert response.status_code == 200
         assert len(canvas_list) == 2
 
+    @httpretty.activate
     def test_properties(self):
+        httpretty.register_uri(httpretty.GET, 'https://loris.library.emory.edu')
         assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
         assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, self.assumed_canvas_pid)
         assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)

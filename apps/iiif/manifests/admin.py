@@ -26,6 +26,7 @@ class ManifestResource(resources.ModelResource):
 class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdmin):
     """Django admin configuration for manifests"""
     resource_class = ManifestResource
+    exclude = ('id',)
     filter_horizontal = ('collections',)
     list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
     search_fields = ('id', 'label', 'author', 'published_date')

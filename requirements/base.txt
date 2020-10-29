@@ -45,5 +45,8 @@ gitdb2==2.0.6
 
 django-background-tasks==1.2.5
 
+# S3 Uploads
+boto3==1.16.4
+
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

@@ -114,16 +114,32 @@ def fetch_positional_ocr(canvas):
             )
         )
     if 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return fetch_url(
-            "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/{p}.tsv".format(
-                m=canvas.manifest.pid,
-                p=canvas.pid.split('_')[-1]
-                .replace('.jp2', '')
-                .replace('.jpg', '')
-                .replace('.tif', '')
-            ),
-            format='text'
-        )
+        # Fake TSV data for testing.
+        if 'fake' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+            tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
+            url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
+                m=canvas.manifest.pid
+            )
+            httpretty.enable()
+            httpretty.register_uri(httpretty.GET, url, body=tsv)
+
+        if canvas.ocr_file_path is None:
+            return fetch_url(
+                "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/{p}.tsv".format(
+                    m=canvas.manifest.pid,
+                    p=canvas.pid.split('_')[-1]
+                    .replace('.jp2', '')
+                    .replace('.jpg', '')
+                    .replace('.tif', '')
+                ),
+                format='text'
+            )
+
+        file = open(canvas.ocr_file_path)
+        data = file.read()
+        file.close()
+        return data
+
     return fetch_url(
         "{p}{c}{s}".format(
             p=settings.DATASTREAM_PREFIX,
@@ -155,6 +171,7 @@ def add_positional_ocr(canvas, result):
                             'y': w[1][3]
                         })
     elif 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+        print(result)
 
         reader = csv.DictReader(result.split('\n'), dialect=IncludeQuotesDialect)
 

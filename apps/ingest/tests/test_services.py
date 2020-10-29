@@ -14,7 +14,7 @@ class ServicesTest(TestCase):
     """ Tests for ingest.services """
     def setUp(self):
         """ Set instance variables. """
-        self.fixture_path = os.path.join(settings.APPS_DIR, 'ingest/fixtures/')
+        self.fixture_path = os.path.join(str(settings.APPS_DIR), 'ingest/fixtures/')
 
     @mock_s3
     def test_s3_upload_from_local(self):

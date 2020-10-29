@@ -6,6 +6,7 @@ redis>=2.10.5  # https://github.com/antirez/redis
 bs4
 pyyaml
 progress
+python-memcached==1.59
 
 # Django
 # ------------------------------------------------------------------------------
@@ -37,6 +38,7 @@ git+git://github.com/rkhleics/wagtailmenus.git@ddbc73797cfa9e6c94c1b0850b4ad0bc0
 wagtail-condensedinlinepanel==0.5.3
 git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
+wagtail-cache==1.0.1
 
 # Import/Export
 django-import-export==2.0.2

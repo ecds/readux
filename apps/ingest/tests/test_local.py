@@ -9,7 +9,7 @@ class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
     def setUp(self):
         """ Set instance variables. """
-        self.fixture_path = join(str(settings.APPS_DIR), 'ingest/fixtures/')
+        self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
 
     def test_bundle_upload(self):
         """ It should upload the zip files, unzip relevent files, and clean up. """

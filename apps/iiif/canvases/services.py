@@ -171,7 +171,6 @@ def add_positional_ocr(canvas, result):
                             'y': w[1][3]
                         })
     elif 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        print(result)
 
         reader = csv.DictReader(result.split('\n'), dialect=IncludeQuotesDialect)
 

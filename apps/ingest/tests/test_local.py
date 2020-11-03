@@ -13,10 +13,10 @@ class LocalTest(TestCase):
 
     def test_bundle_upload(self):
         """ It should upload the zip files, unzip relevent files, and clean up. """
-        for bundle in ['bundle.zip', 'nested_volume.zip']:
+        for bundle in ['bundle.zip', 'nested_volume.zip', 'csv_meta.zip']:
             local = Local()
             local.bundle = SimpleUploadedFile(
-                name='bundle.zip',
+                name=bundle,
                 content=open(join(self.fixture_path, bundle), 'rb').read()
             )
             local.save()
@@ -30,3 +30,36 @@ class LocalTest(TestCase):
             assert exists(image_directory_path) is False
             assert exists(ocr_directory_path) is False
             assert exists(local.bundle.path) is False # pylint: disable=no-member
+
+    def test_metadata_from_excel(self):
+        local = Local()
+        local.bundle = SimpleUploadedFile(
+            name='bundle.zip',
+            content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
+        )
+        local.save()
+        local.create_manifest()
+
+        assert local.manifest.pid == 'sqn75'
+
+    def test_metadata_from_csv(self):
+        local = Local()
+        local.bundle = SimpleUploadedFile(
+            name='csv_meta.zip',
+            content=open(join(self.fixture_path, 'csv_meta.zip'), 'rb').read()
+        )
+        local.save()
+        local.create_manifest()
+
+        assert local.manifest.pid == 'sqn75'
+
+    def test_no_metadata_file(self):
+        local = Local()
+        local.bundle = SimpleUploadedFile(
+            name='no_meta_file.zip',
+            content=open(join(self.fixture_path, 'no_meta_file.zip'), 'rb').read()
+        )
+        local.save()
+        local.create_manifest()
+
+        assert local.manifest.pid == ''

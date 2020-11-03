@@ -9,8 +9,8 @@ from .services import UploadBundle
 # There are so many arguments because background tasks can't take objects as arguments.
 # All arguments "must all be serializable as JSON."
 @background(schedule=1)
-def create_canvases(
-    manifest_id, image_server_id, image_file_name, image_file_path, position, ocr_file_path
+def create_canvas_task(
+    manifest_id, image_server_id, image_file_name, image_file_path, position, ocr_file_path, is_testing=False
 ):
     """Background task to create canvases and upload images.
 
@@ -28,7 +28,6 @@ def create_canvases(
     :type ocr_file_path: str
     """
     manifest = Manifest.objects.get(pk=manifest_id)
-    print(manifest)
     image_server = IServer.objects.get(pk=image_server_id)
     canvas = Canvas(
         manifest=manifest,
@@ -38,7 +37,9 @@ def create_canvases(
         position=position
     )
     canvas.save()
-    upload = UploadBundle(canvas, image_file_path)
-    upload.upload_bundle()
+    if not is_testing:
+        upload = UploadBundle(canvas, image_file_path)
+        upload.upload_bundle()
     remove(image_file_path)
     remove(ocr_file_path)
+    return canvas

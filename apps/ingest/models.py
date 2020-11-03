@@ -10,7 +10,7 @@ from tablib import Dataset
 from django.db import models
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import IServer
-from .tasks import create_canvases
+from .tasks import create_canvas_task
 
 def make_temp_file():
     """Creates a temporary directory.
@@ -99,8 +99,15 @@ class Local(models.Model):
         for file in self.zip_ref.namelist():
             if 'metadata' in file.casefold():
                 self.zip_ref.extract(file, path=self.temp_file_path)
-                with open(os.path.join(self.temp_file_path, file), 'rb') as meta_file:
-                    return Dataset().load(meta_file)
+
+                meta_file = os.path.join(self.temp_file_path, file)
+
+                if 'csv' in guess_type(meta_file)[0]:
+                    with open(meta_file, 'r', encoding='utf-8-sig') as file:
+                        return Dataset().load(file)
+
+                with open(meta_file, 'rb') as file:
+                    return Dataset().load(file)
 
         return None
 
@@ -130,28 +137,34 @@ class Local(models.Model):
         :return: New or updated Manifest with supplied `pid`
         :rtype: iiif.manifest.models.Manifest
         """
+        manifest = None
         # Make a copy of the metadata so we don't extract it over and over.
         metadata = self.metadata
-        attributes = {}
-        for prop in metadata.headers:
-            label = prop.casefold()
-            value = metadata[prop][0]
-            # pylint: disable=multiple-statements
-            # I wish Python had switch statements.
-            if label == 'pid': attributes['pid'] = value
-            elif label == 'label': attributes['label'] = value
-            elif label == 'summary': attributes['summary'] = value
-            elif label == 'author': attributes['author'] = value
-            elif label == 'published city': attributes['published_city'] = value
-            elif label == 'published date': attributes['published_date'] = value
-            elif label == 'publisher': attributes['publisher'] = value
-            elif label == 'pdf': attributes['pdf'] = value
-            # pylint: enable=multiple-statements
-        manifest, created = Manifest.objects.get_or_create(pid=attributes['pid'])
-        for (key, value) in attributes.items():
-            setattr(manifest, key, value)
-        if created:
-            manifest.canvas_set.all().delete()
+        if metadata is not None:
+            attributes = {}
+            for prop in metadata.headers:
+                label = prop.casefold()
+                value = metadata[prop][0]
+                # pylint: disable=multiple-statements
+                # I wish Python had switch statements.
+                if label == 'pid': attributes['pid'] = value
+                elif label == 'label': attributes['label'] = value
+                elif label == 'summary': attributes['summary'] = value
+                elif label == 'author': attributes['author'] = value
+                elif label == 'published city': attributes['published_city'] = value
+                elif label == 'published date': attributes['published_date'] = value
+                elif label == 'publisher': attributes['publisher'] = value
+                elif label == 'pdf': attributes['pdf'] = value
+                # pylint: enable=multiple-statements
+            manifest, created = Manifest.objects.get_or_create(pid=attributes['pid'])
+            for (key, value) in attributes.items():
+                setattr(manifest, key, value)
+            if created:
+                manifest.canvas_set.all().delete()
+
+        else:
+            manifest = Manifest()
+
         manifest.save()
         self.manifest = manifest
 
@@ -163,11 +176,13 @@ class Local(models.Model):
         if self.manifest is None:
             self.create_manifest()
 
-        for index, image_file in enumerate(os.listdir(self.image_directory)):
+        for index, image_file in enumerate(sorted(os.listdir(self.image_directory))):
             ocr_file_name = [
                 f for f in os.listdir(self.ocr_directory) if f.startswith(image_file.split('.')[0])
             ][0]
-            create_canvases(
+
+            # Set up a background task to create the canvas.
+            create_canvas_task(
                 manifest_id=self.manifest.id,
                 image_server_id=self.image_server.id,
                 image_file_name=image_file,

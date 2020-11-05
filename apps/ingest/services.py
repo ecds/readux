@@ -28,5 +28,5 @@ class UploadBundle:
         self.s3_client.upload_file(
             self.file,
             self.canvas.IIIF_IMAGE_SERVER_BASE.storage_path,
-            '{d}/{p}'.format(d=self.canvas.manifest.pid, p=self.canvas.pid)
+            '{d}/{p}'.format(d=self.canvas.manifest.pid, p=self.file.split('/')[-1])
         )

@@ -36,10 +36,10 @@ def create_canvas_task(
         ocr_file_path=ocr_file_path,
         position=position
     )
-    canvas.save()
     if not is_testing:
         upload = UploadBundle(canvas, image_file_path)
         upload.upload_bundle()
+    canvas.save()
     remove(image_file_path)
     remove(ocr_file_path)
     return canvas

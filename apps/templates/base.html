@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}Readux{% endblock title %}</title>
+    <meta property="og:site" content="Readux 2 - Read, Annotate, Publish" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -36,12 +37,19 @@
     {% endif %}
     <meta property="og:image:width" content="600" />
     {% endif %}{% endfor %}
-    {% else %}
+    {% elif page.title %}
     <meta property="og:title" content="{{ page.title }}" />
     <meta name="twitter:title" content="{{ page.title }}" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
     <meta property="og:description" content="{{ page.tagline|striptags }}" />
     <meta name="twitter:description" content="{{ page.tagline|striptags }}" />
+    {% else %}
+    {% block extra_head %}{% endblock %}
+    <meta property="og:title" content="Readux 2" />
+    <meta name="twitter:title" content="Readux 2" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta property="og:description" content="Read, Annotate, Publish" />
+    <meta name="twitter:description" content="Read, Annotate, Publish" />
     <!--<meta property="og:url" content="https://readux.ecds.emory.edu" />-->
     {% endif %}
     <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />

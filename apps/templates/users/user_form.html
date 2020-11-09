@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+{% block extra_head %}
+    <meta property="og:title" content="Readux - User Page" />
+    <meta name="twitter:title" content="Readux - User Page" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta property="og:description" content="Readux - manage your User account." />
+    <meta name="twitter:description" content="Readux - manage your User account." />
+{% endblock %}
+
 {% load crispy_forms_tags %}
 
 {% block title %}{{ user.username }}{% endblock %}

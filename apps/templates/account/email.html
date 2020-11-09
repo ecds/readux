@@ -1,4 +1,11 @@
 {% extends "account/base.html" %}
+{% block extra_head %}
+    <meta property="og:title" content="Readux - User email" />
+    <meta name="twitter:title" content="Readux - User email" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta property="og:description" content="Manage your User email address." />
+    <meta name="twitter:description" content="Manage your User email address." />
+{% endblock %}
 
 {% load i18n %}
 {% load crispy_forms_tags %}

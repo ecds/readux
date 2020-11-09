@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
 {% load static %}
-
+{% block extra_head %}
+    <meta property="og:title" content="Readux - Search" />
+    <meta name="twitter:title" content="Readux - Site Search" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta property="og:description" content="Search the Readux volumes. Get results of a full text search of all volumes." />
+    <meta name="twitter:description" content="Search the Readux volumes. Get results of a full text search of all volumes." />
+{% endblock %}
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}

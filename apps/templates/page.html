@@ -230,6 +230,10 @@
         {% endif %}
         -->
 
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Title</div>
+          <div class="rx-info-content-value">{{ volume.label }}</div>
+        </div>
 
         <div class="rx-info-content">
           <div class="rx-info-content-label">Authors</div>
@@ -274,6 +278,24 @@
           </div>
         </div>
         {% endif %}
+        
+      </div>
+    </div>
+
+    <div class="rx-info">
+      <div class="rx-info-title">Attribution</div>
+
+      <div class="rx-info-content-container">
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Institution</div>
+          <div class="rx-info-content-value">{{ volume.attribution }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">License</div>
+          <div class="rx-info-content-value">{{ volume.license }}</div>
+        </div>
 
       </div>
     </div>

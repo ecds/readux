@@ -95,13 +95,17 @@ function fetchResults() {
     .then(data => {
       ocrAnnotationCount = data.ocr_annotations.length;
       userAnnotationCount = data.user_annotations.length;
+      userAnnotationIndexCount = data.user_annotations_index.length;
       ocrAnnotationUL = document.getElementById('ocr-annotation-results');
       ocrAnnotationUL.innerHTML = '';
       userAnnotationUL = document.getElementById('user-annotation-results');
       userAnnotationUL.innerHTML = '';
+      userAnnotationIndexUL = document.getElementById('user-annotations-index-results');
+      userAnnotationIndexUL.innerHTML = '';
 
       document.getElementById('annotation-count').innerText = `${ocrAnnotationCount}`;
       document.getElementById('user-annotation-count').innerText = `${userAnnotationCount}`;
+      document.getElementById('user-annotations-index-count').innerText = `${userAnnotationIndexCount}`;
 
 
       if (ocrAnnotationCount > 0) {
@@ -126,6 +130,30 @@ function fetchResults() {
         const noResultsP = document.createElement('p');
         noResultsP.innerText = 'No results in the text in this volume';
         ocrAnnotationUL.appendChild(noResultsP);
+      }
+
+      if (userAnnotationIndexCount > 0) {
+        data.user_annotations_index.forEach(result => {
+          const annos = JSON.parse(result);
+          const resultsLi = document.createElement('li');
+          const resultsA = document.createElement('a');
+          resultsA.href = '#';
+          resultsA.addEventListener('click', event => {
+            event.preventDefault();
+            let parts = window.location.pathname.split('/');
+            parts.pop();
+            parts.push(annos.canvas__pid);
+            history.pushState({}, '', `${window.location.origin}${parts.join('/')}`);
+            dispatchEvent(popStateEvent);
+          })
+          resultsA.innerText = `Canvas ${annos.canvas__position} - number of results ${annos.canvas__position__count}`;
+          resultsLi.appendChild(resultsA);
+          userAnnotationIndexUL.appendChild(resultsLi);
+        });
+      } else {
+        const noResultsPs = document.createElement('p');
+        noResultsPs.innerText = 'No results in your annotations in this volume';
+        userAnnotationIndexUL.appendChild(noResultsPs);
       }
 
       if (userAnnotationCount > 0) {

@@ -45,7 +45,7 @@
 
 
   <nav class="rx-flex-parent" uk-navbar id="rx-page-info-panel">
-    
+
     <div class="rx-flex-child">
       <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
         <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
@@ -136,7 +136,7 @@
         </li>
       </ul>
     </div>
-      
+
   </nav>
 
   <div id="offcanvas-usage" uk-offcanvas="flip: true">
@@ -195,6 +195,7 @@
             <ul class="uk-tab" uk-switcher>
               <li><a href="#"><span id="annotation-count"></span> hits in text</a></li>
               <li><a href="#"><span id="user-annotation-count"></span> hits in your annotations</a></li>
+              <li><a href="#">annotation index (<span id="user-annotations-index-count"></span>)</a></li>
             </ul>
             <!-- end of nav head -->
             <!-- nav body -->
@@ -206,6 +207,10 @@
               <li>
                 <!-- Search results list are populated by project.js -->
                 <ul class="uk-padding-remove" id="user-annotation-results"></ul>
+              </li>
+              <li>
+                <!-- Annotation index list is populated by project.js -->
+                <ul class="uk-padding-remove" id="user-annotations-index-results"></ul>
               </li>
             </ul>
             <!-- end of nav body -->
@@ -278,7 +283,7 @@
           </div>
         </div>
         {% endif %}
-        
+
       </div>
     </div>
 

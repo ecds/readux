@@ -34,6 +34,9 @@ class SearchManifestCanvas(View):
         ).filter(
             canvas__manifest__label=manifest.label
         )
+        user_annotations_index = UserAnnotation.objects.filter(
+            owner_id=self.request.user.id
+        )
         fuzzy_search = Q()
         query = SearchQuery('')
         vector = SearchVector('content')
@@ -42,7 +45,8 @@ class SearchManifestCanvas(View):
         results = {
             'search_terms': search_strings,
             'ocr_annotations': [],
-            'user_annotations': []
+            'user_annotations': [],
+            'user_annotations_index': []
         }
 
         if search_strings:
@@ -96,6 +100,19 @@ class SearchManifestCanvas(View):
 
             for ua_annotation in user_annotation_results:
                 results['user_annotations'].append(json.dumps(ua_annotation))
+
+            user_annotations_index_results = user_annotations_index.values(
+                'canvas__position',
+                'canvas__manifest__pid',
+                'canvas__pid'
+                ).annotate(
+                    Count('canvas__position')
+                ).order_by(
+                    'canvas__position'
+                ).distinct()
+
+            for ua_annotation_index in user_annotations_index_results:
+                results['user_annotations_index'].append(json.dumps(ua_annotation_index))
 
         return results
 

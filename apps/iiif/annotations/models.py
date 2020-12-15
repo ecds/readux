@@ -45,7 +45,7 @@ class AbstractAnnotation(models.Model):
     w = models.IntegerField()
     h = models.IntegerField()
     order = models.IntegerField(default=0)
-    content = models.CharField(max_length=1000)
+    content = models.TextField(blank=True, null=True)
     resource_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default=TEXT)
     motivation = models.CharField(max_length=50, choices=MOTIVATION_CHOICES, default=PAINTING)
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)

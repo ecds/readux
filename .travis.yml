@@ -1,11 +1,12 @@
 language: python
 python:
-- '3.5'
 - '3.6'
 - '3.7'
 - '3.8'
+- '3.9'
 services: postgresql
 before_install:
+- sudo apt install libjpeg-dev libopenjp2-7-dev libopenjp2-tools
 - export DATABASE_URL=postgres://postgres@localhost:5432/travisci
 - cp config/settings/local.travis config/settings/local.py
 - mkdir logs

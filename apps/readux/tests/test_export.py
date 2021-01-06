@@ -116,7 +116,7 @@ class ManifestExportTests(TestCase):
             contents = page_file.read()
         # Depending on the order the tests are run, there might be more or less in the database.
         # TODO: Why does the database not get reset?
-        assert 4 <= contents.count('<span') <= 6
+        assert contents.count('<span id') == Canvas.objects.get(id='7261fae2-a24e-4a1c-9743-516f6c4ea0c9').annotation_set.count()
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 

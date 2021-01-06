@@ -1,6 +1,7 @@
 """Django models representing IIIF canvases and IIIF image server info."""
 import uuid
 from bs4 import BeautifulSoup
+import tempfile
 import config.settings.local as settings
 from django.apps import apps
 from django.db import models
@@ -16,11 +17,19 @@ USER = get_user_model()
 # TODO: move this to the manifest model
 class IServer(models.Model):
     """Django model for IIIF image server info. Each canvas has one IServer"""
+
+    STORAGE_SERVICES = (
+        ('sftp', 'SFTP'),
+        ('s3', 'S3')
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     IIIF_IMAGE_SERVER_BASE = models.CharField(
         max_length=255,
         default=settings.IIIF_IMAGE_SERVER_BASE
     )
+    storage_service = models.CharField(max_length=10, choices=STORAGE_SERVICES, default='sftp')
+    storage_path = models.CharField(max_length=255)
 
     def __str__(self):
         return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
@@ -46,6 +55,7 @@ class Canvas(models.Model):
     )
     # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
+    ocr_file_path = models.FilePathField(path=tempfile.gettempdir(), recursive=True, allow_folders=True, null=True, blank=True)
 
     @property
     def identifier(self):
@@ -177,13 +187,14 @@ class Canvas(models.Model):
         Override save function to add OCR and set as manifest's
         `start_canvas` if manifest does not have one.
         """
+        super(Canvas, self).save(*args, **kwargs)
+
         if self._state.adding or not self.annotation_set.exists():
             self.__add_ocr()
 
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()
 
-        super(Canvas, self).save(*args, **kwargs)
 
     def __str__(self):
         return str(self.pid)

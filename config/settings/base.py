@@ -107,9 +107,8 @@ LOCAL_APPS = [
     'apps.readux.apps.ReaduxConfig',
     'apps.cms.apps.CmsConfig',
     'apps.templates',
-    'apps.custom_styles.apps.CustomStylesConfig'
-    # 'apps.readux.collection.apps.CollectionAppConfig',
-    # 'apps.readux.volumes.apps.VolumesAppConfig',
+    'apps.custom_styles.apps.CustomStylesConfig',
+    'apps.ingest.apps.IngestConfig'
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -216,6 +215,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
         'DIRS': [
             str(APPS_DIR.path('templates')),
+            str(APPS_DIR.path('ingest/templates')),
         ],
         'OPTIONS': {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-debug

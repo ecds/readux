@@ -343,6 +343,23 @@ class PageDetail(TemplateView):
         #     context['qs2'] = qs2
         # except MultiValueDictKeyError:
         #     q = ''
+        user_annotation_index = UserAnnotation.objects.all()
+
+        user_annotation_index = user_annotation_index.filter(canvas__manifest__label=manifest.label)
+
+        user_annotation_index = user_annotation_index.filter(owner_id=self.request.user.id).distinct()
+
+        user_annotation_index = user_annotation_index.values(
+                 'canvas__position',
+                 'canvas__manifest__label',
+                 'canvas__pid'
+             ).annotate(
+                 Count(
+                     'canvas__position')
+                 ).order_by('canvas__position')
+
+        context['user_annotation_index'] = user_annotation_index
+
 
         return context
 

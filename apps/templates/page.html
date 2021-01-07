@@ -45,7 +45,7 @@
 
 
   <nav class="rx-flex-parent" uk-navbar id="rx-page-info-panel">
-    
+
     <div class="rx-flex-child">
       <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
         <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
@@ -136,7 +136,7 @@
         </li>
       </ul>
     </div>
-      
+
   </nav>
 
   <div id="offcanvas-usage" uk-offcanvas="flip: true">
@@ -229,6 +229,14 @@
         </ul>
         {% endif %}
         -->
+        {% if user_annotation_index %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Your Annotation Index</div>
+          {% for answer in user_annotation_index %}{% if answer.canvas__manifest__label in volume.label %}
+          <div class="rx-info-content-value">Canvas {{ answer.canvas__position }} ({{ answer.canvas__position__count }} annotations)</div>
+          {% endif %}{% endfor %}
+        </div>
+        {% endif %}
 
         <div class="rx-info-content">
           <div class="rx-info-content-label">Title</div>
@@ -278,7 +286,7 @@
           </div>
         </div>
         {% endif %}
-        
+
       </div>
     </div>
 

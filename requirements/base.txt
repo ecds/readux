@@ -47,3 +47,5 @@ django-background-tasks==1.2.5
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme
+
+django-guardian

@@ -7,14 +7,97 @@ from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, User
 from abc import abstractmethod
 from bs4 import BeautifulSoup
+from guardian.shortcuts import assign_perm, get_objects_for_user, \
+    get_objects_for_group, get_perms_for_model, get_perms
+from guardian.models import UserObjectPermission, GroupObjectPermission
 import json
 import uuid
 import logging
 
 USER = get_user_model()
 LOGGER = logging.getLogger(__name__)
+
+class AnnotationQuerySet(models.QuerySet):
+    'Custom :class:`~django.models.QuerySet` for :class:`Annotation`'
+
+    def visible_to(self, user):
+        """
+        Return annotations the specified user is allowed to view.
+        Objects are found based on view_user_annotation permission and
+        per-object permissions.  Generally, superusers can view all
+        annotations; users can access only their own annotations or
+        those where permissions have been granted to a group they belong to.
+
+        .. Note::
+            Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
+            it is recommended to use this method must be used first; it
+            does combine the existing queryset query, but it does not
+            chain as querysets normally do.
+
+        """
+        qs = get_objects_for_user(user, 'view_user_annotation',
+                                    Annotation)
+        # combine the current queryset query, if any, with the newly
+        # created queryset from django guardian
+        qs.query.combine(self.query, 'AND')
+        return qs
+
+    def visible_to_group(self, group):
+        """
+        Return annotations the specified group is allowed to view.
+        Objects are found based on view_user_annotation permission and
+        per-object permissions.
+
+        .. Note::
+            Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
+            it is recommended to use this method first; it does combine
+            the existing queryset query, but it does not chain as querysets
+            normally do.
+
+        """
+        qs = get_objects_for_group(group, 'view_user_annotation',
+                                   Annotation)
+        # combine current queryset query, if any, with the newly
+        # created queryset from django guardian
+        qs.query.combine(self.query, 'AND')
+        return qs
+
+    def last_created_time(self):
+        '''Creation time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except Annotation.DoesNotExist:
+            pass
+
+    def last_updated_time(self):
+        '''Update time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except Annotation.DoesNotExist:
+            pass
+
+
+class AnnotationManager(models.Manager):
+    '''Custom :class:`~django.models.Manager` for :class:`Annotation`.
+    Returns :class:`AnnotationQuerySet` as default queryset, and exposes
+    :meth:`visible_to` for convenience.'''
+
+    def get_queryset(self):
+        return AnnotationQuerySet(self.model, using=self._db)
+
+    def visible_to(self, user):
+        'Convenience access to :meth:`AnnotationQuerySet.visible_to`'
+        return self.get_queryset().visible_to(user)
+
+    def visible_to_group(self, group):
+        'Convenience access to :meth:`AnnotationQuerySet.visible_to_group`'
+        return self.get_queryset().visible_to_group(group)
+
 
 class AbstractAnnotation(models.Model):
     """Base class for IIIF annotations."""
@@ -73,9 +156,15 @@ class Annotation(AbstractAnnotation):
             raise ValidationError('Content cannot be empty')
         super(Annotation, self).save(*args, **kwargs)
 
+    objects = AnnotationManager()
+
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         ordering = ['order']
         abstract = False
+        permissions = (
+            ('view_user_annotation', 'View annotation'),
+            ('admin_annotation', 'Manage annotation'),
+        )
 
 @receiver(signals.pre_save, sender=Annotation)
 def set_span_element(sender, instance, **kwargs):
@@ -117,3 +206,29 @@ def set_span_element(sender, instance, **kwargs):
         instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {ls}px;}}".format(
             c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size), ls=str(letter_spacing)
         )
+
+
+
+class AnnotationGroup(Group):
+    """Annotation Group; extends :class:`django.contrib.auth.models.Group`.
+
+    Intended to facilitate group permissions on annotations.
+    """
+    # inherits name from Group
+    #: optional notes field
+    notes = models.TextField(blank=True)
+    #: datetime annotation was created; automatically set when added
+    created = models.DateTimeField(auto_now_add=True)
+    #: datetime annotation was last updated; automatically updated on save
+    updated = models.DateTimeField(auto_now=True)
+
+    def num_members(self):
+        return self.user_set.count()
+    num_members.short_description = '# members'
+
+    def __repr__(self):
+        return '<Annotation Group: %s>' % self.name
+
+    @property
+    def annotation_id(self):
+        return 'group:%d' % self.pk

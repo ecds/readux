@@ -97,6 +97,7 @@ THIRD_PARTY_APPS = [
     'wagtailautocomplete',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',
+    'guardian',
 ]
 LOCAL_APPS = [
     'apps.users.apps.UsersAppConfig',
@@ -324,3 +325,5 @@ WAGTAIL_SITE_NAME = 'Readux'
 
 # CORS HEADERS
 CORS_ORIGIN_ALLOW_ALL = True
+
+AUTH_USER_MODEL = "users.User"

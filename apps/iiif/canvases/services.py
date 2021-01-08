@@ -25,10 +25,19 @@ def get_fake_canvas_info(canvas):
     with open('apps/iiif/canvases/fixtures/info.json', 'r') as file:
         iiif_image_info = file.read().replace('\n', '')
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
-    response = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    response = fetch_url(
+        canvas.service_id,
+        timeout=settings.HTTP_REQUEST_TIMEOUT,
+        data_format='json'
+    )
     return response
 
 def get_fake_ocr():
+    """Generate fake OCR data for testing.
+
+    :return: OCR data
+    :rtype: dict
+    """
     return [
         {
             "h": 22,
@@ -94,7 +103,7 @@ def get_canvas_info(canvas):
     if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
         return get_fake_canvas_info(canvas)
 
-    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
 
 # TODO: Maybe add "OCR Source" and "OCR Type" attributes to the manifest model. That might
 # help make this more universal.
@@ -132,7 +141,7 @@ def fetch_positional_ocr(canvas):
                     .replace('.jpg', '')
                     .replace('.tif', '')
                 ),
-                format='text'
+                data_format='text'
             )
 
         file = open(canvas.ocr_file_path)
@@ -144,7 +153,7 @@ def fetch_positional_ocr(canvas):
         "{p}{c}{s}".format(
             p=settings.DATASTREAM_PREFIX,
             c=canvas.pid.replace('fedora:', ''),
-            s=settings.DATASTREAM_SUFFIX), format='text/plain'
+            s=settings.DATASTREAM_SUFFIX), data_format='text/plain'
         )
 
 def add_positional_ocr(canvas, result):
@@ -217,7 +226,7 @@ def fetch_alto_ocr(canvas):
         p=settings.DATASTREAM_PREFIX,
         c=canvas.pid.replace('fedora:', '')
     )
-    return fetch_url(url, format='text/plain')
+    return fetch_url(url, data_format='text/plain')
 
 def add_alto_ocr(result):
     """Function to add fetched Alto OCR data for a given canvas.

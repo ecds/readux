@@ -10,7 +10,7 @@ from tablib import Dataset
 from django.db import models
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import IServer
-from .tasks import create_canvas_task
+import apps.ingest.tasks as tasks
 
 def make_temp_file():
     """Creates a temporary directory.
@@ -80,10 +80,10 @@ class Local(models.Model):
         """
         path = None
         for file in self.zip_ref.namelist():
-            if 'ocr' in file.casefold():
+            if 'ocr' in file.casefold() and '__MACOSX' not in file:
                 self.zip_ref.extract(file, path=self.temp_file_path)
         for directory in self.bundle_dirs:
-            if 'ocr/' in directory.filename.casefold():
+            if 'ocr/' in directory.filename.casefold() and '__MACOSX' not in directory.filename:
                 path = os.path.join(self.temp_file_path, directory.filename)
         self.zip_ref.close()
         self.__remove_none_text_files(path)
@@ -94,25 +94,32 @@ class Local(models.Model):
         """
         Extract metadata from file.
         :return: If metadata file exists, returns the values. If no file, returns None.
-        :rtype: tablib.core.Dataset or None
+        :rtype: dict or None
         """
+        metadata = None
         for file in self.zip_ref.namelist():
-            if 'metadata' in file.casefold():
+            if 'metadata' in file.casefold() and '__MACOSX' not in file:
                 self.zip_ref.extract(file, path=self.temp_file_path)
 
                 meta_file = os.path.join(self.temp_file_path, file)
 
                 if 'csv' in guess_type(meta_file)[0]:
+                    print('^^^^^^^^^^^^^^^^^^^^ ' + meta_file + ' ^^^^^^^^^^^^^^^^^^^^^^^^')
                     with open(meta_file, 'r', encoding='utf-8-sig') as file:
-                        return Dataset().load(file)
+                        metadata = Dataset().load(file)
+                else:
+                    with open(meta_file, 'rb') as file:
+                        metadata = Dataset().load(file)
 
-                with open(meta_file, 'rb') as file:
-                    return Dataset().load(file)
+        if metadata is not None:
+            metadata = self.__clean_metadata(metadata)
 
-        return None
+        return metadata
 
     @staticmethod
     def __remove_none_images(path):
+        print('***************')
+        print(path)
         for image_file in os.listdir(path):
             image_file_path = os.path.join(path, image_file)
             if imghdr.what(image_file_path) is None:
@@ -131,42 +138,27 @@ class Local(models.Model):
                 else:
                     os.remove(ocr_file_path)
 
-    def create_manifest(self):
-        """
-        Create or update a Manifest from supplied metadata and images.
-        :return: New or updated Manifest with supplied `pid`
-        :rtype: iiif.manifest.models.Manifest
-        """
-        manifest = None
-        # Make a copy of the metadata so we don't extract it over and over.
-        metadata = self.metadata
-        if metadata is not None:
-            attributes = {}
-            for prop in metadata.headers:
-                label = prop.casefold()
-                value = metadata[prop][0]
-                # pylint: disable=multiple-statements
-                # I wish Python had switch statements.
-                if label == 'pid': attributes['pid'] = value
-                elif label == 'label': attributes['label'] = value
-                elif label == 'summary': attributes['summary'] = value
-                elif label == 'author': attributes['author'] = value
-                elif label == 'published city': attributes['published_city'] = value
-                elif label == 'published date': attributes['published_date'] = value
-                elif label == 'publisher': attributes['publisher'] = value
-                elif label == 'pdf': attributes['pdf'] = value
-                # pylint: enable=multiple-statements
-            manifest, created = Manifest.objects.get_or_create(pid=attributes['pid'])
-            for (key, value) in attributes.items():
-                setattr(manifest, key, value)
-            if created:
-                manifest.canvas_set.all().delete()
+    @staticmethod
+    def __clean_metadata(metadata):
+        """Remove keys that do not aligin with Manifest fields.
 
-        else:
-            manifest = Manifest()
+        :param metadata:
+        :type metadata: tablib.Dataset
+        :return: Dictionary with keys matching Manifest fields
+        :rtype: dict
+        """
+        metadata = {k.casefold().replace(' ', '_'): v for k, v in metadata.dict[0].items()}
+        fields = [f.name for f in Manifest._meta.get_fields()]
+        invalid_keys = []
 
-        manifest.save()
-        self.manifest = manifest
+        for key in metadata.keys():
+            if key not in fields:
+                invalid_keys.append(key)
+
+        for invalid_key in invalid_keys:
+            metadata.pop(invalid_key)
+        print(metadata)
+        return metadata
 
     def add_canvases(self):
         """
@@ -174,23 +166,34 @@ class Local(models.Model):
         and upload the files to the IIIF server store.
         """
         if self.manifest is None:
-            self.create_manifest()
+            self.manifest = tasks.create_manifest(self)
 
-        self_dict = self.__dict__
-        self_dict['image_directory'] = self.image_directory
-        self_dict['ocr_directory'] = self.ocr_directory
+        tasks.create_canvas_task(self)
 
-        create_canvas_task(
-                manifest_id=self.manifest.id,
-                image_server_id=self.image_server.id,
-                image_file_name=image_file,
-                image_file_path=os.path.join(self.image_directory, image_file),
-                position=index + 1,
-                ocr_file_path=os.path.join(self.temp_file_path, self.ocr_directory, ocr_file_name)
-            )
+        # for index, image_file in enumerate(sorted(os.listdir(self.image_directory))):
+        #     ocr_file_name = [
+        #         f for f in os.listdir(self.ocr_directory) if f.startswith(image_file.split('.')[0])
+        #     ][0]
+
+        #     # Set up a background task to create the canvas.
+        #     create_canvas_task(
+        #         manifest_id=self.manifest.id,
+        #         image_server_id=self.image_server.id,
+        #         image_file_name=image_file,
+        #         image_file_path=os.path.join(self.image_directory, image_file),
+        #         position=index + 1,
+        #         ocr_file_path=os.path.join(self.temp_file_path, self.ocr_directory, ocr_file_name)
+        #     )
+
+        # local.clean_up()
 
     def clean_up(self):
         """ Method to clean up all the files. This is really only applicable for testing. """
         rmtree(self.temp_file_path)
         os.remove(self.bundle.path)
         self.delete()
+
+class Remote(models.Model):
+    """ Model class for ingesting a volume from remote manifest. """
+    remote_url = models.CharField(max_length=255)
+    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)

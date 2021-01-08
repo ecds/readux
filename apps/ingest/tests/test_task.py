@@ -5,8 +5,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tests.factories import IServerFactory
-from ..models import Local
-from ..tasks import create_canvas_task
+from apps.ingest.models import Local
+from ..tasks import create_canvas_task, create_manifest
 
 class CreateCanvasTaskTest(TestCase):
     """ Tests for the ..tasks.create_canvas_task """
@@ -28,8 +28,11 @@ class CreateCanvasTaskTest(TestCase):
         )
 
         local.save()
-        local.create_manifest()
+        local.manifest = create_manifest(local)
         local.save()
+
+        for key in local.metadata.keys():
+            assert getattr(local.manifest, key) == local.metadata[key]
 
         # for index, image_file in enumerate(sorted(os.listdir(local.image_directory))):
         #     ocr_file_name = [

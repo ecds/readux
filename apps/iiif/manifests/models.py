@@ -19,6 +19,25 @@ def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
     return JSONEncoder_olddefault(self, o)
 JSONEncoder.default = JSONEncoder_newdefault
 
+class IServer(models.Model):
+    """Django model for IIIF image server info. Each canvas has one IServer"""
+
+    STORAGE_SERVICES = (
+        ('sftp', 'SFTP'),
+        ('s3', 'S3')
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=True)
+    server_base = models.CharField(
+        max_length=255,
+        default=settings.IIIF_IMAGE_SERVER_BASE
+    )
+    storage_service = models.CharField(max_length=10, choices=STORAGE_SERVICES, default='sftp')
+    storage_path = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "%s" % (self.server_base)
+
 class ManifestManager(models.Manager): # pylint: disable = too-few-public-methods
     """Model manager for searches."""
     def with_documents(self):
@@ -83,6 +102,7 @@ class Manifest(ClusterableModel):
         blank=True,
         null=True
     )
+    image_server = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
 
     def get_absolute_url(self):
         """Absolute URL for manifest

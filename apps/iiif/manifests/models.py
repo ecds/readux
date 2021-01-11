@@ -19,8 +19,8 @@ def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
     return JSONEncoder_olddefault(self, o)
 JSONEncoder.default = JSONEncoder_newdefault
 
-class IServer(models.Model):
-    """Django model for IIIF image server info. Each canvas has one IServer"""
+class ImageServer(models.Model):
+    """Django model for IIIF image server info. Each canvas has one ImageServer"""
 
     STORAGE_SERVICES = (
         ('sftp', 'SFTP'),
@@ -89,7 +89,7 @@ class Manifest(ClusterableModel):
     collections = models.ManyToManyField(Collection, blank=True, related_name='manifests')
     pdf = models.URLField()
     metadata = JSONField(default=dict, blank=True)
-    viewingDirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
+    viewingdirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     autocomplete_search_field = 'label'
@@ -102,7 +102,7 @@ class Manifest(ClusterableModel):
         blank=True,
         null=True
     )
-    image_server = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
+    # image_server = models.ForeignKey(ImageServer, on_delete=models.CASCADE, null=True)
 
     def get_absolute_url(self):
         """Absolute URL for manifest

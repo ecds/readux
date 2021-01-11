@@ -45,7 +45,7 @@ class Serializer(JSONSerializer):
                 )
 
             if obj.metadata == {}:
-                obj.metadata = None;
+                obj.metadata = None
 
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
@@ -108,7 +108,7 @@ class Serializer(JSONSerializer):
                 "attribution": obj.attribution,
                 "logo": obj.thumbnail_logo,
                 "license": obj.license,
-                "viewingDirection": obj.viewingDirection,
+                "viewingDirection": obj.viewingdirection,
                 "viewingHint": "paged",
                 "sequences": [
                     {

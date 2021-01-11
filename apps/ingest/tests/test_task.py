@@ -6,10 +6,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.tests.factories import ImageServerFactory
-from apps.ingest.models import Local, Remote
-import apps.ingest.tasks as tasks
-
-class IngestTasksTest(TestCase):
     """ Tests for the ..tasks.create_canvas_task """
     def setUp(self):
         """ Set instance variables. """

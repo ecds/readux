@@ -80,10 +80,10 @@ class Local(models.Model):
         """
         path = None
         for file in self.zip_ref.namelist():
-            if 'ocr' in file.casefold() and '__MACOSX' not in file:
+            if 'ocr' in file.casefold():
                 self.zip_ref.extract(file, path=self.temp_file_path)
         for directory in self.bundle_dirs:
-            if 'ocr/' in directory.filename.casefold() and '__MACOSX' not in directory.filename:
+            if 'ocr/' in directory.filename.casefold():
                 path = os.path.join(self.temp_file_path, directory.filename)
         self.zip_ref.close()
         self.__remove_none_text_files(path)
@@ -98,13 +98,12 @@ class Local(models.Model):
         """
         metadata = None
         for file in self.zip_ref.namelist():
-            if 'metadata' in file.casefold() and '__MACOSX' not in file:
+            if 'metadata' in file.casefold():
                 self.zip_ref.extract(file, path=self.temp_file_path)
 
                 meta_file = os.path.join(self.temp_file_path, file)
 
                 if 'csv' in guess_type(meta_file)[0]:
-                    print('^^^^^^^^^^^^^^^^^^^^ ' + meta_file + ' ^^^^^^^^^^^^^^^^^^^^^^^^')
                     with open(meta_file, 'r', encoding='utf-8-sig') as file:
                         metadata = Dataset().load(file)
                 else:
@@ -118,8 +117,6 @@ class Local(models.Model):
 
     @staticmethod
     def __remove_none_images(path):
-        print('***************')
-        print(path)
         for image_file in os.listdir(path):
             image_file_path = os.path.join(path, image_file)
             if imghdr.what(image_file_path) is None:

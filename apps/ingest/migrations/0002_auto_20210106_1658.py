@@ -8,7 +8,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('manifests', '0013_auto_20210106_1658'),
         ('ingest', '0001_squashed_0005_auto_20201027_1653'),
     ]
 

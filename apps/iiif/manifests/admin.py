@@ -20,7 +20,7 @@ class ManifestResource(resources.ModelResource):
         fields = (
             'id', 'pid', 'label', 'summary', 'author',
             'published_city', 'published_date', 'publisher',
-            'pdf', 'metadata', 'viewingDirection', 'collection_id'
+            'pdf', 'metadata', 'viewingdirection', 'collection_id'
         )
 
 class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdmin):

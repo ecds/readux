@@ -1,11 +1,11 @@
-""" Background task for creating canvases for ingest. """
+""" Common tasks for ingest. """
 from os import listdir, path, remove
 from background_task import background
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.models import Manifest
+from urllib.parse import urlparse
 from .services import UploadBundle
 from apps.utils.fetch import fetch_url
-from urllib.parse import urlparse
 
 @background(schedule=1)
 def create_canvas_task(
@@ -26,64 +26,38 @@ def create_canvas_task(
     :param ocr_file_path: Absolute path to the OCR file
     :type ocr_file_path: str
     """
-    manifest = Manifest.objects.get(pk=manifest_id)
-    image_server = IServer.objects.get(pk=image_server_id)
-    canvas = Canvas(
-        manifest=manifest,
-        pid='{m}_{f}'.format(m=manifest.pid, f=image_file_name),
-        IIIF_IMAGE_SERVER_BASE=image_server,
-        ocr_file_path=ocr_file_path,
-        position=position
-    )
-    if not is_testing:
-        upload = UploadBundle(canvas, image_file_path)
-        upload.upload_bundle()
-    canvas.save()
-    remove(image_file_path)
-    remove(ocr_file_path)
-    return canvas
+    for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+        ocr_file_name = [
+            f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
+        ][0]
 
-# @background(schedule=1)
-# def create_canvas_task(ingest, is_testing=False):
-#     """Background task to create canvases and upload images.
+        image_file_path = path.join(ingest.image_directory, image_file)
+        position = index + 1
+        ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
-#     :param ingest: Files to be ingested
-#     :type ingest: apps.ingest.models.local
-#     """
-#     manifest = Manifest.objects.get(pk=ingest['manifest_id'])
-#     image_server = IServer.objects.get(pk=ingest['image_server_id'])
-
-#     for index, image_file in enumerate(sorted(listdir(ingest['image_directory']))):
-#         ocr_file_name = [
-#             f for f in listdir(ingest['ocr_directory']) if f.startswith(image_file.split('.')[0])
-#         ][0]
-
-#         # Set up a background task to create the canvas.
-#         # create_canvas_task(
-#         #     manifest_id=ingest.manifest.id,
-#         #     image_server_id=ingest.image_server.id,
-#         #     image_file_name=image_file,
-#         # )
-#         image_file_path = path.join(ingest['image_directory'], image_file)
-#         position = index + 1
-#         ocr_file_path = path.join(ingest['temp_file_path'], ingest['ocr_directory'], ocr_file_name)
-
-#         canvas = Canvas(
-#             manifest=manifest,
-#             pid='{m}_{f}'.format(m=manifest.pid, f=image_file),
-#             IIIF_IMAGE_SERVER_BASE=image_server,
-#             ocr_file_path=ocr_file_path,
-#             position=position
-#         )
-#         if not is_testing:
-#             upload = UploadBundle(canvas, image_file_path)
-#             upload.upload_bundle()
-#         canvas.save()
-#         remove(image_file_path)
-#         remove(ocr_file_path)
-        # return canvas
+        canvas = Canvas(
+            manifest=ingest.manifest,
+            pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
+            IIIF_IMAGE_SERVER_BASE=ingest.image_server,
+            ocr_file_path=ocr_file_path,
+            position=position
+        )
+        if not is_testing:
+            upload = UploadBundle(canvas, image_file_path)
+            upload.upload_bundle()
+        canvas.save()
+        remove(image_file_path)
+        remove(ocr_file_path)
 
     ingest.clean_up()
+
+def create_remote_canvases(ingest):
+    """Task to create Canavs objects from remote IIIF manifest
+
+    :param ingest: Ingest model object
+    :type ingest: apps.ingest.models.Remote
+    """
+
 
 def create_manifest(ingest):
     """
@@ -95,30 +69,6 @@ def create_manifest(ingest):
     # Make a copy of the metadata so we don't extract it over and over.
     metadata = ingest.metadata
     if metadata is not None:
-        # attributes = {k.casefold().replace(' ', '_'): v for k, v in metadata.dict[0].items()}
-        # fields = [f.name for f in Manifest._meta.get_fields()]
-        # invalid_keys = []
-        # for key in attributes.keys():
-        #     if key not in fields:
-        #         invalid_keys.append(key)
-
-        # for key in invalid_keys:
-        #     attributes.pop(key)
-
-        # for prop in metadata.headers:
-        #     label = prop.casefold()
-        #     value = metadata[prop][0]
-            # pylint: disable=multiple-statements
-            # I wish Python had switch statements.
-            # if label == 'pid': attributes['pid'] = value
-            # elif label == 'label': attributes['label'] = value
-            # elif label == 'summary': attributes['summary'] = value
-            # elif label == 'author': attributes['author'] = value
-            # elif label == 'published city': attributes['published_city'] = value
-            # elif label == 'published date': attributes['published_date'] = value
-            # elif label == 'publisher': attributes['publisher'] = value
-            # elif label == 'pdf': attributes['pdf'] = value
-            # pylint: enable=multiple-statements
         manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'])
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
@@ -140,20 +90,53 @@ def parse_iiif_v2_manifest(data):
     :return: Extracted metadata
     :rtype: dict
     """
-    metadata = {}
-    url = urlparse(data['@id'])
-    metadata['pid'] = '{h}-{i}'.format(h=url.hostname, i=url.path.split('/')[-2])
-    metadata['label'] = data['label']
-    metadata['summary'] = data['description']
-    # for property in data['metadata']:
+    properties = {}
+    for property in [{prop['label']: prop['value']} for prop in data['metadata']]:
+        properties.update(property)
+    manifest_data = [{prop: data[prop]} for prop in data if type(data[prop]) == str]
+    for datum in manifest_data:
+        properties.update(datum)
+    properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
+    properties['summary'] = data['description']
 
-    return metadata
+    if 'logo' in properties:
+        properties.pop('logo')
 
-def create_derivative_manifest(remote):
+    manifest_metadata = clean_metadata(properties)
+    manifest_metadata['image_server'] = __extract_image_server(data['sequences'][0]['canvases'][0])
+
+    return manifest_metadata
+
+def create_derivative_manifest(ingest):
     """ Take a remote IIIF manifest and create a derivative version. """
-    data = fetch_url(remote.remote_url)
+    data = fetch_url(ingest.remote_url)
     extracted_data = None
     if data['@context'] == 'http://iiif.io/api/presentation/2/context.json':
         extracted_data = parse_iiif_v2_manifest(data)
 
-    remote.manifest = Manifest()
+    setattr(ingest, 'metadata', extracted_data)
+
+def clean_metadata(metadata):
+    """Remove keys that do not aligin with Manifest fields.
+
+    :param metadata:
+    :type metadata: tablib.Dataset
+    :return: Dictionary with keys matching Manifest fields
+    :rtype: dict
+    """
+    metadata = {k.casefold().replace(' ', '_'): v for k, v in metadata.items()}
+    fields = [f.name for f in Manifest._meta.get_fields()]
+    invalid_keys = []
+
+    for key in metadata.keys():
+        if key not in fields:
+            invalid_keys.append(key)
+
+    for invalid_key in invalid_keys:
+        metadata.pop(invalid_key)
+
+    return metadata
+
+def __extract_image_server(canvas):
+    url = urlparse(canvas['@id'])
+    return '{s}://{h}/iiif'.format(s=url.scheme, h=url.hostname)

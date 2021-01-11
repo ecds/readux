@@ -1,0 +1,1312 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu/manifest.json",
+  "@type": "sc:Manifest",
+  "attribution": "The Internet Archive",
+  "description": "Electronic reproduction. digitized.",
+  "label": "Address by Hon. Frederick Douglass",
+  "logo": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcReMN4l9cgu_qb1OwflFeyfHcjp8aUfVNSJ9ynk2IfuHwW1I4mDSw",
+  "metadata": [
+    {
+      "label": "title",
+      "value": "Address by Hon. Frederick Douglass, delivered in the Metropolitan A.M.E. Church, Washington, D.C., Tuesday, January 9th, 1894, on the lessons of the hour : in which he discusses the various aspects of the so-called, but mis-called, Negro problem"
+    },
+    {
+      "label": "publisher",
+      "value": "Baltimore : Press of Thomas & Evans"
+    },
+    {
+      "label": "subject",
+      "value": "African Americans"
+    },
+    {
+      "label": "date",
+      "value": "1894"
+    },
+    {
+      "label": "contributor",
+      "value": "Emory University, Robert W. Woodruff Library"
+    },
+    {
+      "label": "creator",
+      "value": "Douglass, Frederick, 1818-1895. Metropolitan A.M.E. Church (Washington, D.C.)"
+    }
+  ],
+  "related": "http://archive.org/details/09359080.4757.emory.edu",
+  "seeAlso": "http://archive.org/metadata/09359080.4757.emory.edu",
+  "sequences": [
+    {
+      "@context": "http://iiif.io/api/image/2/context.json",
+      "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu/canvas/default",
+      "@type": "sc:Sequence",
+      "canvases": [
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$0/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$0/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$0/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$0/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$0",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$1/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$1/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$1/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$1/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$1",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$2/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$2/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$2/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$2/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$2",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$3/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$3/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$3/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$3/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$3",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$4/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$4/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$4/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$4/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$4",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$5/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$5/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$5/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$5/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$5",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$6/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$6/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$6/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$6/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$6",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$7/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$7/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$7/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$7/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$7",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$8/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$8/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$8/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$8/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$8",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$9/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$9/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$9/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$9/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$9",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$10/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$10/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$10/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$10/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$10",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$11/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$11/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$11/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$11/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$11",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$12/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$12/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$12/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$12/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$12",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$13/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$13/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$13/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$13/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$13",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$14/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$14/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$14/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$14/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$14",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$15/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$15/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$15/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$15/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$15",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$16/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$16/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$16/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$16/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$16",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$17/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$17/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$17/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$17/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$17",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$18/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$18/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$18/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$18/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$18",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$19/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$19/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$19/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$19/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$19",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$20/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$20/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$20/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$20/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$20",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$21/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$21/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$21/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$21/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$21",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$22/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$22/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$22/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$22/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$22",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$23/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$23/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$23/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$23/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$23",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$24/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$24/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$24/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$24/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$24",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$25/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$25/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$25/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$25/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$25",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$26/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$26/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$26/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$26/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$26",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$27/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$27/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$27/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$27/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$27",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$28/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$28/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$28/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$28/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$28",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$29/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$29/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$29/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$29/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$29",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$30/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$30/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$30/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$30/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$30",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$31/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$31/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$31/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$31/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$31",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$32/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$32/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$32/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$32/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$32",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$33/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$33/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$33/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$33/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$33",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$34/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$34/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$34/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$34/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$34",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$35/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$35/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$35/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$35/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$35",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$36/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$36/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$36/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$36/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$36",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$37/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2909,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$37/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$37/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$37/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2909,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$37",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2040
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2040
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$38/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$38/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$38/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$38/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$38",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$39/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$39/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$39/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$39/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$39",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$40/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$40/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$40/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$40/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$40",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        },
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$41/canvas",
+          "@type": "sc:Canvas",
+          "description": "",
+          "height": 2908,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$41/annotation",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "on": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$41/annotation",
+              "resource": {
+                "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$41/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 2908,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "https://iiif.archivelab.org/iiif/09359080.4757.emory.edu$41",
+                  "profile": "https://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "width": 2039
+              }
+            }
+          ],
+          "label": "p. ",
+          "width": 2039
+        }
+      ],
+      "label": "default"
+    }
+  ],
+  "thumbnail": {
+    "@id": "https://ia801601.us.archive.org/BookReader/BookReaderPreview.php?id=09359080.4757.emory.edu&subPrefix=09359080_4757&itemPath=/0/items/09359080.4757.emory.edu&server=ia801601.us.archive.org&page=preview&"
+  },
+  "viewingHint": "paged",
+  "viewingDirection": "left-to-right"
+}

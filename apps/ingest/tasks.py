@@ -1,6 +1,7 @@
 """ Background task for creating canvases for ingest. """
 from os import listdir, path, remove
 from background_task import background
+from django.apps import apps
 from apps.iiif.canvases.models import Canvas
 from .services import UploadBundle
 
@@ -44,12 +45,14 @@ from .services import UploadBundle
 #     return canvas
 
 @background(schedule=1)
-def create_canvas_task(ingest, is_testing=False):
+def create_canvas_task(ingest_id, is_testing=False):
     """Background task to create canvases and upload images.
 
     :param ingest: Files to be ingested
     :type ingest: apps.ingest.models.local
     """
+    Local = apps.get_model('ingest', 'Local')
+    ingest = Local.objects.get(pk=ingest_id)
     # manifest = Manifest.objects.get(pk=manifest_id)
     # image_server = IServer.objects.get(pk=image_server_id)
 

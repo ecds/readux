@@ -176,7 +176,7 @@ class Local(models.Model):
         if self.manifest is None:
             self.create_manifest()
 
-        create_canvas_task(self)
+        create_canvas_task(ingest_id=self.id)
 
         # for index, image_file in enumerate(sorted(os.listdir(self.image_directory))):
         #     ocr_file_name = [

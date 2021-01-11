@@ -29,6 +29,7 @@ class CreateCanvasTaskTest(TestCase):
 
         local.save()
         local.create_manifest()
+        local.save()
 
         # for index, image_file in enumerate(sorted(os.listdir(local.image_directory))):
         #     ocr_file_name = [
@@ -39,7 +40,7 @@ class CreateCanvasTaskTest(TestCase):
 
         new_canvas_task = create_canvas_task.now
 
-        new_canvas_task(local, is_testing=True)
+        new_canvas_task(local.id, is_testing=True)
 
         local.manifest.refresh_from_db()
 

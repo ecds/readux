@@ -73,7 +73,7 @@ class ManifestAdminForm(forms.ModelForm):
         fields = (
             'id', 'pid', 'label', 'summary', 'author',
             'published_city', 'published_date', 'publisher',
-            'pdf', 'metadata', 'viewingDirection', 'collections',
+            'pdf', 'metadata', 'viewingdirection', 'collections',
             'start_canvas'
         )
     def __init__(self, *args, **kwargs):

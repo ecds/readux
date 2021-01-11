@@ -8,6 +8,7 @@ from tempfile import mkdtemp
 from zipfile import ZipFile
 from tablib import Dataset
 from django.db import models
+from apps.utils.fetch import fetch_url
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import IServer
 import apps.ingest.tasks as tasks
@@ -80,10 +81,10 @@ class Local(models.Model):
         """
         path = None
         for file in self.zip_ref.namelist():
-            if 'ocr' in file.casefold() and '__MACOSX' not in file:
+            if 'ocr' in file.casefold():
                 self.zip_ref.extract(file, path=self.temp_file_path)
         for directory in self.bundle_dirs:
-            if 'ocr/' in directory.filename.casefold() and '__MACOSX' not in directory.filename:
+            if 'ocr/' in directory.filename.casefold():
                 path = os.path.join(self.temp_file_path, directory.filename)
         self.zip_ref.close()
         self.__remove_none_text_files(path)
@@ -98,13 +99,12 @@ class Local(models.Model):
         """
         metadata = None
         for file in self.zip_ref.namelist():
-            if 'metadata' in file.casefold() and '__MACOSX' not in file:
+            if 'metadata' in file.casefold():
                 self.zip_ref.extract(file, path=self.temp_file_path)
 
                 meta_file = os.path.join(self.temp_file_path, file)
 
                 if 'csv' in guess_type(meta_file)[0]:
-                    print('^^^^^^^^^^^^^^^^^^^^ ' + meta_file + ' ^^^^^^^^^^^^^^^^^^^^^^^^')
                     with open(meta_file, 'r', encoding='utf-8-sig') as file:
                         metadata = Dataset().load(file)
                 else:
@@ -112,14 +112,12 @@ class Local(models.Model):
                         metadata = Dataset().load(file)
 
         if metadata is not None:
-            metadata = self.__clean_metadata(metadata)
+            metadata = tasks.clean_metadata(metadata.dict[0])
 
         return metadata
 
     @staticmethod
     def __remove_none_images(path):
-        print('***************')
-        print(path)
         for image_file in os.listdir(path):
             image_file_path = os.path.join(path, image_file)
             if imghdr.what(image_file_path) is None:
@@ -138,28 +136,6 @@ class Local(models.Model):
                 else:
                     os.remove(ocr_file_path)
 
-    @staticmethod
-    def __clean_metadata(metadata):
-        """Remove keys that do not aligin with Manifest fields.
-
-        :param metadata:
-        :type metadata: tablib.Dataset
-        :return: Dictionary with keys matching Manifest fields
-        :rtype: dict
-        """
-        metadata = {k.casefold().replace(' ', '_'): v for k, v in metadata.dict[0].items()}
-        fields = [f.name for f in Manifest._meta.get_fields()]
-        invalid_keys = []
-
-        for key in metadata.keys():
-            if key not in fields:
-                invalid_keys.append(key)
-
-        for invalid_key in invalid_keys:
-            metadata.pop(invalid_key)
-        print(metadata)
-        return metadata
-
     def add_canvases(self):
         """
         Method to kick off a background task to create the apps.iiif.canvases.models.Canvas objects
@@ -169,23 +145,6 @@ class Local(models.Model):
             self.manifest = tasks.create_manifest(self)
 
         tasks.create_canvas_task(self)
-
-        # for index, image_file in enumerate(sorted(os.listdir(self.image_directory))):
-        #     ocr_file_name = [
-        #         f for f in os.listdir(self.ocr_directory) if f.startswith(image_file.split('.')[0])
-        #     ][0]
-
-        #     # Set up a background task to create the canvas.
-        #     create_canvas_task(
-        #         manifest_id=self.manifest.id,
-        #         image_server_id=self.image_server.id,
-        #         image_file_name=image_file,
-        #         image_file_path=os.path.join(self.image_directory, image_file),
-        #         position=index + 1,
-        #         ocr_file_path=os.path.join(self.temp_file_path, self.ocr_directory, ocr_file_name)
-        #     )
-
-        # local.clean_up()
 
     def clean_up(self):
         """ Method to clean up all the files. This is really only applicable for testing. """
@@ -197,3 +156,22 @@ class Remote(models.Model):
     """ Model class for ingesting a volume from remote manifest. """
     remote_url = models.CharField(max_length=255)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+
+    @property
+    def metadata(self):
+        """ Holder for Manifest metadata.
+
+        :return: Extracted metadata from from remote manifest
+        :rtype: dict
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, value):
+        """ Setter for self.metadata """
+        self._metadata = value
+
+# from apps.ingest.tasks import create_derivative_manifest
+# remote = Remote()
+# remote.remote_url = 'https://iiif.archivelab.org/iiif/09359080.4757.emory.edu/manifest.json'
+# create_derivative_manifest(remote)

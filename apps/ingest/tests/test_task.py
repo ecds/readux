@@ -40,18 +40,37 @@ class CreateCanvasTaskTest(TestCase):
 
         new_canvas_task = create_canvas_task.now
 
-        local_dict = local.__dict__
-        local_dict['image_directory'] = local.image_directory
-        local_dict['ocr_directory'] = local.ocr_directory
+        # local_dict = local.__dict__
+        # local_dict['image_directory'] = local.image_directory
+        # local_dict['ocr_directory'] = local.ocr_directory
 
-        new_canvas_task(local_dict, is_testing=True)
+        # new_canvas_task(local_dict, is_testing=True)
 
         local.manifest.refresh_from_db()
 
-        new_canvas = Canvas.objects.get(pid='{m}_00000001.jpg'.format(m=local.manifest.pid))
-        # Check to make sure everything was cleaned up.
-        assert os.path.exists(new_canvas.ocr_file_path) is False
-        # assert os.path.exists(image_file_path) is False
+        for index, image_file in enumerate(sorted(os.listdir(local.image_directory))):
+            ocr_file_name = [
+                f for f in os.listdir(local.ocr_directory) if f.startswith(image_file.split('.')[0])
+            ][0]
+
+            image_file_path = os.path.join(local.image_directory, image_file)
+
+            new_canvas_task = create_canvas_task.now
+
+            new_canvas = new_canvas_task(
+                manifest_id=local.manifest.id,
+                image_server_id=local.image_server.id,
+                image_file_name=image_file,
+                image_file_path=image_file_path,
+                position=index + 1,
+                ocr_file_path=os.path.join(
+                    local.temp_file_path, local.ocr_directory, ocr_file_name
+                ),
+                is_testing=True
+            )
+
+            assert os.path.exists(new_canvas.ocr_file_path) is False
+            assert os.path.exists(image_file_path) is False
 
         assert local.manifest.canvas_set.all().count() == 10
         assert Canvas.objects.get(pid='{m}_00000001.jpg'.format(m=local.manifest.pid)).position == 1

@@ -180,24 +180,14 @@ class Local(models.Model):
         self_dict['image_directory'] = self.image_directory
         self_dict['ocr_directory'] = self.ocr_directory
 
-        create_canvas_task(ingest=self_dict)
-
-        # for index, image_file in enumerate(sorted(os.listdir(self.image_directory))):
-        #     ocr_file_name = [
-        #         f for f in os.listdir(self.ocr_directory) if f.startswith(image_file.split('.')[0])
-        #     ][0]
-
-        #     # Set up a background task to create the canvas.
-        #     create_canvas_task(
-        #         manifest_id=self.manifest.id,
-        #         image_server_id=self.image_server.id,
-        #         image_file_name=image_file,
-        #         image_file_path=os.path.join(self.image_directory, image_file),
-        #         position=index + 1,
-        #         ocr_file_path=os.path.join(self.temp_file_path, self.ocr_directory, ocr_file_name)
-        #     )
-
-        # local.clean_up()
+        create_canvas_task(
+                manifest_id=self.manifest.id,
+                image_server_id=self.image_server.id,
+                image_file_name=image_file,
+                image_file_path=os.path.join(self.image_directory, image_file),
+                position=index + 1,
+                ocr_file_path=os.path.join(self.temp_file_path, self.ocr_directory, ocr_file_name)
+            )
 
     def clean_up(self):
         """ Method to clean up all the files. This is really only applicable for testing. """

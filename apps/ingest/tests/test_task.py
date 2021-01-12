@@ -40,7 +40,11 @@ class CreateCanvasTaskTest(TestCase):
 
         new_canvas_task = create_canvas_task.now
 
-        new_canvas_task(local.id, is_testing=True)
+        local_dict = local.__dict__
+        local_dict['image_directory'] = local.image_directory
+        local_dict['ocr_directory'] = local.ocr_directory
+
+        new_canvas_task(local_dict, is_testing=True)
 
         local.manifest.refresh_from_db()
 

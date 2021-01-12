@@ -1,8 +1,8 @@
 """ Background task for creating canvases for ingest. """
 from os import listdir, path, remove
 from background_task import background
-from django.apps import apps
-from apps.iiif.canvases.models import Canvas
+from apps.iiif.canvases.models import Canvas, IServer
+from apps.iiif.manifests.models import Manifest
 from .services import UploadBundle
 
 # pylint: disable=too-many-arguments
@@ -45,20 +45,18 @@ from .services import UploadBundle
 #     return canvas
 
 @background(schedule=1)
-def create_canvas_task(ingest_id, is_testing=False):
+def create_canvas_task(ingest, is_testing=False):
     """Background task to create canvases and upload images.
 
     :param ingest: Files to be ingested
     :type ingest: apps.ingest.models.local
     """
-    Local = apps.get_model('ingest', 'Local')
-    ingest = Local.objects.get(pk=ingest_id)
-    # manifest = Manifest.objects.get(pk=manifest_id)
-    # image_server = IServer.objects.get(pk=image_server_id)
+    manifest = Manifest.objects.get(pk=ingest['manifest_id'])
+    image_server = IServer.objects.get(pk=ingest['image_server_id'])
 
-    for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+    for index, image_file in enumerate(sorted(listdir(ingest['image_directory']))):
         ocr_file_name = [
-            f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
+            f for f in listdir(ingest['ocr_directory']) if f.startswith(image_file.split('.')[0])
         ][0]
 
         # Set up a background task to create the canvas.
@@ -67,14 +65,14 @@ def create_canvas_task(ingest_id, is_testing=False):
         #     image_server_id=ingest.image_server.id,
         #     image_file_name=image_file,
         # )
-        image_file_path = path.join(ingest.image_directory, image_file)
+        image_file_path = path.join(ingest['image_directory'], image_file)
         position = index + 1
-        ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
+        ocr_file_path = path.join(ingest['temp_file_path'], ingest['ocr_directory'], ocr_file_name)
 
         canvas = Canvas(
-            manifest=ingest.manifest,
-            pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
-            IIIF_IMAGE_SERVER_BASE=ingest.image_server,
+            manifest=manifest,
+            pid='{m}_{f}'.format(m=manifest.pid, f=image_file),
+            IIIF_IMAGE_SERVER_BASE=image_server,
             ocr_file_path=ocr_file_path,
             position=position
         )
@@ -86,4 +84,4 @@ def create_canvas_task(ingest_id, is_testing=False):
         remove(ocr_file_path)
         # return canvas
 
-    ingest.clean_up()
+    # ingest.clean_up()

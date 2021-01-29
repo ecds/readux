@@ -45,7 +45,7 @@
 
 
   <nav class="rx-flex-parent" uk-navbar id="rx-page-info-panel">
-    
+
     <div class="rx-flex-child">
       <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
         <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
@@ -136,7 +136,7 @@
         </li>
       </ul>
     </div>
-      
+
   </nav>
 
   <div id="offcanvas-usage" uk-offcanvas="flip: true">
@@ -278,7 +278,7 @@
           </div>
         </div>
         {% endif %}
-        
+
       </div>
     </div>
 
@@ -373,11 +373,6 @@
 
 {% if page.pid is not None %}
 
-<!--
-        <p id="test"></p>
-        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
-        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
--->
 {% endif %}
 
 {% endblock viewer %}

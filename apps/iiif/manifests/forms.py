@@ -1,6 +1,6 @@
 """Django Forms for export."""
-from django import forms
 import logging
+from django import forms
 from .models import Manifest
 from ..canvases.models import Canvas
 
@@ -66,7 +66,6 @@ class JekyllExportForm(forms.Form):
             self.fields['mode'].choices = self.fields['mode'].choices[:1]
             self.fields['mode'].widget.attrs = {'class': 'uk-radio', 'checked': True}
 
-
 class ManifestAdminForm(forms.ModelForm):
     class Meta:
         model = Manifest
@@ -74,7 +73,7 @@ class ManifestAdminForm(forms.ModelForm):
             'id', 'pid', 'label', 'summary', 'author',
             'published_city', 'published_date', 'publisher',
             'pdf', 'metadata', 'viewingdirection', 'collections',
-            'start_canvas'
+            'image_server', 'start_canvas'
         )
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)

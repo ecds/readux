@@ -15,6 +15,9 @@ def forwards_func(apps, schema_editor):
                 image_server.storage_path = canvas_i_server.storage_path
                 image_server.save()
 
+            manifest.image_server = image_server
+            manifest.save()
+
 def reverse_func(apps, schema_editor):
     Manifest = apps.get_model('manifests', 'Manifest')
     db_alias = schema_editor.connection.alias

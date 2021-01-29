@@ -1,6 +1,7 @@
 # pylint: disable=invalid-name
 """Module to provide some common functions for Canvas objects."""
 import csv
+from os import path
 from xml.etree import ElementTree
 import httpretty
 from django.conf import settings
@@ -83,7 +84,7 @@ def get_ocr(canvas):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
-    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'fake.info' in canvas.manifest.image_server.server_base:
         return get_fake_ocr()
     if canvas.default_ocr == "line":
         result = fetch_alto_ocr(canvas)
@@ -100,7 +101,7 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'fake.info' in str(canvas.manifest.image_server.server_base):
         return get_fake_canvas_info(canvas)
 
     return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
@@ -115,16 +116,28 @@ def fetch_positional_ocr(canvas):
     :return: Positional OCR data
     :rtype: requests.models.Response
     """
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return fetch_url(
-            "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
-                m=canvas.manifest.pid,
-                p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
-            )
+    if 'archivelab' in canvas.manifest.image_server.server_base:
+        url = "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
+            m=canvas.manifest.pid,
+            p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
         )
-    if 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+
+        if 'fake' in canvas.manifest.image_server.server_base:
+            fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+            ocr = fake_ocr.read()
+            fake_ocr.close()
+            httpretty.enable()
+            httpretty.register_uri(
+                httpretty.GET,
+                url,
+                body=ocr,
+                content_type='text/json"'
+            )
+
+        return fetch_url(url)
+    if 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
         # Fake TSV data for testing.
-        if 'fake' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+        if 'fake' in canvas.manifest.image_server.server_base:
             tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
             url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
                 m=canvas.manifest.pid
@@ -166,8 +179,10 @@ def add_positional_ocr(canvas, result):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
+    if result is None:
+        return None
     ocr = []
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'archivelab' in canvas.manifest.image_server.server_base:
         if result is not None and 'ocr' in result and result['ocr'] is not None:
             for index, word in enumerate(result['ocr']): # pylint: disable=unused-variable
                 if len(word) > 0:
@@ -179,7 +194,7 @@ def add_positional_ocr(canvas, result):
                             'x': w[1][0],
                             'y': w[1][3]
                         })
-    elif 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    elif 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
 
         reader = csv.DictReader(result.split('\n'), dialect=IncludeQuotesDialect)
 
@@ -220,7 +235,7 @@ def fetch_alto_ocr(canvas):
     :return: Positional OCR data
     :rtype: requests.models.Response
     """
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'archivelab' in canvas.manifest.image_server.server_base:
         return None
     url = "{p}{c}/datastreams/tei/content".format(
         p=settings.DATASTREAM_PREFIX,

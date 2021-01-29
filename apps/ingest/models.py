@@ -1,17 +1,16 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
-# from bagit import Bag
+from urllib.parse import urlparse
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import mkdtemp
 from zipfile import ZipFile
 from tablib import Dataset
 from django.db import models
+from apps.iiif.manifests.models import Manifest, ImageServer
+import apps.ingest.services as services
 from apps.utils.fetch import fetch_url
-from apps.iiif.manifests.models import Manifest
-from apps.iiif.canvases.models import IServer
-import apps.ingest.tasks as tasks
 
 def make_temp_file():
     """Creates a temporary directory.
@@ -26,7 +25,7 @@ class Local(models.Model):
     """ Model class for ingesting a volume from local files. """
     temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
     bundle = models.FileField(blank=False)
-    image_server = models.ForeignKey(IServer, on_delete=models.DO_NOTHING, null=True)
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     @property
@@ -112,7 +111,7 @@ class Local(models.Model):
                         metadata = Dataset().load(file)
 
         if metadata is not None:
-            metadata = tasks.clean_metadata(metadata.dict[0])
+            metadata = services.clean_metadata(metadata.dict[0])
 
         return metadata
 
@@ -136,16 +135,6 @@ class Local(models.Model):
                 else:
                     os.remove(ocr_file_path)
 
-    def add_canvases(self):
-        """
-        Method to kick off a background task to create the apps.iiif.canvases.models.Canvas objects
-        and upload the files to the IIIF server store.
-        """
-        if self.manifest is None:
-            self.manifest = tasks.create_manifest(self)
-
-        tasks.create_canvas_task(self)
-
     def clean_up(self):
         """ Method to clean up all the files. This is really only applicable for testing. """
         rmtree(self.temp_file_path)
@@ -158,20 +147,65 @@ class Remote(models.Model):
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     @property
-    def metadata(self):
-        """ Holder for Manifest metadata.
+    def image_server(self):
+        """ Image server the Manifest """
+        iiif_url = services.extract_image_server(
+            self.remote_manifest['sequences'][0]['canvases'][0]
+        )
+        server, _created = ImageServer.objects.get_or_create(server_base=iiif_url)
 
-        :return: Extracted metadata from from remote manifest
+        return server
+
+    @property
+    def remote_manifest(self):
+        """Serialized remote IIIF Manifest data.
+
+        :return: IIIF Manifest
         :rtype: dict
         """
-        return self._metadata
+        return fetch_url(self.remote_url)
 
-    @metadata.setter
-    def metadata(self, value):
-        """ Setter for self.metadata """
-        self._metadata = value
+    @property
+    def metadata(self):
+        """ Take a remote IIIF manifest and create a derivative version. """
+        if self.remote_manifest['@context'] == 'http://iiif.io/api/presentation/2/context.json':
+            return self.__parse_iiif_v2_manifest(self.remote_manifest)
 
-# from apps.ingest.tasks import create_derivative_manifest
-# remote = Remote()
-# remote.remote_url = 'https://iiif.archivelab.org/iiif/09359080.4757.emory.edu/manifest.json'
-# create_derivative_manifest(remote)
+        return None
+
+    @staticmethod
+    def __parse_iiif_v2_manifest(data):
+        """Parse IIIF Manifest based on v2.1.1 or the presentation API.
+        https://iiif.io/api/presentation/2.1
+
+        :param data: IIIF Presentation v2.1.1 manifest
+        :type data: dict
+        :return: Extracted metadata
+        :rtype: dict
+        """
+        properties = {}
+
+        for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
+            properties.update(iiif_metadata)
+
+        manifest_data = [{prop: data[prop]} for prop in data if isinstance(data[prop], str)]
+
+        for datum in manifest_data:
+            properties.update(datum)
+
+        properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
+        properties['summary'] = data['description']
+
+        if 'logo' in properties:
+            properties.pop('logo')
+
+        manifest_metadata = services.clean_metadata(properties)
+
+        return manifest_metadata
+
+    @staticmethod
+    def __parse_iiif_v2_canvas(canvas):
+        return {
+            'pid': canvas['@id'].split('/')[-2],
+
+        }

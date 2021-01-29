@@ -49,33 +49,6 @@ class ManifestTests(TestCase):
         self.assumed_pid = self.volume.pid
         self.volume.save()
 
-    # def test_validate_iiif(self):
-    #     volume = self.volume
-    #     manifest = json.loads(
-    #         serialize(
-    #             'manifest',
-    #             [volume],
-    #             version='v2',
-    #             annotators='Tom',
-    #             exportdate=datetime.utcnow()
-    #         )
-    #     )
-    #     reader = ManifestReader(json.dumps(manifest), version='2.1')
-    #     try:
-    #         manifest_reader = reader.read()
-    #         assert manifest_reader.toJSON()
-    #     except Exception as error:
-    #         raise Exception(error)
-
-    #     assert manifest['@id'] == "%s/manifest" % (self.volume.baseurl)
-    #     assert manifest['label'] == self.volume.label
-    #     assert manifest['description'] == volume.summary
-    #     assert manifest['thumbnail']['@id'] == '{h}/{c}/full/600,/0/default.jpg'.format(
-    #         h=self.volume.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
-    #         c=self.start_canvas.pid
-    #     )
-    #     assert manifest['sequences'][0]['startCanvas'] == self.volume.start_canvas
-
     def test_properties(self):
         assert self.volume.publisher_bib == 'Atlanta : ECDS'
         assert self.volume.thumbnail_logo.endswith("/media/logos/ecds.png")

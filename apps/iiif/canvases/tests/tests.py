@@ -6,9 +6,11 @@ import httpretty
 from django.test import TestCase, Client
 from django.urls import reverse
 import config.settings.local as settings
-from ..models import Canvas, IServer
+from apps.iiif.manifests.models import ImageServer
+from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
+from ..models import Canvas
 from .. import services
-from .factories import CanvasFactory, IServerFactory
+from .factories import CanvasFactory
 from ..apps import CanvasesConfig
 
 
@@ -22,10 +24,6 @@ class CanvasTests(TestCase):
         self.assumed_canvas_pid = 'fedora:emory:5622'
         self.assumed_volume_pid = 'readux:st7r6'
         self.assumed_iiif_base = 'https://loris.library.emory.edu'
-
-    def test_default_iiif_image_server_url(self):
-        i_server = IServer()
-        assert i_server.IIIF_IMAGE_SERVER_BASE == settings.IIIF_IMAGE_SERVER_BASE
 
     def test_app_config(self):
         assert CanvasesConfig.verbose_name == 'Canvases'
@@ -71,6 +69,7 @@ class CanvasTests(TestCase):
         }
 
         canvas = Canvas.objects.get(pid='15210893.5622.emory.edu$95')
+        canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
         ocr = services.add_positional_ocr(canvas, valid_ia_ocr_response)
         assert len(ocr) == 17
         for word in ocr:
@@ -126,7 +125,7 @@ class CanvasTests(TestCase):
         httpretty.register_uri(
             httpretty.GET,
             '{b}/{p}'.format(
-                b=self.canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE,
+                b=self.canvas.manifest.image_server.server_base,
                 p=self.canvas.pid
             ),
             body=''
@@ -146,8 +145,9 @@ class CanvasTests(TestCase):
             assert anno.order == num
 
     def test_ocr_from_tsv(self):
-        iiif_server = IServerFactory(IIIF_IMAGE_SERVER_BASE='https://images.readux.ecds.emory.fake/')
-        canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE=iiif_server, manifest=self.canvas.manifest, pid='boo')
+        iiif_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
+        self.canvas.manifest.image_server = iiif_server
+        canvas = CanvasFactory(manifest=self.canvas.manifest, pid='boo')
         ocr = canvas.annotation_set.all().first()
         assert ocr.h == 43
         assert ocr.w == 89
@@ -203,21 +203,20 @@ class CanvasTests(TestCase):
     def test_wide_image_crops(self):
         pid = '15210893.5622.emory.edu$95'
         canvas = Canvas.objects.get(pid=pid)
-        assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
-        assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
-        assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.IIIF_IMAGE_SERVER_BASE, pid)
+        assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.manifest.image_server.server_base, pid)
+        assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.manifest.image_server.server_base, pid)
+        assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, pid)
 
     def test_result_property(self):
         assert self.canvas.result == "a retto , dio Quef\u00eca de'"
 
     def test_no_alto_for_internet_archive(self):
-        # iiif_server = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='https://iiif.archivelab.org/iiif/')
-        # canvas = CanvasFactory(IIIF_IMAGE_SERVER_BASE=iiif_server, manifest=self.canvas.manifest)
+        self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
         assert services.fetch_alto_ocr(self.canvas) is None
 
     def test_get_image_info(self):
-        self.canvas.IIIF_IMAGE_SERVER_BASE = IServer.objects.get(IIIF_IMAGE_SERVER_BASE='http://fake.info')
-        self.canvas.save()
-        updated_canvas = Canvas.objects.get(pk=self.canvas.pk)
-        assert updated_canvas.image_info['height'] == 3000
-        assert updated_canvas.image_info['width'] == 3000
+        image_server = ImageServerFactory.create(server_base='http://fake.info')
+        manifest = ManifestFactory.create(image_server=image_server)
+        canvas = CanvasFactory.create(manifest=manifest)
+        assert canvas.image_info['height'] == 3000
+        assert canvas.image_info['width'] == 3000

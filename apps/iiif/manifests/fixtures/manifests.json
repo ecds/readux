@@ -1,4 +1,31 @@
 [{
+  "model": "manifests.imageserver",
+  "pk": "02ac58b2-2c62-4f67-807e-7927ff191ace",
+  "fields": {
+      "server_base": "https://loris.library.emory.edu"
+  }
+},
+{
+  "model": "manifests.imageserver",
+  "pk": "a7f1bd69-766c-4dd4-ab66-f4051fdd4cff",
+  "fields": {
+      "server_base": "https://iiif.archivelab.org/iiif/"
+  }
+},
+{
+  "model": "manifests.imageserver",
+  "pk": "7d1f0e32-b4e5-4e09-bc70-f692e3780cf7",
+  "fields": {
+      "server_base": "https://images.readux.ecds.emory/"
+  }
+},
+{
+  "model": "manifests.imageserver",
+  "pk": "ad697f1b-766c-4dd4-ab66-f40cff51fdd4",
+  "fields": {
+      "server_base": "http://fake.info"
+  }
+},{
     "model": "manifests.manifest",
     "pk": "464d82f6-6ae5-4503-9afc-8e3cdd92a3f1",
     "fields": {
@@ -14,6 +41,7 @@
       "viewingdirection": "left-to-right",
       "created_at": "2019-04-01T14:41:06.798Z",
       "logo": "awesome.png",
+      "image_server": "02ac58b2-2c62-4f67-807e-7927ff191ace",
       "start_canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
       "collections": [
         "1971fe1e-714f-40f1-9d35-ee0f7a301230"

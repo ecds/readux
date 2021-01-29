@@ -40,7 +40,7 @@
       </div>
 
 
-<!-- 
+<!--
                  {% if qs1 %}
                  <ul class="uk-padding-remove">
                   {% for answer in qs1 %}
@@ -55,10 +55,10 @@
 {% if search_string %}
 <div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
 {% for option in COL_LIST %}
-<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.pid }}&type={{ request.GET.type }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.label }}</button></a>  
+<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.pid }}&type={{ request.GET.type }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.label }}</button></a>
 {% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&type={{ request.GET.type }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
 </div>{% endif %}
-    {% if "?q=" in request.get_full_path %}      
+    {% if "?q=" in request.get_full_path %}
 {% if qs1.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em> in Full Text.</div></span>{% endif %}
 <hr/>
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
@@ -67,7 +67,7 @@
 
     <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
       <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
-<img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+<img src="{{ value.canvas__manifest__image_server_server_base }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
       </a>{% endif %}{% endfor %}
     </div>
     <div class="uk-width-3-4@m">
@@ -100,7 +100,7 @@
   {% endif %}
   </div>
       {% endif %}
-    {% if "?q=" in request.get_full_path %}      
+    {% if "?q=" in request.get_full_path %}
 {% if qs3.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Metadata: Title/Author/Summary.</span><span style="font-size:0.8em;color:#707070;"> (ordered by relevance)</span></div>{% endif %}
 <hr/>
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
@@ -109,7 +109,7 @@
 
     <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
       <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
-<img src="{{ value.canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
+<img src="{{ value.canvas__manifest__image_server_server_base }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
       </a>{% endif %}{% endfor %}
     </div>
     <div class="uk-width-3-4@m">

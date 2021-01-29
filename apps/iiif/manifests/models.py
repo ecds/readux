@@ -1,15 +1,19 @@
 """Django models for IIIF manifests"""
 from uuid import uuid4, UUID
 from json import JSONEncoder
+from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 from modelcluster.models import ClusterableModel
 import config.settings.local as settings
+from ..choices import Choices
 from ..kollections.models import Collection
-
 JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
 
 def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
@@ -24,10 +28,11 @@ class ImageServer(models.Model):
 
     STORAGE_SERVICES = (
         ('sftp', 'SFTP'),
-        ('s3', 'S3')
+        ('s3', 'S3'),
+        ('remote', 'Remote'),
     )
 
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=True)
+    id = models.UUIDField(primary_key=True, default=uuid4)
     server_base = models.CharField(
         max_length=255,
         default=settings.IIIF_IMAGE_SERVER_BASE
@@ -37,6 +42,15 @@ class ImageServer(models.Model):
 
     def __str__(self):
         return "%s" % (self.server_base)
+
+class ValueByLanguage(models.Model):
+    """ Labels by language. """
+    id = models.UUIDField(primary_key=True, default=uuid4)
+    language = models.CharField(max_length=10, choices=Choices.LANGUAGES, default=settings.DEFAULT_LANGUAGE)
+    content = models.TextField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.UUIDField()
+    content_object = GenericForeignKey('content_type', 'object_id')
 
 class ManifestManager(models.Manager): # pylint: disable = too-few-public-methods
     """Model manager for searches."""
@@ -94,6 +108,7 @@ class Manifest(ClusterableModel):
     updated_at = models.DateTimeField(auto_now=True)
     autocomplete_search_field = 'label'
     search_vector = SearchVectorField(null=True, editable=False)
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     objects = ManifestManager()
     start_canvas = models.ForeignKey(
         'canvases.Canvas',
@@ -146,17 +161,16 @@ class Manifest(ClusterableModel):
         """Convenience method to provide the base URL for a manifest."""
         return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
 
-    # TODO: Maybe this should return the canvas object so we can replace
-    # the logic in the serializer that basically makes this same query
-    # to get the thumbnail.
-    # @property
-    # def start_canvas(self):
-    #     """Identifier for first canvas for manifest.
+    @property
+    def related_links(self):
+        """List of links for IIIF v2 'related' field.
 
-    #     :rtype: str
-    #     """
-    #     first = self.canvas_set.all().exclude(is_starting_page=False).first()
-    #     return first.identifier if first else self.canvas_set.all().first().identifier
+        :return: List of links related to Manifest
+        :rtype: list
+        """
+        links = [link.link for link in self.relatedlink_set.all()]
+        links.append(self.get_volume_url())
+        return links
 
     # TODO: Is this needed? It doesn't seem to be called anywhere.
     # Could we just use the label as is?
@@ -176,14 +190,17 @@ class Manifest(ClusterableModel):
     def user_annotation_count(self, user=None):
         if user is None:
             return None
-
         from apps.readux.models import UserAnnotation
         return UserAnnotation.objects.filter(owner=user).filter(canvas__manifest=self).count()
 
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
-        if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
-            self.start_canvas = self.canvas_set.first()
+        Canvas = apps.get_model('canvases.canvas')
+        try:
+            if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
+                self.start_canvas = self.canvas_set.first()
+        except Canvas.DoesNotExist:
+            self.start_canvas = None
 
         super().save(*args, **kwargs)
 
@@ -198,3 +215,13 @@ class Note(models.Model):
     label = models.CharField(max_length=255)
     language = models.CharField(max_length=10, default='en')
     manifest = models.ForeignKey(Manifest, null=True, on_delete=models.CASCADE)
+
+class RelatedLink(models.Model):
+    """ Links to related resources """
+    id = models.UUIDField(primary_key=True, default=uuid4)
+    link = models.CharField(max_length=255)
+    data_type = models.CharField(max_length=255, default='Dataset')
+    label = GenericRelation(ValueByLanguage)
+    format = models.CharField(max_length=255, choices=Choices.MIMETYPES, blank=True, null=True)
+    profile = models.CharField(max_length=255, blank=True, null=True)
+    manifest = models.ForeignKey(Manifest, on_delete=models.CASCADE)

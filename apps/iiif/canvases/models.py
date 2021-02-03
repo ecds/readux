@@ -14,6 +14,18 @@ from . import services
 
 USER = get_user_model()
 
+# TODO: This has moved to Manifest. Remove one everyone has migrated.
+class IServer(models.Model):
+    """Django model for IIIF image server info. Each canvas has one IServer"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    IIIF_IMAGE_SERVER_BASE = models.CharField(
+        max_length=255,
+        default=settings.IIIF_IMAGE_SERVER_BASE
+    )
+
+    def __str__(self):
+        return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
+
 class Canvas(models.Model):
     """Django model for IIIF Canvas objects."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -25,7 +37,8 @@ class Canvas(models.Model):
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     ocr_offset = models.IntegerField(default=0)
-    # TODO: make this lowercase
+    # TODO: This has moved to Manifest. Remove one everyone has migrated.
+    IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
     preferred_ocr = (
         ('word', 'word'),

@@ -1007,6 +1007,7 @@ a.rx-nav-item {
 .mirador-container .manifest-info {
   padding: 0.5rem;
   overflow: initial !important;
+  margin-top: 0px !important;
 }
 
 .mirador-container .window-manifest-navigation {
@@ -1298,7 +1299,7 @@ fieldset {
   .rx-navbar-nav {
     display: block;
   }
-  
+
   .uk-logo {
     padding: 0;
   }

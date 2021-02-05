@@ -68,6 +68,17 @@ Vue.component("v-volume-annotations", {
     <div class="rx-info-content-label rx-padding-bottom-10">Annotation Counts</div>
     <div class="rx-info-content-value rx-annotation-badge">{{localManifestCount}} in manifest</div>
     <div class="rx-info-content-value rx-annotation-badge">{{localPageCount}} on page</div>
+
+    <ul uk-accordion class="rx-accordion-container">
+      <li>
+        <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#">Annotation Index</a>
+        <div class="uk-accordion-content rx-accordion-content">
+          <li v-for="annotation in annotationData" :key="annotation.canvas__pid">
+            <a :href="annotation.canvas__pid"><span class="uk-label rx-label-copy rx-fixed-width-100">Canvas {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
+          </li>
+        </div>
+      </li>
+    </ul>
   </div>
   `,
   data: function () {
@@ -80,7 +91,9 @@ Vue.component("v-volume-annotations", {
   },
   mounted() {
     var vm = this;
-    this.annotationData = JSON.parse(document.getElementById("context").textContent);
+    this.annotationData = JSON.parse(
+      document.getElementById("context").textContent
+    ).json_data;
     window.addEventListener("canvasswitch", function (event) {
       if (event.detail.annotationsOnPage) {
         if (event.detail.annotationAdded) {

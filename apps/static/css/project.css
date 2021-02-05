@@ -10,7 +10,8 @@
 
 .uk-link, a {
   color: var(--link-color);
-  text-decoration: underline dotted;
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
 }
 
 a.nav-link {
@@ -614,9 +615,10 @@ p {
 }
 
 .rx-info-content-label {
-  color: #595959;
-  font-weight: 600;
-  line-height: 1em;
+  color: #595959 !important;
+  font-weight: 600 !important;
+  line-height: 1em !important;
+  font-size: 0.9rem !important;
 }
 
 .rx-info-content-value {
@@ -752,14 +754,16 @@ p {
 
 .rx-annotation-badge {
   border-radius: 3px;
-  background: #595959;
-  color: white;
-  text-transform: uppercase;
-  font-weight: bold;
-  padding: 0.1rem 0.5rem;
+  background: white;
+  color: #595959 !important;
+  border: #595959 1px solid;
   font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  font-weight: 600;
   display: inline-block;
   cursor: default;
+  text-transform: uppercase;
+  padding: 0.1rem 0.5rem;
 }
 
 .rx-padding-bottom-10 {
@@ -1598,5 +1602,27 @@ a.nav-link {
     -webkit-columns: 1;
     -moz-columns: 1;
   }
+}
+
+.rx-accordion-handle {
+  color: var(--link-color) !important;
+}
+
+.uk-accordion-content {
+  color: #595959 !important;
+}
+
+.rx-fixed-width-100 {
+  min-width: 100px;
+  text-align: center;
+}
+
+.rx-accordion-content {
+  margin: 0;
+  padding: 0 0 10px 0;
+}
+
+.rx-accordion-container {
+  margin: 20px 0 0 0;
 }
 /*# sourceMappingURL=project.css.map */

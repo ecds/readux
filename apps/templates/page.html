@@ -22,7 +22,7 @@
   </ul>
   <div class="rx-title uk-text-truncate" title="{{ volume.label }}">{{volume.label}}</div>
 </div> -->
-
+{{ json_data|json_script:"context" }}
 {% block inner %}
 
 <!-- This is the modal -->
@@ -220,7 +220,7 @@
 
       <div class="rx-info-content-container">
 
-        <v-volume-annotations :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}"></v-volume-annotations>
+        <v-volume-annotations :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></v-volume-annotations>
         <!--
         {% if user_annotation_count > 0 %}
         <ul class="uk-subnav uk-subnav-pill" uk-switcher>

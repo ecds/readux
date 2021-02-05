@@ -359,7 +359,7 @@ class PageDetail(TemplateView):
                  ).order_by('canvas__position')
 
         context['user_annotation_index'] = user_annotation_index
-
+        context['json_data'] = {'json_data': list(user_annotation_index)}
 
         return context
 

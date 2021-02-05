@@ -75,10 +75,12 @@ Vue.component("v-volume-annotations", {
       hasImage: false, // visibility of image from src
       localManifestCount: this.manifestCount,
       localPageCount: this.pageCount,
+      annotationData: {},
     };
   },
   mounted() {
     var vm = this;
+    this.annotationData = JSON.parse(document.getElementById("context").textContent);
     window.addEventListener("canvasswitch", function (event) {
       if (event.detail.annotationsOnPage) {
         if (event.detail.annotationAdded) {

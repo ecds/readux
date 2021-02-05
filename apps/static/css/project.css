@@ -1288,7 +1288,19 @@ fieldset {
   color: #595959 !important;
 }
 
-.rx-search-input:placeholder {
+.rx-search-input::-webkit-input-placeholder {
+  color: #737373 !important;
+}
+
+.rx-search-input:-ms-input-placeholder {
+  color: #737373 !important;
+}
+
+.rx-search-input::-ms-input-placeholder {
+  color: #737373 !important;
+}
+
+.rx-search-input::placeholder {
   color: #737373 !important;
 }
 

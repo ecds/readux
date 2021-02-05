@@ -1227,9 +1227,10 @@ fieldset {
 .rx-search-input {
   border: none !important;
   color: $rx-color-grey-1 !important;
-  &:placeholder {
+  &::placeholder {
     color: $rx-color-grey-2 !important;
   }
+
 }
 
 .rx-search-result {

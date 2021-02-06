@@ -229,14 +229,6 @@
         </ul>
         {% endif %}
         -->
-        {% if user_annotation_index %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Your Annotation Index</div>
-          {% for answer in user_annotation_index %}{% if answer.canvas__manifest__label in volume.label %}
-          <div class="rx-info-content-value">Canvas {{ answer.canvas__position }} ({{ answer.canvas__position__count }} annotations)</div>
-          {% endif %}{% endfor %}
-        </div>
-        {% endif %}
 
         <div class="rx-info-content">
           <div class="rx-info-content-label">Title</div>

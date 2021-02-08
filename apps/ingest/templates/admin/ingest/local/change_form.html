@@ -29,7 +29,6 @@
 {% block admin_change_form_document_ready %}
   {{ block.super }}
   <script type="text/javascript">
-    console.log('hi')
     django.jQuery('#start_upload').on('click', function(event) {
       // event.preventDefault();
       django.jQuery('#overlay').removeClass('hide-overlay');

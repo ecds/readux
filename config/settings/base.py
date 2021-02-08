@@ -309,6 +309,8 @@ LANGUAGES = (
     ('de', gettext('German')),
 )
 
+DEFAULT_LANGUAGE = 'en'
+
 SERIALIZATION_MODULES = {
     "canvas": "apps.iiif.serializers.canvas",
     "manifest": "apps.iiif.serializers.manifest",

@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from ..models import Local
+from ..tasks import create_manifest
 
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
@@ -32,34 +33,39 @@ class LocalTest(TestCase):
             assert exists(local.bundle.path) is False # pylint: disable=no-member
 
     def test_metadata_from_excel(self):
+        """ It should create a manifest with metadat supplied in an Excel file. """
         local = Local()
         local.bundle = SimpleUploadedFile(
             name='bundle.zip',
             content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
         )
         local.save()
-        local.create_manifest()
+        local.manifest = create_manifest(local)
 
-        assert local.manifest.pid == 'sqn75'
+        for key in local.metadata.keys():
+            assert local.metadata[key] == getattr(local.manifest, key)
 
     def test_metadata_from_csv(self):
+        """ It should create a manifest with metadat supplied in a CSV file. """
         local = Local()
         local.bundle = SimpleUploadedFile(
             name='csv_meta.zip',
             content=open(join(self.fixture_path, 'csv_meta.zip'), 'rb').read()
         )
         local.save()
-        local.create_manifest()
+        local.manifest = create_manifest(local)
 
-        assert local.manifest.pid == 'sqn75'
+        for key in local.metadata.keys():
+            assert local.metadata[key] == getattr(local.manifest, key)
 
     def test_no_metadata_file(self):
+        """ It should create a Manifest even when no metadata file is supplied. """
         local = Local()
         local.bundle = SimpleUploadedFile(
             name='no_meta_file.zip',
             content=open(join(self.fixture_path, 'no_meta_file.zip'), 'rb').read()
         )
         local.save()
-        local.create_manifest()
+        local.manifest = create_manifest(local)
 
         assert local.manifest.pid == ''

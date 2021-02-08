@@ -10,7 +10,8 @@
 
 .uk-link, a {
   color: var(--link-color);
-  text-decoration: underline dotted;
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
 }
 
 a.nav-link {
@@ -614,9 +615,10 @@ p {
 }
 
 .rx-info-content-label {
-  color: #595959;
-  font-weight: 600;
-  line-height: 1em;
+  color: #595959 !important;
+  font-weight: 600 !important;
+  line-height: 1em !important;
+  font-size: 0.9rem !important;
 }
 
 .rx-info-content-value {
@@ -752,14 +754,16 @@ p {
 
 .rx-annotation-badge {
   border-radius: 3px;
-  background: #595959;
-  color: white;
-  text-transform: uppercase;
-  font-weight: bold;
-  padding: 0.1rem 0.5rem;
+  background: white;
+  color: #595959 !important;
+  border: #595959 1px solid;
   font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  font-weight: 600;
   display: inline-block;
   cursor: default;
+  text-transform: uppercase;
+  padding: 0.1rem 0.5rem;
 }
 
 .rx-padding-bottom-10 {
@@ -1284,7 +1288,19 @@ fieldset {
   color: #595959 !important;
 }
 
-.rx-search-input:placeholder {
+.rx-search-input::-webkit-input-placeholder {
+  color: #737373 !important;
+}
+
+.rx-search-input:-ms-input-placeholder {
+  color: #737373 !important;
+}
+
+.rx-search-input::-ms-input-placeholder {
+  color: #737373 !important;
+}
+
+.rx-search-input::placeholder {
   color: #737373 !important;
 }
 
@@ -1598,5 +1614,31 @@ a.nav-link {
     -webkit-columns: 1;
     -moz-columns: 1;
   }
+}
+
+.rx-accordion-handle {
+  color: var(--link-color) !important;
+}
+
+.uk-accordion-content {
+  color: #595959 !important;
+}
+
+.rx-fixed-width-100 {
+  min-width: 100px;
+  text-align: center;
+}
+
+.rx-accordion-content {
+  margin: 0;
+  padding: 0 0 10px 0;
+}
+
+.rx-accordion-container {
+  margin: 20px 0 0 0;
+}
+
+.uk-offcanvas-bar .uk-open > .uk-accordion-title::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%8Csvg+width%3D%2213%22+height%3D%2213%22+viewBox%3D%220+0+13+13%22+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0D%0A++++%3Crect+fill%3D%22rgba%28149%2C+9%2C+83%2C+1%29%22+width%3D%2213%22+height%3D%221%22+x%3D%220%22+y%3D%226%22+%2F%3E%0D%0A%3C%2Fsvg%3E") !important;
 }
 /*# sourceMappingURL=project.css.map */

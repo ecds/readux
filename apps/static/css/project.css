@@ -1050,6 +1050,7 @@ a.rx-nav-item {
   width: auto !important;
   float: right;
   z-index: 2;
+  margin-top: 0px !important;
 }
 
 .mirador-container .window-manifest-navigation {

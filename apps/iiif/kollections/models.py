@@ -140,17 +140,38 @@ class Collection(models.Model):
         # set save=False, otherwise it will run in an infinite loop
         self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
 
+        sizebanner = (1200, 300)
         forcrop = Image.open(self.original)
-        (width, height) = forcrop.size
-        # pylint: disable = invalid-name
-        x = (0)
-        y = height/3
-        w = width
-        h = 2 * height/3
-        # pylint: enable = invalid-name
+        # Get current and desired ratio for the images
+        img_ratio_banner = forcrop.size[0] / float(forcrop.size[1])
+        ratio_banner = sizebanner[0] / float(sizebanner[1])
+        #The image is scaled/cropped vertically or horizontally depending on the ratio
+        #THIS DOES NOT WORK YET
+        if ratio_banner > img_ratio_banner: #then it needs to be shorter
+            (width, height) = forcrop.size
+            # pylint: disable = invalid-name
+            x = (0)
+            y = height/3 #how to crop to specific size
+            w = width
+            h = 2 * height/3 #how to crop to specific size
+            # pylint: enable = invalid-name
 
-        box = (x, y, w, h)
-        cropped_image = forcrop.crop(box)
+            box = (x, y, w, h)
+            cropped_image = forcrop.crop(box)
+        elif ratio_banner < img_ratio_banner: #then it needs to be narrower
+            (width, height) = forcrop.size
+            # pylint: disable = invalid-name
+            x = (0) #crop from middle
+            y = height #not change
+            w = width #need to make narrower
+            h = 2 * height/3 #not change?
+            # pylint: enable = invalid-name
+
+            box = (x, y, w, h)
+            cropped_image = forcrop.crop(box)
+        else:
+            cropped_image = forcrop.resize((sizebanner[0], sizebanner[1]), Image.ANTIALIAS)
+            # If the scale is the same, we do not need to crop
 
         thename, theextension = os.path.splitext(self.original.name)
         theextension = theextension.lower()

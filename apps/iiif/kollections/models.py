@@ -146,25 +146,30 @@ class Collection(models.Model):
         img_ratio_banner = forcrop.size[0] / float(forcrop.size[1])
         ratio_banner = sizebanner[0] / float(sizebanner[1])
         #The image is scaled/cropped vertically or horizontally depending on the ratio
-        #THIS DOES NOT WORK YET
         if ratio_banner > img_ratio_banner: #then it needs to be shorter
+            forcrop = forcrop.resize(
+                (int(sizebanner[0]), int(sizebanner[0] * forcrop.size[1] / forcrop.size[0])),
+                Image.ANTIALIAS)
             (width, height) = forcrop.size
             # pylint: disable = invalid-name
             x = (0)
-            y = height/3 #how to crop to specific size
+            y = (height - sizebanner[1]) / 2
             w = width
-            h = 2 * height/3 #how to crop to specific size
+            h = (height + sizebanner[1]) / 2
             # pylint: enable = invalid-name
 
             box = (x, y, w, h)
             cropped_image = forcrop.crop(box)
+            # Crop in the top, middle or bottom
         elif ratio_banner < img_ratio_banner: #then it needs to be narrower
+            imagebannerratio = (int(sizebanner[1] * forcrop.size[0] / forcrop.size[1]), int(sizebanner[1]))
+            forcrop = forcrop.resize(imagebannerratio, Image.ANTIALIAS)
             (width, height) = forcrop.size
             # pylint: disable = invalid-name
-            x = (0) #crop from middle
-            y = height #not change
-            w = width #need to make narrower
-            h = 2 * height/3 #not change?
+            x = (width - sizebanner[0]) / 2 #crop from middle
+            y = (0)
+            w = (width + sizebanner[0]) / 2
+            h = height
             # pylint: enable = invalid-name
 
             box = (x, y, w, h)

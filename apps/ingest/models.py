@@ -1,16 +1,16 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
-# from bagit import Bag
+from urllib.parse import urlparse
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import mkdtemp
 from zipfile import ZipFile
 from tablib import Dataset
 from django.db import models
-from apps.iiif.manifests.models import Manifest
-from apps.iiif.canvases.models import IServer
-from .tasks import create_canvas_task
+from apps.iiif.manifests.models import Manifest, ImageServer
+import apps.ingest.services as services
+from apps.utils.fetch import fetch_url
 
 def make_temp_file():
     """Creates a temporary directory.
@@ -25,7 +25,7 @@ class Local(models.Model):
     """ Model class for ingesting a volume from local files. """
     temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
     bundle = models.FileField(blank=False)
-    image_server = models.ForeignKey(IServer, on_delete=models.DO_NOTHING, null=True)
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     @property
@@ -94,8 +94,9 @@ class Local(models.Model):
         """
         Extract metadata from file.
         :return: If metadata file exists, returns the values. If no file, returns None.
-        :rtype: tablib.core.Dataset or None
+        :rtype: dict or None
         """
+        metadata = None
         for file in self.zip_ref.namelist():
             if 'metadata' in file.casefold():
                 self.zip_ref.extract(file, path=self.temp_file_path)
@@ -104,12 +105,15 @@ class Local(models.Model):
 
                 if 'csv' in guess_type(meta_file)[0]:
                     with open(meta_file, 'r', encoding='utf-8-sig') as file:
-                        return Dataset().load(file)
+                        metadata = Dataset().load(file)
+                else:
+                    with open(meta_file, 'rb') as file:
+                        metadata = Dataset().load(file)
 
-                with open(meta_file, 'rb') as file:
-                    return Dataset().load(file)
+        if metadata is not None:
+            metadata = services.clean_metadata(metadata.dict[0])
 
-        return None
+        return metadata
 
     @staticmethod
     def __remove_none_images(path):
@@ -131,66 +135,77 @@ class Local(models.Model):
                 else:
                     os.remove(ocr_file_path)
 
-    def create_manifest(self):
-        """
-        Create or update a Manifest from supplied metadata and images.
-        :return: New or updated Manifest with supplied `pid`
-        :rtype: iiif.manifest.models.Manifest
-        """
-        manifest = None
-        # Make a copy of the metadata so we don't extract it over and over.
-        metadata = self.metadata
-        if metadata is not None:
-            attributes = {}
-            for prop in metadata.headers:
-                label = prop.casefold()
-                value = metadata[prop][0]
-                # pylint: disable=multiple-statements
-                # I wish Python had switch statements.
-                if label == 'pid': attributes['pid'] = value
-                elif label == 'label': attributes['label'] = value
-                elif label == 'summary': attributes['summary'] = value
-                elif label == 'author': attributes['author'] = value
-                elif label == 'published city': attributes['published_city'] = value
-                elif label == 'published date': attributes['published_date'] = value
-                elif label == 'publisher': attributes['publisher'] = value
-                elif label == 'pdf': attributes['pdf'] = value
-                # pylint: enable=multiple-statements
-            manifest, created = Manifest.objects.get_or_create(pid=attributes['pid'])
-            for (key, value) in attributes.items():
-                setattr(manifest, key, value)
-            if created:
-                manifest.canvas_set.all().delete()
-
-        else:
-            manifest = Manifest()
-
-        manifest.save()
-        self.manifest = manifest
-
-    def add_canvases(self):
-        """
-        Method to kick off a background task to create the apps.iiif.canvases.models.Canvas objects
-        and upload the files to the IIIF server store.
-        """
-        if self.manifest is None:
-            self.create_manifest()
-
-        self_dict = self.__dict__
-        self_dict['image_directory'] = self.image_directory
-        self_dict['ocr_directory'] = self.ocr_directory
-
-        create_canvas_task(
-                manifest_id=self.manifest.id,
-                image_server_id=self.image_server.id,
-                image_file_name=image_file,
-                image_file_path=os.path.join(self.image_directory, image_file),
-                position=index + 1,
-                ocr_file_path=os.path.join(self.temp_file_path, self.ocr_directory, ocr_file_name)
-            )
-
     def clean_up(self):
         """ Method to clean up all the files. This is really only applicable for testing. """
         rmtree(self.temp_file_path)
         os.remove(self.bundle.path)
         self.delete()
+
+class Remote(models.Model):
+    """ Model class for ingesting a volume from remote manifest. """
+    remote_url = models.CharField(max_length=255)
+    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+
+    @property
+    def image_server(self):
+        """ Image server the Manifest """
+        iiif_url = services.extract_image_server(
+            self.remote_manifest['sequences'][0]['canvases'][0]
+        )
+        server, _created = ImageServer.objects.get_or_create(server_base=iiif_url)
+
+        return server
+
+    @property
+    def remote_manifest(self):
+        """Serialized remote IIIF Manifest data.
+
+        :return: IIIF Manifest
+        :rtype: dict
+        """
+        return fetch_url(self.remote_url)
+
+    @property
+    def metadata(self):
+        """ Take a remote IIIF manifest and create a derivative version. """
+        if self.remote_manifest['@context'] == 'http://iiif.io/api/presentation/2/context.json':
+            return self.__parse_iiif_v2_manifest(self.remote_manifest)
+
+        return None
+
+    @staticmethod
+    def __parse_iiif_v2_manifest(data):
+        """Parse IIIF Manifest based on v2.1.1 or the presentation API.
+        https://iiif.io/api/presentation/2.1
+
+        :param data: IIIF Presentation v2.1.1 manifest
+        :type data: dict
+        :return: Extracted metadata
+        :rtype: dict
+        """
+        properties = {}
+
+        for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
+            properties.update(iiif_metadata)
+
+        manifest_data = [{prop: data[prop]} for prop in data if isinstance(data[prop], str)]
+
+        for datum in manifest_data:
+            properties.update(datum)
+
+        properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
+        properties['summary'] = data['description']
+
+        if 'logo' in properties:
+            properties.pop('logo')
+
+        manifest_metadata = services.clean_metadata(properties)
+
+        return manifest_metadata
+
+    @staticmethod
+    def __parse_iiif_v2_canvas(canvas):
+        return {
+            'pid': canvas['@id'].split('/')[-2],
+
+        }

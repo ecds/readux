@@ -1,87 +1,128 @@
-""" Background task for creating canvases for ingest. """
+""" Common tasks for ingest. """
 from os import listdir, path, remove
+from urllib.parse import urlparse
 from background_task import background
-from apps.iiif.canvases.models import Canvas, IServer
-from apps.iiif.manifests.models import Manifest
+from django.apps import apps
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.manifests.models import Manifest, RelatedLink
 from .services import UploadBundle
+from apps.utils.fetch import fetch_url
 
-# pylint: disable=too-many-arguments
-# There are so many arguments because background tasks can't take objects as arguments.
-# All arguments "must all be serializable as JSON."
+# Use `apps.ge_model` to avoid circular import error. Because the parameters used to
+# create a background task have to be serializable, we can't just pass in the model object.
+Local = apps.get_model('ingest.local') # pylint: disable = invalid-name
+Remote = apps.get_model('ingest.remote')
+
 @background(schedule=1)
-def create_canvas_task(
-    manifest_id, image_server_id, image_file_name, image_file_path, position, ocr_file_path, is_testing=False
-):
+def create_canvas_task(ingest_id, is_testing=False):
     """Background task to create canvases and upload images.
 
-    :param manifest_id: Primary key for canvas' apps.iiif.manifest.models.Manifest
-    :type manifest_id: UUID
-    :param image_server_id: Primary key for canvas' apps.iiif.canvases.models.IServer
-    :type image_server_id: UUID
-    :param image_file_name: Image's file name
-    :type image_file_name: str
-    :param image_file_path: Absolute path to the image file.
-    :type image_file_path: str
-    :param position: Canvas' position in volume's page order
-    :type position: int
-    :param ocr_file_path: Absolute path to the OCR file
-    :type ocr_file_path: str
+    :param ingest_id: Primary key for .models.Local objects
+    :type ingest_id: UUID
+    :param is_testing: [description], defaults to False
+    :type is_testing: bool, optional
     """
-    manifest = Manifest.objects.get(pk=manifest_id)
-    image_server = IServer.objects.get(pk=image_server_id)
-    canvas = Canvas(
-        manifest=manifest,
-        pid='{m}_{f}'.format(m=manifest.pid, f=image_file_name),
-        IIIF_IMAGE_SERVER_BASE=image_server,
-        ocr_file_path=ocr_file_path,
-        position=position
-    )
-    if not is_testing:
-        upload = UploadBundle(canvas, image_file_path)
-        upload.upload_bundle()
-    canvas.save()
-    remove(image_file_path)
-    remove(ocr_file_path)
-    return canvas
+    ingest = Local.objects.get(pk=ingest_id)
+    for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+        ocr_file_name = [
+            f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
+        ][0]
 
-# @background(schedule=1)
-# def create_canvas_task(ingest, is_testing=False):
-#     """Background task to create canvases and upload images.
+        image_file_path = path.join(ingest.image_directory, image_file)
+        position = index + 1
+        ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
-#     :param ingest: Files to be ingested
-#     :type ingest: apps.ingest.models.local
-#     """
-#     manifest = Manifest.objects.get(pk=ingest['manifest_id'])
-#     image_server = IServer.objects.get(pk=ingest['image_server_id'])
+        canvas = Canvas(
+            manifest=ingest.manifest,
+            pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
+            ocr_file_path=ocr_file_path,
+            position=position
+        )
+        if not is_testing:
+            upload = UploadBundle(canvas, image_file_path)
+            upload.upload_bundle()
+        canvas.save()
+        remove(image_file_path)
+        remove(ocr_file_path)
 
-#     for index, image_file in enumerate(sorted(listdir(ingest['image_directory']))):
-#         ocr_file_name = [
-#             f for f in listdir(ingest['ocr_directory']) if f.startswith(image_file.split('.')[0])
-#         ][0]
+    ingest.clean_up()
 
-#         # Set up a background task to create the canvas.
-#         # create_canvas_task(
-#         #     manifest_id=ingest.manifest.id,
-#         #     image_server_id=ingest.image_server.id,
-#         #     image_file_name=image_file,
-#         # )
-#         image_file_path = path.join(ingest['image_directory'], image_file)
-#         position = index + 1
-#         ocr_file_path = path.join(ingest['temp_file_path'], ingest['ocr_directory'], ocr_file_name)
+@background(schedule=1)
+def create_remote_canvases(ingest_id):
+    """Task to create Canavs objects from remote IIIF manifest
 
-#         canvas = Canvas(
-#             manifest=manifest,
-#             pid='{m}_{f}'.format(m=manifest.pid, f=image_file),
-#             IIIF_IMAGE_SERVER_BASE=image_server,
-#             ocr_file_path=ocr_file_path,
-#             position=position
-#         )
-#         if not is_testing:
-#             upload = UploadBundle(canvas, image_file_path)
-#             upload.upload_bundle()
-#         canvas.save()
-#         remove(image_file_path)
-#         remove(ocr_file_path)
-        # return canvas
+    :param ingest_id: ID for ingest
+    :type ingest: UUID
+    """
+    # Use `apps.ge_model` to avoid circular import error. Because the parameters used to
+    # create a background task have to be serializable, we can't just pass in the model object.
+    remote_ingest = Remote.objects.get(pk=ingest_id)
 
-    # ingest.clean_up()
+    if remote_ingest.manifest is None:
+        remote_ingest.manifest = create_manifest(remote_ingest)
+        remote_ingest.save()
+        remote_ingest.refresh_from_db()
+
+    # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
+    for position, canvas in enumerate(remote_ingest.remote_manifest['sequences'][0]['canvases']):
+        canvas_metadata = None
+        if canvas['@context'] == 'http://iiif.io/api/presentation/2/context.json':
+            canvas_metadata = __parse_iiif_v2_canvas(canvas)
+
+        if canvas_metadata is not None:
+            canvas, _created = Canvas.objects.get_or_create(
+                pid=canvas_metadata['pid'],
+                manifest=remote_ingest.manifest,
+                position=position
+            )
+
+            for (key, value) in canvas_metadata.items():
+                setattr(canvas, key, value)
+            canvas.save()
+
+    remote_ingest.delete()
+
+def create_manifest(ingest):
+    """
+    Create or update a Manifest from supplied metadata and images.
+    :return: New or updated Manifest with supplied `pid`
+    :rtype: iiif.manifest.models.Manifest
+    """
+    manifest = None
+    # Make a copy of the metadata so we don't extract it over and over.
+    metadata = ingest.metadata
+    if metadata is not None:
+        manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'])
+        for (key, value) in metadata.items():
+            setattr(manifest, key, value)
+        if not created:
+            manifest.canvas_set.all().delete()
+    else:
+        manifest = Manifest()
+
+    manifest.image_server = ingest.image_server
+    manifest.save()
+
+    if isinstance(ingest, Remote):
+        RelatedLink(
+            manifest=manifest,
+            link=ingest.remote_url,
+            format='application/ld+json'
+        ).save()
+
+    return manifest
+
+# TODO: I don't like this here while the manifest version is on the Remote model class.
+def __parse_iiif_v2_canvas(canvas):
+    """ """
+    canvas_id = canvas['@id'].split('/')
+    pid = canvas_id[-1] if canvas_id[-1] is not 'canvas' else canvas_id[-2]
+    summary = canvas['description'] if 'description' in canvas.keys() else ''
+    label = canvas['label'] if 'label' in canvas.keys() else ''
+    return {
+        'pid': canvas['@id'].split('/')[-2],
+        'height': canvas['height'],
+        'width': canvas['width'],
+        'summary': summary,
+        'label': label
+    }

@@ -14,22 +14,14 @@ from . import services
 
 USER = get_user_model()
 
-# TODO: move this to the manifest model
+# TODO: This has moved to Manifest. Remove one everyone has migrated.
 class IServer(models.Model):
     """Django model for IIIF image server info. Each canvas has one IServer"""
-
-    STORAGE_SERVICES = (
-        ('sftp', 'SFTP'),
-        ('s3', 'S3')
-    )
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     IIIF_IMAGE_SERVER_BASE = models.CharField(
         max_length=255,
         default=settings.IIIF_IMAGE_SERVER_BASE
     )
-    storage_service = models.CharField(max_length=10, choices=STORAGE_SERVICES, default='sftp')
-    storage_path = models.CharField(max_length=255)
 
     def __str__(self):
         return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
@@ -45,7 +37,7 @@ class Canvas(models.Model):
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     ocr_offset = models.IntegerField(default=0)
-    # TODO: make this lowercase
+    # TODO: This has moved to Manifest. Remove one everyone has migrated.
     IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
     preferred_ocr = (
@@ -70,7 +62,7 @@ class Canvas(models.Model):
     def service_id(self):
         """Concatenated property to represent IIIF service id."""
         return '{h}/{c}'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
+            h=self.manifest.image_server.server_base,
             c=self.pid
         )
 
@@ -92,7 +84,7 @@ class Canvas(models.Model):
     def thumbnail(self):
         """Concatenated property to represent IIIF thumbnail link."""
         return '{h}/{c}/full/200,/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
+            h=self.manifest.image_server.server_base,
             c=self.pid
         )
 
@@ -100,14 +92,14 @@ class Canvas(models.Model):
     def social_media(self):
         """Concatenated property to represent IIIF image link for use in Open Graph metadata."""
         return '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
+            h=self.manifest.image_server.server_base,
             c=self.pid
         )
 
     @property
     def twitter_media1(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
-        # TODO: shouldn't this use `self.IIIF_IMAGE_SERVER_BASE`
+        # TODO: shouldn't this use `self.manifest.image_server.server_base`
         return 'http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/{c}/full/600,/0/default.jpg'.format(
             c=self.pid
         )
@@ -116,7 +108,7 @@ class Canvas(models.Model):
     def twitter_media2(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
         return '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
+            h=self.manifest.image_server.server_base,
             c=self.pid
         )
 
@@ -134,12 +126,12 @@ class Canvas(models.Model):
         if self.height > self.width:
             # portrait
             return '{h}/{c}/full/,250/0/default.jpg'.format(
-                h=self.IIIF_IMAGE_SERVER_BASE,
+                h=self.manifest.image_server.server_base,
                 c=self.pid
             )
         # landscape
         return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
+            h=self.manifest.image_server.server_base,
             c=self.pid
         )
 
@@ -149,11 +141,11 @@ class Canvas(models.Model):
         if self.height > self.width:
             # portrait
             return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
-                h=self.IIIF_IMAGE_SERVER_BASE,
+                h=self.manifest.image_server.server_base,
                 c=self.pid
             )
         # landscape
-        return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+        return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.pid)
 
     @property
     def thumbnail_crop_volume(self):
@@ -161,12 +153,12 @@ class Canvas(models.Model):
         if self.height > self.width:
             # portrait
             return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
-                h=self.IIIF_IMAGE_SERVER_BASE,
+                h=self.manifest.image_server.server_base,
                 c=self.pid
             )
         # landscape
         return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
+            h=self.manifest.image_server.server_base,
             c=self.pid
         )
 

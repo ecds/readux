@@ -1,6 +1,6 @@
 # Readux
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)
 
 Readux is a platform developed by the Emory Center for Digital Scholarship which allows users to read, take notes on, and publish with digitized texts from libraries’ archival collections. With Readux, users are able to:
 -	browse digitized page images,

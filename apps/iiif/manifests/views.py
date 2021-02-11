@@ -10,7 +10,6 @@ from django.views.generic.base import TemplateView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from apps.users.models import User
 from ..canvases.models import Canvas
 from .models import Manifest
 from .export import IiifManifestExport

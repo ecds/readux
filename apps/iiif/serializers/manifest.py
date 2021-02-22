@@ -35,17 +35,17 @@ class Serializer(JSONSerializer):
                 within.append(col.get_absolute_url())
             try:
                 thumbnail = '{h}/{p}'.format(
-                    h=obj.start_canvas.IIIF_IMAGE_SERVER_BASE,
+                    h=obj.image_server.server_base,
                     p=obj.start_canvas.pid
                 )
             except (Canvas.MultipleObjectsReturned, Canvas.DoesNotExist):
                 thumbnail = '{h}/{p}'.format(
-                    h=obj.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
+                    h=obj.image_server.server_base,
                     p=obj.canvas_set.all().first().pid
                 )
 
             if obj.metadata == {}:
-                obj.metadata = None;
+                obj.metadata = None
 
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
@@ -95,7 +95,7 @@ class Serializer(JSONSerializer):
                     }
                 ],
                 "description": obj.summary,
-                "related": [obj.get_volume_url()],
+                "related": obj.related_links,
                 "within": within,
                 "thumbnail": {
                     "@id": thumbnail + "/full/600,/0/default.jpg",
@@ -108,7 +108,7 @@ class Serializer(JSONSerializer):
                 "attribution": obj.attribution,
                 "logo": obj.thumbnail_logo,
                 "license": obj.license,
-                "viewingDirection": obj.viewingDirection,
+                "viewingDirection": obj.viewingdirection,
                 "viewingHint": "paged",
                 "sequences": [
                     {
@@ -127,6 +127,8 @@ class Serializer(JSONSerializer):
                     }
                 ]
             }
+            if obj.relatedlink_set.exists():
+                data["seeAlso"] = [related.link for related in obj.relatedlink_set.all()]
             return data
         return None
 

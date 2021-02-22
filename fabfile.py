@@ -50,6 +50,7 @@ def _update_virtualenv():
     if not exists('{v}/bin/pip'.format(v=VENV_PATH)):
         run('python3 -m venv {v}'.format(v=VENV_PATH))
     run('{v}/bin/pip install -r requirements/local.txt'.format(v=VENV_PATH))
+    run('ln -s {rp}/.ruby-version .ruby-version'.format(rp=ROOT_PATH))
     run('~/.rbenv/shims/gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"') # pylint: disable = line-too-long
     run('~/.rbenv/shims/bundle install')
 

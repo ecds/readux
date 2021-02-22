@@ -1,11 +1,13 @@
 pytz==2019.3  # https://github.com/stub42/pytz
 python-slugify==4.0.0  # https://github.com/un33k/python-slugify
-Pillow==7.1.1  # https://github.com/python-pillow/Pillow
+Pillow
 argon2-cffi==18.3.0  # https://github.com/hynek/argon2_cffi
 redis>=2.10.5  # https://github.com/antirez/redis
 bs4
 pyyaml
 progress
+python-memcached==1.59
+pyld==1.0.5
 
 # Django
 # ------------------------------------------------------------------------------
@@ -37,6 +39,7 @@ git+git://github.com/rkhleics/wagtailmenus.git@ddbc73797cfa9e6c94c1b0850b4ad0bc0
 wagtail-condensedinlinepanel==0.5.3
 git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
+wagtail-cache==1.0.1
 
 # Import/Export
 django-import-export==2.0.2
@@ -44,6 +47,9 @@ gitpython==3.0.5
 gitdb2==2.0.6
 
 django-background-tasks==1.2.5
+
+# S3 Uploads
+boto3==1.16.4
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

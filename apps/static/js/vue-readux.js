@@ -68,6 +68,19 @@ Vue.component("v-volume-annotations", {
     <div class="rx-info-content-label rx-padding-bottom-10">Annotation Counts</div>
     <div class="rx-info-content-value rx-annotation-badge">{{localManifestCount}} in manifest</div>
     <div class="rx-info-content-value rx-annotation-badge">{{localPageCount}} on page</div>
+
+    <ul uk-accordion class="rx-accordion-container">
+      <li class="uk-open">
+        <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#">Annotation Index</a>
+        <div class="uk-accordion-content rx-accordion-content">
+          <li v-for="annotation in annotationData" :key="annotation.canvas__pid" >
+            <div v-if="annotation.canvas__position__count">
+              <a :href="annotation.canvas__pid"><span class="uk-label rx-label-copy rx-fixed-width-100">Canvas {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
+            </div>
+          </li>
+        </div>
+      </li>
+    </ul>
   </div>
   `,
   data: function () {
@@ -75,20 +88,43 @@ Vue.component("v-volume-annotations", {
       hasImage: false, // visibility of image from src
       localManifestCount: this.manifestCount,
       localPageCount: this.pageCount,
+      annotationData: {},
     };
   },
   mounted() {
     var vm = this;
+    this.annotationData = JSON.parse(
+      document.getElementById("context").textContent
+    ).json_data;
     window.addEventListener("canvasswitch", function (event) {
-      if (event.detail.annotationsOnPage) {
-        if (event.detail.annotationAdded) {
-          vm.localManifestCount++;
+      if (event.detail.annotationAdded) {
+        var createNewPage = true;
+        for (var i = 0; i < vm.annotationData.length; i++) {
+          if (vm.annotationData[i].canvas__pid === event.detail.canvas) {
+            vm.annotationData[i].canvas__position__count++;
+            createNewPage = false;
+          }
         }
-        if (event.detail.annotationDeleted) {
-          vm.localManifestCount--;
+        if (createNewPage) {
+          var canvas_pid_num = (event.detail.canvas.match(/\d+$/) || []).pop();
+          vm.annotationData = vm.annotationData.concat({
+            canvas__manifest__label:
+              vm.annotationData[0].canvas__manifest__label,
+            canvas__pid: event.detail.canvas,
+            canvas__position: parseInt(canvas_pid_num) + 1,
+            canvas__position__count: event.detail.annotationsOnPage,
+          });
         }
-        vm.localPageCount = event.detail.annotationsOnPage;
+        vm.localManifestCount++;
       }
+      if (event.detail.annotationDeleted) {
+        for (var i = 0; i < vm.annotationData.length; i++) {
+          if (vm.annotationData[i].canvas__pid === event.detail.canvas)
+            vm.annotationData[i].canvas__position__count--;
+        }
+        vm.localManifestCount--;
+      }
+      vm.localPageCount = event.detail.annotationsOnPage;
     });
   },
 });

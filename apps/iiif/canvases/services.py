@@ -1,6 +1,7 @@
 # pylint: disable=invalid-name
 """Module to provide some common functions for Canvas objects."""
 import csv
+from os import path
 from xml.etree import ElementTree
 import httpretty
 from django.conf import settings
@@ -25,10 +26,19 @@ def get_fake_canvas_info(canvas):
     with open('apps/iiif/canvases/fixtures/info.json', 'r') as file:
         iiif_image_info = file.read().replace('\n', '')
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
-    response = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    response = fetch_url(
+        canvas.service_id,
+        timeout=settings.HTTP_REQUEST_TIMEOUT,
+        data_format='json'
+    )
     return response
 
 def get_fake_ocr():
+    """Generate fake OCR data for testing.
+
+    :return: OCR data
+    :rtype: dict
+    """
     return [
         {
             "h": 22,
@@ -74,7 +84,7 @@ def get_ocr(canvas):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
-    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'fake.info' in canvas.manifest.image_server.server_base:
         return get_fake_ocr()
     if canvas.default_ocr == "line":
         result = fetch_alto_ocr(canvas)
@@ -91,10 +101,10 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'fake.info' in str(canvas.manifest.image_server.server_base):
         return get_fake_canvas_info(canvas)
 
-    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
 
 # TODO: Maybe add "OCR Source" and "OCR Type" attributes to the manifest model. That might
 # help make this more universal.
@@ -106,29 +116,57 @@ def fetch_positional_ocr(canvas):
     :return: Positional OCR data
     :rtype: requests.models.Response
     """
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return fetch_url(
-            "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
-                m=canvas.manifest.pid,
-                p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
+    if 'archivelab' in canvas.manifest.image_server.server_base:
+        url = "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
+            m=canvas.manifest.pid,
+            p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
+        )
+
+        if 'fake' in canvas.manifest.image_server.server_base:
+            fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+            ocr = fake_ocr.read()
+            fake_ocr.close()
+            httpretty.enable()
+            httpretty.register_uri(
+                httpretty.GET,
+                url,
+                body=ocr,
+                content_type='text/json"'
             )
-        )
-    if 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return fetch_url(
-            "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/{p}.tsv".format(
-                m=canvas.manifest.pid,
-                p=canvas.pid.split('_')[-1]
-                .replace('.jp2', '')
-                .replace('.jpg', '')
-                .replace('.tif', '')
-            ),
-            format='text'
-        )
+
+        return fetch_url(url)
+    if 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
+        # Fake TSV data for testing.
+        if 'fake' in canvas.manifest.image_server.server_base:
+            tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
+            url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
+                m=canvas.manifest.pid
+            )
+            httpretty.enable()
+            httpretty.register_uri(httpretty.GET, url, body=tsv)
+
+        if canvas.ocr_file_path is None:
+            return fetch_url(
+                "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/{p}.tsv".format(
+                    m=canvas.manifest.pid,
+                    p=canvas.pid.split('_')[-1]
+                    .replace('.jp2', '')
+                    .replace('.jpg', '')
+                    .replace('.tif', '')
+                ),
+                data_format='text'
+            )
+
+        file = open(canvas.ocr_file_path)
+        data = file.read()
+        file.close()
+        return data
+
     return fetch_url(
         "{p}{c}{s}".format(
             p=settings.DATASTREAM_PREFIX,
             c=canvas.pid.replace('fedora:', ''),
-            s=settings.DATASTREAM_SUFFIX), format='text/plain'
+            s=settings.DATASTREAM_SUFFIX), data_format='text/plain'
         )
 
 def add_positional_ocr(canvas, result):
@@ -141,8 +179,10 @@ def add_positional_ocr(canvas, result):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
+    if result is None:
+        return None
     ocr = []
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'archivelab' in canvas.manifest.image_server.server_base:
         if result is not None and 'ocr' in result and result['ocr'] is not None:
             for index, word in enumerate(result['ocr']): # pylint: disable=unused-variable
                 if len(word) > 0:
@@ -154,7 +194,7 @@ def add_positional_ocr(canvas, result):
                             'x': w[1][0],
                             'y': w[1][3]
                         })
-    elif 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    elif 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
 
         reader = csv.DictReader(result.split('\n'), dialect=IncludeQuotesDialect)
 
@@ -195,13 +235,13 @@ def fetch_alto_ocr(canvas):
     :return: Positional OCR data
     :rtype: requests.models.Response
     """
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'archivelab' in canvas.manifest.image_server.server_base:
         return None
     url = "{p}{c}/datastreams/tei/content".format(
         p=settings.DATASTREAM_PREFIX,
         c=canvas.pid.replace('fedora:', '')
     )
-    return fetch_url(url, format='text/plain')
+    return fetch_url(url, data_format='text/plain')
 
 def add_alto_ocr(result):
     """Function to add fetched Alto OCR data for a given canvas.

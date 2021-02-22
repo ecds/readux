@@ -171,19 +171,19 @@ class CollectionDetail(ListView):
         context['manifest_query_set'] = q
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
         annocount_list = []
-        canvaslist = []
-        for volume in q:
-            user_annotation_count = UserAnnotation.objects.filter(
-                owner_id=self.request.user.id
-            ).filter(
-                canvas__manifest__id=volume.id
-            ).count()
-            annocount_list.append({volume.pid: user_annotation_count})
-            context['user_annotation_count'] = annocount_list
-            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-            canvasquery2 = list(canvasquery)
-            canvaslist.append({volume.pid: canvasquery2})
-            context['firstthumbnail'] = canvaslist
+        # canvaslist = []
+        # for volume in q:
+        #     user_annotation_count = UserAnnotation.objects.filter(
+        #         owner_id=self.request.user.id
+        #     ).filter(
+        #         canvas__manifest__id=volume.id
+        #     ).count()
+        #     annocount_list.append({volume.pid: user_annotation_count})
+        #     context['user_annotation_count'] = annocount_list
+        #     canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+        #     canvasquery2 = list(canvasquery)
+        #     canvaslist.append({volume.pid: canvasquery2})
+        #     context['firstthumbnail'] = canvaslist
         value = 0
         context['value'] = value
         context.update({
@@ -343,6 +343,23 @@ class PageDetail(TemplateView):
         #     context['qs2'] = qs2
         # except MultiValueDictKeyError:
         #     q = ''
+        user_annotation_index = UserAnnotation.objects.all()
+
+        user_annotation_index = user_annotation_index.filter(canvas__manifest__label=manifest.label)
+
+        user_annotation_index = user_annotation_index.filter(owner_id=self.request.user.id).distinct()
+
+        user_annotation_index = user_annotation_index.values(
+                 'canvas__position',
+                 'canvas__manifest__label',
+                 'canvas__pid'
+             ).annotate(
+                 Count(
+                     'canvas__position')
+                 ).order_by('canvas__position')
+
+        context['user_annotation_index'] = user_annotation_index
+        context['json_data'] = {'json_data': list(user_annotation_index)}
 
         return context
 
@@ -451,7 +468,7 @@ class VolumeSearch(ListView):
                     qs3 = qs.filter(qqq)
                     qs2 = qs.values(
                         'label', 'author', 'published_date', 'created_at', 'canvas__pid', 'pid',
-                        'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE'
+                        'canvas__manifest__image_server_server_base'
                     ).order_by(
                         'pid'
                     ).distinct(
@@ -502,7 +519,7 @@ class VolumeSearch(ListView):
 
                     qs2 = qs.values(
                         'canvas__pid', 'pid',
-                        'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE'
+                        'canvas__manifest__image_server_server_base'
                     ).order_by(
                         'pid'
                     ).distinct('pid')

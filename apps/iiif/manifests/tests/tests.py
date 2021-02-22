@@ -13,9 +13,9 @@ from django.core.serializers import serialize
 from allauth.socialaccount.models import SocialAccount
 from iiif_prezi.loader import ManifestReader
 from ..views import ManifestSitemap, ManifestRis
-from ..models import Manifest
+from ..models import Manifest, ImageServer, RelatedLink
 from ..forms import JekyllExportForm
-from .factories import ManifestFactory
+from .factories import ManifestFactory, ImageServerFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
 
@@ -75,7 +75,7 @@ class ManifestTests(TestCase):
         assert manifest['label'] == self.volume.label
         assert manifest['description'] == self.volume.summary
         assert manifest['thumbnail']['@id'] == '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.volume.canvas_set.all().first().IIIF_IMAGE_SERVER_BASE,
+            h=self.volume.image_server.server_base,
             c=self.start_canvas.pid
         )
         assert manifest['sequences'][0]['startCanvas'] == self.volume.start_canvas.identifier
@@ -87,7 +87,8 @@ class ManifestTests(TestCase):
         assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
 
     def test_default_start_canvas(self):
-        manifest = Manifest()
+        image_server = ImageServerFactory.create(server_base="https://fake.info")
+        manifest = Manifest(image_server=image_server)
         manifest.save()
         assert manifest.start_canvas is None
         canvas = CanvasFactory.create(manifest=manifest)
@@ -165,3 +166,34 @@ class ManifestTests(TestCase):
             )
         )
         assert manifest.canvas_set.all().first().pid in serialized_manifest['thumbnail']['@id']
+
+    def test_default_iiif_image_server_url(self):
+        image_server = ImageServer()
+        assert image_server.server_base == settings.IIIF_IMAGE_SERVER_BASE
+
+    def test_serialized_related_links(self):
+        """ It should add a list of links for the "seeAlso" key. """
+        manifest = ManifestFactory.create()
+        no_links = json.loads(
+            serialize(
+                'manifest',
+                [manifest]
+            )
+        )
+        assert 'seeAlso' not in no_links.keys()
+
+        link = RelatedLink(link='images.org', manifest=manifest)
+        link.save()
+        manifest.refresh_from_db()
+
+        with_links = json.loads(
+            serialize(
+                'manifest',
+                [manifest]
+            )
+        )
+
+        assert 'seeAlso' in with_links.keys()
+        assert isinstance(with_links['seeAlso'], list)
+        assert len(with_links['seeAlso']) == 1
+        assert with_links['seeAlso'][0] == 'images.org'

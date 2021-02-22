@@ -93,7 +93,7 @@ HOSTNAME = 'https://localhost:3000'
 
 # Add your Google Analytics ID here. For help, please see https://support.google.com/analytics/answer/1008080
 # Once you are set up, uncomment the next line and replace the example with your ID. It should look something like UA-XXXXXX-Y
-# GOOGLE_ANALYTICS_ID = 'UA-XXXXXX-Y'
+GOOGLE_ANALYTICS_ID = 'UA-XXXXXX-Y'
 
 
 DATASTREAM_PREFIX = 'http://repo.library.emory.edu/fedora/objects/'

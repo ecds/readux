@@ -30,5 +30,9 @@ class UserAnnotationAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = UserAnnotationResource
     list_display = ('id', 'canvas', 'order', 'content', 'x', 'y', 'w', 'h')
     search_fields = ('content', 'oa_annotation')
-
+    fields = (
+        'x', 'y', 'w', 'h', 'order', 'content',
+        'resource_type', 'motivation', 'format',
+        'canvas', 'language', 'owner', 'oa_annotation', 'svg', 'style', 'start_offset', 'end_offset', 'tags'
+    )
 admin.site.register(UserAnnotation, UserAnnotationAdmin)

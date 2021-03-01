@@ -21,7 +21,7 @@ moto==1.3.16 # https://github.com/spulec/moto
 # Code quality
 # ------------------------------------------------------------------------------
 flake8==3.7.9  # https://github.com/PyCQA/flake8
-coverage==5.0.3  # https://github.com/nedbat/coveragepy
+coverage==5.5  # https://github.com/nedbat/coveragepy
 coveralls
 
 # Django

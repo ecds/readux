@@ -1,3 +1,5 @@
+[![ECDS](https://circleci.com/gh/ecds/readux.svg?style=svg)](<LINK>)
+
 # Readux
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)

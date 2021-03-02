@@ -64,8 +64,7 @@ class AnnotationTests(TestCase):
         assert ocr.content == "<span id='{pk}' class='anno-{pk}' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
         assert ocr.owner == USER.objects.get(username='ocr')
 
-    def test_invalid_ocr(self):
-        annotation_count = len(Annotation.objects.all())
+    def test_default_content(self):
         ocr = Annotation()
         ocr.oa_annotation = {"annotatedBy": {"name": "ocr"}}
         ocr.x = 100
@@ -73,9 +72,8 @@ class AnnotationTests(TestCase):
         ocr.w = 100
         ocr.h = 10
         ocr.format = Annotation.HTML
-        with self.assertRaisesMessage(ValidationError, 'Content cannot be empty'):
-            ocr.save()
-        assert annotation_count == len(Annotation.objects.all())
+        ocr.save()
+        assert '> </span>' in ocr.content
 
     def test_annotation_string(self):
         anno = Annotation.objects.all().first()

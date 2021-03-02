@@ -197,13 +197,18 @@ class Canvas(models.Model):
         ocr = services.get_ocr(self)
         if ocr is not None:
             for word in ocr:
+                # A quick check to make sure the header row didn't slip through.
+                if word['x'] == 'x':
+                    continue
+
+                # Set the content to a single space if it's missing.
                 if (
                         word == '' or
                         'content' not in word or
                         not word['content'] or
                         word['content'].isspace()
                 ):
-                    continue
+                    word['content'] = ' '
                 anno = Annotation()
                 anno.canvas = self
                 anno.x = word['x']

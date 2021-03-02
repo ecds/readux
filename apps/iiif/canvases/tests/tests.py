@@ -149,12 +149,18 @@ class CanvasTests(TestCase):
         self.canvas.manifest.image_server = iiif_server
         canvas = CanvasFactory(manifest=self.canvas.manifest, pid='boo')
         ocr = canvas.annotation_set.all().first()
-        assert ocr.h == 43
-        assert ocr.w == 89
         assert ocr.x == 459
         assert ocr.y == 391
+        assert ocr.w == 89
+        assert ocr.h == 43
         assert 'Jordan' in ocr.content
-        assert len(canvas.annotation_set.all()) == 1
+        ocr2 = canvas.annotation_set.all()[1]
+        assert ocr2.x == 453
+        assert ocr2.y == 397
+        assert ocr2.w == 397
+        assert ocr2.h == 3
+        assert '> </span>' in ocr2.content
+        assert canvas.annotation_set.all().count() == 5
 
     def test_no_alto_from_empty_result(self):
         ocr = services.add_alto_ocr(None)

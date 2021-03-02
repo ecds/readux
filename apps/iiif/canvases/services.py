@@ -135,10 +135,12 @@ def fetch_positional_ocr(canvas):
             )
 
         return fetch_url(url)
+
     if 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
         # Fake TSV data for testing.
         if 'fake' in canvas.manifest.image_server.server_base:
-            tsv = """content\tx\ty\tw\th\nJordan\t459\t391\t89\t43\t\n\t453\t397\t397\t3\n \t1\t2\t3\t4\n"""
+            fake_tsv = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/sample.tsv'))
+            tsv = fake_tsv.read()
             url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
                 m=canvas.manifest.pid
             )
@@ -196,7 +198,23 @@ def add_positional_ocr(canvas, result):
                         })
     elif 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
 
-        reader = csv.DictReader(result.split('\n'), dialect=IncludeQuotesDialect)
+        lines = result.split('\n')
+        # if (lines[0].startswith(content)):
+        #     lines.pop(0)
+        # Sometimes the TSV has some extra tabs at the beginign and the end. These have
+        # to be cleaned out. It gets complicatied.
+        for index, line in enumerate(lines):
+            # First we remove any leading column that is empty.
+            line = line.strip()
+            lines[index] = line
+            # It might be true that the "content" column is empty. However, we just
+            # removed it. So we have to add it back.
+            print(lines[index])
+            if lines[index].count('\t') == 3:
+                lines[index] = ' \t' + lines[index]
+            print(lines[index])
+
+        reader = csv.DictReader(lines, dialect=IncludeQuotesDialect)
 
         for row in reader:
             content = row['content']

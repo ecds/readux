@@ -5,19 +5,23 @@ from fabric.contrib.files import exists
 from fabric.api import cd, env, run
 
 REPO_URL = 'https://github.com/ecds/readux.git'
-ROOT_PATH = '/data/readux'
+ROOT_PATH = ''
 VENV_PATH = '{rp}/venv'.format(rp=ROOT_PATH)
 RELEASE_PATH = '{rp}/releases'.format(rp=ROOT_PATH)
 VERSION = datetime.now().strftime("%Y%m%d%H%M%S")
 
 env.user = 'deploy'
 
-def deploy(branch='master'):
+def deploy(branch='release', path=ROOT_PATH):
     """Execute group of tasks for deployment.
 
     :param branch: Git branch to clone, defaults to 'master'
     :type branch: str, optional
     """
+
+    ROOT_PATH = path
+    VENV_PATH = '{rp}/venv'.format(rp=ROOT_PATH)
+    RELEASE_PATH = '{rp}/releases'.format(rp=ROOT_PATH)
 
     version_folder = '{rp}/{vf}'.format(rp=RELEASE_PATH, vf=VERSION)
     run('mkdir -p {p}'.format(p=version_folder))

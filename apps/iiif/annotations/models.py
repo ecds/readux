@@ -134,7 +134,7 @@ class AbstractAnnotation(models.Model):
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)
     canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE, null=True)
     language = models.CharField(max_length=10, default='en')
-    #how does owner work with permissions?
+    #how does owner work with permissions
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True)
     oa_annotation = JSONField(default=dict, blank=False)
     # TODO: Should we keep this for annotations from Mirador, or just get rid of it?

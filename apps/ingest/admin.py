@@ -1,7 +1,6 @@
 """[summary]"""
 from django.contrib import admin
 from django.shortcuts import redirect
-import apps.ingest.services as services
 import apps.ingest.tasks as tasks
 from .models import Local, Remote
 
@@ -17,8 +16,6 @@ class LocalAdmin(admin.ModelAdmin):
         obj.refresh_from_db()
         tasks.create_canvas_task(obj.id)
         super().save_model(request, obj, form, change)
-        # obj.refresh_from_db()
-        # return redirect('apps.iiif.manifests_change', obj.manifest.id)
 
     def response_add(self, request, obj, post_url_continue=None):
         manifest_id = obj.manifest.id

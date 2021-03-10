@@ -2,6 +2,7 @@
 import uuid
 from bs4 import BeautifulSoup
 import tempfile
+from urllib.parse import quote
 import config.settings.local as settings
 from django.apps import apps
 from django.db import models
@@ -15,16 +16,16 @@ from . import services
 USER = get_user_model()
 
 # TODO: This has moved to Manifest. Remove one everyone has migrated.
-class IServer(models.Model):
-    """Django model for IIIF image server info. Each canvas has one IServer"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    IIIF_IMAGE_SERVER_BASE = models.CharField(
-        max_length=255,
-        default=settings.IIIF_IMAGE_SERVER_BASE
-    )
+# class IServer(models.Model):
+#     """Django model for IIIF image server info. Each canvas has one IServer"""
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     IIIF_IMAGE_SERVER_BASE = models.CharField(
+#         max_length=255,
+#         default=settings.IIIF_IMAGE_SERVER_BASE
+#     )
 
-    def __str__(self):
-        return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
+#     def __str__(self):
+#         return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
 
 class Canvas(models.Model):
     """Django model for IIIF Canvas objects."""
@@ -37,8 +38,9 @@ class Canvas(models.Model):
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     ocr_offset = models.IntegerField(default=0)
+    resource = models.TextField(blank=True, null=True)
     # TODO: This has moved to Manifest. Remove one everyone has migrated.
-    IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
+    # IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
     preferred_ocr = (
         ('word', 'word'),
@@ -63,7 +65,16 @@ class Canvas(models.Model):
         """Concatenated property to represent IIIF service id."""
         return '{h}/{c}'.format(
             h=self.manifest.image_server.server_base,
-            c=self.pid
+            c=quote(self.pid)
+        )
+
+    @property
+    def resource_id(self):
+        """Concatenated propert to represent IIIF resource id."""
+        resource = self.resource if self.resource is not None else self.pid
+        return '{h}/{r}'.format(
+            h=self.manifest.image_server.server_base,
+            r=quote(resource, safe='')
         )
 
     @property
@@ -176,13 +187,14 @@ class Canvas(models.Model):
 
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
         """
-        Override save function to add OCR and set as manifest's
-        `start_canvas` if manifest does not have one.
+        Override save function to set `resource_id` add OCR,
+        and set as manifest's `start_canvas` if manifest does not have one.
         """
         super(Canvas, self).save(*args, **kwargs)
 
         if self._state.adding or not self.annotation_set.exists():
             self.__add_ocr()
+
 
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()

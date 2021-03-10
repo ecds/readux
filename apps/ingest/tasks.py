@@ -1,6 +1,6 @@
 """ Common tasks for ingest. """
 from os import listdir, path, remove
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from background_task import background
 from django.apps import apps
 from apps.iiif.canvases.models import Canvas
@@ -66,8 +66,10 @@ def create_remote_canvases(ingest_id):
     # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
     for position, canvas in enumerate(remote_ingest.remote_manifest['sequences'][0]['canvases']):
         canvas_metadata = None
-        if canvas['@context'] == 'http://iiif.io/api/presentation/2/context.json':
-            canvas_metadata = __parse_iiif_v2_canvas(canvas)
+        # TODO: we will need some sort of check for IIIF API version, but not
+        # everyone includes a context for each canvas.
+        # if canvas['@context'] == 'http://iiif.io/api/presentation/2/context.json':
+        canvas_metadata = parse_iiif_v2_canvas(canvas)
 
         if canvas_metadata is not None:
             canvas, _created = Canvas.objects.get_or_create(
@@ -113,16 +115,21 @@ def create_manifest(ingest):
     return manifest
 
 # TODO: I don't like this here while the manifest version is on the Remote model class.
-def __parse_iiif_v2_canvas(canvas):
+def parse_iiif_v2_canvas(canvas):
     """ """
     canvas_id = canvas['@id'].split('/')
-    pid = canvas_id[-1] if canvas_id[-1] is not 'canvas' else canvas_id[-2]
+    pid = canvas_id[-1] if canvas_id[-1] != 'canvas' else canvas_id[-2]
+
+    service = urlparse(canvas['images'][0]['resource']['service']['@id'])
+    resource = unquote(service.path.split('/').pop())
+
     summary = canvas['description'] if 'description' in canvas.keys() else ''
     label = canvas['label'] if 'label' in canvas.keys() else ''
     return {
-        'pid': canvas['@id'].split('/')[-2],
+        'pid': pid,
         'height': canvas['height'],
         'width': canvas['width'],
         'summary': summary,
-        'label': label
+        'label': label,
+        'resource': resource
     }

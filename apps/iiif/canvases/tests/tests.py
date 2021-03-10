@@ -2,11 +2,11 @@
 Test cases for :class:`apps.iiif.canvases`
 """
 import json
+from urllib.parse import quote
 import httpretty
 from django.test import TestCase, Client
 from django.urls import reverse
 import config.settings.local as settings
-from apps.iiif.manifests.models import ImageServer
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Canvas
 from .. import services
@@ -195,7 +195,7 @@ class CanvasTests(TestCase):
     def test_properties(self):
         httpretty.register_uri(httpretty.GET, 'https://loris.library.emory.edu')
         assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
-        assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, quote(self.assumed_canvas_pid))
         assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
         assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
         assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)

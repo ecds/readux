@@ -1,7 +1,7 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote, unquote
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -27,6 +27,9 @@ class Local(models.Model):
     bundle = models.FileField(blank=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Local'
 
     @property
     def zip_ref(self):
@@ -146,6 +149,9 @@ class Remote(models.Model):
     remote_url = models.CharField(max_length=255)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
+    class Meta:
+        verbose_name_plural = 'Remote'
+
     @property
     def image_server(self):
         """ Image server the Manifest """
@@ -203,9 +209,12 @@ class Remote(models.Model):
 
         return manifest_metadata
 
-    @staticmethod
-    def __parse_iiif_v2_canvas(canvas):
-        return {
-            'pid': canvas['@id'].split('/')[-2],
-
-        }
+    # @staticmethod
+    # def parse_iiif_v2_canvas(canvas):
+    #     id_uri = urlparse(unquote(canvas['@id']))
+    #     service = urlparse(unquote(canvas['images'][0]['service']['@id']))
+    #     resource_id = service.path.split('/').pop()
+    #     return {
+    #         'pid': canvas['@id'].split('/')[-2],
+    #         'resource_id': quote(resource_id, save='')
+    #     }

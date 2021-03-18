@@ -191,8 +191,9 @@ class Remote(models.Model):
         """
         properties = {}
 
-        for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
-            properties.update(iiif_metadata)
+        if 'metadata' in data:
+            for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
+                properties.update(iiif_metadata)
 
         manifest_data = [{prop: data[prop]} for prop in data if isinstance(data[prop], str)]
 
@@ -200,7 +201,10 @@ class Remote(models.Model):
             properties.update(datum)
 
         properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
-        properties['summary'] = data['description']
+        properties['label'] = data['label']
+        properties['summary'] = data['description'] if 'description' in data else ''
+
+
 
         if 'logo' in properties:
             properties.pop('logo')

@@ -27,7 +27,7 @@ def get_fake_canvas_info(canvas):
         iiif_image_info = file.read().replace('\n', '')
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
     response = fetch_url(
-        canvas.service_id,
+        canvas.resource_id,
         timeout=settings.HTTP_REQUEST_TIMEOUT,
         data_format='json'
     )
@@ -104,7 +104,7 @@ def get_canvas_info(canvas):
     if 'fake.info' in str(canvas.manifest.image_server.server_base):
         return get_fake_canvas_info(canvas)
 
-    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
+    return fetch_url(canvas.resource_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
 
 # TODO: Maybe add "OCR Source" and "OCR Type" attributes to the manifest model. That might
 # help make this more universal.

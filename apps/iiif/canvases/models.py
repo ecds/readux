@@ -71,10 +71,9 @@ class Canvas(models.Model):
     @property
     def resource_id(self):
         """Concatenated propert to represent IIIF resource id."""
-        resource = self.resource if self.resource is not None else self.pid
         return '{h}/{r}'.format(
             h=self.manifest.image_server.server_base,
-            r=quote(resource, safe='')
+            r=quote(self.resource, safe='') or self.pid
         )
 
     @property
@@ -88,16 +87,18 @@ class Canvas(models.Model):
 
     @property
     def image_info(self):
+        print(self)
         """Convenience property for the canvas' IIIF info json URL."""
         return services.get_canvas_info(self)
 
     @property
     def thumbnail(self):
         """Concatenated property to represent IIIF thumbnail link."""
-        return '{h}/{c}/full/200,/0/default.jpg'.format(
-            h=self.manifest.image_server.server_base,
-            c=self.resource
-        )
+        return self.resource_id + '/full/200,/0/default.jpg'
+        # return '{h}/{c}/full/200,/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def social_media(self):
@@ -111,17 +112,16 @@ class Canvas(models.Model):
     def twitter_media1(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
         # TODO: shouldn't this use `self.manifest.image_server.server_base`
-        return 'http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/{c}/full/600,/0/default.jpg'.format(
-            c=self.resource
-        )
+        return f'{self.resource_id}/full/600,/0/default.jpg'
 
     @property
     def twitter_media2(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
-        return '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.manifest.image_server.server_base,
-            c=self.resource
-        )
+        return f'{self.resource_id}/full/600,/0/default.jpg'
+        # return '{h}/{c}/full/600,/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def uri(self):
@@ -136,15 +136,17 @@ class Canvas(models.Model):
         """Concatenated property for cropped landscape URI"""
         if self.height > self.width:
             # portrait
-            return '{h}/{c}/full/,250/0/default.jpg'.format(
-                h=self.manifest.image_server.server_base,
-                c=self.resource
-            )
+            return f'{self.resource_id}/full/,250/0/default.jpg'
+            # return '{h}/{c}/full/,250/0/default.jpg'.format(
+            #     h=self.manifest.image_server.server_base,
+            #     c=self.resource
+            # )
         # landscape
-        return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
-            h=self.manifest.image_server.server_base,
-            c=self.resource
-        )
+        return f'{self.resource_id}/pct:25,0,50,100/,250/0/default.jpg'
+        # return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def thumbnail_crop_tallwide(self):
@@ -163,15 +165,17 @@ class Canvas(models.Model):
         """Concatenated property for cropped volume URI"""
         if self.height > self.width:
             # portrait
-            return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
-                h=self.manifest.image_server.server_base,
-                c=self.resource
-            )
+            return f'{self.resource_id}/pct:15,15,70,70/,600/0/default.jpg'
+            # return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
+            #     h=self.manifest.image_server.server_base,
+            #     c=self.resource
+            # )
         # landscape
-        return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
-            h=self.manifest.image_server.server_base,
-            c=self.resource
-        )
+        return f'{self.resource_id}/pct:25,15,50,85/,600/0/default.jpg'
+        # return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def result(self):

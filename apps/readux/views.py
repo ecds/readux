@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 import config.settings.local as settings
 from .models import UserAnnotation
-from ..cms.models import Page, CollectionsPage
+from ..cms.models import Page, CollectionsPage, VolumesPage
 from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
@@ -259,6 +259,7 @@ class PageDetail(TemplateView):
         context['page'] = canvas
         context['volume'] = manifest
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
+        context['volumelink'] = Page.objects.type(VolumesPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(
             owner_id=self.request.user.id
         ).filter(

@@ -13,15 +13,7 @@
 {% endblock extra_css %}
 
 {% block content %}
-<!-- <div class="rx-title-container">
-  <ul class="rx-breadcrumb uk-text-truncate">
-    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-    <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-    <li class="rx-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-        alt="Collections">{{ volume.collections.first.label }}</a></li>
-  </ul>
-  <div class="rx-title uk-text-truncate" title="{{ volume.label }}">{{volume.label}}</div>
-</div> -->
+
 {{ json_data|json_script:"context" }}
 {% block inner %}
 
@@ -57,9 +49,13 @@
         <ul class="rx-page-breadcrumb long-and-truncated">
           <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
           <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+          {% if volume.collections.first.pid %}
           <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
               alt="Collections">{{ volume.collections.first.label }}</a>
           </li>
+          {% else %}
+          <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink.slug }}">All Volumes</a></li>
+          {% endif %}
           <!-- <li>
             {{ request.GET.type }}
           </li> -->
@@ -71,9 +67,13 @@
             <ul class="rx-page-breadcrumb">
               <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
               <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+              {% if volume.collections.first.pid %}
               <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
                   alt="Collections">{{ volume.collections.first.label }}</a>
               </li>
+              {% else %}
+              <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink. }}">All Volumes</a></li>
+              {% endif %}
               <!-- <li>
                         {{ request.GET.type }}
                       </li> -->
@@ -373,6 +373,11 @@
 
 {% if page.pid is not None %}
 
+<!--
+        <p id="test"></p>
+        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
+        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
+-->
 {% endif %}
 
 {% endblock viewer %}

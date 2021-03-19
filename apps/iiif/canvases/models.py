@@ -73,7 +73,7 @@ class Canvas(models.Model):
         """Concatenated propert to represent IIIF resource id."""
         return '{h}/{r}'.format(
             h=self.manifest.image_server.server_base,
-            r=quote(self.resource, safe='') or self.pid
+            r=self.resource or self.pid
         )
 
     @property

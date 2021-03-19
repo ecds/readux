@@ -87,7 +87,11 @@ def get_ocr(canvas):
     if 'fake.info' in canvas.manifest.image_server.server_base:
         return get_fake_ocr()
     if canvas.default_ocr == "line":
-        result = fetch_alto_ocr(canvas)
+        result = None
+        if 'fake' in canvas.manifest.image_server.server_base:
+            result = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
+        else:
+            result = fetch_alto_ocr(canvas)
         return add_alto_ocr(result)
     result = fetch_positional_ocr(canvas)
     return add_positional_ocr(canvas, result)
@@ -101,10 +105,21 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    if 'fake.info' in str(canvas.manifest.image_server.server_base):
-        return get_fake_canvas_info(canvas)
+    for x in range(1, 20):
+        print(canvas.manifest.image_server.server_base)
 
-    return fetch_url(canvas.resource_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
+    if 'fake' in str(canvas.manifest.image_server.server_base):
+        response =  get_fake_canvas_info(canvas)
+        for x in range(1, 20):
+            print('@@@')
+            print(response)
+        return response
+
+    response = fetch_url(canvas.resource_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
+    for x in range(1, 20):
+        print(response)
+    return response
+
 
 # TODO: Maybe add "OCR Source" and "OCR Type" attributes to the manifest model. That might
 # help make this more universal.
@@ -259,6 +274,10 @@ def fetch_alto_ocr(canvas):
         p=settings.DATASTREAM_PREFIX,
         c=canvas.pid.replace('fedora:', '')
     )
+    for x in range(1, 20):
+        print('*')
+        print(url)
+
     return fetch_url(url, data_format='text/plain')
 
 def add_alto_ocr(result):

@@ -119,11 +119,14 @@ class CanvasTests(TestCase):
 
     @httpretty.activate
     def test_line_by_line_from_alto(self):
+        iiif_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
+        self.canvas.manifest.image_server = iiif_server
         alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
         url = "{p}{c}/datastreams/tei/content".format(
             p=settings.DATASTREAM_PREFIX,
             c=self.canvas.pid.replace('fedora:', '')
         )
+        url = 'http://repo.library.emory.edu/fedora/objects/emory:5622/datastreams/tei/content'
         httpretty.register_uri(httpretty.GET, url, body=alto)
         httpretty.register_uri(
             httpretty.GET,

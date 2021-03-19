@@ -76,7 +76,7 @@ class ManifestTests(TestCase):
         assert manifest['description'] == self.volume.summary
         assert manifest['thumbnail']['@id'] == '{h}/{c}/full/600,/0/default.jpg'.format(
             h=self.volume.image_server.server_base,
-            c=self.start_canvas.pid
+            c=self.start_canvas.resource
         )
         assert manifest['sequences'][0]['startCanvas'] == self.volume.start_canvas.identifier
 

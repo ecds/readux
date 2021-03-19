@@ -20,8 +20,11 @@ class CanvasTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
+        # self.canvas.save()
+        # self.canvas.refresh_from_db()
         self.manifest = self.canvas.manifest
         self.assumed_canvas_pid = 'fedora:emory:5622'
+        self.assumed_canvas_resource = '5622'
         self.assumed_volume_pid = 'readux:st7r6'
         self.assumed_iiif_base = 'https://loris.library.emory.edu'
 
@@ -99,11 +102,11 @@ class CanvasTests(TestCase):
             assert 'x' in word
             assert 'y' in word
             assert 'content' in word
-            assert type(word['w']) == int
-            assert type(word['h']) == int
-            assert type(word['x']) == int
-            assert type(word['y']) == int
-            assert type(word['content']) == str
+            assert isinstance(word['w'], int)
+            assert isinstance(word['h'], int)
+            assert isinstance(word['x'], int)
+            assert isinstance(word['y'], int)
+            assert isinstance(word['content'], str)
 
     def test_ocr_from_alto(self):
         alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
@@ -180,7 +183,7 @@ class CanvasTests(TestCase):
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)
         assert serialized_canvas['images'][0]['@id'] == self.canvas.anno_id
-        assert serialized_canvas['images'][0]['resource']['@id'] == "%s/full/full/0/default.jpg" % (self.canvas.service_id)
+        assert serialized_canvas['images'][0]['resource']['@id'] == "%s/full/full/0/default.jpg" % (self.canvas.resource_id)
 
     def test_canvas_list(self):
         kwargs = { 'manifest': self.manifest.pid }
@@ -197,21 +200,25 @@ class CanvasTests(TestCase):
         assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
         assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, quote(self.assumed_canvas_pid))
         assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
-        assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
-        assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
-        assert self.canvas.twitter_media1 == "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.assumed_canvas_pid)
-        assert self.canvas.twitter_media2 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.twitter_media1 == "http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/%s/full/600,/0/default.jpg" % (self.assumed_canvas_resource)
+        assert self.canvas.twitter_media2 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
         assert self.canvas.uri == "%s/iiif/%s/" % (settings.HOSTNAME, self.assumed_volume_pid)
-        assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
-        assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
-        assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
 
     def test_wide_image_crops(self):
         pid = '15210893.5622.emory.edu$95'
         canvas = Canvas.objects.get(pid=pid)
-        assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.manifest.image_server.server_base, pid)
-        assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.manifest.image_server.server_base, pid)
-        assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, pid)
+        # canvas.save()
+        # canvas.refresh_from_db()
+        assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
+        for x in range(1, 20):
+            print(canvas.thumbnail_crop_tallwide)
+        assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
+        assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
 
     def test_result_property(self):
         assert self.canvas.result == "a retto , dio Quef\u00eca de'"

@@ -96,7 +96,7 @@ class Canvas(models.Model):
         """Concatenated property to represent IIIF thumbnail link."""
         return '{h}/{c}/full/200,/0/default.jpg'.format(
             h=self.manifest.image_server.server_base,
-            c=self.pid
+            c=self.resource
         )
 
     @property
@@ -104,7 +104,7 @@ class Canvas(models.Model):
         """Concatenated property to represent IIIF image link for use in Open Graph metadata."""
         return '{h}/{c}/full/600,/0/default.jpg'.format(
             h=self.manifest.image_server.server_base,
-            c=self.pid
+            c=self.resource
         )
 
     @property
@@ -112,7 +112,7 @@ class Canvas(models.Model):
         """Concatenated property for twitter cards and Open Graph metadata."""
         # TODO: shouldn't this use `self.manifest.image_server.server_base`
         return 'http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/{c}/full/600,/0/default.jpg'.format(
-            c=self.pid
+            c=self.resource
         )
 
     @property
@@ -120,7 +120,7 @@ class Canvas(models.Model):
         """Concatenated property for twitter cards and Open Graph metadata."""
         return '{h}/{c}/full/600,/0/default.jpg'.format(
             h=self.manifest.image_server.server_base,
-            c=self.pid
+            c=self.resource
         )
 
     @property
@@ -138,12 +138,12 @@ class Canvas(models.Model):
             # portrait
             return '{h}/{c}/full/,250/0/default.jpg'.format(
                 h=self.manifest.image_server.server_base,
-                c=self.pid
+                c=self.resource
             )
         # landscape
         return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
             h=self.manifest.image_server.server_base,
-            c=self.pid
+            c=self.resource
         )
 
     @property
@@ -153,10 +153,10 @@ class Canvas(models.Model):
             # portrait
             return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
                 h=self.manifest.image_server.server_base,
-                c=self.pid
+                c=self.resource
             )
         # landscape
-        return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.pid)
+        return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.resource)
 
     @property
     def thumbnail_crop_volume(self):
@@ -165,12 +165,12 @@ class Canvas(models.Model):
             # portrait
             return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
                 h=self.manifest.image_server.server_base,
-                c=self.pid
+                c=self.resource
             )
         # landscape
         return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
             h=self.manifest.image_server.server_base,
-            c=self.pid
+            c=self.resource
         )
 
     @property
@@ -190,6 +190,9 @@ class Canvas(models.Model):
         Override save function to set `resource_id` add OCR,
         and set as manifest's `start_canvas` if manifest does not have one.
         """
+        if self.resource is None:
+            self.resource = self.pid
+
         super(Canvas, self).save(*args, **kwargs)
 
         if self._state.adding or not self.annotation_set.exists():

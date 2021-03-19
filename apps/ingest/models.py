@@ -201,11 +201,9 @@ class Remote(models.Model):
             properties.update(datum)
 
         properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
-        properties['label'] = data['label']
         properties['summary'] = data['description'] if 'description' in data else ''
 
-
-
+        # TODO: Work out adding remote logos
         if 'logo' in properties:
             properties.pop('logo')
 

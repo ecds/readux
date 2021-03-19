@@ -134,9 +134,9 @@ class IngestTasksTest(TestCase):
         assert manifest.image_server.server_base == 'https://fake.archivelab.io/iiif'
         assert manifest.canvas_set.count() == 6
         assert canvases[0]['@id'] == '{h}/iiif/{m}/canvas/09359080.4757.emory.edu$0'.format(h=settings.HOSTNAME, m=manifest.pid)
-        assert canvases[0]['images'][0]['resource']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu%240/full/full/0/default.jpg'
-        assert canvases[0]['images'][0]['resource']['service']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu%240'
-        assert canvases[0]['thumbnail']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu%240/full/200,/0/default.jpg'
+        assert canvases[0]['images'][0]['resource']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu$0/full/full/0/default.jpg'
+        assert canvases[0]['images'][0]['resource']['service']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu$0'
+        assert canvases[0]['thumbnail']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu$0/full/200,/0/default.jpg'
 
     def test_creating_canvas_when_filename_is_not_pid_princeton_example(self):
         """ Sometimes the filename/path on the IIIF is not the same as the canvas id. """

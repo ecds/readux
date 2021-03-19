@@ -87,7 +87,6 @@ class Canvas(models.Model):
 
     @property
     def image_info(self):
-        print(self)
         """Convenience property for the canvas' IIIF info json URL."""
         return services.get_canvas_info(self)
 
@@ -153,12 +152,14 @@ class Canvas(models.Model):
         """Concatenated property for cropped tallwide URI"""
         if self.height > self.width:
             # portrait
-            return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
-                h=self.manifest.image_server.server_base,
-                c=self.resource
-            )
+            return f'{self.resource_id}/pct:5,5,90,90/,250/0/default.jpg'
+            # return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
+            #     h=self.manifest.image_server.server_base,
+            #     c=self.resource
+            # )
         # landscape
-        return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.resource)
+        return f'{self.resource_id}/pct:5,5,90,90/250,/0/default.jpg'
+        # return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.resource)
 
     @property
     def thumbnail_crop_volume(self):

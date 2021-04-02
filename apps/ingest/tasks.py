@@ -23,27 +23,30 @@ def create_canvas_task(ingest_id, is_testing=False):
     :type is_testing: bool, optional
     """
     ingest = Local.objects.get(pk=ingest_id)
-    for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
-        ocr_file_name = [
-            f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
-        ][0]
+    if path.isfile(ingest.bundle.path):
+        for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+            ocr_file_name = [
+                f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
+            ][0]
 
-        image_file_path = path.join(ingest.image_directory, image_file)
-        position = index + 1
-        ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
+            image_file_path = path.join(ingest.image_directory, image_file)
+            position = index + 1
+            ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
-        canvas = Canvas(
-            manifest=ingest.manifest,
-            pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
-            ocr_file_path=ocr_file_path,
-            position=position
-        )
-        if not is_testing:
-            upload = UploadBundle(canvas, image_file_path)
-            upload.upload_bundle()
-        canvas.save()
-        remove(image_file_path)
-        remove(ocr_file_path)
+            canvas = Canvas(
+                manifest=ingest.manifest,
+                pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
+                ocr_file_path=ocr_file_path,
+                position=position
+            )
+            if not is_testing:
+                upload = UploadBundle(canvas, image_file_path)
+                upload.upload_bundle()
+            canvas.save()
+            remove(image_file_path)
+            remove(ocr_file_path)
+    else:
+        self.create_canvas_task(ingest_id, is_testing)
 
     ingest.clean_up()
 

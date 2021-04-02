@@ -105,19 +105,11 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    for x in range(1, 20):
-        print(canvas.manifest.image_server.server_base)
-
     if 'fake' in str(canvas.manifest.image_server.server_base):
         response =  get_fake_canvas_info(canvas)
-        for x in range(1, 20):
-            print('@@@')
-            print(response)
         return response
 
     response = fetch_url(canvas.resource_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
-    for x in range(1, 20):
-        print(response)
     return response
 
 
@@ -224,10 +216,8 @@ def add_positional_ocr(canvas, result):
             lines[index] = line
             # It might be true that the "content" column is empty. However, we just
             # removed it. So we have to add it back.
-            print(lines[index])
             if lines[index].count('\t') == 3:
                 lines[index] = ' \t' + lines[index]
-            print(lines[index])
 
         reader = csv.DictReader(lines, dialect=IncludeQuotesDialect)
 
@@ -274,9 +264,6 @@ def fetch_alto_ocr(canvas):
         p=settings.DATASTREAM_PREFIX,
         c=canvas.pid.replace('fedora:', '')
     )
-    for x in range(1, 20):
-        print('*')
-        print(url)
 
     return fetch_url(url, data_format='text/plain')
 

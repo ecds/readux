@@ -1,4 +1,5 @@
 """[summary]"""
+from os import path
 from django.contrib import admin
 from django.shortcuts import redirect
 import apps.ingest.tasks as tasks
@@ -10,16 +11,23 @@ class LocalAdmin(admin.ModelAdmin):
     show_save_and_add_another = False
 
     def save_model(self, request, obj, form, change):
-        if obj.manifest is None:
-            obj.manifest = tasks.create_manifest(obj)
         obj.save()
-        obj.refresh_from_db()
-        tasks.create_canvas_task(obj.id)
-        super().save_model(request, obj, form, change)
+        if path.isfile(obj.bundle.path):
+            if obj.manifest is None:
+                obj.manifest = tasks.create_manifest(obj)
+            obj.refresh_from_db()
+            tasks.create_canvas_task(obj.id)
+            super().save_model(request, obj, form, change)
+        else:
+            return self.save_model(request, obj, form, change)
 
     def response_add(self, request, obj, post_url_continue=None):
-        manifest_id = obj.manifest.id
-        return redirect('/admin/manifests/manifest/{m}/change/'.format(m=manifest_id))
+        if obj.manifest is not None:
+            manifest_id = obj.manifest.id
+            return redirect('/admin/manifests/manifest/{m}/change/'.format(m=manifest_id))
+        else:
+            obj.manifest = tasks.create_manifest(obj)
+            return self.response_add(request, obj, post_url_continue)
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Local

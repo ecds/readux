@@ -52,6 +52,9 @@ class Local(models.Model):
             # pylint: disable=expression-not-assigned
             dirs.append(item) if item.is_dir() else None
             # pylint: enable=expression-not-assigned
+        if not dirs and all(not item.is_dir() for item in self.zip_ref.infolist()):
+            dirs.extend([i for i in self.zip_ref.infolist() if 'ocr' in i.filename])
+            dirs.extend([i for i in self.zip_ref.infolist() if 'images' in i.filename])
 
         return dirs
 
@@ -69,7 +72,10 @@ class Local(models.Model):
         for directory in self.bundle_dirs:
             if 'images/' in directory.filename.casefold():
                 self.zip_ref.extract(directory, path=self.temp_file_path)
-                path = os.path.join(self.temp_file_path, directory.filename)
+                if directory.is_dir():
+                    path = os.path.join(self.temp_file_path, directory.filename)
+                else:
+                    path = os.path.join(self.temp_file_path, f"{directory.filename.split('images')[0]}images")
         self.zip_ref.close()
         self.__remove_none_images(path)
         return path
@@ -87,7 +93,10 @@ class Local(models.Model):
                 self.zip_ref.extract(file, path=self.temp_file_path)
         for directory in self.bundle_dirs:
             if 'ocr/' in directory.filename.casefold():
-                path = os.path.join(self.temp_file_path, directory.filename)
+                if directory.is_dir():
+                    path = os.path.join(self.temp_file_path, directory.filename)
+                else:
+                    path = os.path.join(self.temp_file_path, f"{directory.filename.split('ocr')[0]}ocr")
         self.zip_ref.close()
         self.__remove_none_text_files(path)
         return path
@@ -190,12 +199,19 @@ class Remote(models.Model):
         :rtype: dict
         """
         properties = {}
+        manifest_data = []
 
         if 'metadata' in data:
+            manifest_data.append({ 'metadata': data['metadata'] })
+
             for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
                 properties.update(iiif_metadata)
 
-        manifest_data = [{prop: data[prop]} for prop in data if isinstance(data[prop], str)]
+        # Sometimes, that label appears as a list.
+        if 'label' in data.keys() and isinstance(data['label'], list):
+            data['label'] = ' '.join(data['label'])
+
+        manifest_data.extend([{prop: data[prop]} for prop in data if isinstance(data[prop], str)])
 
         for datum in manifest_data:
             properties.update(datum)

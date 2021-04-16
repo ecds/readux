@@ -124,10 +124,14 @@ def fetch_positional_ocr(canvas):
     :rtype: requests.models.Response
     """
     if 'archivelab' in canvas.manifest.image_server.server_base:
-        url = "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
-            m=canvas.manifest.pid,
-            p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
-        )
+        url = None
+
+        if '$' in canvas.pid:
+            pid = str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
+        else:
+            pid = canvas.pid
+
+        url = f"https://api.archivelab.org/books/{canvas.manifest.pid}/pages/{pid}/ocr?mode=words"
 
         if 'fake' in canvas.manifest.image_server.server_base:
             fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))

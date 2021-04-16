@@ -33,6 +33,9 @@ def create_canvas_task(ingest_id, is_testing=False):
             position = index + 1
             ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
+            if ingest.manifest is None:
+                ingest.manifest = create_manifest(ingest)
+
             canvas = Canvas(
                 manifest=ingest.manifest,
                 pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),

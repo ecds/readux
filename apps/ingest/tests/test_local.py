@@ -21,6 +21,7 @@ class LocalTest(TestCase):
                 content=open(join(self.fixture_path, bundle), 'rb').read()
             )
             local.save()
+            assert all(item.is_dir() for item in local.bundle_dirs)
             image_directory_path = local.image_directory
             ocr_directory_path = local.ocr_directory
             assert exists(join(local.image_directory, 'not_image.txt')) is False
@@ -69,3 +70,27 @@ class LocalTest(TestCase):
         local.manifest = create_manifest(local)
 
         assert local.manifest.pid == ''
+
+    def test_single_image(self):
+        """
+        The Zipfile library does not make an `infolist` object for a directory if
+        the directory only has one file. Special code was added to handel this case.
+        """
+        local = Local()
+        local.bundle = SimpleUploadedFile(
+            name='single-image.zip',
+            content=open(join(self.fixture_path, 'single-image.zip'), 'rb').read()
+        )
+        local.save()
+        assert all(not item.is_dir() for item in local.zip_ref.infolist())
+        assert all(not item.is_dir() for item in local.bundle_dirs)
+        assert len(local.bundle_dirs) == 2
+        image_directory_path = local.image_directory
+        ocr_directory_path = local.ocr_directory
+        assert exists(join(local.ocr_directory, '0011.jpg')) is False
+        assert exists(join(local.image_directory, '0011.jpg'))
+        assert exists(join(local.ocr_directory, '0011.tsv'))
+        local.clean_up()
+        assert exists(image_directory_path) is False
+        assert exists(ocr_directory_path) is False
+        assert exists(local.bundle.path) is False # pylint: disable=no-member

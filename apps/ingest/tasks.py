@@ -50,7 +50,8 @@ def create_canvas_task(ingest_id, is_testing=False):
             remove(image_file_path)
             remove(ocr_file_path)
     else:
-        self.create_canvas_task(ingest_id, is_testing)
+        # Does this ever get called?
+        create_canvas_task(ingest_id, is_testing)
 
     ingest.clean_up()
 

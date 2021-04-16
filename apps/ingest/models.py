@@ -1,7 +1,7 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
-from urllib.parse import urlparse, quote, unquote
+from urllib.parse import urlparse, unquote
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import mkdtemp

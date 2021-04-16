@@ -1,5 +1,6 @@
 """ Common tasks for ingest. """
 from os import listdir, path, remove
+from uuid import uuid4
 from urllib.parse import urlparse, unquote
 from background_task import background
 from django.apps import apps
@@ -106,7 +107,7 @@ def create_manifest(ingest):
         if not created:
             manifest.canvas_set.all().delete()
     else:
-        manifest = Manifest()
+        manifest = Manifest(pid=str(uuid4()))
 
     manifest.image_server = ingest.image_server
     manifest.save()

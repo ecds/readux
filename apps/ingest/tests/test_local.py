@@ -1,5 +1,6 @@
 """ Tests for local ingest """
 from os.path import exists, join
+from uuid import UUID
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
@@ -69,7 +70,7 @@ class LocalTest(TestCase):
         local.save()
         local.manifest = create_manifest(local)
 
-        assert local.manifest.pid == ''
+        assert UUID(local.manifest.pid).version == 4
 
     def test_single_image(self):
         """

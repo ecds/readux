@@ -50,9 +50,9 @@ def create_canvas_task(ingest_id, is_testing=False):
             canvas.save()
             remove(image_file_path)
             remove(ocr_file_path)
-    else:
-        # Does this ever get called?
-        create_canvas_task(ingest_id, is_testing)
+    # else:
+    #     # Does this ever get called?
+    #     create_canvas_task(ingest_id, is_testing)
 
     # Return the manifest for testing
     ingest.clean_up()

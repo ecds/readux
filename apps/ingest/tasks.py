@@ -24,6 +24,9 @@ def create_canvas_task(ingest_id, is_testing=False):
     :type is_testing: bool, optional
     """
     ingest = Local.objects.get(pk=ingest_id)
+    # if ingest.manifest is None:
+    #     ingest.manifest = create_manifest(ingest)
+
     if path.isfile(ingest.bundle.path):
         for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
             ocr_file_name = [
@@ -34,8 +37,6 @@ def create_canvas_task(ingest_id, is_testing=False):
             position = index + 1
             ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
-            if ingest.manifest is None:
-                ingest.manifest = create_manifest(ingest)
 
             canvas = Canvas(
                 manifest=ingest.manifest,
@@ -53,6 +54,7 @@ def create_canvas_task(ingest_id, is_testing=False):
         # Does this ever get called?
         create_canvas_task(ingest_id, is_testing)
 
+    # Return the manifest for testing
     ingest.clean_up()
 
 @background(schedule=1)

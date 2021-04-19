@@ -34,7 +34,7 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
     resource_class = ManifestResource
     exclude = ('id',)
     filter_horizontal = ('collections',)
-    list_display = ('id', 'pid', 'label', 'author', 'published_date', 'published_city', 'publisher')
+    list_display = ('id', 'pid', 'label', 'created_at', 'author', 'published_date', 'published_city', 'publisher')
     search_fields = ('id', 'label', 'author', 'published_date')
     summernote_fields = ('summary',)
     form = ManifestAdminForm

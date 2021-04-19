@@ -4,8 +4,9 @@ from uuid import UUID
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from apps.iiif.manifests.models import ImageServer
 from ..models import Local
-from ..tasks import create_manifest
+from ..tasks import create_manifest, create_canvas_task
 
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
@@ -77,7 +78,9 @@ class LocalTest(TestCase):
         The Zipfile library does not make an `infolist` object for a directory if
         the directory only has one file. Special code was added to handel this case.
         """
-        local = Local()
+        image_server = ImageServer(server_base='https://fake.io')
+        image_server.save()
+        local = Local(image_server=image_server)
         local.bundle = SimpleUploadedFile(
             name='single-image.zip',
             content=open(join(self.fixture_path, 'single-image.zip'), 'rb').read()

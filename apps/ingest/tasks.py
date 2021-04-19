@@ -37,19 +37,21 @@ def create_canvas_task(ingest_id, is_testing=False):
             position = index + 1
             ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
-
-            canvas = Canvas(
+            # The task will retry if there is an error. This prevents the creation of
+            # multiple versions of the same canvas
+            canvas, created = Canvas.objects.get_or_create(
                 manifest=ingest.manifest,
                 pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
                 ocr_file_path=ocr_file_path,
                 position=position
             )
-            if not is_testing:
-                upload = UploadBundle(canvas, image_file_path)
-                upload.upload_bundle()
-            canvas.save()
-            remove(image_file_path)
-            remove(ocr_file_path)
+            if created:
+                if not is_testing:
+                    upload = UploadBundle(canvas, image_file_path)
+                    upload.upload_bundle()
+                canvas.save()
+                remove(image_file_path)
+                remove(ocr_file_path)
     # else:
     #     # Does this ever get called?
     #     create_canvas_task(ingest_id, is_testing)

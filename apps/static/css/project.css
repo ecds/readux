@@ -51,6 +51,10 @@ a.nav-link {
   list-style: none;
 }
 
+.block-paragraph_block li {
+  list-style: circle;
+}
+
 .uk-navbar-nav {
   font-weight: bold;
 }

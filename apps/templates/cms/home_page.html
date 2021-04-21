@@ -48,9 +48,9 @@
           </article>
         </li>
         {% endfor %}
-        <a class="nav-link" href="#">
+        <!-- <a class="nav-link" href="#">
           <div class="rx-btn rx-btn-extension">Show All Featured Collections <i class="fas fa-chevron-right"></i></div>
-        </a>
+        </a> -->
       </ul>
       {% endif %}
 
@@ -98,9 +98,9 @@
           </article>
         </li>
       {% endfor %}
-      <a class="nav-link" href="#">
+      <!-- <a class="nav-link" href="#">
         <div class="rx-btn rx-btn-extension">Show All Featured Volumes <i class="fas fa-chevron-right"></i></div>
-      </a>
+      </a> -->
       {% endif %}
 
 
@@ -128,7 +128,14 @@
           </article>
         </li>
         {% endfor %}
+
+        <li class="uk-grid" style="margin-top:0;">
+        <a class="nav-link uk-padding-remove" href="/{{ collectionsurl.slug }}">
+          <div class="rx-btn rx-btn-extension">Show All Collections <i class="fas fa-chevron-right"></i></div>
+        </a>
+        </li>
       </ul>
+              {% include "footer.html" %}
       {% endif %}
 
       {% if page.content_display == 'Volumes' %}
@@ -207,7 +214,7 @@
       <a class="nav-link" href="/{{ volumesurl.slug }}">
         <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
       </a>
-
+    </ul>
 
       {% include "footer.html" %}
       {% endif %}

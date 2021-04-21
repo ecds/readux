@@ -218,6 +218,7 @@ class HomePage(Page):
         # context['volumespage'] = query_set.all
         # context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
         context['volumesurl'] = Page.objects.type(VolumesPage).first()
+        context['collectionsurl'] = Page.objects.type(CollectionsPage).first()
         # annocount_list = []
         # canvaslist = []
         # for volume in query_set:

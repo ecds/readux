@@ -1,4 +1,5 @@
 """ Tests for local ingest """
+from os import listdir
 from os.path import exists, join
 from uuid import UUID
 from django.test import TestCase
@@ -98,3 +99,42 @@ class LocalTest(TestCase):
         assert exists(image_directory_path) is False
         assert exists(ocr_directory_path) is False
         assert exists(local.bundle.path) is False # pylint: disable=no-member
+
+    def test_removing_junk(self):
+        """
+        Any hidden files should be removed.
+        """
+        image_server = ImageServer(server_base='https://fake.io')
+        image_server.save()
+        local = Local(image_server=image_server)
+        local.bundle = SimpleUploadedFile(
+            name='bundle_with_junk.zip',
+            content=open(join(self.fixture_path, 'bundle_with_junk.zip'), 'rb').read()
+        )
+        local.save()
+        files = local.zip_ref.namelist()
+
+        assert 'ocr/.junk.tsv' in [f for f in files if 'junk' in f]
+        assert 'images/.00000010.jpg' in [f for f in files if '.0' in f]
+        assert exists(join(local.image_directory, '.00000010.jpg')) is False
+        assert exists(join(local.image_directory, '.junk.tsv')) is False
+
+    def test_removing_underscores(self):
+        """
+        Any hidden files should be removed.
+        """
+        image_server = ImageServer(server_base='https://fake.io')
+        image_server.save()
+        local = Local(image_server=image_server)
+        local.bundle = SimpleUploadedFile(
+            name='bundle_with_underscores.zip',
+            content=open(join(self.fixture_path, 'bundle_with_underscores.zip'), 'rb').read()
+        )
+        local.save()
+        files = local.zip_ref.namelist()
+        assert len([f for f in files if '_' in f]) == 10
+        assert len([f for f in files if '-' in f]) == 0
+        assert len([f for f in listdir(local.image_directory) if '_' in f]) == 0
+        assert len([f for f in listdir(local.ocr_directory) if '_' in f]) == 0
+        assert len([f for f in listdir(local.image_directory) if '-' in f]) == 5
+        assert len([f for f in listdir(local.ocr_directory) if '-' in f]) == 5

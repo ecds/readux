@@ -1,7 +1,7 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -77,6 +77,8 @@ class Local(models.Model):
                 else:
                     path = os.path.join(self.temp_file_path, f"{directory.filename.split('images')[0]}images")
         self.zip_ref.close()
+        self.__remove_junk(path)
+        self.__remove_underscores(path)
         self.__remove_none_images(path)
         return path
 
@@ -98,6 +100,8 @@ class Local(models.Model):
                 else:
                     path = os.path.join(self.temp_file_path, f"{directory.filename.split('ocr')[0]}ocr")
         self.zip_ref.close()
+        self.__remove_junk(path)
+        self.__remove_underscores(path)
         self.__remove_none_text_files(path)
         return path
 
@@ -126,6 +130,22 @@ class Local(models.Model):
             metadata = services.clean_metadata(metadata.dict[0])
 
         return metadata
+
+    @staticmethod
+    def __remove_junk(path):
+        for junk in [f for f in os.listdir(path) if f.startswith('.')]:
+            junk_file = os.path.join(path, junk)
+            if os.path.isdir(junk_file):
+                rmtree(junk_file)
+            else:
+                os.remove(junk_file)
+        # for junk in [f for f in os.listdir(path) if f.startswith('_') and os.path.isdir(f)]:
+        #     rmtree(junk)
+
+    @staticmethod
+    def __remove_underscores(path):
+        for file in [f for f in os.listdir(path) if '_' in f]:
+            os.rename(os.path.join(path, file), os.path.join(path, file.replace('_', '-')))
 
     @staticmethod
     def __remove_none_images(path):

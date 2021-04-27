@@ -6,7 +6,6 @@ from urllib.parse import quote
 import config.settings.local as settings
 from django.apps import apps
 from django.db import models
-from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from ..manifests.models import Manifest
@@ -190,15 +189,19 @@ class Canvas(models.Model):
             clean_words.append(clean_word)
         return ' '.join(clean_words)
 
-    def save(self, *args, **kwargs): # pylint: disable = arguments-differ
+    def save(self, *args, **kwargs): # pylint: disable = signature-differs
         """
         Override save function to set `resource_id` add OCR,
         and set as manifest's `start_canvas` if manifest does not have one.
         """
+        if self.image_info:
+            self.width = self.image_info['width']
+            self.height = self.image_info['height']
+
         if self.resource is None:
             self.resource = self.pid
 
-        super(Canvas, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         if self._state.adding or not self.annotation_set.exists():
             self.__add_ocr()
@@ -243,13 +246,6 @@ class Canvas(models.Model):
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         ordering = ['position']
-
-@receiver(signals.pre_save, sender=Canvas)
-def set_dimensions(sender, instance, **kwargs):
-    """Pre-save function to get the width and height of the image."""
-    if instance.image_info:
-        instance.width = instance.image_info['width']
-        instance.height = instance.image_info['height']
 
 class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         # Translators: admin:skip

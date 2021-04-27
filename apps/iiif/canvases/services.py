@@ -109,7 +109,11 @@ def get_canvas_info(canvas):
         response =  get_fake_canvas_info(canvas)
         return response
 
-    response = fetch_url(canvas.resource_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
+    response = fetch_url(
+        canvas.resource_id,
+        timeout=settings.HTTP_REQUEST_TIMEOUT,
+        data_format='json'
+    )
     return response
 
 

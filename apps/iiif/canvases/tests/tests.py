@@ -236,3 +236,15 @@ class CanvasTests(TestCase):
         canvas = CanvasFactory.create(manifest=manifest)
         assert canvas.image_info['height'] == 3000
         assert canvas.image_info['width'] == 3000
+
+    def test_setting_height_width_from_iiif(self):
+        image_server = ImageServerFactory.create(server_base='http://fake.info')
+        manifest = ManifestFactory.create(image_server=image_server)
+        canvas = CanvasFactory.build()
+        assert canvas.height != 3000
+        assert canvas.width != 3000
+        canvas.manifest = manifest
+        canvas.save()
+        canvas.refresh_from_db()
+        assert canvas.height == 3000
+        assert canvas.width == 3000

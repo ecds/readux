@@ -52,11 +52,14 @@ def create_canvas_task(ingest_id, is_testing=False):
                 canvas.save()
                 remove(image_file_path)
                 remove(ocr_file_path)
-    # else:
-    #     # Does this ever get called?
-    #     create_canvas_task(ingest_id, is_testing)
 
-    # Return the manifest for testing
+    # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
+    # the database. As a double check loop through to make sure the height and width has been saved.
+    for canvas in ingest.manifest.canvas_set.all():
+        if canvas.width == 0 or canvas.height == 0:
+            canvas.save()
+
+    # Finally clean up the files and the ingest object.
     ingest.clean_up()
 
 @background(schedule=1)

@@ -4,6 +4,7 @@ import logging
 import requests
 
 logger = logging.getLogger(__name__)
+logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 def fetch_url(url, timeout=30, data_format='json', verbosity=1):
     """ Given a url, this function returns the data."""

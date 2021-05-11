@@ -8,11 +8,15 @@ from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.models import Manifest, RelatedLink
 from .services import UploadBundle
 from apps.utils.fetch import fetch_url
+import logging
 
 # Use `apps.ge_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
 Local = apps.get_model('ingest.local') # pylint: disable = invalid-name
 Remote = apps.get_model('ingest.remote')
+
+LOGGER = logging.getLogger(__name__)
+logging.getLogger("background_task").setLevel(logging.ERROR)
 
 @background(schedule=1)
 def create_canvas_task(ingest_id, is_testing=False):
@@ -23,18 +27,21 @@ def create_canvas_task(ingest_id, is_testing=False):
     :param is_testing: [description], defaults to False
     :type is_testing: bool, optional
     """
+    LOGGER.debug('^^^^^Starting create canvas task^^^^^')
     ingest = Local.objects.get(pk=ingest_id)
     # if ingest.manifest is None:
     #     ingest.manifest = create_manifest(ingest)
 
     if path.isfile(ingest.bundle.path):
+        canvas_count = len(listdir(ingest.image_directory))
         for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+            position = index + 1
+            LOGGER.debug(f'^^^^ Creating canvas {position} of {canvas_count} ^^^^')
             ocr_file_name = [
                 f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
             ][0]
 
             image_file_path = path.join(ingest.image_directory, image_file)
-            position = index + 1
             ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
             # The task will retry if there is an error. This prevents the creation of
@@ -46,10 +53,14 @@ def create_canvas_task(ingest_id, is_testing=False):
                 position=position
             )
             if created:
+                LOGGER.debug(f'^^^^ Created canvas {position} of {canvas_count} ^^^^')
                 if not is_testing:
+                    LOGGER.debug(f'^^^^ Uploading canvas {position} of {canvas_count} ^^^^')
                     upload = UploadBundle(canvas, image_file_path)
                     upload.upload_bundle()
+                    LOGGER.debug(f'^^^^ Uploaded canvas {position} of {canvas_count} ^^^^')
                 canvas.save()
+                LOGGER.debug(f'^^^^ Saved canvas {position} of {canvas_count} ^^^^')
                 remove(image_file_path)
                 remove(ocr_file_path)
 
@@ -57,6 +68,7 @@ def create_canvas_task(ingest_id, is_testing=False):
     # the database. As a double check loop through to make sure the height and width has been saved.
     for canvas in ingest.manifest.canvas_set.all():
         if canvas.width == 0 or canvas.height == 0:
+            LOGGER.debug(f'^^^^ Re-saving canvas {canvas.position} to get height and width ^^^^')
             canvas.save()
 
     # Finally clean up the files and the ingest object.

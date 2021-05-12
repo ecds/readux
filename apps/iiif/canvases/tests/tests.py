@@ -10,8 +10,9 @@ import config.settings.local as settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Canvas
 from .. import services
-from .factories import CanvasFactory
+from ..tasks import add_ocr
 from ..apps import CanvasesConfig
+from .factories import CanvasFactory
 
 
 class CanvasTests(TestCase):
@@ -27,6 +28,8 @@ class CanvasTests(TestCase):
         self.assumed_canvas_resource = '5622'
         self.assumed_volume_pid = 'readux:st7r6'
         self.assumed_iiif_base = 'https://loris.library.emory.edu'
+
+        self.add_ocr_task = add_ocr.now
 
     def test_app_config(self):
         assert CanvasesConfig.verbose_name == 'Canvases'
@@ -121,6 +124,7 @@ class CanvasTests(TestCase):
     def test_line_by_line_from_alto(self):
         iiif_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
         self.canvas.manifest.image_server = iiif_server
+        self.canvas.manifest.save()
         alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
         url = "{p}{c}/datastreams/tei/content".format(
             p=settings.DATASTREAM_PREFIX,
@@ -139,6 +143,7 @@ class CanvasTests(TestCase):
         self.canvas.default_ocr = 'line'
         self.canvas.annotation_set.all().delete()
         self.canvas.save()
+        self.add_ocr_task(self.canvas.pk)
         updated_canvas = Canvas.objects.get(pk=self.canvas.pk)
         ocr = updated_canvas.annotation_set.first()
         assert 'mm' in ocr.content
@@ -153,7 +158,10 @@ class CanvasTests(TestCase):
     def test_ocr_from_tsv(self):
         iiif_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
         self.canvas.manifest.image_server = iiif_server
+        self.canvas.manifest.save()
         canvas = CanvasFactory(manifest=self.canvas.manifest, pid='boo')
+        canvas.save()
+        self.add_ocr_task(canvas.id)
         ocr = canvas.annotation_set.all().first()
         assert ocr.x == 459
         assert ocr.y == 391

@@ -5,12 +5,13 @@ from urllib.parse import urlparse, unquote
 from background_task import background
 from django.apps import apps
 from apps.iiif.canvases.models import Canvas
+from apps.iiif.canvases.tasks import add_ocr
 from apps.iiif.manifests.models import Manifest, RelatedLink
 from .services import UploadBundle
 from apps.utils.fetch import fetch_url
 import logging
 
-# Use `apps.ge_model` to avoid circular import error. Because the parameters used to
+# Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
 Local = apps.get_model('ingest.local') # pylint: disable = invalid-name
 Remote = apps.get_model('ingest.remote')
@@ -61,6 +62,11 @@ def create_canvas_task(ingest_id, is_testing=False):
                     LOGGER.debug(f'^^^^ Uploaded canvas {position} of {canvas_count} ^^^^')
                 canvas.save()
                 LOGGER.debug(f'^^^^ Saved canvas {position} of {canvas_count} ^^^^')
+                if is_testing:
+                    add_ocr_task = add_ocr.now
+                    add_ocr_task(canvas.id)
+                else:
+                    add_ocr(canvas.id)
                 remove(image_file_path)
                 remove(ocr_file_path)
 

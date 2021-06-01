@@ -38,6 +38,7 @@ GEM
 
 PLATFORMS
   ruby
+  x64-mingw32
 
 DEPENDENCIES
   iiif_to_jekyll (= 0.9.4)!

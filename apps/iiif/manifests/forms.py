@@ -73,7 +73,7 @@ class ManifestAdminForm(forms.ModelForm):
             'id', 'pid', 'label', 'summary', 'author',
             'published_city', 'published_date', 'publisher',
             'pdf', 'metadata', 'viewingdirection', 'collections',
-            'image_server', 'start_canvas'
+            'image_server', 'start_canvas', 'attribution', 'logo', 'license'
         )
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)

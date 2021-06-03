@@ -7,6 +7,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
 from ..manifests.models import Manifest
 from .models import Canvas
+from .tasks import add_ocr
 
 class CanvasResource(resources.ModelResource):
     """Django admin Canvas resource"""
@@ -35,5 +36,11 @@ class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'pid', 'is_starting_page',
         'manifest__pid', 'manifest__label'
     )
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        obj.refresh_from_db()
+        add_ocr(obj.id)
+        super().save_model(request, obj, form, change)
 
 admin.site.register(Canvas, CanvasAdmin)

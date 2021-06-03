@@ -4,6 +4,7 @@
   "fields": {
       "label": "",
       "pid": "fedora:emory:5622",
+      "resource": "5622",
       "summary": null,
       "manifest": "464d82f6-6ae5-4503-9afc-8e3cdd92a3f1",
       "position": 6,
@@ -17,6 +18,7 @@
   "fields": {
       "label": "",
       "pid": "15210893.5622.emory.edu$95",
+      "resource": "15210893",
       "summary": null,
       "manifest": "464d82f6-6ae5-4503-9afc-8e3cdd92a3f1",
       "position": 96,

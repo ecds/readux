@@ -1,0 +1,64 @@
+{
+    "@context": "http://iiif.io/api/presentation/2/context.json",
+    "@id": "https://www.nga.gov/content/ngaweb/api/v1/iiif/presentation/manifest.json?cultObj:id=164652",
+    "@type": "sc:Manifest",
+    "label": "Autre veue du Campo Vacine",
+    "description": "Autre veue du Campo Vacine",
+    "logo": "https://www.nga.gov/etc/designs/ngaweb/images/nga-seal.png",
+    "attribution": "Provided by National Gallery of Art",
+    "metadata": [
+        {
+        "label": "Artist",
+        "value": "Silvestre, Israël "
+        },
+        {
+        "label": "Accession Number",
+        "value": "1981.69.12.242"
+        },
+        {
+        "label": "Creation Year",
+        "value": "1660"
+        },
+        {
+        "label": "Title",
+        "value": "Autre veue du Campo Vacine"
+        }
+    ],
+    "viewingDirection": "left-to-right",
+    "viewingHint": "individuals",
+    "sequences": [{
+        "@type": "sc:Sequence",
+        "label": "Autre veue du Campo Vacine",
+        "canvases": [{
+            "@id": "https://cq.nga.gov/content/ngaweb/api/v1/iiif/presentation/manifest/sequence/canvas.json?cultObj:id=164652",
+            "@type": "sc:Canvas",
+            "width": 4000,
+            "height": 2074,
+            "label": "Autre veue du Campo Vacine",
+            "images": [{
+                "@type": "oa:Annotation",
+                "motivation": "sc:painting",
+                "resource": {
+                    "@id": "https://www.nga.gov/content/ngaweb/api/v1/iiif/presentation/manifest/sequence/canvas/resource.json?cultObj:id=164652",
+                    "@type": "dctypes:Image",
+                    "format": "image/jpeg",
+                    "height": 2074,
+                    "width": 4000,
+                    "service": {
+                        "@context": "http://iiif.io/api/image/2/context.json",
+                        "@id": "https://media.nga.gov/iiif/cba52a13-d390-4ee4-8965-250593c600ba",
+                        "profile": "http://iiif.io/api/image/2/level2.json"
+                        }
+                    },
+                "on": "https://cq.nga.gov/content/ngaweb/api/v1/iiif/presentation/manifest/sequence/canvas.json?cultObj:id=164652"
+                }],
+            "thumbnail": {
+                "@id": "https://media.nga.gov/iiif/cba52a13-d390-4ee4-8965-250593c600ba/full/!100,100/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "width": 100,
+                "height": 100
+                }
+            }]
+        }]
+    }

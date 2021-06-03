@@ -1,10 +1,13 @@
 """ Tests for local ingest """
+from os import listdir
 from os.path import exists, join
+from uuid import UUID
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from apps.iiif.manifests.models import ImageServer
 from ..models import Local
-from ..tasks import create_manifest
+from ..tasks import create_manifest, create_canvas_task
 
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
@@ -21,6 +24,7 @@ class LocalTest(TestCase):
                 content=open(join(self.fixture_path, bundle), 'rb').read()
             )
             local.save()
+            assert all(item.is_dir() for item in local.bundle_dirs)
             image_directory_path = local.image_directory
             ocr_directory_path = local.ocr_directory
             assert exists(join(local.image_directory, 'not_image.txt')) is False
@@ -68,4 +72,69 @@ class LocalTest(TestCase):
         local.save()
         local.manifest = create_manifest(local)
 
-        assert local.manifest.pid == ''
+        assert UUID(local.manifest.pid).version == 4
+
+    def test_single_image(self):
+        """
+        The Zipfile library does not make an `infolist` object for a directory if
+        the directory only has one file. Special code was added to handel this case.
+        """
+        image_server = ImageServer(server_base='https://fake.io')
+        image_server.save()
+        local = Local(image_server=image_server)
+        local.bundle = SimpleUploadedFile(
+            name='single-image.zip',
+            content=open(join(self.fixture_path, 'single-image.zip'), 'rb').read()
+        )
+        local.save()
+        assert all(not item.is_dir() for item in local.zip_ref.infolist())
+        assert all(not item.is_dir() for item in local.bundle_dirs)
+        assert len(local.bundle_dirs) == 2
+        image_directory_path = local.image_directory
+        ocr_directory_path = local.ocr_directory
+        assert exists(join(local.ocr_directory, '0011.jpg')) is False
+        assert exists(join(local.image_directory, '0011.jpg'))
+        assert exists(join(local.ocr_directory, '0011.tsv'))
+        local.clean_up()
+        assert exists(image_directory_path) is False
+        assert exists(ocr_directory_path) is False
+        assert exists(local.bundle.path) is False # pylint: disable=no-member
+
+    def test_removing_junk(self):
+        """
+        Any hidden files should be removed.
+        """
+        image_server = ImageServer(server_base='https://fake.io')
+        image_server.save()
+        local = Local(image_server=image_server)
+        local.bundle = SimpleUploadedFile(
+            name='bundle_with_junk.zip',
+            content=open(join(self.fixture_path, 'bundle_with_junk.zip'), 'rb').read()
+        )
+        local.save()
+        files = local.zip_ref.namelist()
+
+        assert 'ocr/.junk.tsv' in [f for f in files if 'junk' in f]
+        assert 'images/.00000010.jpg' in [f for f in files if '.0' in f]
+        assert exists(join(local.image_directory, '.00000010.jpg')) is False
+        assert exists(join(local.image_directory, '.junk.tsv')) is False
+
+    def test_removing_underscores(self):
+        """
+        Any hidden files should be removed.
+        """
+        image_server = ImageServer(server_base='https://fake.io')
+        image_server.save()
+        local = Local(image_server=image_server)
+        local.bundle = SimpleUploadedFile(
+            name='bundle_with_underscores.zip',
+            content=open(join(self.fixture_path, 'bundle_with_underscores.zip'), 'rb').read()
+        )
+        local.save()
+        files = local.zip_ref.namelist()
+        assert len([f for f in files if '_' in f]) == 10
+        assert len([f for f in files if '-' in f]) == 0
+        assert len([f for f in listdir(local.image_directory) if '_' in f]) == 0
+        assert len([f for f in listdir(local.ocr_directory) if '_' in f]) == 0
+        assert len([f for f in listdir(local.image_directory) if '-' in f]) == 5
+        assert len([f for f in listdir(local.ocr_directory) if '-' in f]) == 5

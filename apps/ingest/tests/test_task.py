@@ -1,8 +1,10 @@
 """ Tests for ..tasks """
 import os
+import json
 import httpretty
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.serializers import serialize
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.tests.factories import ImageServerFactory
@@ -128,4 +130,26 @@ class IngestTasksTest(TestCase):
 
         new_canvas_task(remote.id)
         manifest.refresh_from_db()
+        canvases = json.loads(serialize('canvas', manifest.canvas_set.all(), is_list=True))
+        assert manifest.image_server.server_base == 'https://fake.archivelab.io/iiif'
         assert manifest.canvas_set.count() == 6
+        assert canvases[0]['@id'] == '{h}/iiif/{m}/canvas/09359080.4757.emory.edu$0'.format(h=settings.HOSTNAME, m=manifest.pid)
+        assert canvases[0]['images'][0]['resource']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu$0/full/full/0/default.jpg'
+        assert canvases[0]['images'][0]['resource']['service']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu$0'
+        assert canvases[0]['thumbnail']['@id'] == 'https://fake.archivelab.io/iiif/09359080.4757.emory.edu$0/full/200,/0/default.jpg'
+
+    def test_creating_canvas_when_filename_is_not_pid_princeton_example(self):
+        """ Sometimes the filename/path on the IIIF is not the same as the canvas id. """
+        with open(os.path.join(self.fixture_path, 'princeton.json')) as json_file:
+            data = json.load(json_file)
+            canvas_data = tasks.parse_iiif_v2_canvas(data['sequences'][0]['canvases'][0])
+            assert canvas_data['resource'] == '0b/21/99/0b21998720154beaacc8218b5063373d/intermediate_file'
+            assert canvas_data['pid'] == '1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e'
+
+    def test_creating_canvas_when_filename_is_not_pid_nga_example(self):
+        """ Sometimes the filename/path on the IIIF is not the same as the canvas id. """
+        with open(os.path.join(self.fixture_path, 'nga.json')) as json_file:
+            data = json.load(json_file)
+            canvas_data = tasks.parse_iiif_v2_canvas(data['sequences'][0]['canvases'][0])
+            assert canvas_data['resource'] == 'cba52a13-d390-4ee4-8965-250593c600ba'
+            # assert canvas_data['pid'] == '1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e'

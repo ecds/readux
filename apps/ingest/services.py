@@ -62,8 +62,10 @@ def extract_image_server(canvas):
     :return: IIIF image server URL
     :rtype: str
     """
-    url = urlparse(canvas['@id'])
-    base_path = '/'.join(url.path.split('/')[:2])
+    url = urlparse(canvas['images'][0]['resource']['service']['@id'])
+    parts = url.path.split('/')
+    parts.pop()
+    base_path = '/'.join(parts)
     host = url.hostname
     if url.port is not None:
         host = '{h}:{p}'.format(h=url.hostname, p=url.port)

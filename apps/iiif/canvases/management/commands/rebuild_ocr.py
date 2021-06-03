@@ -5,6 +5,7 @@ from progress.bar import Bar
 import httpretty
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+from ...tasks import add_ocr
 from ...models import Canvas
 from ... import services
 from ....annotations.models import Annotation
@@ -72,7 +73,7 @@ class Command(BaseCommand):
 
     def __rebuild(self, canvas, testing=False):
         if not canvas.annotation_set.exists():
-            canvas.save()
+            add_ocr.now(canvas.id)
         else:
             ocr = services.get_ocr(canvas)
             if ocr is None:

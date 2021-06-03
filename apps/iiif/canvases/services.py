@@ -27,7 +27,7 @@ def get_fake_canvas_info(canvas):
         iiif_image_info = file.read().replace('\n', '')
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
     response = fetch_url(
-        canvas.service_id,
+        canvas.resource_id,
         timeout=settings.HTTP_REQUEST_TIMEOUT,
         data_format='json'
     )
@@ -87,7 +87,11 @@ def get_ocr(canvas):
     if 'fake.info' in canvas.manifest.image_server.server_base:
         return get_fake_ocr()
     if canvas.default_ocr == "line":
-        result = fetch_alto_ocr(canvas)
+        result = None
+        if 'fake' in canvas.manifest.image_server.server_base:
+            result = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
+        else:
+            result = fetch_alto_ocr(canvas)
         return add_alto_ocr(result)
     result = fetch_positional_ocr(canvas)
     return add_positional_ocr(canvas, result)
@@ -101,10 +105,17 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    if 'fake.info' in str(canvas.manifest.image_server.server_base):
-        return get_fake_canvas_info(canvas)
+    if 'fake' in str(canvas.manifest.image_server.server_base):
+        response =  get_fake_canvas_info(canvas)
+        return response
 
-    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, data_format='json')
+    response = fetch_url(
+        canvas.resource_id,
+        timeout=settings.HTTP_REQUEST_TIMEOUT,
+        data_format='json'
+    )
+    return response
+
 
 # TODO: Maybe add "OCR Source" and "OCR Type" attributes to the manifest model. That might
 # help make this more universal.
@@ -117,10 +128,14 @@ def fetch_positional_ocr(canvas):
     :rtype: requests.models.Response
     """
     if 'archivelab' in canvas.manifest.image_server.server_base:
-        url = "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
-            m=canvas.manifest.pid,
-            p=str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
-        )
+        url = None
+
+        if '$' in canvas.pid:
+            pid = str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
+        else:
+            pid = canvas.pid
+
+        url = f"https://api.archivelab.org/books/{canvas.manifest.pid}/pages/{pid}/ocr?mode=words"
 
         if 'fake' in canvas.manifest.image_server.server_base:
             fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
@@ -209,10 +224,8 @@ def add_positional_ocr(canvas, result):
             lines[index] = line
             # It might be true that the "content" column is empty. However, we just
             # removed it. So we have to add it back.
-            print(lines[index])
             if lines[index].count('\t') == 3:
                 lines[index] = ' \t' + lines[index]
-            print(lines[index])
 
         reader = csv.DictReader(lines, dialect=IncludeQuotesDialect)
 
@@ -259,6 +272,7 @@ def fetch_alto_ocr(canvas):
         p=settings.DATASTREAM_PREFIX,
         c=canvas.pid.replace('fedora:', '')
     )
+
     return fetch_url(url, data_format='text/plain')
 
 def add_alto_ocr(result):

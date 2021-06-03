@@ -1,7 +1,7 @@
 """[summary]"""
+from os import path
 from django.contrib import admin
 from django.shortcuts import redirect
-import apps.ingest.services as services
 import apps.ingest.tasks as tasks
 from .models import Local, Remote
 
@@ -11,16 +11,18 @@ class LocalAdmin(admin.ModelAdmin):
     show_save_and_add_another = False
 
     def save_model(self, request, obj, form, change):
-        if obj.manifest is None:
-            obj.manifest = tasks.create_manifest(obj)
         obj.save()
-        obj.refresh_from_db()
-        tasks.create_canvas_task(obj.id)
-        super().save_model(request, obj, form, change)
-        # obj.refresh_from_db()
-        # return redirect('apps.iiif.manifests_change', obj.manifest.id)
+        if path.isfile(obj.bundle.path):
+            obj.manifest = tasks.create_manifest(obj)
+            obj.save()
+            obj.refresh_from_db()
+            tasks.create_canvas_task(obj.id)
+            super().save_model(request, obj, form, change)
+        else:
+            return self.save_model(request, obj, form, change)
 
     def response_add(self, request, obj, post_url_continue=None):
+        obj.refresh_from_db()
         manifest_id = obj.manifest.id
         return redirect('/admin/manifests/manifest/{m}/change/'.format(m=manifest_id))
 
@@ -34,7 +36,6 @@ class RemoteAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.manifest = tasks.create_manifest(obj)
-        # manifest.save()
         obj.save()
         obj.refresh_from_db()
         tasks.create_remote_canvases(obj.id)

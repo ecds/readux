@@ -29,4 +29,5 @@ class RemoteTest(TestCase):
             assert remote.metadata['viewingdirection'] == 'left-to-right'
             assert remote.metadata['publisher'] == 'Baltimore : Press of Thomas & Evans'
             assert remote.metadata['attribution'] == 'The Internet Archive'
+            assert isinstance(remote.metadata['metadata'], list)
             assert 'logo' not in remote.metadata

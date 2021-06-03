@@ -1,0 +1,41 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    #overlay {
+      color: white;
+      background: rgb(0 0 0 / 50%);;
+      height: 100vh;
+      font-size: 3rem;
+      left: 0;
+      line-height: 100vh;
+      opacity: .75;
+      position: absolute;
+      text-align: center;
+      top: 0;
+      width: 100vw;
+    }
+    .hide-overlay {
+      display: none;
+    }
+  </style>
+{% endblock %}
+{% block submit_buttons_bottom %}
+  <input type="submit" value="{% trans 'Save' %}" class="default" id="start_upload" name="_save">
+{% endblock %}
+{% block admin_change_form_document_ready %}
+  {{ block.super }}
+  <script type="text/javascript">
+    django.jQuery('#start_upload').on('click', function(event) {
+      // event.preventDefault();
+      django.jQuery('#overlay').removeClass('hide-overlay');
+    });
+  </script>
+{% endblock %}
+{% block content %}
+  {{block.super}}
+  <div id="overlay" class="hide-overlay">loading</div>
+{% endblock %}

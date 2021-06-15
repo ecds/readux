@@ -199,11 +199,11 @@ class ManifestExportTests(TestCase):
 
     def test_github_auth_repo_given_name(self):
         auth_repo = self.jse.github_auth_repo(repo_name=self.jse.github_repo)
-        assert auth_repo == "https://{t}:x-oauth-basic@github.com/{u}/{r}.git".format(t=self.sa_token.token, u=self.jse.github_username, r=self.jse.github_repo)
+        assert auth_repo == "git@github.com:{u}/{r}.git".format(t=self.sa_token.token, u=self.jse.github_username, r=self.jse.github_repo)
 
     def test_github_auth_repo_given_url(self):
         auth_repo = self.jse.github_auth_repo(repo_url='https://github.com/karl/{r}'.format(r=self.jse.github_repo))
-        assert auth_repo == "https://{t}:x-oauth-basic@github.com/karl/{r}.git".format(t=self.sa_token.token, r=self.jse.github_repo)
+        assert auth_repo == "git@github.com:karl/{r}.git".format(t=self.sa_token.token, r=self.jse.github_repo)
 
     @httpretty.activate
     def test_github_exists(self):

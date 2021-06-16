@@ -439,28 +439,19 @@ class JekyllSiteExport(object):
     def github_auth_repo(self, repo_name=None, repo_url=None):
         """Generate a GitHub repo url with an oauth token in order to
         push to GitHub on the user's behalf.  Takes either a repository
-        name or repository url.
+        name or repository url. The expected result should be formatted
+        as follows:
+
+        https://<github username>:<github token>@github.com/<github username>/<github repo>.git
 
         :return: GitHub authentication header.
         :rtype: str
         """
-        if repo_name:
-            git_repo_url = 'github.com:%s/%s.git' % (self.github_username, repo_name)
-            github_scheme = 'https'
-        elif repo_url:
-            # parse github url to add oauth token for access
+        if repo_url:
             parsed_repo_url = urlparse(repo_url)
-            git_repo_url = '%s:%s.git' % (parsed_repo_url.netloc, parsed_repo_url.path[1:])
-            # probably https, but may as well pull from parsed url
-            github_scheme = parsed_repo_url.scheme
+            return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{parsed_repo_url.path[1:]}.git'
 
-        # Now that we are setting the password (to the token) in the Git config,
-        # we need to use the git@... format instead of http
-        # https://developer.github.com/changes/2020-02-14-deprecating-oauth-app-endpoint/
-        # 'git@github.com:username/bar.git'
-        return 'git@{gr}'.format(
-            gr=git_repo_url
-        )
+        return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{self.github_username}/{repo_name}.git'
 
     def gitrepo_exists(self):
         """Check to see if GitHub repo already exists.

@@ -3,7 +3,7 @@
 -r ./base.txt
 
 gunicorn==20.0.4  # https://github.com/benoitc/gunicorn
-psycopg2==2.8.4 --no-binary psycopg2  # https://github.com/psycopg/psycopg2
+psycopg2==2.9.1 --no-binary psycopg2  # https://github.com/psycopg/psycopg2
 Collectfast==2.1.0  # https://github.com/antonagestam/collectfast
 raven==6.10.0  # https://github.com/getsentry/raven-python
 

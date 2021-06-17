@@ -261,24 +261,16 @@ class VolumeExport(object):
     def github_auth_repo(self, repo_name=None, repo_url=None):
         """Generate a GitHub repo url with an oauth token in order to
         push to GitHub on the user's behalf.  Takes either a repository
-        name or repository url.
-        """
-        if repo_name:
-            git_repo_url = 'github.com/%s/%s.git' % (self.github_username, repo_name)
-            github_scheme = 'https'
-        elif repo_url:
-            # parse github url to add oauth token for access
-            parsed_repo_url = urlparse(repo_url)
-            git_repo_url = '%s%s.git' % (parsed_repo_url.netloc, parsed_repo_url.path)
-            # probably https, but may as well pull from parsed url
-            github_scheme = parsed_repo_url.scheme
+        name or repository url. The expected result should be formatted
+        as follows:
 
-        # use oauth token to push to github
-        # 'https://<token>@github.com/username/bar.git'
-        # For more information, see
-        # https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
-        return '%s://%s:x-oauth-basic@%s' % (github_scheme, self.github_token,
-                                             git_repo_url)
+        https://<github username>:<github token>@github.com/<github username>/<github repo>.git
+        """
+        if repo_url:
+            parsed_repo_url = urlparse(repo_url)
+            return 'https://%s:%s@github.com%s.git' % (self.github_username, self.github_token, parsed_repo_url.path)
+
+        return 'https://%s:%s@github.com/%s/%s.git' % (self.github_username, self.github_token, self.github_username, repo_name)
 
     def website_gitrepo(self, user, repo_name):
         '''Create a new GitHub repository and populate it with content from

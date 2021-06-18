@@ -25,6 +25,7 @@ class Annotations(ListView):
         username = kwargs['username']
         try:
             owner = USER.objects.get(username=username)
+            #I need to edit this to get the correct queryset for a group
             if self.request.user == owner:
                 return JsonResponse(
                     json.loads(

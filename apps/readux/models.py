@@ -13,6 +13,111 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, \
     get_objects_for_group, get_perms_for_model, get_perms
 from guardian.models import UserObjectPermission, GroupObjectPermission
 
+
+
+
+class UserAnnotationGroup(Group):
+    """Annotation Group; extends :class:`django.contrib.auth.models.Group`.
+
+    Intended to facilitate group permissions on annotations.
+    """
+    # inherits name from Group
+    #: optional notes field
+    notes = models.TextField(blank=True)
+    #: datetime annotation was created; automatically set when added
+    created = models.DateTimeField(auto_now_add=True)
+    #: datetime annotation was last updated; automatically updated on save
+    updated = models.DateTimeField(auto_now=True)
+
+    def num_members(self):
+        return self.user_set.count()
+    num_members.short_description = '# members'
+
+    def __repr__(self):
+        return '<Annotation Group: %s>' % self.name
+
+    @property
+    def annotation_id(self):
+        return 'group:%d' % self.pk
+
+class UserAnnotationQuerySet(models.QuerySet):
+    'Custom :class:`~django.models.QuerySet` for :class:`UserAnnotation`'
+
+    def visible_to(self, user):
+        """
+        Return annotations the specified user is allowed to view.
+        Objects are found based on view_user_annotation permission and
+        per-object permissions.  Generally, superusers can view all
+        annotations; users can access only their own annotations or
+        those where permissions have been granted to a group they belong to.
+
+        .. Note::
+            Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
+            it is recommended to use this method must be used first; it
+            does combine the existing queryset query, but it does not
+            chain as querysets normally do.
+
+        """
+        qs = get_objects_for_user(user, 'view_user_annotation',
+                                    UserAnnotation)
+        # combine the current queryset query, if any, with the newly
+        # created queryset from django guardian
+        qs.query.combine(self.query, 'AND')
+        return qs
+
+    def visible_to_group(self, group):
+        """
+        Return annotations the specified group is allowed to view.
+        Objects are found based on view_user_annotation permission and
+        per-object permissions.
+
+        .. Note::
+            Due to the use of :meth:`guardian.shortcuts.get_objects_for_user`,
+            it is recommended to use this method first; it does combine
+            the existing queryset query, but it does not chain as querysets
+            normally do.
+
+        """
+        qs = get_objects_for_group(group, 'view_user_annotation',
+                                   UserAnnotation)
+        # combine current queryset query, if any, with the newly
+        # created queryset from django guardian
+        qs.query.combine(self.query, 'AND')
+        return qs
+
+    def last_created_time(self):
+        '''Creation time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except UserAnnotation.DoesNotExist:
+            pass
+
+    def last_updated_time(self):
+        '''Update time of the most recently created annotation. If
+        queryset is empty, returns None.'''
+        try:
+            return self.values_list('created', flat=True).latest('created')
+        except UserAnnotation.DoesNotExist:
+            pass
+
+
+class UserAnnotationManager(models.Manager):
+    '''Custom :class:`~django.models.Manager` for :class:`Annotation`.
+    Returns :class:`AnnotationQuerySet` as default queryset, and exposes
+    :meth:`visible_to` for convenience.'''
+
+    def get_queryset(self):
+        return UserAnnotationQuerySet(self.model, using=self._db)
+
+    def visible_to(self, user):
+        'Convenience access to :meth:`UserAnnotationQuerySet.visible_to`'
+        return self.get_queryset().visible_to(user)
+
+    def visible_to_group(self, group):
+        'Convenience access to :meth:`UserAnnotationQuerySet.visible_to_group`'
+        return self.get_queryset().visible_to_group(group)
+
 class TaggedUserAnnotations(TaggedItemBase):
     """Model for tagging :class:`UserAnnotation`s using Django Taggit."""
     content_object = models.ForeignKey('UserAnnotation', on_delete=models.CASCADE)
@@ -47,8 +152,15 @@ class UserAnnotation(AbstractAnnotation):
     start_offset = models.IntegerField(null=True, blank=True, default=None)
     end_offset = models.IntegerField(null=True, blank=True, default=None)
     tags = TaggableManager(through=TaggedUserAnnotations)
+
+    objects = UserAnnotationManager()
+
     class Meta:
-        permissions = (('can_view','Can view annotations'),('can_edit','Can edit annotations'),('can_delete','Can delete annotations'))
+        permissions = (
+            ('view_user_annotation', 'View annotation'),
+            ('admin_annotation', 'Manage annotation'),
+        )
+    #NEED to add more defs from Annotation model in Readux legacy - which uses guardian - to get the annotation to add user permissions on save.
 
     @property
     def item(self):
@@ -231,30 +343,3 @@ def set_tags(sender, instance, **kwargs):
             for existing_tag in instance.tag_list:
                 if existing_tag not in incoming_tags:
                     instance.tags.remove(existing_tag)
-
-
-
-
-class UserAnnotationGroup(Group):
-    """Annotation Group; extends :class:`django.contrib.auth.models.Group`.
-
-    Intended to facilitate group permissions on annotations.
-    """
-    # inherits name from Group
-    #: optional notes field
-    notes = models.TextField(blank=True)
-    #: datetime annotation was created; automatically set when added
-    created = models.DateTimeField(auto_now_add=True)
-    #: datetime annotation was last updated; automatically updated on save
-    updated = models.DateTimeField(auto_now=True)
-
-    def num_members(self):
-        return self.user_set.count()
-    num_members.short_description = '# members'
-
-    def __repr__(self):
-        return '<Annotation Group: %s>' % self.name
-
-    @property
-    def annotation_id(self):
-        return 'group:%d' % self.pk

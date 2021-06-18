@@ -1,3 +1,5 @@
+[![ECDS](https://circleci.com/gh/ecds/readux.svg?style=svg)](<LINK>)
+
 # Readux
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)
@@ -89,20 +91,20 @@ To run the tests, simply run:
 pytest apps/
 ~~~
 
-Readux is configured to use [Travis CI](https://api.travis-ci.com/ecds/readux.svg?branch=release). Any push will trigger build.
+Readux is configured to use [CircleCI](https://app.circleci.com/pipelines/github/ecds/readux). Any push will trigger build.
 
 ### Deploy
 
 For dev:
 
 ~~~bash
-fab deploy:branch=develop -H readux.ecdsdev.org
+fab deploy:branch=develop,path=/data/readux -H <IP>
 ~~~
 
 For public alpha:
 
 ~~~bash
-fab deploy:branch=release -H readux2.ecdsdev.org
+fab deploy:branch=release,path=/data/readux.io -H <IP>
 ~~~
 
 Note: if no branch is passed, the deploy will default to release.

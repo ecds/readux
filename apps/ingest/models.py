@@ -28,6 +28,9 @@ class Local(models.Model):
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
+    class Meta:
+        verbose_name_plural = 'Local'
+
     @property
     def zip_ref(self):
         """Create a reference to the uploaded zip file.
@@ -49,6 +52,9 @@ class Local(models.Model):
             # pylint: disable=expression-not-assigned
             dirs.append(item) if item.is_dir() else None
             # pylint: enable=expression-not-assigned
+        if not dirs and all(not item.is_dir() for item in self.zip_ref.infolist()):
+            dirs.extend([i for i in self.zip_ref.infolist() if 'ocr' in i.filename])
+            dirs.extend([i for i in self.zip_ref.infolist() if 'images' in i.filename])
 
         return dirs
 
@@ -66,8 +72,13 @@ class Local(models.Model):
         for directory in self.bundle_dirs:
             if 'images/' in directory.filename.casefold():
                 self.zip_ref.extract(directory, path=self.temp_file_path)
-                path = os.path.join(self.temp_file_path, directory.filename)
+                if directory.is_dir():
+                    path = os.path.join(self.temp_file_path, directory.filename)
+                else:
+                    path = os.path.join(self.temp_file_path, f"{directory.filename.split('images')[0]}images")
         self.zip_ref.close()
+        self.__remove_junk(path)
+        self.__remove_underscores(path)
         self.__remove_none_images(path)
         return path
 
@@ -84,8 +95,13 @@ class Local(models.Model):
                 self.zip_ref.extract(file, path=self.temp_file_path)
         for directory in self.bundle_dirs:
             if 'ocr/' in directory.filename.casefold():
-                path = os.path.join(self.temp_file_path, directory.filename)
+                if directory.is_dir():
+                    path = os.path.join(self.temp_file_path, directory.filename)
+                else:
+                    path = os.path.join(self.temp_file_path, f"{directory.filename.split('ocr')[0]}ocr")
         self.zip_ref.close()
+        self.__remove_junk(path)
+        self.__remove_underscores(path)
         self.__remove_none_text_files(path)
         return path
 
@@ -114,6 +130,22 @@ class Local(models.Model):
             metadata = services.clean_metadata(metadata.dict[0])
 
         return metadata
+
+    @staticmethod
+    def __remove_junk(path):
+        for junk in [f for f in os.listdir(path) if f.startswith('.')]:
+            junk_file = os.path.join(path, junk)
+            if os.path.isdir(junk_file):
+                rmtree(junk_file)
+            else:
+                os.remove(junk_file)
+        # for junk in [f for f in os.listdir(path) if f.startswith('_') and os.path.isdir(f)]:
+        #     rmtree(junk)
+
+    @staticmethod
+    def __remove_underscores(path):
+        for file in [f for f in os.listdir(path) if '_' in f]:
+            os.rename(os.path.join(path, file), os.path.join(path, file.replace('_', '-')))
 
     @staticmethod
     def __remove_none_images(path):
@@ -145,6 +177,9 @@ class Remote(models.Model):
     """ Model class for ingesting a volume from remote manifest. """
     remote_url = models.CharField(max_length=255)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Remote'
 
     @property
     def image_server(self):
@@ -184,18 +219,27 @@ class Remote(models.Model):
         :rtype: dict
         """
         properties = {}
+        manifest_data = []
 
-        for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
-            properties.update(iiif_metadata)
+        if 'metadata' in data:
+            manifest_data.append({ 'metadata': data['metadata'] })
 
-        manifest_data = [{prop: data[prop]} for prop in data if isinstance(data[prop], str)]
+            for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
+                properties.update(iiif_metadata)
+
+        # Sometimes, that label appears as a list.
+        if 'label' in data.keys() and isinstance(data['label'], list):
+            data['label'] = ' '.join(data['label'])
+
+        manifest_data.extend([{prop: data[prop]} for prop in data if isinstance(data[prop], str)])
 
         for datum in manifest_data:
             properties.update(datum)
 
         properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
-        properties['summary'] = data['description']
+        properties['summary'] = data['description'] if 'description' in data else ''
 
+        # TODO: Work out adding remote logos
         if 'logo' in properties:
             properties.pop('logo')
 
@@ -203,9 +247,12 @@ class Remote(models.Model):
 
         return manifest_metadata
 
-    @staticmethod
-    def __parse_iiif_v2_canvas(canvas):
-        return {
-            'pid': canvas['@id'].split('/')[-2],
-
-        }
+    # @staticmethod
+    # def parse_iiif_v2_canvas(canvas):
+    #     id_uri = urlparse(unquote(canvas['@id']))
+    #     service = urlparse(unquote(canvas['images'][0]['service']['@id']))
+    #     resource_id = service.path.split('/').pop()
+    #     return {
+    #         'pid': canvas['@id'].split('/')[-2],
+    #         'resource_id': quote(resource_id, save='')
+    #     }

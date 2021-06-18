@@ -1,6 +1,11 @@
-version: 2
-orbs:
-  coveralls: coveralls/coveralls@1.0.6
+version: 2.1
+# workflows:
+#   build_and_test:
+#     jobs:
+#       - test:
+#           matrix:
+#             parameters:
+#               python-version: ["3.6", "3.7"]
 jobs:
   build:
     docker:

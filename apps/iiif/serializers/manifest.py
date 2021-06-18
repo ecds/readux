@@ -36,12 +36,12 @@ class Serializer(JSONSerializer):
             try:
                 thumbnail = '{h}/{p}'.format(
                     h=obj.image_server.server_base,
-                    p=obj.start_canvas.pid
+                    p=obj.start_canvas.resource
                 )
             except (Canvas.MultipleObjectsReturned, Canvas.DoesNotExist):
                 thumbnail = '{h}/{p}'.format(
                     h=obj.image_server.server_base,
-                    p=obj.canvas_set.all().first().pid
+                    p=obj.canvas_set.all().first().resource
                 )
 
             if obj.metadata == {}:

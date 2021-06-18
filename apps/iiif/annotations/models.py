@@ -128,7 +128,7 @@ class AbstractAnnotation(models.Model):
     w = models.IntegerField()
     h = models.IntegerField()
     order = models.IntegerField(default=0)
-    content = models.TextField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True, default=' ')
     resource_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default=TEXT)
     motivation = models.CharField(max_length=50, choices=MOTIVATION_CHOICES, default=PAINTING)
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)
@@ -153,8 +153,9 @@ class AbstractAnnotation(models.Model):
 class Annotation(AbstractAnnotation):
     """Model class for IIIF annotations."""
     def save(self, *args, **kwargs):
-        if not self.content or self.content.isspace():
-            raise ValidationError('Content cannot be empty')
+        # if not self.content or self.content.isspace():
+            # raise ValidationError('Content cannot be empty')
+            # self.content = '  '
         super(Annotation, self).save(*args, **kwargs)
 
     objects = AnnotationManager()

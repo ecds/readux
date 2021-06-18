@@ -76,13 +76,29 @@ class ServicesTest(TestCase):
     @staticmethod
     def test_extracting_image_server_with_port():
         """ If should return a URL with a specified port. """
-        canvas = {'@id': 'https://readux.org:8000/iiif/readux:thgg7/canvas/readux:thgg7_1.jp2'}
+        canvas = {
+            'images': [{
+                'resource': {
+                    'service': {
+                        '@id': "https://readux.org:8000/iiif/readux:thgg7_1.jp2"
+                    }
+                }
+            }]
+        }
         image_server_url = services.extract_image_server(canvas)
         assert image_server_url == 'https://readux.org:8000/iiif'
 
     @staticmethod
     def test_extracting_image_server_without_port():
         """ If should return a URL with no port. """
-        canvas = {'@id': 'https://readux.org/iiif/readux:thgg7/canvas/readux:thgg7_1.jp2'}
+        canvas = {
+            'images': [{
+                'resource': {
+                    'service': {
+                        '@id': "https://readux.org/iiif/readux:thgg7_1.jp2"
+                    }
+                }
+            }]
+        }
         image_server_url = services.extract_image_server(canvas)
         assert image_server_url == 'https://readux.org/iiif'

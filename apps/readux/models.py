@@ -8,6 +8,10 @@ from django.db.models import signals
 from django.dispatch import receiver
 from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from apps.iiif.canvases.models import Canvas
+from django.contrib.auth.models import Group, User
+from guardian.shortcuts import assign_perm, get_objects_for_user, \
+    get_objects_for_group, get_perms_for_model, get_perms
+from guardian.models import UserObjectPermission, GroupObjectPermission
 
 class TaggedUserAnnotations(TaggedItemBase):
     """Model for tagging :class:`UserAnnotation`s using Django Taggit."""
@@ -43,6 +47,8 @@ class UserAnnotation(AbstractAnnotation):
     start_offset = models.IntegerField(null=True, blank=True, default=None)
     end_offset = models.IntegerField(null=True, blank=True, default=None)
     tags = TaggableManager(through=TaggedUserAnnotations)
+    class Meta:
+        permissions = (('can_view','Can view annotations'),('can_edit','Can edit annotations'),('can_delete','Can delete annotations'))
 
     @property
     def item(self):
@@ -225,3 +231,30 @@ def set_tags(sender, instance, **kwargs):
             for existing_tag in instance.tag_list:
                 if existing_tag not in incoming_tags:
                     instance.tags.remove(existing_tag)
+
+
+
+
+class UserAnnotationGroup(Group):
+    """Annotation Group; extends :class:`django.contrib.auth.models.Group`.
+
+    Intended to facilitate group permissions on annotations.
+    """
+    # inherits name from Group
+    #: optional notes field
+    notes = models.TextField(blank=True)
+    #: datetime annotation was created; automatically set when added
+    created = models.DateTimeField(auto_now_add=True)
+    #: datetime annotation was last updated; automatically updated on save
+    updated = models.DateTimeField(auto_now=True)
+
+    def num_members(self):
+        return self.user_set.count()
+    num_members.short_description = '# members'
+
+    def __repr__(self):
+        return '<Annotation Group: %s>' % self.name
+
+    @property
+    def annotation_id(self):
+        return 'group:%d' % self.pk

@@ -7,12 +7,8 @@ from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, User
 from abc import abstractmethod
 from bs4 import BeautifulSoup
-from guardian.shortcuts import assign_perm, get_objects_for_user, \
-    get_objects_for_group, get_perms_for_model, get_perms
-from guardian.models import UserObjectPermission, GroupObjectPermission
 import json
 import uuid
 import logging
@@ -208,29 +204,3 @@ def set_span_element(sender, instance, **kwargs):
         instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {ls}px;}}".format(
             c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size), ls=str(letter_spacing)
         )
-
-
-
-class AnnotationGroup(Group):
-    """Annotation Group; extends :class:`django.contrib.auth.models.Group`.
-
-    Intended to facilitate group permissions on annotations.
-    """
-    # inherits name from Group
-    #: optional notes field
-    notes = models.TextField(blank=True)
-    #: datetime annotation was created; automatically set when added
-    created = models.DateTimeField(auto_now_add=True)
-    #: datetime annotation was last updated; automatically updated on save
-    updated = models.DateTimeField(auto_now=True)
-
-    def num_members(self):
-        return self.user_set.count()
-    num_members.short_description = '# members'
-
-    def __repr__(self):
-        return '<Annotation Group: %s>' % self.name
-
-    @property
-    def annotation_id(self):
-        return 'group:%d' % self.pk

@@ -28,7 +28,6 @@ def create_canvas_task(ingest_id, is_testing=False):
     :param is_testing: [description], defaults to False
     :type is_testing: bool, optional
     """
-    LOGGER.debug('^^^^^Starting create canvas task^^^^^')
     ingest = Local.objects.get(pk=ingest_id)
     # if ingest.manifest is None:
     #     ingest.manifest = create_manifest(ingest)
@@ -37,7 +36,6 @@ def create_canvas_task(ingest_id, is_testing=False):
         canvas_count = len(listdir(ingest.image_directory))
         for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
             position = index + 1
-            LOGGER.debug(f'^^^^ Creating canvas {position} of {canvas_count} ^^^^')
             ocr_file_name = [
                 f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
             ][0]
@@ -54,14 +52,10 @@ def create_canvas_task(ingest_id, is_testing=False):
                 position=position
             )
             if created:
-                LOGGER.debug(f'^^^^ Created canvas {position} of {canvas_count} ^^^^')
                 if not is_testing:
-                    LOGGER.debug(f'^^^^ Uploading canvas {position} of {canvas_count} ^^^^')
                     upload = UploadBundle(canvas, image_file_path)
                     upload.upload_bundle()
-                    LOGGER.debug(f'^^^^ Uploaded canvas {position} of {canvas_count} ^^^^')
                 canvas.save()
-                LOGGER.debug(f'^^^^ Saved canvas {position} of {canvas_count} ^^^^')
                 if is_testing:
                     add_ocr_task = add_ocr.now
                     add_ocr_task(canvas.id)
@@ -74,11 +68,14 @@ def create_canvas_task(ingest_id, is_testing=False):
     # the database. As a double check loop through to make sure the height and width has been saved.
     for canvas in ingest.manifest.canvas_set.all():
         if canvas.width == 0 or canvas.height == 0:
-            LOGGER.debug(f'^^^^ Re-saving canvas {canvas.position} to get height and width ^^^^')
             canvas.save()
 
-    # Finally clean up the files and the ingest object.
-    ingest.clean_up()
+    # Finally schedule a task clean up the files and the ingest object.
+    if is_testing:
+        clean_up_task = local_clean_up_task.now
+        clean_up_task(ingest_id)
+    else:
+        local_clean_up_task(ingest_id)
 
 @background(schedule=1)
 def create_remote_canvases(ingest_id):
@@ -116,6 +113,11 @@ def create_remote_canvases(ingest_id):
             canvas.save()
 
     remote_ingest.delete()
+
+@background(schedule=86400)
+def local_clean_up_task(ingest_id):
+    ingest = Local.objects.get(pk=ingest_id)
+    ingest.clean_up()
 
 def create_manifest(ingest):
     """

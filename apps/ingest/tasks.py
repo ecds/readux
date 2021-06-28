@@ -72,8 +72,7 @@ def create_canvas_task(ingest_id, is_testing=False):
 
     # Finally schedule a task clean up the files and the ingest object.
     if is_testing:
-        clean_up_task = local_clean_up_task.now
-        clean_up_task(ingest_id)
+        local_clean_up_task.now(ingest_id)
     else:
         local_clean_up_task(ingest_id)
 
@@ -114,6 +113,8 @@ def create_remote_canvases(ingest_id):
 
     remote_ingest.delete()
 
+# TODO: Maybe a better way to do this is mark an ingest as "done".
+# Then, once a day, clean up all that are done.
 @background(schedule=86400)
 def local_clean_up_task(ingest_id):
     ingest = Local.objects.get(pk=ingest_id)

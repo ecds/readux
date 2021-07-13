@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.manifests.models import ImageServer
 from ..models import Local
-from ..tasks import create_manifest, create_canvas_task
+from ..tasks import create_manifest
 
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
@@ -138,3 +138,46 @@ class LocalTest(TestCase):
         assert len([f for f in listdir(local.ocr_directory) if '_' in f]) == 0
         assert len([f for f in listdir(local.image_directory) if '-' in f]) == 5
         assert len([f for f in listdir(local.ocr_directory) if '-' in f]) == 5
+
+    def test_when_metadata_in_filename(self):
+        """
+        Make sure it doesn't get get confused when the word "metadata" is in
+        every path.
+        """
+        local = Local()
+        local.bundle = SimpleUploadedFile(
+            name='metadata.zip',
+            content=open(join(self.fixture_path, 'metadata.zip'), 'rb').read()
+        )
+        local.save()
+        files = local.zip_ref.namelist()
+        # TODO: Figure out why we have to call the image_directory before we can check
+        # the metadata file.
+        assert 'metadata/images' in local.image_directory
+        assert all('metadata' in f for f in files)
+        assert any('.DS_Store' in f for f in files)
+        assert any('__MACOSX' in f for f in files)
+        assert any('~$metadata.xlsx' in f for f in files)
+        assert any('metadata/ocr/0001.tsv' in f for f in files)
+        assert local.metadata['pid'] == 't9wtf-sample'
+        assert local.metadata['label'] == 't9wtf-sample'
+        assert len(listdir(local.temp_file_path)) == 2
+        assert 'metadata.csv' in listdir(join(local.temp_file_path, 'metadata'))
+        assert '~$metadata.xlsx' not in listdir(join(local.temp_file_path, 'metadata'))
+        assert '0001.tsv' not in listdir(join(local.temp_file_path, 'metadata'))
+
+    def test_with_tsv_metadata_file(self):
+        """
+        Pull metadata from a TSV
+        """
+        local = Local()
+        local.bundle = SimpleUploadedFile(
+            name='metadata.zip',
+            content=open(join(self.fixture_path, 'tsv.zip'), 'rb').read()
+        )
+        local.save()
+        # TODO: Figure out why we have to call the image_directory before we can check
+        # the metadata file.
+        assert 'images' in local.image_directory
+        assert local.metadata['pid'] == 'cdc-ledger-1'
+        assert local.metadata['label'] == 'CDC Ledger'

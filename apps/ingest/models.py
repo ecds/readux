@@ -1,6 +1,7 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
+from time import sleep
 from urllib.parse import urlparse
 from mimetypes import guess_type
 from shutil import rmtree
@@ -75,7 +76,10 @@ class Local(models.Model):
                 if directory.is_dir():
                     path = os.path.join(self.temp_file_path, directory.filename)
                 else:
-                    path = os.path.join(self.temp_file_path, f"{directory.filename.split('images')[0]}images")
+                    path = os.path.join(
+                        self.temp_file_path,
+                        f"{directory.filename.split('images')[0]}images"
+                    )
         self.zip_ref.close()
         self.__remove_junk(path)
         self.__remove_underscores(path)
@@ -98,7 +102,10 @@ class Local(models.Model):
                 if directory.is_dir():
                     path = os.path.join(self.temp_file_path, directory.filename)
                 else:
-                    path = os.path.join(self.temp_file_path, f"{directory.filename.split('ocr')[0]}ocr")
+                    path = os.path.join(
+                        self.temp_file_path,
+                        f"{directory.filename.split('ocr')[0]}ocr"
+                    )
         self.zip_ref.close()
         self.__remove_junk(path)
         self.__remove_underscores(path)
@@ -115,21 +122,37 @@ class Local(models.Model):
         metadata = None
         for file in self.zip_ref.namelist():
             if 'metadata' in file.casefold():
-                self.zip_ref.extract(file, path=self.temp_file_path)
 
                 meta_file = os.path.join(self.temp_file_path, file)
 
-                if 'csv' in guess_type(meta_file)[0]:
+                if metadata is not None:
+                    continue
+                if os.path.split(file)[-1].startswith('.'):
+                    continue
+                if os.path.split(file)[-1].startswith('~'):
+                    continue
+                if os.path.split(file)[-1].startswith('__'):
+                    continue
+                if os.path.isdir(meta_file):
+                    continue
+                if 'ocr' in meta_file.casefold():
+                    continue
+                if 'image' in meta_file.casefold():
+                    continue
+
+                self.zip_ref.extract(file, path=self.temp_file_path)
+
+                if 'csv' in guess_type(meta_file)[0] or 'tab-separated' in guess_type(meta_file)[0]:
                     with open(meta_file, 'r', encoding='utf-8-sig') as file:
                         metadata = Dataset().load(file)
                 else:
                     with open(meta_file, 'rb') as file:
                         metadata = Dataset().load(file)
 
-        if metadata is not None:
-            metadata = services.clean_metadata(metadata.dict[0])
+                if metadata is not None:
+                    metadata = services.clean_metadata(metadata.dict[0])
 
-        return metadata
+                return metadata
 
     @staticmethod
     def __remove_junk(path):

@@ -35,7 +35,7 @@ def deploy(branch='release', path='/readux.io/readux'):
         _update_database(options)
         _update_symlink(options)
         _restart_webserver()
-        _restart_export_task(options)
+        _restart_background_tasks(options)
         _clean_old_builds(options)
 
 def _get_latest_source(branch, options):
@@ -83,9 +83,9 @@ def _update_symlink(options):
 def _restart_webserver():
     run('sudo service apache2 restart')
 
-def _restart_export_task(options):
-    run('bash {rp}/restart_export_task.sh'.format(rp=options['ROOT_PATH']))
+def _restart_background_tasks(options):
+    run(f'{options["VENV_PATH"]}/bin/python manage.py restart_background_tasks')
 
 def _clean_old_builds(options):
     with cd(options['RELEASE_PATH']):
-        run('rm -rf $(ls -1t . | tail -n +6)')
+        run('rm -rf $(ls -1t . | tail -n +11)')

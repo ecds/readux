@@ -16,7 +16,7 @@ class LocalAdmin(admin.ModelAdmin):
             obj.manifest = tasks.create_manifest(obj)
             obj.save()
             obj.refresh_from_db()
-            tasks.create_canvas_task(obj.id, verbose_name=f'Creating canvas {obj.pid} for {obj.manifest.pid}')
+            tasks.create_canvas_task(obj.id, verbose_name=f'Creating canvases for {obj.manifest.pid}')
             super().save_model(request, obj, form, change)
         else:
             return self.save_model(request, obj, form, change)

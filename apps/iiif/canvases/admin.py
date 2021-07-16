@@ -40,7 +40,7 @@ class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.save()
         obj.refresh_from_db()
-        add_ocr(obj.id)
+        add_ocr(obj.id, verbose_name=f'Creating OCR for {obj.manifest.pid} page {obj.position}')
         super().save_model(request, obj, form, change)
 
 admin.site.register(Canvas, CanvasAdmin)

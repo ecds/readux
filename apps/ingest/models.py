@@ -88,7 +88,8 @@ class Local(models.Model):
 
     @property
     def ocr_directory(self):
-        """Finds the absolute path to temporary directory containing OCR files.
+        """
+        Finds the absolute path to temporary directory containing OCR files.
 
         :return: Absolute path to temporary directory containing OCR files
         :rtype: str

@@ -73,7 +73,7 @@ class Command(BaseCommand):
 
     def __rebuild(self, canvas, testing=False):
         if not canvas.annotation_set.exists():
-            add_ocr.now(canvas.id)
+            add_ocr.now(canvas.id, verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}')
         else:
             ocr = services.get_ocr(canvas)
             if ocr is None:

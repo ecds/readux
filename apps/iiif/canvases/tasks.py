@@ -9,7 +9,7 @@ from .services import get_ocr
 Canvas = apps.get_model('canvases.canvas')
 
 @background(schedule=5)
-def add_ocr(canvas_id):
+def add_ocr(canvas_id, *args, **kwargs):
     """Function for parsing and adding OCR."""
     canvas = Canvas.objects.get(pk=canvas_id)
     word_order = 1

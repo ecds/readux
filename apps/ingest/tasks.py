@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger("background_task").setLevel(logging.ERROR)
 
 @background(schedule=1)
-def create_canvas_task(ingest_id, is_testing=False):
+def create_canvas_task(ingest_id, is_testing=False, *args, **kwargs):
     """Background task to create canvases and upload images.
 
     :param ingest_id: Primary key for .models.Local objects
@@ -33,7 +33,6 @@ def create_canvas_task(ingest_id, is_testing=False):
     #     ingest.manifest = create_manifest(ingest)
 
     if path.isfile(ingest.bundle.path):
-        canvas_count = len(listdir(ingest.image_directory))
         for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
             position = index + 1
             ocr_file_name = [
@@ -58,11 +57,9 @@ def create_canvas_task(ingest_id, is_testing=False):
                 canvas.save()
                 if is_testing:
                     add_ocr_task = add_ocr.now
-                    add_ocr_task(canvas.id)
+                    add_ocr_task(canvas.id, verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}')
                 else:
-                    add_ocr(canvas.id)
-                remove(image_file_path)
-                remove(ocr_file_path)
+                    add_ocr(canvas.id, verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}')
 
     # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
     # the database. As a double check loop through to make sure the height and width has been saved.
@@ -77,7 +74,7 @@ def create_canvas_task(ingest_id, is_testing=False):
         local_clean_up_task(ingest_id)
 
 @background(schedule=1)
-def create_remote_canvases(ingest_id):
+def create_remote_canvases(ingest_id, *args, **kwargs):
     """Task to create Canavs objects from remote IIIF manifest
 
     :param ingest_id: ID for ingest
@@ -116,7 +113,7 @@ def create_remote_canvases(ingest_id):
 # TODO: Maybe a better way to do this is mark an ingest as "done".
 # Then, once a day, clean up all that are done.
 @background(schedule=86400)
-def local_clean_up_task(ingest_id):
+def local_clean_up_task(ingest_id, *args, **kwargs):
     ingest = Local.objects.get(pk=ingest_id)
     ingest.clean_up()
 

@@ -1,7 +1,7 @@
 """
 Factory for created canvas objects for testing.
 """
-from factory import DjangoModelFactory
+from factory.django import DjangoModelFactory
 from ..models import Style
 
 class StyleFactory(DjangoModelFactory):

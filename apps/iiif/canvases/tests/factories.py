@@ -2,7 +2,8 @@
 Factory for created canvas objects for testing.
 """
 import random
-from factory import DjangoModelFactory, Faker
+from factory.django import DjangoModelFactory
+from factory import Faker
 from ..models import Canvas
 
 class CanvasFactory(DjangoModelFactory):

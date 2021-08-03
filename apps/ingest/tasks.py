@@ -1,15 +1,17 @@
+# pylint: disable = unused-argument
+
 """ Common tasks for ingest. """
-from os import listdir, path, remove
+import logging
+from os import listdir, path
 from uuid import uuid4
 from urllib.parse import urlparse, unquote
+from celery.decorators import task
 from background_task import background
 from django.apps import apps
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr
 from apps.iiif.manifests.models import Manifest, RelatedLink
 from .services import UploadBundle
-from apps.utils.fetch import fetch_url
-import logging
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
@@ -19,21 +21,22 @@ Remote = apps.get_model('ingest.remote')
 LOGGER = logging.getLogger(__name__)
 logging.getLogger("background_task").setLevel(logging.ERROR)
 
-@background(schedule=1)
-def create_canvas_task(ingest_id, is_testing=False, *args, **kwargs):
+# @background(schedule=1)
+@task(name='creating_canvases_from_local', autoretry_for=(Local.DoesNotExist,), retry_backoff=5)
+def create_canvas_task(ingest_id, *args, is_testing=False, **kwargs):
     """Background task to create canvases and upload images.
 
     :param ingest_id: Primary key for .models.Local objects
     :type ingest_id: UUID
+
     :param is_testing: [description], defaults to False
     :type is_testing: bool, optional
     """
     ingest = Local.objects.get(pk=ingest_id)
-    # if ingest.manifest is None:
-    #     ingest.manifest = create_manifest(ingest)
 
     if path.isfile(ingest.bundle.path):
         for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+            LOGGER.debug(f'Creating canvas from {image_file}')
             position = index + 1
             ocr_file_name = [
                 f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
@@ -46,7 +49,7 @@ def create_canvas_task(ingest_id, is_testing=False, *args, **kwargs):
             # multiple versions of the same canvas
             canvas, created = Canvas.objects.get_or_create(
                 manifest=ingest.manifest,
-                pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
+                pid=f'{ingest.manifest.pid}_{image_file}',
                 ocr_file_path=ocr_file_path,
                 position=position
             )
@@ -57,9 +60,14 @@ def create_canvas_task(ingest_id, is_testing=False, *args, **kwargs):
                 canvas.save()
                 if is_testing:
                     add_ocr_task = add_ocr.now
-                    add_ocr_task(canvas.id, verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}')
+                    add_ocr_task(canvas.id,
+                        verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}'
+                    )
                 else:
-                    add_ocr(canvas.id, verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}')
+                    add_ocr(
+                        canvas.id,
+                        verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}'
+                    )
 
     # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
     # the database. As a double check loop through to make sure the height and width has been saved.
@@ -114,6 +122,12 @@ def create_remote_canvases(ingest_id, *args, **kwargs):
 # Then, once a day, clean up all that are done.
 @background(schedule=86400)
 def local_clean_up_task(ingest_id, *args, **kwargs):
+    """
+    Scheduled a task to clean up ingest files from the local disk
+
+    :param ingest_id: Primary key for an ingest object.
+    :type ingest_id: int
+    """
     ingest = Local.objects.get(pk=ingest_id)
     ingest.clean_up()
 
@@ -166,3 +180,7 @@ def parse_iiif_v2_canvas(canvas):
         'label': label,
         'resource': resource
     }
+
+@task(name="sum_two_numbers")
+def add(x, y):
+    return x + y

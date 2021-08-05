@@ -47,7 +47,7 @@
   {% if volume.start_canvas.pid is null %}
   <div class="box">
     <div class="boxInner">
-      <v-volume-image></v-volume-image>
+      <v-volume-image style="padding:80px !important"></v-volume-image>
       <div class="innerContent">
         <p>
           <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
@@ -64,7 +64,7 @@
       <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
           <v-volume-image
             img-src="{{ volume.start_canvas.thumbnail_crop_volume }}"
-            volume-label="{{volume.label}}">
+            volume-label="{{volume.label}}" style="height:300px !important">
           </v-volume-image>
       </a>
       <div class="innerContent">

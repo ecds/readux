@@ -50,7 +50,7 @@
       <v-volume-image></v-volume-image>
       <div class="innerContent">
         <p>
-          <p>{{ volume.label|truncatechars:200 }}</p>
+          <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
         </p>
         <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
           <em>Date Published:</em> {{volume.published_date}}<br />
@@ -70,7 +70,7 @@
       <div class="innerContent">
         <p>
           <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-            <p>{{ volume.label|truncatechars:200 }}</p>
+            <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
           </a></p>
         <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
           <em>Date Published:</em> {{volume.published_date}}<br />
@@ -130,7 +130,7 @@
     </div>
     <div class="uk-width-3-4@m">
       <a class="nav-link" href="#">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove">
         <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -152,7 +152,7 @@
     </div>
     <div class="uk-width-3-4@m">
       <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
         <li>Author: {{volume.author|truncatechars:150}}</li>

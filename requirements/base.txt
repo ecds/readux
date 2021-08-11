@@ -54,6 +54,7 @@ django-background-tasks==1.2.5
 
 # S3 Uploads
 boto3==1.16.4
+django-storages==1.11.1  # https://github.com/jschneier/django-storages
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

@@ -24,6 +24,9 @@ class UploadBundle:
         """ Upload file to the given image server's store. """
         if self.s3_client is not None:
             self.s3_upload()
+        else:
+            # TODO: How should this work?
+            pass
 
     def s3_upload(self):
         """ Upload file to S3 bucket. """

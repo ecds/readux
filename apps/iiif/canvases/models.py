@@ -15,16 +15,16 @@ from . import services
 USER = get_user_model()
 
 # TODO: This has moved to Manifest. Remove one everyone has migrated.
-# class IServer(models.Model):
-#     """Django model for IIIF image server info. Each canvas has one IServer"""
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     IIIF_IMAGE_SERVER_BASE = models.CharField(
-#         max_length=255,
-#         default=settings.IIIF_IMAGE_SERVER_BASE
-#     )
+class IServer(models.Model):
+    """Django model for IIIF image server info. Each canvas has one IServer"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    IIIF_IMAGE_SERVER_BASE = models.CharField(
+        max_length=255,
+        default=settings.IIIF_IMAGE_SERVER_BASE
+    )
 
-#     def __str__(self):
-#         return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
+    def __str__(self):
+        return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
 
 class Canvas(models.Model):
     """Django model for IIIF Canvas objects."""
@@ -48,7 +48,7 @@ class Canvas(models.Model):
     )
     # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
-    ocr_file_path = models.FilePathField(path=tempfile.gettempdir(), recursive=True, allow_folders=True, null=True, blank=True)
+    ocr_file_path = models.CharField(max_length=100, null=True, blank=True)
 
     @property
     def identifier(self):

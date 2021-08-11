@@ -1,17 +1,24 @@
 """ Model classes for ingesting volumes. """
 import imghdr
 import os
-from time import sleep
+import uuid
+import logging
+from boto3 import client, resource
+from io import BytesIO
 from urllib.parse import urlparse
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import mkdtemp
 from zipfile import ZipFile
 from tablib import Dataset
+from storages.backends.s3boto3 import S3Boto3Storage
 from django.db import models
 from apps.iiif.manifests.models import Manifest, ImageServer
 import apps.ingest.services as services
 from apps.utils.fetch import fetch_url
+from apps.ingest.storages import TmpStorage
+
+LOGGER = logging.getLogger(__name__)
 
 def make_temp_file():
     """Creates a temporary directory.
@@ -22,15 +29,32 @@ def make_temp_file():
     temp_file = mkdtemp()
     return temp_file
 
+def bulk_path(instance, filename):
+    return os.path.join('bulk', str(instance.bulk.id), filename )
+
+class Bulk(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+class Volume(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    bulk = models.ForeignKey(Bulk, on_delete=models.DO_NOTHING, null=False)
+    volume_file = models.FileField(storage=TmpStorage(), upload_to=bulk_path)
+
 class Local(models.Model):
     """ Model class for ingesting a volume from local files. """
     temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
-    bundle = models.FileField(blank=False)
+    bundle = models.FileField(blank=False, storage=TmpStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         verbose_name_plural = 'Local'
+
+    @property
+    def s3_client(self):
+        if self.image_server.storage_service == 's3':
+            return client('s3')
+        return None
 
     @property
     def zip_ref(self):
@@ -39,7 +63,11 @@ class Local(models.Model):
         :return: zipfile.ZipFile object of uploaded
         :rtype: zipfile.ZipFile
         """
-        return ZipFile(self.bundle.path)
+        # return ZipFile(self.bundle.path)
+        # s3_resource = resource('s3')
+        # zip_obj = s3_resource.Object(bucket_name='readux', key=self.bundle.path)
+        buffer = BytesIO(self.bundle.file.obj.get()['Body'].read())
+        return ZipFile(buffer)
 
     @property
     def bundle_dirs(self):
@@ -59,12 +87,68 @@ class Local(models.Model):
 
         return dirs
 
+    @staticmethod
+    def upload_images_s3(self):
+        if self.s3_client is None:
+            return
+
+        for filename in self.zip_ref.namelist():
+            # file_info = self.zip_ref.getinfo(filename)
+            type = guess_type(filename)[0]
+            if type is not None and 'image' in type:
+                self.s3_client.upload_fileobj(
+                    self.zip_ref.open(filename),
+                    Bucket=self.image_server.storage_path,
+                    Key='{p}/{f}'.format(p=self.manifest.pid, f=filename.split("/")[-1])
+                )
+
+    @staticmethod
+    def upload_ocr_s3(self):
+        if self.s3_client is None:
+            return
+
+        for file in self.zip_ref.infolist():
+            if 'ocr' not in file.filename.casefold():
+                continue
+            if 'metadata.' in file.filename:
+                # The metadata file could slip through.
+                # It's unlikely and will not hurt anything.
+                continue
+            if file.is_dir():
+                continue
+            if self.__is_junk(file.filename):
+                continue
+            type = guess_type(file.filename)[0]
+            if type is not None and 'text' in type:
+                self.s3_client.upload_fileobj(
+                    self.zip_ref.open(file.filename),
+                    Bucket=self.image_server.storage_path,
+                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1])
+                )
+
     @property
     def image_directory(self):
         """Finds the absolute path to temporary directory containing image files.
 
         :return: Absolute path to temporary directory containing image files
         :rtype: str
+        https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
+        for filename in z.namelist():
+            file_info = z.getinfo(filename)
+            type = guess_type(filename)[0]
+            if type is not None and 'image' in type:
+                client.upload_fileobj(z.open(filename), Bucket='readux', Key='testtesttest/{f}'.format(f=filename.split("/")[-
+        ...: 1]))
+
+        client.put_object_tagging(Bucket='readux', Key='00000005.jp2', Tagging={'TagSet': [{'Key': 'poop', 'Value': 'head'}]})
+
+        buffer = BytesIO(zip_obj.get()['Body'].read())
+        z = ZipFile(buffer)
+        for file in z.namelist():
+            if 'meta' in file:
+            metadata = z.read(file)
+
+        data = Dataset().load(metadata)
         """
         path = None
         for file in self.zip_ref.namelist():
@@ -121,39 +205,35 @@ class Local(models.Model):
         :rtype: dict or None
         """
         metadata = None
-        for file in self.zip_ref.namelist():
-            if 'metadata' in file.casefold():
+        for file in self.zip_ref.infolist():
+            if 'metadata' in file.filename.casefold():
 
-                meta_file = os.path.join(self.temp_file_path, file)
-
+                if file.is_dir():
+                    continue
                 if metadata is not None:
                     continue
-                if os.path.split(file)[-1].startswith('.'):
+                if self.__is_junk(file.filename):
                     continue
-                if os.path.split(file)[-1].startswith('~'):
+                if 'ocr' in file.filename.casefold():
                     continue
-                if os.path.split(file)[-1].startswith('__'):
-                    continue
-                if os.path.isdir(meta_file):
-                    continue
-                if 'ocr' in meta_file.casefold():
-                    continue
-                if 'image' in meta_file.casefold():
+                if 'image' in file.filename.casefold():
                     continue
 
-                self.zip_ref.extract(file, path=self.temp_file_path)
-
-                if 'csv' in guess_type(meta_file)[0] or 'tab-separated' in guess_type(meta_file)[0]:
-                    with open(meta_file, 'r', encoding='utf-8-sig') as file:
-                        metadata = Dataset().load(file)
+                if 'csv' in guess_type(file.filename)[0] or 'tab-separated' in guess_type(file.filename)[0]:
+                    data = self.zip_ref.read(file.filename)
+                    metadata = Dataset().load(data.decode('utf-8'))
                 else:
-                    with open(meta_file, 'rb') as file:
-                        metadata = Dataset().load(file)
+                    metadata = Dataset().load(self.zip_ref.read(file.filename))
 
                 if metadata is not None:
                     metadata = services.clean_metadata(metadata.dict[0])
 
                 return metadata
+
+    @staticmethod
+    def __is_junk(path):
+        file = path.split('/')[-1]
+        return file.startswith('.') or file.startswith('~') or file.startswith('__')
 
     @staticmethod
     def __remove_junk(path):

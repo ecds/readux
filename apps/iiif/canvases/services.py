@@ -174,10 +174,13 @@ def fetch_positional_ocr(canvas):
                 data_format='text'
             )
 
-        file = open(canvas.ocr_file_path)
-        data = file.read()
-        file.close()
-        return data
+        if canvas.ocr_file_path.startswith('https') and 's3' in canvas.ocr_file_path:
+            return fetch_url(canvas.ocr_file_path, data_format='text')
+        else:
+            file = open(canvas.ocr_file_path)
+            data = file.read()
+            file.close()
+            return data
 
     return fetch_url(
         "{p}{c}{s}".format(

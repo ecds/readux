@@ -46,6 +46,7 @@ class Local(models.Model):
     bundle = models.FileField(blank=False, storage=TmpStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+    local_bundle_path = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -57,17 +58,35 @@ class Local(models.Model):
         return None
 
     @property
+    def bucket(self):
+        s3 = resource('s3')
+        return s3.Bucket(self.image_server.storage_path)
+
+
+    @property
     def zip_ref(self):
         """Create a reference to the uploaded zip file.
 
         :return: zipfile.ZipFile object of uploaded
         :rtype: zipfile.ZipFile
+        https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
         """
-        # return ZipFile(self.bundle.path)
-        # s3_resource = resource('s3')
-        # zip_obj = s3_resource.Object(bucket_name='readux', key=self.bundle.path)
-        buffer = BytesIO(self.bundle.file.obj.get()['Body'].read())
-        return ZipFile(buffer)
+        if self.local_bundle_path:
+            return ZipFile(self.local_bundle_path)
+        try:
+            buffer = BytesIO(self.bundle.file.obj.get()['Body'].read())
+            return ZipFile(buffer)
+        except OverflowError:
+            self.local_bundle_path = os.path.join(
+                self.temp_file_path,
+                self.bundle.file.obj.key.split('/')[-1]
+            )
+
+            if os.path.isfile(self.local_bundle_path) is False:
+                self.bundle.file.obj.download_file(self.local_bundle_path)
+                self.save()
+
+            return ZipFile(self.local_bundle_path)
 
     @property
     def bundle_dirs(self):
@@ -87,22 +106,24 @@ class Local(models.Model):
 
         return dirs
 
-    @staticmethod
     def upload_images_s3(self):
         if self.s3_client is None:
             return
 
         for filename in self.zip_ref.namelist():
-            # file_info = self.zip_ref.getinfo(filename)
+            if self.__is_junk(filename):
+                continue
             type = guess_type(filename)[0]
             if type is not None and 'image' in type:
+                # TODO: check if file already exists in S3.
+                # If it does, compare the hash and the S3 etag.
+                # Don't upload if files are the same.
                 self.s3_client.upload_fileobj(
                     self.zip_ref.open(filename),
                     Bucket=self.image_server.storage_path,
                     Key='{p}/{f}'.format(p=self.manifest.pid, f=filename.split("/")[-1])
                 )
 
-    @staticmethod
     def upload_ocr_s3(self):
         if self.s3_client is None:
             return
@@ -132,43 +153,27 @@ class Local(models.Model):
 
         :return: Absolute path to temporary directory containing image files
         :rtype: str
-        https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
-        for filename in z.namelist():
-            file_info = z.getinfo(filename)
-            type = guess_type(filename)[0]
-            if type is not None and 'image' in type:
-                client.upload_fileobj(z.open(filename), Bucket='readux', Key='testtesttest/{f}'.format(f=filename.split("/")[-
-        ...: 1]))
-
-        client.put_object_tagging(Bucket='readux', Key='00000005.jp2', Tagging={'TagSet': [{'Key': 'poop', 'Value': 'head'}]})
-
-        buffer = BytesIO(zip_obj.get()['Body'].read())
-        z = ZipFile(buffer)
-        for file in z.namelist():
-            if 'meta' in file:
-            metadata = z.read(file)
-
-        data = Dataset().load(metadata)
         """
-        path = None
-        for file in self.zip_ref.namelist():
-            if 'images' in file.casefold():
-                self.zip_ref.extract(file, path=self.temp_file_path)
-        for directory in self.bundle_dirs:
-            if 'images/' in directory.filename.casefold():
-                self.zip_ref.extract(directory, path=self.temp_file_path)
-                if directory.is_dir():
-                    path = os.path.join(self.temp_file_path, directory.filename)
-                else:
-                    path = os.path.join(
-                        self.temp_file_path,
-                        f"{directory.filename.split('images')[0]}images"
-                    )
-        self.zip_ref.close()
-        self.__remove_junk(path)
-        self.__remove_underscores(path)
-        self.__remove_none_images(path)
-        return path
+        pass
+        # path = None
+        # for file in self.zip_ref.namelist():
+        #     if 'images' in file.casefold():
+        #         self.zip_ref.extract(file, path=self.temp_file_path)
+        # for directory in self.bundle_dirs:
+        #     if 'images/' in directory.filename.casefold():
+        #         self.zip_ref.extract(directory, path=self.temp_file_path)
+        #         if directory.is_dir():
+        #             path = os.path.join(self.temp_file_path, directory.filename)
+        #         else:
+        #             path = os.path.join(
+        #                 self.temp_file_path,
+        #                 f"{directory.filename.split('images')[0]}images"
+        #             )
+        # self.zip_ref.close()
+        # self.__remove_junk(path)
+        # self.__remove_underscores(path)
+        # self.__remove_none_images(path)
+        # return path
 
     @property
     def ocr_directory(self):
@@ -178,24 +183,25 @@ class Local(models.Model):
         :return: Absolute path to temporary directory containing OCR files
         :rtype: str
         """
-        path = None
-        for file in self.zip_ref.namelist():
-            if 'ocr' in file.casefold():
-                self.zip_ref.extract(file, path=self.temp_file_path)
-        for directory in self.bundle_dirs:
-            if 'ocr/' in directory.filename.casefold():
-                if directory.is_dir():
-                    path = os.path.join(self.temp_file_path, directory.filename)
-                else:
-                    path = os.path.join(
-                        self.temp_file_path,
-                        f"{directory.filename.split('ocr')[0]}ocr"
-                    )
-        self.zip_ref.close()
-        self.__remove_junk(path)
-        self.__remove_underscores(path)
-        self.__remove_none_text_files(path)
-        return path
+        pass
+        # path = None
+        # for file in self.zip_ref.namelist():
+        #     if 'ocr' in file.casefold():
+        #         self.zip_ref.extract(file, path=self.temp_file_path)
+        # for directory in self.bundle_dirs:
+        #     if 'ocr/' in directory.filename.casefold():
+        #         if directory.is_dir():
+        #             path = os.path.join(self.temp_file_path, directory.filename)
+        #         else:
+        #             path = os.path.join(
+        #                 self.temp_file_path,
+        #                 f"{directory.filename.split('ocr')[0]}ocr"
+        #             )
+        # self.zip_ref.close()
+        # self.__remove_junk(path)
+        # self.__remove_underscores(path)
+        # self.__remove_none_text_files(path)
+        # return path
 
     @property
     def metadata(self):
@@ -246,30 +252,30 @@ class Local(models.Model):
         # for junk in [f for f in os.listdir(path) if f.startswith('_') and os.path.isdir(f)]:
         #     rmtree(junk)
 
-    @staticmethod
-    def __remove_underscores(path):
-        for file in [f for f in os.listdir(path) if '_' in f]:
-            os.rename(os.path.join(path, file), os.path.join(path, file.replace('_', '-')))
+    # @staticmethod
+    # def __remove_underscores(path):
+    #     for file in [f for f in os.listdir(path) if '_' in f]:
+    #         os.rename(os.path.join(path, file), os.path.join(path, file.replace('_', '-')))
 
-    @staticmethod
-    def __remove_none_images(path):
-        for image_file in os.listdir(path):
-            image_file_path = os.path.join(path, image_file)
-            if imghdr.what(image_file_path) is None:
-                if os.path.isdir(image_file_path):
-                    rmtree(image_file_path)
-                else:
-                    os.remove(image_file_path)
+    # @staticmethod
+    # def __remove_none_images(path):
+    #     for image_file in os.listdir(path):
+    #         image_file_path = os.path.join(path, image_file)
+    #         if imghdr.what(image_file_path) is None:
+    #             if os.path.isdir(image_file_path):
+    #                 rmtree(image_file_path)
+    #             else:
+    #                 os.remove(image_file_path)
 
-    @staticmethod
-    def __remove_none_text_files(path):
-        for ocr_file in os.listdir(path):
-            ocr_file_path = os.path.join(path, ocr_file)
-            if 'text' not in guess_type(ocr_file_path)[0]:
-                if os.path.isdir(ocr_file_path):
-                    rmtree(ocr_file_path)
-                else:
-                    os.remove(ocr_file_path)
+    # @staticmethod
+    # def __remove_none_text_files(path):
+    #     for ocr_file in os.listdir(path):
+    #         ocr_file_path = os.path.join(path, ocr_file)
+    #         if 'text' not in guess_type(ocr_file_path)[0]:
+    #             if os.path.isdir(ocr_file_path):
+    #                 rmtree(ocr_file_path)
+    #             else:
+    #                 os.remove(ocr_file_path)
 
     def clean_up(self):
         """ Method to clean up all the files. This is really only applicable for testing. """

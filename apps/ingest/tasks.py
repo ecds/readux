@@ -39,11 +39,10 @@ def create_canvas_form_local_task(ingest_id):
         ingest.manifest = create_manifest(ingest)
         ingest.save()
         ingest.refresh_from_db()
-    ingest.upload_images_s3(ingest)
-    ingest.upload_ocr_s3(ingest)
+    ingest.upload_images_s3()
+    ingest.upload_ocr_s3()
     s3 = resource('s3')
     bucket = s3.Bucket('readux')
-    LOGGER.debug('^^^^^ hmmmmmmm')
 
     # try:
     #     s3.Object('readux', ingest.manifest.pid).load()

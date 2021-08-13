@@ -81,10 +81,12 @@ def _update_symlink(options):
         run('ln -s {rp}/releases/{v} current'.format(rp=options['ROOT_PATH'], v=options['VERSION']))
 
 def _restart_webserver():
-    run('sudo service apache2 restart')
+    run('sudo /bin/systemctl reload apache2')
 
 def _restart_background_tasks(options):
-    run(f'{options["VENV_PATH"]}/bin/python manage.py restart_background_tasks')
+    with cd(options['ROOT_PATH']):
+        run('nohup ./restart_export_tasks.sh &')
+    run('sudo /bin/systemctl restart celeryd')
 
 def _clean_old_builds(options):
     with cd(options['RELEASE_PATH']):

@@ -3,18 +3,16 @@
 """ Common tasks for ingest. """
 import logging
 from os import listdir, path
-from uuid import uuid4
 from urllib.parse import urlparse, unquote
 from celery import Celery
 from boto3 import resource
 from botocore.exceptions import ClientError
 from background_task import background
 from django.apps import apps
+from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr, add_ocr_task
-from apps.iiif.manifests.models import Manifest, RelatedLink
-from .services import UploadBundle
-from django.conf import settings
+from .services import create_manifest
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
@@ -39,54 +37,7 @@ def create_canvas_form_local_task(ingest_id):
         ingest.manifest = create_manifest(ingest)
         ingest.save()
         ingest.refresh_from_db()
-    ingest.upload_images_s3()
-    ingest.upload_ocr_s3()
-    s3 = resource('s3')
-    bucket = s3.Bucket('readux')
-
-    # try:
-    #     s3.Object('readux', ingest.manifest.pid).load()
-    # except ClientError as error:
-    #     if error.response['Error']['Code'] == '404':
-    #         LOGGER.debug('^^^^^ 404')
-    #         pass
-    # else:
-    image_files = [
-        file.key for file in bucket.objects.filter(Prefix=ingest.manifest.pid) if '_*ocr*_' not in file.key
-    ]
-    LOGGER.debug(f'^^^^^First image file {image_files[0]}')
-    if len(image_files) == 0:
-        # TODO: Throw an error here?
-        pass
-    ocr_files = [
-        file.key for file in bucket.objects.filter(Prefix=ingest.manifest.pid) if '_*ocr*_' in file.key
-    ]
-    LOGGER.debug(f'^^^^^First ocr file {ocr_files[0]}')
-
-    for index, key in enumerate(sorted(image_files)):
-        image_file = key.split('/')[-1]
-        LOGGER.debug(f'^^^^^Creating canvas from {image_file}')
-        ocr_file_path = None
-        if len(ocr_files) > 0:
-            image_name = '.'.join(image_file.split('.')[:-1])
-            LOGGER.debug(f'^^^^^IMAGE NAME {image_name}')
-            try:
-                ocr_key = [key for key in ocr_files if image_name in key][0]
-                ocr_file_path = f'https://readux.s3.amazonaws.com/{ocr_key}'
-            except IndexError:
-                # Every image may not have a matching OCR file
-                ocr_file_path = None
-                pass
-        position = index + 1
-        canvas, created = Canvas.objects.get_or_create(
-            manifest=ingest.manifest,
-            pid=f'{ingest.manifest.pid}_{image_file}',
-            ocr_file_path=ocr_file_path,
-            position=position
-        )
-
-        if created and canvas.ocr_file_path is not None:
-            add_ocr_task.delay(canvas.id)
+    ingest.create_canvases()
 
 # @background(schedule=1)
 # @app.task(name='creating_canvases_from_local', autoretry_for=(Local.DoesNotExist,), retry_backoff=5)
@@ -150,11 +101,11 @@ def create_canvas_task(ingest_id, *args, is_testing=False, **kwargs):
     # else:
     #     local_clean_up_task(ingest_id)
 
-@app.task(name='uploading_canvases_from_local', autoretry_for=(Canvas.DoesNotExist,), retry_backoff=5)
-def upload_canvas(canvas_id, image_file_path):
-    canvas = Canvas.objects.get(id=canvas_id)
-    upload = UploadBundle(canvas, image_file_path)
-    upload.upload_bundle()
+# @app.task(name='uploading_canvases_from_local', autoretry_for=(Canvas.DoesNotExist,), retry_backoff=5)
+# def upload_canvas(canvas_id, image_file_path):
+#     canvas = Canvas.objects.get(id=canvas_id)
+#     upload = UploadBundle(canvas, image_file_path)
+#     upload.upload_bundle()
 
 
 @background(schedule=1)
@@ -207,35 +158,7 @@ def local_clean_up_task(ingest_id, *args, **kwargs):
     ingest = Local.objects.get(pk=ingest_id)
     ingest.clean_up()
 
-def create_manifest(ingest):
-    """
-    Create or update a Manifest from supplied metadata and images.
-    :return: New or updated Manifest with supplied `pid`
-    :rtype: iiif.manifest.models.Manifest
-    """
-    manifest = None
-    # Make a copy of the metadata so we don't extract it over and over.
-    metadata = ingest.metadata
-    if metadata is not None:
-        manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'])
-        for (key, value) in metadata.items():
-            setattr(manifest, key, value)
-        if not created:
-            manifest.canvas_set.all().delete()
-    else:
-        manifest = Manifest(pid=str(uuid4()))
 
-    manifest.image_server = ingest.image_server
-    manifest.save()
-
-    if isinstance(ingest, Remote):
-        RelatedLink(
-            manifest=manifest,
-            link=ingest.remote_url,
-            format='application/ld+json'
-        ).save()
-
-    return manifest
 
 # TODO: I don't like this here while the manifest version is on the Remote model class.
 def parse_iiif_v2_canvas(canvas):

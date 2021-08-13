@@ -3,12 +3,13 @@ from celery import Celery
 from background_task import background
 from django.apps import apps
 from ..annotations.models import Annotation
+from .models import Canvas
 from .services import get_ocr
 from django.conf import settings
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
-Canvas = apps.get_model('canvases.canvas')
+# Canvas = apps.get_model('canvases.canvas')
 
 app = Celery('apps.ingest')
 app.config_from_object('django.conf:settings')

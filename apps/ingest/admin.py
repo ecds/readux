@@ -1,10 +1,11 @@
 """[summary]"""
+import logging
 from os import path
 from django.contrib import admin
 from django.shortcuts import redirect
 import apps.ingest.tasks as tasks
 from .models import Bulk, Local, Remote, Volume
-import logging
+from .services import create_manifest
 
 LOGGER = logging.getLogger(__name__)
 class LocalAdmin(admin.ModelAdmin):
@@ -14,14 +15,11 @@ class LocalAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.save()
-        # if path.isfile(obj.bundle.path):
-        obj.manifest = tasks.create_manifest(obj)
+        obj.manifest = create_manifest(obj)
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
         tasks.create_canvas_form_local_task.delay(obj.id)
-        # else:
-        #     return self.save_model(request, obj, form, change)
 
     def response_add(self, request, obj, post_url_continue=None):
         obj.refresh_from_db()
@@ -37,7 +35,7 @@ class RemoteAdmin(admin.ModelAdmin):
     show_save_and_add_another = False
 
     def save_model(self, request, obj, form, change):
-        obj.manifest = tasks.create_manifest(obj)
+        obj.manifest = create_manifest(obj)
         obj.save()
         obj.refresh_from_db()
         tasks.create_remote_canvases(obj.id, verbose_name=f'Creating canvas {obj.pid} for {obj.manifest.id}')

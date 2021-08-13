@@ -195,6 +195,8 @@ class Manifest(ClusterableModel):
 
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
+        if '_' in self.pid:
+            self.pid = self.pid.replace('_', '-')
         Canvas = apps.get_model('canvases.canvas')
         try:
             if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():

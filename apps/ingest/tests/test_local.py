@@ -1,4 +1,5 @@
 """ Tests for local ingest """
+import pytest
 import boto3
 from moto import mock_s3
 from os import listdir, path
@@ -11,6 +12,8 @@ from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Local
 from ..services import create_manifest
+
+pytestmark = pytest.mark.django_db(transaction=True) # pylint: disable = invalid-name
 
 @mock_s3
 class LocalTest(TestCase):

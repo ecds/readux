@@ -4,7 +4,9 @@ import boto3
 from moto import mock_s3
 from os import listdir, path
 from os.path import exists, join
+from tempfile import gettempdir
 from uuid import UUID
+from unittest import mock
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
@@ -215,3 +217,11 @@ class LocalTest(TestCase):
         assert Canvas.objects.get(pid=f'{pid}_00000009.jpg').position == 9
         assert Canvas.objects.get(pid=f'{pid}_00000010.jpg').position == 10
 
+
+    def test_it_downloads_zip_when_local_bundle_path_is_not_none(self):
+        local = self.mock_local('metadata.zip', True)
+        local.local_bundle_path = 'swoop'
+        files_in_zip = [f.filename for f in local.zip_ref.infolist()]
+        assert 'metadata/images/' in files_in_zip
+        assert exists(join(gettempdir(), 'metadata.zip'))
+        assert local.local_bundle_path == join(gettempdir(), 'metadata.zip')

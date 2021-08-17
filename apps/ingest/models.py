@@ -3,6 +3,7 @@ import imghdr
 import os
 import uuid
 import logging
+from time import sleep
 from boto3 import client, resource
 from io import BytesIO
 from urllib.parse import urlparse
@@ -77,39 +78,13 @@ class Local(models.Model):
         https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
         """
         if self.local_bundle_path:
-            return ZipFile(self.local_bundle_path)
+            return self.__fallback_download()
         try:
             buffer = BytesIO(self.bundle.file.obj.get()['Body'].read())
             return ZipFile(buffer)
         except OverflowError:
-            self.local_bundle_path = os.path.join(
-                gettempdir(),
-                self.bundle.file.obj.key.split('/')[-1]
-            )
-
-            if os.path.isfile(self.local_bundle_path) is False:
-                self.bundle.file.obj.download_file(self.local_bundle_path)
-                self.save()
-
-            return ZipFile(self.local_bundle_path)
-
-    # @property
-    # def bundle_dirs(self):
-    #     """
-    #     Find all the directories in the uploaded zip
-    #     :return: List of directories in uploaded zip
-    #     :rtype: list
-    #     """
-    #     dirs = []
-    #     for item in self.zip_ref.infolist():
-    #         # pylint: disable=expression-not-assigned
-    #         dirs.append(item) if item.is_dir() else None
-    #         # pylint: enable=expression-not-assigned
-    #     if not dirs and all(not item.is_dir() for item in self.zip_ref.infolist()):
-    #         dirs.extend([i for i in self.zip_ref.infolist() if 'ocr' in i.filename])
-    #         dirs.extend([i for i in self.zip_ref.infolist() if 'images' in i.filename])
-
-    #     return dirs
+            # TODO: Figure out how to test this.
+            return self.__fallback_download()
 
     def upload_images_s3(self):
         if self.s3_client is None:
@@ -149,7 +124,7 @@ class Local(models.Model):
                 self.s3_client.upload_fileobj(
                     self.zip_ref.open(file.filename),
                     Bucket=self.image_server.storage_path,
-                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1])
+                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1].replace('_', '-'))
                 )
 
     @property
@@ -248,6 +223,18 @@ class Local(models.Model):
     def __is_junk(path):
         file = path.split('/')[-1]
         return file.startswith('.') or file.startswith('~') or file.startswith('__')
+
+    def __fallback_download(self):
+        self.local_bundle_path = os.path.join(
+            gettempdir(),
+            self.bundle.file.obj.key.split('/')[-1]
+        )
+
+        if os.path.isfile(self.local_bundle_path) is False:
+            self.bundle.file.obj.download_file(self.local_bundle_path)
+            self.save()
+
+        return ZipFile(self.local_bundle_path)
 
 class Remote(models.Model):
     """ Model class for ingesting a volume from remote manifest. """

@@ -137,17 +137,20 @@ def fetch_positional_ocr(canvas):
 
         url = f"https://api.archivelab.org/books/{canvas.manifest.pid}/pages/{pid}/ocr?mode=words"
 
-        if 'fake' in canvas.manifest.image_server.server_base:
-            fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
-            ocr = fake_ocr.read()
-            fake_ocr.close()
-            httpretty.enable()
-            httpretty.register_uri(
-                httpretty.GET,
-                url,
-                body=ocr,
-                content_type='text/json"'
-            )
+        for _ in range(10):
+            print(url)
+
+        # if 'fake' in canvas.manifest.image_server.server_base:
+        #     fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+        #     ocr = fake_ocr.read()
+        #     fake_ocr.close()
+        #     httpretty.enable()
+        #     httpretty.register_uri(
+        #         httpretty.GET,
+        #         url,
+        #         body=ocr,
+        #         content_type='text/json"'
+        #     )
 
         return fetch_url(url)
 
@@ -176,11 +179,12 @@ def fetch_positional_ocr(canvas):
 
         if canvas.ocr_file_path.startswith('https') and 's3' in canvas.ocr_file_path:
             return fetch_url(canvas.ocr_file_path, data_format='text')
-        else:
-            file = open(canvas.ocr_file_path)
-            data = file.read()
-            file.close()
-            return data
+        # Not sure we will need this. Leaving just as a reminder.
+        # else:
+        #     file = open(canvas.ocr_file_path)
+        #     data = file.read()
+        #     file.close()
+        #     return data
 
     return fetch_url(
         "{p}{c}{s}".format(

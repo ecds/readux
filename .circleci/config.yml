@@ -13,6 +13,9 @@ jobs:
         environment:
           DATABASE_URL: postgres://root@127.0.0.1:5432/readux
           PGUSER: root
+          AWS_ACCESS_KEY_ID: dummy-access-key
+          AWS_SECRET_ACCESS_KEY: dummy-access-key-secret
+          AWS_DEFAULT_REGION: us-east-1
       - image: circleci/postgres:9.6.2-alpine
         environment:
           POSTGRES_USER: root
@@ -43,4 +46,11 @@ jobs:
           name: Running tests
           command: |
             . venv/bin/activate
-            pytest apps/
+            pytest apps/ingest/tests/test_admin.py --cov=./apps
+      - run:
+          name: Sending Coverage Report
+          when: on_success
+          command: |
+            . venv/bin/activate
+            ./venv/bin/coveralls
+

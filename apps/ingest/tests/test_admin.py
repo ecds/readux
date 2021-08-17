@@ -1,4 +1,6 @@
 from os.path import join
+import boto3
+from moto import mock_s3
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -9,10 +11,16 @@ from apps.ingest.models import Local
 from apps.ingest.admin import LocalAdmin
 from .factories import LocalFactory
 
+@mock_s3
 class IngestAdminTest(TestCase):
     def setUp(self):
         """ Set instance variables. """
         self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
+
+        # Create fake bucket for moto's mock S3 service.
+        conn = boto3.resource('s3', region_name='us-east-1')
+        conn.create_bucket(Bucket='readux')
+        conn.create_bucket(Bucket='readux-ingest')
 
     def test_admin_save(self):
         """It should add a manifest to the Local object"""

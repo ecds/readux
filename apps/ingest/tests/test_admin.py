@@ -9,7 +9,7 @@ from django.conf import settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from apps.ingest.models import Local
 from apps.ingest.admin import LocalAdmin
-from .factories import LocalFactory
+# from .factories import LocalFactory
 
 @mock_s3
 class IngestAdminTest(TestCase):
@@ -54,6 +54,7 @@ class IngestAdminTest(TestCase):
             name='bundle.zip',
             content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
         )
+        local.save()
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         response = local_model_admin.response_add(obj=local, request=None)

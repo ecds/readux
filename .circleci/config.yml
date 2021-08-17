@@ -46,11 +46,4 @@ jobs:
           name: Running tests
           command: |
             . venv/bin/activate
-            pytest apps/ingest/tests/test_admin.py --cov=./apps
-      - run:
-          name: Sending Coverage Report
-          when: on_success
-          command: |
-            . venv/bin/activate
-            ./venv/bin/coveralls
-
+            pytest apps/

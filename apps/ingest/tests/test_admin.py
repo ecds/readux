@@ -44,7 +44,16 @@ class IngestAdminTest(TestCase):
     def test_admin_response_add(self):
         """It should redirect to new manifest"""
 
-        local = LocalFactory.create(manifest=ManifestFactory.create())
+        # local = LocalFactory.create(manifest=ManifestFactory.create())
+
+        local = Local(
+            image_server = ImageServerFactory.create(),
+            manifest = ManifestFactory.create()
+        )
+        local.bundle = SimpleUploadedFile(
+            name='bundle.zip',
+            content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
+        )
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         response = local_model_admin.response_add(obj=local, request=None)

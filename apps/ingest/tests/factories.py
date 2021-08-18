@@ -14,3 +14,4 @@ class LocalFactory(DjangoModelFactory):
     bundle = FileField(filename='bundle.zip', filepath=join(settings.APPS_DIR, 'ingest/fixtures/bundle.zip'))
     image_server = SubFactory(ImageServerFactory)
     manifest = None
+    local_bundle_path = None

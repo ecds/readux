@@ -77,6 +77,8 @@ class Local(models.Model):
         :rtype: zipfile.ZipFile
         https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
         """
+        if self.local_bundle_path and os.path.exists(self.local_bundle_path):
+            return ZipFile(self.local_bundle_path)
         if self.local_bundle_path:
             return self.__fallback_download()
         try:

@@ -31,7 +31,7 @@ class IngestAdminTest(TestCase):
 
     def test_admin_save(self):
         """It should add a manifest to the Local object"""
-        local = LocalFactory.create()
+        local = LocalFactory.create(local_bundle_path=join(self.fixture_path, 'bundle.zip'))
 
         assert local.manifest is None
 
@@ -49,8 +49,6 @@ class IngestAdminTest(TestCase):
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         response = local_model_admin.response_add(obj=local, request=None)
-
-        assert environ['DJANGO_ENV'] == 'test'
 
         assert isinstance(response, HttpResponseRedirect)
         assert response.url == f'/admin/manifests/manifest/{local.manifest.id}/change/'

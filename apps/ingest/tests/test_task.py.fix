@@ -80,12 +80,10 @@ class IngestTasksTest(TestCase):
         for key in local.metadata.keys():
             assert getattr(local.manifest, key) == local.metadata[key]
 
-        new_canvas_task = tasks.create_canvas_task.now
-
         local_image_directory = local.image_directory
         local_ocr_directory = local.ocr_directory
 
-        new_canvas_task(local.id, is_testing=True)
+        tasks.create_canvas_task(local.id, is_testing=True)
 
         local.manifest.refresh_from_db()
 

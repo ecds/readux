@@ -434,34 +434,24 @@ class JekyllSiteExport(object):
         self.github = GithubApi.connect_as_user(user)
         self.github_username = GithubApi.github_username(user)
         self.github_token = GithubApi.github_token(user)
+        self.github.session.headers['Authorization'] = f'token {self.github_token}'
 
     def github_auth_repo(self, repo_name=None, repo_url=None):
         """Generate a GitHub repo url with an oauth token in order to
         push to GitHub on the user's behalf.  Takes either a repository
-        name or repository url.
+        name or repository url. The expected result should be formatted
+        as follows:
+
+        https://<github username>:<github token>@github.com/<github username>/<github repo>.git
 
         :return: GitHub authentication header.
         :rtype: str
         """
-        if repo_name:
-            git_repo_url = 'github.com/%s/%s.git' % (self.github_username, repo_name)
-            github_scheme = 'https'
-        elif repo_url:
-            # parse github url to add oauth token for access
+        if repo_url:
             parsed_repo_url = urlparse(repo_url)
-            git_repo_url = '%s%s.git' % (parsed_repo_url.netloc, parsed_repo_url.path)
-            # probably https, but may as well pull from parsed url
-            github_scheme = parsed_repo_url.scheme
+            return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{parsed_repo_url.path[1:]}.git'
 
-        # use oauth token to push to github
-        # 'https://<token>@github.com/username/bar.git'
-        # For more information, see
-        # https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
-        return '{gs}://{gt}:x-oauth-basic@{gr}'.format(
-            gs=github_scheme,
-            gt=self.github_token,
-            gr=git_repo_url
-        )
+        return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{self.github_username}/{repo_name}.git'
 
     def gitrepo_exists(self):
         """Check to see if GitHub repo already exists.
@@ -546,7 +536,7 @@ class JekyllSiteExport(object):
         )
 
         self.github.create_repo(
-            self.github_repo, homepage=github_pages_url,
+            self.github_repo, homepage=github_pages_url, user=self.user,
             description='An annotated digital edition created with Readux'
         )
 
@@ -565,6 +555,10 @@ class JekyllSiteExport(object):
         # add and commit all contents
         gitcmd.config("user.email", self.user.email)
         gitcmd.config("user.name", self.user.fullname())
+        # Use the token to authenticate the Git commands.
+        # Required to do this as of June 9, 2020
+        # https://developer.github.com/changes/2020-02-14-deprecating-oauth-app-endpoint/
+        gitcmd.config("user.password", GithubApi.github_token(self.user))
 
         gitcmd.add(['.'])
         gitcmd.commit([

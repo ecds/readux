@@ -1,15 +1,18 @@
+# pylint: disable = unused-argument
+
 """ Common tasks for ingest. """
-from os import listdir, path, remove
-from uuid import uuid4
+import logging
+from os import listdir, path
 from urllib.parse import urlparse, unquote
+from celery import Celery
+from boto3 import resource
+from botocore.exceptions import ClientError
 from background_task import background
 from django.apps import apps
+from django.conf import settings
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.canvases.tasks import add_ocr
-from apps.iiif.manifests.models import Manifest, RelatedLink
-from .services import UploadBundle
-from apps.utils.fetch import fetch_url
-import logging
+from apps.iiif.canvases.tasks import add_ocr, add_ocr_task
+from .services import create_manifest
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
@@ -18,70 +21,95 @@ Remote = apps.get_model('ingest.remote')
 
 LOGGER = logging.getLogger(__name__)
 logging.getLogger("background_task").setLevel(logging.ERROR)
+logging.getLogger('boto3').setLevel(logging.ERROR)
+logging.getLogger('botocore').setLevel(logging.ERROR)
+logging.getLogger('s3transfer').setLevel(logging.ERROR)
+logging.getLogger('factory').setLevel(logging.ERROR)
 
-@background(schedule=1)
-def create_canvas_task(ingest_id, is_testing=False):
+app = Celery('apps.ingest')
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+@app.task(name='creating_canvases_from_local', autoretry_for=(Local.DoesNotExist,), retry_backoff=5)
+def create_canvas_form_local_task(ingest_id):
+    ingest = Local.objects.get(pk=ingest_id)
+    if ingest.manifest is None:
+        ingest.manifest = create_manifest(ingest)
+        ingest.save()
+        ingest.refresh_from_db()
+    ingest.create_canvases()
+
+# @background(schedule=1)
+# @app.task(name='creating_canvases_from_local', autoretry_for=(Local.DoesNotExist,), retry_backoff=5)
+def create_canvas_task(ingest_id, *args, is_testing=False, **kwargs):
     """Background task to create canvases and upload images.
 
     :param ingest_id: Primary key for .models.Local objects
     :type ingest_id: UUID
+
     :param is_testing: [description], defaults to False
     :type is_testing: bool, optional
+    from botocore.exceptions import ClientError
+
     """
-    LOGGER.debug('^^^^^Starting create canvas task^^^^^')
-    ingest = Local.objects.get(pk=ingest_id)
-    # if ingest.manifest is None:
-    #     ingest.manifest = create_manifest(ingest)
+    pass
+    # ingest = Local.objects.get(pk=ingest_id)
 
-    if path.isfile(ingest.bundle.path):
-        canvas_count = len(listdir(ingest.image_directory))
-        for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
-            position = index + 1
-            LOGGER.debug(f'^^^^ Creating canvas {position} of {canvas_count} ^^^^')
-            ocr_file_name = [
-                f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
-            ][0]
+    # if path.isfile(ingest.bundle.path):
+    #     for index, image_file in enumerate(sorted(listdir(ingest.image_directory))):
+    #         LOGGER.debug(f'Creating canvas from {image_file}')
+    #         position = index + 1
+    #         ocr_file_name = [
+    #             f for f in listdir(ingest.ocr_directory) if f.startswith(image_file.split('.')[0])
+    #         ][0]
 
-            image_file_path = path.join(ingest.image_directory, image_file)
-            ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
+    #         image_file_path = path.join(ingest.image_directory, image_file)
+    #         ocr_file_path = path.join(ingest.temp_file_path, ingest.ocr_directory, ocr_file_name)
 
-            # The task will retry if there is an error. This prevents the creation of
-            # multiple versions of the same canvas
-            canvas, created = Canvas.objects.get_or_create(
-                manifest=ingest.manifest,
-                pid='{m}_{f}'.format(m=ingest.manifest.pid, f=image_file),
-                ocr_file_path=ocr_file_path,
-                position=position
-            )
-            if created:
-                LOGGER.debug(f'^^^^ Created canvas {position} of {canvas_count} ^^^^')
-                if not is_testing:
-                    LOGGER.debug(f'^^^^ Uploading canvas {position} of {canvas_count} ^^^^')
-                    upload = UploadBundle(canvas, image_file_path)
-                    upload.upload_bundle()
-                    LOGGER.debug(f'^^^^ Uploaded canvas {position} of {canvas_count} ^^^^')
-                canvas.save()
-                LOGGER.debug(f'^^^^ Saved canvas {position} of {canvas_count} ^^^^')
-                if is_testing:
-                    add_ocr_task = add_ocr.now
-                    add_ocr_task(canvas.id)
-                else:
-                    add_ocr(canvas.id)
-                remove(image_file_path)
-                remove(ocr_file_path)
+    #         # The task will retry if there is an error. This prevents the creation of
+    #         # multiple versions of the same canvas
+    #         canvas, created = Canvas.objects.get_or_create(
+    #             manifest=ingest.manifest,
+    #             pid=f'{ingest.manifest.pid}_{image_file}',
+    #             ocr_file_path=ocr_file_path,
+    #             position=position
+    #         )
+    #         if created:
+    #             if not is_testing:
+    #                 upload_canvas.delay(canvas.id, image_file_path)
+    #             # canvas.save()
+    #             if is_testing:
+    #                 add_ocr_task = add_ocr.now
+    #                 add_ocr_task(canvas.id,
+    #                     verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}'
+    #                 )
+    #             else:
+    #                 add_ocr(
+    #                     canvas.id,
+    #                     verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}'
+    #                 )
 
-    # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
-    # the database. As a double check loop through to make sure the height and width has been saved.
-    for canvas in ingest.manifest.canvas_set.all():
-        if canvas.width == 0 or canvas.height == 0:
-            LOGGER.debug(f'^^^^ Re-saving canvas {canvas.position} to get height and width ^^^^')
-            canvas.save()
+    # # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
+    # # the database. As a double check loop through to make sure the height and width has been saved.
+    # for canvas in ingest.manifest.canvas_set.all():
+    #     if canvas.width == 0 or canvas.height == 0:
+    #         canvas.save()
 
-    # Finally clean up the files and the ingest object.
-    ingest.clean_up()
+    # # Finally schedule a task clean up the files and the ingest object.
+    # if is_testing:
+    #     local_clean_up_task.now(ingest_id)
+    # else:
+    #     local_clean_up_task(ingest_id)
+
+# @app.task(name='uploading_canvases_from_local', autoretry_for=(Canvas.DoesNotExist,), retry_backoff=5)
+# def upload_canvas(canvas_id, image_file_path):
+#     canvas = Canvas.objects.get(id=canvas_id)
+#     upload = UploadBundle(canvas, image_file_path)
+#     upload.upload_bundle()
+
 
 @background(schedule=1)
-def create_remote_canvases(ingest_id):
+def create_remote_canvases(ingest_id, *args, **kwargs):
     """Task to create Canavs objects from remote IIIF manifest
 
     :param ingest_id: ID for ingest
@@ -117,35 +145,20 @@ def create_remote_canvases(ingest_id):
 
     remote_ingest.delete()
 
-def create_manifest(ingest):
+# TODO: Maybe a better way to do this is mark an ingest as "done".
+# Then, once a day, clean up all that are done.
+@background(schedule=86400)
+def local_clean_up_task(ingest_id, *args, **kwargs):
     """
-    Create or update a Manifest from supplied metadata and images.
-    :return: New or updated Manifest with supplied `pid`
-    :rtype: iiif.manifest.models.Manifest
+    Scheduled a task to clean up ingest files from the local disk
+
+    :param ingest_id: Primary key for an ingest object.
+    :type ingest_id: int
     """
-    manifest = None
-    # Make a copy of the metadata so we don't extract it over and over.
-    metadata = ingest.metadata
-    if metadata is not None:
-        manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'])
-        for (key, value) in metadata.items():
-            setattr(manifest, key, value)
-        if not created:
-            manifest.canvas_set.all().delete()
-    else:
-        manifest = Manifest(pid=str(uuid4()))
+    ingest = Local.objects.get(pk=ingest_id)
+    ingest.clean_up()
 
-    manifest.image_server = ingest.image_server
-    manifest.save()
 
-    if isinstance(ingest, Remote):
-        RelatedLink(
-            manifest=manifest,
-            link=ingest.remote_url,
-            format='application/ld+json'
-        ).save()
-
-    return manifest
 
 # TODO: I don't like this here while the manifest version is on the Remote model class.
 def parse_iiif_v2_canvas(canvas):
@@ -166,3 +179,7 @@ def parse_iiif_v2_canvas(canvas):
         'label': label,
         'resource': resource
     }
+
+@app.task(name="sum_two_numbers")
+def add(x, y):
+    return x + y

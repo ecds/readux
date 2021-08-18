@@ -238,6 +238,22 @@ class CanvasTests(TestCase):
         self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
         assert services.fetch_alto_ocr(self.canvas) is None
 
+    def test_fetch_positional_ocr(self):
+        self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
+        self.canvas.manifest.pid = 'atlantacitydirec1908foot'
+        self.canvas.pid = '1'
+        assert services.fetch_positional_ocr(self.canvas)['ocr'] is not None
+
+    def test_fetch_positional_ocr_with_offset(self):
+        self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
+        self.canvas.manifest.pid = 'atlantacitydirec1908foot'
+        self.canvas.pid = '$1'
+        assert services.fetch_positional_ocr(self.canvas)['ocr'] is not None
+
+    def test_fetch_positional_ocr_that_return_none(self):
+        self.canvas.manifest.image_server.server_base = 'oxford'
+        assert services.fetch_positional_ocr(self.canvas) is None
+
     def test_get_image_info(self):
         image_server = ImageServerFactory.create(server_base='http://fake.info')
         manifest = ManifestFactory.create(image_server=image_server)

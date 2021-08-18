@@ -1,0 +1,1 @@
+from apps.ingest import celery

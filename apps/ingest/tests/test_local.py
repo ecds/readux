@@ -1,140 +1,227 @@
 """ Tests for local ingest """
-from os import listdir
+import pytest
+import boto3
+from moto import mock_s3
+from os import listdir, path
 from os.path import exists, join
+from tempfile import gettempdir
 from uuid import UUID
+from unittest import mock
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
-from apps.iiif.manifests.models import ImageServer
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Local
-from ..tasks import create_manifest, create_canvas_task
+from ..services import create_manifest
 
+pytestmark = pytest.mark.django_db(transaction=True) # pylint: disable = invalid-name
+
+@mock_s3
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
     def setUp(self):
         """ Set instance variables. """
         self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
+        self.image_server = ImageServerFactory(
+            server_base='http://images.readux.ecds.emory',
+            storage_service='s3',
+            storage_path='readux'
+        )
+        # Create fake bucket for moto's mock S3 service.
+        conn = boto3.resource('s3', region_name='us-east-1')
+        conn.create_bucket(Bucket=self.image_server.storage_path)
+        conn.create_bucket(Bucket='readux-ingest')
+
+    def mock_local(self, bundle, with_manifest=False):
+        local = Local(
+            image_server = self.image_server
+        )
+        local.bundle = SimpleUploadedFile(
+            name=bundle,
+            content=open(path.join(self.fixture_path, bundle), 'rb').read()
+        )
+
+        local.save()
+
+        if with_manifest:
+            local.manifest = create_manifest(local)
+            local.save()
+
+        return local
+
 
     def test_bundle_upload(self):
-        """ It should upload the zip files, unzip relevent files, and clean up. """
+        """ It should upload the images using a fake S3 service from moto. """
         for bundle in ['bundle.zip', 'nested_volume.zip', 'csv_meta.zip']:
-            local = Local()
-            local.bundle = SimpleUploadedFile(
-                name=bundle,
-                content=open(join(self.fixture_path, bundle), 'rb').read()
-            )
-            local.save()
-            assert all(item.is_dir() for item in local.bundle_dirs)
-            image_directory_path = local.image_directory
-            ocr_directory_path = local.ocr_directory
-            assert exists(join(local.image_directory, 'not_image.txt')) is False
-            assert exists(join(local.ocr_directory, '00000008.jpg')) is False
-            assert exists(join(local.image_directory, '00000008.jpg'))
-            assert exists(join(local.ocr_directory, '00000008.tsv'))
-            local.clean_up()
-            assert exists(image_directory_path) is False
-            assert exists(ocr_directory_path) is False
-            assert exists(local.bundle.path) is False # pylint: disable=no-member
+            local = self.mock_local(bundle)
+
+            assert bundle in [f.key for f in local.tmp_bucket.objects.all()]
+
+    def test_image_upload_to_s3(self):
+        local = self.mock_local('bundle.zip', True)
+
+        local.upload_images_s3()
+
+        image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        assert f'{local.manifest.pid}/00000008.jpg' in image_files
+
+    def test_ocr_upload_to_s3(self):
+        local = self.mock_local('nested_volume.zip', True)
+
+        local.upload_ocr_s3()
+
+        image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in image_files
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadat supplied in an Excel file. """
-        local = Local()
-        local.bundle = SimpleUploadedFile(
-            name='bundle.zip',
-            content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
-        )
-        local.save()
-        local.manifest = create_manifest(local)
+        local = self.mock_local('bundle.zip', True)
+
+        assert 'pid' in local.metadata.keys()
 
         for key in local.metadata.keys():
             assert local.metadata[key] == getattr(local.manifest, key)
 
     def test_metadata_from_csv(self):
-        """ It should create a manifest with metadat supplied in a CSV file. """
-        local = Local()
-        local.bundle = SimpleUploadedFile(
-            name='csv_meta.zip',
-            content=open(join(self.fixture_path, 'csv_meta.zip'), 'rb').read()
-        )
-        local.save()
-        local.manifest = create_manifest(local)
+        """ It should create a manifest with metadata supplied in a CSV file. """
+        local = self.mock_local('csv_meta.zip', True)
+
+        assert 'pid' in local.metadata.keys()
+
+        for key in local.metadata.keys():
+            assert local.metadata[key] == getattr(local.manifest, key)
+
+    def test_metadata_from_tsv(self):
+        """ It should create a manifest with metadata supplied in a CSV file. """
+        local = self.mock_local('tsv.zip', True)
+
+        assert 'pid' in local.metadata.keys()
 
         for key in local.metadata.keys():
             assert local.metadata[key] == getattr(local.manifest, key)
 
     def test_no_metadata_file(self):
         """ It should create a Manifest even when no metadata file is supplied. """
-        local = Local()
-        local.bundle = SimpleUploadedFile(
-            name='no_meta_file.zip',
-            content=open(join(self.fixture_path, 'no_meta_file.zip'), 'rb').read()
-        )
-        local.save()
-        local.manifest = create_manifest(local)
+        local = self.mock_local('no_meta_file.zip', True)
 
         assert UUID(local.manifest.pid).version == 4
 
     def test_single_image(self):
         """
-        The Zipfile library does not make an `infolist` object for a directory if
-        the directory only has one file. Special code was added to handel this case.
         """
-        image_server = ImageServer(server_base='https://fake.io')
-        image_server.save()
-        local = Local(image_server=image_server)
-        local.bundle = SimpleUploadedFile(
-            name='single-image.zip',
-            content=open(join(self.fixture_path, 'single-image.zip'), 'rb').read()
-        )
-        local.save()
-        assert all(not item.is_dir() for item in local.zip_ref.infolist())
-        assert all(not item.is_dir() for item in local.bundle_dirs)
-        assert len(local.bundle_dirs) == 2
-        image_directory_path = local.image_directory
-        ocr_directory_path = local.ocr_directory
-        assert exists(join(local.ocr_directory, '0011.jpg')) is False
-        assert exists(join(local.image_directory, '0011.jpg'))
-        assert exists(join(local.ocr_directory, '0011.tsv'))
-        local.clean_up()
-        assert exists(image_directory_path) is False
-        assert exists(ocr_directory_path) is False
-        assert exists(local.bundle.path) is False # pylint: disable=no-member
+        local = self.mock_local('single-image.zip', True)
+
+        local.upload_images_s3()
+
+        image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        assert f'{local.manifest.pid}/0011.jpg' in image_files
 
     def test_removing_junk(self):
         """
-        Any hidden files should be removed.
+        Any hidden files should not be uploaded.
         """
-        image_server = ImageServer(server_base='https://fake.io')
-        image_server.save()
-        local = Local(image_server=image_server)
-        local.bundle = SimpleUploadedFile(
-            name='bundle_with_junk.zip',
-            content=open(join(self.fixture_path, 'bundle_with_junk.zip'), 'rb').read()
-        )
-        local.save()
-        files = local.zip_ref.namelist()
+        local = self.mock_local('bundle_with_junk.zip', True)
 
-        assert 'ocr/.junk.tsv' in [f for f in files if 'junk' in f]
-        assert 'images/.00000010.jpg' in [f for f in files if '.0' in f]
-        assert exists(join(local.image_directory, '.00000010.jpg')) is False
-        assert exists(join(local.image_directory, '.junk.tsv')) is False
+        local.upload_images_s3()
+        local.upload_ocr_s3()
+
+        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        assert 'ocr/.junk.tsv' in [f.filename for f in local.zip_ref.infolist()]
+        assert 'images/.00000010.jpg' in [f.filename for f in local.zip_ref.infolist()]
+        assert f'{local.manifest.pid}/00000009.jpg' in ingest_files
+        assert f'{local.manifest.pid}/.00000010.jpg' not in ingest_files
+        assert f'{local.manifest.pid}/_*ocr*_/00000003.tsv' in ingest_files
+        assert f'{local.manifest.pid}/_*ocr*_/.junk.tsv' not in ingest_files
 
     def test_removing_underscores(self):
         """
         Any hidden files should be removed.
         """
-        image_server = ImageServer(server_base='https://fake.io')
-        image_server.save()
-        local = Local(image_server=image_server)
-        local.bundle = SimpleUploadedFile(
-            name='bundle_with_underscores.zip',
-            content=open(join(self.fixture_path, 'bundle_with_underscores.zip'), 'rb').read()
+        local = self.mock_local('bundle_with_underscores.zip', True)
+
+        local.upload_images_s3()
+        local.upload_ocr_s3()
+
+        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        underscore_files = [f.filename for f in local.zip_ref.infolist() if '_' in f.filename]
+        assert len(underscore_files) == 10
+        assert len([f.filename for f in local.zip_ref.infolist() if '-' in f.filename]) == 0
+        for underscore in [f.filename for f in local.zip_ref.infolist() if '_' in f.filename]:
+            assert underscore not in ingest_files
+
+    def test_when_metadata_in_filename(self):
+        """
+        Make sure it doesn't get get confused when the word "metadata" is in
+        every path.
+        """
+        local = self.mock_local('metadata.zip', True)
+
+        local.upload_images_s3()
+        local.upload_ocr_s3()
+
+        files_in_zip = [f.filename for f in local.zip_ref.infolist()]
+        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        assert 'metadata/images/' in files_in_zip
+        assert all('metadata' in f for f in files_in_zip)
+        assert any('.DS_Store' in f for f in files_in_zip)
+        assert any('__MACOSX' in f for f in files_in_zip)
+        assert any('~$metadata.xlsx' in f for f in files_in_zip)
+        assert any('metadata/ocr/0001.tsv' in f for f in files_in_zip)
+        assert local.metadata['pid'] == 't9wtf-sample'
+        assert local.metadata['label'] == 't9wtf-sample'
+        assert '~$metadata.xlsx' not in ingest_files
+        assert f'{local.manifest.pid}/_*ocr*_/0001.tsv' in ingest_files
+        assert f'{local.manifest.pid}/0001.jpg' in ingest_files
+        assert len(ingest_files) == 2
+
+    def test_when_underscore_in_pid(self):
+        local = self.mock_local('no_meta_file.zip')
+        local.manifest = ManifestFactory.create(
+            image_server = self.image_server,
+            pid='p_i_d'
         )
-        local.save()
-        files = local.zip_ref.namelist()
-        assert len([f for f in files if '_' in f]) == 10
-        assert len([f for f in files if '-' in f]) == 0
-        assert len([f for f in listdir(local.image_directory) if '_' in f]) == 0
-        assert len([f for f in listdir(local.ocr_directory) if '_' in f]) == 0
-        assert len([f for f in listdir(local.image_directory) if '-' in f]) == 5
-        assert len([f for f in listdir(local.ocr_directory) if '-' in f]) == 5
+
+        local.upload_images_s3()
+        local.upload_ocr_s3()
+
+        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+
+        assert all('p-i-d' in f for f in ingest_files)
+
+    def test_creating_canvases(self):
+        """
+        Make sure it doesn't get get confused when the word "metadata" is in
+        every path.
+        """
+        local = self.mock_local('bundle.zip', True)
+        local.create_canvases(is_testing=True)
+
+        pid = local.manifest.pid
+
+        assert local.manifest.canvas_set.all().count() == 10
+        assert Canvas.objects.get(pid=f'{pid}_00000001.jpg').position == 1
+        assert Canvas.objects.get(pid=f'{pid}_00000002.jpg').position == 2
+        assert Canvas.objects.get(pid=f'{pid}_00000003.jpg').position == 3
+        assert Canvas.objects.get(pid=f'{pid}_00000004.jpg').position == 4
+        assert Canvas.objects.get(pid=f'{pid}_00000005.jpg').position == 5
+        assert Canvas.objects.get(pid=f'{pid}_00000006.jpg').position == 6
+        assert Canvas.objects.get(pid=f'{pid}_00000007.jpg').position == 7
+        assert Canvas.objects.get(pid=f'{pid}_00000008.jpg').position == 8
+        assert Canvas.objects.get(pid=f'{pid}_00000009.jpg').position == 9
+        assert Canvas.objects.get(pid=f'{pid}_00000010.jpg').position == 10
+
+
+    def test_it_downloads_zip_when_local_bundle_path_is_not_none(self):
+        local = self.mock_local('metadata.zip', True)
+        local.local_bundle_path = 'swoop'
+        files_in_zip = [f.filename for f in local.zip_ref.infolist()]
+        assert 'metadata/images/' in files_in_zip
+        assert exists(join(gettempdir(), 'metadata.zip'))
+        assert local.local_bundle_path == join(gettempdir(), 'metadata.zip')

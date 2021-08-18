@@ -1,7 +1,7 @@
 """Factory to create Manifests for Tests"""
 from random import randrange
-from factory import DjangoModelFactory, Faker, RelatedFactory, SubFactory
-from factory.django import ImageField
+from factory.django import DjangoModelFactory, ImageField
+from factory import Faker, RelatedFactory, SubFactory
 from ..models import Manifest, ImageServer
 from ...canvases.tests.factories import CanvasFactory
 

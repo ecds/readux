@@ -53,7 +53,7 @@ class ManifestExportTests(TestCase):
         self.jse.user = self.user
         self.jse.use_github(self.user)
         self.jse.github_repo = 'marx'
-        self.jse.is_testing = True
+        # self.jse.is_testing = True
         self.jse.owners = [self.user.id]
 
     def test_zip_creation(self):

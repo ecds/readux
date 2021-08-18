@@ -41,7 +41,7 @@ def create_canvas_form_local_task(ingest_id):
 
 # @background(schedule=1)
 # @app.task(name='creating_canvases_from_local', autoretry_for=(Local.DoesNotExist,), retry_backoff=5)
-def create_canvas_task(ingest_id, *args, is_testing=False, **kwargs):
+def create_canvas_task(ingest_id, *args, **kwargs):
     """Background task to create canvases and upload images.
 
     :param ingest_id: Primary key for .models.Local objects

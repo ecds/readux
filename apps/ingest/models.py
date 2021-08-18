@@ -160,7 +160,7 @@ class Local(models.Model):
 
                 return metadata
 
-    def create_canvases(self, is_testing=False):
+    def create_canvases(self):
         self.upload_images_s3()
         self.upload_ocr_s3()
 
@@ -205,7 +205,7 @@ class Local(models.Model):
             )
 
             if created and canvas.ocr_file_path is not None:
-                if is_testing:
+                if os.environ['DJANGO_ENV'] == 'test':
                     add_ocr_task(canvas.id)
                 else:
                     add_ocr_task.delay(canvas.id)

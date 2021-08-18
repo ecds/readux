@@ -83,7 +83,7 @@ class IngestTasksTest(TestCase):
         local_image_directory = local.image_directory
         local_ocr_directory = local.ocr_directory
 
-        tasks.create_canvas_task(local.id, is_testing=True)
+        tasks.create_canvas_task(local.id)
 
         local.manifest.refresh_from_db()
 

@@ -201,7 +201,7 @@ class LocalTest(TestCase):
         every path.
         """
         local = self.mock_local('bundle.zip', True)
-        local.create_canvases(is_testing=True)
+        local.create_canvases()
 
         pid = local.manifest.pid
 

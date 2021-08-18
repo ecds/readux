@@ -234,6 +234,7 @@ class JekyllSiteExport(object):
         self.owners = owners
         self.user = user
         self.github_repo = github_repo
+        # TODO: Why?
         self.is_testing = False
 
 
@@ -574,7 +575,7 @@ class JekyllSiteExport(object):
         # push local master to the gh-pages branch of the newly created repo,
         # using the user's oauth token credentials
         self.log_status('Pushing new content to GitHub')
-        if self.is_testing is False: # pragma: no cover
+        if os.environ['DJANGO_ENV'] != 'test': # pragma: no cover
             gitcmd.push([repo_url, 'master:gh-pages']) # pragma: no cover
 
         # clean up temporary files after push to github
@@ -611,7 +612,7 @@ class JekyllSiteExport(object):
             )
         )
         repo = None
-        if self.is_testing:
+        if os.environ['DJANGO_ENV'] == 'test':
             repo = git.Repo.init(tmpdir)
             yml_config_path = os.path.join(tmpdir, '_config.yml')
             open(yml_config_path, 'a').close()
@@ -670,7 +671,7 @@ class JekyllSiteExport(object):
         # if self.include_deep_zoom:
         #     self.generate_deep_zoom(jekyll_site_dir)
 
-        if self.is_testing is False:
+        if os.environ['DJANGO_ENV'] != 'test':
             # run the script to import IIIF as jekyll site content
             self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
@@ -693,7 +694,7 @@ class JekyllSiteExport(object):
             author=git_author
         )
 
-        if self.is_testing is False:
+        if os.environ['DJANGO_ENV'] != 'test':
             # push the update to a new branch on github
             repo.remotes.origin.push( # pragma: no cover
                 '{b}s:{b}s'.format(b=git_branch_name)
@@ -736,7 +737,7 @@ class JekyllSiteExport(object):
         # to do needed export steps
         # TODO: httpretty seems to include the HEAD method, but it errors when
         # making the request because the Head method is not implemented.
-        if self.is_testing is False and 'repo' not in self.github.oauth_scopes():
+        if os.environ['DJANGO_ENV'] != 'test' and 'repo' not in self.github.oauth_scopes():
             LOGGER.error('TODO: bad scope message')
             return None # pragma: no cover
 
@@ -759,7 +760,7 @@ class JekyllSiteExport(object):
             try:
                 # TODO: How to highjack the request to
                 # https://58816:x-oauth-basic@github.com/zaphod/marx.git/ when testing.
-                if self.is_testing is False:
+                if os.environ['DJANGO_ENV'] != 'test':
                     pr_url = self.update_gitrepo() # pragma: no cover
                 else:
                     pr_url = 'https://github.com/{u}/{r}/pull/2'.format(

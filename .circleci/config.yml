@@ -46,4 +46,4 @@ jobs:
           name: Running tests
           command: |
             . venv/bin/activate
-            pytest apps/
+            DJANGO_ENV=test pytest apps/ingest/ --cov=./apps

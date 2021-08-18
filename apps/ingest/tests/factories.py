@@ -8,11 +8,6 @@ from apps.iiif.manifests.tests.factories import ImageServerFactory
 from apps.ingest.models import Local
 
 class LocalFactory(DjangoModelFactory):
-    # def __init__(self, **kwargs):
-    #     conn = boto3.resource('s3', region_name='us-east-1')
-    #     conn.create_bucket(Bucket='readux')
-    #     conn.create_bucket(Bucket='readux-ingest')
-
     class Meta:
         model = Local
 

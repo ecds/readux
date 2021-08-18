@@ -31,13 +31,7 @@ class IngestAdminTest(TestCase):
 
     def test_admin_save(self):
         """It should add a manifest to the Local object"""
-        local = Local(
-            image_server = self.image_server
-        )
-        local.bundle = SimpleUploadedFile(
-            name='bundle.zip',
-            content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
-        )
+        local = LocalFactory.create()
 
         assert local.manifest is None
 
@@ -52,16 +46,6 @@ class IngestAdminTest(TestCase):
         """It should redirect to new manifest"""
 
         local = LocalFactory.create(manifest=ManifestFactory.create())
-
-        # local = Local(
-        #     image_server = ImageServerFactory.create(),
-        #     manifest = ManifestFactory.create()
-        # )
-        # local.bundle = SimpleUploadedFile(
-        #     name='bundle.zip',
-        #     content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
-        # )
-        # local.save()
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         response = local_model_admin.response_add(obj=local, request=None)

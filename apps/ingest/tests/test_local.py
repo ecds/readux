@@ -34,6 +34,7 @@ class LocalTest(TestCase):
         conn.create_bucket(Bucket='readux-ingest')
 
     def mock_local(self, bundle, with_manifest=False):
+        # Note, I tried to use the factory here, but could not get it to override the file for bundle.
         local = Local(
             image_server = self.image_server
         )

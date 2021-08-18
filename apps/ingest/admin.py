@@ -1,6 +1,6 @@
 """[summary]"""
 import logging
-from os import path
+from os import environ, path
 from django.contrib import admin
 from django.shortcuts import redirect
 import apps.ingest.tasks as tasks
@@ -19,7 +19,8 @@ class LocalAdmin(admin.ModelAdmin):
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
-        tasks.create_canvas_form_local_task.delay(obj.id)
+        if environ['DJANGO_ENV'] != 'test':
+            tasks.create_canvas_form_local_task.delay(obj.id)
 
     def response_add(self, request, obj, post_url_continue=None):
         obj.refresh_from_db()

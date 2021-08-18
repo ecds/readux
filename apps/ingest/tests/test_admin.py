@@ -1,3 +1,4 @@
+from os import  environ
 from os.path import join
 import boto3
 from moto import mock_s3
@@ -9,13 +10,19 @@ from django.conf import settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from apps.ingest.models import Local
 from apps.ingest.admin import LocalAdmin
-# from .factories import LocalFactory
+from .factories import LocalFactory
 
 @mock_s3
 class IngestAdminTest(TestCase):
     def setUp(self):
         """ Set instance variables. """
         self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
+
+        self.image_server = ImageServerFactory(
+            server_base='http://images.readux.ecds.emory',
+            storage_service='s3',
+            storage_path='readux'
+        )
 
         # Create fake bucket for moto's mock S3 service.
         conn = boto3.resource('s3', region_name='us-east-1')
@@ -25,7 +32,7 @@ class IngestAdminTest(TestCase):
     def test_admin_save(self):
         """It should add a manifest to the Local object"""
         local = Local(
-            image_server = ImageServerFactory.create()
+            image_server = self.image_server
         )
         local.bundle = SimpleUploadedFile(
             name='bundle.zip',
@@ -44,20 +51,22 @@ class IngestAdminTest(TestCase):
     def test_admin_response_add(self):
         """It should redirect to new manifest"""
 
-        # local = LocalFactory.create(manifest=ManifestFactory.create())
+        local = LocalFactory.create(manifest=ManifestFactory.create())
 
-        local = Local(
-            image_server = ImageServerFactory.create(),
-            manifest = ManifestFactory.create()
-        )
-        local.bundle = SimpleUploadedFile(
-            name='bundle.zip',
-            content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
-        )
-        local.save()
+        # local = Local(
+        #     image_server = ImageServerFactory.create(),
+        #     manifest = ManifestFactory.create()
+        # )
+        # local.bundle = SimpleUploadedFile(
+        #     name='bundle.zip',
+        #     content=open(join(self.fixture_path, 'bundle.zip'), 'rb').read()
+        # )
+        # local.save()
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         response = local_model_admin.response_add(obj=local, request=None)
+
+        assert environ['DJANGO_ENV'] == 'test'
 
         assert isinstance(response, HttpResponseRedirect)
         assert response.url == f'/admin/manifests/manifest/{local.manifest.id}/change/'

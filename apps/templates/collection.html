@@ -66,7 +66,7 @@
         </div>
         <div class="uk-width-3-4@m" tabindex="0">
           <a class="nav-link" href="#">
-            <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+            <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
           </a>
           <ul class="uk-padding-remove rx-card-text">
             <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -112,7 +112,7 @@
       </div>
       <div class="uk-width-3-4@m" tabindex="0" aria-label="Volume Information">
         <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-          <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+          <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
         </a>
         <ul class="uk-padding-remove rx-card-text">
           <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -139,6 +139,25 @@
     {% endif %}
     {% endfor %}
   </div>
+</div>
+
+<!--TODO: move inline styles into project CSS-->
+<div class="pagination" style="margin-bottom:20px">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=page_obj.previous_page_number %}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace page=page_obj.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
 </div>
 
 {% include "footer.html" %}

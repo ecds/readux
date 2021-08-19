@@ -469,7 +469,7 @@ class VolumeSearch(ListView):
                     qs3 = qs.filter(qqq)
                     qs2 = qs.values(
                         'label', 'author', 'published_date', 'created_at', 'canvas__pid', 'pid',
-                        'canvas__manifest__image_server_server_base'
+                        'canvas__manifest__image_server__server_base'
                     ).order_by(
                         'pid'
                     ).distinct(

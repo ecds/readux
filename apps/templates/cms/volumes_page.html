@@ -47,10 +47,10 @@
   {% if volume.start_canvas.pid is null %}
   <div class="box">
     <div class="boxInner">
-      <v-volume-image></v-volume-image>
+      <v-volume-image style="padding:80px !important"></v-volume-image>
       <div class="innerContent">
         <p>
-          <p>{{ volume.label|truncatechars:200 }}</p>
+          <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
         </p>
         <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
           <em>Date Published:</em> {{volume.published_date}}<br />
@@ -64,13 +64,13 @@
       <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
           <v-volume-image
             img-src="{{ volume.start_canvas.thumbnail_crop_volume }}"
-            volume-label="{{volume.label}}">
+            volume-label="{{volume.label}}" style="height:300px !important">
           </v-volume-image>
       </a>
       <div class="innerContent">
         <p>
           <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-            <p>{{ volume.label|truncatechars:200 }}</p>
+            <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
           </a></p>
         <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
           <em>Date Published:</em> {{volume.published_date}}<br />
@@ -80,6 +80,23 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+<div class="pagination" style="margin-bottom:20px">
+    <span class="step-links">
+        {% if volumes.has_previous %}
+            <a href="?{% url_replace page=volumes %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
+        </span>
+
+        {% if volumes.has_next %}
+            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=volumes.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
 </div>
 {% endif %}
 
@@ -113,7 +130,7 @@
     </div>
     <div class="uk-width-3-4@m">
       <a class="nav-link" href="#">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove">
         <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -135,7 +152,7 @@
     </div>
     <div class="uk-width-3-4@m">
       <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+        <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
       </a>
       <ul class="uk-padding-remove uk-margin-remove rx-card-text">
         <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -159,6 +176,23 @@
   {% endfor %}
 </div>
 
+<div class="pagination" style="margin-bottom:20px">
+    <span class="step-links">
+        {% if volumes.has_previous %}
+            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
+        </span>
+
+        {% if volumes.has_next %}
+            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=volumes.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
     {% include "footer.html" %}
 
 {% endif %}

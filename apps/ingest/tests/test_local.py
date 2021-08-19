@@ -2,7 +2,7 @@
 import pytest
 import boto3
 from moto import mock_s3
-from os import listdir, path
+from shutil import copy
 from os.path import exists, join
 from tempfile import gettempdir
 from uuid import UUID
@@ -11,6 +11,7 @@ from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
+from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Local
 from ..services import create_manifest
@@ -40,7 +41,7 @@ class LocalTest(TestCase):
         )
         local.bundle = SimpleUploadedFile(
             name=bundle,
-            content=open(path.join(self.fixture_path, bundle), 'rb').read()
+            content=open(join(self.fixture_path, bundle), 'rb').read()
         )
 
         local.save()
@@ -62,7 +63,7 @@ class LocalTest(TestCase):
     def test_image_upload_to_s3(self):
         local = self.mock_local('bundle.zip', True)
 
-        local.upload_images_s3()
+        local.extract_images_s3()
 
         image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -71,7 +72,7 @@ class LocalTest(TestCase):
     def test_ocr_upload_to_s3(self):
         local = self.mock_local('nested_volume.zip', True)
 
-        local.upload_ocr_s3()
+        local.extract_ocr_s3()
 
         image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -115,7 +116,7 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('single-image.zip', True)
 
-        local.upload_images_s3()
+        local.extract_images_s3()
 
         image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -127,8 +128,8 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('bundle_with_junk.zip', True)
 
-        local.upload_images_s3()
-        local.upload_ocr_s3()
+        local.extract_images_s3()
+        local.extract_ocr_s3()
 
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -145,8 +146,8 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('bundle_with_underscores.zip', True)
 
-        local.upload_images_s3()
-        local.upload_ocr_s3()
+        local.extract_images_s3()
+        local.extract_ocr_s3()
 
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -163,8 +164,8 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('metadata.zip', True)
 
-        local.upload_images_s3()
-        local.upload_ocr_s3()
+        local.extract_images_s3()
+        local.extract_ocr_s3()
 
         files_in_zip = [f.filename for f in local.zip_ref.infolist()]
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
@@ -189,8 +190,8 @@ class LocalTest(TestCase):
             pid='p_i_d'
         )
 
-        local.upload_images_s3()
-        local.upload_ocr_s3()
+        local.extract_images_s3()
+        local.extract_ocr_s3()
 
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -226,3 +227,16 @@ class LocalTest(TestCase):
         assert 'metadata/images/' in files_in_zip
         assert exists(join(gettempdir(), 'metadata.zip'))
         assert local.local_bundle_path == join(gettempdir(), 'metadata.zip')
+
+    def test_it_cleans_up(self):
+        local = self.mock_local('metadata.zip', True)
+        local.local_bundle_path = 'swoop'
+        assert exists(join(gettempdir(), 'metadata.zip'))
+        local.create_canvases()
+        manifest = Manifest.objects.get(pk=local.manifest.id)
+        assert manifest.canvas_set.count() == 1
+        assert exists(join(gettempdir(), 'metadata.zip')) is False
+        try:
+            Local.objects.get(pk=local.id)
+        except Local.DoesNotExist:
+            pass

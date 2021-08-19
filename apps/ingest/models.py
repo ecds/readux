@@ -48,7 +48,7 @@ class Local(models.Model):
     bundle = models.FileField(blank=False, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
-    local_bundle_path = models.CharField(max_length=100, null=True, blank=True)
+    local_bundle_path = models.CharField(max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -88,47 +88,6 @@ class Local(models.Model):
             # TODO: Figure out how to test this.
             return self.__fallback_download()
 
-    def upload_images_s3(self):
-        if self.s3_client is None:
-            return
-
-        for filename in self.zip_ref.namelist():
-            if self.__is_junk(filename):
-                continue
-            type = guess_type(filename)[0]
-            if type is not None and 'image' in type:
-                # TODO: check if file already exists in S3.
-                # If it does, compare the hash and the S3 etag.
-                # Don't upload if files are the same.
-                self.s3_client.upload_fileobj(
-                    self.zip_ref.open(filename),
-                    Bucket=self.image_server.storage_path,
-                    Key='{p}/{f}'.format(p=self.manifest.pid, f=filename.split("/")[-1].replace('_', '-'))
-                )
-
-    def upload_ocr_s3(self):
-        if self.s3_client is None:
-            return
-
-        for file in self.zip_ref.infolist():
-            if 'ocr' not in file.filename.casefold():
-                continue
-            if 'metadata.' in file.filename:
-                # The metadata file could slip through.
-                # It's unlikely and will not hurt anything.
-                continue
-            if file.is_dir():
-                continue
-            if self.__is_junk(file.filename):
-                continue
-            type = guess_type(file.filename)[0]
-            if type is not None and 'text' in type:
-                self.s3_client.upload_fileobj(
-                    self.zip_ref.open(file.filename),
-                    Bucket=self.image_server.storage_path,
-                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1].replace('_', '-'))
-                )
-
     @property
     def metadata(self):
         """
@@ -162,17 +121,60 @@ class Local(models.Model):
 
                 return metadata
 
-    def create_canvases(self):
-        self.upload_images_s3()
-        self.upload_ocr_s3()
+    def extract_images_s3(self):
+        """
+        Extract image files directly to S3
+        """
+        if self.s3_client is None:
+            return
 
-        # try:
-        #     s3.Object('readux', self.manifest.pid).load()
-        # except ClientError as error:
-        #     if error.response['Error']['Code'] == '404':
-        #         LOGGER.debug(' 404')
-        #         pass
-        # else:
+        for filename in self.zip_ref.namelist():
+            if self.__is_junk(filename):
+                continue
+            type = guess_type(filename)[0]
+            if type is not None and 'image' in type:
+                # TODO: check if file already exists in S3.
+                # If it does, compare the hash and the S3 etag.
+                # Don't upload if files are the same.
+                self.s3_client.upload_fileobj(
+                    self.zip_ref.open(filename),
+                    Bucket=self.image_server.storage_path,
+                    Key='{p}/{f}'.format(p=self.manifest.pid, f=filename.split("/")[-1].replace('_', '-'))
+                )
+
+    def extract_ocr_s3(self):
+        """
+        Locate and extract OCR files directly to S3
+        """
+        if self.s3_client is None:
+            return
+
+        for file in self.zip_ref.infolist():
+            if 'ocr' not in file.filename.casefold():
+                continue
+            if 'metadata.' in file.filename:
+                # The metadata file could slip through.
+                # It's unlikely and will not hurt anything.
+                continue
+            if file.is_dir():
+                continue
+            if self.__is_junk(file.filename):
+                continue
+            type = guess_type(file.filename)[0]
+            if type is not None and 'text' in type:
+                self.s3_client.upload_fileobj(
+                    self.zip_ref.open(file.filename),
+                    Bucket=self.image_server.storage_path,
+                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1].replace('_', '-'))
+                )
+
+    def create_canvases(self):
+        """
+        Create Canvas objects for each image file.
+        """
+        self.extract_images_s3()
+        self.extract_ocr_s3()
+
         image_files = [
             file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key
         ]
@@ -186,11 +188,13 @@ class Local(models.Model):
 
         for index, key in enumerate(sorted(image_files)):
             image_file = key.split('/')[-1]
+
             LOGGER.debug(f'Creating canvas from {image_file}')
+
             ocr_file_path = None
             if len(ocr_files) > 0:
                 image_name = '.'.join(image_file.split('.')[:-1])
-                LOGGER.debug(f'IMAGE NAME {image_name}')
+
                 try:
                     ocr_key = [key for key in ocr_files if image_name in key][0]
                     ocr_file_path = f'https://readux.s3.amazonaws.com/{ocr_key}'
@@ -198,6 +202,7 @@ class Local(models.Model):
                     # Every image may not have a matching OCR file
                     ocr_file_path = None
                     pass
+
             position = index + 1
             canvas, created = Canvas.objects.get_or_create(
                 manifest=self.manifest,
@@ -210,15 +215,19 @@ class Local(models.Model):
                 if os.environ['DJANGO_ENV'] == 'test':
                     add_ocr_task(canvas.id)
                 else:
-                    add_ocr_task.delay(canvas.id)
+                    add_ocr_task.s(canvas.id)
+
+        if self.manifest.canvas_set.count() == len(image_files):
+            self.clean_up()
+        else:
+            # TODO: Log or though an error/waring?
+            pass
 
     def clean_up(self):
-        """ Method to clean up all the files. This is really only applicable for testing. """
-        if self.local_bundle_path:
+        """ Method to clean up all the files. """
+        if self.local_bundle_path and os.path.exists(self.local_bundle_path):
             os.remove(self.local_bundle_path)
-        else:
-            # TODO: Add tags to S3 object to mark for deletion
-            pass
+
         self.delete()
 
     @staticmethod

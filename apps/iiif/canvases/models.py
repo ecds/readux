@@ -48,7 +48,7 @@ class Canvas(models.Model):
     )
     # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
-    ocr_file_path = models.CharField(max_length=100, null=True, blank=True)
+    ocr_file_path = models.CharField(max_length=500, null=True, blank=True)
 
     @property
     def identifier(self):

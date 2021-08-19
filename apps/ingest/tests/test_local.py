@@ -229,13 +229,14 @@ class LocalTest(TestCase):
         assert local.local_bundle_path == join(gettempdir(), 'metadata.zip')
 
     def test_it_cleans_up(self):
-        local = self.mock_local('metadata.zip', True)
+        local = self.mock_local('single-image.zip', True)
         local.local_bundle_path = 'swoop'
-        assert exists(join(gettempdir(), 'metadata.zip'))
+        local.zip_ref
+        assert exists(join(gettempdir(), 'single-image.zip'))
         local.create_canvases()
         manifest = Manifest.objects.get(pk=local.manifest.id)
         assert manifest.canvas_set.count() == 1
-        assert exists(join(gettempdir(), 'metadata.zip')) is False
+        assert exists(join(gettempdir(), 'single-image.zip')) is False
         try:
             Local.objects.get(pk=local.id)
         except Local.DoesNotExist:

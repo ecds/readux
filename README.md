@@ -88,7 +88,7 @@ alter user readux createdb;
 To run the tests, simply run:
 
 ~~~bash
-pytest apps/
+DJANGO_ENV=test pytest apps/
 ~~~
 
 Readux is configured to use [CircleCI](https://app.circleci.com/pipelines/github/ecds/readux). Any push will trigger build.

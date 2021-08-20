@@ -8,9 +8,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
-from apps.ingest.models import Local
-from apps.ingest.admin import LocalAdmin
-from .factories import LocalFactory
+from apps.ingest.models import Local, Remote
+from apps.ingest.admin import LocalAdmin, RemoteAdmin
+from .factories import LocalFactory, RemoteFactory
 
 @mock_s3
 class IngestAdminTest(TestCase):
@@ -29,7 +29,7 @@ class IngestAdminTest(TestCase):
         conn.create_bucket(Bucket='readux')
         conn.create_bucket(Bucket='readux-ingest')
 
-    def test_admin_save(self):
+    def test_local_admin_save(self):
         """It should add a manifest to the Local object"""
         local = LocalFactory.create(local_bundle_path=join(self.fixture_path, 'bundle.zip'))
 
@@ -42,7 +42,7 @@ class IngestAdminTest(TestCase):
         assert local.manifest is not None
         # assert local.manifest.canvas_set.count() == 10
 
-    def test_admin_response_add(self):
+    def test_local_admin_response_add(self):
         """It should redirect to new manifest"""
 
         local = LocalFactory.create(manifest=ManifestFactory.create())
@@ -53,4 +53,29 @@ class IngestAdminTest(TestCase):
         assert isinstance(response, HttpResponseRedirect)
         assert response.url == f'/admin/manifests/manifest/{local.manifest.id}/change/'
 
+    def test_remote_admin_save(self):
+        """It should add a manifest to the Local object"""
+        remote = RemoteFactory.create(
+            remote_url='https://dooley.net/manifest.json' # pylint: disable=line-too-long
+        )
+        assert remote.manifest is None
 
+        remote_model_admin = RemoteAdmin(model=Remote, admin_site=AdminSite())
+        remote_model_admin.save_model(obj=remote, request=None, form=None, change=None)
+
+        remote.refresh_from_db()
+        assert remote.manifest is not None
+
+    def test_remote_admin_response_add(self):
+        """It should redirect to new manifest"""
+
+        remote = RemoteFactory.create(
+            manifest=ManifestFactory.create(),
+            remote_url='https://poop.org/manifest.json' # pylint: disable=line-too-long
+        )
+
+        remote_model_admin = RemoteAdmin(model=Remote, admin_site=AdminSite())
+        response = remote_model_admin.response_add(obj=remote, request=None)
+
+        assert isinstance(response, HttpResponseRedirect)
+        assert response.url == f'/admin/manifests/manifest/{remote.manifest.id}/change/'

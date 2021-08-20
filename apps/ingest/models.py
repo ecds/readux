@@ -3,16 +3,17 @@ import imghdr
 import os
 import uuid
 import logging
-from time import sleep
+import httpretty
 from boto3 import client, resource
 from io import BytesIO
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from mimetypes import guess_type
 from shutil import rmtree
 from tempfile import gettempdir, mkdtemp
 from zipfile import ZipFile
 from tablib import Dataset
 from django.db import models
+from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
 from apps.iiif.manifests.models import Manifest, ImageServer
@@ -272,61 +273,42 @@ class Remote(models.Model):
         :return: IIIF Manifest
         :rtype: dict
         """
+        if os.environ['DJANGO_ENV'] == 'test':
+            httpretty.enable()
+            httpretty.register_uri(
+                httpretty.GET,
+                self.remote_url,
+                body=open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest.json')).read(),
+                content_type="text/json"
+            )
         return fetch_url(self.remote_url)
 
     @property
     def metadata(self):
         """ Take a remote IIIF manifest and create a derivative version. """
         if self.remote_manifest['@context'] == 'http://iiif.io/api/presentation/2/context.json':
-            return self.__parse_iiif_v2_manifest(self.remote_manifest)
+            return services.parse_iiif_v2_manifest(self.remote_manifest)
 
         return None
 
-    @staticmethod
-    def __parse_iiif_v2_manifest(data):
-        """Parse IIIF Manifest based on v2.1.1 or the presentation API.
-        https://iiif.io/api/presentation/2.1
+    def create_canvases(self):
+        for _ in range(20):
+            print(len(self.remote_manifest['sequences'][0]['canvases']))
+         # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
+        for position, canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
+            canvas_metadata = None
+            # TODO: we will need some sort of check for IIIF API version, but not
+            # everyone includes a context for each canvas.
+            # if canvas['@context'] == 'http://iiif.io/api/presentation/2/context.json':
+            canvas_metadata = services.parse_iiif_v2_canvas(canvas)
 
-        :param data: IIIF Presentation v2.1.1 manifest
-        :type data: dict
-        :return: Extracted metadata
-        :rtype: dict
-        """
-        properties = {}
-        manifest_data = []
+            if canvas_metadata is not None:
+                canvas, _created = Canvas.objects.get_or_create(
+                    pid=canvas_metadata['pid'],
+                    manifest=self.manifest,
+                    position=position
+                )
 
-        if 'metadata' in data:
-            manifest_data.append({ 'metadata': data['metadata'] })
-
-            for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
-                properties.update(iiif_metadata)
-
-        # Sometimes, that label appears as a list.
-        if 'label' in data.keys() and isinstance(data['label'], list):
-            data['label'] = ' '.join(data['label'])
-
-        manifest_data.extend([{prop: data[prop]} for prop in data if isinstance(data[prop], str)])
-
-        for datum in manifest_data:
-            properties.update(datum)
-
-        properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
-        properties['summary'] = data['description'] if 'description' in data else ''
-
-        # TODO: Work out adding remote logos
-        if 'logo' in properties:
-            properties.pop('logo')
-
-        manifest_metadata = services.clean_metadata(properties)
-
-        return manifest_metadata
-
-    # @staticmethod
-    # def parse_iiif_v2_canvas(canvas):
-    #     id_uri = urlparse(unquote(canvas['@id']))
-    #     service = urlparse(unquote(canvas['images'][0]['service']['@id']))
-    #     resource_id = service.path.split('/').pop()
-    #     return {
-    #         'pid': canvas['@id'].split('/')[-2],
-    #         'resource_id': quote(resource_id, save='')
-    #     }
+                for (key, value) in canvas_metadata.items():
+                    setattr(canvas, key, value)
+                canvas.save()

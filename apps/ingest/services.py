@@ -1,44 +1,10 @@
 """ Module of service classes and methods for ingest. """
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 from uuid import uuid4
 import boto3
 from django.apps import apps
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.models import Manifest, RelatedLink
-
-
-# class UploadBundle:
-#     """ Class to negotiate file uploads """
-#     def __init__(self, canvas, file_path):
-#         """
-#         Class to upload images to a IIIF server's store.
-#         :param canvas: Canvas object being added.
-#         :type canvas: iiif.canvases.modesl.Canvas
-#         :param file_path: Path to image to be uploaded.
-#         :type file_path: str
-#         """
-#         self.canvas = canvas
-#         self.file = file_path
-#         self.s3_client = None
-
-#         if self.canvas.manifest.image_server.storage_service == 's3':
-#             self.s3_client = boto3.client('s3')
-
-#     def upload_bundle(self):
-#         """ Upload file to the given image server's store. """
-#         if self.s3_client is not None:
-#             self.s3_upload()
-#         else:
-#             # TODO: How should this work?
-#             pass
-
-#     def s3_upload(self):
-#         """ Upload file to S3 bucket. """
-#         self.s3_client.upload_file(
-#             self.file,
-#             self.canvas.manifest.image_server.storage_path,
-#             '{d}/{p}'.format(d=self.canvas.manifest.pid, p=self.file.split('/')[-1])
-#         )
 
 def clean_metadata(metadata):
     """Remove keys that do not aligin with Manifest fields.
@@ -110,3 +76,60 @@ def extract_image_server(canvas):
     if url.port is not None:
         host = '{h}:{p}'.format(h=url.hostname, p=url.port)
     return '{s}://{h}{p}'.format(s=url.scheme, h=host, p=base_path)
+
+def parse_iiif_v2_manifest(data):
+    """Parse IIIF Manifest based on v2.1.1 or the presentation API.
+    https://iiif.io/api/presentation/2.1
+
+    :param data: IIIF Presentation v2.1.1 manifest
+    :type data: dict
+    :return: Extracted metadata
+    :rtype: dict
+    """
+    properties = {}
+    manifest_data = []
+
+    if 'metadata' in data:
+        manifest_data.append({ 'metadata': data['metadata'] })
+
+        for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
+            properties.update(iiif_metadata)
+
+    # Sometimes, that label appears as a list.
+    if 'label' in data.keys() and isinstance(data['label'], list):
+        data['label'] = ' '.join(data['label'])
+
+    manifest_data.extend([{prop: data[prop]} for prop in data if isinstance(data[prop], str)])
+
+    for datum in manifest_data:
+        properties.update(datum)
+
+    properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
+    properties['summary'] = data['description'] if 'description' in data else ''
+
+    # TODO: Work out adding remote logos
+    if 'logo' in properties:
+        properties.pop('logo')
+
+    manifest_metadata = clean_metadata(properties)
+
+    return manifest_metadata
+
+def parse_iiif_v2_canvas(canvas):
+    """ """
+    canvas_id = canvas['@id'].split('/')
+    pid = canvas_id[-1] if canvas_id[-1] != 'canvas' else canvas_id[-2]
+
+    service = urlparse(canvas['images'][0]['resource']['service']['@id'])
+    resource = unquote(service.path.split('/').pop())
+
+    summary = canvas['description'] if 'description' in canvas.keys() else ''
+    label = canvas['label'] if 'label' in canvas.keys() else ''
+    return {
+        'pid': pid,
+        'height': canvas['height'],
+        'width': canvas['width'],
+        'summary': summary,
+        'label': label,
+        'resource': resource
+    }

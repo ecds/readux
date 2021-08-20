@@ -39,8 +39,9 @@ class RemoteAdmin(admin.ModelAdmin):
         obj.manifest = create_manifest(obj)
         obj.save()
         obj.refresh_from_db()
-        tasks.create_remote_canvases(obj.id, verbose_name=f'Creating canvas {obj.pid} for {obj.manifest.id}')
         super().save_model(request, obj, form, change)
+        if environ['DJANGO_ENV'] != 'test':
+            tasks.create_remote_canvases.delay(obj.id)
 
     def response_add(self, request, obj, post_url_continue=None):
         obj.refresh_from_db()

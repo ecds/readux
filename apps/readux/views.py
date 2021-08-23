@@ -520,7 +520,7 @@ class VolumeSearch(ListView):
 
                     qs2 = qs.values(
                         'canvas__pid', 'pid',
-                        'canvas__manifest__image_server_server_base'
+                        'canvas__manifest__image_server__server_base'
                     ).order_by(
                         'pid'
                     ).distinct('pid')

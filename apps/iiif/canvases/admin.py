@@ -1,13 +1,15 @@
 """
 Django admin module for Canvases
 """
+from os import environ
 from django.contrib import admin
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
 from ..manifests.models import Manifest
 from .models import Canvas
-from .tasks import add_ocr
+from .tasks import add_ocr_task
+from . import services
 
 class CanvasResource(resources.ModelResource):
     """Django admin Canvas resource"""
@@ -40,7 +42,14 @@ class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.save()
         obj.refresh_from_db()
-        add_ocr(obj.id, verbose_name=f'Creating OCR for {obj.manifest.pid} page {obj.position}')
         super().save_model(request, obj, form, change)
+
+        if environ['DJANGO_ENV'] == 'test':
+            ocr = services.get_ocr(obj)
+            if ocr is not None:
+                services.add_ocr_annotations(obj, ocr)
+
+        else:
+            add_ocr_task.delay(obj.id)
 
 admin.site.register(Canvas, CanvasAdmin)

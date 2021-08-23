@@ -16,6 +16,7 @@ from django.db import models
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
+from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
 from apps.iiif.manifests.models import Manifest, ImageServer
 import apps.ingest.services as services
 from apps.utils.fetch import fetch_url
@@ -214,9 +215,11 @@ class Local(models.Model):
 
             if created and canvas.ocr_file_path is not None:
                 if os.environ['DJANGO_ENV'] == 'test':
-                    add_ocr_task(canvas.id)
+                    ocr = get_ocr(canvas)
+                    if ocr is not None:
+                        add_ocr_annotations(canvas, ocr)
                 else:
-                    add_ocr_task.s(canvas.id)
+                    add_ocr_task.delay(canvas.id)
 
         if self.manifest.canvas_set.count() == len(image_files):
             self.clean_up()

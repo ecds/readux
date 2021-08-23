@@ -14,6 +14,7 @@ class CanvasFactory(DjangoModelFactory):
     position = random.randrange(5)
     manifest = None
     ocr_file_path = None
+    default_ocr = 'word'
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Canvas

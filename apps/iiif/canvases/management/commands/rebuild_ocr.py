@@ -1,11 +1,12 @@
 """
 Manage commands for Canvas objects.
 """
+from os import environ
 from progress.bar import Bar
 import httpretty
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from ...tasks import add_ocr
+from ...tasks import add_ocr_task
 from ...models import Canvas
 from ... import services
 from ....annotations.models import Annotation
@@ -73,7 +74,12 @@ class Command(BaseCommand):
 
     def __rebuild(self, canvas, testing=False):
         if not canvas.annotation_set.exists():
-            add_ocr.now(canvas.id, verbose_name=f'Adding OCR for {canvas.manifest.pid} page {canvas.position}')
+            if environ['DJANGO_ENV'] != 'test':
+                add_ocr_task(canvas.id)
+            else:
+                ocr = services.get_ocr(canvas)
+                if ocr is not None:
+                    services.add_ocr_annotations(canvas, ocr)
         else:
             ocr = services.get_ocr(canvas)
             if ocr is None:

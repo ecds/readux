@@ -7,8 +7,7 @@ from django.test import TestCase
 from django.core.management import call_command
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
-from ...manifests.models import ImageServer
-from ...manifests.tests.factories import ImageServerFactory, ManifestFactory
+from ...manifests.tests.factories import ImageServerFactory
 from .factories import CanvasFactory
 
 class CanvasTests(TestCase):

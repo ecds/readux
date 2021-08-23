@@ -203,9 +203,6 @@ class Canvas(models.Model):
 
         super().save(*args, **kwargs)
 
-        # if self._state.adding or not self.annotation_set.exists():
-        #     self.__add_ocr()
-
 
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()
@@ -213,36 +210,6 @@ class Canvas(models.Model):
 
     def __str__(self):
         return str(self.pid)
-
-    # def __add_ocr(self):
-    #     """Private function for parsing and adding OCR."""
-    #     word_order = 1
-    #     ocr = services.get_ocr(self)
-    #     if ocr is not None:
-    #         for word in ocr:
-    #             # A quick check to make sure the header row didn't slip through.
-    #             if word['x'] == 'x':
-    #                 continue
-
-    #             # Set the content to a single space if it's missing.
-    #             if (
-    #                     word == '' or
-    #                     'content' not in word or
-    #                     not word['content'] or
-    #                     word['content'].isspace()
-    #             ):
-    #                 word['content'] = ' '
-    #             anno = Annotation()
-    #             anno.canvas = self
-    #             anno.x = word['x']
-    #             anno.y = word['y']
-    #             anno.w = word['w']
-    #             anno.h = word['h']
-    #             anno.resource_type = anno.OCR
-    #             anno.content = word['content']
-    #             anno.order = word_order
-    #             anno.save()
-    #             word_order += 1
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         ordering = ['position']

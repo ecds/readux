@@ -1,7 +1,6 @@
 """ Tests for ingest.services """
 import os
-import boto3
-from moto import mock_s3
+import json
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
@@ -9,7 +8,7 @@ from apps.iiif.canvases.tests.factories import CanvasFactory
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 import apps.ingest.services as services
-from ..models import Local
+from .factories import RemoteFactory
 
 class ServicesTest(TestCase):
     """ Tests for ingest.services """
@@ -17,39 +16,7 @@ class ServicesTest(TestCase):
         """ Set instance variables. """
         self.fixture_path = os.path.join(settings.APPS_DIR, 'ingest/fixtures/')
 
-    # @mock_s3
-    # def test_s3_upload_from_local(self):
-    #     """ It should upload the images using a fake S3 service from moto. """
-    #     local = Local(
-    #         image_server = ImageServerFactory(
-    #             server_base='http://images.readux.ecds.emory',
-    #             storage_service='s3',
-    #             storage_path='readux'
-    #         )
-    #     )
-    #     local.bundle = SimpleUploadedFile(
-    #         name='bundle.zip',
-    #         content=open(os.path.join(self.fixture_path, 'bundle.zip'), 'rb').read()
-    #     )
-
-    #     local.save()
-
-    #     # Create fake bucket for moto's mock S3 service.
-    #     conn = boto3.resource('s3', region_name='us-east-1')
-    #     conn.create_bucket(Bucket=local.image_server.storage_path)
-
-    #     upload_service = services.UploadBundle(
-    #         canvas=CanvasFactory(
-    #             ocr_file_path=os.path.join(local.ocr_directory, '00000005.tsv'),
-    #             manifest=ManifestFactory(image_server=local.image_server)
-    #         ),
-    #         file_path=os.path.join(local.image_directory, '00000005.jpg')
-    #     )
-
-    #     upload_service.upload_bundle()
-
-    @staticmethod
-    def test_cleaning_metadata():
+    def test_cleaning_metadata(self):
         """ It should normalize keys and remove key/value pairs that
         do not match a Manifest field. """
         fake_metadata = {
@@ -73,8 +40,7 @@ class ServicesTest(TestCase):
         assert cleaned_metadata['published_city'] == fake_metadata['Published City']
         assert cleaned_metadata['publisher'] == fake_metadata['PUBLISHER']
 
-    @staticmethod
-    def test_extracting_image_server_with_port():
+    def test_extracting_image_server_with_port(self):
         """ If should return a URL with a specified port. """
         canvas = {
             'images': [{
@@ -88,8 +54,7 @@ class ServicesTest(TestCase):
         image_server_url = services.extract_image_server(canvas)
         assert image_server_url == 'https://readux.org:8000/iiif'
 
-    @staticmethod
-    def test_extracting_image_server_without_port():
+    def test_extracting_image_server_without_port(self):
         """ If should return a URL with no port. """
         canvas = {
             'images': [{
@@ -102,3 +67,16 @@ class ServicesTest(TestCase):
         }
         image_server_url = services.extract_image_server(canvas)
         assert image_server_url == 'https://readux.org/iiif'
+
+    def test_adding_related_link_to_remote_ingest_manifest(self):
+        remote = RemoteFactory.create(
+            remote_url='https://swoop.net/manifest.json' # pylint: disable=line-too-long
+        )
+        manifest = services.create_manifest(remote)
+        related_link = manifest.relatedlink_set.first()
+        assert related_link.link == remote.remote_url
+
+    def test_parse_v2_manifest_with_label_as_list(self):
+        data = json.loads(open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest-label-as-array.json')).read())
+        metadata = services.parse_iiif_v2_manifest(data)
+        self.assertEqual(metadata['label'], 'Address by American Hero Frederick Douglass')

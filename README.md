@@ -70,7 +70,7 @@ python manage.py loaddata apps/fixtures/dump.json
 Run the development under https to avoid mix content errors. Note: this will generate a self-signed certificate. There are ways to tell your browser to trust these certs, but that is beyond the scope of this README.
 
 ~~~bash
-python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
+DJANGO_ENV=develop python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 ~~~
 
 ### Running the tests

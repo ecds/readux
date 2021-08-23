@@ -1,10 +1,11 @@
 # pylint: disable=invalid-name
 """Module to provide some common functions for Canvas objects."""
 import csv
-from os import path
+from os import environ, path
 from xml.etree import ElementTree
 import httpretty
 from django.conf import settings
+from apps.iiif.annotations.models import Annotation
 from apps.utils.fetch import fetch_url
 
 class IncludeQuotesDialect(csv.Dialect): # pylint: disable=too-few-public-methods
@@ -84,14 +85,14 @@ def get_ocr(canvas):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
-    if 'fake.info' in canvas.manifest.image_server.server_base:
+    if environ['DJANGO_ENV'] == 'test':
         return get_fake_ocr()
     if canvas.default_ocr == "line":
         result = None
-        if 'fake' in canvas.manifest.image_server.server_base:
-            result = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
-        else:
-            result = fetch_alto_ocr(canvas)
+        # if environ['DJANGO_ENV'] == 'test':
+        #     result = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
+        # else:
+        result = fetch_alto_ocr(canvas)
         return add_alto_ocr(result)
     result = fetch_positional_ocr(canvas)
     return add_positional_ocr(canvas, result)
@@ -105,7 +106,7 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    if 'fake' in str(canvas.manifest.image_server.server_base):
+    if environ['DJANGO_ENV'] == 'test':
         response =  get_fake_canvas_info(canvas)
         return response
 
@@ -137,26 +138,11 @@ def fetch_positional_ocr(canvas):
 
         url = f"https://api.archivelab.org/books/{canvas.manifest.pid}/pages/{pid}/ocr?mode=words"
 
-        for _ in range(10):
-            print(url)
-
-        # if 'fake' in canvas.manifest.image_server.server_base:
-        #     fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
-        #     ocr = fake_ocr.read()
-        #     fake_ocr.close()
-        #     httpretty.enable()
-        #     httpretty.register_uri(
-        #         httpretty.GET,
-        #         url,
-        #         body=ocr,
-        #         content_type='text/json"'
-        #     )
-
         return fetch_url(url)
 
     if 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
         # Fake TSV data for testing.
-        if 'fake' in canvas.manifest.image_server.server_base:
+        if environ['DJANGO_ENV'] == 'test':
             fake_tsv = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/sample.tsv'))
             tsv = fake_tsv.read()
             url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
@@ -226,6 +212,9 @@ def add_positional_ocr(canvas, result):
         # Sometimes the TSV has some extra tabs at the beginign and the end. These have
         # to be cleaned out. It gets complicatied.
         for index, line in enumerate(lines):
+            print('----')
+            print(line)
+            print('----')
             # First we remove any leading column that is empty.
             line = line.strip()
             lines[index] = line
@@ -309,3 +298,32 @@ def add_alto_ocr(result):
     if ocr:
         return ocr
     return None
+
+def add_ocr_annotations(canvas, ocr):
+    for _ in range(9):
+        print(type(ocr))
+    word_order = 1
+    for word in ocr:
+        # A quick check to make sure the header row didn't slip through.
+        if word['x'] == 'x':
+            continue
+
+        # Set the content to a single space if it's missing.
+        if (
+            word == '' or
+            'content' not in word or
+            not word['content'] or
+            word['content'].isspace()
+        ):
+            word['content'] = ' '
+        anno = Annotation()
+        anno.canvas = canvas
+        anno.x = word['x']
+        anno.y = word['y']
+        anno.w = word['w']
+        anno.h = word['h']
+        anno.resource_type = anno.OCR
+        anno.content = word['content']
+        anno.order = word_order
+        anno.save()
+        word_order += 1

@@ -1,7 +1,6 @@
 """ Module of service classes and methods for ingest. """
 from urllib.parse import unquote, urlparse
 from uuid import uuid4
-import boto3
 from django.apps import apps
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.models import Manifest, RelatedLink
@@ -35,13 +34,17 @@ def create_manifest(ingest):
     """
     manifest = None
     # Make a copy of the metadata so we don't extract it over and over.
-    metadata = ingest.metadata
+    try:
+        metadata = dict(ingest.metadata)
+    except TypeError:
+        metadata = None
     if metadata is not None:
         manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
-        if not created:
-            manifest.canvas_set.all().delete()
+        # TODO: I'm not sure this is what we want to do
+        # if not created:
+        #     manifest.canvas_set.all().delete()
     else:
         manifest = Manifest(pid=str(uuid4()))
 
@@ -49,9 +52,9 @@ def create_manifest(ingest):
     manifest.save()
 
     # This was giving me a 'django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet' error.
-    # Remote = apps.get_model('ingest.remote')
+    Remote = apps.get_model('ingest.remote')
     # if type(ingest, .models.Remote):
-    if type(ingest) == 'apps.ingest.model.Local':
+    if isinstance(ingest, Remote):
         RelatedLink(
             manifest=manifest,
             link=ingest.remote_url,
@@ -95,7 +98,7 @@ def parse_iiif_v2_manifest(data):
         for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
             properties.update(iiif_metadata)
 
-    # Sometimes, that label appears as a list.
+    # Sometimes, the label appears as a list.
     if 'label' in data.keys() and isinstance(data['label'], list):
         data['label'] = ' '.join(data['label'])
 

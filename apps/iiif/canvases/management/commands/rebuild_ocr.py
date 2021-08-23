@@ -78,9 +78,11 @@ class Command(BaseCommand):
                 add_ocr_task(canvas.id)
             else:
                 ocr = services.get_ocr(canvas)
+
                 if ocr is not None:
                     services.add_ocr_annotations(canvas, ocr)
         else:
+            # canvas.annotation_set.all().delete()
             ocr = services.get_ocr(canvas)
             if ocr is None:
                 return
@@ -89,6 +91,8 @@ class Command(BaseCommand):
             self.stdout.write('Adding OCR for canvas {c}'.format(c=canvas.pid))
             with Bar('Processing', max=len(ocr)) as prog_bar:
                 for word in ocr:
+                    if word['content'] == 'Dope':
+                        print(word)
                     if (
                             word == '' or
                             'content' not in word or
@@ -107,6 +111,9 @@ class Command(BaseCommand):
                             canvas=canvas
                         )
                     except Annotation.DoesNotExist:
+                        if word['content'] == 'Dope':
+                            for _ in range(10):
+                                print('DANG')
                         anno = Annotation(
                             w=word['w'],
                             h=word['h'],

@@ -1,6 +1,7 @@
 from apps.iiif.canvases.models import Canvas
 from os.path import join
-from django.test import TestCase
+from urllib.parse import quote
+from django.test import TestCase, Client
 from boto3 import client, resource
 from botocore.exceptions import ClientError
 from moto import mock_s3
@@ -9,6 +10,31 @@ from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFact
 from .factories import CanvasFactory
 
 class TestCanvasModels(TestCase):
+    fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
+
+    def setUp(self):
+        self.client = Client()
+        self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
+        self.manifest = self.canvas.manifest
+        self.assumed_canvas_pid = 'fedora:emory:5622'
+        self.assumed_canvas_resource = '5622'
+        self.assumed_volume_pid = 'readux:st7r6'
+        self.assumed_iiif_base = 'https://loris.library.emory.edu'
+
+    def test_properties(self):
+        # httpretty.register_uri(httpretty.GET, 'https://loris.library.emory.edu')
+        assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
+        assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, quote(self.assumed_canvas_pid))
+        assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
+        assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.twitter_media1 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.twitter_media2 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.uri == "%s/iiif/%s/" % (settings.HOSTNAME, self.assumed_volume_pid)
+        assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+        assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+
     @mock_s3
     def test_delete_canvas_from_s3(self):
         """When deleted, it should delete the S3 objects"""

@@ -22,8 +22,6 @@ class CanvasTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
-        # self.canvas.save()
-        # self.canvas.refresh_from_db()
         self.manifest = self.canvas.manifest
         self.assumed_canvas_pid = 'fedora:emory:5622'
         self.assumed_canvas_resource = '5622'
@@ -158,99 +156,84 @@ class CanvasTests(TestCase):
         assert '> </span>' in ocr2.content
         assert canvas.annotation_set.all().count() == 5
 
-    # def test_no_alto_from_empty_result(self):
-    #     ocr = services.add_alto_ocr(None)
-    #     assert ocr is None
+    def test_no_alto_from_empty_result(self):
+        ocr = services.add_alto_ocr(None)
+        assert ocr is None
 
-    # def test_from_bad_alto(self):
-    #     alto = open('apps/iiif/canvases/fixtures/bad_alto.xml', 'r').read()
-    #     ocr = services.add_alto_ocr(alto)
-    #     assert ocr is None
+    def test_from_bad_alto(self):
+        alto = open('apps/iiif/canvases/fixtures/bad_alto.xml', 'r').read()
+        ocr = services.add_alto_ocr(alto)
+        assert ocr is None
 
-    # def test_canvas_detail(self):
-    #     kwargs = {'manifest': self.manifest.pid, 'pid': self.canvas.pid}
-    #     url = reverse('RenderCanvasDetail', kwargs=kwargs)
-    #     response = self.client.get(url)
-    #     serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
-    #     assert response.status_code == 200
-    #     assert serialized_canvas['@id'] == self.canvas.identifier
-    #     assert serialized_canvas['label'] == str(self.canvas.position)
-    #     assert serialized_canvas['images'][0]['@id'] == self.canvas.anno_id
-    #     assert serialized_canvas['images'][0]['resource']['@id'] == "%s/full/full/0/default.jpg" % (self.canvas.resource_id)
+    def test_canvas_detail(self):
+        kwargs = {'manifest': self.manifest.pid, 'pid': self.canvas.pid}
+        url = reverse('RenderCanvasDetail', kwargs=kwargs)
+        response = self.client.get(url)
+        serialized_canvas = json.loads(response.content.decode('UTF-8-sig'))
+        assert response.status_code == 200
+        assert serialized_canvas['@id'] == self.canvas.identifier
+        assert serialized_canvas['label'] == str(self.canvas.position)
+        assert serialized_canvas['images'][0]['@id'] == self.canvas.anno_id
+        assert serialized_canvas['images'][0]['resource']['@id'] == "%s/full/full/0/default.jpg" % (self.canvas.resource_id)
 
-    # def test_canvas_list(self):
-    #     kwargs = { 'manifest': self.manifest.pid }
-    #     url = reverse('RenderCanvasList', kwargs=kwargs)
-    #     response = self.client.get(url)
-    #     canvas_list = json.loads(response.content.decode('UTF-8-sig'))
+    def test_canvas_list(self):
+        kwargs = { 'manifest': self.manifest.pid }
+        url = reverse('RenderCanvasList', kwargs=kwargs)
+        response = self.client.get(url)
+        canvas_list = json.loads(response.content.decode('UTF-8-sig'))
 
-    #     assert response.status_code == 200
-    #     assert len(canvas_list) == 2
+        assert response.status_code == 200
+        assert len(canvas_list) == 2
 
-    # @httpretty.activate
-    # def test_properties(self):
-    #     httpretty.register_uri(httpretty.GET, 'https://loris.library.emory.edu')
-    #     assert self.canvas.identifier == "%s/iiif/%s/canvas/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
-    #     assert self.canvas.service_id == "%s/%s" % (self.assumed_iiif_base, quote(self.assumed_canvas_pid))
-    #     assert self.canvas.anno_id == "%s/iiif/%s/annotation/%s" % (settings.HOSTNAME, self.assumed_volume_pid, self.assumed_canvas_pid)
-    #     assert self.canvas.thumbnail == "%s/%s/full/200,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
-    #     assert self.canvas.social_media == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
-    #     assert self.canvas.twitter_media1 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
-    #     assert self.canvas.twitter_media2 == "%s/%s/full/600,/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
-    #     assert self.canvas.uri == "%s/iiif/%s/" % (settings.HOSTNAME, self.assumed_volume_pid)
-    #     assert self.canvas.thumbnail_crop_landscape == "%s/%s/full/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
-    #     assert self.canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/,250/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
-    #     assert self.canvas.thumbnail_crop_volume == "%s/%s/pct:15,15,70,70/,600/0/default.jpg" % (self.assumed_iiif_base, self.assumed_canvas_resource)
+    def test_wide_image_crops(self):
+        pid = '15210893.5622.emory.edu$95'
+        canvas = Canvas.objects.get(pid=pid)
+        # canvas.save()
+        # canvas.refresh_from_db()
+        assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
+        for x in range(1, 20):
+            print(canvas.thumbnail_crop_tallwide)
+        assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
+        assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
 
-    # def test_wide_image_crops(self):
-    #     pid = '15210893.5622.emory.edu$95'
-    #     canvas = Canvas.objects.get(pid=pid)
-    #     # canvas.save()
-    #     # canvas.refresh_from_db()
-    #     assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
-    #     for x in range(1, 20):
-    #         print(canvas.thumbnail_crop_tallwide)
-    #     assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
-    #     assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
+    def test_result_property(self):
+        assert self.canvas.result == "a retto , dio Quef\u00eca de'"
 
-    # def test_result_property(self):
-    #     assert self.canvas.result == "a retto , dio Quef\u00eca de'"
+    def test_no_alto_for_internet_archive(self):
+        self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
+        assert services.fetch_alto_ocr(self.canvas) is None
 
-    # def test_no_alto_for_internet_archive(self):
-    #     self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
-    #     assert services.fetch_alto_ocr(self.canvas) is None
+    def test_fetch_positional_ocr(self):
+        self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
+        self.canvas.manifest.pid = 'atlantacitydirec1908foot'
+        self.canvas.pid = '1'
+        assert services.fetch_positional_ocr(self.canvas)['ocr'] is not None
 
-    # def test_fetch_positional_ocr(self):
-    #     self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
-    #     self.canvas.manifest.pid = 'atlantacitydirec1908foot'
-    #     self.canvas.pid = '1'
-    #     assert services.fetch_positional_ocr(self.canvas)['ocr'] is not None
-
-    # def test_fetch_positional_ocr_with_offset(self):
-    #     self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
-    #     self.canvas.manifest.pid = 'atlantacitydirec1908foot'
-    #     self.canvas.pid = '$1'
-    #     assert services.fetch_positional_ocr(self.canvas)['ocr'] is not None
+    def test_fetch_positional_ocr_with_offset(self):
+        self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
+        self.canvas.manifest.pid = 'atlantacitydirec1908foot'
+        self.canvas.pid = '$1'
+        assert services.fetch_positional_ocr(self.canvas)['ocr'] is not None
 
     # def test_fetch_positional_ocr_that_return_none(self):
     #     self.canvas.manifest.image_server.server_base = 'oxford'
     #     assert services.fetch_positional_ocr(self.canvas) is None
 
-    # def test_get_image_info(self):
-    #     image_server = ImageServerFactory.create(server_base='http://fake.info')
-    #     manifest = ManifestFactory.create(image_server=image_server)
-    #     canvas = CanvasFactory.create(manifest=manifest)
-    #     assert canvas.image_info['height'] == 3000
-    #     assert canvas.image_info['width'] == 3000
+    def test_get_image_info(self):
+        image_server = ImageServerFactory.create(server_base='http://fake.info')
+        manifest = ManifestFactory.create(image_server=image_server)
+        canvas = CanvasFactory.create(manifest=manifest)
+        assert canvas.image_info['height'] == 3000
+        assert canvas.image_info['width'] == 3000
 
-    # def test_setting_height_width_from_iiif(self):
-    #     image_server = ImageServerFactory.create(server_base='http://fake.info')
-    #     manifest = ManifestFactory.create(image_server=image_server)
-    #     canvas = CanvasFactory.build()
-    #     assert canvas.height != 3000
-    #     assert canvas.width != 3000
-    #     canvas.manifest = manifest
-    #     canvas.save()
-    #     canvas.refresh_from_db()
-    #     assert canvas.height == 3000
-    #     assert canvas.width == 3000
+    def test_setting_height_width_from_iiif(self):
+        image_server = ImageServerFactory.create(server_base='http://fake.info')
+        manifest = ManifestFactory.create(image_server=image_server)
+        canvas = CanvasFactory.build()
+        assert canvas.height != 3000
+        assert canvas.width != 3000
+        canvas.manifest = manifest
+        canvas.save()
+        canvas.refresh_from_db()
+        assert canvas.height == 3000
+        assert canvas.width == 3000

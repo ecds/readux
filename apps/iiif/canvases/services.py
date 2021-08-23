@@ -40,42 +40,7 @@ def get_fake_ocr():
     :return: OCR data
     :rtype: dict
     """
-    return [
-        {
-            "h": 22,
-            "w": 22,
-            "x": 1146,
-            "y": 928,
-            "content": "Dope"
-        },
-        {
-            "h": 222,
-            "w": 222,
-            "x": 11462,
-            "y": 9282,
-            "content": ""
-        },
-        {
-            "h": 21,
-            "w": 21,
-            "x": 1141,
-            "y": 9281,
-            "content": "southernplayalisticadillacmuzik"
-        },
-        {
-            "h": 213,
-            "w": 213,
-            "x": 11413,
-            "y": 92813
-        },
-        {
-            "h": 214,
-            "w": 214,
-            "x": 11414,
-            "y": 92814,
-            "content": " "
-        }
-    ]
+    return
 
 def get_ocr(canvas):
     """Function to determine method for fetching OCR for a canvas.
@@ -85,15 +50,10 @@ def get_ocr(canvas):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
-    if environ['DJANGO_ENV'] == 'test':
-        return get_fake_ocr()
     if canvas.default_ocr == "line":
-        result = None
-        # if environ['DJANGO_ENV'] == 'test':
-        #     result = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
-        # else:
         result = fetch_alto_ocr(canvas)
         return add_alto_ocr(result)
+
     result = fetch_positional_ocr(canvas)
     return add_positional_ocr(canvas, result)
 
@@ -129,14 +89,18 @@ def fetch_positional_ocr(canvas):
     :rtype: requests.models.Response
     """
     if 'archivelab' in canvas.manifest.image_server.server_base:
-        url = None
-
         if '$' in canvas.pid:
             pid = str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
         else:
             pid = canvas.pid
 
         url = f"https://api.archivelab.org/books/{canvas.manifest.pid}/pages/{pid}/ocr?mode=words"
+
+        if environ['DJANGO_ENV'] == 'test':
+            fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+            words = fake_ocr.read()
+            httpretty.enable()
+            httpretty.register_uri(httpretty.GET, url, body=words)
 
         return fetch_url(url)
 
@@ -172,12 +136,20 @@ def fetch_positional_ocr(canvas):
         #     file.close()
         #     return data
 
-    return fetch_url(
-        "{p}{c}{s}".format(
-            p=settings.DATASTREAM_PREFIX,
-            c=canvas.pid.replace('fedora:', ''),
-            s=settings.DATASTREAM_SUFFIX), data_format='text/plain'
-        )
+    url = "{p}{c}{s}".format(
+        p=settings.DATASTREAM_PREFIX,
+        c=canvas.pid.replace('fedora:', ''),
+        s=settings.DATASTREAM_SUFFIX
+    )
+
+    if environ['DJANGO_ENV'] == 'test':
+        fake_alto = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+        words = fake_alto.read()
+        httpretty.enable()
+        httpretty.register_uri(httpretty.GET, url, body=words)
+
+
+    return fetch_url(url, data_format='text/plain')
 
 def add_positional_ocr(canvas, result):
     """Function to parse fetched OCR data for a canvas.
@@ -300,8 +272,6 @@ def add_alto_ocr(result):
     return None
 
 def add_ocr_annotations(canvas, ocr):
-    for _ in range(9):
-        print(type(ocr))
     word_order = 1
     for word in ocr:
         # A quick check to make sure the header row didn't slip through.

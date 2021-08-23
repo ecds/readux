@@ -295,8 +295,6 @@ class Remote(models.Model):
         return None
 
     def create_canvases(self):
-        for _ in range(20):
-            print(len(self.remote_manifest['sequences'][0]['canvases']))
          # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
         for position, canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
             canvas_metadata = None

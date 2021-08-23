@@ -61,7 +61,7 @@ class CanvasTests(TestCase):
         assert original_span.span is not None
         assert original_span.span.span is None
         self.canvas.manifest.image_server = ImageServerFactory.create(
-            server_base='http://fake.info'
+            server_base='http://archivelab.info'
         )
         self.canvas.manifest.save()
         out = StringIO()
@@ -77,13 +77,10 @@ class CanvasTests(TestCase):
         assert original_span.string not in new_span.string
         assert new_span.span is not None
         assert new_span.span.span is None
-        assert len(self.canvas.annotation_set.all()) == original_anno_count + 1
+        assert self.canvas.annotation_set.count() > original_anno_count
 
     def test_command_rebuild_ocr_manifest(self):
-        # image_server = ImageServerFactory.create(server_base='https://iiif.archivelab.org/iiif/')
-        # manifest = ManifestFactory.create(image_server=image_server)
         canvas = Canvas.objects.get(pk='a7f1bd69-766c-4dd4-ab66-f4051fdd4cff')
-        # canvas.manifest = manifest
         original_anno_count = canvas.annotation_set.all().count()
         # Check the OCR attributes before rebuilding.
         first_anno = canvas.annotation_set.all().first()
@@ -92,16 +89,16 @@ class CanvasTests(TestCase):
         assert first_anno.x == 1146
         assert first_anno.y == 928
         original_span = BeautifulSoup(first_anno.content, 'html.parser')
-        assert 'southernplayalisticadillacmuzik' not in original_span.string
+        assert 'Dope' not in original_span.string
         assert original_span.span is not None
         assert original_span.span.span is None
         manifest = canvas.manifest
         manifest.image_server = ImageServerFactory.create(
-            server_base='http://fake.info'
+            server_base='http://archivelab.info'
         )
         manifest.save()
         out = StringIO()
-        call_command('rebuild_ocr', manifest=manifest.pid, testing=True, stdout=out)
+        call_command('rebuild_ocr', manifest=manifest.pid, stdout=out)
         assert 'OCR rebuilt for manifest' in out.getvalue()
         ocr = canvas.annotation_set.all().first()
         assert ocr.h == 22
@@ -113,4 +110,4 @@ class CanvasTests(TestCase):
         assert original_span.string not in new_span.string
         assert new_span.span is not None
         assert new_span.span.span is None
-        assert len(canvas.annotation_set.all()) == original_anno_count + 1
+        assert canvas.annotation_set.count() > original_anno_count

@@ -225,8 +225,6 @@ class Canvas(models.Model):
             if self.ocr_file_path:
                 ocr_file = self.ocr_file_path.split("/")[-1]
                 key = f'{self.manifest.pid}/_*ocr*_/{ocr_file}'
-                for _ in range(20):
-                    print(key)
                 s3.Object(self.manifest.image_server.storage_path, key).delete()
         else:
             try:

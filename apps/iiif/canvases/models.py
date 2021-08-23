@@ -1,5 +1,8 @@
 """Django models representing IIIF canvases and IIIF image server info."""
+from genericpath import exists
 import uuid
+import os
+from boto3 import resource
 from bs4 import BeautifulSoup
 import tempfile
 from urllib.parse import quote
@@ -49,6 +52,10 @@ class Canvas(models.Model):
     # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
     ocr_file_path = models.CharField(max_length=500, null=True, blank=True)
+
+    @property
+    def file_name(self):
+        return self.pid.replace('_', '/')
 
     @property
     def identifier(self):
@@ -207,6 +214,32 @@ class Canvas(models.Model):
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()
 
+    def delete(self, *args, **kwargs):
+        """
+        Override the delete function to clean up files.
+        """
+        if self.manifest.image_server.storage_service == 's3':
+            s3 = resource('s3')
+            s3.Object(self.manifest.image_server.storage_path, self.file_name).delete()
+
+            if self.ocr_file_path:
+                ocr_file = self.ocr_file_path.split("/")[-1]
+                key = f'{self.manifest.pid}/_*ocr*_/{ocr_file}'
+                for _ in range(20):
+                    print(key)
+                s3.Object(self.manifest.image_server.storage_path, key).delete()
+        else:
+            try:
+                os.remove(os.path.join(self.manifest.image_server.storage_path, self.file_name))
+            except (FileNotFoundError, TypeError):
+                pass
+            try:
+                os.remove(self.ocr_file_path)
+            except (FileNotFoundError, TypeError):
+                pass
+
+
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return str(self.pid)

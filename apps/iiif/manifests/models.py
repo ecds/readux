@@ -1,4 +1,5 @@
 """Django models for IIIF manifests"""
+from boto3 import resource
 from uuid import uuid4, UUID
 from json import JSONEncoder
 from django.apps import apps
@@ -42,6 +43,13 @@ class ImageServer(models.Model):
 
     def __str__(self):
         return "%s" % (self.server_base)
+
+    @property
+    def bucket(self):
+        if self.storage_source == 's3':
+            s3 = resource('s3')
+            return s3.Bucket(self.storage_path)
+        return None
 
 class ValueByLanguage(models.Model):
     """ Labels by language. """
@@ -210,6 +218,18 @@ class Manifest(ClusterableModel):
             instance = self._meta.default_manager.with_documents().get(pk=self.pk)
             instance.search_vector = instance.document
             instance.save(update_fields=['search_vector'])
+
+    def delete(self, *args, **kwargs):
+        """
+        When a manifest is delted, the related canvas objects are deleted (`on_delete`=models.CASCADE).
+        However, the `delete` method is not called on the canvas objects. We need to do that so
+        the files can be cleaned up.
+        https://docs.djangoproject.com/en/3.2/ref/models/fields/#django.db.models.CASCADE
+        """
+        for canvas in self.canvas_set.all():
+            canvas.delete()
+
+        super().delete(*args, **kwargs)
 
 # TODO: is this needed?
 class Note(models.Model):

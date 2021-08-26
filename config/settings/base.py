@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'crispy_forms',
     'django_celery_results',
+    'django_json_widget',
     'modelcluster',
     'sass_processor',
     'storages',

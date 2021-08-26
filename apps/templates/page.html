@@ -266,6 +266,15 @@
           <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
         </div>
 
+
+          {% for field, value in volume.metadata.items %}
+          <div class="rx-info-content">
+            <div class="rx-info-content-label">{{field}}</div>
+            <div class="rx-info-content-value">{{value}}</div>
+          </div>
+          {% endfor %}
+
+
         {% if volume.note_set|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Notes</div>

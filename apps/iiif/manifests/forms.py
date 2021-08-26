@@ -1,6 +1,7 @@
 """Django Forms for export."""
 import logging
 from django import forms
+from django_json_widget.widgets import JSONEditorWidget
 from .models import Manifest
 from ..canvases.models import Canvas
 
@@ -75,6 +76,11 @@ class ManifestAdminForm(forms.ModelForm):
             'pdf', 'metadata', 'viewingdirection', 'collections',
             'image_server', 'start_canvas', 'attribution', 'logo', 'license'
         )
+
+        widgets = {
+            'metadata': JSONEditorWidget
+        }
+
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)
         if (

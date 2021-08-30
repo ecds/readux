@@ -267,7 +267,7 @@
         </div>
 
 
-          {% for field, value in volume.metadata.items %}
+          {% for field, value in volume.metadata.items|dictsort:"0.lower" %}
           <div class="rx-info-content">
             <div class="rx-info-content-label">{{field}}</div>
             <div class="rx-info-content-value">{{value}}</div>

@@ -23,7 +23,7 @@ app = Celery('apps.ingest')
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
-@app.task(name='creating_canvases_from_local', autoretry_for=(Local.DoesNotExist,), retry_backoff=5)
+@app.task(name='creating_canvases_from_local', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def create_canvas_form_local_task(ingest_id):
     """Background task to create canvases and upload images.
 
@@ -40,7 +40,13 @@ def create_canvas_form_local_task(ingest_id):
 
     local_ingest.create_canvases()
 
-@app.task(name='creating_canvases_from_remote', autoretry_for=(Remote.DoesNotExist,), retry_backoff=5)
+    # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
+    # the database. As a double check loop through to make sure the height and width has been saved.
+    for canvas in local_ingest.manifest.canvas_set.all():
+        if canvas.width == 0 or canvas.height == 0:
+            canvas.save()
+
+@app.task(name='creating_canvases_from_remote', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def create_remote_canvases(ingest_id, *args, **kwargs):
     """Task to create Canavs objects from remote IIIF manifest
 

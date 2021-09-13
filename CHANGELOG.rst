@@ -2,6 +2,10 @@
 
 CHANGELOG
 =========
+Release 2.1.1
+---------------------
+* Fixes migration conflicts
+
 Release 2.1.0
 ---------------------
 * Adds ingest

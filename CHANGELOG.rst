@@ -2,6 +2,10 @@
 
 CHANGELOG
 =========
+Release 2.1.0
+---------------------
+* Adds ingest
+
 Release 2.0.0-alpha.4
 ---------------------
 * Full text search of volumes

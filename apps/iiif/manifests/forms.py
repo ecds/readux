@@ -1,7 +1,8 @@
 """Django Forms for export."""
+import logging
 from django import forms
 from .models import Manifest
-import logging
+from ..canvases.models import Canvas
 
 LOGGER = logging.getLogger(__name__)
 
@@ -65,18 +66,21 @@ class JekyllExportForm(forms.Form):
             self.fields['mode'].choices = self.fields['mode'].choices[:1]
             self.fields['mode'].widget.attrs = {'class': 'uk-radio', 'checked': True}
 
-
 class ManifestAdminForm(forms.ModelForm):
     class Meta:
         model = Manifest
         fields = (
             'id', 'pid', 'label', 'summary', 'author',
             'published_city', 'published_date', 'publisher',
-            'pdf', 'metadata', 'viewingDirection', 'collections',
-            'start_canvas'
+            'pdf', 'metadata', 'viewingdirection', 'collections',
+            'image_server', 'start_canvas', 'attribution', 'logo', 'license'
         )
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
+        if (
+                'instance' in kwargs and
+                hasattr(kwargs['instance'], 'canvas_set') and kwargs['instance'].canvas_set.exists()
+        ):
             self.fields['start_canvas'].queryset = kwargs['instance'].canvas_set.all()
-
+        else:
+            self.fields['start_canvas'].queryset = Canvas.objects.none()

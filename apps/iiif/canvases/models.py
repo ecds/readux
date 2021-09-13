@@ -1,10 +1,14 @@
 """Django models representing IIIF canvases and IIIF image server info."""
+from genericpath import exists
 import uuid
+import os
+from boto3 import resource
 from bs4 import BeautifulSoup
+import tempfile
+from urllib.parse import quote
 import config.settings.local as settings
 from django.apps import apps
 from django.db import models
-from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from ..manifests.models import Manifest
@@ -13,7 +17,7 @@ from . import services
 
 USER = get_user_model()
 
-# TODO: move this to the manifest model
+# TODO: This has moved to Manifest. Remove one everyone has migrated.
 class IServer(models.Model):
     """Django model for IIIF image server info. Each canvas has one IServer"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -35,8 +39,10 @@ class Canvas(models.Model):
     position = models.IntegerField()
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
-    # TODO: make this lowercase
-    IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
+    ocr_offset = models.IntegerField(default=0)
+    resource = models.TextField(blank=True, null=True)
+    # TODO: This has moved to Manifest. Remove one everyone has migrated.
+    # IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
     preferred_ocr = (
         ('word', 'word'),
@@ -45,6 +51,11 @@ class Canvas(models.Model):
     )
     # TODO: move this to the mainfest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
+    ocr_file_path = models.CharField(max_length=500, null=True, blank=True)
+
+    @property
+    def file_name(self):
+        return self.pid.replace('_', '/')
 
     @property
     def identifier(self):
@@ -59,8 +70,16 @@ class Canvas(models.Model):
     def service_id(self):
         """Concatenated property to represent IIIF service id."""
         return '{h}/{c}'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
-            c=self.pid
+            h=self.manifest.image_server.server_base,
+            c=quote(self.pid)
+        )
+
+    @property
+    def resource_id(self):
+        """Concatenated propert to represent IIIF resource id."""
+        return '{h}/{r}'.format(
+            h=self.manifest.image_server.server_base,
+            r=self.resource or self.pid
         )
 
     @property
@@ -80,34 +99,34 @@ class Canvas(models.Model):
     @property
     def thumbnail(self):
         """Concatenated property to represent IIIF thumbnail link."""
-        return '{h}/{c}/full/200,/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
-            c=self.pid
-        )
+        return self.resource_id + '/full/200,/0/default.jpg'
+        # return '{h}/{c}/full/200,/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def social_media(self):
         """Concatenated property to represent IIIF image link for use in Open Graph metadata."""
         return '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
-            c=self.pid
+            h=self.manifest.image_server.server_base,
+            c=self.resource
         )
 
     @property
     def twitter_media1(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
-        # TODO: shouldn't this use `self.IIIF_IMAGE_SERVER_BASE`
-        return 'http://images.readux.ecds.emory.edu/cantaloupe/iiif/2/{c}/full/600,/0/default.jpg'.format(
-            c=self.pid
-        )
+        # TODO: shouldn't this use `self.manifest.image_server.server_base`
+        return f'{self.resource_id}/full/600,/0/default.jpg'
 
     @property
     def twitter_media2(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
-        return '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
-            c=self.pid
-        )
+        return f'{self.resource_id}/full/600,/0/default.jpg'
+        # return '{h}/{c}/full/600,/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def uri(self):
@@ -122,42 +141,48 @@ class Canvas(models.Model):
         """Concatenated property for cropped landscape URI"""
         if self.height > self.width:
             # portrait
-            return '{h}/{c}/full/,250/0/default.jpg'.format(
-                h=self.IIIF_IMAGE_SERVER_BASE,
-                c=self.pid
-            )
+            return f'{self.resource_id}/full/,250/0/default.jpg'
+            # return '{h}/{c}/full/,250/0/default.jpg'.format(
+            #     h=self.manifest.image_server.server_base,
+            #     c=self.resource
+            # )
         # landscape
-        return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
-            c=self.pid
-        )
+        return f'{self.resource_id}/pct:25,0,50,100/,250/0/default.jpg'
+        # return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def thumbnail_crop_tallwide(self):
         """Concatenated property for cropped tallwide URI"""
         if self.height > self.width:
             # portrait
-            return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
-                h=self.IIIF_IMAGE_SERVER_BASE,
-                c=self.pid
-            )
+            return f'{self.resource_id}/pct:5,5,90,90/,250/0/default.jpg'
+            # return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
+            #     h=self.manifest.image_server.server_base,
+            #     c=self.resource
+            # )
         # landscape
-        return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.IIIF_IMAGE_SERVER_BASE, self.pid)
+        return f'{self.resource_id}/pct:5,5,90,90/250,/0/default.jpg'
+        # return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.resource)
 
     @property
     def thumbnail_crop_volume(self):
         """Concatenated property for cropped volume URI"""
         if self.height > self.width:
             # portrait
-            return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
-                h=self.IIIF_IMAGE_SERVER_BASE,
-                c=self.pid
-            )
+            return f'{self.resource_id}/pct:15,15,70,70/,600/0/default.jpg'
+            # return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
+            #     h=self.manifest.image_server.server_base,
+            #     c=self.resource
+            # )
         # landscape
-        return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
-            h=self.IIIF_IMAGE_SERVER_BASE,
-            c=self.pid
-        )
+        return f'{self.resource_id}/pct:25,15,50,85/,600/0/default.jpg'
+        # return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
+        #     h=self.manifest.image_server.server_base,
+        #     c=self.resource
+        # )
 
     @property
     def result(self):
@@ -171,56 +196,54 @@ class Canvas(models.Model):
             clean_words.append(clean_word)
         return ' '.join(clean_words)
 
-    def save(self, *args, **kwargs): # pylint: disable = arguments-differ
+    def save(self, *args, **kwargs): # pylint: disable = signature-differs
         """
-        Override save function to add OCR and set as manifest's
-        `start_canvas` if manifest does not have one.
+        Override save function to set `resource_id` add OCR,
+        and set as manifest's `start_canvas` if manifest does not have one.
         """
-        if self._state.adding or not self.annotation_set.exists():
-            self.__add_ocr()
+        if self.image_info:
+            self.width = self.image_info['width']
+            self.height = self.image_info['height']
+
+        if self.resource is None:
+            self.resource = self.pid
+
+        super().save(*args, **kwargs)
+
 
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()
 
-        super(Canvas, self).save(*args, **kwargs)
+    def delete(self, *args, **kwargs):
+        """
+        Override the delete function to clean up files.
+        """
+        if self.manifest.image_server.storage_service == 's3':
+            s3 = resource('s3')
+            s3.Object(self.manifest.image_server.storage_path, self.file_name).delete()
+
+            if self.ocr_file_path:
+                ocr_file = self.ocr_file_path.split("/")[-1]
+                key = f'{self.manifest.pid}/_*ocr*_/{ocr_file}'
+                s3.Object(self.manifest.image_server.storage_path, key).delete()
+        else:
+            try:
+                os.remove(os.path.join(self.manifest.image_server.storage_path, self.file_name))
+            except (FileNotFoundError, TypeError):
+                pass
+            try:
+                os.remove(self.ocr_file_path)
+            except (FileNotFoundError, TypeError):
+                pass
+
+
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return str(self.pid)
 
-    def __add_ocr(self):
-        """Private function for parsing and adding OCR."""
-        word_order = 1
-        ocr = services.get_ocr(self)
-        if ocr is not None:
-            for word in ocr:
-                if (
-                        word == '' or
-                        'content' not in word or
-                        not word['content'] or
-                        word['content'].isspace()
-                ):
-                    continue
-                anno = Annotation()
-                anno.canvas = self
-                anno.x = word['x']
-                anno.y = word['y']
-                anno.w = word['w']
-                anno.h = word['h']
-                anno.resource_type = anno.OCR
-                anno.content = word['content']
-                anno.order = word_order
-                anno.save()
-                word_order += 1
-
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         ordering = ['position']
-
-@receiver(signals.pre_save, sender=Canvas)
-def set_dimensions(sender, instance, **kwargs):
-    """Pre-save function to get the width and height of the image."""
-    if instance.image_info:
-        instance.width = instance.image_info['width']
-        instance.height = instance.image_info['height']
 
 class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         # Translators: admin:skip

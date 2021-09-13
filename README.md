@@ -1,6 +1,8 @@
+[![ECDS](https://circleci.com/gh/ecds/readux.svg?style=svg)](<LINK>)
+
 # Readux
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)[![Build Status](https://travis-ci.com/ecds/readux.svg?branch=develop)](https://travis-ci.com/ecds/readux)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)
 
 Readux is a platform developed by the Emory Center for Digital Scholarship which allows users to read, take notes on, and publish with digitized texts from libraries’ archival collections. With Readux, users are able to:
 -	browse digitized page images,
@@ -68,7 +70,7 @@ python manage.py loaddata apps/fixtures/dump.json
 Run the development under https to avoid mix content errors. Note: this will generate a self-signed certificate. There are ways to tell your browser to trust these certs, but that is beyond the scope of this README.
 
 ~~~bash
-python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
+DJANGO_ENV=develop python manage.py runserver_plus --cert-file cert.crt  0.0.0.0:3000
 ~~~
 
 ### Running the tests
@@ -86,23 +88,23 @@ alter user readux createdb;
 To run the tests, simply run:
 
 ~~~bash
-pytest apps/
+DJANGO_ENV=test pytest apps/
 ~~~
 
-Readux is configured to use [Travis CI](https://api.travis-ci.com/ecds/readux.svg?branch=release). Any push will trigger build.
+Readux is configured to use [CircleCI](https://app.circleci.com/pipelines/github/ecds/readux). Any push will trigger build.
 
 ### Deploy
 
 For dev:
 
 ~~~bash
-fab deploy:branch=develop -H readux.ecdsdev.org
+fab deploy:branch=develop,path=/data/readux -H <IP>
 ~~~
 
 For public alpha:
 
 ~~~bash
-fab deploy:branch=release -H readux2.ecdsdev.org
+fab deploy:branch=release,path=/data/readux.io -H <IP>
 ~~~
 
 Note: if no branch is passed, the deploy will default to release.

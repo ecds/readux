@@ -2,8 +2,8 @@
 Factory to create collestions for testing.
 """
 import random
-from factory import DjangoModelFactory, Faker
-from factory.django import ImageField
+from factory.django import DjangoModelFactory, ImageField
+from factory import Faker
 from ..models import Collection
 
 class CollectionFactory(DjangoModelFactory):

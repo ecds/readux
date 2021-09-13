@@ -1,3 +1,4 @@
+""" Test functions for the Readux export """
 import io
 import json
 import os
@@ -52,7 +53,7 @@ class ManifestExportTests(TestCase):
         self.jse.user = self.user
         self.jse.use_github(self.user)
         self.jse.github_repo = 'marx'
-        self.jse.is_testing = True
+        # self.jse.is_testing = True
         self.jse.owners = [self.user.id]
 
     def test_zip_creation(self):
@@ -116,7 +117,7 @@ class ManifestExportTests(TestCase):
             contents = page_file.read()
         # Depending on the order the tests are run, there might be more or less in the database.
         # TODO: Why does the database not get reset?
-        assert 4 <= contents.count('<span') <= 6
+        assert contents.count('<span id') == Canvas.objects.get(id='7261fae2-a24e-4a1c-9743-516f6c4ea0c9').annotation_set.count()
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 
@@ -198,11 +199,11 @@ class ManifestExportTests(TestCase):
 
     def test_github_auth_repo_given_name(self):
         auth_repo = self.jse.github_auth_repo(repo_name=self.jse.github_repo)
-        assert auth_repo == "https://{t}:x-oauth-basic@github.com/{u}/{r}.git".format(t=self.sa_token.token, u=self.jse.github_username, r=self.jse.github_repo)
+        assert auth_repo == f'https://{self.jse.github_username}:{self.sa_token.token}@github.com/{self.jse.github_username}/{self.jse.github_repo}.git'
 
     def test_github_auth_repo_given_url(self):
-        auth_repo = self.jse.github_auth_repo(repo_url='https://github.com/karl/{r}'.format(r=self.jse.github_repo))
-        assert auth_repo == "https://{t}:x-oauth-basic@github.com/karl/{r}.git".format(t=self.sa_token.token, r=self.jse.github_repo)
+        auth_repo = self.jse.github_auth_repo(repo_url=f'https://github.com/{self.jse.github_username}/{self.jse.github_repo}')
+        assert auth_repo == f'https://{self.jse.github_username}:{self.sa_token.token}@github.com/{self.jse.github_username}/{self.jse.github_repo}.git' #.format(t=self.sa_token.token, r=)
 
     @httpretty.activate
     def test_github_exists(self):

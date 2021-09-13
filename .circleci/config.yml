@@ -1,0 +1,56 @@
+version: 2.1
+# workflows:
+#   build_and_test:
+#     jobs:
+#       - test:
+#           matrix:
+#             parameters:
+#               python-version: ["3.6", "3.7"]
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.8
+        environment:
+          DATABASE_URL: postgres://root@127.0.0.1:5432/readux
+          PGUSER: root
+          AWS_ACCESS_KEY_ID: dummy-access-key
+          AWS_SECRET_ACCESS_KEY: dummy-access-key-secret
+          AWS_DEFAULT_REGION: us-east-1
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: readux
+      - image: cimg/ruby:2.5-node
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements/local.txt" }}
+      - run:
+          command: |
+            sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full
+            mkdir logs && touch logs/debug.log
+            sudo gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
+            bundle install
+            sudo gem install sass
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install pyld==1.0.5
+            pip install -r requirements/local.txt
+            cp config/settings/local.dst config/settings/local.py
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements/local.txt" }}
+          paths:
+            - "venv"
+      - run:
+          name: Running tests
+          command: |
+            . venv/bin/activate
+            DJANGO_ENV=test pytest apps/ --cov=./apps
+      - run:
+          name: Sending Coverage Report
+          when: on_success
+          command: |
+            . venv/bin/activate
+            ./venv/bin/coveralls
+

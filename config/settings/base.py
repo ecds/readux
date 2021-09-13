@@ -14,6 +14,8 @@ if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR.path('.env')))
 
+DJANGO_ENV = env('DJANGO_ENV', default='develop')
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -42,6 +44,8 @@ DATABASES = {
     'default': env.db('DATABASE_URL', default='postgres:///readux'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
+
+FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -80,8 +84,10 @@ THIRD_PARTY_APPS = [
     'background_task',
     'corsheaders',
     'crispy_forms',
+    'django_celery_results',
     'modelcluster',
     'sass_processor',
+    'storages',
     'taggit',
     'wagtail.contrib.forms',
     'wagtail.contrib.redirects',
@@ -107,9 +113,8 @@ LOCAL_APPS = [
     'apps.readux.apps.ReaduxConfig',
     'apps.cms.apps.CmsConfig',
     'apps.templates',
-    'apps.custom_styles.apps.CustomStylesConfig'
-    # 'apps.readux.collection.apps.CollectionAppConfig',
-    # 'apps.readux.volumes.apps.VolumesAppConfig',
+    'apps.custom_styles.apps.CustomStylesConfig',
+    'apps.ingest.apps.IngestConfig'
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -216,6 +221,7 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
         'DIRS': [
             str(APPS_DIR.path('templates')),
+            str(APPS_DIR.path('ingest/templates')),
         ],
         'OPTIONS': {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
@@ -308,6 +314,8 @@ LANGUAGES = (
     ('en', gettext('English')),
     ('de', gettext('German')),
 )
+
+DEFAULT_LANGUAGE = 'en'
 
 SERIALIZATION_MODULES = {
     "canvas": "apps.iiif.serializers.canvas",

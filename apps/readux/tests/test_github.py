@@ -58,7 +58,7 @@ class TestGithubApi(TestCase):
     @httpretty.activate
     def test_create_repo(self):
         httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
-        assert self.gh.create_repo(name='name', description='desc', homepage='page')
+        assert self.gh.create_repo(name='name', user=self.user, description='desc', homepage='page')
 
     @httpretty.activate
     def test_list_repos(self):
@@ -79,7 +79,7 @@ class TestGithubApi(TestCase):
 
         repos = self.gh.list_repos('karl')
         assert len(repos) == 6
-        
+
     @httpretty.activate
     def test_list_user_repos(self):
         resp_body = '[{},{},{}]'

@@ -12,11 +12,10 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 import config.settings.local as settings
 from .models import UserAnnotation
-from ..cms.models import Page, CollectionsPage
+from ..cms.models import Page, CollectionsPage, VolumesPage
 from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
-from ..iiif.annotations.models import Annotation
 from ..iiif.manifests.forms import JekyllExportForm
 from ..iiif.manifests.export import JekyllSiteExport
 
@@ -87,11 +86,45 @@ class VolumesList(ListView):
         })
         return context
 
-class CollectionDetail(TemplateView):
+class CollectionDetail(ListView):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""
     template_name = "collection.html"
     SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
     ORDER_OPTIONS = ['asc', 'desc']
+    paginate_by = 10
+
+    def get_queryset(self):
+        sort = self.request.GET.get('sort', None)
+        order = self.request.GET.get('order', None)
+        q = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests.all()
+
+        if sort is None:
+            sort = 'title'
+        if order is None:
+            order = 'asc'
+
+        if sort == 'title':
+            if order == 'asc':
+                q = q.order_by('label')
+            elif order == 'desc':
+                q = q.order_by('-label')
+        elif sort == 'author':
+            if order == 'asc':
+                q = q.order_by('author')
+            elif order == 'desc':
+                q = q.order_by('-author')
+        elif sort == 'date published':
+            if order == 'asc':
+                q = q.order_by('published_date')
+            elif order == 'desc':
+                q = q.order_by('-published_date')
+        elif sort == 'date added':
+            if order == 'asc':
+                q = q.order_by('created_at')
+            elif order == 'desc':
+                q = q.order_by('-created_at')
+
+        return 	q
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -128,28 +161,14 @@ class CollectionDetail(TemplateView):
 
         sort_url_params = self.request.GET.copy()
         order_url_params = self.request.GET.copy()
-        if 'sort' in sort_url_params:
-            del sort_url_params['sort']
+#         if 'sort' in sort_url_params:
+#             del sort_url_params['sort']
 
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
-        context['collection'] = Collection.objects.filter(pid=kwargs['collection']).first()
+        context['collection'] = Collection.objects.filter(pid=self.kwargs['collection']).first()
         context['volumes'] = q.all
         context['manifest_query_set'] = q
         context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
-        annocount_list = []
-        canvaslist = []
-        for volume in q:
-            user_annotation_count = UserAnnotation.objects.filter(
-                owner_id=self.request.user.id
-            ).filter(
-                canvas__manifest__id=volume.id
-            ).count()
-            annocount_list.append({volume.pid: user_annotation_count})
-            context['user_annotation_count'] = annocount_list
-            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-            canvasquery2 = list(canvasquery)
-            canvaslist.append({volume.pid: canvasquery2})
-            context['firstthumbnail'] = canvaslist
         value = 0
         context['value'] = value
         context.update({
@@ -192,23 +211,6 @@ class AnnotationsCount(TemplateView):
         ).count()
         return context
 
-# This replaces plain to_tsquery with to_tsquery so that operators ( | for or and :* for end of word) can be used.
-# If we upgrade to Django 2.2 from 2.1 we can add the operator search_type="raw" to the standard SearchQuery, and it should do the same thing.
-# TODO: This does not seem to be called anywhere. Is it actually needed?
-# class MySearchQuery(SearchQuery):
-#     """View for Search Query"""
-#     def as_sql(self, compiler, connection):
-#         params = [self.value]
-#         if self.config:
-#             config_sql, config_params = compiler.compile(self.config)
-#             template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)
-#             params = config_params + [self.value]
-#         else:
-#             template = 'to_tsquery(%s)'
-#         if self.invert:
-#             template = '!!({})'.format(template)
-#         return template, params
-
 class PageDetail(TemplateView):
     """Django Template View for :class:`apps.iiif.canvases.models.Canvas`"""
     template_name = "page.html"
@@ -220,11 +222,12 @@ class PageDetail(TemplateView):
             canvas = Canvas.objects.filter(pid=kwargs['page']).first()
         else:
             canvas = manifest.canvas_set.all().first()
-        if 'page' in kwargs and kwargs['page'] == 'all':
-            context['all'] = True
+        # if 'page' in kwargs and kwargs['page'] == 'all':
+        #     context['all'] = True
         context['page'] = canvas
         context['volume'] = manifest
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
+        context['volumelink'] = Page.objects.type(VolumesPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(
             owner_id=self.request.user.id
         ).filter(
@@ -236,79 +239,24 @@ class PageDetail(TemplateView):
             canvas__manifest__id=manifest.id
         ).count()
         context['mirador_url'] = settings.MIRADOR_URL
-        # qs = Annotation.objects.all()
-        # qs2 = UserAnnotation.objects.all()
 
-        # try:
-        #     # TODO: Write tests after rewrite.
-        #     search_string = self.request.GET['q']
-        #     search_type = self.request.GET['type']
-        #     search_strings = self.request.GET['q'].split()
-        #     if search_strings:
-        #         if search_type == 'partial':
-        #             qq = Q()
-        #             query = SearchQuery('')
-        #             for search_string in search_strings:
-        #                 query = query | SearchQuery(search_string)
-        #                 qq |= Q(content__icontains=search_string)
-        #             vector = SearchVector('content')
-        #             qs = qs.filter(qq).filter(canvas__manifest__label=manifest.label)
-        #             qs = qs.values(
-        #                 'canvas__position',
-        #                 'canvas__manifest__label',
-        #                 'canvas__pid'
-        #             ).annotate(
-        #                 Count(
-        #                     'canvas__position')
-        #                 ).order_by('canvas__position')
-        #             qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-        #             qs2 = qs2.annotate(
-        #                 search=vector
-        #             ).filter(
-        #                 search=query
-        #             ).filter(
-        #                 canvas__manifest__label=manifest.label
-        #             )
-        #             qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-        #             qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
-        #         elif search_type == 'exact':
-        #             qq = Q()
-        #             query = SearchQuery('')
-        #             for search_string in search_strings:
-        #                 query = query | SearchQuery(search_string)
-        #                 qq |= Q(content__contains=search_string)
-        #             vector = SearchVector('content')
-        #             qs = qs.annotate(
-        #                 search=vector
-        #             ).filter(
-        #                 search=query
-        #             ).filter(
-        #                 canvas__manifest__label=manifest.label
-        #             )
-        #             qs = qs.values(
-        #                 'canvas__position',
-        #                 'canvas__manifest__label',
-        #                 'canvas__pid'
-        #             ).annotate(
-        #                 Count('canvas__position')
-        #             ).order_by('canvas__position')
-        #             qs1 = qs.exclude(resource_type='dctypes:Text').distinct()
-        #             qs2 = qs2.annotate(
-        #                 search=vector
-        #             ).filter(
-        #                 search=query
-        #             ).filter(
-        #                 canvas__manifest__label=manifest.label
-        #             )
-        #             qs2 = qs2.annotate(rank=SearchRank(vector, query)).order_by('-rank')
-        #             qs2 = qs2.filter(owner_id=self.request.user.id).distinct()
-        #     else:
-        #         qs1 = ''
-        #         qs2 = ''
-        #     context['qs1'] = qs1
-        #     context['qs2'] = qs2
-        # except MultiValueDictKeyError:
-        #     q = ''
+        user_annotation_index = UserAnnotation.objects.all()
+
+        user_annotation_index = user_annotation_index.filter(canvas__manifest__label=manifest.label)
+
+        user_annotation_index = user_annotation_index.filter(owner_id=self.request.user.id).distinct()
+
+        user_annotation_index = user_annotation_index.values(
+                 'canvas__position',
+                 'canvas__manifest__label',
+                 'canvas__pid'
+             ).annotate(
+                 Count(
+                     'canvas__position')
+                 ).order_by('canvas__position')
+
+        context['user_annotation_index'] = user_annotation_index
+        context['json_data'] = {'json_data': list(user_annotation_index)}
 
         return context
 
@@ -322,8 +270,6 @@ class ExportOptions(TemplateView, FormMixin):
         kwargs = super(ExportOptions, self).get_form_kwargs()
         # add user, which is used to determine available groups
         kwargs['user'] = self.request.user
-        # add flag to indicate if user has a github account
-#        kwargs['user_has_github'] = self.user_has_github
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -367,6 +313,7 @@ class ExportDownloadZip(View):
         resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
         return resp
 
+# TODO: Replace with Elasticsearch
 class VolumeSearch(ListView):
     '''Search across all volumes.'''
     template_name = 'search_results.html'
@@ -417,7 +364,7 @@ class VolumeSearch(ListView):
                     qs3 = qs.filter(qqq)
                     qs2 = qs.values(
                         'label', 'author', 'published_date', 'created_at', 'canvas__pid', 'pid',
-                        'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE'
+                        'canvas__manifest__image_server__server_base'
                     ).order_by(
                         'pid'
                     ).distinct(
@@ -468,7 +415,7 @@ class VolumeSearch(ListView):
 
                     qs2 = qs.values(
                         'canvas__pid', 'pid',
-                        'canvas__IIIF_IMAGE_SERVER_BASE__IIIF_IMAGE_SERVER_BASE'
+                        'canvas__manifest__image_server__server_base'
                     ).order_by(
                         'pid'
                     ).distinct('pid')

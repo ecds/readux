@@ -5,7 +5,9 @@ from io import StringIO
 from bs4 import BeautifulSoup
 from django.test import TestCase
 from django.core.management import call_command
-from ...canvases.models import Canvas, IServer
+from ...canvases.models import Canvas
+from ...canvases.tests.factories import CanvasFactory
+from ...manifests.tests.factories import ImageServerFactory
 from .factories import CanvasFactory
 
 class CanvasTests(TestCase):
@@ -58,10 +60,10 @@ class CanvasTests(TestCase):
         assert 'Dope' not in original_span.string
         assert original_span.span is not None
         assert original_span.span.span is None
-        self.canvas.IIIF_IMAGE_SERVER_BASE = IServer.objects.get(
-            IIIF_IMAGE_SERVER_BASE='http://fake.info'
+        self.canvas.manifest.image_server = ImageServerFactory.create(
+            server_base='http://archivelab.info'
         )
-        self.canvas.save()
+        self.canvas.manifest.save()
         out = StringIO()
         call_command('rebuild_ocr', canvas=self.canvas.pid, testing=True, stdout=out)
         assert 'OCR rebuilt for canvas' in out.getvalue()
@@ -75,7 +77,7 @@ class CanvasTests(TestCase):
         assert original_span.string not in new_span.string
         assert new_span.span is not None
         assert new_span.span.span is None
-        assert len(self.canvas.annotation_set.all()) == original_anno_count + 1
+        assert self.canvas.annotation_set.count() > original_anno_count
 
     def test_command_rebuild_ocr_manifest(self):
         canvas = Canvas.objects.get(pk='a7f1bd69-766c-4dd4-ab66-f4051fdd4cff')
@@ -87,15 +89,16 @@ class CanvasTests(TestCase):
         assert first_anno.x == 1146
         assert first_anno.y == 928
         original_span = BeautifulSoup(first_anno.content, 'html.parser')
-        assert 'southernplayalisticadillacmuzik' not in original_span.string
+        assert 'Dope' not in original_span.string
         assert original_span.span is not None
         assert original_span.span.span is None
-        canvas.IIIF_IMAGE_SERVER_BASE = IServer.objects.get(
-            IIIF_IMAGE_SERVER_BASE='http://fake.info'
+        manifest = canvas.manifest
+        manifest.image_server = ImageServerFactory.create(
+            server_base='http://archivelab.info'
         )
-        canvas.save()
+        manifest.save()
         out = StringIO()
-        call_command('rebuild_ocr', manifest=canvas.manifest.pid, testing=True, stdout=out)
+        call_command('rebuild_ocr', manifest=manifest.pid, stdout=out)
         assert 'OCR rebuilt for manifest' in out.getvalue()
         ocr = canvas.annotation_set.all().first()
         assert ocr.h == 22
@@ -107,4 +110,4 @@ class CanvasTests(TestCase):
         assert original_span.string not in new_span.string
         assert new_span.span is not None
         assert new_span.span.span is None
-        assert len(canvas.annotation_set.all()) == original_anno_count + 1
+        assert canvas.annotation_set.count() > original_anno_count

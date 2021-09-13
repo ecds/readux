@@ -83,7 +83,7 @@ class GithubApi(object):
             return response.headers['x-oauth-scopes'].split(', ')
         return None
 
-    def create_repo(self, name, description=None, homepage=None):
+    def create_repo(self, name, user, description=None, homepage=None):
         """Create a new user repository with the specified name.
 
         :param name: Repo name
@@ -95,6 +95,7 @@ class GithubApi(object):
         :return: True if the POST succeeds.
         :rtype: bool
         """
+        self.session.headers['Authorization'] = f'token {self.github_token(user)}'
         repo_data = {'name': name}
         if description:
             repo_data['description'] = description

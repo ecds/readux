@@ -1,0 +1,147 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@type": "sc:Manifest",
+  "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest",
+  "label": ["Nvova pianta et alzata della città di Roma con tvtte le strade, piazze et edificii de tempi, palazzi, giardini et altre fabbriche antiche e moderne come si trovano al presente nel pontificato di N.S. Papa Innocentio XI con le loro dichiarationi nomi et indice copiosissimo / disegniata et intagliata da Gio. Battista Falda da Valdvggio et date al pvblico da Gio. Giacomo de Rossi dalle sve stampe in Roma alla pace l'anno 1676 con privileggio del Som. Pont"],
+  "description": ["\"Con l'aggivunta delle nove fabriche di chiese et altri edificij fatti sin' all'anno presente, MDCCXXX\"", "In lower right corner: Giorgio Widman intagliole littere.", "Oriented with North to the left.", "Pictorial map of Rome within the city walls as they existed in 1676.", "Includes indexes of 495 buildings and inset (smaller scale) of Rome and its environs.", "In case, mounted on fabric and folded."],
+  "viewingHint": "paged",
+  "viewingDirection": "left-to-right",
+  "metadata": [{
+    "label": "Author",
+    "value": ["Falda, Giovanni Battista, approximately 1640-1678"]
+  }, {
+    "label": "Alternative",
+    "value": ["Nuova pianta et alzata della città di Roma con tutte le strade, piazze et edificii de tempi, palazzi, giardini et altre fabbriche antiche e moderne come si trovano al presente nel pontificato di N.S. Papa Innocentio XI con le loro dichiarationi nomi et indice copiosissimo"]
+  }, {
+    "label": "Extent",
+    "value": ["1 map (12 sheets) mounted on cloth ; 138 x 151 cm. in case 54 cm.", "Graphic scales given in Italian miles."]
+  }, {
+    "label": "Identifier",
+    "value": ["\u003ca href='http://arks.princeton.edu/ark:/88435/5d86p0240' alt='Identifier'\u003ehttp://arks.princeton.edu/ark:/88435/5d86p0240\u003c/a\u003e"]
+  }, {
+    "label": "Replaces",
+    "value": ["pudl0023/4166894"]
+  }, {
+    "label": "Title",
+    "value": [{
+      "@value": "Nvova pianta et alzata della città di Roma con tvtte le strade, piazze et edificii de tempi, palazzi, giardini et altre fabbriche antiche e moderne come si trovano al presente nel pontificato di N.S. Papa Innocentio XI con le loro dichiarationi nomi et indice copiosissimo / disegniata et intagliata da Gio. Battista Falda da Valdvggio et date al pvblico da Gio. Giacomo de Rossi dalle sve stampe in Roma alla pace l'anno 1676 con privileggio del Som. Pont",
+      "@language": "ita"
+    }]
+  }, {
+    "label": "Type",
+    "value": ["Maps", "Maps, Pictorial"]
+  }, {
+    "label": "Contributor",
+    "value": ["Rossi, Giovanni Giacomo de, 1627-1691", "Widman, Georgio"]
+  }, {
+    "label": "Creator",
+    "value": ["Falda, Giovanni Battista, approximately 1640-1678"]
+  }, {
+    "label": "Date",
+    "value": ["1730"]
+  }, {
+    "label": "Language",
+    "value": ["Italian"]
+  }, {
+    "label": "Local Identifier",
+    "value": ["p0p097960k"]
+  }, {
+    "label": "Publisher",
+    "value": ["[Roma] : G. G. de Rossi, 1730."]
+  }, {
+    "label": "Subject",
+    "value": ["Rome (Italy)—Maps—Early works to 1800"]
+  }, {
+    "label": "Call Number",
+    "value": ["Oversize G6714.R7 F342 1730e", "Electronic Resource"]
+  }, {
+    "label": "Location",
+    "value": ["SAX Oversize G6714.R7 F342 1730e", "SAX Electronic Resource", "ELF1 Oversize G6714.R7 F342 1730e", "ELF1 Electronic Resource"]
+  }, {
+    "label": "Electronic Locations",
+    "value": [{
+      "id": null,
+      "internal_resource": "LabeledURI",
+      "created_at": null,
+      "updated_at": null,
+      "new_record": true,
+      "uri": {
+        "@id": "https://catalog.princeton.edu/catalog/4166894#view"
+      },
+      "label": "Digital content"
+    }]
+  }, {
+    "label": "Member Of Collections",
+    "value": ["Marquand Library Selections"]
+  }],
+  "sequences": [{
+    "@type": "sc:Sequence",
+    "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest/sequence/normal",
+    "rendering": [{
+      "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/pdf",
+      "label": "Download as PDF",
+      "format": "application/pdf"
+    }],
+    "canvases": [{
+      "@type": "sc:Canvas",
+      "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest/canvas/1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e",
+      "label": "Composite view",
+      "local_identifier": "p1257bv430",
+      "rendering": [{
+        "@id": "https://figgy.princeton.edu/downloads/1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e/file/64074eff-c630-44a8-9733-485e5e0e0f34",
+        "label": "Download the original file",
+        "format": "image/tiff"
+      }],
+      "width": 6945,
+      "height": 7200,
+      "images": [{
+        "@type": "oa:Annotation",
+        "motivation": "sc:painting",
+        "resource": {
+          "@type": "dctypes:Image",
+          "@id": "https://iiif-cloud.princeton.edu/iiif/2/0b%2F21%2F99%2F0b21998720154beaacc8218b5063373d%2Fintermediate_file/full/1000,/0/default.jpg",
+          "height": 7200,
+          "width": 6945,
+          "format": "image/jpeg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://iiif-cloud.princeton.edu/iiif/2/0b%2F21%2F99%2F0b21998720154beaacc8218b5063373d%2Fintermediate_file",
+            "profile": "http://iiif.io/api/image/2/level2.json"
+          }
+        },
+        "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest/image/1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e",
+        "on": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest/canvas/1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e"
+      }]
+    }],
+    "viewingHint": "paged"
+  }],
+  "structures": [{
+    "@type": "sc:Range",
+    "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest/range/rb5280354-6427-4407-b83e-364733b1a988",
+    "label": "",
+    "viewingHint": "top",
+    "ranges": [],
+    "canvases": ["https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest/canvas/1ba0d507-a39d-4720-bb7d-2abe2cfa4b1e"]
+  }],
+  "seeAlso": [{
+    "@id": "https://figgy.princeton.edu/catalog/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005.jsonld",
+    "format": "application/ld+json"
+  }, {
+    "@id": "https://bibdata.princeton.edu/bibliographic/4166894",
+    "format": "text/xml"
+  }],
+  "license": "http://rightsstatements.org/vocab/NKC/1.0/",
+  "thumbnail": {
+    "@id": "https://iiif-cloud.princeton.edu/iiif/2/0b%2F21%2F99%2F0b21998720154beaacc8218b5063373d%2Fintermediate_file/full/!200,150/0/default.jpg",
+    "service": {
+      "@context": "http://iiif.io/api/image/2/context.json",
+      "@id": "https://iiif-cloud.princeton.edu/iiif/2/0b%2F21%2F99%2F0b21998720154beaacc8218b5063373d%2Fintermediate_file",
+      "profile": "http://iiif.io/api/image/2/level2.json"
+    }
+  },
+  "rendering": {
+    "@id": "http://arks.princeton.edu/ark:/88435/5d86p0240",
+    "format": "text/html"
+  },
+  "logo": "https://figgy.princeton.edu/assets/pul_logo_icon-7b5f9384dfa5ca04f4851c6ee9e44e2d6953e55f893472a3e205e1591d3b2ca6.png"
+}

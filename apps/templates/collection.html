@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load url_replace %}
 {% block content %}
 <div>
 
@@ -23,7 +24,7 @@
       <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
       <li class="rx-breadcrumb-item">{{ collection.label }}</li>
     </ul>
-    <div class="rx-title" id="main">{{ collection.label }}</div>
+    <h2 class="rx-title" id="main">{{ collection.label }}</h2>
     <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
   </div>
 
@@ -34,8 +35,28 @@
   {% include "snippets/sort_dropdown.html" %}
   <!--TODO: include ascending/descending sort feature-->
 
+  <!--TODO: move inline styles into project CSS-->
+  <div class="pagination" style="margin-bottom:20px">
+      <span class="step-links">
+          {% if page_obj.has_previous %}
+              <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
+              <a href="?{% url_replace page=page_obj.previous_page_number %}" style="margin-right:5px;">previous</a>
+          {% endif %}
+
+          <span class="current" style="margin:0px,5px;">
+              Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+          </span>
+
+          {% if page_obj.has_next %}
+              <a href="?{% url_replace page=page_obj.next_page_number %}" style="margin-left:5px;">next</a>
+              <a href="?{% url_replace page=page_obj.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+          {% endif %}
+      </span>
+  </div>
+
+
    <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
-   {% for volume in volumes %}
+   {% for volume in page_obj %}
   {% if volume.canvas_set.first.pid is null %}
       <div class="uk-width-1-2@m uk-grid-medium">
         <div class=" uk-width-1-4@m">
@@ -45,7 +66,7 @@
         </div>
         <div class="uk-width-3-4@m" tabindex="0">
           <a class="nav-link" href="#">
-            <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+            <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
           </a>
           <ul class="uk-padding-remove rx-card-text">
             <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -74,28 +95,24 @@
     <div class="uk-width-1-2@m uk-grid-medium">
       <div class=" uk-width-1-4@m">
         <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      {% for fir in firstthumbnail %}
-      {% for canvas in volume.canvas_set.all %}
-        {% if canvas.pid in fir|safe %}
+        {% if volume.start_canvas.pid %}
            <v-volume-image
-            img-src="{{ canvas.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label}}">
+            img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}"
+            volume-label="{{volume.label|truncatechars:50}}">
           </v-volume-image>
         {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
         {% if forloop.last %}
           <v-volume-image
             img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label}}">
+            volume-label="{{volume.label|truncatechars:50}}">
           </v-volume-image>
         {% endif %}
         {% endif %}
-      {% endfor %}
-      {% endfor %}
         </a>
       </div>
       <div class="uk-width-3-4@m" tabindex="0" aria-label="Volume Information">
         <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-          <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
+          <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
         </a>
         <ul class="uk-padding-remove rx-card-text">
           <li>Author: {{volume.author|truncatechars:150}}</li>
@@ -122,6 +139,25 @@
     {% endif %}
     {% endfor %}
   </div>
+</div>
+
+<!--TODO: move inline styles into project CSS-->
+<div class="pagination" style="margin-bottom:20px">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=page_obj.previous_page_number %}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace page=page_obj.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
 </div>
 
 {% include "footer.html" %}

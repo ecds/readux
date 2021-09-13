@@ -234,6 +234,7 @@ class JekyllSiteExport(object):
         self.owners = owners
         self.user = user
         self.github_repo = github_repo
+        # TODO: Why?
         self.is_testing = False
 
 
@@ -434,34 +435,24 @@ class JekyllSiteExport(object):
         self.github = GithubApi.connect_as_user(user)
         self.github_username = GithubApi.github_username(user)
         self.github_token = GithubApi.github_token(user)
+        self.github.session.headers['Authorization'] = f'token {self.github_token}'
 
     def github_auth_repo(self, repo_name=None, repo_url=None):
         """Generate a GitHub repo url with an oauth token in order to
         push to GitHub on the user's behalf.  Takes either a repository
-        name or repository url.
+        name or repository url. The expected result should be formatted
+        as follows:
+
+        https://<github username>:<github token>@github.com/<github username>/<github repo>.git
 
         :return: GitHub authentication header.
         :rtype: str
         """
-        if repo_name:
-            git_repo_url = 'github.com/%s/%s.git' % (self.github_username, repo_name)
-            github_scheme = 'https'
-        elif repo_url:
-            # parse github url to add oauth token for access
+        if repo_url:
             parsed_repo_url = urlparse(repo_url)
-            git_repo_url = '%s%s.git' % (parsed_repo_url.netloc, parsed_repo_url.path)
-            # probably https, but may as well pull from parsed url
-            github_scheme = parsed_repo_url.scheme
+            return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{parsed_repo_url.path[1:]}.git'
 
-        # use oauth token to push to github
-        # 'https://<token>@github.com/username/bar.git'
-        # For more information, see
-        # https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
-        return '{gs}://{gt}:x-oauth-basic@{gr}'.format(
-            gs=github_scheme,
-            gt=self.github_token,
-            gr=git_repo_url
-        )
+        return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{self.github_username}/{repo_name}.git'
 
     def gitrepo_exists(self):
         """Check to see if GitHub repo already exists.
@@ -546,7 +537,7 @@ class JekyllSiteExport(object):
         )
 
         self.github.create_repo(
-            self.github_repo, homepage=github_pages_url,
+            self.github_repo, homepage=github_pages_url, user=self.user,
             description='An annotated digital edition created with Readux'
         )
 
@@ -565,6 +556,10 @@ class JekyllSiteExport(object):
         # add and commit all contents
         gitcmd.config("user.email", self.user.email)
         gitcmd.config("user.name", self.user.fullname())
+        # Use the token to authenticate the Git commands.
+        # Required to do this as of June 9, 2020
+        # https://developer.github.com/changes/2020-02-14-deprecating-oauth-app-endpoint/
+        gitcmd.config("user.password", GithubApi.github_token(self.user))
 
         gitcmd.add(['.'])
         gitcmd.commit([
@@ -580,7 +575,7 @@ class JekyllSiteExport(object):
         # push local master to the gh-pages branch of the newly created repo,
         # using the user's oauth token credentials
         self.log_status('Pushing new content to GitHub')
-        if self.is_testing is False: # pragma: no cover
+        if os.environ['DJANGO_ENV'] != 'test': # pragma: no cover
             gitcmd.push([repo_url, 'master:gh-pages']) # pragma: no cover
 
         # clean up temporary files after push to github
@@ -617,7 +612,7 @@ class JekyllSiteExport(object):
             )
         )
         repo = None
-        if self.is_testing:
+        if os.environ['DJANGO_ENV'] == 'test':
             repo = git.Repo.init(tmpdir)
             yml_config_path = os.path.join(tmpdir, '_config.yml')
             open(yml_config_path, 'a').close()
@@ -676,7 +671,7 @@ class JekyllSiteExport(object):
         # if self.include_deep_zoom:
         #     self.generate_deep_zoom(jekyll_site_dir)
 
-        if self.is_testing is False:
+        if os.environ['DJANGO_ENV'] != 'test':
             # run the script to import IIIF as jekyll site content
             self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
@@ -699,7 +694,7 @@ class JekyllSiteExport(object):
             author=git_author
         )
 
-        if self.is_testing is False:
+        if os.environ['DJANGO_ENV'] != 'test':
             # push the update to a new branch on github
             repo.remotes.origin.push( # pragma: no cover
                 '{b}s:{b}s'.format(b=git_branch_name)
@@ -742,7 +737,7 @@ class JekyllSiteExport(object):
         # to do needed export steps
         # TODO: httpretty seems to include the HEAD method, but it errors when
         # making the request because the Head method is not implemented.
-        if self.is_testing is False and 'repo' not in self.github.oauth_scopes():
+        if os.environ['DJANGO_ENV'] != 'test' and 'repo' not in self.github.oauth_scopes():
             LOGGER.error('TODO: bad scope message')
             return None # pragma: no cover
 
@@ -765,7 +760,7 @@ class JekyllSiteExport(object):
             try:
                 # TODO: How to highjack the request to
                 # https://58816:x-oauth-basic@github.com/zaphod/marx.git/ when testing.
-                if self.is_testing is False:
+                if os.environ['DJANGO_ENV'] != 'test':
                     pr_url = self.update_gitrepo() # pragma: no cover
                 else:
                     pr_url = 'https://github.com/{u}/{r}/pull/2'.format(

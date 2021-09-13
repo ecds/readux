@@ -1,34 +1,42 @@
 pytz==2019.3  # https://github.com/stub42/pytz
 python-slugify==4.0.0  # https://github.com/un33k/python-slugify
-Pillow==7.1.1  # https://github.com/python-pillow/Pillow
+Pillow
 argon2-cffi==18.3.0  # https://github.com/hynek/argon2_cffi
-redis>=2.10.5  # https://github.com/antirez/redis
+redis==3.5.3  # https://github.com/antirez/redis
 bs4
 pyyaml
 progress
+python-memcached==1.59
+pyld==1.0.5
 
 # Django
 # ------------------------------------------------------------------------------
-Django==2.2.10  # https://www.djangoproject.com/
-django-environ==0.4.5  # https://github.com/joke2k/django-environ
+# Django AllAuth 0.45 is NOT compatible with Django :(
+# When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
+Django==2.2.23  # https://www.djangoproject.com/
+#django-environ==0.4.5  # https://github.com/joke2k/django-environ
+git+https://github.com/joke2k/django-environ@develop
 django-model-utils==3.1.2  # https://github.com/jazzband/django-model-utils
-django-allauth==0.41.0  # https://github.com/pennersr/django-allauth
+django-allauth>=0.45.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.8.1  # https://github.com/django-crispy-forms/django-crispy-forms
-django-redis==4.11.0  # https://github.com/niwinz/django-redis
+django-redis==5.0.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
-django-modeltranslation==0.14.4 # https://github.com/deschler/django-modeltranslation
-django-taggit==1.2.0 # https://github.com/jazzband/django-taggit
+django-modeltranslation>=0.17.2 # https://github.com/deschler/django-modeltranslation
+django-taggit>=1.5.0 # https://github.com/jazzband/django-taggit
 #coreapi==2.3.3  # https://github.com/core-api/python-client
-django-cors-headers===3.2.1 # https://github.com/ottoyiu/django-cors-headers
+django-cors-headers>=3.8.0 # https://github.com/ottoyiu/django-cors-headers
 
 #wysiwyg
-django-summernote===0.8.11.6 # https://github.com/summernote/django-summernote
+django-summernote>=0.8.11.6 # https://github.com/summernote/django-summernote
 
 # SCSS Support
 #--------------------------------------------------------------------------------
 libsass
 django-compressor
 django-sass-processor
+
+# Django rules for PyLint
+pylint-django==2.4.4
 
 # Wagtail
 wagtail==2.8.1
@@ -37,6 +45,7 @@ git+git://github.com/rkhleics/wagtailmenus.git@ddbc73797cfa9e6c94c1b0850b4ad0bc0
 wagtail-condensedinlinepanel==0.5.3
 git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
+wagtail-cache==1.0.1
 
 # Import/Export
 django-import-export==2.0.2
@@ -44,6 +53,10 @@ gitpython==3.0.5
 gitdb2==2.0.6
 
 django-background-tasks==1.2.5
+
+# S3 Uploads
+boto3==1.18.20
+django-storages==1.11.1  # https://github.com/jschneier/django-storages
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

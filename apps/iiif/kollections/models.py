@@ -140,17 +140,43 @@ class Collection(models.Model):
         # set save=False, otherwise it will run in an infinite loop
         self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
 
+        sizebanner = (1200, 300)
         forcrop = Image.open(self.original)
-        (width, height) = forcrop.size
-        # pylint: disable = invalid-name
-        x = (0)
-        y = height/3
-        w = width
-        h = 2 * height/3
-        # pylint: enable = invalid-name
+        # Get current and desired ratio for the images
+        img_ratio_banner = forcrop.size[0] / float(forcrop.size[1])
+        ratio_banner = sizebanner[0] / float(sizebanner[1])
+        #The image is scaled/cropped vertically or horizontally depending on the ratio
+        if ratio_banner > img_ratio_banner: #then it needs to be shorter
+            forcrop = forcrop.resize(
+                (int(sizebanner[0]), int(sizebanner[0] * forcrop.size[1] / forcrop.size[0])),
+                Image.ANTIALIAS)
+            (width, height) = forcrop.size
+            # pylint: disable = invalid-name
+            x = (0)
+            y = (height - sizebanner[1]) / 2
+            w = width
+            h = (height + sizebanner[1]) / 2
+            # pylint: enable = invalid-name
 
-        box = (x, y, w, h)
-        cropped_image = forcrop.crop(box)
+            box = (x, y, w, h)
+            cropped_image = forcrop.crop(box)
+            # Crop in the top, middle or bottom
+        elif ratio_banner < img_ratio_banner: #then it needs to be narrower
+            imagebannerratio = (int(sizebanner[1] * forcrop.size[0] / forcrop.size[1]), int(sizebanner[1]))
+            forcrop = forcrop.resize(imagebannerratio, Image.ANTIALIAS)
+            (width, height) = forcrop.size
+            # pylint: disable = invalid-name
+            x = (width - sizebanner[0]) / 2 #crop from middle
+            y = (0)
+            w = (width + sizebanner[0]) / 2
+            h = height
+            # pylint: enable = invalid-name
+
+            box = (x, y, w, h)
+            cropped_image = forcrop.crop(box)
+        else:
+            cropped_image = forcrop.resize((sizebanner[0], sizebanner[1]), Image.ANTIALIAS)
+            # If the scale is the same, we do not need to crop
 
         thename, theextension = os.path.splitext(self.original.name)
         theextension = theextension.lower()

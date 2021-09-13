@@ -19,13 +19,13 @@
         {% endif %}
         <p class="">Engage with digitized print materials on an open source software platform and share new thinking.
         </p>
-        <img src="static/images/ecds.svg" class="readux-home-ecds">
+        <img src="static/images/ecds.svg" alt="ECDS logo" class="readux-home-ecds">
       </div>
     </div>
 
     <div class="rx-home-right-column">
       {% if page.featured_collections.all|length != 0  %}
-      <div class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</div>
+      <h2 class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</h2>
       <ul class="uk-padding-remove-left">
         {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
         <li>
@@ -33,7 +33,7 @@
             <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
               <a alt="Thumbnail image for collection {{collection.label}}" class="rx-card-image"
                 href="{% url 'collection' collection.pid %}">
-                <img class="rx-title-image" src="/media/{{collection.thumbnail}}">
+                <img class="rx-title-image" alt="Thumbnail image for collection {{collection.label}}" src="/media/{{collection.thumbnail}}">
               </a>
             </div>
             <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
@@ -48,22 +48,22 @@
           </article>
         </li>
         {% endfor %}
-        <a class="nav-link" href="#">
+        <!-- <a class="nav-link" href="#">
           <div class="rx-btn rx-btn-extension">Show All Featured Collections <i class="fas fa-chevron-right"></i></div>
-        </a>
+        </a> -->
       </ul>
       {% endif %}
 
       {# FIXME: NEED BETTER WAY #}
       {% if page.featured_volumes.all|length != 0 %}
-      <div class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</div>
+      <h2 class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</h2>
       {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
         <li>
           <article class="uk-grid rx-article">
             <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
               <a alt="First page of {{volume.label}}" class="rx-card-image"
                 href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-                  <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
+                  <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}" volume-label="{{volume.label}}">
                   </v-volume-image>
               </a>
             </div>
@@ -98,41 +98,48 @@
           </article>
         </li>
       {% endfor %}
-      <a class="nav-link" href="#">
+      <!-- <a class="nav-link" href="#">
         <div class="rx-btn rx-btn-extension">Show All Featured Volumes <i class="fas fa-chevron-right"></i></div>
-      </a>
+      </a> -->
       {% endif %}
 
 
 
       {% if page.content_display == 'Collections' %}
-      <div class="readux-group-title">All Collections</div>
+      <h2 class="readux-group-title">All Collections</h2>
 
       <ul>
         {% for collection in page.collections %}
-        <li class="uk-grid">
-          <article class="rx-article uk-width-1-1">
-            <div class="rx-card-image-container">
+        <li class="uk-grid" style="margin-top:0;">
+          <article class="rx-article uk-width-1-1" style="padding-left:5px;margin-top:1.5em;margin-bottom:1.5em;">
+            <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
               <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
                 style="background-image: url('https://127.0.0.1:3000/media/{{collection.header}}'); // background-position: 77% 52% !important;"></a>
             </div>
-            <div class="rx-card-body uk-width-3-1">
+            <div class="rx-card-body uk-width-3-1" style="padding-left: 40px;">
               <a class="nav-link" href="{% url 'collection' collection.pid %}">
                 <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
                 <div class="rx-title-tagline">{{collection.manifests.all|length}}
                   volume{{collection.manifests.all|length|pluralize}}
                 </div>
-                <p class="rx-card-text">{{ collection.summary|safe }}</p>
+                <p class="rx-card-text">{{ collection.summary|truncatewords_html:40|safe }}</p>
               </a>
             </div>
           </article>
         </li>
         {% endfor %}
+
+        <li class="uk-grid" style="margin-top:0;">
+        <a class="nav-link uk-padding-remove" href="/{{ collectionsurl.slug }}">
+          <div class="rx-btn rx-btn-extension">Show All Collections <i class="fas fa-chevron-right"></i></div>
+        </a>
+        </li>
       </ul>
+              {% include "footer.html" %}
       {% endif %}
 
       {% if page.content_display == 'Volumes' %}
-      <div class="readux-group-title">All Volumes</div>
+      <h2 class="readux-group-title">All Volumes</h2>
       {% for volume in page.volumes %}
       {% if volume.canvas_set.first.pid is null %}
       <li>
@@ -165,7 +172,7 @@
         <article class="uk-grid rx-article">
           <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
             <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-              <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}">
+              <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label|truncatechars:50}}">
               </v-volume-image>
             </a>
 
@@ -207,7 +214,7 @@
       <a class="nav-link" href="/{{ volumesurl.slug }}">
         <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
       </a>
-
+    </ul>
 
       {% include "footer.html" %}
       {% endif %}

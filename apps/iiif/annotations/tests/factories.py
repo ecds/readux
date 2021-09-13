@@ -1,6 +1,7 @@
 """Factory to create Annotations for Tests"""
 from random import randrange
-from factory import DjangoModelFactory, Faker, SubFactory
+from factory.django import DjangoModelFactory
+from factory import Faker
 from apps.users.tests.factories import UserFactory
 from ..models import Annotation
 

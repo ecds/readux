@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title %}Readux{% endblock title %}</title>
+    <meta property="og:site" content="Readux 2 - Read, Annotate, Publish" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -36,12 +37,19 @@
     {% endif %}
     <meta property="og:image:width" content="600" />
     {% endif %}{% endfor %}
-    {% else %}
+    {% elif page.title %}
     <meta property="og:title" content="{{ page.title }}" />
     <meta name="twitter:title" content="{{ page.title }}" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
     <meta property="og:description" content="{{ page.tagline|striptags }}" />
     <meta name="twitter:description" content="{{ page.tagline|striptags }}" />
+    {% else %}
+    {% block extra_head %}{% endblock %}
+    <meta property="og:title" content="Readux 2" />
+    <meta name="twitter:title" content="Readux 2" />
+    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta property="og:description" content="Read, Annotate, Publish" />
+    <meta name="twitter:description" content="Read, Annotate, Publish" />
     <!--<meta property="og:url" content="https://readux.ecds.emory.edu" />-->
     {% endif %}
     <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
@@ -82,9 +90,9 @@
     <div class="uk-container" id="v-readux">
       <nav uk-navbar id="rx-nav">
         <div class="uk-navbar-left">
-          <a class="uk-navbar-item uk-logo uk-padding-remove-left uk-visible@s" href="/">
+          <h1><a class="uk-navbar-item uk-logo uk-padding-remove-left uk-visible@s" href="/">
             <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
-          </a>
+          </a></h1>
 
           <div class="uk-visible@s">
             {% main_menu %}
@@ -162,7 +170,7 @@
       {# Modal for signin #}
       <div id="signin-modal" class="uk-flex-top" uk-modal>
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-          <button class="uk-modal-close-default" type="button" uk-close></button>
+          <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
           <section class="uk-modal-header">
             <h2 class="uk-modal-title uk-text-center">
             {% if user.is_authenticated %}

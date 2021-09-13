@@ -82,14 +82,14 @@ class Serializer(JSONSerializer):
                         "@type": "oa:Annotation",
                         "motivation": "sc:painting",
                         "resource": {
-                            "@id": '{id}/full/full/0/default.jpg'.format(id=obj.service_id),
+                            "@id": '{id}/full/full/0/default.jpg'.format(id=obj.resource_id),
                             "@type": "dctypes:Image",
                             "format": "image/jpeg",
                             "height": obj.height,
                             "width": obj.width,
                             "service": {
                                 "@context": "https://iiif.io/api/image/2/context.json",
-                                "@id": obj.service_id,
+                                "@id": obj.resource_id,
                                 "profile": "https://iiif.io/api/image/2/level2.json"
                             }
                         },

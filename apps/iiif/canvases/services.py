@@ -1,9 +1,11 @@
 # pylint: disable=invalid-name
 """Module to provide some common functions for Canvas objects."""
 import csv
+from os import environ, path
 from xml.etree import ElementTree
 import httpretty
 from django.conf import settings
+from apps.iiif.annotations.models import Annotation
 from apps.utils.fetch import fetch_url
 
 class IncludeQuotesDialect(csv.Dialect): # pylint: disable=too-few-public-methods
@@ -25,46 +27,20 @@ def get_fake_canvas_info(canvas):
     with open('apps/iiif/canvases/fixtures/info.json', 'r') as file:
         iiif_image_info = file.read().replace('\n', '')
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
-    response = fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    response = fetch_url(
+        canvas.resource_id,
+        timeout=settings.HTTP_REQUEST_TIMEOUT,
+        data_format='json'
+    )
     return response
 
 def get_fake_ocr():
-    return [
-        {
-            "h": 22,
-            "w": 22,
-            "x": 1146,
-            "y": 928,
-            "content": "Dope"
-        },
-        {
-            "h": 222,
-            "w": 222,
-            "x": 11462,
-            "y": 9282,
-            "content": ""
-        },
-        {
-            "h": 21,
-            "w": 21,
-            "x": 1141,
-            "y": 9281,
-            "content": "southernplayalisticadillacmuzik"
-        },
-        {
-            "h": 213,
-            "w": 213,
-            "x": 11413,
-            "y": 92813
-        },
-        {
-            "h": 214,
-            "w": 214,
-            "x": 11414,
-            "y": 92814,
-            "content": " "
-        }
-    ]
+    """Generate fake OCR data for testing.
+
+    :return: OCR data
+    :rtype: dict
+    """
+    return
 
 def get_ocr(canvas):
     """Function to determine method for fetching OCR for a canvas.
@@ -74,11 +50,10 @@ def get_ocr(canvas):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
-    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return get_fake_ocr()
     if canvas.default_ocr == "line":
         result = fetch_alto_ocr(canvas)
         return add_alto_ocr(result)
+
     result = fetch_positional_ocr(canvas)
     return add_positional_ocr(canvas, result)
 
@@ -91,10 +66,17 @@ def get_canvas_info(canvas):
     :rtype: requests.models.Response
     """
     # If testing, just fake it.
-    if 'fake.info' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return get_fake_canvas_info(canvas)
+    if environ['DJANGO_ENV'] == 'test':
+        response =  get_fake_canvas_info(canvas)
+        return response
 
-    return fetch_url(canvas.service_id, timeout=settings.HTTP_REQUEST_TIMEOUT, format='json')
+    response = fetch_url(
+        canvas.resource_id,
+        timeout=settings.HTTP_REQUEST_TIMEOUT,
+        data_format='json'
+    )
+    return response
+
 
 # TODO: Maybe add "OCR Source" and "OCR Type" attributes to the manifest model. That might
 # help make this more universal.
@@ -106,30 +88,68 @@ def fetch_positional_ocr(canvas):
     :return: Positional OCR data
     :rtype: requests.models.Response
     """
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return fetch_url(
-            "https://api.archivelab.org/books/{m}/pages/{p}/ocr?mode=words".format(
-                m=canvas.manifest.pid,
-                p=canvas.pid.split('$')[-1]
+    if 'archivelab' in canvas.manifest.image_server.server_base:
+        if '$' in canvas.pid:
+            pid = str(int(canvas.pid.split('$')[-1]) - canvas.ocr_offset)
+        else:
+            pid = canvas.pid
+
+        url = f"https://api.archivelab.org/books/{canvas.manifest.pid}/pages/{pid}/ocr?mode=words"
+
+        if environ['DJANGO_ENV'] == 'test':
+            fake_ocr = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+            words = fake_ocr.read()
+            httpretty.enable()
+            httpretty.register_uri(httpretty.GET, url, body=words)
+
+        return fetch_url(url)
+
+    if 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
+        # Fake TSV data for testing.
+        if environ['DJANGO_ENV'] == 'test':
+            fake_tsv = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/sample.tsv'))
+            tsv = fake_tsv.read()
+            url = "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/boo.tsv".format(
+                m=canvas.manifest.pid
             )
-        )
-    if 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
-        return fetch_url(
-            "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/{p}.tsv".format(
-                m=canvas.manifest.pid,
-                p=canvas.pid.split('_')[-1]
-                .replace('.jp2', '')
-                .replace('.jpg', '')
-                .replace('.tif', '')
-            ),
-            format='text'
-        )
-    return fetch_url(
-        "{p}{c}{s}".format(
-            p=settings.DATASTREAM_PREFIX,
-            c=canvas.pid.replace('fedora:', ''),
-            s=settings.DATASTREAM_SUFFIX), format='text/plain'
-        )
+            httpretty.enable()
+            httpretty.register_uri(httpretty.GET, url, body=tsv)
+
+        if canvas.ocr_file_path is None:
+            return fetch_url(
+                "https://raw.githubusercontent.com/ecds/ocr-bucket/master/{m}/{p}.tsv".format(
+                    m=canvas.manifest.pid,
+                    p=canvas.pid.split('_')[-1]
+                    .replace('.jp2', '')
+                    .replace('.jpg', '')
+                    .replace('.tif', '')
+                ),
+                data_format='text'
+            )
+
+        if canvas.ocr_file_path.startswith('https') and 's3' in canvas.ocr_file_path:
+            return fetch_url(canvas.ocr_file_path, data_format='text')
+        # Not sure we will need this. Leaving just as a reminder.
+        # else:
+        #     file = open(canvas.ocr_file_path)
+        #     data = file.read()
+        #     file.close()
+        #     return data
+
+    url = "{p}{c}{s}".format(
+        p=settings.DATASTREAM_PREFIX,
+        c=canvas.pid.replace('fedora:', ''),
+        s=settings.DATASTREAM_SUFFIX
+    )
+
+    if environ['DJANGO_ENV'] == 'test':
+        fake_alto = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+        words = fake_alto.read()
+        httpretty.enable()
+        httpretty.register_uri(httpretty.GET, url, body=words)
+
+
+    return fetch_url(url, data_format='text/plain')
 
 def add_positional_ocr(canvas, result):
     """Function to parse fetched OCR data for a canvas.
@@ -141,8 +161,10 @@ def add_positional_ocr(canvas, result):
     :return: List of dicts of parsed OCR data.
     :rtype: list
     """
+    if result is None:
+        return None
     ocr = []
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'archivelab' in canvas.manifest.image_server.server_base:
         if result is not None and 'ocr' in result and result['ocr'] is not None:
             for index, word in enumerate(result['ocr']): # pylint: disable=unused-variable
                 if len(word) > 0:
@@ -154,9 +176,26 @@ def add_positional_ocr(canvas, result):
                             'x': w[1][0],
                             'y': w[1][3]
                         })
-    elif 'images.readux.ecds.emory' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    elif 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
 
-        reader = csv.DictReader(result.split('\n'), dialect=IncludeQuotesDialect)
+        lines = result.split('\n')
+        # if (lines[0].startswith(content)):
+        #     lines.pop(0)
+        # Sometimes the TSV has some extra tabs at the beginign and the end. These have
+        # to be cleaned out. It gets complicatied.
+        for index, line in enumerate(lines):
+            print('----')
+            print(line)
+            print('----')
+            # First we remove any leading column that is empty.
+            line = line.strip()
+            lines[index] = line
+            # It might be true that the "content" column is empty. However, we just
+            # removed it. So we have to add it back.
+            if lines[index].count('\t') == 3:
+                lines[index] = ' \t' + lines[index]
+
+        reader = csv.DictReader(lines, dialect=IncludeQuotesDialect)
 
         for row in reader:
             content = row['content']
@@ -195,13 +234,14 @@ def fetch_alto_ocr(canvas):
     :return: Positional OCR data
     :rtype: requests.models.Response
     """
-    if 'archivelab' in canvas.IIIF_IMAGE_SERVER_BASE.IIIF_IMAGE_SERVER_BASE:
+    if 'archivelab' in canvas.manifest.image_server.server_base:
         return None
     url = "{p}{c}/datastreams/tei/content".format(
         p=settings.DATASTREAM_PREFIX,
         c=canvas.pid.replace('fedora:', '')
     )
-    return fetch_url(url, format='text/plain')
+
+    return fetch_url(url, data_format='text/plain')
 
 def add_alto_ocr(result):
     """Function to add fetched Alto OCR data for a given canvas.
@@ -230,3 +270,30 @@ def add_alto_ocr(result):
     if ocr:
         return ocr
     return None
+
+def add_ocr_annotations(canvas, ocr):
+    word_order = 1
+    for word in ocr:
+        # A quick check to make sure the header row didn't slip through.
+        if word['x'] == 'x':
+            continue
+
+        # Set the content to a single space if it's missing.
+        if (
+            word == '' or
+            'content' not in word or
+            not word['content'] or
+            word['content'].isspace()
+        ):
+            word['content'] = ' '
+        anno = Annotation()
+        anno.canvas = canvas
+        anno.x = word['x']
+        anno.y = word['y']
+        anno.w = word['w']
+        anno.h = word['h']
+        anno.resource_type = anno.OCR
+        anno.content = word['content']
+        anno.order = word_order
+        anno.save()
+        word_order += 1

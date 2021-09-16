@@ -66,7 +66,7 @@ class BulkAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     def response_add(self, request, obj, post_url_continue=None):
-        obj.refresh_from_db()
+        obj.delete()
         return redirect('/admin/manifests/manifest/?o=-4')
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring

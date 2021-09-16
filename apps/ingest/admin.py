@@ -67,7 +67,7 @@ class BulkAdmin(admin.ModelAdmin):
 
     def response_add(self, request, obj, post_url_continue=None):
         obj.refresh_from_db()
-        return redirect('/admin/')
+        return redirect('/admin/manifests/manifest/?o=-4')
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Bulk

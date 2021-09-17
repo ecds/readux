@@ -1,4 +1,5 @@
 """[summary]"""
+import os
 from apps.ingest.storages import IngestStorage
 import logging
 from os import environ, path
@@ -58,7 +59,7 @@ class BulkAdmin(admin.ModelAdmin):
         obj.save()
         files = request.FILES.getlist('volume_files')
         for f in files:
-            path = form.storage.save(f.name, f)
+            path = form.storage.save(os.path.join('bulk', str(obj.id), f.name), f)
             new_local = Local.objects.create(bulk=obj, bundle=path, image_server=obj.image_server)
             if environ['DJANGO_ENV'] != 'test':
                 tasks.create_canvas_form_local_task.delay(new_local.id)

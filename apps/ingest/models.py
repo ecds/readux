@@ -31,13 +31,13 @@ def make_temp_file():
     return temp_file
 
 def bulk_path(instance, filename):
-    return os.path.join('bulk', str(instance.bulk.id), filename )
+    return os.path.join('bulk', str(instance.id), filename )
 
 class Bulk(models.Model):
     """ Model class for bulk ingesting volumes from local files. """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
-    volume_files = models.FileField(blank=False)
+    volume_files = models.FileField(blank=False, upload_to=bulk_path)
 
     class Meta:
         verbose_name_plural = 'Bulk'

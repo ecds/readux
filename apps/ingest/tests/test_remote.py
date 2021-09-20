@@ -17,6 +17,7 @@ class RemoteTest(TestCase):
             manifest=ManifestFactory.create(),
             remote_url='https://iiif.archivelab.org/iiif/09359080.4757.emory.edu/manifest.json' # pylint: disable=line-too-long
         )
+        remote.open_metadata()
         assert remote.metadata['pid'] == '09359080.4757.emory.edu'
         assert remote.metadata['label'] == 'Address by Hon. Frederick Douglass'
         assert remote.metadata['summary'] == 'Respect Frederick Douglass.'

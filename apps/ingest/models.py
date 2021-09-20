@@ -11,6 +11,7 @@ from zipfile import ZipFile
 from tablib import Dataset
 from django.db import models
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
 from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
@@ -33,6 +34,14 @@ def make_temp_file():
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
 
+class IngestAbstractModel(models.Model):
+    metadata = JSONField(default=dict, blank=True)
+    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
+        abstract = True
+
+
 class Bulk(models.Model):
     """ Model class for bulk ingesting volumes from local files. """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -42,13 +51,12 @@ class Bulk(models.Model):
     class Meta:
         verbose_name_plural = 'Bulk'
 
-class Local(models.Model):
+class Local(IngestAbstractModel):
     """ Model class for ingesting a volume from local files. """
     # temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
     bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
     bundle = models.FileField(blank=False, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
-    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
     local_bundle_path = models.CharField(max_length=500, null=True, blank=True)
 
     class Meta:
@@ -89,8 +97,7 @@ class Local(models.Model):
             # TODO: Figure out how to test this.
             return self.__fallback_download()
 
-    @property
-    def metadata(self):
+    def open_metadata(self):
         """
         Extract metadata from file.
         :return: If metadata file exists, returns the values. If no file, returns None.
@@ -113,14 +120,12 @@ class Local(models.Model):
 
                 if 'csv' in guess_type(file.filename)[0] or 'tab-separated' in guess_type(file.filename)[0]:
                     data = self.zip_ref.read(file.filename)
-                    metadata = Dataset().load(data.decode('utf-8-sig'))
+                    self.metadata = Dataset().load(data.decode('utf-8-sig'))
                 else:
-                    metadata = Dataset().load(self.zip_ref.read(file.filename))
+                    self.metadata = Dataset().load(self.zip_ref.read(file.filename))
 
-                if metadata is not None:
-                    metadata = services.clean_metadata(metadata.dict[0])
-
-                return metadata
+                if self.metadata is not None:
+                    self.metadata = services.clean_metadata(self.metadata.dict[0])
 
     def extract_images_s3(self):
         """
@@ -250,10 +255,9 @@ class Local(models.Model):
 
         return ZipFile(self.local_bundle_path)
 
-class Remote(models.Model):
+class Remote(IngestAbstractModel):
     """ Model class for ingesting a volume from remote manifest. """
     remote_url = models.CharField(max_length=255)
-    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         verbose_name_plural = 'Remote'
@@ -285,13 +289,10 @@ class Remote(models.Model):
             )
         return fetch_url(self.remote_url)
 
-    @property
-    def metadata(self):
+    def open_metadata(self):
         """ Take a remote IIIF manifest and create a derivative version. """
         if self.remote_manifest['@context'] == 'http://iiif.io/api/presentation/2/context.json':
-            return services.parse_iiif_v2_manifest(self.remote_manifest)
-
-        return None
+            self.metadata = services.parse_iiif_v2_manifest(self.remote_manifest)
 
     def create_canvases(self):
          # TODO: What if there are multiple sequences? Is that even allowed in IIIF?

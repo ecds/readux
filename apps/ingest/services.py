@@ -35,16 +35,16 @@ def create_manifest(ingest):
     manifest = None
     # Make a copy of the metadata so we don't extract it over and over.
     try:
+        if not bool(ingest.manifest) or ingest.manifest is None:
+            ingest.open_metadata()
+
         metadata = dict(ingest.metadata)
     except TypeError:
         metadata = None
-    if metadata is not None:
+    if metadata:
         manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
-        # TODO: I'm not sure this is what we want to do
-        # if not created:
-        #     manifest.canvas_set.all().delete()
     else:
         manifest = Manifest(pid=str(uuid4()))
 

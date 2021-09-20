@@ -34,10 +34,11 @@ class LocalTest(TestCase):
         conn.create_bucket(Bucket=self.image_server.storage_path)
         conn.create_bucket(Bucket='readux-ingest')
 
-    def mock_local(self, bundle, with_manifest=False):
+    def mock_local(self, bundle, with_manifest=False, metadata={}):
         # Note, I tried to use the factory here, but could not get it to override the file for bundle.
         local = Local(
-            image_server = self.image_server
+            image_server = self.image_server,
+            metadata = metadata
         )
         local.bundle = SimpleUploadedFile(
             name=bundle,
@@ -61,7 +62,7 @@ class LocalTest(TestCase):
             assert bundle in [f.key for f in local.tmp_bucket.objects.all()]
 
     def test_image_upload_to_s3(self):
-        local = self.mock_local('bundle.zip', True)
+        local = self.mock_local('bundle.zip', with_manifest=True)
 
         local.extract_images_s3()
 
@@ -70,7 +71,7 @@ class LocalTest(TestCase):
         assert f'{local.manifest.pid}/00000008.jpg' in image_files
 
     def test_ocr_upload_to_s3(self):
-        local = self.mock_local('nested_volume.zip', True)
+        local = self.mock_local('nested_volume.zip', with_manifest=True)
 
         local.extract_ocr_s3()
 
@@ -80,7 +81,7 @@ class LocalTest(TestCase):
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadat supplied in an Excel file. """
-        local = self.mock_local('bundle.zip', True)
+        local = self.mock_local('bundle.zip', with_manifest=True)
 
         assert 'pid' in local.metadata.keys()
 
@@ -89,7 +90,7 @@ class LocalTest(TestCase):
 
     def test_metadata_from_csv(self):
         """ It should create a manifest with metadata supplied in a CSV file. """
-        local = self.mock_local('csv_meta.zip', True)
+        local = self.mock_local('csv_meta.zip', with_manifest=True)
 
         assert 'pid' in local.metadata.keys()
 
@@ -98,7 +99,7 @@ class LocalTest(TestCase):
 
     def test_metadata_from_tsv(self):
         """ It should create a manifest with metadata supplied in a CSV file. """
-        local = self.mock_local('tsv.zip', True)
+        local = self.mock_local('tsv.zip', with_manifest=True)
 
         assert 'pid' in local.metadata.keys()
 
@@ -107,14 +108,14 @@ class LocalTest(TestCase):
 
     def test_no_metadata_file(self):
         """ It should create a Manifest even when no metadata file is supplied. """
-        local = self.mock_local('no_meta_file.zip', True)
+        local = self.mock_local('no_meta_file.zip', with_manifest=True)
 
         assert UUID(local.manifest.pid).version == 4
 
     def test_single_image(self):
         """
         """
-        local = self.mock_local('single-image.zip', True)
+        local = self.mock_local('single-image.zip', with_manifest=True)
 
         local.extract_images_s3()
 
@@ -126,7 +127,7 @@ class LocalTest(TestCase):
         """
         Any hidden files should not be uploaded.
         """
-        local = self.mock_local('bundle_with_junk.zip', True)
+        local = self.mock_local('bundle_with_junk.zip', with_manifest=True)
 
         local.extract_images_s3()
         local.extract_ocr_s3()
@@ -144,7 +145,7 @@ class LocalTest(TestCase):
         """
         Any hidden files should be removed.
         """
-        local = self.mock_local('bundle_with_underscores.zip', True)
+        local = self.mock_local('bundle_with_underscores.zip', with_manifest=True)
 
         local.extract_images_s3()
         local.extract_ocr_s3()
@@ -162,7 +163,7 @@ class LocalTest(TestCase):
         Make sure it doesn't get get confused when the word "metadata" is in
         every path.
         """
-        local = self.mock_local('metadata.zip', True)
+        local = self.mock_local('metadata.zip', with_manifest=True)
 
         local.extract_images_s3()
         local.extract_ocr_s3()
@@ -202,7 +203,7 @@ class LocalTest(TestCase):
         Make sure it doesn't get get confused when the word "metadata" is in
         every path.
         """
-        local = self.mock_local('bundle.zip', True)
+        local = self.mock_local('bundle.zip', with_manifest=True)
         local.create_canvases()
 
         pid = local.manifest.pid
@@ -221,7 +222,7 @@ class LocalTest(TestCase):
 
 
     def test_it_downloads_zip_when_local_bundle_path_is_not_none(self):
-        local = self.mock_local('metadata.zip', True)
+        local = self.mock_local('metadata.zip', with_manifest=True)
         local.local_bundle_path = 'swoop'
         files_in_zip = [f.filename for f in local.zip_ref.infolist()]
         assert 'metadata/images/' in files_in_zip
@@ -229,7 +230,7 @@ class LocalTest(TestCase):
         assert local.local_bundle_path == join(gettempdir(), 'metadata.zip')
 
     def test_it_cleans_up(self):
-        local = self.mock_local('single-image.zip', True)
+        local = self.mock_local('single-image.zip', with_manifest=True)
         local.local_bundle_path = 'swoop'
         local.zip_ref
         assert exists(join(gettempdir(), 'single-image.zip'))
@@ -241,3 +242,13 @@ class LocalTest(TestCase):
             Local.objects.get(pk=local.id)
         except Local.DoesNotExist:
             pass
+
+    def test_it_creates_mainfest_with_metadata_property(self):
+        metadata = {
+            'pid': '808',
+            'title': 'Goodie Mob'
+        }
+        local = self.mock_local('no_meta_file.zip', metadata=metadata)
+        local.manifest = create_manifest(local)
+        assert local.manifest.pid == '808'
+        assert local.manifest.title == 'Goodie Mob'

@@ -184,9 +184,6 @@ def add_positional_ocr(canvas, result):
         # Sometimes the TSV has some extra tabs at the beginign and the end. These have
         # to be cleaned out. It gets complicatied.
         for index, line in enumerate(lines):
-            print('----')
-            print(line)
-            print('----')
             # First we remove any leading column that is empty.
             line = line.strip()
             lines[index] = line

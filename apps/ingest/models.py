@@ -1,14 +1,11 @@
 """ Model classes for ingesting volumes. """
-import imghdr
 import os
 import uuid
 import logging
 import httpretty
 from boto3 import client, resource
 from io import BytesIO
-from urllib.parse import urlparse, unquote
 from mimetypes import guess_type
-from shutil import rmtree
 from tempfile import gettempdir, mkdtemp
 from zipfile import ZipFile
 from tablib import Dataset
@@ -34,19 +31,21 @@ def make_temp_file():
     return temp_file
 
 def bulk_path(instance, filename):
-    return os.path.join('bulk', str(instance.bulk.id), filename )
+    return os.path.join('bulk', str(instance.id), filename )
 
 class Bulk(models.Model):
+    """ Model class for bulk ingesting volumes from local files. """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
+    volume_files = models.FileField(blank=False, upload_to=bulk_path)
 
-class Volume(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    bulk = models.ForeignKey(Bulk, on_delete=models.DO_NOTHING, null=False)
-    volume_file = models.FileField(storage=IngestStorage(), upload_to=bulk_path)
+    class Meta:
+        verbose_name_plural = 'Bulk'
 
 class Local(models.Model):
     """ Model class for ingesting a volume from local files. """
     # temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
+    bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
     bundle = models.FileField(blank=False, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)

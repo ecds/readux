@@ -87,7 +87,7 @@ class IngestAdminTest(TestCase):
         """It should add a Local object to this Bulk object"""
         bulk = BulkFactory.create()
 
-        assert len(bulk.local_uploads.all()) is 0
+        assert len(bulk.local_uploads.all()) == 0
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/')
@@ -104,7 +104,7 @@ class IngestAdminTest(TestCase):
         """It should add three Local objects to this Bulk object"""
         bulk = BulkFactory.create()
 
-        assert len(bulk.local_uploads.all()) is 0
+        assert len(bulk.local_uploads.all()) == 0
 
         # Add 3 files to POST request
         data = {}
@@ -123,7 +123,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/', data=data)
-        
+
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()
         bulk_model_admin.save_model(obj=bulk, request=req, form=mock_form, change=None)
@@ -142,3 +142,39 @@ class IngestAdminTest(TestCase):
             bulk.refresh_from_db()
         assert isinstance(response, HttpResponseRedirect)
         assert response.url == '/admin/manifests/manifest/?o=-4'
+
+    def test_bulk_admin_with_external_metadata(self):
+        """It should add the metadata to the matching Local object"""
+        bulk = BulkFactory.create()
+
+        data = {}
+        data['volume_files'] = []
+
+        # Mock upload metadata csv with matching pid for zip
+        filepath1 = join(settings.APPS_DIR, 'ingest/fixtures/metadata.csv')
+        with open(filepath1, 'rb') as open_file:
+            content1 = files.base.ContentFile(open_file.read())
+        file1 = files.File(content1.file, 'metadata.csv')
+        data['volume_files'].append(file1)
+
+        # Mock upload a zip with no metadata
+        filepath2 = join(settings.APPS_DIR, 'ingest/fixtures/no_meta_file.zip')
+        with open(filepath2, 'rb') as open_file:
+            content2 = files.base.ContentFile(open_file.read())
+        file2 = files.File(content2.file, 'no_meta_file.zip')
+        data['volume_files'].append(file2)
+
+        request_factory = RequestFactory()
+        req = request_factory.post('/admin/ingest/bulk/add/', data=data)
+
+        bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
+        mock_form = BulkVolumeUploadForm()
+        bulk_model_admin.save_model(obj=bulk, request=req, form=mock_form, change=None)
+
+        bulk.refresh_from_db()
+
+        local = bulk.local_uploads.first()
+        assert local.metadata is not None
+        assert isinstance(local.metadata, dict)
+        assert len(local.metadata) != 0
+        assert local.metadata['pid'] == 'no_meta_file'

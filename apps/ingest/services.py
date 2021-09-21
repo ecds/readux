@@ -1,8 +1,9 @@
 """ Module of service classes and methods for ingest. """
+from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
 from uuid import uuid4
 from django.apps import apps
-from apps.iiif.manifests.models import Manifest
+from tablib.core import Dataset
 from apps.iiif.manifests.models import Manifest, RelatedLink
 
 def clean_metadata(metadata):
@@ -136,3 +137,44 @@ def parse_iiif_v2_canvas(canvas):
         'label': label,
         'resource': resource
     }
+
+def get_metadata_from(files):
+    """
+    Find metadata file in uploaded files.
+    :return: If metadata file exists, returns the values. If no file, returns None.
+    :rtype: list or None
+    """
+    metadata = None
+    for file in files:
+        if metadata is not None:
+            continue
+        if 'zip' in guess_type(file.name)[0]:
+            continue
+        if 'metadata' in file.name.casefold():
+            stream = file.read()
+            if 'csv' in guess_type(file.name)[0] or 'tab-separated' in guess_type(file.name)[0]:
+                metadata = Dataset().load(stream.decode('utf-8-sig')).dict
+            else:
+                metadata = Dataset().load(stream).dict
+    return metadata
+
+def get_associated_meta(all_metadata, file):
+    """
+    Associate metadata with filename.
+    :return: If a matching PID is found, returns the row as dict. Otherwise, returns {}.
+    :rtype: dict
+    """
+    file_meta = {}
+    extless_filename = file.name[0:file.name.rindex('.')]
+    for meta_dict in all_metadata:
+        for key, val in meta_dict.items():
+            if key.casefold() == 'pid':
+                pid = val
+            else:
+                continue
+        # Match pid, case-sensitive, against filename
+        if pid and pid == extless_filename:
+            file_meta = meta_dict
+        else:
+            continue
+    return file_meta

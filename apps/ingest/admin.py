@@ -1,7 +1,7 @@
 """[summary]"""
 import logging
 from mimetypes import guess_type
-from os import environ, path
+from os import environ, path, remove, listdir, rmdir
 from django.contrib import admin
 from django.shortcuts import redirect
 from apps.ingest import tasks
@@ -86,6 +86,13 @@ class BulkAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     def response_add(self, request, obj, post_url_continue=None):
+        # Delete local file
+        file_path = obj.volume_files.path
+        if path.isfile(file_path):
+            remove(file_path)
+        dir_path = file_path[0:file_path.rindex('/')]
+        if len(listdir(dir_path)) == 0:
+            rmdir(dir_path)
         obj.delete()
         return redirect("/admin/manifests/manifest/?o=-4")
 

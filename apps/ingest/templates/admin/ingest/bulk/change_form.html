@@ -30,18 +30,29 @@
   </style>
 {% endblock %}
 {% block submit_buttons_bottom %}
-  <input type="submit" value="{% trans 'Save' %}" class="default" id="start_upload" name="_save">
+  <div class="submit-row">
+    <input type="submit" value="{% trans 'Save and add another' %}" id="add_another" name="_addanother" {{ onclick_attrib }}/>
+    <input type="submit" value="{% trans 'Save' %}" class="default" id="start_upload" name="_save">
+  </div>
 {% endblock %}
 {% block admin_change_form_document_ready %}
   {{ block.super }}
   <script type="text/javascript">
-    django.jQuery('#bulk_form').on('submit', (e) => {
+
+    // for each form on the page...
+    let bulkForm = django.jQuery('#bulk_form'); // define context and reference
+    django.jQuery("input:submit", bulkForm).bind("click keypress", function ()
+    {
+        bulkForm.data("callerid", this.id);
+    });
+    bulkForm.on('submit', (e) => {
       e.preventDefault();
 
       const overlay = django.jQuery('#overlay');
       const label = document.getElementById('overlay-label');
       const percentage = document.getElementById('overlay-percentage');
       const progressBar = document.getElementById('overlay-progress');
+      const buttonUsed = django.jQuery('#bulk_form').data("callerid");
       let errored = false;
 
       // Set up POST req
@@ -77,7 +88,11 @@
       xhr.upload.onloadend = (e) => { 
         // Redirect to manifests page
         if (!errored) {
-          location.href = '/admin/manifests/manifest/?o=-4';
+          if (buttonUsed === 'start_upload') {
+            location.href = '/admin/manifests/manifest/?o=-4';
+          } else {
+            location.reload();
+          }
         }
       };
 

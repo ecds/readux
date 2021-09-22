@@ -17,6 +17,7 @@ class LocalAdmin(admin.ModelAdmin):
     show_save_and_add_another = False
 
     def save_model(self, request, obj, form, change):
+        print(request.FILES)
         obj.save()
         obj.manifest = create_manifest(obj)
         obj.save()

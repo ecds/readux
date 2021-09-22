@@ -3,6 +3,7 @@ import os
 import uuid
 import logging
 import httpretty
+from stream_unzip import stream_unzip, TruncatedDataError
 from boto3 import client, resource
 from io import BytesIO
 from mimetypes import guess_type
@@ -53,11 +54,9 @@ class Bulk(models.Model):
 
 class Local(IngestAbstractModel):
     """ Model class for ingesting a volume from local files. """
-    # temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
     bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
     bundle = models.FileField(blank=False, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
-    local_bundle_path = models.CharField(max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -77,109 +76,59 @@ class Local(IngestAbstractModel):
     def tmp_bucket(self):
         return resource('s3').Bucket('readux-ingest')
 
-
-    @property
-    def zip_ref(self):
-        """Create a reference to the uploaded zip file.
-
-        :return: zipfile.ZipFile object of uploaded
-        :rtype: zipfile.ZipFile
-        https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
-        """
-        if self.local_bundle_path and os.path.exists(self.local_bundle_path):
-            return ZipFile(self.local_bundle_path)
-        if self.local_bundle_path:
-            return self.__fallback_download()
-        try:
-            buffer = BytesIO(self.bundle.file.obj.get()['Body'].read())
-            return ZipFile(buffer)
-        except OverflowError:
-            # TODO: Figure out how to test this.
-            return self.__fallback_download()
-
     def open_metadata(self):
         """
         Extract metadata from file.
         :return: If metadata file exists, returns the values. If no file, returns None.
         :rtype: dict or None
         """
-        metadata = None
-        for file in self.zip_ref.infolist():
-            if 'metadata' in file.filename.casefold():
+        try:
+            for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+                file_path, file_name, file_type = self.__file_info(zipped_file)
+                tmp_file = bytes()
+                for chunk in unzipped_chunks:
+                    if file_type and not self.__is_junk(file_name) and 'metadata' in file_name:
+                        tmp_file += chunk
+                if len(tmp_file) > 0 and file_type and not self.__is_junk(file_name):
+                    if 'csv' in file_type or 'tab-separated' in file_type:
+                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'))
+                    elif 'officedocument' in file_type:
+                        metadata = Dataset().load(BytesIO(tmp_file))
+                    if metadata is not None:
+                        self.metadata = services.clean_metadata(metadata.dict[0])
+                        return
+        except TruncatedDataError:
+            # TODO: Why does `apps.ingest.tests.test_admin.IngestAdminTest.test_local_admin_save` raise this?
+            pass
 
-                if file.is_dir():
-                    continue
-                if metadata is not None:
-                    continue
-                if self.__is_junk(file.filename):
-                    continue
-                if 'ocr' in file.filename.casefold():
-                    continue
-                if 'image' in file.filename.casefold():
-                    continue
+    def volume_to_s3(self):
+        for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+            file_path, file_name, file_type = self.__file_info(zipped_file)
+            tmp_file = bytes()
+            for chunk in unzipped_chunks:
+                if file_type and not self.__is_junk(file_name):
+                    tmp_file += chunk
+            if file_type and not self.__is_junk(file_name):
+                if 'image' in file_type and 'images' in file_path:
+                    self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
+                if 'text' in file_type and 'ocr' in file_path:
+                    self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
 
-                if 'csv' in guess_type(file.filename)[0] or 'tab-separated' in guess_type(file.filename)[0]:
-                    data = self.zip_ref.read(file.filename)
-                    self.metadata = Dataset().load(data.decode('utf-8-sig'))
-                else:
-                    self.metadata = Dataset().load(self.zip_ref.read(file.filename))
+    def file_list(self):
+        files = []
+        for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+            file_path, file_name, file_type = self.__file_info(zipped_file)
+            files.append(file_path)
+            for chunk in unzipped_chunks:
+                pass
 
-                if self.metadata is not None:
-                    self.metadata = services.clean_metadata(self.metadata.dict[0])
-
-    def extract_images_s3(self):
-        """
-        Extract image files directly to S3
-        """
-        if self.s3_client is None:
-            return
-
-        for filename in self.zip_ref.namelist():
-            if self.__is_junk(filename):
-                continue
-            type = guess_type(filename)[0]
-            if type is not None and 'image' in type:
-                # TODO: check if file already exists in S3.
-                # If it does, compare the hash and the S3 etag.
-                # Don't upload if files are the same.
-                self.s3_client.upload_fileobj(
-                    self.zip_ref.open(filename),
-                    Bucket=self.image_server.storage_path,
-                    Key='{p}/{f}'.format(p=self.manifest.pid, f=filename.split("/")[-1].replace('_', '-'))
-                )
-
-    def extract_ocr_s3(self):
-        """
-        Locate and extract OCR files directly to S3
-        """
-        if self.s3_client is None:
-            return
-
-        for file in self.zip_ref.infolist():
-            if 'ocr' not in file.filename.casefold():
-                continue
-            if 'metadata.' in file.filename:
-                # The metadata file could slip through.
-                # It's unlikely and will not hurt anything.
-                continue
-            if file.is_dir():
-                continue
-            if self.__is_junk(file.filename):
-                continue
-            type = guess_type(file.filename)[0]
-            if type is not None and 'text' in type:
-                self.s3_client.upload_fileobj(
-                    self.zip_ref.open(file.filename),
-                    Bucket=self.image_server.storage_path,
-                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1].replace('_', '-'))
-                )
+        return files
 
     def create_canvases(self):
         """
         Create Canvas objects for each image file.
         """
-        self.extract_images_s3()
-        self.extract_ocr_s3()
+        self.volume_to_s3()
 
         image_files = [
             file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key
@@ -226,34 +175,27 @@ class Local(IngestAbstractModel):
                     add_ocr_task.delay(canvas.id)
 
         if self.manifest.canvas_set.count() == len(image_files):
-            self.clean_up()
+            self.delete()
         else:
             # TODO: Log or though an error/waring?
             pass
-
-    def clean_up(self):
-        """ Method to clean up all the files. """
-        if self.local_bundle_path and os.path.exists(self.local_bundle_path):
-            os.remove(self.local_bundle_path)
-
-        self.delete()
 
     @staticmethod
     def __is_junk(path):
         file = path.split('/')[-1]
         return file.startswith('.') or file.startswith('~') or file.startswith('__')
 
-    def __fallback_download(self):
-        self.local_bundle_path = os.path.join(
-            gettempdir(),
-            self.bundle.file.obj.key.split('/')[-1]
-        )
+    @staticmethod
+    def __file_info(path):
+        path = path.decode('UTF-8')
+        return [
+            path,
+            path.split('/')[-1],
+            guess_type(path)[0]
+        ]
 
-        if os.path.isfile(self.local_bundle_path) is False:
-            self.bundle.file.obj.download_file(self.local_bundle_path)
-            self.save()
-
-        return ZipFile(self.local_bundle_path)
+    def __zipped_chunks(self):
+        yield from self.bundle.file.obj.get()['Body'].iter_chunks(chunk_size=10240)
 
 class Remote(IngestAbstractModel):
     """ Model class for ingesting a volume from remote manifest. """

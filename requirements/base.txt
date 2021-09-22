@@ -58,5 +58,8 @@ django-background-tasks==1.2.5
 boto3==1.18.20
 django-storages==1.11.1  # https://github.com/jschneier/django-storages
 
+# Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.
+stream-unzip>=0.0.58
+
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme

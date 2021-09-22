@@ -34,12 +34,23 @@ class IngestAdminTest(TestCase):
 
     def test_local_admin_save(self):
         """It should add a manifest to the Local object"""
-        local = LocalFactory.create(local_bundle_path=join(self.fixture_path, 'bundle.zip'))
+        local = LocalFactory.create()
 
         assert local.manifest is None
 
+        filepath = join(settings.APPS_DIR, 'ingest/fixtures/bundle.zip')
+
+        with open(filepath, 'rb') as f:
+            content = files.base.ContentFile(f.read())
+
+        bundle_file = files.File(content.file, 'bundle.zip')
+
+        data = { 'bundle': [bundle_file] }
+        request_factory = RequestFactory()
+        req = request_factory.post('/admin/ingest/local/add/', data=data)
+
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
-        local_model_admin.save_model(obj=local, request=None, form=None, change=None)
+        local_model_admin.save_model(obj=local, request=req, form=None, change=None)
 
         local.refresh_from_db()
         assert local.manifest is not None

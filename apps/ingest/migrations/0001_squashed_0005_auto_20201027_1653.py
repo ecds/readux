@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('bundle', models.FileField(upload_to='')),
-                ('temp_file_path', models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpz0h5pz94')),
+                ('temp_file_path', models.FilePathField(path='/tmp/tmpz0h5pz94')),
                 ('image_server', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='canvases.IServer')),
                 ('manifest', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='manifests.Manifest')),
             ],

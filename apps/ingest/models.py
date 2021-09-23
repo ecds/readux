@@ -23,15 +23,6 @@ from .storages import IngestStorage
 
 LOGGER = logging.getLogger(__name__)
 
-def make_temp_file():
-    """Creates a temporary directory.
-
-    :return: Absolute path to the temporary directory
-    :rtype: str
-    """
-    temp_file = mkdtemp()
-    return temp_file
-
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
 

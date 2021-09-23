@@ -15,10 +15,5 @@ class Migration(migrations.Migration):
             model_name='local',
             name='bundle_local',
             field=models.BooleanField(default=False),
-        ),
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpr3y3av34'),
-        ),
+        )
     ]

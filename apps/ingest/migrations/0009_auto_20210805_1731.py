@@ -34,9 +34,4 @@ class Migration(migrations.Migration):
             name='remote',
             options={'verbose_name_plural': 'Remote'},
         ),
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpz_6fa3al'),
-        ),
     ]

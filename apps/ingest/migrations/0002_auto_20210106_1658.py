@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpeqhs0abf'),
-        ),
         migrations.CreateModel(
             name='Remote',
             fields=[

@@ -18,9 +18,4 @@ class Migration(migrations.Migration):
             name='image_server',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='manifests.ImageServer'),
         ),
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmp6pbyozq4'),
-        ),
     ]

@@ -15,6 +15,7 @@ from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Local
 from ..services import create_manifest
+from ..storages import IngestStorage
 
 pytestmark = pytest.mark.django_db(transaction=True) # pylint: disable = invalid-name
 
@@ -59,7 +60,7 @@ class LocalTest(TestCase):
         for bundle in ['bundle.zip', 'nested_volume.zip', 'csv_meta.zip']:
             local = self.mock_local(bundle)
 
-            assert bundle in [f.key for f in local.tmp_bucket.objects.all()]
+            assert bundle in [f.key for f in IngestStorage().bucket.objects.all()]
 
     def test_image_upload_to_s3(self):
         local = self.mock_local('bundle.zip', with_manifest=True)
@@ -134,8 +135,8 @@ class LocalTest(TestCase):
 
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
-        assert 'ocr/.junk.tsv' in local.file_list()
-        assert 'images/.00000010.jpg' in local.file_list()
+        assert 'ocr/.junk.tsv' in local.file_list
+        assert 'images/.00000010.jpg' in local.file_list
         assert f'{local.manifest.pid}/00000009.jpg' in ingest_files
         assert f'{local.manifest.pid}/.00000010.jpg' not in ingest_files
         assert f'{local.manifest.pid}/_*ocr*_/00000003.tsv' in ingest_files
@@ -152,10 +153,10 @@ class LocalTest(TestCase):
 
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
-        underscore_files = [f for f in local.file_list() if '_' in f]
+        underscore_files = [f for f in local.file_list if '_' in f]
         assert len(underscore_files) == 10
-        assert len([f for f in local.file_list() if '-' in f]) == 0
-        for underscore in [f for f in local.file_list() if '_' in f]:
+        assert len([f for f in local.file_list if '-' in f]) == 0
+        for underscore in [f for f in local.file_list if '_' in f]:
             assert underscore not in ingest_files
 
     def test_when_metadata_in_filename(self):
@@ -168,7 +169,7 @@ class LocalTest(TestCase):
         local.volume_to_s3()
         local.volume_to_s3()
 
-        files_in_zip = local.file_list()
+        files_in_zip = local.file_list
         ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert 'metadata/images/' in files_in_zip
@@ -224,7 +225,7 @@ class LocalTest(TestCase):
     # def test_it_downloads_zip_when_local_bundle_path_is_not_none(self):
     #     local = self.mock_local('metadata.zip', with_manifest=True)
     #     local.local_bundle_path = 'swoop'
-    #     files_in_zip = local.file_list()
+    #     files_in_zip = local.file_list
     #     assert 'metadata/images/' in files_in_zip
     #     assert exists(join(gettempdir(), 'metadata.zip'))
     #     assert local.local_bundle_path == join(gettempdir(), 'metadata.zip')

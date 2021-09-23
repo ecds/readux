@@ -11,9 +11,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/var/folders/6q/m6_cn6w96g158vldpfhnn6k40000gn/T/tmpe_pzad5b'),
-        ),
+
     ]

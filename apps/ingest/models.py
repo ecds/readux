@@ -72,15 +72,9 @@ class Local(IngestAbstractModel):
         s3 = resource('s3')
         return s3.Bucket(self.image_server.storage_path)
 
-    @property
-    def tmp_bucket(self):
-        return resource('s3').Bucket('readux-ingest')
-
     def open_metadata(self):
         """
-        Extract metadata from file.
-        :return: If metadata file exists, returns the values. If no file, returns None.
-        :rtype: dict or None
+        Set metadata property from extracted metadata from file.
         """
         try:
             for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
@@ -102,6 +96,10 @@ class Local(IngestAbstractModel):
             pass
 
     def volume_to_s3(self):
+        """
+        Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
+        into memory or any of its uncompressed files.
+        """
         for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
             file_path, file_name, file_type = self.__file_info(zipped_file)
             tmp_file = bytes()
@@ -114,11 +112,18 @@ class Local(IngestAbstractModel):
                 if 'text' in file_type and 'ocr' in file_path:
                     self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
 
+    @property
     def file_list(self):
+        """Returns a list of files in the zip. Used for testing.
+
+        :return: List of files in zip.
+        :rtype: list
+        """
         files = []
         for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
             file_path, file_name, file_type = self.__file_info(zipped_file)
             files.append(file_path)
+            # Not looping through the chunks throws an UnexpectedSignatureError
             for chunk in unzipped_chunks:
                 pass
 

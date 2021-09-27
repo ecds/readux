@@ -173,7 +173,7 @@ def get_associated_meta(all_metadata, file):
             if key.casefold() == 'filename':
                 metadata_found_filename = val
         # Match filename column, case-sensitive, against filename
-        if metadata_found_filename and metadata_found_filename == extless_filename:
+        if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
             file_meta = meta_dict
             # PID generation
             file_meta['pid'] = str(uuid4())

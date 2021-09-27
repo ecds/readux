@@ -2,6 +2,7 @@
 """Module to provide some common functions for Canvas objects."""
 import csv
 from os import environ, path
+import pytest
 from xml.etree import ElementTree
 import httpretty
 from django.conf import settings
@@ -15,8 +16,8 @@ class IncludeQuotesDialect(csv.Dialect): # pylint: disable=too-few-public-method
     delimiter = '\t'
     quoting = csv.QUOTE_NONE # perform no special processing of quote characters
 
-@httpretty.activate
-def get_fake_canvas_info(canvas):
+# @httpretty.activate
+def activate_fake_canvas_info(canvas):
     """Function to mock a response for testing.
 
     :param canvas: Canvas object
@@ -27,20 +28,6 @@ def get_fake_canvas_info(canvas):
     with open('apps/iiif/canvases/fixtures/info.json', 'r') as file:
         iiif_image_info = file.read().replace('\n', '')
     httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
-    response = fetch_url(
-        canvas.resource_id,
-        timeout=settings.HTTP_REQUEST_TIMEOUT,
-        data_format='json'
-    )
-    return response
-
-def get_fake_ocr():
-    """Generate fake OCR data for testing.
-
-    :return: OCR data
-    :rtype: dict
-    """
-    return
 
 def get_ocr(canvas):
     """Function to determine method for fetching OCR for a canvas.
@@ -67,8 +54,9 @@ def get_canvas_info(canvas):
     """
     # If testing, just fake it.
     if environ['DJANGO_ENV'] == 'test':
-        response =  get_fake_canvas_info(canvas)
-        return response
+        httpretty.enable(allow_net_connect=False)
+        activate_fake_canvas_info(canvas)
+        # return response
 
     response = fetch_url(
         canvas.resource_id,

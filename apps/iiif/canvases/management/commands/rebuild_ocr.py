@@ -91,8 +91,6 @@ class Command(BaseCommand):
             self.stdout.write('Adding OCR for canvas {c}'.format(c=canvas.pid))
             with Bar('Processing', max=len(ocr)) as prog_bar:
                 for word in ocr:
-                    if word['content'] == 'Dope':
-                        print(word)
                     if (
                             word == '' or
                             'content' not in word or
@@ -111,9 +109,6 @@ class Command(BaseCommand):
                             canvas=canvas
                         )
                     except Annotation.DoesNotExist:
-                        if word['content'] == 'Dope':
-                            for _ in range(10):
-                                print('DANG')
                         anno = Annotation(
                             w=word['w'],
                             h=word['h'],

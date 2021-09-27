@@ -202,7 +202,6 @@ class Canvas(models.Model):
         and set as manifest's `start_canvas` if manifest does not have one.
         """
         if self.image_info:
-            print(self.image_info)
             self.width = self.image_info['width']
             self.height = self.image_info['height']
 

@@ -47,6 +47,7 @@ def create_manifest(ingest):
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
     else:
+        # PID generation
         manifest = Manifest(pid=str(uuid4()))
 
     manifest.image_server = ingest.image_server
@@ -161,20 +162,19 @@ def get_metadata_from(files):
 def get_associated_meta(all_metadata, file):
     """
     Associate metadata with filename.
-    :return: If a matching PID is found, returns the row as dict. Otherwise, returns {}.
+    :return: If a matching filename is found, returns the row as dict,
+        with generated pid. Otherwise, returns {}.
     :rtype: dict
     """
     file_meta = {}
     extless_filename = file.name[0:file.name.rindex('.')]
     for meta_dict in all_metadata:
         for key, val in meta_dict.items():
-            if key.casefold() == 'pid':
-                pid = val
-            else:
-                continue
-        # Match pid, case-sensitive, against filename
-        if pid and pid == extless_filename:
+            if key.casefold() == 'filename':
+                metadata_found_filename = val
+        # Match filename column, case-sensitive, against filename
+        if metadata_found_filename and metadata_found_filename == extless_filename:
             file_meta = meta_dict
-        else:
-            continue
+            # PID generation
+            file_meta['pid'] = str(uuid4())
     return file_meta

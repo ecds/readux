@@ -189,3 +189,38 @@ class IngestAdminTest(TestCase):
         assert isinstance(local.metadata, dict)
         assert len(local.metadata) != 0
         assert local.metadata['pid'] == 'no_meta_file'
+
+    # def test_local_admin_save_update_manifest(self):
+    #     """It should add a manifest to the Local object"""
+    #     local = LocalFactory.create()
+
+    #     assert local.manifest is None
+
+    #     request_factory = RequestFactory()
+
+    #     with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as f:
+    #         content = files.base.ContentFile(f.read())
+
+    #     local.bundle = files.File(content.file, 'no_meta_file.zip')
+
+    #     req = request_factory.post('/admin/ingest/local/add/', data={})
+
+    #     local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
+    #     local_model_admin.save_model(obj=local, request=req, form=None, change=None)
+
+    #     local.refresh_from_db()
+
+    #     assert local.manifest is not None
+    #     assert not local.manifest.label
+
+    #     manifest = local.manifest
+    #     new_label = Faker._get_faker().name()
+    #     manifest.label = new_label
+    #     manifest.save()
+
+    #     assert manifest.label == new_label
+
+    #     create_canvas_form_local_task(local.id)
+    #     manifest.refresh_from_db()
+
+    #     assert manifest.label == new_label

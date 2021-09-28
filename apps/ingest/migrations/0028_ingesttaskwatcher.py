@@ -8,7 +8,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_celery_results', '0012_remove_taskresult_task_creator'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('ingest', '0027_remove_local_local_bundle_path'),
     ]

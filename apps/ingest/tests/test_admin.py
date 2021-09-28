@@ -1,3 +1,4 @@
+from apps.readux.tests.test_export import User
 from django.core import files
 from apps.ingest.forms import BulkVolumeUploadForm
 from os import  environ
@@ -7,11 +8,14 @@ from django.test.client import RequestFactory
 from moto import mock_s3
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django_celery_results.models import TaskResult
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from celery.contrib.pytest import celery_app
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
-from apps.ingest.models import Bulk, Local, Remote
+from apps.ingest.models import Bulk, Local, Remote, IngestTaskWatcher
 from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin
 from .factories import BulkFactory, LocalFactory, RemoteFactory
 
@@ -25,6 +29,10 @@ class IngestAdminTest(TestCase):
             server_base='http://images.readux.ecds.emory',
             storage_service='s3',
             storage_path='readux'
+        )
+
+        self.user = get_user_model().objects.create_superuser(
+            'adminuser', 'myemail@test.com', password='top_secret'
         )
 
         # Create fake bucket for moto's mock S3 service.
@@ -48,6 +56,7 @@ class IngestAdminTest(TestCase):
         data = { 'bundle': [bundle_file] }
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/local/add/', data=data)
+        req.user = self.user
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         local_model_admin.save_model(obj=local, request=req, form=None, change=None)
@@ -102,6 +111,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/')
+        req.user = self.user
 
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()
@@ -134,6 +144,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/', data=data)
+        req.user = self.user
 
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()
@@ -177,6 +188,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/', data=data)
+        req.user = self.user
 
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()

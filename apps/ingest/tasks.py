@@ -19,7 +19,7 @@ logging.getLogger('botocore').setLevel(logging.ERROR)
 logging.getLogger('s3transfer').setLevel(logging.ERROR)
 logging.getLogger('factory').setLevel(logging.ERROR)
 
-app = Celery('apps.ingest')
+app = Celery('apps.ingest', result_extended=True)
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 

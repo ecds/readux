@@ -48,7 +48,7 @@ def create_manifest(ingest):
             setattr(manifest, key, value)
     else:
         # PID generation
-        manifest = Manifest(pid=str(uuid4()))
+        manifest = Manifest(pid=generate_pid())
 
     manifest.image_server = ingest.image_server
     manifest.save()
@@ -176,5 +176,13 @@ def get_associated_meta(all_metadata, file):
         if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
             file_meta = meta_dict
             # PID generation
-            file_meta['pid'] = str(uuid4())
+            file_meta['pid'] = generate_pid()
     return file_meta
+
+def generate_pid():
+    """
+    Generate a PID for a volume.
+    :return: Returns a newly generated PID
+    :rtype: str
+    """
+    return str(uuid4())

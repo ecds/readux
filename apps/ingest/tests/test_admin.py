@@ -188,7 +188,7 @@ class IngestAdminTest(TestCase):
         assert local.metadata is not None
         assert isinstance(local.metadata, dict)
         assert len(local.metadata) != 0
-        assert local.metadata['pid'] == 'no_meta_file'
+        assert local.metadata['label'] == 'Test Bundle'
 
     # def test_local_admin_save_update_manifest(self):
     #     """It should add a manifest to the Local object"""

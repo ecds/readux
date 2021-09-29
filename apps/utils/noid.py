@@ -67,14 +67,13 @@ def encode_noid(num):
     return ''.join([ALPHABET[digit] for digit in digits])
 
 
-# Keep around if needed
-# def decode_noid(noid):
-#     '''Decode the integer represented by a NOID string, ignoring the final
-#     checksum character.'''
-#     noid = noid[:-1]  # strip checksum character
-#     power = len(noid) - 1
-#     num = 0
-#     for char in noid:
-#         num += ALPHABET.index(char) * (ALPHASIZE ** power)
-#         power -= 1
-#     return num
+def decode_noid(noid):
+    '''Decode the integer represented by a NOID string, ignoring the final
+    checksum character.'''
+    noid = noid[:-1]  # strip checksum character
+    power = len(noid) - 1
+    num = 0
+    for char in noid:
+        num += ALPHABET.index(char) * (ALPHASIZE ** power)
+        power -= 1
+    return num

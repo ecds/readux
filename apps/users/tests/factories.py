@@ -9,6 +9,9 @@ class UserFactory(DjangoModelFactory):
     username = Faker("user_name")
     email = Faker("email")
     name = Faker("name")
+    is_superuser = False
+    is_staff = False
+    is_active = True
 
     @post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):

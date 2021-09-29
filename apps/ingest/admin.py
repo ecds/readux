@@ -30,12 +30,15 @@ class LocalAdmin(admin.ModelAdmin):
             local_task_result = TaskResult(task_id=local_task_id)
             local_task_result.save()
             file = request.FILES['bundle']
+
             IngestTaskWatcher.manager.create_watcher(
                 task_id=local_task_id,
                 task_result=local_task_result,
                 task_creator=request.user,
                 filename=file.name
             )
+        else:
+            tasks.create_canvas_form_local_task(obj.id)
 
     def response_add(self, request, obj, post_url_continue=None):
         obj.refresh_from_db()
@@ -87,19 +90,23 @@ class BulkAdmin(admin.ModelAdmin):
             # Skip metadata file now
             if 'metadata' in file.name.casefold() and 'zip' not in guess_type(file.name)[0]:
                 continue
+
             # Associate metadata with zipfile
             if all_metadata is not None:
                 file_meta = clean_metadata(get_associated_meta(all_metadata, file))
             else:
                 file_meta = {}
+
             # Save in storage
             bundle_path = form.storage.save(
                 path.join("bulk", str(obj.id), file.name), file
             )
+
             # Create local
             new_local = Local.objects.create(
                 bulk=obj, bundle=bundle_path, image_server=obj.image_server, metadata=file_meta
             )
+
             if environ["DJANGO_ENV"] != 'test' and environ.get('DJANGO_ENV') != 'test':
                 local_task_id = tasks.create_canvas_form_local_task.delay(new_local.id)
                 local_task_result = TaskResult(task_id=local_task_id)
@@ -110,6 +117,9 @@ class BulkAdmin(admin.ModelAdmin):
                     task_creator=request.user,
                     filename=file.name
                 )
+            # else:
+            #     tasks.create_canvas_form_local_task(new_local.id)
+
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
 

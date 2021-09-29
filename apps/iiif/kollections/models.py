@@ -7,17 +7,12 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
 import config.settings.local as settings
+from ..models import IiifBase
 
-class Collection(models.Model):
+class Collection(IiifBase):
     """Model for IIIF Collection."""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    label = models.CharField(max_length=255, help_text="Title of the collection.")
     summary = models.TextField(
         help_text="Description of the collection."
-    )
-    pid = models.CharField(
-        max_length=255,
-        help_text="Unique ID. Do not use -'s or spaces in the pid."
     )
     attribution = models.CharField(
         max_length=255,

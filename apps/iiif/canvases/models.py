@@ -11,38 +11,23 @@ from django.apps import apps
 from django.db import models
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from ..manifests.models import Manifest
+from ..models import IiifBase
+from ..manifests.models import Manifest, ImageServer
 from ..annotations.models import Annotation
 from . import services
 
 USER = get_user_model()
 
-# TODO: This has moved to Manifest. Remove one everyone has migrated.
-class IServer(models.Model):
-    """Django model for IIIF image server info. Each canvas has one IServer"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    IIIF_IMAGE_SERVER_BASE = models.CharField(
-        max_length=255,
-        default=settings.IIIF_IMAGE_SERVER_BASE
-    )
-
-    def __str__(self):
-        return "%s" % (self.IIIF_IMAGE_SERVER_BASE)
-
-class Canvas(models.Model):
+class Canvas(IiifBase):
     """Django model for IIIF Canvas objects."""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    label = models.CharField(max_length=255)
-    pid = models.CharField(max_length=255)
     summary = models.TextField(blank=True, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.CASCADE)
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     position = models.IntegerField()
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     ocr_offset = models.IntegerField(default=0)
     resource = models.TextField(blank=True, null=True)
-    # TODO: This has moved to Manifest. Remove one everyone has migrated.
-    # IIIF_IMAGE_SERVER_BASE = models.ForeignKey(IServer, on_delete=models.CASCADE, null=True)
     is_starting_page = models.BooleanField(default=False)
     preferred_ocr = (
         ('word', 'word'),
@@ -69,16 +54,25 @@ class Canvas(models.Model):
     @property
     def service_id(self):
         """Concatenated property to represent IIIF service id."""
+        self.__check_image_server()
+        if self.image_server is None:
+
+            return None
+
         return '{h}/{c}'.format(
-            h=self.manifest.image_server.server_base,
+            h=self.image_server.server_base,
             c=quote(self.pid)
         )
 
     @property
     def resource_id(self):
-        """Concatenated propert to represent IIIF resource id."""
+        """Concatenated property to represent IIIF resource id."""
+        self.__check_image_server()
+        if self.image_server is None:
+            return None
+
         return '{h}/{r}'.format(
-            h=self.manifest.image_server.server_base,
+            h=self.image_server.server_base,
             r=self.resource or self.pid
         )
 
@@ -100,33 +94,30 @@ class Canvas(models.Model):
     def thumbnail(self):
         """Concatenated property to represent IIIF thumbnail link."""
         return self.resource_id + '/full/200,/0/default.jpg'
-        # return '{h}/{c}/full/200,/0/default.jpg'.format(
-        #     h=self.manifest.image_server.server_base,
-        #     c=self.resource
-        # )
 
     @property
     def social_media(self):
         """Concatenated property to represent IIIF image link for use in Open Graph metadata."""
+        self.__check_image_server()
+
+        if self.image_server is None:
+            return None
+
         return '{h}/{c}/full/600,/0/default.jpg'.format(
-            h=self.manifest.image_server.server_base,
+            h=self.image_server.server_base,
             c=self.resource
         )
 
     @property
     def twitter_media1(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
-        # TODO: shouldn't this use `self.manifest.image_server.server_base`
+        # TODO: shouldn't this use `self.image_server.server_base`
         return f'{self.resource_id}/full/600,/0/default.jpg'
 
     @property
     def twitter_media2(self):
         """Concatenated property for twitter cards and Open Graph metadata."""
         return f'{self.resource_id}/full/600,/0/default.jpg'
-        # return '{h}/{c}/full/600,/0/default.jpg'.format(
-        #     h=self.manifest.image_server.server_base,
-        #     c=self.resource
-        # )
 
     @property
     def uri(self):
@@ -142,16 +133,8 @@ class Canvas(models.Model):
         if self.height > self.width:
             # portrait
             return f'{self.resource_id}/full/,250/0/default.jpg'
-            # return '{h}/{c}/full/,250/0/default.jpg'.format(
-            #     h=self.manifest.image_server.server_base,
-            #     c=self.resource
-            # )
         # landscape
         return f'{self.resource_id}/pct:25,0,50,100/,250/0/default.jpg'
-        # return '{h}/{c}/pct:25,0,50,100/,250/0/default.jpg'.format(
-        #     h=self.manifest.image_server.server_base,
-        #     c=self.resource
-        # )
 
     @property
     def thumbnail_crop_tallwide(self):
@@ -159,13 +142,8 @@ class Canvas(models.Model):
         if self.height > self.width:
             # portrait
             return f'{self.resource_id}/pct:5,5,90,90/,250/0/default.jpg'
-            # return '{h}/{c}/pct:5,5,90,90/,250/0/default.jpg'.format(
-            #     h=self.manifest.image_server.server_base,
-            #     c=self.resource
-            # )
         # landscape
         return f'{self.resource_id}/pct:5,5,90,90/250,/0/default.jpg'
-        # return "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (self.manifest.image_server.server_base, self.resource)
 
     @property
     def thumbnail_crop_volume(self):
@@ -173,16 +151,8 @@ class Canvas(models.Model):
         if self.height > self.width:
             # portrait
             return f'{self.resource_id}/pct:15,15,70,70/,600/0/default.jpg'
-            # return '{h}/{c}/pct:15,15,70,70/,600/0/default.jpg'.format(
-            #     h=self.manifest.image_server.server_base,
-            #     c=self.resource
-            # )
         # landscape
         return f'{self.resource_id}/pct:25,15,50,85/,600/0/default.jpg'
-        # return '{h}/{c}/pct:25,15,50,85/,600/0/default.jpg'.format(
-        #     h=self.manifest.image_server.server_base,
-        #     c=self.resource
-        # )
 
     @property
     def result(self):
@@ -199,8 +169,11 @@ class Canvas(models.Model):
     def save(self, *args, **kwargs): # pylint: disable = signature-differs
         """
         Override save function to set `resource_id` add OCR,
-        and set as manifest's `start_canvas` if manifest does not have one.
+        set as manifest's `start_canvas` if manifest does not have one,
+        and set
         """
+        self.__check_image_server()
+
         if self.image_info:
             self.width = self.image_info['width']
             self.height = self.image_info['height']
@@ -208,27 +181,26 @@ class Canvas(models.Model):
         if self.resource is None:
             self.resource = self.pid
 
-        super().save(*args, **kwargs)
-
-
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()
+
+        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """
         Override the delete function to clean up files.
         """
-        if self.manifest.image_server.storage_service == 's3':
+        if self.image_server.storage_service == 's3':
             s3 = resource('s3')
-            s3.Object(self.manifest.image_server.storage_path, self.file_name).delete()
+            s3.Object(self.image_server.storage_path, self.file_name).delete()
 
             if self.ocr_file_path:
                 ocr_file = self.ocr_file_path.split("/")[-1]
                 key = f'{self.manifest.pid}/_*ocr*_/{ocr_file}'
-                s3.Object(self.manifest.image_server.storage_path, key).delete()
+                s3.Object(self.image_server.storage_path, key).delete()
         else:
             try:
-                os.remove(os.path.join(self.manifest.image_server.storage_path, self.file_name))
+                os.remove(os.path.join(self.image_server.storage_path, self.file_name))
             except (FileNotFoundError, TypeError):
                 pass
             try:
@@ -242,11 +214,17 @@ class Canvas(models.Model):
     def __str__(self):
         return str(self.pid)
 
+    def __check_image_server(self):
+        try:
+            if self.image_server is None and self.manifest.image_server is not None:
+                self.image_server = self.manifest.image_server
+        except Manifest.DoesNotExist:
+            return None
+
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         ordering = ['position']
 
 class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
-        # Translators: admin:skip
     verbose_name = 'canvas'
     # Translators: admin:skip
     verbose_name_plural = 'canvases'

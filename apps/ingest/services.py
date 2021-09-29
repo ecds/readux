@@ -47,7 +47,7 @@ def create_manifest(ingest):
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
     else:
-        manifest = Manifest(pid=str(uuid4()))
+        manifest = Manifest()
 
     manifest.image_server = ingest.image_server
     manifest.save()

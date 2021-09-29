@@ -4,10 +4,11 @@ Factory for created canvas objects for testing.
 import random
 from factory.django import DjangoModelFactory
 from factory import Faker
+from time import time
+from apps.utils.noid import encode_noid
 from ..models import Canvas
 
 class CanvasFactory(DjangoModelFactory):
-    pid = str(random.randrange(2000, 5000) + random.randrange(200, 500))
     label = Faker("name")
     height = random.randrange(200, 500)
     width = random.randrange(200, 500)

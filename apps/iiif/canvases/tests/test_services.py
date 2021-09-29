@@ -1,15 +1,16 @@
 """
 Test cases for :class:`apps.iiif.canvases`
 """
-from apps.iiif import manifests
 import json
 from os.path import join
-from urllib.parse import quote
-import httpretty
+from time import time
+import boto3
+from moto import mock_s3
 from django.test import TestCase, Client
 from django.urls import reverse
 import config.settings.local as settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
+from apps.utils.noid import encode_noid
 from ..models import Canvas
 from .. import services
 from ..apps import CanvasesConfig
@@ -114,9 +115,6 @@ class CanvasTests(TestCase):
         assert ocr[1]['y'] == 185
 
     def test_line_by_line_from_alto(self):
-        # self.canvas.default_ocr = 'line'
-        # self.canvas.annotation_set.all().delete()
-        # self.canvas.save()
         canvas = CanvasFactory.create(default_ocr='line', manifest=ManifestFactory.create())
         ocr_file = open(join(settings.APPS_DIR, 'iiif/canvases/fixtures/alto.xml'), 'r').read()
         alto = services.add_alto_ocr(ocr_file)
@@ -133,9 +131,7 @@ class CanvasTests(TestCase):
             assert anno.order == num
 
     def test_ocr_from_tsv(self):
-        iiif_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
-        self.canvas.manifest.image_server = iiif_server
-        self.canvas.manifest.save()
+        self.manifest.image_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
         canvas = CanvasFactory(manifest=self.canvas.manifest, pid='boo')
         canvas.save()
         # TODO: TOO MANY STEPS TO MAKE OCR????
@@ -237,3 +233,19 @@ class CanvasTests(TestCase):
         canvas.refresh_from_db()
         assert canvas.height == 3000
         assert canvas.width == 3000
+
+    @mock_s3
+    def test_ocr_in_s3(self):
+        bucket_name = encode_noid(int(time()))
+        manifest = ManifestFactory.create(
+            image_server = ImageServerFactory.create(storage_service = 's3', storage_path=bucket_name, server_base='images.readux.ecds.emory')
+        )
+        tsv_file_path = 'apps/iiif/canvases/fixtures/00000002.tsv'
+        canvas = manifest.canvas_set.first()
+        canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/00000002.tsv'
+        conn = boto3.resource('s3', region_name='us-east-1')
+        conn.create_bucket(Bucket=manifest.image_server.storage_path)
+        conn.create_bucket(Bucket=bucket_name)
+        manifest.image_server.bucket.upload_file(tsv_file_path, f'{manifest.pid}/_*ocr*_/00000002.tsv')
+        fetched_ocr = services.fetch_positional_ocr(canvas)
+        assert open(tsv_file_path, 'rb').read() == fetched_ocr

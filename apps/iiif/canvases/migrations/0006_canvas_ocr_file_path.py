@@ -15,4 +15,11 @@ class Migration(migrations.Migration):
             name='ocr_file_path',
             field=models.FilePathField(allow_folders=True, blank=True, null=True, path='/tmp', recursive=True),
         ),
+        migrations.RemoveField(
+            model_name='canvas',
+            name='IIIF_IMAGE_SERVER_BASE',
+        ),
+        migrations.DeleteModel(
+            name='IServer',
+        ),
     ]

@@ -115,8 +115,10 @@ def fetch_positional_ocr(canvas):
                 data_format='text'
             )
 
-        if canvas.ocr_file_path.startswith('https') and 's3' in canvas.ocr_file_path:
-            return fetch_url(canvas.ocr_file_path, data_format='text')
+        if canvas.image_server.storage_service == 's3':
+            return canvas.image_server.bucket.Object(canvas.ocr_file_path).get()['Body'].read()
+
+            # return fetch_url(canvas.ocr_file_path, data_format='text')
         # Not sure we will need this. Leaving just as a reminder.
         # else:
         #     file = open(canvas.ocr_file_path)

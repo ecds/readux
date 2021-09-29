@@ -90,11 +90,6 @@ class Local(IngestAbstractModel):
             return client('s3')
         return None
 
-    @property
-    def bucket(self):
-        s3 = resource('s3')
-        return s3.Bucket(self.image_server.storage_path)
-
     def open_metadata(self):
         """
         Set metadata property from extracted metadata from file.
@@ -131,9 +126,9 @@ class Local(IngestAbstractModel):
                     tmp_file += chunk
             if file_type and not self.__is_junk(file_name):
                 if 'image' in file_type and 'images' in file_path:
-                    self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
+                    self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
                 if 'text' in file_type and 'ocr' in file_path:
-                    self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
+                    self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
 
     @property
     def file_list(self):
@@ -159,18 +154,22 @@ class Local(IngestAbstractModel):
         self.volume_to_s3()
 
         image_files = [
-            file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         if len(image_files) == 0:
             # TODO: Throw an error here?
             pass
+
         ocr_files = [
-            file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' in file.key
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         for index, key in enumerate(sorted(image_files)):
             image_file = key.split('/')[-1]
+
+            if not image_file:
+                continue
 
             LOGGER.debug(f'Creating canvas from {image_file}')
 
@@ -180,7 +179,7 @@ class Local(IngestAbstractModel):
 
                 try:
                     ocr_key = [key for key in ocr_files if image_name in key][0]
-                    ocr_file_path = f'https://readux.s3.amazonaws.com/{ocr_key}'
+                    ocr_file_path = ocr_key
                 except IndexError:
                     # Every image may not have a matching OCR file
                     ocr_file_path = None

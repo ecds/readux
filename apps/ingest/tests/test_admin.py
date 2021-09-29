@@ -2,7 +2,6 @@ from os.path import join
 import boto3
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
-from django.contrib.auth import get_user_model
 from django.core import files
 from django.http import HttpResponseRedirect
 from django.test import TestCase
@@ -10,9 +9,12 @@ from django.test.client import RequestFactory
 from django_celery_results.models import TaskResult
 from moto import mock_s3
 from apps.ingest.forms import BulkVolumeUploadForm
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from apps.ingest.models import Bulk, Local, Remote, IngestTaskWatcher
 from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin, TaskWatcherAdmin
+from apps.users.tests.factories import UserFactory
 from .factories import BulkFactory, LocalFactory, RemoteFactory, TaskResultFactory
 
 @mock_s3
@@ -27,9 +29,7 @@ class IngestAdminTest(TestCase):
             storage_path='readux'
         )
 
-        self.user = get_user_model().objects.create_superuser(
-            'adminuser', 'myemail@test.com', password='top_secret'
-        )
+        self.user = UserFactory.create(is_superuser=True)
 
         self.task_result = TaskResultFactory()
         self.task_watcher = IngestTaskWatcher.manager.create_watcher(
@@ -45,29 +45,38 @@ class IngestAdminTest(TestCase):
         conn.create_bucket(Bucket='readux-ingest')
 
     def test_local_admin_save(self):
-        """It should add a manifest to the Local object"""
-        local = LocalFactory.create()
+        """It should add a create a manifest and canvases and delete the Local object"""
+        local = LocalFactory.build(
+            image_server=self.image_server
+        )
 
-        assert local.manifest is None
+        original_manifest_count = Manifest.objects.count()
+        original_canvas_count = Canvas.objects.count()
 
-        filepath = join(settings.APPS_DIR, 'ingest/fixtures/bundle.zip')
+        request_factory = RequestFactory()
 
-        with open(filepath, 'rb') as f:
+        with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as f:
             content = files.base.ContentFile(f.read())
 
-        bundle_file = files.File(content.file, 'bundle.zip')
+        local.bundle = files.File(content.file, 'no_meta_file.zip')
 
-        data = { 'bundle': [bundle_file] }
-        request_factory = RequestFactory()
-        req = request_factory.post('/admin/ingest/local/add/', data=data)
-        req.user = self.user
+        req = request_factory.post('/admin/ingest/local/add/', data={})
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         local_model_admin.save_model(obj=local, request=req, form=None, change=None)
 
-        local.refresh_from_db()
-        assert local.manifest is not None
-        # assert local.manifest.canvas_set.count() == 10
+        # Saving should kick off the task to create the canvases and then delete
+        # the `Local` ingest object when done.
+        try:
+            local.refresh_from_db()
+            assert False
+        except Local.DoesNotExist:
+            assert True
+
+        # A new `Manifest` should have been created along with the canvases
+        # in the ingest
+        assert Manifest.objects.count() == original_manifest_count + 1
+        assert Canvas.objects.count() == original_canvas_count + 10
 
     def test_local_admin_response_add(self):
         """It should redirect to new manifest"""
@@ -171,7 +180,7 @@ class IngestAdminTest(TestCase):
 
     def test_bulk_admin_with_external_metadata(self):
         """It should add the metadata to the matching Local object"""
-        bulk = BulkFactory.create()
+        bulk = BulkFactory.create(image_server=self.image_server)
 
         data = {}
         data['volume_files'] = []

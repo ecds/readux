@@ -15,6 +15,7 @@ from modelcluster.models import ClusterableModel
 import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
+from..models import IiifBase
 JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
 
 def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
@@ -46,7 +47,7 @@ class ImageServer(models.Model):
 
     @property
     def bucket(self):
-        if self.storage_source == 's3':
+        if self.storage_service == 's3':
             s3 = resource('s3')
             return s3.Bucket(self.storage_path)
         return None
@@ -73,16 +74,13 @@ class ManifestManager(models.Manager): # pylint: disable = too-few-public-method
         vector = SearchVector(StringAgg('canvas__annotation__content', delimiter=' '))
         return self.get_queryset().annotate(document=vector)
 
-class Manifest(ClusterableModel):
+class Manifest(IiifBase):
     """Model class for IIIF Manifest"""
 
     DIRECTIONS = (
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')
     )
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=True)
-    pid = models.CharField(max_length=255)
-    label = models.CharField(max_length=255)
     summary = models.TextField()
     author = models.TextField(null=True)
     published_city = models.TextField(null=True)

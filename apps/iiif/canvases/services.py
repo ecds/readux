@@ -115,8 +115,10 @@ def fetch_positional_ocr(canvas):
                 data_format='text'
             )
 
-        if canvas.ocr_file_path.startswith('https') and 's3' in canvas.ocr_file_path:
-            return fetch_url(canvas.ocr_file_path, data_format='text')
+        if canvas.image_server.storage_service == 's3':
+            return canvas.image_server.bucket.Object(canvas.ocr_file_path).get()['Body'].read()
+
+            # return fetch_url(canvas.ocr_file_path, data_format='text')
         # Not sure we will need this. Leaving just as a reminder.
         # else:
         #     file = open(canvas.ocr_file_path)
@@ -166,9 +168,8 @@ def add_positional_ocr(canvas, result):
                         })
     elif 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
 
-        lines = result.split('\n')
-        # if (lines[0].startswith(content)):
-        #     lines.pop(0)
+        lines = str(result).split('\n')
+
         # Sometimes the TSV has some extra tabs at the beginign and the end. These have
         # to be cleaned out. It gets complicatied.
         for index, line in enumerate(lines):

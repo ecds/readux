@@ -26,7 +26,7 @@ class LocalTest(TestCase):
         """ Set instance variables. """
         self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
         self.image_server = ImageServerFactory(
-            server_base='http://images.readux.ecds.emory',
+            server_base='http://readux.s3.amazonaws.com',
             storage_service='s3',
             storage_path='readux'
         )
@@ -67,7 +67,7 @@ class LocalTest(TestCase):
 
         local.volume_to_s3()
 
-        image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        image_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert f'{local.manifest.pid}/00000008.jpg' in image_files
 
@@ -76,9 +76,9 @@ class LocalTest(TestCase):
 
         local.volume_to_s3()
 
-        image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        ocr_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
-        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in image_files
+        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadat supplied in an Excel file. """
@@ -111,16 +111,16 @@ class LocalTest(TestCase):
         """ It should create a Manifest even when no metadata file is supplied. """
         local = self.mock_local('no_meta_file.zip', with_manifest=True)
 
-        assert UUID(local.manifest.pid).version == 4
+        assert isinstance(local.manifest.pid, str)
+        assert len(local.manifest.pid) == 8
 
     def test_single_image(self):
-        """
-        """
+        """ It should work when only one image is present. """
         local = self.mock_local('single-image.zip', with_manifest=True)
 
         local.volume_to_s3()
 
-        image_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        image_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert f'{local.manifest.pid}/0011.jpg' in image_files
 
@@ -133,7 +133,7 @@ class LocalTest(TestCase):
         local.volume_to_s3()
         local.volume_to_s3()
 
-        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert 'ocr/.junk.tsv' in local.file_list
         assert 'images/.00000010.jpg' in local.file_list
@@ -151,7 +151,7 @@ class LocalTest(TestCase):
         local.volume_to_s3()
         local.volume_to_s3()
 
-        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         underscore_files = [f for f in local.file_list if '_' in f]
         assert len(underscore_files) == 10
@@ -170,7 +170,7 @@ class LocalTest(TestCase):
         local.volume_to_s3()
 
         files_in_zip = local.file_list
-        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert 'metadata/images/' in files_in_zip
         assert all('metadata' in f for f in files_in_zip)
@@ -195,7 +195,7 @@ class LocalTest(TestCase):
         local.volume_to_s3()
         local.volume_to_s3()
 
-        ingest_files = [f.key for f in local.bucket.objects.filter(Prefix=local.manifest.pid)]
+        ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert all('p-i-d' in f for f in ingest_files)
 

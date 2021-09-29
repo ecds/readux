@@ -1,5 +1,8 @@
+from apps.utils.noid import encode_noid
+from time import time
 from django.test import TestCase
 from .fetch import fetch_url
+from .noid import _digits, decode_noid, encode_noid
 import httpretty
 import json
 
@@ -39,3 +42,12 @@ class TestUtils(TestCase):
             fetch_url('http://cnn.com', verbosity=3)
             assert 'bad content' in cm.output[0]
             assert 'WARNING' in cm.output[0]
+
+    def test_digits_with_empty_sting(self):
+        assert _digits('') == []
+
+    def test_noid_decode(self):
+        now = int(time())
+        noid = encode_noid(now)
+        assert noid != now
+        assert decode_noid(noid) == now

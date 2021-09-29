@@ -13,6 +13,7 @@ from tablib import Dataset
 from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
 from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
@@ -25,6 +26,37 @@ LOGGER = logging.getLogger(__name__)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
+
+class IngestTaskWatcherManager(models.Manager):
+    """ Manager class for associating user and ingest data with a task result """
+    def create_watcher(self, filename, task_id, task_result, task_creator):
+        """
+        Creates an instance of IngestTaskWatcher with provided params
+        """
+        watcher = self.create(
+            filename=filename,
+            task_id=task_id,
+            task_result=task_result,
+            task_creator=task_creator
+        )
+        return watcher
+
+
+class IngestTaskWatcher(models.Model):
+    """ Model class for associating user and ingest data with a task result """
+    filename = models.CharField(max_length=255, null=True)
+    task_id = models.CharField(max_length=255, null=True)
+    task_result = models.ForeignKey(TaskResult, on_delete=models.CASCADE, null=True)
+    task_creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='created_tasks'
+    )
+    manager = IngestTaskWatcherManager()
+
+    class Meta:
+        verbose_name_plural = 'Ingest Statuses'
 
 class IngestAbstractModel(models.Model):
     metadata = JSONField(default=dict, blank=True)

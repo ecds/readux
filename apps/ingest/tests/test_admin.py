@@ -1,23 +1,19 @@
-from apps.readux.tests.test_export import User
-from django.core import files
-from apps.ingest.forms import BulkVolumeUploadForm
-from os import  environ
 from os.path import join
 import boto3
-from django.test.client import RequestFactory
-from moto import mock_s3
-from django.test import TestCase
+from django.conf import settings
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django_celery_results.models import TaskResult
+from django.core import files
 from django.http import HttpResponseRedirect
-from django.conf import settings
-from celery.contrib.pytest import celery_app
+from django.test import TestCase
+from django.test.client import RequestFactory
+from django_celery_results.models import TaskResult
+from moto import mock_s3
+from apps.ingest.forms import BulkVolumeUploadForm
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from apps.ingest.models import Bulk, Local, Remote, IngestTaskWatcher
-from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin
-from .factories import BulkFactory, LocalFactory, RemoteFactory
+from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin, TaskWatcherAdmin
+from .factories import BulkFactory, LocalFactory, RemoteFactory, TaskResultFactory
 
 @mock_s3
 class IngestAdminTest(TestCase):
@@ -33,6 +29,14 @@ class IngestAdminTest(TestCase):
 
         self.user = get_user_model().objects.create_superuser(
             'adminuser', 'myemail@test.com', password='top_secret'
+        )
+
+        self.task_result = TaskResultFactory()
+        self.task_watcher = IngestTaskWatcher.manager.create_watcher(
+            task_id='1',
+            task_result=self.task_result,
+            task_creator=self.user,
+            filename='test_fake.zip'
         )
 
         # Create fake bucket for moto's mock S3 service.
@@ -201,6 +205,20 @@ class IngestAdminTest(TestCase):
         assert isinstance(local.metadata, dict)
         assert len(local.metadata) != 0
         assert local.metadata['pid'] == 'no_meta_file'
+
+
+    def test_task_watcher_admin_functions(self):
+        """It should get the appropriate values from the watcher's associated TaskResult"""
+        watcher = self.task_watcher
+        assert isinstance(watcher.task_result, TaskResult)
+        assert watcher.task_id == watcher.task_result.task_id
+        assert watcher.task_result.task_name == 'fake_task'
+        assert watcher.task_result.status == 'PENDING'
+
+        watcher_admin = TaskWatcherAdmin(model=IngestTaskWatcher, admin_site=AdminSite())
+        assert watcher_admin.task_name(watcher) == 'fake_task'
+        assert 'PENDING' in watcher_admin.task_status(watcher)
+
 
     # def test_local_admin_save_update_manifest(self):
     #     """It should add a manifest to the Local object"""

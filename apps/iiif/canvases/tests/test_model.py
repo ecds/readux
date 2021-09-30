@@ -82,3 +82,12 @@ class TestCanvasModels(TestCase):
         self.assertEqual(get_image_error, 'NoSuchKey')
         self.assertEqual(get_ocr_error, 'NoSuchKey')
 
+    def test_no_manifest(self):
+        canvas = Canvas()
+        assert canvas.service_id is None
+        assert canvas.resource_id is None
+        assert canvas.social_media is None
+
+    def test_string_representation(self):
+        canvas = CanvasFactory.create(manifest=ManifestFactory.create())
+        assert str(canvas) == canvas.pid

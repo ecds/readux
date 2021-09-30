@@ -13,6 +13,7 @@ from tablib import Dataset
 from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
 from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
@@ -25,6 +26,37 @@ LOGGER = logging.getLogger(__name__)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
+
+class IngestTaskWatcherManager(models.Manager):
+    """ Manager class for associating user and ingest data with a task result """
+    def create_watcher(self, filename, task_id, task_result, task_creator):
+        """
+        Creates an instance of IngestTaskWatcher with provided params
+        """
+        watcher = self.create(
+            filename=filename,
+            task_id=task_id,
+            task_result=task_result,
+            task_creator=task_creator
+        )
+        return watcher
+
+
+class IngestTaskWatcher(models.Model):
+    """ Model class for associating user and ingest data with a task result """
+    filename = models.CharField(max_length=255, null=True)
+    task_id = models.CharField(max_length=255, null=True)
+    task_result = models.ForeignKey(TaskResult, on_delete=models.CASCADE, null=True)
+    task_creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='created_tasks'
+    )
+    manager = IngestTaskWatcherManager()
+
+    class Meta:
+        verbose_name_plural = 'Ingest Statuses'
 
 class IngestAbstractModel(models.Model):
     metadata = JSONField(default=dict, blank=True)
@@ -57,11 +89,6 @@ class Local(IngestAbstractModel):
         if self.image_server.storage_service == 's3':
             return client('s3')
         return None
-
-    @property
-    def bucket(self):
-        s3 = resource('s3')
-        return s3.Bucket(self.image_server.storage_path)
 
     def open_metadata(self):
         """
@@ -99,9 +126,9 @@ class Local(IngestAbstractModel):
                     tmp_file += chunk
             if file_type and not self.__is_junk(file_name):
                 if 'image' in file_type and 'images' in file_path:
-                    self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
+                    self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
                 if 'text' in file_type and 'ocr' in file_path:
-                    self.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
+                    self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
 
     @property
     def file_list(self):
@@ -127,18 +154,22 @@ class Local(IngestAbstractModel):
         self.volume_to_s3()
 
         image_files = [
-            file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         if len(image_files) == 0:
             # TODO: Throw an error here?
             pass
+
         ocr_files = [
-            file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' in file.key
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         for index, key in enumerate(sorted(image_files)):
             image_file = key.split('/')[-1]
+
+            if not image_file:
+                continue
 
             LOGGER.debug(f'Creating canvas from {image_file}')
 
@@ -148,7 +179,7 @@ class Local(IngestAbstractModel):
 
                 try:
                     ocr_key = [key for key in ocr_files if image_name in key][0]
-                    ocr_file_path = f'https://readux.s3.amazonaws.com/{ocr_key}'
+                    ocr_file_path = ocr_key
                 except IndexError:
                     # Every image may not have a matching OCR file
                     ocr_file_path = None

@@ -1,10 +1,11 @@
 """ Module of service classes and methods for ingest. """
 from mimetypes import guess_type
+from time import time
 from urllib.parse import unquote, urlparse
-from uuid import uuid4
 from django.apps import apps
 from tablib.core import Dataset
 from apps.iiif.manifests.models import Manifest, RelatedLink
+from apps.utils.noid import encode_noid
 
 def clean_metadata(metadata):
     """Remove keys that do not aligin with Manifest fields.
@@ -43,12 +44,14 @@ def create_manifest(ingest):
     except TypeError:
         metadata = None
     if metadata:
-        manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+        if 'pid' in metadata:
+            manifest = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+        else:
+            manifest = Manifest()
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
     else:
-        # PID generation
-        manifest = Manifest(pid=generate_pid())
+        manifest = Manifest()
 
     manifest.image_server = ingest.image_server
     manifest.save()
@@ -175,8 +178,8 @@ def get_associated_meta(all_metadata, file):
         # Match filename column, case-sensitive, against filename
         if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
             file_meta = meta_dict
-            # PID generation
-            file_meta['pid'] = generate_pid()
+            if 'pid' not in file_meta:
+                file_meta['pid'] = generate_pid()
     return file_meta
 
 def generate_pid():
@@ -185,4 +188,4 @@ def generate_pid():
     :return: Returns a newly generated PID
     :rtype: str
     """
-    return str(uuid4())
+    return encode_noid(int(time()))

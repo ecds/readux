@@ -1,19 +1,21 @@
-from django.core import files
-from apps.ingest.forms import BulkVolumeUploadForm
-from os import  environ
 from os.path import join
 import boto3
-from django.test.client import RequestFactory
-from moto import mock_s3
-from django.test import TestCase
-from django.contrib.admin.sites import AdminSite
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.http import HttpResponseRedirect
 from django.conf import settings
+from django.contrib.admin.sites import AdminSite
+from django.core import files
+from django.http import HttpResponseRedirect
+from django.test import TestCase
+from django.test.client import RequestFactory
+from django_celery_results.models import TaskResult
+from moto import mock_s3
+from apps.ingest.forms import BulkVolumeUploadForm
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
-from apps.ingest.models import Bulk, Local, Remote
-from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin
-from .factories import BulkFactory, LocalFactory, RemoteFactory
+from apps.ingest.models import Bulk, Local, Remote, IngestTaskWatcher
+from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin, TaskWatcherAdmin
+from apps.users.tests.factories import UserFactory
+from .factories import BulkFactory, LocalFactory, RemoteFactory, TaskResultFactory
 
 @mock_s3
 class IngestAdminTest(TestCase):
@@ -27,34 +29,54 @@ class IngestAdminTest(TestCase):
             storage_path='readux'
         )
 
+        self.user = UserFactory.create(is_superuser=True)
+
+        self.task_result = TaskResultFactory()
+        self.task_watcher = IngestTaskWatcher.manager.create_watcher(
+            task_id='1',
+            task_result=self.task_result,
+            task_creator=self.user,
+            filename='test_fake.zip'
+        )
+
         # Create fake bucket for moto's mock S3 service.
         conn = boto3.resource('s3', region_name='us-east-1')
         conn.create_bucket(Bucket='readux')
         conn.create_bucket(Bucket='readux-ingest')
 
     def test_local_admin_save(self):
-        """It should add a manifest to the Local object"""
-        local = LocalFactory.create()
+        """It should add a create a manifest and canvases and delete the Local object"""
+        local = LocalFactory.build(
+            image_server=self.image_server
+        )
 
-        assert local.manifest is None
+        original_manifest_count = Manifest.objects.count()
+        original_canvas_count = Canvas.objects.count()
 
-        filepath = join(settings.APPS_DIR, 'ingest/fixtures/bundle.zip')
+        request_factory = RequestFactory()
 
-        with open(filepath, 'rb') as f:
+        with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as f:
             content = files.base.ContentFile(f.read())
 
-        bundle_file = files.File(content.file, 'bundle.zip')
+        local.bundle = files.File(content.file, 'no_meta_file.zip')
 
-        data = { 'bundle': [bundle_file] }
-        request_factory = RequestFactory()
-        req = request_factory.post('/admin/ingest/local/add/', data=data)
+        req = request_factory.post('/admin/ingest/local/add/', data={})
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         local_model_admin.save_model(obj=local, request=req, form=None, change=None)
 
-        local.refresh_from_db()
-        assert local.manifest is not None
-        # assert local.manifest.canvas_set.count() == 10
+        # Saving should kick off the task to create the canvases and then delete
+        # the `Local` ingest object when done.
+        try:
+            local.refresh_from_db()
+            assert False
+        except Local.DoesNotExist:
+            assert True
+
+        # A new `Manifest` should have been created along with the canvases
+        # in the ingest
+        assert Manifest.objects.count() == original_manifest_count + 1
+        assert Canvas.objects.count() == original_canvas_count + 10
 
     def test_local_admin_response_add(self):
         """It should redirect to new manifest"""
@@ -102,6 +124,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/')
+        req.user = self.user
 
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()
@@ -134,6 +157,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/', data=data)
+        req.user = self.user
 
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()
@@ -156,7 +180,7 @@ class IngestAdminTest(TestCase):
 
     def test_bulk_admin_with_external_metadata(self):
         """It should add the metadata to the matching Local object"""
-        bulk = BulkFactory.create()
+        bulk = BulkFactory.create(image_server=self.image_server)
 
         data = {}
         data['volume_files'] = []
@@ -177,6 +201,7 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
         req = request_factory.post('/admin/ingest/bulk/add/', data=data)
+        req.user = self.user
 
         bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
         mock_form = BulkVolumeUploadForm()
@@ -189,6 +214,20 @@ class IngestAdminTest(TestCase):
         assert isinstance(local.metadata, dict)
         assert len(local.metadata) != 0
         assert local.metadata['label'] == 'Test Bundle'
+
+
+    def test_task_watcher_admin_functions(self):
+        """It should get the appropriate values from the watcher's associated TaskResult"""
+        watcher = self.task_watcher
+        assert isinstance(watcher.task_result, TaskResult)
+        assert watcher.task_id == watcher.task_result.task_id
+        assert watcher.task_result.task_name == 'fake_task'
+        assert watcher.task_result.status == 'PENDING'
+
+        watcher_admin = TaskWatcherAdmin(model=IngestTaskWatcher, admin_site=AdminSite())
+        assert watcher_admin.task_name(watcher) == 'fake_task'
+        assert 'PENDING' in watcher_admin.task_status(watcher)
+
 
     # def test_local_admin_save_update_manifest(self):
     #     """It should add a manifest to the Local object"""

@@ -45,9 +45,9 @@ def create_manifest(ingest):
         metadata = None
     if metadata:
         if 'pid' in metadata:
-            manifest = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+            manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
         else:
-            manifest = Manifest()
+            manifest, created = Manifest.objects.get_or_create()
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
     else:
@@ -178,14 +178,4 @@ def get_associated_meta(all_metadata, file):
         # Match filename column, case-sensitive, against filename
         if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
             file_meta = meta_dict
-            if 'pid' not in file_meta:
-                file_meta['pid'] = generate_pid()
     return file_meta
-
-def generate_pid():
-    """
-    Generate a PID for a volume.
-    :return: Returns a newly generated PID
-    :rtype: str
-    """
-    return encode_noid(int(time()))

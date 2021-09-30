@@ -213,7 +213,7 @@ class IngestAdminTest(TestCase):
         assert local.metadata is not None
         assert isinstance(local.metadata, dict)
         assert len(local.metadata) != 0
-        assert local.metadata['pid'] == 'no_meta_file'
+        assert local.metadata['label'] == 'Test Bundle'
 
 
     def test_task_watcher_admin_functions(self):

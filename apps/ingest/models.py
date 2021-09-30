@@ -154,7 +154,7 @@ class Local(IngestAbstractModel):
         self.volume_to_s3()
 
         image_files = [
-            file.key for file in self.image_server.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         if len(image_files) == 0:
@@ -162,7 +162,7 @@ class Local(IngestAbstractModel):
             pass
 
         ocr_files = [
-            file.key for file in self.image_server.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         for index, key in enumerate(sorted(image_files)):
@@ -195,9 +195,7 @@ class Local(IngestAbstractModel):
 
             if created and canvas.ocr_file_path is not None:
                 if os.environ['DJANGO_ENV'] == 'test':
-                    ocr = get_ocr(canvas)
-                    if ocr is not None:
-                        add_ocr_annotations(canvas, ocr)
+                    add_ocr_task(canvas.id)
                 else:
                     add_ocr_task.delay(canvas.id)
 

@@ -17,6 +17,7 @@ Django==2.2.23  # https://www.djangoproject.com/
 #django-environ==0.4.5  # https://github.com/joke2k/django-environ
 git+https://github.com/joke2k/django-environ@develop
 django-model-utils==3.1.2  # https://github.com/jazzband/django-model-utils
+django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
 django-allauth>=0.45.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.8.1  # https://github.com/django-crispy-forms/django-crispy-forms
 django-redis==5.0.0  # https://github.com/niwinz/django-redis

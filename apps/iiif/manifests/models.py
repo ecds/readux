@@ -123,7 +123,6 @@ class Manifest(IiifBase):
         blank=True,
         null=True
     )
-    # image_server = models.ForeignKey(ImageServer, on_delete=models.CASCADE, null=True)
 
     def get_absolute_url(self):
         """Absolute URL for manifest
@@ -201,6 +200,9 @@ class Manifest(IiifBase):
 
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
+        if not self._state.adding and 'pid' in self.get_dirty_fields() and self.image_server.storage_service == 's3':
+            self.__rename_s3_objects()
+
         if '_' in self.pid:
             self.pid = self.pid.replace('_', '-')
         Canvas = apps.get_model('canvases.canvas')
@@ -228,6 +230,14 @@ class Manifest(IiifBase):
             canvas.delete()
 
         super().delete(*args, **kwargs)
+
+    def __rename_s3_objects(self):
+        original_pid = self.get_dirty_fields()['pid']
+        keys = [f.key for f in self.image_server.bucket.objects.filter(Prefix=f'{original_pid}/')]
+        for key in keys:
+            obj = self.image_server.bucket.Object(key.replace(original_pid, self.pid))
+            obj.copy({ 'Bucket': self.image_server.storage_path, 'Key': key })
+            self.image_server.bucket.Object(key).delete()
 
 # TODO: is this needed?
 class Note(models.Model):

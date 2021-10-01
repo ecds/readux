@@ -1,8 +1,9 @@
 -r ./base.txt
 
 Werkzeug==0.16.1  # https://github.com/pallets/werkzeug
-ipdb==0.11  # https://github.com/gotcha/ipdb
+ipdb==0.13.9  # https://github.com/gotcha/ipdb
 Sphinx==1.8.1  # https://github.com/sphinx-doc/sphinx
+# TODO: Upgrade after moving to Django 3
 psycopg2-binary==2.8.4  # https://github.com/psycopg/psycopg2
 
 # Testing
@@ -16,7 +17,7 @@ iiif-prezi==0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty==1.0.2 # https://pypi.org/project/httpretty/
 #mock==4.0.2
 cssutils==1.0.2 # https://pypi.org/project/cssutils/
-pytest-django==4.3.0  # https://github.com/pytest-dev/pytest-django
+pytest-django==4.4.0  # https://github.com/pytest-dev/pytest-django
 moto==2.2.2 # https://github.com/spulec/moto
 
 # Code quality
@@ -30,7 +31,7 @@ coveralls
 factory-boy==3.2.0  # https://github.com/FactoryBoy/factory_boy
 faker==8.10.0
 
-django-debug-toolbar==2.2  # https://github.com/jazzband/django-debug-toolbar
+django-debug-toolbar==2.2.1  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==2.2.9  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin==1.8.0  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https

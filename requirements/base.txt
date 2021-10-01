@@ -1,7 +1,7 @@
 pytz==2019.3  # https://github.com/stub42/pytz
 python-slugify==4.0.0  # https://github.com/un33k/python-slugify
 Pillow
-argon2-cffi==18.3.0  # https://github.com/hynek/argon2_cffi
+argon2-cffi==20.1.0  # https://github.com/hynek/argon2_cffi
 redis==3.5.3  # https://github.com/antirez/redis
 bs4
 pyyaml
@@ -13,13 +13,13 @@ pyld==1.0.5
 # ------------------------------------------------------------------------------
 # Django AllAuth 0.45 is NOT compatible with Django :(
 # When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django==2.2.23  # https://www.djangoproject.com/
+Django==2.2.24  # https://www.djangoproject.com/
 #django-environ==0.4.5  # https://github.com/joke2k/django-environ
 git+https://github.com/joke2k/django-environ@develop
 django-model-utils==3.1.2  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
 django-allauth>=0.45.0  # https://github.com/pennersr/django-allauth
-django-crispy-forms==1.8.1  # https://github.com/django-crispy-forms/django-crispy-forms
+django-crispy-forms==1.12.0  # https://github.com/django-crispy-forms/django-crispy-forms
 django-redis==5.0.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
 django-modeltranslation>=0.17.2 # https://github.com/deschler/django-modeltranslation
@@ -40,7 +40,7 @@ django-sass-processor
 pylint-django==2.4.4
 
 # Wagtail
-wagtail==2.9.3
+wagtail==2.11.8
 # wagtailmenus==2.13
 git+git://github.com/rkhleics/wagtailmenus.git@ddbc73797cfa9e6c94c1b0850b4ad0bc02b09667
 wagtail-condensedinlinepanel==0.5.3

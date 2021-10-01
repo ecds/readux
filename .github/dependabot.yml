@@ -1,0 +1,32 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  target-branch: develop
+  ignore:
+  - dependency-name: ipdb
+    versions:
+    - 0.13.4
+    - 0.13.5
+    - 0.13.6
+  - dependency-name: django-crispy-forms
+    versions:
+    - 1.10.0
+    - 1.11.0
+    - 1.11.1
+  - dependency-name: django
+    versions:
+    - 2.2.13
+  - dependency-name: coverage
+    versions:
+    - "5.4"
+  - dependency-name: pytest-django
+    versions:
+    - 4.1.0
+  - dependency-name: wagtail
+    versions:
+    - 2.9.3

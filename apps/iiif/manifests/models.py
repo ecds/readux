@@ -113,6 +113,7 @@ class Manifest(IiifBase):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     autocomplete_search_field = 'label'
+    # TODO: This has to be removed/redone before we upgrade to Django 3
     search_vector = SearchVectorField(null=True, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     objects = ManifestManager()

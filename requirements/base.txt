@@ -50,8 +50,7 @@ wagtail-cache==1.0.1
 
 # Import/Export
 django-import-export==2.0.2
-gitpython==3.0.5
-gitdb2==2.0.6
+gitpython==3.0.9
 
 django-background-tasks==1.2.5
 

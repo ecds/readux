@@ -1,6 +1,8 @@
 {% load static i18n %}<!DOCTYPE html>
 {% load menu_tags %}
 {% load sass_tags %}
+{% load wagtailcore_tags %}
+{% wagtail_site as current_site %}
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -53,7 +55,7 @@
     <!--<meta property="og:url" content="https://readux.ecds.emory.edu" />-->
     {% endif %}
     <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
-    <meta property="og:site_name" content="{{ request.site.site_name }}" />
+    <meta property="og:site_name" content="{{ current_site.site_name }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@emorycds" />
     <meta name="twitter:creator" content="@emorycds" />
@@ -148,9 +150,9 @@
           </ul>
         </div>
       </nav>
-      
+
       <main id='main'>
-      
+
       {% if messages %}
           {% for message in messages %}
             <div class="uk-alert-{{ message.tags }}" uk-alert>
@@ -187,7 +189,7 @@
       {% block viewer %}{% endblock viewer %}
 
     </main>
-    
+
     </div>
 
     {% block javascript %}

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models import signals
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 from django.contrib.auth import get_user_model
 from abc import abstractmethod
 from bs4 import BeautifulSoup

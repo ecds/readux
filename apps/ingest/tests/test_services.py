@@ -1,14 +1,17 @@
 """ Tests for ingest.services """
 import os
 import json
+import boto3
+from moto import mock_s3
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+from factory.django import FileField
 from apps.iiif.canvases.tests.factories import CanvasFactory
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 import apps.ingest.services as services
-from .factories import RemoteFactory
+from .factories import LocalFactory, RemoteFactory
 
 class ServicesTest(TestCase):
     """ Tests for ingest.services """
@@ -80,3 +83,26 @@ class ServicesTest(TestCase):
         data = json.loads(open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest-label-as-array.json')).read())
         metadata = services.parse_iiif_v2_manifest(data)
         self.assertEqual(metadata['label'], 'Address by American Hero Frederick Douglass')
+
+    @mock_s3
+    def test_when_pid_not_in_metadata(self):
+        image_server = ImageServerFactory.create()
+        conn = boto3.resource('s3', region_name='us-east-1')
+        conn.create_bucket(Bucket=image_server.storage_path)
+        conn.create_bucket(Bucket='readux-ingest')
+        for _ in range(1, 5):
+            ManifestFactory.create()
+        local = LocalFactory.create(
+            image_server=image_server,
+            bundle=FileField(
+                filename='no_meta_file.zip',
+                filepath=os.path.join(settings.APPS_DIR, 'ingest/fixtures/no_meta_file.zip')
+            )
+        )
+        local.metadata['label'] = 'Southernplayalisticadillacmuzik'
+        local.manifest = None
+        assert 'pid' not in local.metadata
+        assert dict(local.metadata) is not None
+        local.manifest = services.create_manifest(local)
+        assert local.manifest.label == 'Southernplayalisticadillacmuzik'
+        assert local.manifest.pid is not None

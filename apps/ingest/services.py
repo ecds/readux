@@ -45,9 +45,9 @@ def create_manifest(ingest):
         metadata = None
     if metadata:
         if 'pid' in metadata:
-            manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+            manifest = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
         else:
-            manifest, created = Manifest.objects.get_or_create()
+            manifest = Manifest.objects.create()
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
     else:

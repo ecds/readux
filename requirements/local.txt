@@ -22,7 +22,7 @@ moto==2.2.2 # https://github.com/spulec/moto
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8==3.7.9  # https://github.com/PyCQA/flake8
+flake8==3.9.2  # https://github.com/PyCQA/flake8
 coverage==5.2.1  # https://github.com/nedbat/coveragepy
 coveralls
 

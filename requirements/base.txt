@@ -45,7 +45,7 @@ wagtail==2.13.4
 git+git://github.com/jayvarner/wagtailmenus.git@master
 git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
-wagtail-cache==1.0.1
+wagtail-cache==1.0.2
 
 # Import/Export
 django-import-export==2.6.1

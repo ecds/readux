@@ -1,10 +1,8 @@
 """
 Factory to create collestions for testing.
 """
-import random
 from factory.django import DjangoModelFactory, ImageField
 from factory import Faker
-from time import time
 from apps.utils.noid import encode_noid
 from ..models import Collection
 
@@ -12,7 +10,7 @@ class CollectionFactory(DjangoModelFactory):
     """
     Factory for mocking :class:`apps.iiif.kollections.models.Collection` objects.
     """
-    pid = encode_noid(int(time()))
+    pid = encode_noid()
     label = Faker("name")
     original = ImageField(
         width=1024,

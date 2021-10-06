@@ -149,7 +149,6 @@ class LocalTest(TestCase):
         local = self.mock_local('bundle_with_underscores.zip', with_manifest=True)
 
         local.volume_to_s3()
-        local.volume_to_s3()
 
         ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 

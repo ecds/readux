@@ -6,7 +6,7 @@ import random
 import boto3
 from moto import mock_s3
 from datetime import datetime
-from time import time
+from time import sleep
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
@@ -143,8 +143,10 @@ class ManifestTests(TestCase):
 
     def test_multiple_starting_canvases(self):
         volume = ManifestFactory.create()
-        for num in range(4):
-            CanvasFactory.create(manifest=volume, is_starting_page=True)
+        for index, _ in enumerate(range(4)):
+            CanvasFactory.create(manifest=volume, is_starting_page=True, position=index+1)
+            sleep(2)
+        # volume.refresh_from_db()
         manifest = json.loads(
             serialize(
                 'manifest',
@@ -154,8 +156,8 @@ class ManifestTests(TestCase):
                 exportdate=datetime.utcnow()
             )
         )
-        first_canvas = volume.canvas_set.all().first()
-        assert first_canvas.pid in manifest['thumbnail']['@id']
+        first_canvas = volume.canvas_set.all().order_by('position').first()
+        assert volume.start_canvas.pid in manifest['thumbnail']['@id']
 
     def test_no_starting_canvases(self):
         manifest = ManifestFactory.create()
@@ -163,12 +165,17 @@ class ManifestTests(TestCase):
             manifest.canvas_set.all().get(is_starting_page=True)
         except Canvas.DoesNotExist as error:
             assert str(error) == 'Canvas matching query does not exist.'
+        manifest.refresh_from_db()
         serialized_manifest = json.loads(
             serialize(
                 'manifest',
                 [manifest]
             )
         )
+        print('*')
+        print(manifest.canvas_set.count())
+        print([c.position for c in manifest.canvas_set.all()])
+        print('*')
         assert manifest.canvas_set.all().first().pid in serialized_manifest['thumbnail']['@id']
 
     def test_default_iiif_image_server_url(self):
@@ -212,7 +219,7 @@ class ManifestTests(TestCase):
         original_pid = manifest.pid
         image_server.bucket.upload_file('apps/iiif/canvases/fixtures/00000002.jpg', f'{manifest.pid}/00000002.jpg')
         assert f'{manifest.pid}/00000002.jpg' in [f.key for f in image_server.bucket.objects.all()]
-        manifest.pid = encode_noid(int(time()))
+        manifest.pid = encode_noid(0)
         manifest.save()
         manifest.refresh_from_db()
         assert f'{original_pid}/00000002.jpg' not in [f.key for f in image_server.bucket.objects.all()]

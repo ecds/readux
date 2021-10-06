@@ -201,24 +201,26 @@ class Manifest(IiifBase):
 
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
-        if not self._state.adding and 'pid' in self.get_dirty_fields() and self.image_server.storage_service == 's3':
+
+        if not self._state.adding and 'pid' in self.get_dirty_fields() and self.image_server and self.image_server.storage_service == 's3':
             self.__rename_s3_objects()
 
-        if '_' in self.pid:
-            self.pid = self.pid.replace('_', '-')
+        super().save(*args, **kwargs)
+
         Canvas = apps.get_model('canvases.canvas')
         try:
             if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
-                self.start_canvas = self.canvas_set.first()
+                print([c.position] for c in self.canvas_set.all())
+                self.start_canvas = self.canvas_set.all().order_by('position').first()
+                self.save()
         except Canvas.DoesNotExist:
             self.start_canvas = None
-
-        super().save(*args, **kwargs)
 
         if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
             instance = self._meta.default_manager.with_documents().get(pk=self.pk)
             instance.search_vector = instance.document
             instance.save(update_fields=['search_vector'])
+
 
     def delete(self, *args, **kwargs):
         """

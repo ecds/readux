@@ -3,7 +3,6 @@ Test cases for :class:`apps.iiif.canvases`
 """
 import json
 from os.path import join
-from time import time
 import boto3
 from moto import mock_s3
 from django.test import TestCase, Client
@@ -226,6 +225,8 @@ class CanvasTests(TestCase):
         image_server = ImageServerFactory.create(server_base='http://fake.info')
         manifest = ManifestFactory.create(image_server=image_server)
         canvas = CanvasFactory.build()
+        canvas.height = None
+        canvas.width = None
         assert canvas.height != 3000
         assert canvas.width != 3000
         canvas.manifest = manifest
@@ -236,7 +237,7 @@ class CanvasTests(TestCase):
 
     @mock_s3
     def test_ocr_in_s3(self):
-        bucket_name = encode_noid(int(time()))
+        bucket_name = encode_noid()
         manifest = ManifestFactory.create(
             image_server = ImageServerFactory.create(storage_service = 's3', storage_path=bucket_name, server_base='images.readux.ecds.emory')
         )

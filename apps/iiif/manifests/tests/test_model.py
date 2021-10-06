@@ -1,3 +1,5 @@
+from time import time
+from apps.utils.noid import encode_noid
 from apps.iiif.canvases.models import Canvas
 from django.test import TestCase
 from apps.iiif.canvases.models import Canvas
@@ -40,6 +42,16 @@ class TestManifestModel(TestCase):
         manifest = Manifest()
         manifest.save()
         assert manifest.start_canvas is None
+
+    def test_no_duplicate_pids(self):
+        """ Manifests should not be created with duplicate PIDs """
+        for _ in range(0, 20):
+            Manifest.objects.create(pid='a-random-pid')
+
+        pids = set([m.pid for m in Manifest.objects.all()])
+        assert 'a-random-pid' in pids
+        assert len(pids) == Manifest.objects.all().count()
+
 class TestImageServerModel(TestCase):
     def test_string_representation(self):
         """ It should return teh `server_base` property when cast as `str`. """

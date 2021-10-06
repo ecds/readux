@@ -125,6 +125,7 @@ class Local(IngestAbstractModel):
                 if file_type and not self.__is_junk(file_name):
                     tmp_file += chunk
             if file_type and not self.__is_junk(file_name):
+                file_name = file_name.replace('_', '-')
                 if 'image' in file_type and 'images' in file_path:
                     self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
                 if 'text' in file_type and 'ocr' in file_path:
@@ -166,7 +167,7 @@ class Local(IngestAbstractModel):
         ]
 
         for index, key in enumerate(sorted(image_files)):
-            image_file = key.split('/')[-1]
+            image_file = key.split('/')[-1].replace('_', '-')
 
             if not image_file:
                 continue

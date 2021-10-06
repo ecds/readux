@@ -29,10 +29,18 @@ using::
 # dependencies by re-implementing the tiny bit of NOID-generation logic we
 # actually used in Python for direct access from Django.
 
+from random import randint
+from time import time
+
 #: NOID alphabet; specifies the characters to be used for minting noids
 ALPHABET = '0123456789bcdfghjkmnpqrstvwxz'
 ALPHASIZE = len(ALPHABET)
 
+
+def random_num():
+    '''Generate a random number based on current time and a random number.'''
+    a, b = str(time()).split('.')
+    return int(a) - int(b) - randint(0, 1000)
 
 def _digits(num):
     '''Represent num in base ALPHASIZE. Return an array of digits, most
@@ -59,7 +67,9 @@ def _checksum(digits):
     return sum % ALPHASIZE
 
 
-def encode_noid(num):
+def encode_noid(num=None):
+    if num is None:
+        num = random_num()
     '''Encode an integer as a NOID string, including final checksum
     character.'''
     digits = _digits(num)

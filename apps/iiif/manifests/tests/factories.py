@@ -17,9 +17,19 @@ class ImageServerFactory(DjangoModelFactory):
 
 class ManifestFactory(DjangoModelFactory):
     """Creates a Manifest object for testing."""
-    pid = encode_noid(int(time()))
+    pid = encode_noid()
     label = Faker("name")
     canvase = RelatedFactory(CanvasFactory, 'manifest')
+    logo = ImageField(from_path='apps/iiif/canvases/tests/ecds.png')
+    image_server = SubFactory(ImageServerFactory)
+
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
+        model = Manifest
+
+class EmptyManifestFactory(DjangoModelFactory):
+    """Creates a Manifest object for testing."""
+    pid = encode_noid()
+    label = Faker("name")
     logo = ImageField(from_path='apps/iiif/canvases/tests/ecds.png')
     image_server = SubFactory(ImageServerFactory)
 

@@ -1,15 +1,11 @@
 """Django models representing IIIF canvases and IIIF image server info."""
 from genericpath import exists
-import uuid
 import os
 from boto3 import resource
 from bs4 import BeautifulSoup
-import tempfile
 from urllib.parse import quote
 import config.settings.local as settings
-from django.apps import apps
 from django.db import models
-from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from ..models import IiifBase
 from ..manifests.models import Manifest, ImageServer
@@ -174,17 +170,23 @@ class Canvas(IiifBase):
         """
         self.__check_image_server()
 
-        if self.image_info:
+        if self.manifest and self.position is None:
+            self.position = self.manifest.canvas_set.count() + 1
+
+        if self.image_info and self.width is None and self.height is None:
+            for _ in range(20):
+                print(self.image_info['width'])
             self.width = self.image_info['width']
             self.height = self.image_info['height']
 
+        super().save(*args, **kwargs)
+
         if self.resource is None:
             self.resource = self.pid
+            self.save()
 
         if self.manifest and self.manifest.start_canvas is None:
             self.manifest.save()
-
-        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """
@@ -210,6 +212,15 @@ class Canvas(IiifBase):
 
 
         super().delete(*args, **kwargs)
+
+    # TODO: The way we construct PIDs for Canvas objects might need some
+    # rethinking.
+    def clean_pid(self):
+        """ Override the `__clean_pid` method that replaces underscores (_).
+        Canvas PIDs are combonation of the Manifest PID and the Canvase's
+        file name, seperated by an underscore. This is how Cantaloupe finds
+        the image file. """
+        pass
 
     def __str__(self):
         return str(self.pid)

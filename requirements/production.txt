@@ -3,7 +3,7 @@
 -r ./base.txt
 
 gunicorn==20.1.0  # https://github.com/benoitc/gunicorn
-Collectfast==2.1.0  # https://github.com/antonagestam/collectfast
+Collectfast==2.2.0  # https://github.com/antonagestam/collectfast
 raven==6.10.0  # https://github.com/getsentry/raven-python
 
 # Django

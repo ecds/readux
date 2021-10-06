@@ -16,7 +16,7 @@ requests==2.26.0
 iiif-prezi==0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty==1.1.4 # https://pypi.org/project/httpretty/
 #mock==4.0.2
-cssutils==1.0.2 # https://pypi.org/project/cssutils/
+cssutils==2.3.0 # https://pypi.org/project/cssutils/
 pytest-django==4.4.0  # https://github.com/pytest-dev/pytest-django
 moto==2.2.8 # https://github.com/spulec/moto
 

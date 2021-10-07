@@ -19,3 +19,7 @@ class CanvasFactory(DjangoModelFactory):
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Canvas
+
+class CanvasNoDimensionsFactory(CanvasFactory):
+    height = 0
+    width = 0

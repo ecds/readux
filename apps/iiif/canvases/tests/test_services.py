@@ -214,27 +214,6 @@ class CanvasTests(TestCase):
     #     self.canvas.manifest.image_server.server_base = 'oxford'
     #     assert services.fetch_positional_ocr(self.canvas) is None
 
-    def test_get_image_info(self):
-        image_server = ImageServerFactory.create(server_base='http://fake.info')
-        manifest = ManifestFactory.create(image_server=image_server)
-        canvas = CanvasFactory.create(manifest=manifest)
-        assert canvas.image_info['height'] == 3000
-        assert canvas.image_info['width'] == 3000
-
-    def test_setting_height_width_from_iiif(self):
-        image_server = ImageServerFactory.create(server_base='http://fake.info')
-        manifest = ManifestFactory.create(image_server=image_server)
-        canvas = CanvasFactory.build()
-        canvas.height = None
-        canvas.width = None
-        assert canvas.height != 3000
-        assert canvas.width != 3000
-        canvas.manifest = manifest
-        canvas.save()
-        canvas.refresh_from_db()
-        assert canvas.height == 3000
-        assert canvas.width == 3000
-
     @mock_s3
     def test_ocr_in_s3(self):
         bucket_name = encode_noid()

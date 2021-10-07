@@ -173,11 +173,15 @@ class Canvas(IiifBase):
         if self.manifest and self.position is None:
             self.position = self.manifest.canvas_set.count() + 1
 
-        if self.image_info and self.width is None and self.height is None:
-            for _ in range(20):
-                print(self.image_info['width'])
-            self.width = self.image_info['width']
-            self.height = self.image_info['height']
+        if self.image_info:
+            # TODO: Consider changing the default value for height and width
+            # so we don't have to check for 0 in addition to None.
+            if self.width == 0 or self.height == 0:
+                self.width = None
+                self.height = None
+            if self.width is None and self.height is None:
+                self.width = self.image_info['width']
+                self.height = self.image_info['height']
 
         super().save(*args, **kwargs)
 

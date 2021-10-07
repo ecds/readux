@@ -28,6 +28,10 @@ class CanvasTests(TestCase):
         self.assumed_volume_pid = 'readux:st7r6'
         self.assumed_iiif_base = 'https://loris.library.emory.edu'
 
+    def set_up_mock_s3(self, manifest):
+        conn = boto3.resource('s3', region_name='us-east-1')
+        conn.create_bucket(Bucket=manifest.image_server.storage_path)
+
     def test_app_config(self):
         assert CanvasesConfig.verbose_name == 'Canvases'
         assert CanvasesConfig.name == 'apps.iiif.canvases'
@@ -220,12 +224,46 @@ class CanvasTests(TestCase):
         manifest = ManifestFactory.create(
             image_server = ImageServerFactory.create(storage_service = 's3', storage_path=bucket_name, server_base='images.readux.ecds.emory')
         )
+        self.set_up_mock_s3(manifest)
         tsv_file_path = 'apps/iiif/canvases/fixtures/00000002.tsv'
         canvas = manifest.canvas_set.first()
         canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/00000002.tsv'
-        conn = boto3.resource('s3', region_name='us-east-1')
-        conn.create_bucket(Bucket=manifest.image_server.storage_path)
-        conn.create_bucket(Bucket=bucket_name)
         manifest.image_server.bucket.upload_file(tsv_file_path, f'{manifest.pid}/_*ocr*_/00000002.tsv')
         fetched_ocr = services.fetch_positional_ocr(canvas)
         assert open(tsv_file_path, 'rb').read() == fetched_ocr
+
+    @mock_s3
+    def test_fetched_ocr_result_is_string(self):
+        """ Test when fetched OCR is a string. """
+        bucket_name = encode_noid()
+        manifest = ManifestFactory.create(
+            image_server = ImageServerFactory.create(storage_service = 's3', storage_path=bucket_name, server_base='images.readux.ecds.emory')
+        )
+        self.set_up_mock_s3(manifest)
+        tsv_file_path = 'apps/iiif/canvases/fixtures/00000002.tsv'
+        canvas = manifest.canvas_set.first()
+        canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/00000002.tsv'
+        manifest.image_server.bucket.upload_file(tsv_file_path, f'{manifest.pid}/_*ocr*_/00000002.tsv')
+        ocr_result = open(tsv_file_path, 'r').read()
+        assert isinstance(ocr_result, str)
+        ocr = services.add_positional_ocr(canvas, ocr_result)
+        assert len(ocr) == 10
+        assert ocr[0]['content'] == 'Manuscript'
+
+    @mock_s3
+    def test_fetched_ocr_result_is_bytes(self):
+        """ Test when fetched OCR is a bytes. """
+        bucket_name = encode_noid()
+        manifest = ManifestFactory.create(
+            image_server = ImageServerFactory.create(storage_service = 's3', storage_path=bucket_name, server_base='images.readux.ecds.emory')
+        )
+        self.set_up_mock_s3(manifest)
+        tsv_file_path = 'apps/iiif/canvases/fixtures/00000002.tsv'
+        canvas = manifest.canvas_set.first()
+        canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/00000002.tsv'
+        manifest.image_server.bucket.upload_file(tsv_file_path, f'{manifest.pid}/_*ocr*_/00000002.tsv')
+        ocr_result = open(tsv_file_path, 'rb').read()
+        assert isinstance(ocr_result, bytes)
+        ocr = services.add_positional_ocr(canvas, ocr_result)
+        assert len(ocr) == 10
+        assert ocr[0]['content'] == 'Manuscript'

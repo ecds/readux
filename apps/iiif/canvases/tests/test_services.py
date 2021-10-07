@@ -104,20 +104,20 @@ class CanvasTests(TestCase):
             assert isinstance(word['y'], int)
             assert isinstance(word['content'], str)
 
-    def test_ocr_from_alto(self):
-        alto = open('apps/iiif/canvases/fixtures/alto.xml', 'r').read()
-        ocr = services.add_alto_ocr(alto)
+    def test_ocr_from_tei(self):
+        tei = open('apps/iiif/canvases/fixtures/tei.xml', 'r').read()
+        ocr = services.add_tei_ocr(tei)
         assert ocr[1]['content'] == 'AEN DEN LESIIU'
         assert ocr[1]['h'] == 28
         assert ocr[1]['w'] == 461
         assert ocr[1]['x'] == 814
         assert ocr[1]['y'] == 185
 
-    def test_line_by_line_from_alto(self):
+    def test_line_by_line_from_tei(self):
         canvas = CanvasFactory.create(default_ocr='line', manifest=ManifestFactory.create())
-        ocr_file = open(join(settings.APPS_DIR, 'iiif/canvases/fixtures/alto.xml'), 'r').read()
-        alto = services.add_alto_ocr(ocr_file)
-        services.add_ocr_annotations(canvas, alto)
+        ocr_file = open(join(settings.APPS_DIR, 'iiif/canvases/fixtures/tei.xml'), 'r').read()
+        tei = services.add_tei_ocr(ocr_file)
+        services.add_ocr_annotations(canvas, tei)
         updated_canvas = Canvas.objects.get(pk=canvas.pk)
         ocr = updated_canvas.annotation_set.first()
         assert 'mm' in ocr.content
@@ -151,13 +151,13 @@ class CanvasTests(TestCase):
         assert '> </span>' in ocr2.content
         assert canvas.annotation_set.all().count() == 5
 
-    def test_no_alto_from_empty_result(self):
-        ocr = services.add_alto_ocr(None)
+    def test_no_tei_from_empty_result(self):
+        ocr = services.add_tei_ocr(None)
         assert ocr is None
 
-    def test_from_bad_alto(self):
-        alto = open('apps/iiif/canvases/fixtures/bad_alto.xml', 'r').read()
-        ocr = services.add_alto_ocr(alto)
+    def test_from_bad_tei(self):
+        tei = open('apps/iiif/canvases/fixtures/bad_tei.xml', 'r').read()
+        ocr = services.add_tei_ocr(tei)
         assert ocr is None
 
     def test_canvas_detail(self):
@@ -194,9 +194,9 @@ class CanvasTests(TestCase):
     def test_result_property(self):
         assert self.canvas.result == "a retto , dio Quef\u00eca de'"
 
-    def test_no_alto_for_internet_archive(self):
+    def test_no_tei_for_internet_archive(self):
         self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'
-        assert services.fetch_alto_ocr(self.canvas) is None
+        assert services.fetch_tei_ocr(self.canvas) is None
 
     def test_fetch_positional_ocr(self):
         self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'

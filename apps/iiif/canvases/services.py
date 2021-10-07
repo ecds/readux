@@ -38,8 +38,8 @@ def get_ocr(canvas):
     :rtype: list
     """
     if canvas.default_ocr == "line":
-        result = fetch_alto_ocr(canvas)
-        return add_alto_ocr(result)
+        result = fetch_tei_ocr(canvas)
+        return add_tei_ocr(result)
 
     result = fetch_positional_ocr(canvas)
     return add_positional_ocr(canvas, result)
@@ -133,8 +133,8 @@ def fetch_positional_ocr(canvas):
     )
 
     if environ['DJANGO_ENV'] == 'test':
-        fake_alto = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
-        words = fake_alto.read()
+        fake_tei = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
+        words = fake_tei.read()
         httpretty.enable()
         httpretty.register_uri(httpretty.GET, url, body=words)
 
@@ -212,8 +212,8 @@ def add_positional_ocr(canvas, result):
         return ocr
     return None
 
-def fetch_alto_ocr(canvas):
-    """Function to fetch Alto OCR data for a given canvas.
+def fetch_tei_ocr(canvas):
+    """Function to fetch TEI OCR data for a given canvas.
 
     :param canvas: Canvas object
     :type canvas: apps.iiif.canvases.models.Canvas
@@ -229,12 +229,12 @@ def fetch_alto_ocr(canvas):
 
     return fetch_url(url, data_format='text/plain')
 
-def add_alto_ocr(result):
-    """Function to add fetched Alto OCR data for a given canvas.
+def add_tei_ocr(result):
+    """Function to add fetched TEI OCR data for a given canvas.
 
     :param result: Fetched OCR data
     :type result: requests.models.Response
-    :return: Parsed Alto OCR data
+    :return: Parsed TEI OCR data
     :rtype: list
     """
     if result is None:

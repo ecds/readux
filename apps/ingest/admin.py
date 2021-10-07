@@ -161,7 +161,8 @@ class TaskWatcherAdmin(admin.ModelAdmin):
         "date_created",
         "date_done",
     )
-    list_filter = ('task_creator',)
+    list_filter = ('task_creator', 'task_result__task_name')
+    search_fields = ('filename',)
     date_hierarchy = 'task_result__date_created'
     empty_value_display = '(none)'
 

@@ -2,6 +2,7 @@
 """Module to provide some common functions for Canvas objects."""
 import csv
 from os import environ, path
+from django.core.exceptions import ValidationError
 import pytest
 from xml.etree import ElementTree
 import httpretty
@@ -256,6 +257,45 @@ def add_tei_ocr(result):
     if ocr:
         return ocr
     return None
+
+def add_alto_ocr(result):
+    """Function to add fetched ALTO OCR data for a given canvas.
+
+    :param result: Fetched OCR data
+    :type result: requests.models.Response
+    :return: Parsed ALTO OCR data
+    :rtype: list
+    """
+    if result is None:
+        return None
+    ocr = []
+    root = ElementTree.fromstring(result)
+    if not is_valid_alto(root):
+        raise ValidationError
+    strings = root.find('.//String')
+    for string in strings:
+        ocr.append({
+            'content': string.get('content').text,
+            'h': int(string.get('height')),
+            'w': int(string.get('width')),
+            'x': int(string.get('hpos')),
+            'y': int(string.get('vpos'))
+        })
+    if ocr:
+        return ocr
+    return None
+
+def is_valid_alto(xml_root):
+    """Function to check validity of ALTO OCR data.
+
+    :param xml_root: OCR data
+    :type xml_root: xml.etree.ElementTree
+    :return: True if valid, False if invalid
+    :rtype: bool
+    """
+    if xml_root.tag != 'alto':
+        return False
+    return True
 
 def add_ocr_annotations(canvas, ocr):
     word_order = 1

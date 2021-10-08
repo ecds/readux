@@ -169,7 +169,10 @@ def add_positional_ocr(canvas, result):
                         })
     elif 'images.readux.ecds.emory' in canvas.manifest.image_server.server_base:
 
-        lines = str(result).split('\n')
+        if isinstance(result, bytes):
+            lines = result.decode('utf-8').splitlines()
+        else:
+            lines = str(result).split('\n')
 
         # Sometimes the TSV has some extra tabs at the beginign and the end. These have
         # to be cleaned out. It gets complicatied.

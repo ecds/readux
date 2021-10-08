@@ -80,6 +80,12 @@ class Local(IngestAbstractModel):
     bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
     bundle = models.FileField(blank=False, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='created_locals'
+    )
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -198,7 +204,16 @@ class Local(IngestAbstractModel):
                 if os.environ['DJANGO_ENV'] == 'test':
                     add_ocr_task(canvas.id)
                 else:
-                    add_ocr_task.delay(canvas.id)
+                    ocr_task_id = add_ocr_task.delay(canvas.id)
+                    ocr_task_result = TaskResult(task_id=ocr_task_id)
+                    ocr_task_result.save()
+                    IngestTaskWatcher.manager.create_watcher(
+                        task_id=ocr_task_id,
+                        task_result=ocr_task_result,
+                        task_creator=self.creator,
+                        filename=self.bundle.file.name
+                    )
+
 
         if self.manifest.canvas_set.count() == len(image_files):
             self.delete()

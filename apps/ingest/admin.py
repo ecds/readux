@@ -22,6 +22,7 @@ class LocalAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.save()
         obj.manifest = create_manifest(obj)
+        obj.creator = request.user
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
@@ -103,7 +104,11 @@ class BulkAdmin(admin.ModelAdmin):
 
             # Create local
             new_local = Local.objects.create(
-                bulk=obj, bundle=bundle_path, image_server=obj.image_server, metadata=file_meta
+                bulk=obj,
+                bundle=bundle_path,
+                image_server=obj.image_server,
+                metadata=file_meta,
+                creator=request.user
             )
             if environ["DJANGO_ENV"] != 'test' and environ.get('DJANGO_ENV') != 'test':
                 local_task_id = tasks.create_canvas_form_local_task.delay(new_local.id)

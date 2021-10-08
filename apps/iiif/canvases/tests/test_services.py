@@ -7,6 +7,7 @@ import boto3
 from moto import mock_s3
 from django.test import TestCase, Client
 from django.urls import reverse
+from lxml.etree import XMLSyntaxError
 import config.settings.local as settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from apps.utils.noid import encode_noid
@@ -161,8 +162,7 @@ class CanvasTests(TestCase):
 
     def test_from_bad_tei(self):
         tei = open('apps/iiif/canvases/fixtures/bad_tei.xml', 'r').read()
-        ocr = services.add_tei_ocr(tei)
-        assert ocr is None
+        self.assertRaises(XMLSyntaxError, services.add_tei_ocr, tei)
 
     def test_canvas_detail(self):
         kwargs = {'manifest': self.manifest.pid, 'pid': self.canvas.pid}

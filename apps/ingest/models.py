@@ -211,7 +211,7 @@ class Local(IngestAbstractModel):
                         task_id=ocr_task_id,
                         task_result=ocr_task_result,
                         task_creator=self.creator,
-                        filename=self.bundle.file.name
+                        filename=canvas.ocr_file_path
                     )
 
 

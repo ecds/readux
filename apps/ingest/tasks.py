@@ -102,7 +102,7 @@ def send_email_on_failure(sender=None, exception=None, task_id=None, traceback=N
             )
 
 @task_success.connect
-def task_success_notifier(sender=None, **kwargs):
+def send_email_on_success(sender=None, **kwargs):
     """Function to send an email on task success signal from Celery.
 
     :param sender: The task object

@@ -75,12 +75,15 @@ def send_email_on_failure(sender=None, exception=None, task_id=None, traceback=N
     :param sender: The task object
     :type sender: celery.task
     """
-    if 'creating_canvases_from_local' in sender.name:
+    if sender is not None and 'creating_canvases_from_local' in sender.name:
         task_watcher = IngestTaskWatcher.manager.get(task_id=task_id)
         context = {}
-        context['filename'] = task_watcher.filename
-        context['exception'] = exception.__repr__()
-        context['traceback'] = '\n'.join(format_tb(traceback))
+        if task_watcher is not None:
+            context['filename'] = task_watcher.filename
+        if exception is not None:
+            context['exception'] = exception.__repr__()
+        if traceback is not None:
+            context['traceback'] = '\n'.join(format_tb(traceback))
         context['result_url'] = settings.HOSTNAME + reverse(
             "admin:%s_%s_change"
             % (
@@ -91,9 +94,9 @@ def send_email_on_failure(sender=None, exception=None, task_id=None, traceback=N
         )
         html_email = get_template('ingest_failure_email.html').render(context)
         text_email = get_template('ingest_failure_email.txt').render(context)
-        if task_watcher and task_watcher.task_creator and task_watcher.task_creator.email:
+        if task_watcher is not None and task_watcher.task_creator is not None:
             send_mail(
-                '[Readux] Ingest failed: ' + task_watcher.filename,
+                '[Readux] Failed: Ingest ' + task_watcher.filename,
                 text_email,
                 settings.READUX_EMAIL_SENDER,
                 [task_watcher.task_creator.email],
@@ -108,12 +111,13 @@ def send_email_on_success(sender=None, **kwargs):
     :param sender: The task object
     :type sender: celery.task
     """
-    if 'creating_canvases_from_local' in sender.name:
+    if sender is not None and 'creating_canvases_from_local' in sender.name:
         task_id = sender.request.id
         task_watcher = IngestTaskWatcher.manager.get(task_id=task_id)
         context = {}
-        context['filename'] = task_watcher.filename
-        if task_watcher.associated_manifest:
+        if task_watcher is not None:
+            context['filename'] = task_watcher.filename
+        if task_watcher is not None and task_watcher.associated_manifest is not None:
             context['manifest_url'] = settings.HOSTNAME + reverse(
                 'admin:manifests_manifest_change', args=(task_watcher.associated_manifest.id,)
             )
@@ -125,7 +129,7 @@ def send_email_on_success(sender=None, **kwargs):
             )
         html_email = get_template('ingest_success_email.html').render(context)
         text_email = get_template('ingest_success_email.txt').render(context)
-        if task_watcher and task_watcher.task_creator and task_watcher.task_creator.email:
+        if task_watcher is not None and task_watcher.task_creator is not None:
             send_mail(
                 '[Readux] Ingest complete: ' + task_watcher.filename,
                 text_email,

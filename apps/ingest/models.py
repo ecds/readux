@@ -29,7 +29,7 @@ def bulk_path(instance, filename):
 
 class IngestTaskWatcherManager(models.Manager):
     """ Manager class for associating user and ingest data with a task result """
-    def create_watcher(self, filename, task_id, task_result, task_creator):
+    def create_watcher(self, filename, task_id, task_result, task_creator, associated_manifest=None):
         """
         Creates an instance of IngestTaskWatcher with provided params
         """
@@ -37,7 +37,8 @@ class IngestTaskWatcherManager(models.Manager):
             filename=filename,
             task_id=task_id,
             task_result=task_result,
-            task_creator=task_creator
+            task_creator=task_creator,
+            associated_manifest=associated_manifest
         )
         return watcher
 
@@ -53,6 +54,7 @@ class IngestTaskWatcher(models.Model):
         null=True,
         related_name='created_tasks'
     )
+    associated_manifest = models.ForeignKey(Manifest, on_delete=models.SET_NULL, null=True)
     manager = IngestTaskWatcherManager()
 
     class Meta:

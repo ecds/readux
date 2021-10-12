@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 Vue.component("v-volume-image", {
   props: ["imgSrc", "volumeLabel"],
   template: `
@@ -284,6 +286,11 @@ Vue.component("v-info-content-url-image-link", {
     var vm = this;
     window.addEventListener("canvasswitch", function (event) {
       if (event.detail) {
+        axios
+          .get(`iiif/resource/${event.detail.page}`)
+          .then(response => (
+            console.log(response.resource;)
+          ))
         var protocol = window.location.protocol;
         var host = window.location.host;
         var canvas = event.detail.canvas;

@@ -74,3 +74,16 @@ class IIIFV2Detail(View):
             ),
             safe=False
         )
+
+class CanvasResource(View):
+    def get(self, *args, **kwargs):
+        canvas = Canvas.objects.get(pid=self.kwargs['pid'])
+
+        return JsonResponse(
+            json.dumps(
+                {
+                    'resource': canvas.resource,
+                    'text': canvas.result
+                }
+            )
+        )

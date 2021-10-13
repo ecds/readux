@@ -1,0 +1,18 @@
+<h1>
+  Readux
+</h1>
+
+<h3 style="color: green;">Ingest complete: {{ filename }}</h3>
+<div>
+  Details:
+  <ul>
+    <li>Filename: <span style="font-family: monospace">{{ filename }}</span></li>
+    {% if manifest_url %}
+      <li>Manifest PID: <span style="font-family: monospace">{{ manifest_pid }}</span></li>
+      <li><a href="{{ manifest_url }}">Edit manifest</a></li>
+      <li><a href="{{ volume_url }}">Link to volume</a></li>
+    {% else %}
+      <li><a href="{{ manifests_list_url }}">List of manifests</a></li>
+    {% endif %}
+  </ul>
+</div>

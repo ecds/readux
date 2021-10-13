@@ -61,6 +61,7 @@ class IngestAdminTest(TestCase):
         local.bundle = files.File(content.file, 'no_meta_file.zip')
 
         req = request_factory.post('/admin/ingest/local/add/', data={})
+        req.user = self.user
 
         local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
         local_model_admin.save_model(obj=local, request=req, form=None, change=None)

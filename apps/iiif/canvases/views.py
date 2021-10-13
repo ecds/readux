@@ -80,10 +80,8 @@ class CanvasResource(View):
         canvas = Canvas.objects.get(pid=self.kwargs['pid'])
 
         return JsonResponse(
-            json.dumps(
                 {
-                    'resource': canvas.resource,
+                    'resource': canvas.resource_id + "/full/full/0/default.jpg",
                     'text': canvas.result
                 }
-            )
         )

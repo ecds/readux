@@ -1,0 +1,20 @@
+<h1>
+    Readux
+  </h1>
+  
+  <h3 style="color: red;">Ingest failed: {{ filename }}</h3>
+  <div>
+    Details:
+    <ul>
+        <li>Filename: <span style="font-family: monospace">{{ filename }}</span></li>
+        <li>Error: <span style="font-family: monospace">{{ exception }}</span></li>
+        <li><a href="{{ result_url }}">Task result details</a></li>
+    </ul>
+    <p>
+        Traceback:
+    </p>
+    <pre>
+        {{ traceback }}
+    </pre>
+
+</div>

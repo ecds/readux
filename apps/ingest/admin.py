@@ -3,6 +3,7 @@ import logging
 from mimetypes import guess_type
 from os import environ, path, remove, listdir, rmdir
 from django.contrib import admin
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
@@ -26,7 +27,7 @@ class LocalAdmin(admin.ModelAdmin):
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
-        if environ["DJANGO_ENV"] != 'test' and environ.get('DJANGO_ENV') != 'test':
+        if environ["DJANGO_ENV"] != 'test':
             local_task_id = tasks.create_canvas_form_local_task.delay(obj.id)
             local_task_result = TaskResult(task_id=local_task_id)
             local_task_result.save()
@@ -35,6 +36,7 @@ class LocalAdmin(admin.ModelAdmin):
                 task_id=local_task_id,
                 task_result=local_task_result,
                 task_creator=request.user,
+                associated_manifest=obj.manifest,
                 filename=file.name
             )
         else:
@@ -58,7 +60,7 @@ class RemoteAdmin(admin.ModelAdmin):
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
-        if environ["DJANGO_ENV"] != 'test' and environ.get('DJANGO_ENV') != 'test':
+        if environ["DJANGO_ENV"] != 'test':
             remote_task_id = tasks.create_remote_canvases.delay(obj.id)
             remote_task_result = TaskResult(task_id=remote_task_id)
             remote_task_result.save()
@@ -66,7 +68,8 @@ class RemoteAdmin(admin.ModelAdmin):
                 task_id=remote_task_id,
                 task_result=remote_task_result,
                 task_creator=request.user,
-                filename=obj.remote_url
+                filename=obj.remote_url,
+                associated_manifest=obj.manifest
             )
 
     def response_add(self, request, obj, post_url_continue=None):
@@ -110,7 +113,11 @@ class BulkAdmin(admin.ModelAdmin):
                 metadata=file_meta,
                 creator=request.user
             )
-            if environ["DJANGO_ENV"] != 'test' and environ.get('DJANGO_ENV') != 'test':
+            new_local.save()
+            new_local.manifest = create_manifest(new_local)
+            new_local.save()
+            new_local.refresh_from_db()
+            if environ["DJANGO_ENV"] != 'test':
                 local_task_id = tasks.create_canvas_form_local_task.delay(new_local.id)
                 local_task_result = TaskResult(task_id=local_task_id)
                 local_task_result.save()
@@ -118,10 +125,9 @@ class BulkAdmin(admin.ModelAdmin):
                     task_id=local_task_id,
                     task_result=local_task_result,
                     task_creator=request.user,
+                    associated_manifest=new_local.manifest,
                     filename=file.name
                 )
-            # else:
-            #     tasks.create_canvas_form_local_task(new_local.id)
 
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)

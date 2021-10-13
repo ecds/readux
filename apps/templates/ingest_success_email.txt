@@ -1,0 +1,13 @@
+Readux
+-------
+
+Ingest complete: {{ filename }}
+
+Details:
+{% if manifest_url %}
+- Manifest PID: {{ manifest_pid }}
+- Edit manifest: {{ manifest_url }}
+- Link to volume: {{ volume_url }}
+{% else %}
+- List of manifests: {{ manifests_list_url }}
+{% endif %}

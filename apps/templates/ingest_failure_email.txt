@@ -1,0 +1,9 @@
+Readux
+-------
+
+Ingest failed: {{ filename }}
+
+Details:
+- Error: {{ exception }}
+- Result URL: {{ result_url }}
+- Traceback: {{ traceback }}

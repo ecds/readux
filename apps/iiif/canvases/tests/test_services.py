@@ -111,7 +111,7 @@ class CanvasTests(TestCase):
 
     def test_ocr_from_tei(self):
         tei = open('apps/iiif/canvases/fixtures/tei.xml', 'r').read()
-        ocr = services.add_tei_ocr(tei)
+        ocr = services.parse_tei_ocr(tei)
         assert ocr[1]['content'] == 'AEN DEN LESIIU'
         assert ocr[1]['h'] == 28
         assert ocr[1]['w'] == 461
@@ -121,7 +121,7 @@ class CanvasTests(TestCase):
     def test_line_by_line_from_tei(self):
         canvas = CanvasFactory.create(default_ocr='line', manifest=ManifestFactory.create())
         ocr_file = open(join(settings.APPS_DIR, 'iiif/canvases/fixtures/tei.xml'), 'r').read()
-        tei = services.add_tei_ocr(ocr_file)
+        tei = services.parse_tei_ocr(ocr_file)
         services.add_ocr_annotations(canvas, tei)
         updated_canvas = Canvas.objects.get(pk=canvas.pk)
         ocr = updated_canvas.annotation_set.first()
@@ -157,12 +157,12 @@ class CanvasTests(TestCase):
         assert canvas.annotation_set.all().count() == 5
 
     def test_no_tei_from_empty_result(self):
-        ocr = services.add_tei_ocr(None)
+        ocr = services.parse_tei_ocr(None)
         assert ocr is None
 
     def test_from_bad_tei(self):
         tei = open('apps/iiif/canvases/fixtures/bad_tei.xml', 'r').read()
-        self.assertRaises(XMLSyntaxError, services.add_tei_ocr, tei)
+        self.assertRaises(XMLSyntaxError, services.parse_tei_ocr, tei)
 
     def test_canvas_detail(self):
         kwargs = {'manifest': self.manifest.pid, 'pid': self.canvas.pid}

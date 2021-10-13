@@ -2,13 +2,11 @@
 import os
 import uuid
 import logging
-import httpretty
-from stream_unzip import stream_unzip, TruncatedDataError
-from boto3 import client, resource
 from io import BytesIO
 from mimetypes import guess_type
-from tempfile import gettempdir, mkdtemp
-from zipfile import ZipFile
+import httpretty
+from stream_unzip import stream_unzip, TruncatedDataError
+from boto3 import client
 from tablib import Dataset
 from django.db import models
 from django.conf import settings
@@ -16,9 +14,8 @@ from django.contrib.postgres.fields import JSONField
 from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
-from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
 from apps.iiif.manifests.models import Manifest, ImageServer
-import apps.ingest.services as services
+from apps.ingest import services
 from apps.utils.fetch import fetch_url
 from .storages import IngestStorage
 
@@ -141,10 +138,12 @@ class Local(IngestAbstractModel):
                         f'{self.manifest.pid}/{file_name}'
                     )
                 if file_type:
-                    is_ocr_file_type = 'text' in file_type \
-                    or 'xml' in file_type \
-                    or 'json' in file_type \
-                    or 'html' in file_type
+                    is_ocr_file_type = (
+                        'text' in file_type 
+                        or 'xml' in file_type 
+                        or 'json' in file_type
+                        or 'html' in file_type
+                    )
                 if 'ocr' in file_path and (
                     file_name.endswith('.hocr') or is_ocr_file_type
                 ):

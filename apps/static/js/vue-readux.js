@@ -306,6 +306,50 @@ Vue.component("v-info-content-url-image-link", {
   },
 });
 
+// url copy component made for when the url is modified externally (outside Vue.js) - trying image link
+Vue.component("v-info-content-url-page-text", {
+  props: [],
+  data: function () {
+    return {
+      pagetext: this.pagetext,
+    };
+  },
+  template: `
+  <div id="text-overlay-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Text</h2>
+        <p>{{pagetext}}</p>
+    </div>
+  </div>
+  `,
+  methods: {
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail) {
+        var protocol = window.location.protocol;
+        var host = window.location.host;
+        var canvas = event.detail.canvas;
+        var volume = event.detail.volume;
+        var localpagelink = vm.pagelink;
+        axios.get(`iiif/resource/${event.detail.canvas}`)
+          .then(response => {
+            console.log(response.data.resource);
+            console.log(response.data.text);
+            vm.pageresource = response.data.resource;
+            vm.pagetext = response.data.text;
+          }).catch(error => {console.log(error);})
+        var url =
+          localpagelink + "/" + canvas + "/full/full/0/default.jpg";
+        vm.localUrls = url;
+        vm.can = canvas;
+      }
+    });
+  },
+});
+
 var readux = new Vue({
   el: "#v-readux",
   delimiters: ["[[", "]]"],

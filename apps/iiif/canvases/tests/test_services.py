@@ -267,3 +267,43 @@ class CanvasTests(TestCase):
         ocr = services.add_positional_ocr(canvas, ocr_result)
         assert len(ocr) == 10
         assert ocr[0]['content'] == 'Manuscript'
+
+    def test_from_alto_ocr(self):
+        """ Test parsing ALTO OCR """
+        alto = open('apps/iiif/canvases/fixtures/alto.xml', 'rb').read()
+        ocr = services.parse_alto_ocr(alto)
+        assert ocr[0]['content'] == 'MAGNA'
+        assert ocr[0]['h'] == 164
+        assert ocr[0]['w'] == 758
+        assert ocr[0]['x'] == 1894
+        assert ocr[0]['y'] == 1787
+
+    def test_from_hocr(self):
+        """ Test parsing hOCR """
+        hocr = open('apps/iiif/canvases/fixtures/hocr.hocr', 'rb').read()
+        ocr = services.parse_hocr_ocr(hocr)
+        assert ocr[0]['content'] == 'MAGNA'
+        assert ocr[0]['h'] == 164
+        assert ocr[0]['w'] == 758
+        assert ocr[0]['x'] == 1894
+        assert ocr[0]['y'] == 1787
+
+    def test_identifying_alto_xml(self):
+        """ Test identifying XML file as ALTO OCR """
+        alto = open('apps/iiif/canvases/fixtures/alto.xml', 'rb').read()
+        ocr = services.parse_xml_ocr(alto)
+        assert ocr[0]['content'] == 'MAGNA'
+        assert ocr[0]['h'] == 164
+        assert ocr[0]['w'] == 758
+        assert ocr[0]['x'] == 1894
+        assert ocr[0]['y'] == 1787
+
+    def test_identifying_hocr_xml(self):
+        """ Test identifying XML file as hOCR """
+        hocr = open('apps/iiif/canvases/fixtures/hocr.hocr', 'rb').read()
+        ocr = services.parse_xml_ocr(hocr)
+        assert ocr[0]['content'] == 'MAGNA'
+        assert ocr[0]['h'] == 164
+        assert ocr[0]['w'] == 758
+        assert ocr[0]['x'] == 1894
+        assert ocr[0]['y'] == 1787

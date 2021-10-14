@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alto xmlns="http://www.loc.gov/standards/alto/ns-v2#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v2# http://www.loc.gov/standards/alto/alto.xsd">
+  <Description>
+    <MeasurementUnit>pixel</MeasurementUnit>
+    <sourceImageInformation>
+      <fileName>./P100.tif</fileName>
+    </sourceImageInformation>
+    <OCRProcessing ID="IdOcr">
+      <ocrProcessingStep>
+        <processingSoftware>
+          <softwareName>tesseract 4.0.0</softwareName>
+        </processingSoftware>
+      </ocrProcessingStep>
+    </OCRProcessing>
+  </Description>
+  <Layout>
+    <Page ID="page_1" PHYSICAL_IMG_NR="1" HEIGHT="8403" WIDTH="6194">
+      <PrintSpace HEIGHT="8403" WIDTH="6194" VPOS="0" HPOS="0">
+        <ComposedBlock ID="block_1_1" HEIGHT="12" WIDTH="901" VPOS="275" HPOS="3126">
+          <TextBlock ID="par_1_1" HEIGHT="12" WIDTH="901" VPOS="275" HPOS="3126" LANG="ita">
+            <TextLine ID="line_1_1" HEIGHT="12" WIDTH="901" VPOS="275" HPOS="3126">
+              <String ID="word_1_29" CONTENT="MAGNA" HEIGHT="164" WIDTH="758" VPOS="1787" HPOS="1894" WC="0.95"/>
+              <String ID="word_1_30" CONTENT="CAMPI" HEIGHT="140" WIDTH="637" VPOS="1820" HPOS="2763" WC="0.92"/>
+              <String ID="word_1_31" CONTENT="MARTII" HEIGHT="147" WIDTH="730" VPOS="1834" HPOS="3504" WC="0.87"/>
+              <String ID="word_1_32" CONTENT="—" HEIGHT="3" WIDTH="3" VPOS="1983" HPOS="4355" WC="0.85"/>
+            </TextLine>
+            <TextLine ID="line_1_2" HEIGHT="141" WIDTH="2744" VPOS="2006" HPOS="1239">
+              <String ID="word_1_33" CONTENT="ICHNOGRAPHIA" HEIGHT="119" WIDTH="1228" VPOS="2006" HPOS="1239" WC="0.85"/>
+              <String ID="word_1_34" CONTENT="DESCRIPTA" HEIGHT="103" WIDTH="858" VPOS="2032" HPOS="2574" WC="0.87"/>
+              <String ID="word_1_35" CONTENT="SV" HEIGHT="98" WIDTH="185" VPOS="2047" HPOS="3545" WC="0.5"/>
+              <String ID="word_1_36" CONTENT="NT" HEIGHT="99" WIDTH="227" VPOS="2048" HPOS="3756" WC="0.5"/>
+            </TextLine>
+          </TextBlock>
+        </ComposedBlock>
+      </PrintSpace>
+    </Page>
+    <Page ID="page_2" PHYSICAL_IMG_NR="1" HEIGHT="160" WIDTH="118">
+      <PrintSpace HEIGHT="160" WIDTH="118" VPOS="0" HPOS="0"/>
+    </Page>
+  </Layout>
+</alto>

@@ -458,9 +458,9 @@ def parse_xml_ocr(result):
         or 'www.loc.gov/standards/alto' in root.find('.//*').tag
     ):
         return parse_alto_ocr(result)
-    if root.find('.//teiHeader') or root.find('.//{*}teiHeader'):
+    if root.find('.//teiHeader') is not None or root.find('.//{*}teiHeader') is not None:
         return parse_tei_ocr(result)
-    if root.find('.//div') or root.find('.//{*}div'):
+    if root.find('.//div') is not None or root.find('.//{*}div') is not None:
         # Fallback to hOCR if it looks like XHTML
         return parse_hocr_ocr(result)
     return None

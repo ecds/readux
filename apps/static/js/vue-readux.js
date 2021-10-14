@@ -306,7 +306,7 @@ Vue.component("v-info-content-url-image-link", {
   },
 });
 
-// url copy component made for when the url is modified externally (outside Vue.js) - trying image link
+// adapted from (url copy component made for when the url is modified externally (outside Vue.js)) - now page text modal
 Vue.component("v-info-content-url-page-text", {
   props: [],
   data: function () {

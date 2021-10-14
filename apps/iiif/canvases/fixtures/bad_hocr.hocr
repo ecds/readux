@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+  <title></title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name='ocr-system' content='tesseract 4.0.0' />
+  <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par ocr_line ocrx_word ocrp_wconf'/>
+</head>
+<body>
+  <div class='ocr_page' id='page_1' title='image "./P100.tif"; bbox 0 0 6194 8403; ppageno 0'>
+   <div class='ocr_carea' id='block_1_1' title="bbox 996 1787 4358 2147">
+    <p class='ocr_par' id='par_1_1' lang='ita' title="bbox 996 1787 4358 2147">
+     <span class='ocr_line' id='line_1_1' title="bbox 996 1787 4358 1986; unsupported_thing 1; baseline 0.014 -47; x_size 211; x_descenders 48; x_ascenders 33">
+      <span class='ocrx_word' id='word_1_1' title='bbox 1894 1787 2652 1951; x_wconf 95'>MAGNA</span>
+      <span class='ocrx_word' id='word_1_2' title='bbox 2763 1820 3400 1960; x_wconf 92'>CAMPI</span>
+      <span class='ocrx_word' id='word_1_3' title='bbox 3504 1834 4234 1981; x_wconf 87'>MARTII</span>
+      <span class='ocrx_word' id='word_1_4' title='bbox 4355 1983 4358 1986; x_wconf 85'>—</span>
+     </span>
+     <span class='ocr_line' id='line_1_2' title="bbox 1239 2006 3983 2147; unsupported_thing 2; baseline 0.012 -31; x_size 138.68248; x_descenders 20.682476; x_ascenders 24">
+      <span class='ocrx_word' id='word_1_5' title='bbox 1239 2006 2467 2125; x_wconf 85'>ICHNOGRAPHIA</span>
+      <span class='ocrx_word' id='word_1_6' title='bbox 2574 2032 3432 2135; x_wconf 87'>DESCRIPTA</span>
+      <span class='ocrx_word' id='word_1_7' title='bbox 3545 2047 3730 2145; x_wconf 50'>SV</span>
+      <span class='ocrx_word' id='word_1_8' title='bbox 3756 2048 3983 2147; x_wconf 50'>NT</span>
+     </span>
+    </p>
+   </div>
+  </div>
+  <div class='ocr_page' id='page_2' title='image "./P100.tif"; bbox 0 0 118 160; ppageno 1'>
+  </div>
+ </body>
+</html>

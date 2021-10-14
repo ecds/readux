@@ -288,6 +288,11 @@ class CanvasTests(TestCase):
         assert ocr[0]['x'] == 1894
         assert ocr[0]['y'] == 1787
 
+    def test_from_bad_hocr(self):
+        """ Test parsing bad hOCR """
+        bad_hocr = open('apps/iiif/canvases/fixtures/bad_hocr.hocr', 'rb').read()
+        self.assertRaises(XMLSyntaxError, services.parse_hocr_ocr, bad_hocr)
+
     def test_identifying_alto_xml(self):
         """ Test identifying XML file as ALTO OCR """
         alto = open('apps/iiif/canvases/fixtures/alto.xml', 'rb').read()
@@ -307,3 +312,96 @@ class CanvasTests(TestCase):
         assert ocr[0]['w'] == 758
         assert ocr[0]['x'] == 1894
         assert ocr[0]['y'] == 1787
+
+    def test_identifying_tei_xml(self):
+        """ Test identifying XML file as hOCR """
+        tei = open('apps/iiif/canvases/fixtures/tei.xml', 'r').read()
+        ocr = services.parse_xml_ocr(tei)
+        assert ocr[1]['content'] == 'AEN DEN LESIIU'
+        assert ocr[1]['h'] == 28
+        assert ocr[1]['w'] == 461
+        assert ocr[1]['x'] == 814
+        assert ocr[1]['y'] == 185
+
+    def test_identification_failure(self):
+        """ Test identifying XML on non-XML fails """
+        tsv = open('apps/iiif/canvases/fixtures/sample.tsv', 'r').read()
+        self.assertRaises(XMLSyntaxError, services.parse_xml_ocr, tsv)
+
+    def test_unidentifiable_xml(self):
+        """ Test identifying XML that is not TEI, ALTO, or hOCR """
+        hops = open('apps/iiif/canvases/fixtures/hops.xml', 'rb').read()
+        ocr = services.parse_xml_ocr(hops)
+        assert ocr is None
+
+    @mock_s3
+    def test_add_alto_ocr_by_filename(self):
+        """ Test get_ocr when OCR is ALTO file (by filename). """
+        bucket_name = encode_noid()
+        manifest = ManifestFactory.create(
+            image_server = ImageServerFactory.create(
+                storage_service = 's3',
+                storage_path=bucket_name,
+                server_base='images.readux.ecds.emory'
+            )
+        )
+        self.set_up_mock_s3(manifest)
+        tsv_file_path = 'apps/iiif/canvases/fixtures/alto.xml'
+        canvas = manifest.canvas_set.first()
+        canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/alto.xml'
+        manifest.image_server.bucket.upload_file(tsv_file_path, f'{manifest.pid}/_*ocr*_/alto.xml')
+        ocr = services.get_ocr(canvas)
+        assert ocr[0]['content'] == 'MAGNA'
+        assert ocr[0]['h'] == 164
+        assert ocr[0]['w'] == 758
+        assert ocr[0]['x'] == 1894
+        assert ocr[0]['y'] == 1787
+
+    @mock_s3
+    def test_add_hocr_by_filename(self):
+        """ Test get_ocr when OCR is hOCR file (by filename). """
+        bucket_name = encode_noid()
+        manifest = ManifestFactory.create(
+            image_server = ImageServerFactory.create(
+                storage_service = 's3',
+                storage_path=bucket_name,
+                server_base='images.readux.ecds.emory'
+            )
+        )
+        self.set_up_mock_s3(manifest)
+        tsv_file_path = 'apps/iiif/canvases/fixtures/hocr.hocr'
+        canvas = manifest.canvas_set.first()
+        canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/hocr.hocr'
+        manifest.image_server.bucket.upload_file(tsv_file_path, f'{manifest.pid}/_*ocr*_/hocr.hocr')
+        ocr = services.get_ocr(canvas)
+        assert ocr[0]['content'] == 'MAGNA'
+        assert ocr[0]['h'] == 164
+        assert ocr[0]['w'] == 758
+        assert ocr[0]['x'] == 1894
+        assert ocr[0]['y'] == 1787
+
+    @mock_s3
+    def test_add_json_ocr_by_filename(self):
+        """ Test get_ocr when OCR is JSON file (by filename). """
+        bucket_name = encode_noid()
+        manifest = ManifestFactory.create(
+            image_server = ImageServerFactory.create(
+                storage_service = 's3',
+                storage_path=bucket_name,
+                server_base='images.readux.ecds.emory'
+            )
+        )
+        self.set_up_mock_s3(manifest)
+        tsv_file_path = 'apps/iiif/canvases/fixtures/ocr_words.json'
+        canvas = manifest.canvas_set.first()
+        canvas.ocr_file_path = f'{manifest.pid}/_*ocr*_/ocr_words.json'
+        manifest.image_server.bucket.upload_file(
+            tsv_file_path, f'{manifest.pid}/_*ocr*_/ocr_words.json'
+        )
+        ocr = services.get_ocr(canvas)
+        assert ocr[0]['content'] == 'Dope'
+
+    def test_none_ocr(self):
+        """ Test add_positional_ocr when fetched OCR is None. """
+        ocr = services.add_positional_ocr(self.canvas, None)
+        assert ocr is None

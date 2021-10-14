@@ -225,8 +225,6 @@ def add_positional_ocr(canvas, result):
         ocr = parse_xml_ocr(result)
     elif canvas.ocr_file_path.endswith('.hocr'):
         ocr = parse_hocr_ocr(result)
-    else:
-        ocr = parse_fedora_ocr(result)
     if ocr:
         return ocr
     return None
@@ -293,7 +291,9 @@ def parse_hocr_ocr(result):
     report = validator.validate(source=file_like_hocr)
     is_valid = report.format('bool')
     if not is_valid:
-        raise etree.XMLSyntaxError
+        raise etree.XMLSyntaxError(
+            message='Invalid hOCR', code=0, line=0, column=0, filename=None
+        )
     ocr = []
     tree = etree.parse(file_like_hocr)
     words = tree.findall(".//span[@class]")

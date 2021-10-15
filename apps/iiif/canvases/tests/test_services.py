@@ -291,7 +291,7 @@ class CanvasTests(TestCase):
     def test_from_bad_hocr(self):
         """ Test parsing bad hOCR """
         bad_hocr = open('apps/iiif/canvases/fixtures/bad_hocr.hocr', 'rb').read()
-        self.assertRaises(XMLSyntaxError, services.parse_hocr_ocr, bad_hocr)
+        self.assertRaises(services.HocrValidationError, services.parse_hocr_ocr, bad_hocr)
 
     def test_identifying_alto_xml(self):
         """ Test identifying XML file as ALTO OCR """

@@ -3,8 +3,9 @@
 import csv
 from io import BytesIO
 import json
-from os import environ, path
+from os import environ, path, unlink
 import re
+import tempfile
 from hocr_spec import HocrValidator
 from lxml import etree
 from django.conf import settings
@@ -18,6 +19,10 @@ class IncludeQuotesDialect(csv.Dialect): # pylint: disable=too-few-public-method
     lineterminator = '\n'
     delimiter = '\t'
     quoting = csv.QUOTE_NONE # perform no special processing of quote characters
+
+class HocrValidationError(Exception):
+    """Exception for hOCR validation errors."""
+    pass # pylint: disable=unnecessary-pass
 
 # @httpretty.activate
 def activate_fake_canvas_info(canvas):
@@ -287,14 +292,21 @@ def parse_hocr_ocr(result):
         repl='', string=as_string
     )
     file_like_hocr = BytesIO(result_without_invalid.encode('utf-8'))
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+        file_like_hocr.seek(0)
+        tmp_file.write(file_like_hocr.read())
+        tmp_file.flush()
+        temp_file_name = tmp_file.name
     validator = HocrValidator(profile='relaxed')
-    report = validator.validate(source=file_like_hocr)
+    report = validator.validate(source=temp_file_name)
     is_valid = report.format('bool')
     if not is_valid:
-        raise etree.XMLSyntaxError(
-            message='Invalid hOCR', code=0, line=0, column=0, filename=None
-        )
+        report_text = report.format('text')
+        unlink(temp_file_name)
+        raise HocrValidationError(str(report_text))
+    unlink(temp_file_name)
     ocr = []
+    file_like_hocr.seek(0)
     tree = etree.parse(file_like_hocr)
     words = tree.findall(".//span[@class]")
     if not words:

@@ -2,13 +2,11 @@
 import os
 import uuid
 import logging
-import httpretty
-from stream_unzip import stream_unzip, TruncatedDataError
-from boto3 import client, resource
 from io import BytesIO
 from mimetypes import guess_type
-from tempfile import gettempdir, mkdtemp
-from zipfile import ZipFile
+import httpretty
+from stream_unzip import stream_unzip, TruncatedDataError
+from boto3 import client
 from tablib import Dataset
 from django.db import models
 from django.conf import settings
@@ -16,9 +14,8 @@ from django.contrib.postgres.fields import JSONField
 from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
-from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
 from apps.iiif.manifests.models import Manifest, ImageServer
-import apps.ingest.services as services
+from apps.ingest import services
 from apps.utils.fetch import fetch_url
 from .storages import IngestStorage
 
@@ -103,8 +100,8 @@ class Local(IngestAbstractModel):
         Set metadata property from extracted metadata from file.
         """
         try:
-            for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
-                file_path, file_name, file_type = self.__file_info(zipped_file)
+            for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+                _, file_name, file_type = self.__file_info(zipped_file)
                 tmp_file = bytes()
                 for chunk in unzipped_chunks:
                     if file_type and not self.__is_junk(file_name) and 'metadata' in file_name:
@@ -126,18 +123,34 @@ class Local(IngestAbstractModel):
         Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
         into memory or any of its uncompressed files.
         """
-        for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+        for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
             file_path, file_name, file_type = self.__file_info(zipped_file)
+            has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
             tmp_file = bytes()
             for chunk in unzipped_chunks:
-                if file_type and not self.__is_junk(file_name):
+                if has_type_or_is_hocr and not self.__is_junk(file_name):
                     tmp_file += chunk
-            if file_type and not self.__is_junk(file_name):
+            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
                 file_name = file_name.replace('_', '-')
-                if 'image' in file_type and 'images' in file_path:
-                    self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/{file_name}')
-                if 'text' in file_type and 'ocr' in file_path:
-                    self.image_server.bucket.upload_fileobj(BytesIO(tmp_file), f'{self.manifest.pid}/_*ocr*_/{file_name}')
+                if file_type and 'image' in file_type and 'images' in file_path:
+                    self.image_server.bucket.upload_fileobj(
+                        BytesIO(tmp_file),
+                        f'{self.manifest.pid}/{file_name}'
+                    )
+                if file_type:
+                    is_ocr_file_type = (
+                        'text' in file_type 
+                        or 'xml' in file_type 
+                        or 'json' in file_type
+                        or 'html' in file_type
+                    )
+                if 'ocr' in file_path and (
+                    file_name.endswith('.hocr') or is_ocr_file_type
+                ):
+                    self.image_server.bucket.upload_fileobj(
+                        BytesIO(tmp_file),
+                        f'{self.manifest.pid}/_*ocr*_/{file_name}'
+                    )
 
     @property
     def file_list(self):

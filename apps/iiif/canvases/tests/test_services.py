@@ -405,3 +405,14 @@ class CanvasTests(TestCase):
         """ Test add_positional_ocr when fetched OCR is None. """
         ocr = services.add_positional_ocr(self.canvas, None)
         assert ocr is None
+
+    def test_none_alto_ocr(self):
+        """ Test add_positional_ocr when fetched OCR is None. """
+        ocr = services.parse_alto_ocr(None)
+        assert ocr is None
+
+    def test_not_tsv(self):
+        """ Test is_tsv with something that is not TSV """
+        not_tsv = 'test string'
+        is_tsv = services.is_tsv(not_tsv)
+        self.assertFalse(is_tsv)

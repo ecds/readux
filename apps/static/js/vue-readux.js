@@ -253,6 +253,7 @@ Vue.component("v-info-content-url-image-link", {
   data: function () {
     return {
       localUrls: this.url,
+      pageresource: this.pageresource,
     };
   },
   template: `
@@ -267,8 +268,8 @@ Vue.component("v-info-content-url-image-link", {
         </div>
       </div>
       <div class="rx-info-content-value">
-        <a v-bind:href="localUrls" class="rx-anchor"
-          target="_blank">{{localUrls}}</a>
+        <a v-bind:href="pageresource" class="rx-anchor"
+          target="_blank">{{pageresource}}</a>
       </div>
     </div>
   `,
@@ -289,6 +290,57 @@ Vue.component("v-info-content-url-image-link", {
         var canvas = event.detail.canvas;
         var volume = event.detail.volume;
         var localpagelink = vm.pagelink;
+        axios.get(`iiif/resource/${event.detail.canvas}`)
+          .then(response => {
+            console.log(response.data.resource);
+            console.log(response.data.text);
+            vm.pageresource = response.data.resource;
+            vm.pagetext = response.data.text;
+          }).catch(error => {console.log(error);})
+        var url =
+          localpagelink + "/" + canvas + "/full/full/0/default.jpg";
+        vm.localUrls = url;
+        vm.can = canvas;
+      }
+    });
+  },
+});
+
+// adapted from (url copy component made for when the url is modified externally (outside Vue.js)) - now page text modal
+Vue.component("v-info-content-url-page-text", {
+  props: [],
+  data: function () {
+    return {
+      pagetext: this.pagetext,
+    };
+  },
+  template: `
+  <div id="text-overlay-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Text</h2>
+        <p>{{pagetext}}</p>
+    </div>
+  </div>
+  `,
+  methods: {
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail) {
+        var protocol = window.location.protocol;
+        var host = window.location.host;
+        var canvas = event.detail.canvas;
+        var volume = event.detail.volume;
+        var localpagelink = vm.pagelink;
+        axios.get(`iiif/resource/${event.detail.canvas}`)
+          .then(response => {
+            console.log(response.data.resource);
+            console.log(response.data.text);
+            vm.pageresource = response.data.resource;
+            vm.pagetext = response.data.text;
+          }).catch(error => {console.log(error);})
         var url =
           localpagelink + "/" + canvas + "/full/full/0/default.jpg";
         vm.localUrls = url;

@@ -17,7 +17,7 @@ hocr-spec==0.2.0
 Django==2.2.24  # https://www.djangoproject.com/
 #django-environ==0.4.5  # https://github.com/joke2k/django-environ
 git+https://github.com/joke2k/django-environ@develop
-django-model-utils==4.1.1  # https://github.com/jazzband/django-model-utils
+django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
 django-allauth>=0.45.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.13.0  # https://github.com/django-crispy-forms/django-crispy-forms

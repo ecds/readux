@@ -18,7 +18,7 @@ httpretty==1.1.4 # https://pypi.org/project/httpretty/
 #mock==4.0.2
 cssutils==2.3.0 # https://pypi.org/project/cssutils/
 pytest-django==4.4.0  # https://github.com/pytest-dev/pytest-django
-moto==2.2.9 # https://github.com/spulec/moto
+moto==2.2.10 # https://github.com/spulec/moto
 
 # Code quality
 # ------------------------------------------------------------------------------

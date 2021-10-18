@@ -13,7 +13,7 @@ class IiifBase(DirtyFieldsMixin, ClusterableModel):
         blank=False,
         help_text="Unique ID. Do not use _'s or spaces in the pid."
     )
-    label = models.CharField(max_length=255)
+    label = models.CharField(max_length=1000)
 
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
         self.clean_pid()

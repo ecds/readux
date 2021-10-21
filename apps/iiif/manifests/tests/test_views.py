@@ -2,6 +2,7 @@
 '''
 import json
 from datetime import datetime
+from time import sleep
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
@@ -13,7 +14,7 @@ from iiif_prezi.loader import ManifestReader
 from ..views import ManifestSitemap, ManifestRis
 from ..models import Manifest
 from ..forms import JekyllExportForm
-from .factories import ManifestFactory
+from .factories import ManifestFactory, EmptyManifestFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
 
@@ -29,16 +30,14 @@ class ManifestTests(TestCase):
     ]
 
     def setUp(self):
-        # fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
         self.user = get_user_model().objects.get(pk=111)
         self.factory = RequestFactory()
         self.client = Client()
-        # self.volume = Manifest.objects.get(pk='464d82f6-6ae5-4503-9afc-8e3cdd92a3f1')
         self.volume = ManifestFactory.create(
             publisher='ECDS',
             published_city='Atlanta'
         )
-        for num in [1, 2, 3]:
+        for num in range(0, 3):
             CanvasFactory.create(
                 manifest=self.volume,
                 position=num
@@ -53,11 +52,14 @@ class ManifestTests(TestCase):
         assert self.volume.publisher_bib == 'Atlanta : ECDS'
         assert self.volume.thumbnail_logo.endswith("/media/logos/ecds.png")
         assert self.volume.baseurl.endswith("/iiif/v2/%s" % (self.volume.pid))
-        assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
+        assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.volume.start_canvas.pid))
 
     def test_default_start_canvas(self):
         self.start_canvas.is_starting_page = False
         self.start_canvas.save()
+        self.volume.start_canvas = None
+        self.volume.save()
+        self.volume.refresh_from_db()
         assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.default_start_canvas.pid))
 
     def test_meta(self):
@@ -97,15 +99,17 @@ class ManifestTests(TestCase):
         assert form.fields['mode'].choices[1][0] == 'github'
 
     def test_manifest_search_vector_exists(self):
-        assert self.volume.search_vector is None
-        self.volume.save()
-        self.volume.refresh_from_db()
-        assert self.volume.search_vector is not None
+        volume = ManifestFactory.create()
+        assert not self.volume.search_vector
+        volume.save()
+        volume.refresh_from_db()
+        assert volume.search_vector is not  None
 
     def test_multiple_starting_canvases(self):
-        volume = ManifestFactory.create()
-        for num in range(4):
-            CanvasFactory.create(manifest=volume, is_starting_page=True)
+        volume = EmptyManifestFactory.create(canvas=None)
+        assert volume.canvas_set.exists() is False
+        for index, _ in enumerate(range(4)):
+            CanvasFactory.create(manifest=volume, is_starting_page=True, position=index+1)
         manifest = json.loads(
             serialize(
                 'manifest',
@@ -116,6 +120,8 @@ class ManifestTests(TestCase):
             )
         )
         first_canvas = volume.canvas_set.all().first()
+        assert volume.start_canvas.position <= 1
+        assert first_canvas.position <= 1
         assert first_canvas.pid in manifest['thumbnail']['@id']
 
     def test_no_starting_canvases(self):

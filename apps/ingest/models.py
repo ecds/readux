@@ -1,56 +1,90 @@
 """ Model classes for ingesting volumes. """
-import imghdr
 import os
 import uuid
 import logging
-import httpretty
-from boto3 import client, resource
 from io import BytesIO
-from urllib.parse import urlparse, unquote
 from mimetypes import guess_type
-from shutil import rmtree
-from tempfile import gettempdir, mkdtemp
-from zipfile import ZipFile
+import httpretty
+from stream_unzip import stream_unzip, TruncatedDataError
+from boto3 import client
 from tablib import Dataset
 from django.db import models
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
+from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
-from apps.iiif.canvases.services import add_ocr_annotations, get_ocr
 from apps.iiif.manifests.models import Manifest, ImageServer
-import apps.ingest.services as services
+from apps.ingest import services
 from apps.utils.fetch import fetch_url
 from .storages import IngestStorage
 
 LOGGER = logging.getLogger(__name__)
 
-def make_temp_file():
-    """Creates a temporary directory.
-
-    :return: Absolute path to the temporary directory
-    :rtype: str
-    """
-    temp_file = mkdtemp()
-    return temp_file
-
 def bulk_path(instance, filename):
-    return os.path.join('bulk', str(instance.bulk.id), filename )
+    return os.path.join('bulk', str(instance.id), filename )
+
+class IngestTaskWatcherManager(models.Manager):
+    """ Manager class for associating user and ingest data with a task result """
+    def create_watcher(self, filename, task_id, task_result, task_creator, associated_manifest=None):
+        """
+        Creates an instance of IngestTaskWatcher with provided params
+        """
+        watcher = self.create(
+            filename=filename,
+            task_id=task_id,
+            task_result=task_result,
+            task_creator=task_creator,
+            associated_manifest=associated_manifest
+        )
+        return watcher
+
+
+class IngestTaskWatcher(models.Model):
+    """ Model class for associating user and ingest data with a task result """
+    filename = models.CharField(max_length=255, null=True)
+    task_id = models.CharField(max_length=255, null=True)
+    task_result = models.ForeignKey(TaskResult, on_delete=models.CASCADE, null=True)
+    task_creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='created_tasks'
+    )
+    associated_manifest = models.ForeignKey(Manifest, on_delete=models.SET_NULL, null=True)
+    manager = IngestTaskWatcherManager()
+
+    class Meta:
+        verbose_name_plural = 'Ingest Statuses'
+
+class IngestAbstractModel(models.Model):
+    metadata = JSONField(default=dict, blank=True)
+    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
+
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
+        abstract = True
+
 
 class Bulk(models.Model):
+    """ Model class for bulk ingesting volumes from local files. """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
+    volume_files = models.FileField(blank=False, upload_to=bulk_path)
 
-class Volume(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    bulk = models.ForeignKey(Bulk, on_delete=models.DO_NOTHING, null=False)
-    volume_file = models.FileField(storage=IngestStorage(), upload_to=bulk_path)
+    class Meta:
+        verbose_name_plural = 'Bulk'
 
-class Local(models.Model):
+class Local(IngestAbstractModel):
     """ Model class for ingesting a volume from local files. """
-    # temp_file_path = models.FilePathField(path=make_temp_file(), default=make_temp_file)
+    bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
     bundle = models.FileField(blank=False, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
-    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
-    local_bundle_path = models.CharField(max_length=500, null=True, blank=True)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='created_locals'
+    )
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -61,135 +95,103 @@ class Local(models.Model):
             return client('s3')
         return None
 
-    @property
-    def bucket(self):
-        s3 = resource('s3')
-        return s3.Bucket(self.image_server.storage_path)
-
-    @property
-    def tmp_bucket(self):
-        return resource('s3').Bucket('readux-ingest')
-
-
-    @property
-    def zip_ref(self):
-        """Create a reference to the uploaded zip file.
-
-        :return: zipfile.ZipFile object of uploaded
-        :rtype: zipfile.ZipFile
-        https://medium.com/@johnpaulhayes/how-extract-a-huge-zip-file-in-an-amazon-s3-bucket-by-using-aws-lambda-and-python-e32c6cf58f06
+    def open_metadata(self):
         """
-        if self.local_bundle_path and os.path.exists(self.local_bundle_path):
-            return ZipFile(self.local_bundle_path)
-        if self.local_bundle_path:
-            return self.__fallback_download()
+        Set metadata property from extracted metadata from file.
+        """
         try:
-            buffer = BytesIO(self.bundle.file.obj.get()['Body'].read())
-            return ZipFile(buffer)
-        except OverflowError:
-            # TODO: Figure out how to test this.
-            return self.__fallback_download()
+            for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+                _, file_name, file_type = self.__file_info(zipped_file)
+                tmp_file = bytes()
+                for chunk in unzipped_chunks:
+                    if file_type and not self.__is_junk(file_name) and 'metadata' in file_name:
+                        tmp_file += chunk
+                if len(tmp_file) > 0 and file_type and not self.__is_junk(file_name):
+                    if 'csv' in file_type or 'tab-separated' in file_type:
+                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'))
+                    elif 'officedocument' in file_type:
+                        metadata = Dataset().load(BytesIO(tmp_file))
+                    if metadata is not None:
+                        self.metadata = services.clean_metadata(metadata.dict[0])
+                        return
+        except TruncatedDataError:
+            # TODO: Why does `apps.ingest.tests.test_admin.IngestAdminTest.test_local_admin_save` raise this?
+            pass
+
+    def volume_to_s3(self):
+        """
+        Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
+        into memory or any of its uncompressed files.
+        """
+        for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+            file_path, file_name, file_type = self.__file_info(zipped_file)
+            has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
+            tmp_file = bytes()
+            for chunk in unzipped_chunks:
+                if has_type_or_is_hocr and not self.__is_junk(file_name):
+                    tmp_file += chunk
+            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
+                file_name = file_name.replace('_', '-')
+                if file_type and 'image' in file_type and 'images' in file_path:
+                    self.image_server.bucket.upload_fileobj(
+                        BytesIO(tmp_file),
+                        f'{self.manifest.pid}/{file_name}'
+                    )
+                if file_type:
+                    is_ocr_file_type = (
+                        'text' in file_type 
+                        or 'xml' in file_type 
+                        or 'json' in file_type
+                        or 'html' in file_type
+                    )
+                if 'ocr' in file_path and (
+                    file_name.endswith('.hocr') or is_ocr_file_type
+                ):
+                    self.image_server.bucket.upload_fileobj(
+                        BytesIO(tmp_file),
+                        f'{self.manifest.pid}/_*ocr*_/{file_name}'
+                    )
 
     @property
-    def metadata(self):
+    def file_list(self):
+        """Returns a list of files in the zip. Used for testing.
+
+        :return: List of files in zip.
+        :rtype: list
         """
-        Extract metadata from file.
-        :return: If metadata file exists, returns the values. If no file, returns None.
-        :rtype: dict or None
-        """
-        metadata = None
-        for file in self.zip_ref.infolist():
-            if 'metadata' in file.filename.casefold():
+        files = []
+        for zipped_file, file_size, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+            file_path, file_name, file_type = self.__file_info(zipped_file)
+            files.append(file_path)
+            # Not looping through the chunks throws an UnexpectedSignatureError
+            for chunk in unzipped_chunks:
+                pass
 
-                if file.is_dir():
-                    continue
-                if metadata is not None:
-                    continue
-                if self.__is_junk(file.filename):
-                    continue
-                if 'ocr' in file.filename.casefold():
-                    continue
-                if 'image' in file.filename.casefold():
-                    continue
-
-                if 'csv' in guess_type(file.filename)[0] or 'tab-separated' in guess_type(file.filename)[0]:
-                    data = self.zip_ref.read(file.filename)
-                    metadata = Dataset().load(data.decode('utf-8-sig'))
-                else:
-                    metadata = Dataset().load(self.zip_ref.read(file.filename))
-
-                if metadata is not None:
-                    metadata = services.clean_metadata(metadata.dict[0])
-
-                return metadata
-
-    def extract_images_s3(self):
-        """
-        Extract image files directly to S3
-        """
-        if self.s3_client is None:
-            return
-
-        for filename in self.zip_ref.namelist():
-            if self.__is_junk(filename):
-                continue
-            type = guess_type(filename)[0]
-            if type is not None and 'image' in type:
-                # TODO: check if file already exists in S3.
-                # If it does, compare the hash and the S3 etag.
-                # Don't upload if files are the same.
-                self.s3_client.upload_fileobj(
-                    self.zip_ref.open(filename),
-                    Bucket=self.image_server.storage_path,
-                    Key='{p}/{f}'.format(p=self.manifest.pid, f=filename.split("/")[-1].replace('_', '-'))
-                )
-
-    def extract_ocr_s3(self):
-        """
-        Locate and extract OCR files directly to S3
-        """
-        if self.s3_client is None:
-            return
-
-        for file in self.zip_ref.infolist():
-            if 'ocr' not in file.filename.casefold():
-                continue
-            if 'metadata.' in file.filename:
-                # The metadata file could slip through.
-                # It's unlikely and will not hurt anything.
-                continue
-            if file.is_dir():
-                continue
-            if self.__is_junk(file.filename):
-                continue
-            type = guess_type(file.filename)[0]
-            if type is not None and 'text' in type:
-                self.s3_client.upload_fileobj(
-                    self.zip_ref.open(file.filename),
-                    Bucket=self.image_server.storage_path,
-                    Key='{p}/_*ocr*_/{f}'.format(p=self.manifest.pid, f=file.filename.split("/")[-1].replace('_', '-'))
-                )
+        return files
 
     def create_canvases(self):
         """
         Create Canvas objects for each image file.
         """
-        self.extract_images_s3()
-        self.extract_ocr_s3()
+        self.volume_to_s3()
 
         image_files = [
-            file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' not in file.key
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         if len(image_files) == 0:
             # TODO: Throw an error here?
             pass
+
         ocr_files = [
-            file.key for file in self.bucket.objects.filter(Prefix=self.manifest.pid) if '_*ocr*_' in file.key
+            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
         ]
 
         for index, key in enumerate(sorted(image_files)):
-            image_file = key.split('/')[-1]
+            image_file = key.split('/')[-1].replace('_', '-')
+
+            if not image_file:
+                continue
 
             LOGGER.debug(f'Creating canvas from {image_file}')
 
@@ -199,7 +201,7 @@ class Local(models.Model):
 
                 try:
                     ocr_key = [key for key in ocr_files if image_name in key][0]
-                    ocr_file_path = f'https://readux.s3.amazonaws.com/{ocr_key}'
+                    ocr_file_path = ocr_key
                 except IndexError:
                     # Every image may not have a matching OCR file
                     ocr_file_path = None
@@ -215,46 +217,45 @@ class Local(models.Model):
 
             if created and canvas.ocr_file_path is not None:
                 if os.environ['DJANGO_ENV'] == 'test':
-                    ocr = get_ocr(canvas)
-                    if ocr is not None:
-                        add_ocr_annotations(canvas, ocr)
+                    add_ocr_task(canvas.id)
                 else:
-                    add_ocr_task.delay(canvas.id)
+                    ocr_task_id = add_ocr_task.delay(canvas.id)
+                    ocr_task_result = TaskResult(task_id=ocr_task_id)
+                    ocr_task_result.save()
+                    IngestTaskWatcher.manager.create_watcher(
+                        task_id=ocr_task_id,
+                        task_result=ocr_task_result,
+                        task_creator=self.creator,
+                        filename=canvas.ocr_file_path
+                    )
+
 
         if self.manifest.canvas_set.count() == len(image_files):
-            self.clean_up()
+            self.delete()
         else:
             # TODO: Log or though an error/waring?
             pass
-
-    def clean_up(self):
-        """ Method to clean up all the files. """
-        if self.local_bundle_path and os.path.exists(self.local_bundle_path):
-            os.remove(self.local_bundle_path)
-
-        self.delete()
 
     @staticmethod
     def __is_junk(path):
         file = path.split('/')[-1]
         return file.startswith('.') or file.startswith('~') or file.startswith('__')
 
-    def __fallback_download(self):
-        self.local_bundle_path = os.path.join(
-            gettempdir(),
-            self.bundle.file.obj.key.split('/')[-1]
-        )
+    @staticmethod
+    def __file_info(path):
+        path = path.decode('UTF-8')
+        return [
+            path,
+            path.split('/')[-1],
+            guess_type(path)[0]
+        ]
 
-        if os.path.isfile(self.local_bundle_path) is False:
-            self.bundle.file.obj.download_file(self.local_bundle_path)
-            self.save()
+    def __zipped_chunks(self):
+        yield from self.bundle.file.obj.get()['Body'].iter_chunks(chunk_size=10240)
 
-        return ZipFile(self.local_bundle_path)
-
-class Remote(models.Model):
+class Remote(IngestAbstractModel):
     """ Model class for ingesting a volume from remote manifest. """
     remote_url = models.CharField(max_length=255)
-    manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
         verbose_name_plural = 'Remote'
@@ -286,13 +287,10 @@ class Remote(models.Model):
             )
         return fetch_url(self.remote_url)
 
-    @property
-    def metadata(self):
+    def open_metadata(self):
         """ Take a remote IIIF manifest and create a derivative version. """
         if self.remote_manifest['@context'] == 'http://iiif.io/api/presentation/2/context.json':
-            return services.parse_iiif_v2_manifest(self.remote_manifest)
-
-        return None
+            self.metadata = services.parse_iiif_v2_manifest(self.remote_manifest)
 
     def create_canvases(self):
          # TODO: What if there are multiple sequences? Is that even allowed in IIIF?

@@ -11,11 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=None, path=apps.ingest.models.make_temp_file),
-        ),
         migrations.AlterField(
             model_name='local',
             name='bundle',

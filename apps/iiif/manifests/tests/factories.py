@@ -2,6 +2,8 @@
 from random import randrange
 from factory.django import DjangoModelFactory, ImageField
 from factory import Faker, RelatedFactory, SubFactory
+from time import time
+from apps.utils.noid import encode_noid
 from ..models import Manifest, ImageServer
 from ...canvases.tests.factories import CanvasFactory
 
@@ -15,9 +17,19 @@ class ImageServerFactory(DjangoModelFactory):
 
 class ManifestFactory(DjangoModelFactory):
     """Creates a Manifest object for testing."""
-    pid = str(randrange(2000, 5000))
+    pid = encode_noid()
     label = Faker("name")
     canvase = RelatedFactory(CanvasFactory, 'manifest')
+    logo = ImageField(from_path='apps/iiif/canvases/tests/ecds.png')
+    image_server = SubFactory(ImageServerFactory)
+
+    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
+        model = Manifest
+
+class EmptyManifestFactory(DjangoModelFactory):
+    """Creates a Manifest object for testing."""
+    pid = encode_noid()
+    label = Faker("name")
     logo = ImageField(from_path='apps/iiif/canvases/tests/ecds.png')
     image_server = SubFactory(ImageServerFactory)
 

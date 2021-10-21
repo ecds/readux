@@ -18,11 +18,6 @@ class Migration(migrations.Migration):
             field=models.FileField(storage=apps.ingest.storages.TmpStorage(), upload_to=''),
         ),
         migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpcmngb1zt'),
-        ),
-        migrations.AlterField(
             model_name='volume',
             name='volume_file',
             field=models.FileField(storage=apps.ingest.storages.TmpStorage(), upload_to=apps.ingest.models.bulk_path),

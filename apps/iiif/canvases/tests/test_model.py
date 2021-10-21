@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 from moto import mock_s3
 from django.conf import settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
-from .factories import CanvasFactory
+from .factories import CanvasFactory, CanvasNoDimensionsFactory
 
 class TestCanvasModels(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -82,3 +82,41 @@ class TestCanvasModels(TestCase):
         self.assertEqual(get_image_error, 'NoSuchKey')
         self.assertEqual(get_ocr_error, 'NoSuchKey')
 
+    def test_no_manifest(self):
+        canvas = Canvas()
+        assert canvas.service_id is None
+        assert canvas.resource_id is None
+        assert canvas.social_media is None
+
+    def test_string_representation(self):
+        canvas = CanvasFactory.create(manifest=ManifestFactory.create())
+        assert str(canvas) == canvas.pid
+
+    def test_get_image_info(self):
+        image_server = ImageServerFactory.create(server_base='http://fake.info')
+        manifest = ManifestFactory.create(image_server=image_server)
+        canvas = CanvasFactory.create(manifest=manifest)
+        assert canvas.image_info['height'] == 3000
+        assert canvas.image_info['width'] == 3000
+
+    def test_setting_height_width_from_iiif(self):
+        image_server = ImageServerFactory.create(server_base='http://fake.info')
+        manifest = ManifestFactory.create(image_server=image_server)
+        canvas = CanvasFactory.build()
+        canvas.height = None
+        canvas.width = None
+        assert canvas.height != 3000
+        assert canvas.width != 3000
+        canvas.manifest = manifest
+        canvas.save()
+        canvas.refresh_from_db()
+        assert canvas.height == 3000
+        assert canvas.width == 3000
+
+    def test_setting_height_and_width(self):
+        canvas = CanvasNoDimensionsFactory.build(manifest=ManifestFactory.create())
+        assert canvas.height == 0
+        assert canvas.width == 0
+        canvas.save()
+        assert canvas.height == 3000
+        assert canvas.width == 3000

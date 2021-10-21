@@ -1,5 +1,5 @@
 """ Collection of choices to be used in choice fields. """
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 
 class Choices():
     """ Collection of choices to be used in choice fields. """

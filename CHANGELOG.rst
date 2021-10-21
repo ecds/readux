@@ -2,6 +2,14 @@
 
 CHANGELOG
 =========
+
+Release 2.2.0
+---------------------
+* Stream ingest uploads to S3
+* Adds status records for ingest tasks
+* Adds bulk ingest
+* Adds email notifications for ingest success and failure
+
 Release 2.1.1
 ---------------------
 * Fixes migration conflicts

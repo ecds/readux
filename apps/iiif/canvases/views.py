@@ -74,3 +74,14 @@ class IIIFV2Detail(View):
             ),
             safe=False
         )
+
+class CanvasResource(View):
+    def get(self, *args, **kwargs):
+        canvas = Canvas.objects.get(pid=self.kwargs['pid'])
+
+        return JsonResponse(
+                {
+                    'resource': canvas.resource_id + "/full/full/0/default.jpg",
+                    'text': canvas.result
+                }
+        )

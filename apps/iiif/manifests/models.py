@@ -15,6 +15,7 @@ from modelcluster.models import ClusterableModel
 import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
+from..models import IiifBase
 JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
 
 def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
@@ -46,7 +47,7 @@ class ImageServer(models.Model):
 
     @property
     def bucket(self):
-        if self.storage_source == 's3':
+        if self.storage_service == 's3':
             s3 = resource('s3')
             return s3.Bucket(self.storage_path)
         return None
@@ -73,16 +74,13 @@ class ManifestManager(models.Manager): # pylint: disable = too-few-public-method
         vector = SearchVector(StringAgg('canvas__annotation__content', delimiter=' '))
         return self.get_queryset().annotate(document=vector)
 
-class Manifest(ClusterableModel):
+class Manifest(IiifBase):
     """Model class for IIIF Manifest"""
 
     DIRECTIONS = (
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')
     )
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=True)
-    pid = models.CharField(max_length=255)
-    label = models.CharField(max_length=255)
     summary = models.TextField()
     author = models.TextField(null=True)
     published_city = models.TextField(null=True)
@@ -115,6 +113,7 @@ class Manifest(ClusterableModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     autocomplete_search_field = 'label'
+    # TODO: This has to be removed/redone before we upgrade to Django 3
     search_vector = SearchVectorField(null=True, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     objects = ManifestManager()
@@ -125,7 +124,6 @@ class Manifest(ClusterableModel):
         blank=True,
         null=True
     )
-    # image_server = models.ForeignKey(ImageServer, on_delete=models.CASCADE, null=True)
 
     def get_absolute_url(self):
         """Absolute URL for manifest
@@ -203,21 +201,26 @@ class Manifest(ClusterableModel):
 
     #update search_vector every time the entry updates
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
-        if '_' in self.pid:
-            self.pid = self.pid.replace('_', '-')
+
+        if not self._state.adding and 'pid' in self.get_dirty_fields() and self.image_server and self.image_server.storage_service == 's3':
+            self.__rename_s3_objects()
+
+        super().save(*args, **kwargs)
+
         Canvas = apps.get_model('canvases.canvas')
         try:
             if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
-                self.start_canvas = self.canvas_set.first()
+                print([c.position] for c in self.canvas_set.all())
+                self.start_canvas = self.canvas_set.all().order_by('position').first()
+                self.save()
         except Canvas.DoesNotExist:
             self.start_canvas = None
-
-        super().save(*args, **kwargs)
 
         if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
             instance = self._meta.default_manager.with_documents().get(pk=self.pk)
             instance.search_vector = instance.document
             instance.save(update_fields=['search_vector'])
+
 
     def delete(self, *args, **kwargs):
         """
@@ -230,6 +233,14 @@ class Manifest(ClusterableModel):
             canvas.delete()
 
         super().delete(*args, **kwargs)
+
+    def __rename_s3_objects(self):
+        original_pid = self.get_dirty_fields()['pid']
+        keys = [f.key for f in self.image_server.bucket.objects.filter(Prefix=f'{original_pid}/')]
+        for key in keys:
+            obj = self.image_server.bucket.Object(key.replace(original_pid, self.pid))
+            obj.copy({ 'Bucket': self.image_server.storage_path, 'Key': key })
+            self.image_server.bucket.Object(key).delete()
 
 # TODO: is this needed?
 class Note(models.Model):

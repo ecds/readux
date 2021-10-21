@@ -21,11 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='local',
             name='image_server',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='canvases.IServer'),
-        ),
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpz0h5pz94'),
-        ),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='manifests.ImageServer'),
+        )
     ]

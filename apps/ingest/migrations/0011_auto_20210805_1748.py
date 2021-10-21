@@ -17,10 +17,5 @@ class Migration(migrations.Migration):
             name='bulk',
             field=models.ForeignKey(default='6b48744e-30a6-4de3-8ff5-5a527cf48e4e', on_delete=django.db.models.deletion.DO_NOTHING, to='ingest.Bulk'),
             preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmpouz1ixtm'),
-        ),
+        )
     ]

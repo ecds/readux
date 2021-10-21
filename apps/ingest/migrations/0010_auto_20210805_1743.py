@@ -14,10 +14,5 @@ class Migration(migrations.Migration):
         migrations.RenameModel(
             old_name='BulkUploads',
             new_name='Volume',
-        ),
-        migrations.AlterField(
-            model_name='local',
-            name='temp_file_path',
-            field=models.FilePathField(default=apps.ingest.models.make_temp_file, path='/tmp/tmptvgpofrt'),
-        ),
+        )
     ]

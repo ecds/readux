@@ -199,7 +199,7 @@ Vue.component("v-info-content-url-multiple", {
 
 // url copy component made for when the url is modified externally (outside Vue.js)
 Vue.component("v-info-content-url-external", {
-  props: ["label", "url"],
+  props: ["label", "url", "volume"],
   data: function () {
     return {
       localUrl: this.url,
@@ -237,10 +237,114 @@ Vue.component("v-info-content-url-external", {
         var protocol = window.location.protocol;
         var host = window.location.host;
         var canvas = event.detail.canvas;
-        var volume = event.detail.volume;
+        var volume = vm.volume;
         var url =
-          protocol + "//" + host + "/volume/" + volume + "/page/" + canvas;
+          protocol + "//" + host + volume + "/page/" + canvas;
         vm.localUrl = url;
+        vm.vol = volume;
+      }
+    });
+  },
+});
+
+// url copy component made for when the url is modified externally (outside Vue.js) - trying image link
+Vue.component("v-info-content-url-image-link", {
+  props: ["label", "pagelink"],
+  data: function () {
+    return {
+      localUrls: this.url,
+      pageresource: this.pageresource,
+    };
+  },
+  template: `
+    <div class="rx-info-content">
+      <div class="rx-info-content-label uk-flex-between rx-flex ">
+        <span v-if="localUrls !== undefined">{{label}}</span>
+        <div>
+          <span class="uk-label rx-label-copy"
+            v-clipboard:copy="localUrls"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError" v-if="localUrls !== undefined">Copy</span>
+        </div>
+      </div>
+      <div class="rx-info-content-value">
+        <a v-bind:href="pageresource" class="rx-anchor"
+          target="_blank">{{pageresource}}</a>
+      </div>
+    </div>
+  `,
+  methods: {
+    onCopy() {
+      alert(`You have copied: ${this.localUrls}`);
+    },
+    onError() {
+      alert(`Something went wrong with copy.`);
+    },
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail) {
+        var protocol = window.location.protocol;
+        var host = window.location.host;
+        var canvas = event.detail.canvas;
+        var volume = event.detail.volume;
+        var localpagelink = vm.pagelink;
+        axios.get(`iiif/resource/${event.detail.canvas}`)
+          .then(response => {
+            console.log(response.data.resource);
+            console.log(response.data.text);
+            vm.pageresource = response.data.resource;
+            vm.pagetext = response.data.text;
+          }).catch(error => {console.log(error);})
+        var url =
+          localpagelink + "/" + canvas + "/full/full/0/default.jpg";
+        vm.localUrls = url;
+        vm.can = canvas;
+      }
+    });
+  },
+});
+
+// adapted from (url copy component made for when the url is modified externally (outside Vue.js)) - now page text modal
+Vue.component("v-info-content-url-page-text", {
+  props: [],
+  data: function () {
+    return {
+      pagetext: this.pagetext,
+    };
+  },
+  template: `
+  <div id="text-overlay-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title">Text</h2>
+        <p>{{pagetext}}</p>
+    </div>
+  </div>
+  `,
+  methods: {
+  },
+  mounted() {
+    var vm = this;
+    window.addEventListener("canvasswitch", function (event) {
+      if (event.detail) {
+        var protocol = window.location.protocol;
+        var host = window.location.host;
+        var canvas = event.detail.canvas;
+        var volume = event.detail.volume;
+        var localpagelink = vm.pagelink;
+        axios.get(`iiif/resource/${event.detail.canvas}`)
+          .then(response => {
+            console.log(response.data.resource);
+            console.log(response.data.text);
+            vm.pageresource = response.data.resource;
+            vm.pagetext = response.data.text;
+          }).catch(error => {console.log(error);})
+        var url =
+          localpagelink + "/" + canvas + "/full/full/0/default.jpg";
+        vm.localUrls = url;
+        vm.can = canvas;
       }
     });
   },
@@ -270,7 +374,7 @@ var readux = new Vue({
     toggleMoreInfo: function(){
       this.showMoreInfo = !this.showMoreInfo
     }
-    
+
     // ascaddURL: function(element) {
     // 	$(element).attr('href', function () {
     // 		if (window.location.search.length == 0) {
@@ -316,4 +420,3 @@ var readux = new Vue({
     }
   }
 });
-

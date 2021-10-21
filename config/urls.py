@@ -37,12 +37,12 @@ urlpatterns = [
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'^pages/', include(wagtail_urls)),
-    url(r'^', include('apps.iiif.canvases.urls')),
-    url(r'^', include('apps.iiif.manifests.urls')),
-    url(r'^', include('apps.iiif.annotations.urls')),
-    url(r'^', include('apps.iiif.kollections.urls')),
-    path('accounts/', include('allauth.urls')),# url(r'^', include('readux.collection.urls')),
-    # url(r'^', include('readux.volumes.urls')),
+    re_path(r'^', include('apps.iiif.canvases.urls')),
+    re_path(r'^', include('apps.iiif.manifests.urls')),
+    re_path(r'^', include('apps.iiif.annotations.urls')),
+    re_path(r'^', include('apps.iiif.kollections.urls')),
+    path('accounts/', include('allauth.urls')),# re_path(r'^', include('readux.collection.urls')),
+    # re_path(r'^', include('readux.volumes.urls')),
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     # path(
     #     'about/',
@@ -58,7 +58,7 @@ urlpatterns = [
     ),
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    url(r'^', include('apps.readux.urls')),
+    re_path(r'^', include('apps.readux.urls')),
     re_path(r'', include(wagtail_urls)),
     path(r'^summernote/', include('django_summernote.urls')),
 

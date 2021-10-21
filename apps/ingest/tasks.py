@@ -3,9 +3,12 @@
 """ Common tasks for ingest. """
 import logging
 from celery import Celery
+from celery.signals import task_success, task_failure
 from django.apps import apps
 from django.conf import settings
+from apps.ingest.models import IngestTaskWatcher
 from .services import create_manifest
+from .mail import send_email_on_failure, send_email_on_success
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
@@ -19,7 +22,7 @@ logging.getLogger('botocore').setLevel(logging.ERROR)
 logging.getLogger('s3transfer').setLevel(logging.ERROR)
 logging.getLogger('factory').setLevel(logging.ERROR)
 
-app = Celery('apps.ingest')
+app = Celery('apps.ingest', result_extended=True)
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
@@ -39,7 +42,6 @@ def create_canvas_form_local_task(ingest_id):
         local_ingest.refresh_from_db()
 
     local_ingest.create_canvases()
-
     # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
     # the database. As a double check loop through to make sure the height and width has been saved.
     for canvas in local_ingest.manifest.canvas_set.all():
@@ -61,3 +63,29 @@ def create_remote_canvases(ingest_id, *args, **kwargs):
         remote_ingest.refresh_from_db()
 
     remote_ingest.create_canvases()
+
+
+@task_failure.connect
+def send_email_on_failure_task(sender=None, exception=None, task_id=None, traceback=None, *args, **kwargs):
+    """Function to send an email on task success signal from Celery.
+
+    :param sender: The task object
+    :type sender: celery.task
+    """
+    if sender is not None and 'creating_canvases_from_local' in sender.name:
+        task_watcher = IngestTaskWatcher.manager.get(task_id=task_id)
+        if task_watcher is not None:
+            send_email_on_failure(task_watcher, exception, traceback, *args, **kwargs)
+
+@task_success.connect
+def send_email_on_success_task(sender=None, **kwargs):
+    """Function to send an email on task success signal from Celery.
+
+    :param sender: The task object
+    :type sender: celery.task
+    """
+    if sender is not None and 'creating_canvases_from_local' in sender.name:
+        task_id = sender.request.id
+        task_watcher = IngestTaskWatcher.manager.get(task_id=task_id)
+        if task_watcher is not None:
+          send_email_on_success(task_watcher)

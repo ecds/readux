@@ -7,7 +7,6 @@ import os
 
 def make_csv(args):
     print(','.join(['manifest',
-                'IIIF_IMAGE_SERVER_BASE',
                 'id',
                 'label',
                 'pid',

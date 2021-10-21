@@ -1,9 +1,11 @@
 """ Module of service classes and methods for ingest. """
+from mimetypes import guess_type
+from time import time
 from urllib.parse import unquote, urlparse
-from uuid import uuid4
 from django.apps import apps
-from apps.iiif.manifests.models import Manifest
+from tablib.core import Dataset
 from apps.iiif.manifests.models import Manifest, RelatedLink
+from apps.utils.noid import encode_noid
 
 def clean_metadata(metadata):
     """Remove keys that do not aligin with Manifest fields.
@@ -35,18 +37,21 @@ def create_manifest(ingest):
     manifest = None
     # Make a copy of the metadata so we don't extract it over and over.
     try:
+        if not bool(ingest.manifest) or ingest.manifest is None:
+            ingest.open_metadata()
+
         metadata = dict(ingest.metadata)
     except TypeError:
         metadata = None
-    if metadata is not None:
-        manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+    if metadata:
+        if 'pid' in metadata:
+            manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+        else:
+            manifest = Manifest.objects.create()
         for (key, value) in metadata.items():
             setattr(manifest, key, value)
-        # TODO: I'm not sure this is what we want to do
-        # if not created:
-        #     manifest.canvas_set.all().delete()
     else:
-        manifest = Manifest(pid=str(uuid4()))
+        manifest = Manifest()
 
     manifest.image_server = ingest.image_server
     manifest.save()
@@ -136,3 +141,41 @@ def parse_iiif_v2_canvas(canvas):
         'label': label,
         'resource': resource
     }
+
+def get_metadata_from(files):
+    """
+    Find metadata file in uploaded files.
+    :return: If metadata file exists, returns the values. If no file, returns None.
+    :rtype: list or None
+    """
+    metadata = None
+    for file in files:
+        if metadata is not None:
+            continue
+        if 'zip' in guess_type(file.name)[0]:
+            continue
+        if 'metadata' in file.name.casefold():
+            stream = file.read()
+            if 'csv' in guess_type(file.name)[0] or 'tab-separated' in guess_type(file.name)[0]:
+                metadata = Dataset().load(stream.decode('utf-8-sig')).dict
+            else:
+                metadata = Dataset().load(stream).dict
+    return metadata
+
+def get_associated_meta(all_metadata, file):
+    """
+    Associate metadata with filename.
+    :return: If a matching filename is found, returns the row as dict,
+        with generated pid. Otherwise, returns {}.
+    :rtype: dict
+    """
+    file_meta = {}
+    extless_filename = file.name[0:file.name.rindex('.')]
+    for meta_dict in all_metadata:
+        for key, val in meta_dict.items():
+            if key.casefold() == 'filename':
+                metadata_found_filename = val
+        # Match filename column, case-sensitive, against filename
+        if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
+            file_meta = meta_dict
+    return file_meta

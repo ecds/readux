@@ -226,6 +226,7 @@ class PageDetail(TemplateView):
         #     context['all'] = True
         context['page'] = canvas
         context['volume'] = manifest
+        context['pagelink'] = manifest.image_server
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
         context['volumelink'] = Page.objects.type(VolumesPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(

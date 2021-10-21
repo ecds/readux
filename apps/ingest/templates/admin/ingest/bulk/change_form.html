@@ -27,6 +27,14 @@
     #overlay-progress-container {
       height: 32px;
     }
+    #overlay-warning-container {
+      margin-top: 3rem;
+      width: 50%;
+    }
+    .overlay-warning {
+      font-size: 1rem;
+      color: white !important;
+    }
   </style>
 {% endblock %}
 {% block submit_buttons_bottom %}
@@ -109,6 +117,16 @@
     <div id="overlay-percentage">0%</div>
     <div id="overlay-progress-container">
       <progress id="overlay-progress" value="0" max="100"></progress>
+    </div>
+    <div id="overlay-warning-container">
+      <p class="overlay-warning">
+        <strong>You must leave this window open during upload.</strong>
+      </p>
+      <p class="overlay-warning">
+        Once upload completes, you will be sent to the list of manifests.
+        You may navigate away while the rest of the ingest completes; you
+        will receive an email to notify you when the ingest has completed.
+      </p>
     </div>
   </div>
 {% endblock %}

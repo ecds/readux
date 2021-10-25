@@ -50,7 +50,7 @@ def send_email_on_success(task_watcher=None):
             'admin:manifests_manifest_change', args=(task_watcher.associated_manifest.id,)
         )
         context['manifest_pid'] = task_watcher.associated_manifest.pid
-        context['volume_url'] = task_watcher.associated_manifest.get_absolute_url()
+        context['volume_url'] = task_watcher.associated_manifest.get_volume_url()
     else:
         context['manifests_list_url'] = settings.HOSTNAME + reverse(
             'admin:manifests_manifest_changelist'

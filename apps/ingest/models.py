@@ -77,7 +77,8 @@ class Bulk(models.Model):
 class Local(IngestAbstractModel):
     """ Model class for ingesting a volume from local files. """
     bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
-    bundle = models.FileField(blank=False, storage=IngestStorage())
+    bundle_from_bulk = models.FileField(null=True, blank=True, upload_to=bulk_path)
+    bundle = models.FileField(null=True, blank=True, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,

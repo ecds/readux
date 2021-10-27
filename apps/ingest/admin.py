@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django_celery_results.models import TaskResult
 from apps.ingest import tasks
-from apps.ingest.storages import IngestStorage
 from .models import Bulk, IngestTaskWatcher, Local, Remote
 from .services import clean_metadata, create_manifest, get_associated_meta, get_metadata_from
 from .forms import BulkVolumeUploadForm
@@ -118,8 +117,6 @@ class BulkAdmin(admin.ModelAdmin):
             if environ["DJANGO_ENV"] != 'test':
                 upload_task = tasks.upload_to_s3_task.delay(
                     local_id=new_local.id,
-                    file_path=path.join("bulk", str(obj.id), file.name),
-                    user_id=request.user.id,
                 )
                 upload_task_result = TaskResult(task_id=upload_task.id)
                 upload_task_result.save()

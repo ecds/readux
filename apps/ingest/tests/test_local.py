@@ -1,12 +1,11 @@
 """ Tests for local ingest """
 from os import path, remove
-from tempfile import gettempdir
 import pytest
 import boto3
 from moto import mock_s3
 from os.path import join
 from django.test import TestCase
-from django.core.files.uploadedfile import SimpleUploadedFile, TemporaryUploadedFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory

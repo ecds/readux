@@ -4,6 +4,7 @@ import uuid
 import logging
 from io import BytesIO
 from mimetypes import guess_type
+from django.core.files.base import ContentFile
 import httpretty
 from stream_unzip import stream_unzip, TruncatedDataError
 from boto3 import client
@@ -77,7 +78,8 @@ class Bulk(models.Model):
 class Local(IngestAbstractModel):
     """ Model class for ingesting a volume from local files. """
     bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
-    bundle = models.FileField(blank=False, storage=IngestStorage())
+    bundle_from_bulk = models.FileField(null=True, blank=True, upload_to=bulk_path)
+    bundle = models.FileField(null=True, blank=True, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -151,6 +153,28 @@ class Local(IngestAbstractModel):
                         BytesIO(tmp_file),
                         f'{self.manifest.pid}/_*ocr*_/{file_name}'
                     )
+
+    def bundle_to_s3(self):
+        """Uploads the zipfile stored in bundle_from_bulk to S3
+        :param file_path: File path for uploaded file
+        :type file_path: str
+        """
+        if bool(self.bundle_from_bulk):
+            # Save to bundle
+            if not bool(self.bundle):
+                if not os.path.isfile(self.bundle_from_bulk.path):
+                    raise Exception(f"Could not find file: {self.bundle_from_bulk.path}")
+                bulk_name = self.bundle_from_bulk.name
+                with ContentFile(self.bundle_from_bulk.read()) as file_content:
+                    self.bundle.save(bulk_name, file_content)
+            # Delete tempfile
+            if bool(self.bundle):
+                old_path = self.bundle_from_bulk.path
+                os.remove(old_path)
+                dir_path = old_path[0:old_path.rindex('/')]
+                if not os.path.isfile(old_path) and len(os.listdir(dir_path)) == 0:
+                    os.rmdir(dir_path)
+                self.bundle_from_bulk.delete()
 
     @property
     def file_list(self):

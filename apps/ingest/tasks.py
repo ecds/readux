@@ -6,6 +6,9 @@ from celery import Celery
 from celery.signals import task_success, task_failure
 from django.apps import apps
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from django_celery_results.models import TaskResult
 from apps.ingest.models import IngestTaskWatcher
 from .services import create_manifest
 from .mail import send_email_on_failure, send_email_on_success
@@ -64,6 +67,35 @@ def create_remote_canvases(ingest_id, *args, **kwargs):
 
     remote_ingest.create_canvases()
 
+@app.task(name='uploading_to_s3', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
+def upload_to_s3_task(local_id):
+    """Task to create Canavs objects from remote IIIF manifest
+
+    :param local_id: Primary key for .models.Local object
+    :type local_id: UUID
+    """
+    local = Local.objects.get(pk=local_id)
+
+    # Upload tempfile to S3
+    local.bundle_to_s3()
+
+    # Create manifest now that we have a file
+    if local.manifest is None:
+        local.manifest = create_manifest(local)
+
+    # Queue task to create canvases etc.
+    local.save()
+    local.refresh_from_db()
+    local_task_id = create_canvas_form_local_task.delay(local_id)
+    local_task_result = TaskResult(task_id=local_task_id)
+    local_task_result.save()
+    IngestTaskWatcher.manager.create_watcher(
+        task_id=local_task_id,
+        task_result=local_task_result,
+        task_creator=get_user_model().objects.get(pk=local.creator.id),
+        associated_manifest=local.manifest,
+        filename=local.bundle.name
+    )
 
 @task_failure.connect
 def send_email_on_failure_task(sender=None, exception=None, task_id=None, traceback=None, *args, **kwargs):
@@ -88,4 +120,4 @@ def send_email_on_success_task(sender=None, **kwargs):
         task_id = sender.request.id
         task_watcher = IngestTaskWatcher.manager.get(task_id=task_id)
         if task_watcher is not None:
-          send_email_on_success(task_watcher)
+            send_email_on_success(task_watcher)

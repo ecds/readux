@@ -6,6 +6,7 @@ from django.core import files
 from django.http import HttpResponseRedirect
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.urls.base import reverse
 from django_celery_results.models import TaskResult
 from moto import mock_s3
 from apps.ingest.forms import BulkVolumeUploadForm
@@ -177,7 +178,7 @@ class IngestAdminTest(TestCase):
         with self.assertRaises(Bulk.DoesNotExist):
             bulk.refresh_from_db()
         assert isinstance(response, HttpResponseRedirect)
-        assert response.url == '/admin/manifests/manifest/?o=-4'
+        assert response.url == reverse('admin:ingest_ingesttaskwatcher_changelist')
 
     def test_bulk_admin_with_external_metadata(self):
         """It should add the metadata to the matching Local object"""

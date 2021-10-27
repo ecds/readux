@@ -3,7 +3,6 @@ from os import path, remove
 import pytest
 import boto3
 from moto import mock_s3
-from os.path import join
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
@@ -20,7 +19,7 @@ class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
     def setUp(self):
         """ Set instance variables. """
-        self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
+        self.fixture_path = path.join(settings.APPS_DIR, 'ingest/fixtures/')
         self.image_server = ImageServerFactory(
             server_base='http://readux.s3.amazonaws.com',
             storage_service='s3',
@@ -40,7 +39,7 @@ class LocalTest(TestCase):
         local.save()
         file = SimpleUploadedFile(
                 name=bundle,
-                content=open(join(self.fixture_path, bundle), 'rb').read()
+                content=open(path.join(self.fixture_path, bundle), 'rb').read()
             )
         if from_bulk:
             local.bundle_from_bulk.save(bundle, file)

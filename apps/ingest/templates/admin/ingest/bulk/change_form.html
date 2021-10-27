@@ -86,6 +86,16 @@
         label.textContent = 'Upload complete, please wait...';
       }
 
+      function handleError (e) {
+        errored = true;
+        label.textContent = 'Error: Please see dev tools console for details';
+      }
+
+      xhr.upload.addEventListener('abort', handleError);
+      xhr.upload.addEventListener('error', handleError);
+      xhr.addEventListener('abort', handleError);
+      xhr.addEventListener('error', handleError);
+
       xhr.onreadystatechange = (e) => {
         if (xhr.readyState == XMLHttpRequest.DONE) {
           if (buttonUsed === 'start_upload') {

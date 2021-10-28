@@ -1,11 +1,9 @@
 """ Module of service classes and methods for ingest. """
 from mimetypes import guess_type
-from time import time
 from urllib.parse import unquote, urlparse
 from django.apps import apps
 from tablib.core import Dataset
 from apps.iiif.manifests.models import Manifest, RelatedLink
-from apps.utils.noid import encode_noid
 
 def clean_metadata(metadata):
     """Remove keys that do not aligin with Manifest fields.
@@ -54,10 +52,18 @@ def create_manifest(ingest):
         manifest = Manifest()
 
     manifest.image_server = ingest.image_server
-    manifest.save()
 
     # This was giving me a 'django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet' error.
     Remote = apps.get_model('ingest.remote')
+
+    # Ensure that manifest has an ID before updating the M2M relationship
+    manifest.save()
+    if not isinstance(ingest, Remote):
+        manifest.refresh_from_db()
+        manifest.collections.set(ingest.collections.all())
+        # Save again once relationship is set
+        manifest.save()
+
     # if type(ingest, .models.Remote):
     if isinstance(ingest, Remote):
         RelatedLink(

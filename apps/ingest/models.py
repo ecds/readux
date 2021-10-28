@@ -4,7 +4,6 @@ import uuid
 import logging
 from io import BytesIO
 from mimetypes import guess_type
-from django.core.files.base import ContentFile
 import httpretty
 from stream_unzip import stream_unzip, TruncatedDataError
 from boto3 import client
@@ -12,9 +11,11 @@ from tablib import Dataset
 from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.core.files.base import ContentFile
 from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
+from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest, ImageServer
 from apps.ingest import services
 from apps.utils.fetch import fetch_url
@@ -71,6 +72,11 @@ class Bulk(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     volume_files = models.FileField(blank=False, upload_to=bulk_path)
+    collections = models.ManyToManyField(
+        Collection,
+        blank=True,
+        help_text="Optional: Collections to attach to ALL volumes ingested in this form."
+    )
 
     class Meta:
         verbose_name_plural = 'Bulk'
@@ -86,6 +92,11 @@ class Local(IngestAbstractModel):
         on_delete=models.SET_NULL,
         null=True,
         related_name='created_locals'
+    )
+    collections = models.ManyToManyField(
+        Collection,
+        blank=True,
+        help_text="Optional: Collections to attach to the volume ingested in this form."
     )
 
     class Meta:

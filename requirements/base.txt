@@ -56,7 +56,7 @@ django-background-tasks==1.2.5
 
 # S3 Uploads
 boto3==1.19.4
-django-storages==1.12.2  # https://github.com/jschneier/django-storages
+django-storages==1.12.3  # https://github.com/jschneier/django-storages
 
 # Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.
 stream-unzip>=0.0.58

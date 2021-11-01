@@ -5,6 +5,7 @@ import json
 from django.http import JsonResponse
 from django.views import View
 from django.core.serializers import serialize
+from django.utils.html import format_html
 from .models import Canvas
 from ..manifests.models import Manifest
 # from .serializers import CanvasSerializer
@@ -82,6 +83,6 @@ class CanvasResource(View):
         return JsonResponse(
                 {
                     'resource': canvas.resource_id + "/full/full/0/default.jpg",
-                    'text': canvas.result
+                    'text': format_html(canvas.result2)
                 }
         )

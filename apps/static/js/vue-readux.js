@@ -319,7 +319,7 @@ Vue.component("v-info-content-url-page-text", {
     <div class="uk-modal-dialog uk-modal-body">
         <button class="uk-modal-close-default" type="button" uk-close></button>
         <h2 class="uk-modal-title">Text</h2>
-        <p>{{pagetext}}</p>
+        <p style="background-color:white;background:white;height:100vh;" v-html="pagetext"></p>
     </div>
   </div>
   `,

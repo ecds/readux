@@ -162,6 +162,18 @@ class Canvas(IiifBase):
             clean_words.append(clean_word)
         return ' '.join(clean_words)
 
+    @property
+    def result2(self):
+        """Empty attribute to hold the result of requests to get OCR data."""
+        words = Annotation.objects.filter(
+            owner=USER.objects.get(username='ocr'),
+            canvas=self.id).order_by('order')
+        out_words = []
+        for word in words:
+            out_word = str(word.content) + '<style> #' + str(word.id) + ' {{left:' + str(word.x / 2) + 'px; top: ' + str(word.y / 2) + 'px;}} </style>'
+            out_words.append(out_word)
+        return ' '.join(out_words)
+
     def save(self, *args, **kwargs): # pylint: disable = signature-differs
         """
         Override save function to set `resource_id` add OCR,

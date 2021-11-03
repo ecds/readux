@@ -1,11 +1,15 @@
 """Django admin module for maninfests"""
 from django.contrib import admin
+from django.http import HttpResponseRedirect
+from django.urls.conf import path
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget, ForeignKeyWidget
 from django_summernote.admin import SummernoteModelAdmin
+
 from .models import Manifest, Note, ImageServer
 from .forms import ManifestAdminForm
+from .views import AddToCollectionsView
 from ..kollections.models import Collection
 
 class ManifestResource(resources.ModelResource):
@@ -38,6 +42,26 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
     search_fields = ('id', 'label', 'author', 'published_date')
     summernote_fields = ('summary',)
     form = ManifestAdminForm
+    actions = ['add_to_collections_action']
+
+    def add_to_collections_action(self, request, queryset):
+        """Action choose manifests to add to collections"""
+        selected = queryset.values_list('pk', flat=True)
+        selected_ids = ','.join(str(pk) for pk in selected)
+        return HttpResponseRedirect(f'add_to_collections/?ids={selected_ids}')
+    add_to_collections_action.short_description = 'Add selected manifests to collection(s)'
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path(
+                'add_to_collections/',
+                self.admin_site.admin_view(AddToCollectionsView.as_view()),
+                {'model_admin': self, },
+                name="AddManifestsToCollections",
+            )
+        ]
+        return my_urls + urls
 
 class NoteAdmin(admin.ModelAdmin):
     """Django admin configuration for a note."""

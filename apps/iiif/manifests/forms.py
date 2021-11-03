@@ -1,6 +1,9 @@
 """Django Forms for export."""
 import logging
 from django import forms
+from django.contrib.admin import site as admin_site, widgets
+
+from apps.iiif.kollections.models import Collection
 from .models import Manifest
 from ..canvases.models import Canvas
 
@@ -84,3 +87,17 @@ class ManifestAdminForm(forms.ModelForm):
             self.fields['start_canvas'].queryset = kwargs['instance'].canvas_set.all()
         else:
             self.fields['start_canvas'].queryset = Canvas.objects.none()
+
+class ManifestsCollectionsForm(forms.ModelForm):
+    """Form to add manifests to collections."""
+    class Meta:
+        model = Manifest
+        fields=('collections',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['collections'].widget = widgets.RelatedFieldWidgetWrapper(
+               self.fields['collections'].widget,
+               self.instance._meta.get_field('collections').remote_field,           
+               admin_site,
+        )

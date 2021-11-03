@@ -11,6 +11,8 @@ from django_celery_results.models import TaskResult
 from moto import mock_s3
 from apps.ingest.forms import BulkVolumeUploadForm
 from apps.iiif.canvases.models import Canvas
+from apps.iiif.kollections.models import Collection
+from apps.iiif.kollections.tests.factories import CollectionFactory
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from apps.ingest.models import Bulk, Local, Remote, IngestTaskWatcher
@@ -79,6 +81,42 @@ class IngestAdminTest(TestCase):
         # in the ingest
         assert Manifest.objects.count() == original_manifest_count + 1
         assert Canvas.objects.count() == original_canvas_count + 10
+
+    def test_local_ingest_with_collections(self):
+        """It should add chosen collections to the Local's manifests"""
+        local = LocalFactory.build(
+            image_server=self.image_server
+        )
+
+        # Force evaluation to get the true current list of manifests
+        manifests_before = list(Manifest.objects.all())
+
+        # Assign collections to Local
+        for _ in range(3):
+            CollectionFactory.create()
+        collections = Collection.objects.all()
+        local.save()
+        local.collections.set(collections)
+        assert len(local.collections.all()) == 3
+
+        # Make a local ingest
+        request_factory = RequestFactory()
+        with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as f:
+            content = files.base.ContentFile(f.read())
+        local.bundle = files.File(content.file, 'no_meta_file.zip')
+        req = request_factory.post('/admin/ingest/local/add/', data={})
+        req.user = self.user
+        local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
+        local_model_admin.save_model(obj=local, request=req, form=None, change=None)
+
+        # Get the newly created manifest by comparing current list to the list before
+        manifests_after = list(Manifest.objects.all())
+        new_manifests = [x for x in manifests_after if x not in manifests_before]
+        assert len(new_manifests) == 1
+        assert isinstance(new_manifests[0], Manifest)
+
+        # The new manifest shouhld get the Local's collections
+        assert new_manifests[0].collections.count() == 3
 
     def test_local_admin_response_add(self):
         """It should redirect to new manifest"""
@@ -229,6 +267,29 @@ class IngestAdminTest(TestCase):
         watcher_admin = TaskWatcherAdmin(model=IngestTaskWatcher, admin_site=AdminSite())
         assert watcher_admin.task_name(watcher) == 'fake_task'
         assert 'PENDING' in watcher_admin.task_status(watcher)
+
+    def test_bulk_ingest_with_collections(self):
+        """It should add the collections to the matching Local object"""
+        bulk = BulkFactory.create()
+        for _ in range(3):
+            CollectionFactory.create()
+        collections = Collection.objects.all()
+        bulk.save()
+        bulk.collections.set(collections)
+        data = {}
+        data['volume_files'] = [bulk.volume_files]
+
+        request_factory = RequestFactory()
+        req = request_factory.post('/admin/ingest/bulk/add/', data=data)
+        req.user = self.user
+
+        bulk_model_admin = BulkAdmin(model=Bulk, admin_site=AdminSite())
+        mock_form = BulkVolumeUploadForm()
+        bulk_model_admin.save_model(obj=bulk, request=req, form=mock_form, change=None)
+        bulk.refresh_from_db()
+        created_local = bulk.local_uploads.first()
+
+        assert created_local.collections.count() == 3
 
 
     # def test_local_admin_save_update_manifest(self):

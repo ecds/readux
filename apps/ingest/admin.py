@@ -16,7 +16,7 @@ from .forms import BulkVolumeUploadForm
 LOGGER = logging.getLogger(__name__)
 class LocalAdmin(admin.ModelAdmin):
     """Django admin ingest.models.local resource."""
-    fields = ('bundle', 'image_server')
+    fields = ('bundle', 'image_server', 'collections')
     show_save_and_add_another = False
 
     def save_model(self, request, obj, form, change):
@@ -82,6 +82,10 @@ class BulkAdmin(admin.ModelAdmin):
     form = BulkVolumeUploadForm
 
     def save_model(self, request, obj, form, change):
+        # Save M2M relationships with collections so we can access them later
+        if form.is_valid():
+            form.save(commit=False)
+            form.save_m2m()
         obj.save()
         # Get files from multi upload form
         files = request.FILES.getlist("volume_files")
@@ -104,6 +108,7 @@ class BulkAdmin(admin.ModelAdmin):
                 image_server=obj.image_server,
                 creator=request.user
             )
+            new_local.collections.set(obj.collections.all())
             if file_meta:
                 new_local.metadata=file_meta
 

@@ -81,13 +81,13 @@ class LocalTest(TestCase):
         assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
 
     def test_metadata_from_excel(self):
-        """ It should create a manifest with metadat supplied in an Excel file. """
+        """ It should create a manifest with metadata supplied in an Excel file. """
         local = self.mock_local('bundle.zip', with_manifest=True)
 
         assert 'pid' in local.metadata.keys()
 
         for key in local.metadata.keys():
-            assert local.metadata[key] == getattr(local.manifest, key)
+            assert str(local.metadata[key]) == str(getattr(local.manifest, key))
 
     def test_metadata_from_csv(self):
         """ It should create a manifest with metadata supplied in a CSV file. """

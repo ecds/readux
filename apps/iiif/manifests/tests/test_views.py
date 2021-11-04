@@ -2,21 +2,24 @@
 '''
 import json
 from datetime import datetime
-from time import sleep
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
+from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.core.serializers import serialize
 from allauth.socialaccount.models import SocialAccount
-from iiif_prezi.loader import ManifestReader
-from ..views import ManifestSitemap, ManifestRis
+
+from ..admin import ManifestAdmin
+from ..views import AddToCollectionsView, ManifestSitemap, ManifestRis
 from ..models import Manifest
-from ..forms import JekyllExportForm
+from ..forms import JekyllExportForm, ManifestsCollectionsForm
 from .factories import ManifestFactory, EmptyManifestFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
+from ...kollections.models import Collection
+from ...kollections.tests.factories import CollectionFactory
 
 USER = get_user_model()
 
@@ -137,3 +140,45 @@ class ManifestTests(TestCase):
             )
         )
         assert manifest.canvas_set.all().first().pid in serialized_manifest['thumbnail']['@id']
+
+    # TODO: Test with 0 manifests, 1 manifests, non-manifest obj
+    def test_add_to_collections_view_context(self):
+        """it should add the passed manifests to view context"""
+        manifest1 = ManifestFactory.create()
+        manifest2 = ManifestFactory.create()
+        ids = ','.join([str(manifest1.pk), str(manifest2.pk)])
+        request = self.factory.get(
+            reverse('admin:manifests_manifest_changelist') + 'add_to_collections/?ids=' + ids
+        )
+        request.user = self.user
+        view = AddToCollectionsView()
+        model_admin = ManifestAdmin(model=Manifest, admin_site=AdminSite())
+        view.setup(request, model_admin=model_admin)
+
+        context = view.get_context_data()
+        self.assertIn('manifests', context)
+        self.assertIn(manifest1, context['manifests'])
+        self.assertIn(manifest2, context['manifests'])
+
+    def test_add_to_collections_view_function(self):
+        """it should add the passed manifests to the selected collections"""
+        manifest1 = ManifestFactory.create()
+        manifest2 = ManifestFactory.create()
+        collection1 = CollectionFactory.create()
+        collection2 = CollectionFactory.create()
+        ids = ','.join([str(manifest1.pk), str(manifest2.pk)])
+        request = self.factory.get(
+            reverse('admin:manifests_manifest_changelist') + 'add_to_collections/?ids=' + ids
+        )
+        request.user = self.user
+        view = AddToCollectionsView()
+        model_admin = ManifestAdmin(model=Manifest, admin_site=AdminSite())
+        view.setup(request, model_admin=model_admin)
+        qs = Collection.objects.filter(pk__in=[collection1.pk, collection2.pk])
+        form = ManifestsCollectionsForm(data={"collections": qs})
+
+        assert len(manifest1.collections.all()) == 0
+        assert len(manifest2.collections.all()) == 0
+        view.add_manifests_to_collections(form)
+        assert len(manifest1.collections.all()) == 2
+        assert len(manifest2.collections.all()) == 2

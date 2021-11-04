@@ -223,9 +223,11 @@ class AddToCollectionsView(FormView):
         return super().form_valid(form)
 
     def add_manifests_to_collections(self, form):
+        """Adds selected manifests to selected collections from form"""
         context = self.get_context_data()
         manifests = context['manifests']
-        collections = form.cleaned_data['collections']
+        if form.is_valid():
+            collections = form.cleaned_data['collections']
         for manifest in manifests:
             manifest.collections.add(*collections)
             manifest.save()

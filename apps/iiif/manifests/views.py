@@ -2,18 +2,21 @@
 import json
 import logging
 from datetime import datetime
+from django.contrib import messages
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.views import View
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from ..canvases.models import Canvas
 from .models import Manifest
 from .export import IiifManifestExport
-from .forms import JekyllExportForm
+from .forms import JekyllExportForm, ManifestsCollectionsForm
 from .tasks import github_export_task
 from .tasks import download_export_task
 
@@ -198,3 +201,39 @@ class PlainExport(View):
         for canvas in self.get_queryset() :
             annotations.append(canvas.result)
         return HttpResponse(' '.join(annotations))
+
+class AddToCollectionsView(FormView):
+    """Intermediate page to choose collections to which you are adding manifests"""
+
+    template_name = 'add_manifests_to_collections.html'
+    form_class = ManifestsCollectionsForm
+
+    def get_context_data(self, **kwargs):
+        ids = self.request.GET.get('ids', '').split(',')
+        manifests = Manifest.objects.filter(pk__in=ids)
+        model_admin = self.kwargs['model_admin']
+        context = super().get_context_data(**kwargs)
+        context['model_admin'] = model_admin.admin_site.each_context(self.request)
+        context['manifests'] = manifests
+        context['title'] = 'Add selected manifests to collection(s)'
+        return context
+
+    def form_valid(self, form):
+        self.add_manifests_to_collections(form)
+        return super().form_valid(form)
+
+    def add_manifests_to_collections(self, form):
+        """Adds selected manifests to selected collections from form"""
+        context = self.get_context_data()
+        manifests = context['manifests']
+        if form.is_valid():
+            collections = form.cleaned_data['collections']
+        for manifest in manifests:
+            manifest.collections.add(*collections)
+            manifest.save()
+
+    def get_success_url(self):
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Successfully added manifests to collections'
+        )
+        return reverse('admin:manifests_manifest_changelist')

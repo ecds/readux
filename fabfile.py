@@ -37,7 +37,7 @@ def deploy(branch='release', path='/readux.io/readux', volume=None):
         _update_database(options)
         _update_symlink(options)
         _restart_webserver()
-        _restart_background_tasks(options)
+        _restart_celery(options)
         _clean_old_builds(options)
 
 def _get_latest_source(branch, options):
@@ -89,7 +89,7 @@ def _update_symlink(options):
 def _restart_webserver():
     run('sudo /bin/systemctl reload apache2')
 
-def _restart_background_tasks(options):
+def _restart_celery(options):
     run('sudo /bin/systemctl restart celeryd')
 
 def _clean_old_builds(options):

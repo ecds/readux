@@ -19,11 +19,6 @@ Local = apps.get_model('ingest.local') # pylint: disable = invalid-name
 Remote = apps.get_model('ingest.remote')
 
 LOGGER = logging.getLogger(__name__)
-logging.getLogger("background_task").setLevel(logging.ERROR)
-logging.getLogger('boto3').setLevel(logging.ERROR)
-logging.getLogger('botocore').setLevel(logging.ERROR)
-logging.getLogger('s3transfer').setLevel(logging.ERROR)
-logging.getLogger('factory').setLevel(logging.ERROR)
 
 app = Celery('apps.ingest', result_extended=True)
 app.config_from_object('django.conf:settings')

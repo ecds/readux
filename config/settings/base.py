@@ -81,7 +81,6 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    'background_task',
     'corsheaders',
     'crispy_forms',
     'django_celery_results',

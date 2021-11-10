@@ -8,7 +8,7 @@ from fabric.api import cd, env, run
 
 env.user = 'deploy'
 
-def deploy(branch='release', path='/readux.io/readux'):
+def deploy(branch='release', path='/readux.io/readux', volume=None):
     """Execute group of tasks for deployment.
 
     :param branch: Git branch to clone, defaults to 'master'
@@ -30,7 +30,9 @@ def deploy(branch='release', path='/readux.io/readux'):
         _get_latest_source(branch, options)
         _update_virtualenv(options)
         _link_settings(options)
-        _create_static_media_symlinks(options)
+        _create_staticfiles_symlink(options)
+        if volume is not None:
+            _mount_media(volume)
         _update_static_files(options)
         _update_database(options)
         _update_symlink(options)
@@ -63,7 +65,11 @@ def _link_settings(options):
     with cd('config/settings'):
         run('ln -s {rp}/local.py local.py'.format(rp=options['ROOT_PATH']))
 
-def _create_static_media_symlinks(options):
+def _mount_media(volume):
+    with cd('apps'):
+        run(f'mkdir media && sudo mount /dev/{volume} media')
+
+def _create_staticfiles_symlink(options):
     run('ln -s {rp}/staticfiles staticfiles'.format(rp=options['ROOT_PATH']))
     with cd('apps'):
         run('ln -s {rp}/media media'.format(rp=options['ROOT_PATH']))
@@ -84,8 +90,6 @@ def _restart_webserver():
     run('sudo /bin/systemctl reload apache2')
 
 def _restart_background_tasks(options):
-    with cd(options['ROOT_PATH']):
-        run('nohup ./restart_export_tasks.sh &')
     run('sudo /bin/systemctl restart celeryd')
 
 def _clean_old_builds(options):

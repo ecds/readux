@@ -14,7 +14,7 @@ from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.views import ManifestExport, JekyllExport
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport, GithubExportException
+from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport, GithubExportException, ExportException
 from apps.iiif.manifests.github import GithubApi
 from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 from iiif_prezi.loader import ManifestReader
@@ -120,6 +120,15 @@ class ManifestExportTests(TestCase):
         assert contents.count('<span id') == Canvas.objects.get(id='7261fae2-a24e-4a1c-9743-516f6c4ea0c9').annotation_set.count()
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
+
+    def test_jekyll_export_error(self):
+        export = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id], deep_zoom='exclude')
+        export.jekyll_site_dir = 'nope'
+        try:
+            export.import_iiif_jekyll(self.volume, 'non_existing_directory')
+            assert False
+        except ExportException:
+            assert True
 
     def test_get_zip_file(self):
         # Make an empty file

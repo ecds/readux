@@ -71,8 +71,6 @@ def _mount_media(volume):
 
 def _create_staticfiles_symlink(options):
     run('ln -s {rp}/staticfiles staticfiles'.format(rp=options['ROOT_PATH']))
-    with cd('apps'):
-        run('ln -s {rp}/media media'.format(rp=options['ROOT_PATH']))
 
 def _update_static_files(options):
     run('{v}/bin/python manage.py collectstatic --noinput'.format(v=options['VENV_PATH']))

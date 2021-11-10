@@ -14,8 +14,8 @@ from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.views import ManifestExport, JekyllExport
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport, GithubExportException, ExportException
-from apps.iiif.manifests.github import GithubApi
+from apps.export.export import IiifManifestExport, JekyllSiteExport, GithubExportException, ExportException
+from apps.export.github import GithubApi
 from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 from iiif_prezi.loader import ManifestReader
 

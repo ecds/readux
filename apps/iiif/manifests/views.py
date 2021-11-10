@@ -15,10 +15,10 @@ from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 from ..canvases.models import Canvas
 from .models import Manifest
-from .export import IiifManifestExport
+from apps.export.export import IiifManifestExport
 from .forms import JekyllExportForm, ManifestsCollectionsForm
-from .tasks import github_export_task
-from .tasks import download_export_task
+from apps.export.tasks import github_export_task
+from apps.export.tasks import download_export_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -149,7 +149,7 @@ class JekyllExport(TemplateView):
         if export_mode == 'download':
             context = self.get_context_data()
             manifest_pid = manifest.pid
-            download_export_task(
+            download_export_task.delay(
                 manifest_pid,
                 kwargs['version'],
                 github_repo=github_repo,
@@ -164,7 +164,7 @@ class JekyllExport(TemplateView):
         #github exports
         context = self.get_context_data()
         manifest_pid = manifest.pid
-        github_export_task(
+        github_export_task.delay(
             manifest_pid,
             kwargs['version'],
             github_repo=github_repo,

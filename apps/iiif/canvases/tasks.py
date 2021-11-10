@@ -1,6 +1,5 @@
 """ Common tasks for canvases. """
 from celery import Celery
-from background_task import background
 from django.apps import apps
 from ..annotations.models import Annotation
 from .models import Canvas

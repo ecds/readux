@@ -146,8 +146,8 @@ class ManifestExportTests(TestCase):
         response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
         assert isinstance(response.getvalue(), bytes)
 
-    def test_setting_jekyll_site_dir(self):
-        self.jse
+    # def test_setting_jekyll_site_dir(self):
+    #     self.jse
 
     # Things I want to test:
     # * Unzip the IIIF zip file
@@ -185,9 +185,6 @@ class ManifestExportTests(TestCase):
 
     @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github(self):
-        '''
-        Docstring
-        '''
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),

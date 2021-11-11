@@ -150,14 +150,15 @@ class JekyllExport(TemplateView):
         if export_mode == 'download':
             context = self.get_context_data()
             manifest_pid = manifest.pid
-            download_export_task.delay(
-                manifest_pid,
-                kwargs['version'],
-                github_repo=github_repo,
-                deep_zoom=False,
-                owner_ids=owners,
-                user_id=self.request.user.id
-            )
+            if environ['DJANGO_ENV'] != 'test': # pragma: no cover
+                download_export_task.delay(
+                    manifest_pid,
+                    kwargs['version'],
+                    github_repo=github_repo,
+                    deep_zoom=False,
+                    owner_ids=owners,
+                    user_id=self.request.user.id
+                )
             context['email'] = request.user.email
             context['mode'] = "download"
             return render(request, self.template_name, context)

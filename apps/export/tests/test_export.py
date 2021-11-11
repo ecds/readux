@@ -183,10 +183,20 @@ class ManifestExportTests(TestCase):
         )
         assert isinstance(response.getvalue(), bytes)
 
+    @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github(self):
         '''
         Docstring
         '''
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body='[{"name":"marx"}]',
+            content_type="text/json"
+        )
+        httpretty.register_uri(
+            httpretty.POST, 'https://api.github.com/user/repos'
+        )
         kwargs = {'pid': self.volume.pid, 'version': 'v2'}
         url = reverse('JekyllExport', kwargs=kwargs)
         kwargs['deep_zoom'] = 'exclude'

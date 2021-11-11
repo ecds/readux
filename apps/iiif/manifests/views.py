@@ -1,6 +1,7 @@
 """Django views for manifests"""
 import json
 import logging
+from os import environ
 from datetime import datetime
 from django.contrib import messages
 from django.http import JsonResponse
@@ -164,14 +165,25 @@ class JekyllExport(TemplateView):
         #github exports
         context = self.get_context_data()
         manifest_pid = manifest.pid
-        github_export_task.delay(
-            manifest_pid,
-            kwargs['version'],
-            github_repo=github_repo,
-            deep_zoom=False,
-            owner_ids=owners,
-            user_id=self.request.user.id
-        )
+
+        if environ['DJANGO_ENV'] != 'test': # pragma: no cover
+            github_export_task.delay(
+                manifest_pid,
+                kwargs['version'],
+                github_repo=github_repo,
+                deep_zoom=False,
+                owner_ids=owners,
+                user_id=self.request.user.id
+            )
+        else:
+            github_export_task(
+                manifest_pid,
+                kwargs['version'],
+                github_repo=github_repo,
+                deep_zoom=False,
+                owner_ids=owners,
+                user_id=self.request.user.id
+            )
 
         context['email'] = request.user.email
         context['mode'] = "github"

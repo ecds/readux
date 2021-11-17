@@ -2,6 +2,10 @@
 
 CHANGELOG
 =========
+Release 2.2.1
+---------------------
+* Improvements to bulk ingest
+* Export tasks converted to Celery.
 
 Release 2.2.0
 ---------------------

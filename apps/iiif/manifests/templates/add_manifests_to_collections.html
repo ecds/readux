@@ -1,0 +1,38 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+{% load static %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+{% endblock %}
+
+{% block content %}
+  <form method="post">{% csrf_token %}
+    <fieldset class="module aligned ">
+      <div class="form-row">
+        <div>
+          <label class="required">{% trans 'Manifests selected' %}:</label>
+          <div>
+            <ul>
+              {% for manifest in manifests %}
+              <li>
+                {% trans 'unlabeled' as unlabeled %}
+                <strong>{{ manifest.label|default:unlabeled }}</strong>
+                ({{ manifest.pk }})
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        {{ form }}
+      </div>
+    </fieldset>
+    {% block submit_buttons_bottom %}
+      <div class="submit-row">
+        <input type="submit" value="{% trans 'Save' %}" class="default" name="_save">
+      </div>
+    {% endblock %}
+  </form>
+{% endblock %}

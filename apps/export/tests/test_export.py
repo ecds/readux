@@ -14,8 +14,8 @@ from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.views import ManifestExport, JekyllExport
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.export import IiifManifestExport, JekyllSiteExport, GithubExportException
-from apps.iiif.manifests.github import GithubApi
+from apps.export.export import IiifManifestExport, JekyllSiteExport, GithubExportException, ExportException
+from apps.export.github import GithubApi
 from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 from iiif_prezi.loader import ManifestReader
 
@@ -121,6 +121,15 @@ class ManifestExportTests(TestCase):
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
 
+    def test_jekyll_export_error(self):
+        export = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id], deep_zoom='exclude')
+        export.jekyll_site_dir = 'nope'
+        try:
+            export.import_iiif_jekyll(self.volume, 'non_existing_directory')
+            assert False
+        except ExportException:
+            assert True
+
     def test_get_zip_file(self):
         # Make an empty file
         dummy_file = os.path.join(tempfile.tempdir, 'file.txt')
@@ -137,8 +146,8 @@ class ManifestExportTests(TestCase):
         response = self.manifest_export_view(request, pid=self.volume.pid, version='v2')
         assert isinstance(response.getvalue(), bytes)
 
-    def test_setting_jekyll_site_dir(self):
-        self.jse
+    # def test_setting_jekyll_site_dir(self):
+    #     self.jse
 
     # Things I want to test:
     # * Unzip the IIIF zip file
@@ -174,10 +183,17 @@ class ManifestExportTests(TestCase):
         )
         assert isinstance(response.getvalue(), bytes)
 
+    @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github(self):
-        '''
-        Docstring
-        '''
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body='[{"name":"marx"}]',
+            content_type="text/json"
+        )
+        httpretty.register_uri(
+            httpretty.POST, 'https://api.github.com/user/repos'
+        )
         kwargs = {'pid': self.volume.pid, 'version': 'v2'}
         url = reverse('JekyllExport', kwargs=kwargs)
         kwargs['deep_zoom'] = 'exclude'

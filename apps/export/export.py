@@ -673,7 +673,7 @@ class JekyllSiteExport(object):
 
         if os.environ['DJANGO_ENV'] != 'test':
             # run the script to import IIIF as jekyll site content
-            self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
+            self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir) # pragma: no cover
 
             # add any files that could be updated to the git index
             repo.index.add([ # pragma: no cover

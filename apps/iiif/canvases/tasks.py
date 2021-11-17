@@ -1,6 +1,5 @@
 """ Common tasks for canvases. """
 from celery import Celery
-from background_task import background
 from django.apps import apps
 from ..annotations.models import Annotation
 from .models import Canvas
@@ -11,9 +10,7 @@ from django.conf import settings
 # create a background task have to be serializable, we can't just pass in the model object.
 # Canvas = apps.get_model('canvases.canvas')
 
-app = Celery('apps.ingest')
-app.config_from_object('django.conf:settings')
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app = Celery('apps.readux')
 
 @app.task(name='adding_ocr_to_canvas', autoretry_for=(Canvas.DoesNotExist,), retry_backoff=5)
 def add_ocr_task(canvas_id, *args, **kwargs):

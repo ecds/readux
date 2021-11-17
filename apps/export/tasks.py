@@ -1,15 +1,17 @@
 """Module to manage background export task."""
 import logging
 import os
-from background_task import background
+from celery import Celery
+from django.conf import settings
 from apps.users.models import User
+from apps.iiif.manifests.models import Manifest
 from .export import JekyllSiteExport
-from .models import Manifest
-
 
 LOGGER = logging.getLogger(__name__)
 
-@background(schedule=1)
+app = Celery('apps.readux', result_extended=True)
+
+@app.task(name='github_export', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def github_export_task(
         manifest_pid, version, github_repo=None,
         user_id=None, owner_ids=None, deep_zoom=False):
@@ -45,7 +47,7 @@ def github_export_task(
     jekyll_exporter.github_export(user.email)
     LOGGER.info('Background github export finished.')
 
-@background(schedule=1)
+@app.task(name='download_export', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def download_export_task(
         manifest_pid, version, github_repo=None,
         user_id=None, owner_ids=None, deep_zoom=False):
@@ -79,10 +81,10 @@ def download_export_task(
     )
 
     zipfile_name = jekyll_exporter.download_export(user.email, manifest)
-    delete_download_task(zipfile_name)
+    delete_download_task.apply_async((zipfile_name), countdown=86400)
     LOGGER.info('Background download export finished.')
 
-@background(schedule=86400)
+@app.task(name='delete_download', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def delete_download_task(download_path):
     """Background delete download task.
 

@@ -1,1 +1,1 @@
-from apps.ingest import celery
+from apps.readux import celery

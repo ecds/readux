@@ -81,7 +81,6 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    'background_task',
     'corsheaders',
     'crispy_forms',
     'django_celery_results',
@@ -114,7 +113,8 @@ LOCAL_APPS = [
     'apps.cms.apps.CmsConfig',
     'apps.templates',
     'apps.custom_styles.apps.CustomStylesConfig',
-    'apps.ingest.apps.IngestConfig'
+    'apps.ingest.apps.IngestConfig',
+    'apps.export.apps.ExportConfig'
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

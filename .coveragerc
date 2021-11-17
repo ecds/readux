@@ -11,7 +11,7 @@ omit =
 exclude_lines =
     # Ignore imports
     from
-    import
+    import\s
     logger
     LOGGER
     pragma: no cover

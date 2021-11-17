@@ -61,7 +61,6 @@
       const percentage = document.getElementById('overlay-percentage');
       const progressBar = document.getElementById('overlay-progress');
       const buttonUsed = django.jQuery('#bulk_form').data("callerid");
-      let errored = false;
 
       // Set up POST req
       const form = e.currentTarget;
@@ -76,16 +75,20 @@
         label.textContent = 'Uploading...';
       };
 
-      xhr.upload.onprogress = function (e) {
+      xhr.upload.onprogress = (e) => {
         const percent = e.lengthComputable ? (e.loaded / e.total) * 100 : 0;
         progressBar.value = percent.toFixed(2);
         progressBar.setAttribute('aria-valuenow', percent.toFixed(2));
         percentage.textContent = percent.toFixed(2) + '%';
       };
 
+      xhr.upload.onloadend = (e) => {
+        label.textContent = 'Upload complete, please wait...';
+      }
+
       function handleError (e) {
         errored = true;
-        label.textContent = e.type.toString();
+        label.textContent = 'Error: Please see dev tools console for details';
       }
 
       xhr.upload.addEventListener('abort', handleError);
@@ -93,19 +96,17 @@
       xhr.addEventListener('abort', handleError);
       xhr.addEventListener('error', handleError);
 
-      xhr.upload.onloadend = (e) => { 
-        // Redirect to manifests page
-        if (!errored) {
+      xhr.onreadystatechange = (e) => {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
           if (buttonUsed === 'start_upload') {
-            location.href = '/admin/manifests/manifest/?o=-4';
+            location.href = '/admin/ingest/ingesttaskwatcher/';
           } else {
             location.reload();
           }
         }
-      };
-
+      }
       // Send POST req
-      xhr.open('POST', url);
+      xhr.open('POST', url, true);
       xhr.send(new FormData(form));
     })
   </script>
@@ -123,8 +124,8 @@
         <strong>You must leave this window open during upload.</strong>
       </p>
       <p class="overlay-warning">
-        Once upload completes, you will be sent to the list of manifests.
-        You may navigate away while the rest of the ingest completes; you
+        Once upload completes, you will be sent to a new page.
+        You may then navigate away while the rest of the ingest completes; you
         will receive an email to notify you when the ingest has completed.
       </p>
     </div>

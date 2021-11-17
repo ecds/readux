@@ -1,17 +1,12 @@
 """ Tests for local ingest """
+from os import path, remove
 import pytest
 import boto3
 from moto import mock_s3
-from shutil import copy
-from os.path import exists, join
-from tempfile import gettempdir
-from uuid import UUID
-from unittest import mock
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.models import Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import Local
 from ..services import create_manifest
@@ -24,7 +19,7 @@ class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
     def setUp(self):
         """ Set instance variables. """
-        self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
+        self.fixture_path = path.join(settings.APPS_DIR, 'ingest/fixtures/')
         self.image_server = ImageServerFactory(
             server_base='http://readux.s3.amazonaws.com',
             storage_service='s3',
@@ -35,16 +30,21 @@ class LocalTest(TestCase):
         conn.create_bucket(Bucket=self.image_server.storage_path)
         conn.create_bucket(Bucket='readux-ingest')
 
-    def mock_local(self, bundle, with_manifest=False, metadata={}):
+    def mock_local(self, bundle, with_manifest=False, metadata={}, from_bulk=False):
         # Note, I tried to use the factory here, but could not get it to override the file for bundle.
         local = Local(
             image_server = self.image_server,
             metadata = metadata
         )
-        local.bundle = SimpleUploadedFile(
-            name=bundle,
-            content=open(join(self.fixture_path, bundle), 'rb').read()
-        )
+        local.save()
+        file = SimpleUploadedFile(
+                name=bundle,
+                content=open(path.join(self.fixture_path, bundle), 'rb').read()
+            )
+        if from_bulk:
+            local.bundle_from_bulk.save(bundle, file)
+        else:
+            local.bundle = file
 
         local.save()
 
@@ -81,13 +81,13 @@ class LocalTest(TestCase):
         assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
 
     def test_metadata_from_excel(self):
-        """ It should create a manifest with metadat supplied in an Excel file. """
+        """ It should create a manifest with metadata supplied in an Excel file. """
         local = self.mock_local('bundle.zip', with_manifest=True)
 
         assert 'pid' in local.metadata.keys()
 
         for key in local.metadata.keys():
-            assert local.metadata[key] == getattr(local.manifest, key)
+            assert str(local.metadata[key]) == str(getattr(local.manifest, key))
 
     def test_metadata_from_csv(self):
         """ It should create a manifest with metadata supplied in a CSV file. """
@@ -252,3 +252,41 @@ class LocalTest(TestCase):
         local.manifest = create_manifest(local)
         assert local.manifest.pid == '808'
         assert local.manifest.title == 'Goodie Mob'
+
+    def test_moving_bulk_bundle_to_s3(self):
+        """
+        It should upload Local.bundle_from_bulk to mock S3 by saving it to
+        Local.bundle, then it should clean up tempfiles
+        """
+        # Make sure local with from_bulk is mocked correctly
+        local = self.mock_local('bundle.zip', from_bulk=True)
+        assert bool(local.bundle_from_bulk) is True
+        bulk_name = local.bundle_from_bulk.name
+        bulk_path = local.bundle_from_bulk.path
+        dir_path = bulk_path[0:bulk_path.rindex('/')]
+        assert bulk_name[bulk_name.rindex('/')+1:] == 'bundle.zip'
+        assert path.isfile(bulk_path) is True
+        assert path.isdir(dir_path) is True
+
+        # Call bundle_to_s3() and test that it uploaded the file
+        local.bundle_to_s3()
+        assert bool(local.bundle) is True
+        assert local.bundle.name[local.bundle.name.rindex('/')+1:] == 'bundle.zip'
+        assert local.bundle.storage.exists(f'bulk/{local.id}/bundle.zip') # pylint: disable=no-member
+
+        # Test tempfile cleanup
+        assert bool(local.bundle_from_bulk) is False
+        assert path.isfile(bulk_path) is False
+        assert path.isdir(dir_path) is False
+
+    def test_bundle_to_s3_fails_for_deleted_tempfile(self):
+        """
+        It should raise an exception because we deleted the tempfile before
+        running bundle_to_s3
+        """
+        local = self.mock_local('bundle.zip', from_bulk=True)
+        bulk_path = local.bundle_from_bulk.path
+        assert path.isfile(bulk_path) is True
+        remove(bulk_path)
+        assert path.isfile(bulk_path) is False
+        self.assertRaises(Exception, local.bundle_to_s3)

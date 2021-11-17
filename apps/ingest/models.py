@@ -11,9 +11,11 @@ from tablib import Dataset
 from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.core.files.base import ContentFile
 from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tasks import add_ocr_task
+from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest, ImageServer
 from apps.ingest import services
 from apps.utils.fetch import fetch_url
@@ -70,6 +72,11 @@ class Bulk(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     volume_files = models.FileField(blank=False, upload_to=bulk_path)
+    collections = models.ManyToManyField(
+        Collection,
+        blank=True,
+        help_text="Optional: Collections to attach to ALL volumes ingested in this form."
+    )
 
     class Meta:
         verbose_name_plural = 'Bulk'
@@ -77,13 +84,19 @@ class Bulk(models.Model):
 class Local(IngestAbstractModel):
     """ Model class for ingesting a volume from local files. """
     bulk = models.ForeignKey(Bulk, related_name='local_uploads', on_delete=models.SET_NULL, null=True)
-    bundle = models.FileField(blank=False, storage=IngestStorage())
+    bundle_from_bulk = models.FileField(null=True, blank=True, upload_to=bulk_path)
+    bundle = models.FileField(null=True, blank=True, storage=IngestStorage())
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name='created_locals'
+    )
+    collections = models.ManyToManyField(
+        Collection,
+        blank=True,
+        help_text="Optional: Collections to attach to the volume ingested in this form."
     )
 
     class Meta:
@@ -151,6 +164,28 @@ class Local(IngestAbstractModel):
                         BytesIO(tmp_file),
                         f'{self.manifest.pid}/_*ocr*_/{file_name}'
                     )
+
+    def bundle_to_s3(self):
+        """Uploads the zipfile stored in bundle_from_bulk to S3
+        :param file_path: File path for uploaded file
+        :type file_path: str
+        """
+        if bool(self.bundle_from_bulk):
+            # Save to bundle
+            if not bool(self.bundle):
+                if not os.path.isfile(self.bundle_from_bulk.path):
+                    raise Exception(f"Could not find file: {self.bundle_from_bulk.path}")
+                bulk_name = self.bundle_from_bulk.name
+                with ContentFile(self.bundle_from_bulk.read()) as file_content:
+                    self.bundle.save(bulk_name, file_content)
+            # Delete tempfile
+            if bool(self.bundle):
+                old_path = self.bundle_from_bulk.path
+                os.remove(old_path)
+                dir_path = old_path[0:old_path.rindex('/')]
+                if not os.path.isfile(old_path) and len(os.listdir(dir_path)) == 0:
+                    os.rmdir(dir_path)
+                self.bundle_from_bulk.delete()
 
     @property
     def file_list(self):

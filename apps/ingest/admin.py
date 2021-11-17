@@ -2,14 +2,13 @@
 import logging
 from mimetypes import guess_type
 from os import environ, path, remove, listdir, rmdir
+from django.core.files.base import ContentFile
 from django.contrib import admin
-from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
 from django_celery_results.models import TaskResult
 from apps.ingest import tasks
-from apps.ingest.storages import IngestStorage
 from .models import Bulk, IngestTaskWatcher, Local, Remote
 from .services import clean_metadata, create_manifest, get_associated_meta, get_metadata_from
 from .forms import BulkVolumeUploadForm
@@ -17,7 +16,7 @@ from .forms import BulkVolumeUploadForm
 LOGGER = logging.getLogger(__name__)
 class LocalAdmin(admin.ModelAdmin):
     """Django admin ingest.models.local resource."""
-    fields = ('bundle', 'image_server')
+    fields = ('bundle', 'image_server', 'collections')
     show_save_and_add_another = False
 
     def save_model(self, request, obj, form, change):
@@ -83,7 +82,10 @@ class BulkAdmin(admin.ModelAdmin):
     form = BulkVolumeUploadForm
 
     def save_model(self, request, obj, form, change):
-        form.storage = IngestStorage()
+        # Save M2M relationships with collections so we can access them later
+        if form.is_valid():
+            form.save(commit=False)
+            form.save_m2m()
         obj.save()
         # Get files from multi upload form
         files = request.FILES.getlist("volume_files")
@@ -100,35 +102,35 @@ class BulkAdmin(admin.ModelAdmin):
             else:
                 file_meta = {}
 
-            # Save in storage
-            bundle_path = form.storage.save(
-                path.join("bulk", str(obj.id), file.name), file
-            )
-
-            # Create local
+            # Create a Local object
             new_local = Local.objects.create(
                 bulk=obj,
-                bundle=bundle_path,
                 image_server=obj.image_server,
-                metadata=file_meta,
                 creator=request.user
             )
-            new_local.save()
-            new_local.manifest = create_manifest(new_local)
+            new_local.collections.set(obj.collections.all())
+            if file_meta:
+                new_local.metadata=file_meta
+
+            # Save tempfile in bundle_from_bulk
+            with ContentFile(file.read()) as file_content:
+                new_local.bundle_from_bulk.save(file.name, file_content)
             new_local.save()
             new_local.refresh_from_db()
+
+            # Queue task to upload to S3
             if environ["DJANGO_ENV"] != 'test':
-                local_task_id = tasks.create_canvas_form_local_task.delay(new_local.id)
-                local_task_result = TaskResult(task_id=local_task_id)
-                local_task_result.save()
+                upload_task = tasks.upload_to_s3_task.delay(
+                    local_id=new_local.id,
+                )
+                upload_task_result = TaskResult(task_id=upload_task.id)
+                upload_task_result.save()
                 IngestTaskWatcher.manager.create_watcher(
-                    task_id=local_task_id,
-                    task_result=local_task_result,
+                    task_id=upload_task.id,
+                    task_result=upload_task_result,
                     task_creator=request.user,
-                    associated_manifest=new_local.manifest,
                     filename=file.name
                 )
-
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
 
@@ -137,11 +139,14 @@ class BulkAdmin(admin.ModelAdmin):
         file_path = obj.volume_files.path
         if path.isfile(file_path):
             remove(file_path)
+        else:
+            LOGGER.error(f"Could not cleanup {file_path}")
         dir_path = file_path[0:file_path.rindex('/')]
-        if len(listdir(dir_path)) == 0:
+        if not path.isfile(file_path) and len(listdir(dir_path)) == 0:
             rmdir(dir_path)
         obj.delete()
-        return redirect("/admin/manifests/manifest/?o=-4")
+        url_to = reverse('admin:ingest_ingesttaskwatcher_changelist')
+        return redirect(url_to)
 
     class Meta:  # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Bulk

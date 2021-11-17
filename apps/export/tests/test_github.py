@@ -1,7 +1,7 @@
 from django.test import TestCase
-from apps.iiif.manifests.github import GithubApi, GithubApiException, GithubAccountNotFound
-from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 import httpretty
+from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
+from apps.export.github import GithubApi, GithubApiException, GithubAccountNotFound
 
 class TestGithubApi(TestCase):
     def setUp(self):

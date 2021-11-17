@@ -2,7 +2,7 @@
 
 Werkzeug==2.0.2  # https://github.com/pallets/werkzeug
 ipdb==0.13.9  # https://github.com/gotcha/ipdb
-Sphinx==4.2.0  # https://github.com/sphinx-doc/sphinx
+Sphinx==4.3.0  # https://github.com/sphinx-doc/sphinx
 # TODO: Upgrade after moving to Django 3
 psycopg2-binary==2.8.4  # https://github.com/psycopg/psycopg2
 
@@ -18,22 +18,22 @@ httpretty==1.1.4 # https://pypi.org/project/httpretty/
 #mock==4.0.2
 cssutils==2.3.0 # https://pypi.org/project/cssutils/
 pytest-django==4.4.0  # https://github.com/pytest-dev/pytest-django
-moto==2.2.10 # https://github.com/spulec/moto
+moto==2.2.15 # https://github.com/spulec/moto
 
 # Code quality
 # ------------------------------------------------------------------------------
 flake8==4.0.1  # https://github.com/PyCQA/flake8
-coverage==5.2.1  # https://github.com/nedbat/coveragepy
+coverage==6.1.2  # https://github.com/nedbat/coveragepy
 coveralls
 
 # Django
 # ------------------------------------------------------------------------------
-factory-boy==3.2.0  # https://github.com/FactoryBoy/factory_boy
-faker==9.5.1
+factory-boy==3.2.1  # https://github.com/FactoryBoy/factory_boy
+faker==9.8.2
 
 django-debug-toolbar==3.2.2  # https://github.com/jazzband/django-debug-toolbar
-django-extensions==3.1.3  # https://github.com/django-extensions/django-extensions
-django-coverage-plugin==2.0.1  # https://github.com/nedbat/django_coverage_plugin
+django-extensions==3.1.5  # https://github.com/django-extensions/django-extensions
+django-coverage-plugin==2.0.2  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https
 
 # Deployment
@@ -41,5 +41,5 @@ pyopenssl # for running dev server under https
 # TODO: Why are we using this fork?
 Fabric3==1.14.post1 # https://github.com/mathiasertl/fabric
 
-celery==5.1.2
+celery==5.2.1
 django-celery-results==2.2.0

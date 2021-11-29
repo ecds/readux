@@ -9,7 +9,9 @@ from .export import JekyllSiteExport
 
 LOGGER = logging.getLogger(__name__)
 
-app = Celery('apps.readux', result_extended=True)
+app = Celery('apps.export', result_extended=True)
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(name='github_export', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def github_export_task(

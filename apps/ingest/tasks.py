@@ -20,7 +20,9 @@ Remote = apps.get_model('ingest.remote')
 
 LOGGER = logging.getLogger(__name__)
 
-app = Celery('apps.readux', result_extended=True)
+app = Celery('apps.ingest', result_extended=True)
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(name='creating_canvases_from_local', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def create_canvas_form_local_task(ingest_id):

@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 # pylint: disable = unused-import, ungrouped-imports
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError:
+except ImportError: # pragma: no cover
     from yaml import Loader, Dumper
 # pylint: enable = unused-import, ungrouped-imports
 # TODO: Can we be more efficient in how we import git?

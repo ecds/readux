@@ -1,9 +1,11 @@
 [report]
 omit =
   *tests.py
+  *celery.py
   *tests/*
   apps/cms/*
   apps/contrib/*
+  apps/utils/fake_traceback.py
   *migrations*
   # Exclude tasks
   *tasks.py

@@ -14,7 +14,7 @@ from allauth.socialaccount.models import SocialAccount
 from ..admin import ManifestAdmin
 from ..views import AddToCollectionsView, ManifestSitemap, ManifestRis
 from ..models import Manifest
-from ..forms import JekyllExportForm, ManifestsCollectionsForm
+from ..forms import ManifestsCollectionsForm
 from .factories import ManifestFactory, EmptyManifestFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
@@ -88,18 +88,6 @@ class ManifestTests(TestCase):
 
     def test_absolute_url(self):
         assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)
-
-    def test_form_mode_choices_no_github(self):
-        form = JekyllExportForm(user=self.user)
-        assert len(form.fields['mode'].choices) == 1
-        assert form.fields['mode'].choices[0] != 'github'
-
-    def test_form_mode_choices_with_github(self):
-        sa = SocialAccount(provider='github', user=self.user)
-        sa.save()
-        form = JekyllExportForm(user=self.user)
-        assert len(form.fields['mode'].choices) == 2
-        assert form.fields['mode'].choices[1][0] == 'github'
 
     def test_manifest_search_vector_exists(self):
         volume = ManifestFactory.create()

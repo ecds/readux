@@ -2,6 +2,10 @@
 
 CHANGELOG
 =========
+Release 2.2.2
+---------------------
+* Bug fixes for naming GitHub repository for export.
+
 Release 2.2.1
 ---------------------
 * Improvements to bulk ingest

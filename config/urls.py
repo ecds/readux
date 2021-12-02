@@ -41,6 +41,7 @@ urlpatterns = [
     re_path(r'^', include('apps.iiif.manifests.urls')),
     re_path(r'^', include('apps.iiif.annotations.urls')),
     re_path(r'^', include('apps.iiif.kollections.urls')),
+    re_path(r'^', include('apps.export.urls')),
     path('accounts/', include('allauth.urls')),# re_path(r'^', include('readux.collection.urls')),
     # re_path(r'^', include('readux.volumes.urls')),
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),

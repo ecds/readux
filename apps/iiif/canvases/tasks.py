@@ -10,7 +10,9 @@ from django.conf import settings
 # create a background task have to be serializable, we can't just pass in the model object.
 # Canvas = apps.get_model('canvases.canvas')
 
-app = Celery('apps.readux')
+app = Celery('apps.iiif.canvases')
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(name='adding_ocr_to_canvas', autoretry_for=(Canvas.DoesNotExist,), retry_backoff=5)
 def add_ocr_task(canvas_id, *args, **kwargs):

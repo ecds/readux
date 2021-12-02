@@ -12,12 +12,12 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 import config.settings.local as settings
 from apps.export.export import JekyllSiteExport
+from apps.export.forms import JekyllExportForm
 from .models import UserAnnotation
 from ..cms.models import Page, CollectionsPage, VolumesPage
 from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
-from ..iiif.manifests.forms import JekyllExportForm
 
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']

@@ -26,7 +26,7 @@ class LocalAdmin(admin.ModelAdmin):
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
-        if environ["DJANGO_ENV"] != 'test':
+        if environ["DJANGO_ENV"] != 'test': # pragma: no cover
             local_task_id = tasks.create_canvas_form_local_task.delay(obj.id)
             local_task_result = TaskResult(task_id=local_task_id)
             local_task_result.save()
@@ -59,7 +59,7 @@ class RemoteAdmin(admin.ModelAdmin):
         obj.save()
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
-        if environ["DJANGO_ENV"] != 'test':
+        if environ["DJANGO_ENV"] != 'test': # pragma: no cover
             remote_task_id = tasks.create_remote_canvases.delay(obj.id)
             remote_task_result = TaskResult(task_id=remote_task_id)
             remote_task_result.save()
@@ -119,7 +119,7 @@ class BulkAdmin(admin.ModelAdmin):
             new_local.refresh_from_db()
 
             # Queue task to upload to S3
-            if environ["DJANGO_ENV"] != 'test':
+            if environ["DJANGO_ENV"] != 'test': # pragma: no cover
                 upload_task = tasks.upload_to_s3_task.delay(
                     local_id=new_local.id,
                 )

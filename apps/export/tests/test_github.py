@@ -56,6 +56,16 @@ class TestGithubApi(TestCase):
         assert scopes == ['repo', 'user']
 
     @httpretty.activate
+    def test_get_oauth_scopes_is_none(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/user',
+            status=404
+        )
+        scopes = self.gh.oauth_scopes(test=True)
+        assert scopes is None
+
+    @httpretty.activate
     def test_create_repo(self):
         httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
         assert self.gh.create_repo(name='name', user=self.user, description='desc', homepage='page')
@@ -79,6 +89,19 @@ class TestGithubApi(TestCase):
 
         repos = self.gh.list_repos('karl')
         assert len(repos) == 6
+
+    @httpretty.activate
+    def test_list_user_repos_is_none(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/user/repos',
+            status=404
+        )
+
+        repos = self.gh.list_user_repos()
+        for _ in range(0, 20):
+            print(f'****{repos}')
+        assert repos is None
 
     @httpretty.activate
     def test_list_user_repos(self):
@@ -108,7 +131,7 @@ class TestGithubApi(TestCase):
             body='{}',
             status=201
         )
-        pr = self.gh.create_pull_request('joseph', 'pitty', 'barco', 'larentowicz')
+        pr = self.gh.create_pull_request('joseph', 'pitty', 'barco', 'larentowicz', 'araujo')
         assert pr == {}
 
     @httpretty.activate

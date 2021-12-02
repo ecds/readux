@@ -6,21 +6,19 @@ import re
 import tempfile
 import zipfile
 import httpretty
+from slugify import slugify
 from django.test import TestCase, Client
 from django.test import RequestFactory
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
-from apps.iiif.manifests.views import ManifestExport, JekyllExport
 from apps.iiif.canvases.models import Canvas
 from apps.export.export import IiifManifestExport, JekyllSiteExport, GithubExportException, ExportException
 from apps.export.github import GithubApi
-from apps.users.tests.factories import UserFactory, SocialAccountFactory, SocialAppFactory, SocialTokenFactory
-from iiif_prezi.loader import ManifestReader
+from apps.users.tests.factories import SocialAccountFactory, SocialAppFactory, SocialTokenFactory
+from apps.export.views import JekyllExport, ManifestExport
 
 User = get_user_model()
-
 
 class ManifestExportTests(TestCase):
     fixtures = ['users.json', 'kollections.json', 'manifests.json', 'canvases.json', 'annotations.json', 'userannotation.json']
@@ -184,7 +182,7 @@ class ManifestExportTests(TestCase):
         assert isinstance(response.getvalue(), bytes)
 
     @httpretty.httprettified(allow_net_connect=False)
-    def test_jekyll_export_to_github(self):
+    def test_jekyll_export_to_github_repo_name_has_spaces(self):
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
@@ -198,6 +196,7 @@ class ManifestExportTests(TestCase):
         url = reverse('JekyllExport', kwargs=kwargs)
         kwargs['deep_zoom'] = 'exclude'
         kwargs['mode'] = 'github'
+        kwargs['github_repo'] = 'has spaces'
         request = self.factory.post(url, data=kwargs)
         request.user = self.user
         response = self.jekyll_export_view(
@@ -207,6 +206,35 @@ class ManifestExportTests(TestCase):
             content_type="application/x-www-form-urlencoded"
         )
         assert response.status_code == 200
+        assert 'https://github.com/zaphod/has-spaces' in response.content.decode('utf-8')
+
+    @httpretty.httprettified(allow_net_connect=False)
+    def test_jekyll_export_to_github_repo_name_not_given(self):
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body='[{"name":"marx"}]',
+            content_type="text/json"
+        )
+        httpretty.register_uri(
+            httpretty.POST, 'https://api.github.com/user/repos'
+        )
+        kwargs = {'pid': self.volume.pid, 'version': 'v2'}
+        url = reverse('JekyllExport', kwargs=kwargs)
+        kwargs['deep_zoom'] = 'exclude'
+        kwargs['mode'] = 'github'
+        kwargs['github_repo'] = ''
+        request = self.factory.post(url, data=kwargs)
+        request.user = self.user
+        response = self.jekyll_export_view(
+            request,
+            pid=self.volume.pid,
+            version='v2',
+            content_type="application/x-www-form-urlencoded"
+        )
+        assert response.status_code == 200
+        assert f'https://github.com/zaphod/{slugify(self.volume.label, lowercase=False, max_length=50)}' in response.content.decode('utf-8')
+        assert f'https://zaphod.github.io/{slugify(self.volume.label, lowercase=False, max_length=50)}' in response.content.decode('utf-8')
 
     def test_use_github(self):
         assert isinstance(self.jse.github, GithubApi)

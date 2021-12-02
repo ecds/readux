@@ -18,7 +18,6 @@ from iiif_prezi.loader import ManifestReader
 from apps.utils.noid import encode_noid
 from ..views import ManifestSitemap, ManifestRis
 from ..models import Manifest, ImageServer, RelatedLink
-from ..forms import JekyllExportForm
 from .factories import ManifestFactory, ImageServerFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
@@ -122,18 +121,6 @@ class ManifestTests(TestCase):
 
     def test_absolute_url(self):
         assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)
-
-    def test_form_mode_choices_no_github(self):
-        form = JekyllExportForm(user=self.user)
-        assert len(form.fields['mode'].choices) == 1
-        assert form.fields['mode'].choices[0] != 'github'
-
-    def test_form_mode_choices_with_github(self):
-        sa = SocialAccount(provider='github', user=self.user)
-        sa.save()
-        form = JekyllExportForm(user=self.user)
-        assert len(form.fields['mode'].choices) == 2
-        assert form.fields['mode'].choices[1][0] == 'github'
 
     def test_manifest_search_vector_exists(self):
         assert self.volume.search_vector is None

@@ -69,9 +69,13 @@ class JekyllExport(TemplateView):
         cleaned_data = export_form.clean()
 
         export_mode = export_form.cleaned_data['mode']
-        if 'github_repo' not in cleaned_data or not cleaned_data['github_repo']:
-            fallback = request.POST['github_repo'] if 'github_repo' in request.POST else manifest.label
-            github_repo = slugify(fallback, lowercase=False, max_length=50)
+
+        if 'github_repo' not in cleaned_data:
+            # If the person used spaces, `github_repo` will not be in `cleaned_data`
+            github_repo = slugify(request.POST['github_repo'], lowercase=False, max_length=40)
+        elif 'github_repo' in cleaned_data and not cleaned_data['github_repo']:
+            # if `github_repo` was left blank, it will be an empty `str`
+            github_repo = slugify(manifest.label, lowercase=False, max_length=40)
         else:
             github_repo = cleaned_data['github_repo']
 

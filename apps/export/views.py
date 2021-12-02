@@ -72,10 +72,10 @@ class JekyllExport(TemplateView):
 
         if 'github_repo' not in cleaned_data:
             # If the person used spaces, `github_repo` will not be in `cleaned_data`
-            github_repo = slugify(request.POST['github_repo'], lowercase=False, max_length=40)
+            github_repo = slugify(request.POST['github_repo'], lowercase=False, max_length=50)
         elif 'github_repo' in cleaned_data and not cleaned_data['github_repo']:
             # if `github_repo` was left blank, it will be an empty `str`
-            github_repo = slugify(manifest.label, lowercase=False, max_length=40)
+            github_repo = slugify(manifest.label, lowercase=False, max_length=50)
         else:
             github_repo = cleaned_data['github_repo']
 

@@ -233,8 +233,8 @@ class ManifestExportTests(TestCase):
             content_type="application/x-www-form-urlencoded"
         )
         assert response.status_code == 200
-        assert f'https://github.com/zaphod/{slugify(self.volume.label, lowercase=False, max_length=40)}' in response.content.decode('utf-8')
-        assert f'https://zaphod.github.io/{slugify(self.volume.label, lowercase=False, max_length=40)}' in response.content.decode('utf-8')
+        assert f'https://github.com/zaphod/{slugify(self.volume.label, lowercase=False, max_length=50)}' in response.content.decode('utf-8')
+        assert f'https://zaphod.github.io/{slugify(self.volume.label, lowercase=False, max_length=50)}' in response.content.decode('utf-8')
 
     def test_use_github(self):
         assert isinstance(self.jse.github, GithubApi)

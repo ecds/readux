@@ -24,12 +24,11 @@ from django.core.mail import send_mail
 from django.core.serializers import serialize
 from django.template.loader import get_template
 from apps.users.models import User
+from apps.readux import __version__
 import digitaledition_jekylltheme
 import config.settings.local as settings
 from .github import GithubApi, GithubAccountNotFound
 
-
-__version__ = "2.0.0"
 
 LOGGER = logging.getLogger(__name__)
 

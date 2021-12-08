@@ -124,6 +124,20 @@ class TestGithubApi(TestCase):
         assert len(repos) == 6
 
     @httpretty.activate
+    def test_repo_branches(self):
+        resp_body = '[{"name": "branch1", "commit": {"sha": "40767", "url": ""}, "protected": "False"}, {"name": "branch2", "commit": {"sha": "40767", "url": ""}, "protected": "False"}]'
+        httpretty.register_uri(
+            httpretty.GET,
+            f'https://api.github.com/{self.gh.github_username(self.user)}/some-repo/branches',
+            body=resp_body,
+            content_type="text/json"
+        )
+
+        branches = self.gh.list_repo_branches('some-repo', self.user)
+        assert len(branches) == 2
+        assert 'branch2' in branches
+
+    @httpretty.activate
     def test_create_pr(self):
         httpretty.register_uri(
             httpretty.POST,

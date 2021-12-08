@@ -24,12 +24,11 @@ from django.core.mail import send_mail
 from django.core.serializers import serialize
 from django.template.loader import get_template
 from apps.users.models import User
+from apps.readux import __version__
 import digitaledition_jekylltheme
 import config.settings.local as settings
 from .github import GithubApi, GithubAccountNotFound
 
-
-__version__ = "2.0.0"
 
 LOGGER = logging.getLogger(__name__)
 
@@ -89,7 +88,7 @@ class IiifManifestExport:
         annotators = User.objects.filter(
             userannotation__canvas__manifest__id=manifest.id
         ).distinct()
-        annotators_string = ', '.join([i.fullname() for i in annotators])
+        annotators_string = ', '.join([i.name for i in annotators])
         # pylint: enable = possibly-unused-variable
 
         # pylint: disable = line-too-long
@@ -550,12 +549,19 @@ class JekyllSiteExport(object):
         # initialize export dir as a git repo, and commit the contents
         # NOTE: to debug git commands, print the git return to see git output
 
+        git_author = None
+
+        if self.user.name is None or not self.user.name:
+            git_author = GithubApi.github_username(self.user)
+        else:
+            git_author = self.user.name
+
         gitcmd = Git(jekyll_dir)
         # initialize jekyll site as a git repo
         gitcmd.init()
         # add and commit all contents
         gitcmd.config("user.email", self.user.email)
-        gitcmd.config("user.name", self.user.fullname())
+        gitcmd.config("user.name", git_author)
         # Use the token to authenticate the Git commands.
         # Required to do this as of June 9, 2020
         # https://developer.github.com/changes/2020-02-14-deprecating-oauth-app-endpoint/
@@ -568,7 +574,7 @@ class JekyllSiteExport(object):
                 v=__version__
             ),
             '--author="{fn} <{ue}>"'.format(
-                fn=self.user.fullname(),
+                fn=git_author,
                 ue=self.user.email
             )
         ])
@@ -683,7 +689,7 @@ class JekyllSiteExport(object):
             # TODO: if deep zoom is added, we must add that directory as well
 
         git_author = git.Actor(
-            self.user.fullname(),
+            self.user.name,
             self.user.email
         )
         # commit all changes

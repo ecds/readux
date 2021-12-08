@@ -4,15 +4,14 @@ from django.conf import settings
 from ..annotations import Annotations, AnnotationCrud
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.template import Context, Template
 from django.core.serializers import serialize
-from apps.iiif.annotations.models import Annotation
 from apps.iiif.manifests.models import Manifest
+from apps import readux
 from ..models import UserAnnotation
-from apps.readux.views import VolumesList, VolumeDetail, CollectionDetail, Collection, ExportOptions, AnnotationsCount
+from ..context_processors import current_version
+from apps.readux.views import VolumesList, CollectionDetail, ExportOptions, AnnotationsCount
 from urllib.parse import urlencode
 from cssutils import parseString
-import warnings
 import json
 import re
 import uuid
@@ -597,3 +596,6 @@ class AnnotationTests(TestCase):
         assert response.context_data['page'] == self.canvas
         assert response.context_data['user_annotation_page_count'] == 3
         assert response.context_data['user_annotation_count'] == 3
+
+    def test_current_version_context(self):
+        assert readux.__version__ == current_version()['APP_VERSION']

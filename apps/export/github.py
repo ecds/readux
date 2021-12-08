@@ -163,6 +163,19 @@ class GithubApi(object):
             return repos
         return None
 
+    def list_repo_branches(self, repo, user):
+        """List branches in repository
+
+        :param repo: Name of repository
+        :type repo: str
+        :param user: GitHub user
+        :type user: apps.users.models.User
+        :return: List of GitHub repository branch names.
+        :rtype: list
+        """
+        response = self.session.get(f'{self.url}/{self.github_username(user)}/{repo}/branches')
+        return [branch['name'] for branch in response.json()]
+
     def create_pull_request(self, repo, title, head, base, text=None):
         """Create a new pull request.
         https://developer.github.com/v3/pulls/#create-a-pull-request

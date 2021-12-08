@@ -2,6 +2,11 @@
 
 CHANGELOG
 =========
+Release 2.2.3
+---------------------
+* Added version number to template
+* Bug fixes for missing author name in GitHub export
+
 Release 2.2.2
 ---------------------
 * Bug fixes for naming GitHub repository for export.

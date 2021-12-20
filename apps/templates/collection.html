@@ -10,8 +10,8 @@
         style="width:100%;" />
     </div>
     <div class="collection-image-info collasped"  tabindex="0" aria-label="about this collection" uk-tooltip="title: About this collection; pos: right">
-      <h3>{{ collection.collection_image_title }}</h3>
-      <div class="info"> {% if collection.collection_image_summary %}
+      <div class="info">
+        <p style="font-size:130%">{{ collection.collection_image_title }}</p>{% if collection.collection_image_summary %}
         <p>{{ collection.collection_image_summary }}</p> {% endif %}
         <p>{{ collection.collection_image_creator }}</p>
       </div>

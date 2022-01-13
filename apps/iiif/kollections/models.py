@@ -24,7 +24,7 @@ class Collection(IiifBase):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     original = models.ImageField(
-        upload_to='originals/',
+        upload_to='originals/', #I'm not deleting this field yet, since that would mess more with existing data - and we may want to use this field for something else later.
         null=True,
         blank=True,
         help_text="No longer used!" # pylint: disable = line-too-long
@@ -33,31 +33,31 @@ class Collection(IiifBase):
         upload_to='headers/',
         null=True,
         blank=True,
-        help_text="Upload the image for the collection header here. Ideal ration 1200 x 300 px."
+        help_text="Upload the image for the collection header here. Ideal ratio 1200 x 300 px."
     )
     thumbnail = models.ImageField(
         upload_to='thumbnails/',
         null=True,
         blank=True,
-        help_text="Upload the image for the collection thumbnail here. Ideal ration 400 x 500 px."
+        help_text="Upload the image for the collection thumbnail here. Ideal ratio 400 x 500 px."
     )
     collection_image_title = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        help_text="The title of the header/thumbnail image."
+        help_text="The title of the header image."
     )
     collection_image_creator = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        help_text="The artist or author of the header/thumbnail image source."
+        help_text="The artist or author of the header image source."
     )
     collection_image_summary = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        help_text="Any additional information to display about the header/thumbnail image source."
+        help_text="Any additional information to display about the header image source."
     )
     autocomplete_search_field = 'label'
 

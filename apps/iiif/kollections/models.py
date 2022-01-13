@@ -24,39 +24,40 @@ class Collection(IiifBase):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     original = models.ImageField(
-        upload_to='originals/',
+        upload_to='originals/', #I'm not deleting this field yet, since that would mess more with existing data - and we may want to use this field for something else later.
         null=True,
-        help_text="Upload the Original Image and the Thumbnail and Banner will be created automatically!" # pylint: disable = line-too-long
+        blank=True,
+        help_text="No longer used!" # pylint: disable = line-too-long
     )
     header = models.ImageField(
         upload_to='headers/',
         null=True,
         blank=True,
-        help_text="You do not need to upload this file."
+        help_text="Upload the image for the collection header here. Ideal ratio 1200 x 300 px."
     )
     thumbnail = models.ImageField(
         upload_to='thumbnails/',
         null=True,
         blank=True,
-        help_text="You do not need to upload this file."
+        help_text="Upload the image for the collection thumbnail here. Ideal ratio 400 x 500 px."
     )
     collection_image_title = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        help_text="The title of the header/thumbnail image."
+        help_text="The title of the header image."
     )
     collection_image_creator = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        help_text="The artist or author of the header/thumbnail image source."
+        help_text="The artist or author of the header image source."
     )
     collection_image_summary = models.CharField(
         max_length=255,
         null=True,
         blank=True,
-        help_text="Any additional information to display about the header/thumbnail image source."
+        help_text="Any additional information to display about the header image source."
     )
     autocomplete_search_field = 'label'
 
@@ -81,6 +82,9 @@ class Collection(IiifBase):
         if not self.__make_thumbnail():
             # set to a default thumbnail
             raise Exception('Could not create thumbnail - is the file type valid?')
+        if not self.__make_header():
+            # set to a default header
+            raise Exception('Could not create header - is the file type valid?')
 
         super(Collection, self).save(*args, **kwargs)
 
@@ -93,7 +97,7 @@ class Collection(IiifBase):
         """
         # If height is higher we resize vertically, if not we resize horizontally
         size = (400, 500)
-        image = Image.open(self.original)
+        image = Image.open(self.thumbnail)
         # Get current and desired ratio for the images
         img_ratio = image.size[0] / float(image.size[1])
         ratio = size[0] / float(size[1])
@@ -113,7 +117,7 @@ class Collection(IiifBase):
         else:
             image = image.resize((size[0], size[1]), Image.ANTIALIAS)
         # If the scale is the same, we do not need to crop
-        thumb_name, thumb_extension = os.path.splitext(self.original.name)
+        thumb_name, thumb_extension = os.path.splitext(self.thumbnail.name)
         thumb_extension = thumb_extension.lower()
 
         thumb_filename = thumb_name + '_thumb' + thumb_extension
@@ -134,9 +138,18 @@ class Collection(IiifBase):
 
         # set save=False, otherwise it will run in an infinite loop
         self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
+        temp_thumb.close()
+        return True
 
+    def __make_header(self):
+        """Private method to generate a thumbnail for the collection.
+
+        :return: True if file is created successfully.
+        :rtype: bool
+        """
+        # If height is higher we resize vertically, if not we resize horizontally
         sizebanner = (1200, 300)
-        forcrop = Image.open(self.original)
+        forcrop = Image.open(self.header)
         # Get current and desired ratio for the images
         img_ratio_banner = forcrop.size[0] / float(forcrop.size[1])
         ratio_banner = sizebanner[0] / float(sizebanner[1])
@@ -171,19 +184,28 @@ class Collection(IiifBase):
             cropped_image = forcrop.crop(box)
         else:
             cropped_image = forcrop.resize((sizebanner[0], sizebanner[1]), Image.ANTIALIAS)
-            # If the scale is the same, we do not need to crop
-
-        thename, theextension = os.path.splitext(self.original.name)
+        # If the scale is the same, we do not need to crop
+        thename, theextension = os.path.splitext(self.header.name)
         theextension = theextension.lower()
 
         thefilename = thename + '_header' + theextension
 
-        header_io = BytesIO()
-        cropped_image.save(header_io, format=file_type)
-        header_io.seek(0)
+        if theextension in ['.jpg', '.jpeg']:
+            file_type = 'JPEG'
+        elif theextension == '.gif':
+            file_type = 'GIF'
+        elif theextension == '.png':
+            file_type = 'PNG'
+        else:
+            return False    # Unrecognized file type
 
-        self.header.save(thefilename, ContentFile(header_io.read()), save=False)
-        header_io.close()
-        temp_thumb.close()
+        # Save header to in-memory file as StringIO
+        temp_header = BytesIO()
+        cropped_image.save(temp_header, file_type)
+        temp_header.seek(0)
+
+        # set save=False, otherwise it will run in an infinite loop
+        self.header.save(thefilename, ContentFile(temp_header.read()), save=False)
+        temp_header.close()
 
         return True

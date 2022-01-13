@@ -32,13 +32,11 @@ class Collection(IiifBase):
     header = models.ImageField(
         upload_to='headers/',
         null=True,
-        blank=True,
         help_text="Upload the image for the collection header here. Ideal ratio 1200 x 300 px."
     )
     thumbnail = models.ImageField(
         upload_to='thumbnails/',
         null=True,
-        blank=True,
         help_text="Upload the image for the collection thumbnail here. Ideal ratio 400 x 500 px."
     )
     collection_image_title = models.CharField(

@@ -77,10 +77,10 @@ class Collection(IiifBase):
 
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
         """Override save function to create the the thumbnail file for the collection"""
-        if not self.__make_thumbnail():
+        if self.thumbnail and not self.__make_thumbnail():
             # set to a default thumbnail
             raise Exception('Could not create thumbnail - is the file type valid?')
-        if not self.__make_header():
+        if self.header and not self.__make_header():
             # set to a default header
             raise Exception('Could not create header - is the file type valid?')
 

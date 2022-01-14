@@ -132,8 +132,9 @@ class IngestAdminTest(TestCase):
     def test_remote_admin_save(self):
         """It should add a manifest to the Local object"""
         remote = RemoteFactory.create(
-            remote_url='https://dooley.net/manifest.json' # pylint: disable=line-too-long
+            remote_url='https://dooley.net/manifest.json'
         )
+
         assert remote.manifest is None
 
         remote_model_admin = RemoteAdmin(model=Remote, admin_site=AdminSite())

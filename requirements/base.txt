@@ -2,7 +2,7 @@ pytz==2021.3  # https://github.com/stub42/pytz
 python-slugify==5.0.2  # https://github.com/un33k/python-slugify
 Pillow
 argon2-cffi==21.1.0  # https://github.com/hynek/argon2_cffi
-redis==4.0.0  # https://github.com/antirez/redis
+redis==4.1.1  # https://github.com/antirez/redis
 bs4
 pyyaml
 progress

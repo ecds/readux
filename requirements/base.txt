@@ -14,7 +14,7 @@ hocr-spec==0.2.0
 # ------------------------------------------------------------------------------
 # TODO: To upgrade to Django 3, we have to redo the full text search on the manifest model.
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django==2.2.24  # https://www.djangoproject.com/
+Django==4.0.2  # https://www.djangoproject.com/
 #django-environ==0.4.5  # https://github.com/joke2k/django-environ
 git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils

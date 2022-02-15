@@ -342,3 +342,7 @@ class Remote(IngestAbstractModel):
                 for (key, value) in canvas_metadata.items():
                     setattr(canvas, key, value)
                 canvas.save()
+                canvas.refresh_from_db()
+
+                if os.environ['DJANGO_ENV'] != 'test':
+                  add_ocr_task.delay(canvas.id)

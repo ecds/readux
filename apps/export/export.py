@@ -788,13 +788,16 @@ class JekyllSiteExport(object):
         context['ghpages_url'] = ghpages_url
         context['pr_url'] = pr_url
 
+        # It takes GitHub a few to build the site. This holds the email till the site
+        # is available. If it takes longer than 10 minutes, and email is sent saying
+        # that is is taking longer than expected.
         tries = 0
-        sleep_for = 60 if os.environ['DJANGO_ENV'] != 'test' else 0.1
+        sleep_for = 15 if os.environ['DJANGO_ENV'] != 'test' else 0.1
         while not self.__check_site(ghpages_url, tries):
             tries += 1
             sleep(sleep_for)
 
-        if tries < 11:
+        if tries < 45:
             email_subject = 'Your Readux site export is ready!'
             email_contents = get_template('jekyll_export_email.html').render(context)
             text_contents = get_template('jekyll_export_email.txt').render(context)

@@ -1,0 +1,15 @@
+{{volume.label}}
+
+Static Site Export
+
+GitHub Jekyll site export is taking longer than expected.
+
+Your website export has finished, but the site is not responding. You can check if the GitHub repository was created at <a class="repo-url" href="{{ repo_url }}">{{ repo_url }}</a>.
+
+It is possible it still worked but is just taking longer than expected. Your site is expected to be available at {{ ghpages_url }}.
+
+We recommend trying the export again. If it continues to fail, please contact readux@emroy.edu for help.
+
+For more information on using and customizing your site, see the
+Github Pages help documentation at:
+https://help.github.com/categories/github-pages-basics/

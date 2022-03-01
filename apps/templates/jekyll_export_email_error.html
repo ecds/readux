@@ -1,0 +1,34 @@
+
+{% block content %}
+
+<h1 class='uk-text-truncate'>
+  {{volume.label}}
+</h1>
+{% endblock content %}
+{% block viewer %}
+  <div class='uk-flex-center' uk-grid>
+    <div class='uk-width-3-4'>
+      <div class='uk-padding'>
+        <h3>Static Site Export Error</h3>
+        <div class="alert">GitHub Jekyll site export is taking longer than expected.</div>
+        <p>
+          Your website export has finished, but the site is not responding. You can check if
+          the GitHub repository was created at <a class="repo-url" href="{{ repo_url }}">{{ repo_url }}</a>.
+        </p>
+        <p>
+          It is possible it still worked but is just taking longer than expected.
+          Your site is expected to be available at <a class="ghpages-url" href="{{ ghpages_url }}">{{ ghpages_url }}</a>.</p>
+        </p>
+        <p>
+          We recommend trying the export again. If it continues to fail, please contact
+          <a href="mailto:readux@emroy.edu">readux@emroy.edu</a> for help.
+        </p>
+        <p>For more information on using and customizing your site,
+        see the
+        <a href="https://help.github.com/categories/github-pages-basics/">Github
+        Pages help documentation</a>.</p>
+      </div>
+
+    </div>
+  </div>
+{% endblock viewer %}

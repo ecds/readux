@@ -10,6 +10,7 @@ from slugify import slugify
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import Canvas
@@ -198,6 +199,7 @@ class ManifestExportTests(TestCase):
 
     @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github_repo_name_has_spaces(self):
+        httpretty.register_uri(httpretty.GET, 'https://zaphod.github.io/has-spaces/', status=200)
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
@@ -222,9 +224,12 @@ class ManifestExportTests(TestCase):
         )
         assert response.status_code == 200
         assert 'https://github.com/zaphod/has-spaces' in response.content.decode('utf-8')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Your Readux site export is ready!')
 
     @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github_repo_name_not_given(self):
+        httpretty.register_uri(httpretty.GET, f'https://zaphod.github.io/{slugify(self.volume.label, lowercase=False, max_length=50)}/', status=200)
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
@@ -310,6 +315,7 @@ class ManifestExportTests(TestCase):
             status=200
         )
         httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
+        httpretty.register_uri(httpretty.GET, f'https://{self.jse.github_username}.github.io/{self.jse.github_repo}/', status=200)
         resp_body = '[{"name":"foo"}]'
         httpretty.register_uri(
             httpretty.GET,
@@ -361,6 +367,7 @@ class ManifestExportTests(TestCase):
             body=resp_body,
             content_type="text/json"
         )
+        httpretty.register_uri(httpretty.GET, f'https://{self.jse.github_username}.github.io/{self.jse.github_repo}/', status=200)
         gh_export = self.jse.github_export(self.user.email)
         assert gh_export == [
             'https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo),
@@ -384,6 +391,7 @@ class ManifestExportTests(TestCase):
             body=resp_body,
             content_type="text/json"
         )
+        httpretty.register_uri(httpretty.GET, f'https://{self.jse.github_username}.github.io/{self.jse.github_repo}/', status=200)
         gh_export = self.jse.github_export(self.user.email)
         assert gh_export == [
             'https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo),
@@ -398,3 +406,31 @@ class ManifestExportTests(TestCase):
 
     def test_notify_message(self):
         self.jse.notify_msg('hey')
+
+    @httpretty.httprettified(allow_net_connect=False)
+    def test_jekyll_export_to_github_site_timeout(self):
+        httpretty.register_uri(httpretty.GET, 'https://zaphod.github.io/has-spaces/', status=404)
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body='[{"name":"marx"}]',
+            content_type="text/json"
+        )
+        httpretty.register_uri(
+            httpretty.POST, 'https://api.github.com/user/repos'
+        )
+        kwargs = {'pid': self.volume.pid, 'version': 'v2'}
+        url = reverse('JekyllExport', kwargs=kwargs)
+        kwargs['deep_zoom'] = 'exclude'
+        kwargs['mode'] = 'github'
+        kwargs['github_repo'] = 'has spaces'
+        request = self.factory.post(url, data=kwargs)
+        request.user = self.user
+        self.jekyll_export_view(
+            request,
+            pid=self.volume.pid,
+            version='v2',
+            content_type="application/x-www-form-urlencoded"
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Your Readux site export is taking longer than expected')

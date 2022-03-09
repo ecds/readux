@@ -5,7 +5,7 @@ import logging
 import json
 from io import BytesIO
 from mimetypes import guess_type
-import httpretty
+from requests import get
 from stream_unzip import stream_unzip, TruncatedDataError
 from boto3 import client
 from tablib import Dataset
@@ -264,6 +264,10 @@ class Local(IngestAbstractModel):
                         task_creator=self.creator,
                         filename=canvas.ocr_file_path
                     )
+
+            # Request the thumbnail so a cached version is created on IIIF server.
+            if os.environ['DJANGO_ENV'] != 'test':
+                get(canvas.thumbnail)
 
 
         if self.manifest.canvas_set.count() == len(image_files):

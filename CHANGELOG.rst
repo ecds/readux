@@ -2,6 +2,11 @@
 
 CHANGELOG
 =========
+Release 2.2.4
+---------------------
+* Export updates
+* Fix for creating Canvas objects during remote ingest.
+
 Release 2.2.3
 ---------------------
 * Added version number to template

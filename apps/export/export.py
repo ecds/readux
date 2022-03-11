@@ -858,13 +858,11 @@ class JekyllSiteExport(object):
         return zip_file.name
 
     def __check_site(self, url, tries):
-        # if os.environ['DJANGO_ENV'] == 'test':
-        #     httpretty.enable(verbose=True, allow_net_connect=False)  # enable HTTPretty so that it will monkey patch the socket module
-        #     httpretty.register_uri(httpretty.GET, url, status=404)
         if tries > 45:
             return True
-        # raise NameError(url)
+
         req = get(url, verify=False, timeout=1)
+
         if req.status_code == 200:
             return True
         return False

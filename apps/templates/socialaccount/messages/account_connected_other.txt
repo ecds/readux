@@ -1,2 +1,2 @@
 {% load i18n %}
-{% blocktrans %}This login has been authorized for use with another account. Social media logins (Google, Facebook, Twitter, GitHub) can only be associated with one Readux account.{% endblocktrans %}
+{% blocktrans %}This social media login has been authorized for use with another Readux account. Social media logins (Google, Facebook, Twitter, GitHub) can only be associated with one Readux account.{% endblocktrans %}

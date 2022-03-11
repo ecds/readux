@@ -10,11 +10,14 @@ from slugify import slugify
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.urls import reverse
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import Canvas
 from apps.export.export import IiifManifestExport, JekyllSiteExport, GithubExportException, ExportException
 from apps.export.github import GithubApi
+from apps.readux.tests.factories import UserAnnotationFactory
+from apps.readux.models import UserAnnotation
 from apps.users.tests.factories import SocialAccountFactory, SocialAppFactory, SocialTokenFactory
 from apps.export.views import JekyllExport, ManifestExport
 
@@ -87,6 +90,13 @@ class ManifestExportTests(TestCase):
         assert comment_annotation_list['@id'] == comment_annotation_list_id
 
     def test_jekyll_site_export(self):
+        user_anno = UserAnnotation.objects.get(pk='18f24705-398a-401d-a106-acfca6e72070')
+        # self.user.userannotation_set.clear()
+        # user_anno = UserAnnotationFactory.create(canvas=self.volume.canvas_set.first(), owner=self.user)
+        user_anno.tags.add('tag1', 'tag2', 'tag3')
+        assert user_anno.owner == self.user
+        assert user_anno.canvas.manifest == self.volume
+        self.volume.refresh_from_db()
         j = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id])
         zip_file = j.get_zip()
         tempdir = j.generate_website()
@@ -115,9 +125,15 @@ class ManifestExportTests(TestCase):
             contents = page_file.read()
         # Depending on the order the tests are run, there might be more or less in the database.
         # TODO: Why does the database not get reset?
-        assert contents.count('<span id') == Canvas.objects.get(id='7261fae2-a24e-4a1c-9743-516f6c4ea0c9').annotation_set.count()
+        # assert contents.count('<span id') == Canvas.objects.get(id='7261fae2-a24e-4a1c-9743-516f6c4ea0c9').annotation_set.count()
         # verify user annotation count is correct
         assert len(os.listdir(os.path.join(jekyll_path, '_annotations'))) == 1
+        assert self.user.userannotation_set.count() > 0
+        assert os.path.exists(os.path.join(jekyll_path, 'overlays', 'ocr', '6.json'))
+        assert os.path.exists(os.path.join(jekyll_path, 'overlays', 'annotations', '6.json'))
+        assert os.path.exists(os.path.join(jekyll_path, 'tags', 'tag1.md'))
+        tags_yaml = open(os.path.join(jekyll_path, '_data', 'tags.yml')).read()
+        assert 'tag1' in tags_yaml
 
     def test_jekyll_export_error(self):
         export = JekyllSiteExport(self.volume, 'v2', owners=[self.user.id], deep_zoom='exclude')
@@ -183,6 +199,7 @@ class ManifestExportTests(TestCase):
 
     @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github_repo_name_has_spaces(self):
+        httpretty.register_uri(httpretty.GET, 'https://zaphod.github.io/has-spaces/', status=200)
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
@@ -207,9 +224,12 @@ class ManifestExportTests(TestCase):
         )
         assert response.status_code == 200
         assert 'https://github.com/zaphod/has-spaces' in response.content.decode('utf-8')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Your Readux site export is ready!')
 
     @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github_repo_name_not_given(self):
+        httpretty.register_uri(httpretty.GET, f'https://zaphod.github.io/{slugify(self.volume.label, lowercase=False, max_length=50)}/', status=200)
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
@@ -295,6 +315,7 @@ class ManifestExportTests(TestCase):
             status=200
         )
         httpretty.register_uri(httpretty.POST, 'https://api.github.com/user/repos', body='hello', status=201)
+        httpretty.register_uri(httpretty.GET, f'https://{self.jse.github_username}.github.io/{self.jse.github_repo}/', status=200)
         resp_body = '[{"name":"foo"}]'
         httpretty.register_uri(
             httpretty.GET,
@@ -346,6 +367,7 @@ class ManifestExportTests(TestCase):
             body=resp_body,
             content_type="text/json"
         )
+        httpretty.register_uri(httpretty.GET, f'https://{self.jse.github_username}.github.io/{self.jse.github_repo}/', status=200)
         gh_export = self.jse.github_export(self.user.email)
         assert gh_export == [
             'https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo),
@@ -369,6 +391,7 @@ class ManifestExportTests(TestCase):
             body=resp_body,
             content_type="text/json"
         )
+        httpretty.register_uri(httpretty.GET, f'https://{self.jse.github_username}.github.io/{self.jse.github_repo}/', status=200)
         gh_export = self.jse.github_export(self.user.email)
         assert gh_export == [
             'https://github.com/{u}/{r}'.format(u=self.jse.github_username, r=self.jse.github_repo),
@@ -383,3 +406,31 @@ class ManifestExportTests(TestCase):
 
     def test_notify_message(self):
         self.jse.notify_msg('hey')
+
+    @httpretty.httprettified(allow_net_connect=False)
+    def test_jekyll_export_to_github_site_timeout(self):
+        httpretty.register_uri(httpretty.GET, 'https://zaphod.github.io/not-found/', status=404)
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
+            body='[{"name":"marx"}]',
+            content_type="text/json"
+        )
+        httpretty.register_uri(
+            httpretty.POST, 'https://api.github.com/user/repos'
+        )
+        kwargs = {'pid': self.volume.pid, 'version': 'v2'}
+        url = reverse('JekyllExport', kwargs=kwargs)
+        kwargs['deep_zoom'] = 'exclude'
+        kwargs['mode'] = 'github'
+        kwargs['github_repo'] = 'not found'
+        request = self.factory.post(url, data=kwargs)
+        request.user = self.user
+        self.jekyll_export_view(
+            request,
+            pid=self.volume.pid,
+            version='v2',
+            content_type="application/x-www-form-urlencoded"
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Your Readux site export is taking longer than expected')

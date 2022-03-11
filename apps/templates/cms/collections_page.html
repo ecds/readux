@@ -42,7 +42,7 @@
 <article class="rx-grid-layout">
   <a class="nav-link" href="{% url 'collection' collection.pid %}">
   <div class="rx-volume-in-grid">
-    <div class="rx-grid-image-container"><img src="/media/{{collection.thumbnail}}"></div>
+    <div class="rx-grid-image-container"><img src="/media/{{collection.thumbnail}}"  alt="Thumbnail image for collection {{collection.label}}"></div>
     <div class="rx-title-tagline uk-margin-small-top">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>
     <div class="rx-collection-title">{{ collection.label }}</div>
   </div>

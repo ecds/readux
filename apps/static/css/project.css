@@ -333,7 +333,7 @@ header#page-bg .collection-image-info h3 {
 
 header#page-bg .collection-image-info p {
   width: 100%;
-  color: #dedede;
+  color: #dedede !important;
   text-align: left;
   margin-bottom: 0px;
   margin-top: 0px;
@@ -347,6 +347,7 @@ header#page-bg .collection-image-info.collasped {
   padding: 1.5em 1.75em;
   background-color: rgba(22, 22, 22, 0.33);
   opacity: 0.8;
+  color: #dedede !important;
 }
 
 header#page-bg .collection-image-info.collasped:hover {

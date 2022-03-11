@@ -2,9 +2,10 @@
 import os
 import uuid
 import logging
+import json
 from io import BytesIO
 from mimetypes import guess_type
-import httpretty
+from requests import get
 from stream_unzip import stream_unzip, TruncatedDataError
 from boto3 import client
 from tablib import Dataset
@@ -152,8 +153,8 @@ class Local(IngestAbstractModel):
                     )
                 if file_type:
                     is_ocr_file_type = (
-                        'text' in file_type 
-                        or 'xml' in file_type 
+                        'text' in file_type
+                        or 'xml' in file_type
                         or 'json' in file_type
                         or 'html' in file_type
                     )
@@ -264,6 +265,10 @@ class Local(IngestAbstractModel):
                         filename=canvas.ocr_file_path
                     )
 
+            # Request the thumbnail so a cached version is created on IIIF server.
+            if os.environ['DJANGO_ENV'] != 'test':
+                get(canvas.thumbnail)
+
 
         if self.manifest.canvas_set.count() == len(image_files):
             self.delete()
@@ -313,13 +318,8 @@ class Remote(IngestAbstractModel):
         :rtype: dict
         """
         if os.environ['DJANGO_ENV'] == 'test':
-            httpretty.enable()
-            httpretty.register_uri(
-                httpretty.GET,
-                self.remote_url,
-                body=open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest.json')).read(),
-                content_type="text/json"
-            )
+            return json.loads(open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest.json')).read())
+
         return fetch_url(self.remote_url)
 
     def open_metadata(self):
@@ -328,7 +328,7 @@ class Remote(IngestAbstractModel):
             self.metadata = services.parse_iiif_v2_manifest(self.remote_manifest)
 
     def create_canvases(self):
-         # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
+        # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
         for position, canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
             canvas_metadata = None
             # TODO: we will need some sort of check for IIIF API version, but not
@@ -346,3 +346,7 @@ class Remote(IngestAbstractModel):
                 for (key, value) in canvas_metadata.items():
                     setattr(canvas, key, value)
                 canvas.save()
+                canvas.refresh_from_db()
+
+                if os.environ['DJANGO_ENV'] != 'test':
+                  add_ocr_task.delay(canvas.id)

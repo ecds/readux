@@ -59,7 +59,7 @@
 {% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&type={{ request.GET.type }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
 </div>{% endif %}
     {% if "?q=" in request.get_full_path %}
-{% if qs1.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em> in Full Text.</div></span>{% endif %}
+{% if qs1.count > 0 %}<h2><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em> in Full Text.</span></div></h2>{% endif %}
 <hr/>
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs1 %}
@@ -101,7 +101,7 @@
   </div>
       {% endif %}
     {% if "?q=" in request.get_full_path %}
-{% if qs3.count > 0 %}<h4><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Metadata: Title/Author/Summary.</span><span style="font-size:0.8em;color:#707070;"> (ordered by relevance)</span></div>{% endif %}
+{% if qs3.count > 0 %}<h2><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Metadata: Title/Author/Summary.</span><span style="font-size:0.8em;color:#707070;"> (ordered by relevance)</span></div></h2>{% endif %}
 <hr/>
 <div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
   {% for volume in qs3 %}

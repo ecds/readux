@@ -1,4 +1,5 @@
 """Github export module"""
+import httpretty
 import io
 import json
 import logging
@@ -9,7 +10,9 @@ import subprocess
 import tempfile
 import zipfile
 from datetime import datetime
+from time import sleep
 from urllib.parse import urlparse
+from requests import get
 # pylint: disable = unused-import, ungrouped-imports
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -785,17 +788,34 @@ class JekyllSiteExport(object):
         context['ghpages_url'] = ghpages_url
         context['pr_url'] = pr_url
 
-        email_contents = get_template('jekyll_export_email.html').render(context)
-        text_contents = get_template('jekyll_export_email.txt').render(context)
+        # It takes GitHub a few to build the site. This holds the email till the site
+        # is available. If it takes longer than 10 minutes, and email is sent saying
+        # that is is taking longer than expected.
+        tries = 0
+        sleep_for = 15 if os.environ['DJANGO_ENV'] != 'test' else 0.1
+        while not self.__check_site(ghpages_url, tries):
+            for _ in range(0,10):
+                print(tries)
+            tries += 1
+            sleep(sleep_for)
+
+        if tries < 45:
+            email_subject = 'Your Readux site export is ready!'
+            email_contents = get_template('jekyll_export_email.html').render(context)
+            text_contents = get_template('jekyll_export_email.txt').render(context)
+        else:
+            email_subject = 'Your Readux site export is taking longer than expected'
+            email_contents = get_template('jekyll_export_email_error.html').render(context)
+            text_contents = get_template('jekyll_export_email_error.txt').render(context)
+
         send_mail(
-            'Your Readux site export is ready!',
+            email_subject,
             text_contents,
             settings.READUX_EMAIL_SENDER,
             [user_email],
             fail_silently=False,
             html_message=email_contents
         )
-
 
         return [repo_url, ghpages_url, pr_url]
 
@@ -836,3 +856,13 @@ class JekyllSiteExport(object):
         )
 
         return zip_file.name
+
+    def __check_site(self, url, tries):
+        if tries > 45:
+            return True
+
+        req = get(url, verify=False, timeout=1)
+
+        if req.status_code == 200:
+            return True
+        return False

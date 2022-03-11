@@ -53,30 +53,35 @@ class KollectionTests(TestCase):
         assert collection[0]['@type'] == 'sc:Manifest'
         assert collection[0]['label'] == self.volume.label
 
-    def test_collection_images(self):
+    def test_collection_thumbnail(self):
         image_path = "{p}test_vert.jpg".format(p=self.fixture_path)
-        self.collection.original = SimpleUploadedFile(
+        self.collection.thumbnail = SimpleUploadedFile(
             name='test_vert.jpg',
             content=open(image_path, 'rb').read(),
             content_type='image/jpeg'
         )
         self.collection.save()
         # NOTE: pytest uses some arbitrary tmp file naming structure.
-        assert self.collection.original.path.split('/')[-1] == 'test_vert.jpg'
-        assert self.collection.header.path.split('/')[-1] == 'test_vert_header.jpg'
         assert self.collection.thumbnail.path.split('/')[-1] == 'test_vert_thumb.jpg'
-        assert self.collection.original.url == '{u}originals/test_vert.jpg'.format(
-            u=settings.MEDIA_URL
-        )
-        assert self.collection.header.url == '{u}headers/test_vert_header.jpg'.format(
-            u=settings.MEDIA_URL
-        )
         assert self.collection.thumbnail.url == '{u}thumbnails/test_vert_thumb.jpg'.format(
             u=settings.MEDIA_URL
         )
-        assert path.isfile(self.collection.original.path)
-        assert path.isfile(self.collection.header.path)
         assert path.isfile(self.collection.thumbnail.path)
+
+    def test_collection_header(self):
+        image_path = "{p}test_vert.jpg".format(p=self.fixture_path)
+        self.collection.header = SimpleUploadedFile(
+            name='test_vert.jpg',
+            content=open(image_path, 'rb').read(),
+            content_type='image/jpeg'
+        )
+        self.collection.save()
+        # NOTE: pytest uses some arbitrary tmp file naming structure.
+        assert self.collection.header.path.split('/')[-1] == 'test_vert_header.jpg'
+        assert self.collection.header.url == '{u}headers/test_vert_header.jpg'.format(
+            u=settings.MEDIA_URL
+        )
+        assert path.isfile(self.collection.header.path)
 
     def test_autocomplete_label(self):
         assert self.collection.autocomplete_label() == self.collection.label
@@ -86,7 +91,7 @@ class KollectionTests(TestCase):
 
     def test_invalid_image_file_types(self):
         collection = Collection()
-        collection.label = 'Some Lousy Collection'
+        collection.label = 'Some Collection'
         invalid_test_images = {
             'tiff': "{p}test.tiff".format(p=self.fixture_path),
             'jp2': "{p}test.jp2".format(p=self.fixture_path)
@@ -105,14 +110,14 @@ class KollectionTests(TestCase):
 
     def test_valid_image_file_types(self):
         collection = Collection()
-        collection.label = 'Some Lousy Collection'
+        collection.label = 'Some Collection'
         invalid_test_images = {
             'png': "{p}test.tiff".format(p=self.fixture_path),
             'gif': "{p}test.gif".format(p=self.fixture_path),
             'jpeg': "{p}test.jpeg".format(p=self.fixture_path)
         }
         for file_type, file_path in invalid_test_images.items():
-            collection.original = SimpleUploadedFile(
+            collection.thumbnail = SimpleUploadedFile(
                 name="test.{t}".format(
                     t=file_type
                 ),
@@ -133,13 +138,30 @@ class KollectionTests(TestCase):
             'test_400x500.png': "{p}test_400x500.png".format(p=self.fixture_path)
         }
         for file_name, file_path in images.items():
-            collection.original = SimpleUploadedFile(
+            collection.thumbnail = SimpleUploadedFile(
                 name=file_name,
                 content=open(file_path, 'rb').read()
             )
             collection.save()
             thumbnail = Image.open(collection.thumbnail.path)
             assert thumbnail.size == (400, 500)
+
+    def test_header_size(self):
+        collection = Collection()
+        images = {
+            'test_horz.jpg': "{p}test_horz.jpg".format(p=self.fixture_path),
+            'test_vert.jpg': "{p}test_vert.jpg".format(p=self.fixture_path),
+            'test_square.png': "{p}test_square.png".format(p=self.fixture_path),
+            'test_400x500.png': "{p}test_400x500.png".format(p=self.fixture_path)
+        }
+        for file_name, file_path in images.items():
+            collection.header = SimpleUploadedFile(
+                name=file_name,
+                content=open(file_path, 'rb').read()
+            )
+            collection.save()
+            header = Image.open(collection.header.path)
+            assert header.size == (1200, 300)
 
     def test_sitemap(self):
         assert len(CollectionSitemap().items()) == Collection.objects.all().count()

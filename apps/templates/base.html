@@ -16,15 +16,15 @@
     <meta property="og:title" content="Readux collection: {{ collection.label }}" />
     <meta name="twitter:title" content="Readux collection: {{ collection.label }}" />
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
-    <meta property="og:description" content="{{ collection.summary }}" />
-    <meta name="twitter:description" content="{{ collection.summary }}" />
+    <meta property="og:description" content="{{ collection.summary|escape }}" />
+    <meta name="twitter:description" content="{{ collection.summary|escape }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
     {% elif volume.label %}
-    <meta property="og:title" content="{{ volume.label|safe }}" />
-    <meta name="twitter:title" content="{{ volume.label|safe }}" />
-    <meta property="og:description" content="{{ volume.summary }}" />
-    <meta name="twitter:description" content="{{ volume.summary }}" />
+    <meta property="og:title" content="{{ volume.label|escape }}" />
+    <meta name="twitter:title" content="{{ volume.label|escape }}" />
+    <meta property="og:description" content="{{ volume.summary|escape }}" />
+    <meta name="twitter:description" content="{{ volume.summary|escape }}" />
     <meta property="og:type" content="book" />
 
     {% for page in volume.canvas_set.all %}{% if forloop.first %}

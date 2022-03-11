@@ -409,7 +409,7 @@ class ManifestExportTests(TestCase):
 
     @httpretty.httprettified(allow_net_connect=False)
     def test_jekyll_export_to_github_site_timeout(self):
-        httpretty.register_uri(httpretty.GET, 'https://zaphod.github.io/has-spaces/', status=404)
+        httpretty.register_uri(httpretty.GET, 'https://zaphod.github.io/not-found/', status=404)
         httpretty.register_uri(
             httpretty.GET,
             'https://api.github.com/users/{u}/repos?per_page=3'.format(u=self.jse.github_username),
@@ -423,7 +423,7 @@ class ManifestExportTests(TestCase):
         url = reverse('JekyllExport', kwargs=kwargs)
         kwargs['deep_zoom'] = 'exclude'
         kwargs['mode'] = 'github'
-        kwargs['github_repo'] = 'has spaces'
+        kwargs['github_repo'] = 'not found'
         request = self.factory.post(url, data=kwargs)
         request.user = self.user
         self.jekyll_export_view(

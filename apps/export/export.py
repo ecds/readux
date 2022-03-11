@@ -794,6 +794,8 @@ class JekyllSiteExport(object):
         tries = 0
         sleep_for = 15 if os.environ['DJANGO_ENV'] != 'test' else 0.1
         while not self.__check_site(ghpages_url, tries):
+            for _ in range(0,10):
+                print(tries)
             tries += 1
             sleep(sleep_for)
 
@@ -859,7 +861,7 @@ class JekyllSiteExport(object):
         # if os.environ['DJANGO_ENV'] == 'test':
         #     httpretty.enable(verbose=True, allow_net_connect=False)  # enable HTTPretty so that it will monkey patch the socket module
         #     httpretty.register_uri(httpretty.GET, url, status=404)
-        if tries > 10:
+        if tries > 45:
             return True
         # raise NameError(url)
         req = get(url, verify=False, timeout=1)

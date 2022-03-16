@@ -82,10 +82,10 @@ class Manifest(IiifBase):
         ('right-to-left', 'Right to Left')
     )
     summary = models.TextField(null=True, blank=True)
-    author = models.TextField(null=True, blank=True)
-    published_city = models.TextField(null=True, blank=True)
+    author = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
+    published_city = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     published_date = models.CharField(max_length=25, null=True, blank=True)
-    publisher = models.CharField(max_length=255, null=True, blank=True)
+    publisher = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     attribution = models.CharField(
         max_length=255,
         null=True,

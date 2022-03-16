@@ -81,11 +81,11 @@ class Manifest(IiifBase):
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')
     )
-    summary = models.TextField()
-    author = models.TextField(null=True)
-    published_city = models.TextField(null=True)
-    published_date = models.CharField(max_length=25)
-    publisher = models.CharField(max_length=255)
+    summary = models.TextField(null=True, blank=True)
+    author = models.TextField(null=True, blank=True)
+    published_city = models.TextField(null=True, blank=True)
+    published_date = models.CharField(max_length=25, null=True, blank=True)
+    publisher = models.CharField(max_length=255, null=True, blank=True)
     attribution = models.CharField(
         max_length=255,
         null=True,
@@ -107,7 +107,7 @@ class Manifest(IiifBase):
         help_text="Only enter a URI to a license statement."
     )
     collections = models.ManyToManyField(Collection, blank=True, related_name='manifests')
-    pdf = models.URLField()
+    pdf = models.URLField(null=True, blank=True)
     metadata = JSONField(default=dict, blank=True)
     viewingdirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)

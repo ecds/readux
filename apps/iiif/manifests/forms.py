@@ -21,7 +21,7 @@ class ManifestAdminForm(forms.ModelForm):
         model = Manifest
         fields = (
             'id', 'pid', 'label', 'summary', 'author',
-            'published_city', 'published_date', 'publisher', 'language',
+            'published_city', 'published_date', 'published_date_edtf', 'publisher', 'language',
             'pdf', 'metadata', 'viewingdirection', 'collections',
             'image_server', 'start_canvas', 'attribution', 'logo', 'license', 'scanned_by', 'identifier', 'identifier_uri'
         )

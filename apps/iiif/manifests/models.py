@@ -12,6 +12,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from modelcluster.models import ClusterableModel
+from edtf.fields import EDTFField
 import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
@@ -84,7 +85,24 @@ class Manifest(IiifBase):
     summary = models.TextField(null=True, blank=True)
     author = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     published_city = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
-    published_date = models.CharField(max_length=25, null=True, blank=True)
+    published_date = models.CharField(max_length=255, null=True, blank=True)
+    published_date_edtf = models.CharField(max_length=255, null=True, blank=True, help_text="Use standard EDTF dates. For examples go to <a target='_blank' href='https://github.com/ixc/python-edtf#natural-language-representation'>https://github.com/ixc/python-edtf#natural-language-representation</a>")
+    date_edtf = EDTFField(
+        "Date of creation (EDTF)",
+        natural_text_field='published_date_edtf',
+        lower_fuzzy_field='date_earliest',
+        upper_fuzzy_field='date_latest',
+        lower_strict_field='date_sort_ascending',
+        upper_strict_field='date_sort_descending',
+        blank=True,
+        null=True,
+    )
+    # use for filtering
+    date_earliest = models.FloatField(blank=True, null=True)
+    date_latest = models.FloatField(blank=True, null=True)
+    # use for sorting
+    date_sort_ascending = models.FloatField(blank=True, null=True)
+    date_sort_descending = models.FloatField(blank=True, null=True)
     publisher = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     language = models.CharField(max_length=255, null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     attribution = models.CharField(

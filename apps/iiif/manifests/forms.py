@@ -21,9 +21,9 @@ class ManifestAdminForm(forms.ModelForm):
         model = Manifest
         fields = (
             'id', 'pid', 'label', 'summary', 'author',
-            'published_city', 'published_date', 'publisher',
+            'published_city', 'published_date', 'publisher', 'language',
             'pdf', 'metadata', 'viewingdirection', 'collections',
-            'image_server', 'start_canvas', 'attribution', 'logo', 'license'
+            'image_server', 'start_canvas', 'attribution', 'logo', 'license', 'scanned_by', 'identifier', 'identifier_uri'
         )
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)

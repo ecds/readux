@@ -86,6 +86,7 @@ class Manifest(IiifBase):
     published_city = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     published_date = models.CharField(max_length=25, null=True, blank=True)
     publisher = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
+    language = models.CharField(max_length=255, null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
     attribution = models.CharField(
         max_length=255,
         null=True,
@@ -106,8 +107,11 @@ class Manifest(IiifBase):
         default="https://creativecommons.org/publicdomain/zero/1.0/",
         help_text="Only enter a URI to a license statement."
     )
+    scanned_by = models.CharField(max_length=255, null=True, blank=True)
+    identifier = models.CharField(max_length=255, null=True, blank=True, help_text="Call number or other unique id.")
+    identifier_uri = models.URLField(null=True, blank=True, help_text="Only enter a link to a catalog record.")
     collections = models.ManyToManyField(Collection, blank=True, related_name='manifests')
-    pdf = models.URLField(null=True, blank=True)
+    pdf = models.URLField(null=True, blank=True, help_text="Enter a link to an online pdf.")
     metadata = JSONField(default=dict, blank=True)
     viewingdirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)

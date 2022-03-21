@@ -41,12 +41,14 @@ source venv/bin/activate
 
 4. Install the dependencies.
 
+Note: You will need to install Rust and have it in your path.
+
 ~~~bash
 pip install -r requirements/local.txt
 bundle install
 ~~~
 
-5. Copy and set up your local settings.
+1. Copy and set up your local settings.
 
 ~~~bash
 cp config/settings/local.dst config/settings/local.py

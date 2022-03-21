@@ -22,6 +22,7 @@ jobs:
           POSTGRES_USER: root
           POSTGRES_DB: readux
       - image: cimg/ruby:2.5-node
+      - image: cimg/rust:1.59.0
     steps:
       - checkout
       - restore_cache:

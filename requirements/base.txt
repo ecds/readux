@@ -42,7 +42,7 @@ django-sass-processor
 pylint-django==2.5.2
 
 # Wagtail
-wagtail==2.15
+wagtail==2.16.1
 # wagtailmenus==2.13
 git+https://github.com/jayvarner/wagtailmenus.git@master
 git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete

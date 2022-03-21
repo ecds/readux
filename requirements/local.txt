@@ -42,4 +42,4 @@ pyopenssl # for running dev server under https
 Fabric3==1.14.post1 # https://github.com/mathiasertl/fabric
 
 celery==5.2.3
-django-celery-results==2.2.0
+django-celery-results==2.3.0

@@ -138,7 +138,7 @@ class Manifest(IiifBase):
     # TODO: This has to be removed/redone before we upgrade to Django 3
     search_vector = SearchVectorField(null=True, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
-    objects = ManifestManager()
+    # objects = ManifestManager()
     start_canvas = models.ForeignKey(
         'canvases.Canvas',
         on_delete=models.SET_NULL,
@@ -165,7 +165,7 @@ class Manifest(IiifBase):
 
     class Meta: # pylint: disable = too-few-public-methods, missing-class-docstring
         ordering = ['published_date']
-        indexes = [GinIndex(fields=['search_vector'])]
+        # indexes = [GinIndex(fields=['search_vector'])]
 
     @property
     def publisher_bib(self):
@@ -238,10 +238,10 @@ class Manifest(IiifBase):
         except Canvas.DoesNotExist:
             self.start_canvas = None
 
-        if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
-            instance = self._meta.default_manager.with_documents().get(pk=self.pk)
-            instance.search_vector = instance.document
-            instance.save(update_fields=['search_vector'])
+        # if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
+        #     instance = self._meta.default_manager.with_documents().get(pk=self.pk)
+        #     instance.search_vector = instance.document
+        #     instance.save(update_fields=['search_vector'])
 
 
     def delete(self, *args, **kwargs):

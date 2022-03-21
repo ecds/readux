@@ -315,156 +315,156 @@ class ExportDownloadZip(View):
         return resp
 
 # TODO: Replace with Elasticsearch
-class VolumeSearch(ListView):
-    '''Search across all volumes.'''
-    template_name = 'search_results.html'
+# class VolumeSearch(ListView):
+#     '''Search across all volumes.'''
+#     template_name = 'search_results.html'
 
-    def get_queryset(self):
-        return Manifest.objects.all()
+#     def get_queryset(self):
+#         return Manifest.objects.all()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        collection = self.request.GET.get('collection', None)
-        # pylint: disable = invalid-name
-        COLSET = Collection.objects.values_list('pid', flat=True)
-        COL_OPTIONS = list(COLSET)
-        COL_LIST = Collection.objects.values('pid', 'label').order_by('label').distinct('label')
-        # pylint: enable = invalid-name
-        collection_url_params = self.request.GET.copy()
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         collection = self.request.GET.get('collection', None)
+#         # pylint: disable = invalid-name
+#         COLSET = Collection.objects.values_list('pid', flat=True)
+#         COL_OPTIONS = list(COLSET)
+#         COL_LIST = Collection.objects.values('pid', 'label').order_by('label').distinct('label')
+#         # pylint: enable = invalid-name
+#         collection_url_params = self.request.GET.copy()
 
-        qs = self.get_queryset()
-        try:
-            search_string = self.request.GET['q']
-            search_type = self.request.GET['type']
-            search_strings = self.request.GET['q'].split()
-            if search_strings:
-                if search_type == 'partial':
-                    qq = Q()
-                    qqq = Q()
-                    query = SearchQuery('')
-                    for search_string in search_strings:
-                        query = query | SearchQuery(search_string)
-                        qq |= Q(canvas__annotation__content__icontains=search_string)
-                        qqq |= Q(label__icontains=search_string) |Q(author__icontains=search_string) | Q(summary__icontains=search_string) # pylint: disable = line-too-long
-                    qs1 = qs.filter(qq)
-                    qs1 = qs1.values(
-                        'pid', 'label', 'author',
-                        'published_date', 'created_at'
-                    ).annotate(
-                        pidcount=Count('pid')
-                    ).order_by('-pidcount')
+#         qs = self.get_queryset()
+#         try:
+#             search_string = self.request.GET['q']
+#             search_type = self.request.GET['type']
+#             search_strings = self.request.GET['q'].split()
+#             if search_strings:
+#                 if search_type == 'partial':
+#                     qq = Q()
+#                     qqq = Q()
+#                     query = SearchQuery('')
+#                     for search_string in search_strings:
+#                         query = query | SearchQuery(search_string)
+#                         qq |= Q(canvas__annotation__content__icontains=search_string)
+#                         qqq |= Q(label__icontains=search_string) |Q(author__icontains=search_string) | Q(summary__icontains=search_string) # pylint: disable = line-too-long
+#                     qs1 = qs.filter(qq)
+#                     qs1 = qs1.values(
+#                         'pid', 'label', 'author',
+#                         'published_date', 'created_at'
+#                     ).annotate(
+#                         pidcount=Count('pid')
+#                     ).order_by('-pidcount')
 
-                    vector2 = SearchVector(
-                        'label', weight='A'
-                    ) + SearchVector(
-                        'author', weight='B'
-                    ) + SearchVector(
-                        'summary', weight='C'
-                    )
+#                     vector2 = SearchVector(
+#                         'label', weight='A'
+#                     ) + SearchVector(
+#                         'author', weight='B'
+#                     ) + SearchVector(
+#                         'summary', weight='C'
+#                     )
 
-                    qs3 = qs.filter(qqq)
-                    qs2 = qs.values(
-                        'label', 'author', 'published_date', 'created_at', 'canvas__pid', 'pid',
-                        'canvas__manifest__image_server__server_base'
-                    ).order_by(
-                        'pid'
-                    ).distinct(
-                        'pid'
-                    )
+#                     qs3 = qs.filter(qqq)
+#                     qs2 = qs.values(
+#                         'label', 'author', 'published_date', 'created_at', 'canvas__pid', 'pid',
+#                         'canvas__manifest__image_server__server_base'
+#                     ).order_by(
+#                         'pid'
+#                     ).distinct(
+#                         'pid'
+#                     )
 
-                    if collection not in COL_OPTIONS:
-                        collection = None
+#                     if collection not in COL_OPTIONS:
+#                         collection = None
 
-                    if collection is not None:
-                        qs1 = qs1.filter(collections__pid = collection)
-                        qs3 = qs3.filter(collections__pid = collection)
+#                     if collection is not None:
+#                         qs1 = qs1.filter(collections__pid = collection)
+#                         qs3 = qs3.filter(collections__pid = collection)
 
-                    if 'collection' in collection_url_params:
-                        del collection_url_params['collection']
-                elif search_type == 'exact':
-                    qq = Q()
-                    query = SearchQuery('')
-                    for search_string in search_strings:
-                        query = query | SearchQuery(search_string)
-                        qq |= Q(canvas__annotation__content__exact=search_string)
-                    vector = SearchVector('canvas__annotation__content')
-                    qs1 = qs.annotate(search=vector).filter(search=query)
-                    qs1 = qs1.annotate(
-                        rank=SearchRank(vector, query)
-                    ).values(
-                        'pid', 'label', 'author',
-                        'published_date', 'created_at'
-                    ).annotate(
-                        pidcount = Count('pid')
-                    ).order_by('-pidcount')
+#                     if 'collection' in collection_url_params:
+#                         del collection_url_params['collection']
+#                 elif search_type == 'exact':
+#                     qq = Q()
+#                     query = SearchQuery('')
+#                     for search_string in search_strings:
+#                         query = query | SearchQuery(search_string)
+#                         qq |= Q(canvas__annotation__content__exact=search_string)
+#                     vector = SearchVector('canvas__annotation__content')
+#                     qs1 = qs.annotate(search=vector).filter(search=query)
+#                     qs1 = qs1.annotate(
+#                         rank=SearchRank(vector, query)
+#                     ).values(
+#                         'pid', 'label', 'author',
+#                         'published_date', 'created_at'
+#                     ).annotate(
+#                         pidcount = Count('pid')
+#                     ).order_by('-pidcount')
 
-                    vector2 = SearchVector(
-                        'label', weight='A'
-                    ) + SearchVector(
-                        'author', weight='B'
-                    ) + SearchVector(
-                        'summary', weight='C'
-                    )
+#                     vector2 = SearchVector(
+#                         'label', weight='A'
+#                     ) + SearchVector(
+#                         'author', weight='B'
+#                     ) + SearchVector(
+#                         'summary', weight='C'
+#                     )
 
-                    qs3 = qs.annotate(search=vector2).filter(search=query)
-                    qs3 = qs3.annotate(
-                        rank=SearchRank(vector2, query)
-                    ).values(
-                        'pid', 'label', 'author',
-                        'published_date', 'created_at'
-                    ).order_by('-rank')
+#                     qs3 = qs.annotate(search=vector2).filter(search=query)
+#                     qs3 = qs3.annotate(
+#                         rank=SearchRank(vector2, query)
+#                     ).values(
+#                         'pid', 'label', 'author',
+#                         'published_date', 'created_at'
+#                     ).order_by('-rank')
 
-                    qs2 = qs.values(
-                        'canvas__pid', 'pid',
-                        'canvas__manifest__image_server__server_base'
-                    ).order_by(
-                        'pid'
-                    ).distinct('pid')
+#                     qs2 = qs.values(
+#                         'canvas__pid', 'pid',
+#                         'canvas__manifest__image_server__server_base'
+#                     ).order_by(
+#                         'pid'
+#                     ).distinct('pid')
 
-                    if collection not in COL_OPTIONS:
-                        collection = None
+#                     if collection not in COL_OPTIONS:
+#                         collection = None
 
-                    if collection is not None:
-                        qs1 = qs1.filter(collections__pid = collection)
-                        qs3 = qs3.filter(collections__pid = collection)
+#                     if collection is not None:
+#                         qs1 = qs1.filter(collections__pid = collection)
+#                         qs3 = qs3.filter(collections__pid = collection)
 
-                    if 'collection' in collection_url_params:
-                        del collection_url_params['collection']
-            else:
-                search_string = ''
-                search_strings = ''
-                qs1 = ''
-                qs2 = ''
-                qs3 = ''
-            context['qs1'] = qs1
-            context['qs2'] = qs2
-            context['qs3'] = qs3
-        except MultiValueDictKeyError:
-            q = ''
-            search_string = ''
-            search_strings = ''
+#                     if 'collection' in collection_url_params:
+#                         del collection_url_params['collection']
+#             else:
+#                 search_string = ''
+#                 search_strings = ''
+#                 qs1 = ''
+#                 qs2 = ''
+#                 qs3 = ''
+#             context['qs1'] = qs1
+#             context['qs2'] = qs2
+#             context['qs3'] = qs3
+#         except MultiValueDictKeyError:
+#             q = ''
+#             search_string = ''
+#             search_strings = ''
 
-        context['volumes'] = qs.all
-        annocount_list = []
-        canvaslist = []
-        for volume in qs:
-            user_annotation_count = UserAnnotation.objects.filter(
-                owner_id=self.request.user.id
-            ).filter(
-                canvas__manifest__id=volume.id
-            ).count()
-            annocount_list.append({volume.pid: user_annotation_count})
-            context['user_annotation_count'] = annocount_list
-            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-            canvasquery2 = list(canvasquery)
-            canvaslist.append({volume.pid: canvasquery2})
-            context['firstthumbnail'] = canvaslist
-        context.update({
-            'collection_url_params': urlencode(collection_url_params),
-            'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
-            'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
-        })
-        return context
+#         context['volumes'] = qs.all
+#         annocount_list = []
+#         canvaslist = []
+#         for volume in qs:
+#             user_annotation_count = UserAnnotation.objects.filter(
+#                 owner_id=self.request.user.id
+#             ).filter(
+#                 canvas__manifest__id=volume.id
+#             ).count()
+#             annocount_list.append({volume.pid: user_annotation_count})
+#             context['user_annotation_count'] = annocount_list
+#             canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
+#             canvasquery2 = list(canvasquery)
+#             canvaslist.append({volume.pid: canvasquery2})
+#             context['firstthumbnail'] = canvaslist
+#         context.update({
+#             'collection_url_params': urlencode(collection_url_params),
+#             'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
+#             'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
+#         })
+#         return context
 
 class ManifestsSitemap(Sitemap):
     """Django Sitemap for Manafests"""

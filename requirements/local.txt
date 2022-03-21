@@ -2,7 +2,7 @@
 
 Werkzeug==2.0.2  # https://github.com/pallets/werkzeug
 ipdb==0.13.9  # https://github.com/gotcha/ipdb
-Sphinx==4.3.0  # https://github.com/sphinx-doc/sphinx
+Sphinx==4.4.0  # https://github.com/sphinx-doc/sphinx
 # TODO: Upgrade after moving to Django 3
 psycopg2-binary==2.8.4  # https://github.com/psycopg/psycopg2
 

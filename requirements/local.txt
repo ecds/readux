@@ -41,5 +41,5 @@ pyopenssl # for running dev server under https
 # TODO: Why are we using this fork?
 Fabric3==1.14.post1 # https://github.com/mathiasertl/fabric
 
-celery==5.2.1
+celery==5.2.3
 django-celery-results==2.2.0

@@ -22,6 +22,7 @@ class ManifestFactory(DjangoModelFactory):
     canvase = RelatedFactory(CanvasFactory, 'manifest')
     logo = ImageField(from_path='apps/iiif/canvases/tests/ecds.png')
     image_server = SubFactory(ImageServerFactory)
+    summary = Faker('sentence')
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = Manifest

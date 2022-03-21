@@ -44,8 +44,8 @@ pylint-django==2.4.4
 # Wagtail
 wagtail==2.13.4
 # wagtailmenus==2.13
-git+git://github.com/jayvarner/wagtailmenus.git@master
-git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
+git+https://github.com/jayvarner/wagtailmenus.git@master
+git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
 wagtail-cache==1.0.2
 
@@ -62,3 +62,6 @@ stream-unzip>=0.0.58
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme
+
+# List of BCP 47 language codes
+bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py

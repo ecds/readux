@@ -9,7 +9,7 @@ class IiifBase(DirtyFieldsMixin, ClusterableModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=True)
     pid = models.CharField(
         max_length=255,
-        default=encode_noid(),
+        default=encode_noid,
         blank=False,
         help_text="Unique ID. Do not use _'s or spaces in the pid."
     )

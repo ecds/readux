@@ -28,15 +28,25 @@ jobs:
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements/local.txt" }}
       - run:
+          name: Install System packages
           command: |
             sudo apt update
             sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full
             mkdir logs && touch logs/debug.log
             sudo gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
+      - run:
+          name: Install Ruby Stuff
+          command: |
             bundle install
             sudo gem install sass
+      - run:
+          name: Setup Virtual Environment
+          command: |
             python3 -m venv venv
-            . venv/bin/activate
+            source venv/bin/activate
+      - run:
+          name: Install Python Stuff and Setup App
+          command: |
             pip install --upgrade pip
             pip install pyld==1.0.5
             pip install -r requirements/local.txt

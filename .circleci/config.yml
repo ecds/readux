@@ -40,30 +40,19 @@ jobs:
             bundle install
             sudo gem install sass
       - run:
-          name: Setup Virtual Environment
-          command: |
-            python3 -m venv venv
-            source venv/bin/activate
-      - run:
           name: Install Python Stuff and Setup App
           command: |
             pip install --upgrade pip
             pip install pyld==1.0.5
             pip install -r requirements/local.txt
             cp config/settings/local.dst config/settings/local.py
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/local.txt" }}
-          paths:
-            - "venv"
       - run:
           name: Running tests
           command: |
-            source venv/bin/activate
             DJANGO_ENV=test pytest apps/ --cov=./apps
       - run:
           name: Sending Coverage Report
           when: on_success
           command: |
-            source venv/bin/activate
-            ./venv/bin/coveralls
+            coveralls
 

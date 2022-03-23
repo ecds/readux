@@ -58,12 +58,12 @@ jobs:
       - run:
           name: Running tests
           command: |
-            . venv/bin/activate
+            source venv/bin/activate
             DJANGO_ENV=test pytest apps/ --cov=./apps
       - run:
           name: Sending Coverage Report
           when: on_success
           command: |
-            . venv/bin/activate
+            source venv/bin/activate
             ./venv/bin/coveralls
 

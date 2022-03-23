@@ -333,3 +333,11 @@ WAGTAIL_SITE_NAME = 'Readux'
 
 # CORS HEADERS
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Elasticsearch
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': env.db('ELASTICSEARCH_URL', default='localhost:9200')
+    },
+}

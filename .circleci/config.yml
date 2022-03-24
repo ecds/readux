@@ -24,12 +24,11 @@ jobs:
           POSTGRES_DB: readux
       - image: cimg/ruby:2.5-node
       - image: cimg/rust:1.59.0
-      - image: docker.elastic.co/elasticsearch/elasticsearch:8.1.1
+      - image: docker.elastic.co/elasticsearch/elasticsearch:7.17.1
         environment:
-          - cluster.name: readux_elasticsearch
+          - STACK_VERSION: 7.17.1
           - xpack.security.enabled: false
-          - transport.host: localhost
-          - network.host: 127.0.0.1
+          - cluster.name: readux-elasticsearch
           - http.port: 9200
           - discovery.type: single-node
 
@@ -56,6 +55,10 @@ jobs:
             pip install pyld==1.0.5
             pip install -r requirements/local.txt
             cp config/settings/local.dst config/settings/local.py
+      - run:
+          name: Wait for Elasticsearch startup
+          command: |
+            dockerize -wait tcp://localhost:9200
       - run:
           name: Running tests
           command: |

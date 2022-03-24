@@ -338,6 +338,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 ELASTICSEARCH_DSL={
     'default': {
-        'hosts': env.db('ELASTICSEARCH_URL', default='localhost:9200')
+        'hosts': env('ELASTICSEARCH_URL', default='http://localhost:9200')
     },
 }

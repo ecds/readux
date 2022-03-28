@@ -152,6 +152,11 @@ class Local(IngestAbstractModel):
             pass
 
     def volume_to_s3(self):
+        """ Upload images and OCR files to an S3 buckett
+
+        :return: Tuple of two lists. One list of image files and one of OCR files
+        :rtype: tuple
+        """
         self.__unzip_bundle()
         for file_path in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/'):
             LOGGER.debug(f'File in S3 {file_path}')
@@ -162,6 +167,11 @@ class Local(IngestAbstractModel):
         )
 
     def volume_to_sftp(self):
+        """ Upload images and OCR files via SFTP
+
+        :return: Tuple of two lists. One list of image files and one of OCR files
+        :rtype: tuple
+        """
         sftp = self.create_sftp_connection()
         sftp.mkdir(self.manifest.pid)
         with sftp.cd(self.manifest.pid):
@@ -170,17 +180,6 @@ class Local(IngestAbstractModel):
         sftp.close()
         self.__unzip_bundle()
         return self.__list_sftp_files()
-
-    def __list_sftp_files(self):
-        sftp = self.create_sftp_connection()
-
-        files = (
-            [f'{self.manifest.pid}/{image}' for image in sftp.listdir(self.manifest.pid)],
-            [f'{self.manifest.pid}/_*ocr*_/{ocr}' for ocr in sftp.listdir(f'{self.manifest.pid}/_*ocr*_')]
-        )
-        sftp.close()
-
-        return files
 
     def bundle_to_s3(self):
         """Uploads the zipfile stored in bundle_from_bulk to S3
@@ -341,6 +340,17 @@ class Local(IngestAbstractModel):
                 sftp.put(local_path)
                 os.remove(local_path)
             sftp.close()
+
+    def __list_sftp_files(self):
+        sftp = self.create_sftp_connection()
+
+        files = (
+            [f'{self.manifest.pid}/{image}' for image in sftp.listdir(self.manifest.pid)],
+            [f'{self.manifest.pid}/_*ocr*_/{ocr}' for ocr in sftp.listdir(f'{self.manifest.pid}/_*ocr*_')]
+        )
+        sftp.close()
+
+        return files
 
     @staticmethod
     def __is_junk(path):

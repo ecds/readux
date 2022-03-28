@@ -39,7 +39,7 @@ django-compressor
 django-sass-processor
 
 # Django rules for PyLint
-pylint-django==2.5.2
+pylint-django==2.5.3
 
 # Wagtail
 wagtail==2.16.1

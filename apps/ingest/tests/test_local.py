@@ -1,7 +1,9 @@
 """ Tests for local ingest """
-from os import path, remove
+from os import path, remove, getlogin, getcwd
+from shutil import rmtree
 import pytest
 import boto3
+import httpretty
 from moto import mock_s3
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -58,8 +60,7 @@ class LocalTest(TestCase):
     def test_bundle_upload(self):
         """ It should upload the images using a fake S3 service from moto. """
         for bundle in ['bundle.zip', 'nested_volume.zip', 'csv_meta.zip']:
-            local = self.mock_local(bundle)
-
+            self.mock_local(bundle)
             assert bundle in [f.key for f in IngestStorage().bucket.objects.all()]
 
     def test_image_upload_to_s3(self):
@@ -79,6 +80,25 @@ class LocalTest(TestCase):
         ocr_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
+
+    # @httpretty.httprettified(allow_net_connect=True)
+    def test_ocr_upload_to_sftp(self):
+        """ It should upload files via SFTP """
+        httpretty.disable()
+        local = self.mock_local('nested_volume.zip', with_manifest=True)
+        local.image_server = ImageServerFactory(
+            server_base='localhost',
+            storage_service='sftp',
+            storage_path=getcwd(),
+            sftp_port=3373,
+            private_key_path='/tmp/sshkey',
+            sftp_user=getlogin()
+        )
+
+        _, ocr_files = local.volume_to_sftp()
+
+        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
+        rmtree(local.manifest.pid)
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadata supplied in an Excel file. """
@@ -165,8 +185,7 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('metadata.zip', with_manifest=True)
 
-        local.volume_to_s3()
-        local.volume_to_s3()
+        image_files, ocr_files = local.volume_to_s3()
 
         files_in_zip = local.file_list
         ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
@@ -180,8 +199,8 @@ class LocalTest(TestCase):
         assert local.metadata['pid'] == 't9wtf-sample'
         assert local.metadata['label'] == 't9wtf-sample'
         assert '~$metadata.xlsx' not in ingest_files
-        assert f'{local.manifest.pid}/_*ocr*_/0001.tsv' in ingest_files
-        assert f'{local.manifest.pid}/0001.jpg' in ingest_files
+        assert f'{local.manifest.pid}/_*ocr*_/0001.tsv' in ocr_files
+        assert f'{local.manifest.pid}/0001.jpg' in image_files
         assert len(ingest_files) == 2
 
     def test_when_underscore_in_pid(self):

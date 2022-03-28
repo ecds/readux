@@ -42,9 +42,12 @@ class ImageServer(models.Model):
     )
     storage_service = models.CharField(max_length=10, choices=STORAGE_SERVICES, default='sftp')
     storage_path = models.CharField(max_length=255)
+    sftp_user = models.CharField(max_length=100, null=True, blank=True)
+    sftp_port = models.IntegerField(default=22)
+    private_key_path = models.CharField(max_length=500, default='~/.ssh/id_rsa.pem')
 
     def __str__(self):
-        return "%s" % (self.server_base)
+        return f'{self.server_base}'
 
     @property
     def bucket(self):
@@ -52,6 +55,15 @@ class ImageServer(models.Model):
             s3 = resource('s3')
             return s3.Bucket(self.storage_path)
         return None
+
+    @property
+    def sftp_connection(self):
+        return {
+            'host': self.server_base,
+            'username': self.sftp_user,
+            'private_key': self.private_key_path,
+            'port': self.sftp_port
+        }
 
 class ValueByLanguage(models.Model):
     """ Labels by language. """

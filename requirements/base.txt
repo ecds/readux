@@ -57,6 +57,9 @@ gitpython==3.1.27
 boto3==1.21.31
 django-storages==1.12.3  # https://github.com/jschneier/django-storages
 
+# SFTP Uploads
+pysftp>=0.2.9,<1.0 # https://pysftp.readthedocs.io/
+
 # Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.
 stream-unzip>=0.0.58
 

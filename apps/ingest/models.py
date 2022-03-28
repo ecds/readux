@@ -3,7 +3,9 @@ import os
 import uuid
 import logging
 import json
+from tempfile import gettempdir
 from io import BytesIO
+import pysftp
 from mimetypes import guess_type
 from requests import get
 from stream_unzip import stream_unzip, TruncatedDataError
@@ -23,6 +25,10 @@ from apps.utils.fetch import fetch_url
 from .storages import IngestStorage
 
 LOGGER = logging.getLogger(__name__)
+logging.getLogger('botocore').setLevel(logging.ERROR)
+logging.getLogger('boto3').setLevel(logging.ERROR)
+logging.getLogger('s3transfer').setLevel(logging.ERROR)
+logging.getLogger('httpretty').setLevel(logging.ERROR)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
@@ -107,6 +113,19 @@ class Local(IngestAbstractModel):
     def s3_client(self):
         if self.image_server.storage_service == 's3':
             return client('s3')
+
+        return None
+
+    def create_sftp_connection(self):
+
+        if self.image_server.storage_service == 'sftp':
+            connection_options = pysftp.CnOpts()
+
+            # if os.environ['DJANGO_ENV'] == 'test':
+            connection_options.hostkeys = None
+
+            return pysftp.Connection(**self.image_server.sftp_connection, cnopts=connection_options)
+
         return None
 
     def open_metadata(self):
@@ -133,38 +152,35 @@ class Local(IngestAbstractModel):
             pass
 
     def volume_to_s3(self):
-        """
-        Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
-        into memory or any of its uncompressed files.
-        """
-        for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
-            file_path, file_name, file_type = self.__file_info(zipped_file)
-            has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
-            tmp_file = bytes()
-            for chunk in unzipped_chunks:
-                if has_type_or_is_hocr and not self.__is_junk(file_name):
-                    tmp_file += chunk
-            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
-                file_name = file_name.replace('_', '-')
-                if file_type and 'image' in file_type and 'images' in file_path:
-                    self.image_server.bucket.upload_fileobj(
-                        BytesIO(tmp_file),
-                        f'{self.manifest.pid}/{file_name}'
-                    )
-                if file_type:
-                    is_ocr_file_type = (
-                        'text' in file_type
-                        or 'xml' in file_type
-                        or 'json' in file_type
-                        or 'html' in file_type
-                    )
-                if 'ocr' in file_path and (
-                    file_name.endswith('.hocr') or is_ocr_file_type
-                ):
-                    self.image_server.bucket.upload_fileobj(
-                        BytesIO(tmp_file),
-                        f'{self.manifest.pid}/_*ocr*_/{file_name}'
-                    )
+        self.__unzip_bundle()
+        for file_path in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/'):
+            LOGGER.debug(f'File in S3 {file_path}')
+
+        return (
+            [file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid],
+            [file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid]
+        )
+
+    def volume_to_sftp(self):
+        sftp = self.create_sftp_connection()
+        sftp.mkdir(self.manifest.pid)
+        with sftp.cd(self.manifest.pid):
+            sftp.mkdir('_*ocr*_')
+
+        sftp.close()
+        self.__unzip_bundle()
+        return self.__list_sftp_files()
+
+    def __list_sftp_files(self):
+        sftp = self.create_sftp_connection()
+
+        files = (
+            [f'{self.manifest.pid}/{image}' for image in sftp.listdir(self.manifest.pid)],
+            [f'{self.manifest.pid}/_*ocr*_/{ocr}' for ocr in sftp.listdir(f'{self.manifest.pid}/_*ocr*_')]
+        )
+        sftp.close()
+
+        return files
 
     def bundle_to_s3(self):
         """Uploads the zipfile stored in bundle_from_bulk to S3
@@ -200,7 +216,7 @@ class Local(IngestAbstractModel):
             file_path, file_name, file_type = self.__file_info(zipped_file)
             files.append(file_path)
             # Not looping through the chunks throws an UnexpectedSignatureError
-            for chunk in unzipped_chunks:
+            for _ in unzipped_chunks:
                 pass
 
         return files
@@ -209,19 +225,16 @@ class Local(IngestAbstractModel):
         """
         Create Canvas objects for each image file.
         """
-        self.volume_to_s3()
+        image_files, ocr_files = ([], [])
 
-        image_files = [
-            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
-        ]
+        if self.image_server.storage_service == 's3':
+            image_files, ocr_files = self.volume_to_s3()
+        elif self.image_server.storage_service == 'sftp':
+            image_files, ocr_files = self.volume_to_sftp()
 
         if len(image_files) == 0:
             # TODO: Throw an error here?
             pass
-
-        ocr_files = [
-            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
-        ]
 
         for index, key in enumerate(sorted(image_files)):
             image_file = key.split('/')[-1].replace('_', '-')
@@ -275,6 +288,59 @@ class Local(IngestAbstractModel):
         else:
             # TODO: Log or though an error/waring?
             pass
+
+    def __unzip_bundle(self):
+        """
+        Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
+        into memory or any of its uncompressed files.
+        """
+        for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+            file_path, file_name, file_type = self.__file_info(zipped_file)
+
+            has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
+            tmp_file = bytes()
+            for chunk in unzipped_chunks:
+                if has_type_or_is_hocr and not self.__is_junk(file_name):
+                    tmp_file += chunk
+            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
+                file_name = file_name.replace('_', '-')
+                if file_type and 'image' in file_type and 'images' in file_path:
+                    LOGGER.debug(f'Trying to upload {file_path}')
+                    self.__upload_file(tmp_file, file_name, file_path)
+                if file_type:
+                    is_ocr_file_type = (
+                        'text' in file_type
+                        or 'xml' in file_type
+                        or 'json' in file_type
+                        or 'html' in file_type
+                    )
+                if 'ocr' in file_path and (
+                    file_name.endswith('.hocr') or is_ocr_file_type
+                ):
+                    self.__upload_file(tmp_file, file_name, file_path)
+
+    def __upload_file(self, file, file_name, path):
+        if self.image_server.storage_service == 's3':
+            remote_path = f'{self.manifest.pid}/{file_name}'
+            if 'ocr' in path:
+                remote_path = f'{self.manifest.pid}/_*ocr*_/{file_name}'
+            LOGGER.debug(f'Upload to S3 {path}')
+            self.image_server.bucket.upload_fileobj(
+                BytesIO(file),
+                remote_path
+            )
+        elif self.image_server.storage_service == 'sftp':
+            local_path = os.path.join(gettempdir(), file_name)
+            LOGGER.debug(f'Tmp file path {local_path}')
+            with open(local_path, 'wb') as f:
+                f.write(BytesIO(file).getbuffer())
+            sftp = self.create_sftp_connection()
+            with sftp.cd(self.manifest.pid):
+                if 'ocr' in path:
+                    sftp.chdir('_*ocr*_')
+                sftp.put(local_path)
+                os.remove(local_path)
+            sftp.close()
 
     @staticmethod
     def __is_junk(path):

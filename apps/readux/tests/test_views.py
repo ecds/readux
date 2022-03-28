@@ -1,8 +1,9 @@
 import os
+from unittest.mock import Mock
 import pytest
 from tempfile import gettempdir
 from pathlib import Path
-from django.test import RequestFactory
+from django.test import RequestFactory, TestCase
 from django.http import HttpResponse
 from apps.readux import views
 from apps.iiif.manifests.models import Manifest
@@ -12,6 +13,7 @@ from apps.iiif.kollections.models import Collection
 from apps.iiif.canvases.models import Canvas
 from apps.users.tests.factories import UserFactory
 import config.settings.local as settings
+from django_elasticsearch_dsl.test import ESTestCase
 
 pytestmark = pytest.mark.django_db
 
@@ -74,3 +76,41 @@ class TestReaduxViews:
         assert response.status_code == 200
         assert isinstance(response.serialize(), bytes)
         assert 'jekyll_site_export.zip' in str(response.serialize())
+
+class TestVolumeSearchView(ESTestCase, TestCase):
+    """View tests for Elasticsearch"""
+
+    def setUp(self):
+        """Populate tests with sample data"""
+        super().setUp()
+        self.volume1 = Manifest(label="primary", summary="test")
+        self.volume1.save()
+        self.volume2 = Manifest(label="secondary", summary="test")
+        self.volume2.save()
+        self.volume3 = Manifest(label="tertiary", summary="secondary")
+        self.volume3.save()
+
+    def test_get_queryset(self):
+        """Should be able to query by search term"""
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+        volume_search_view.request.GET = {"query": "primary"}
+        volumes_queryset = volume_search_view.get_queryset()
+        assert volumes_queryset.count() == 1
+        assert volumes_queryset.first().pk == self.volume1.pk
+
+        # should get all volumes when request is empty
+        volume_search_view.request.GET = {}
+        volumes_queryset = volume_search_view.get_queryset()
+        assert volumes_queryset.count() == 3
+
+    def test_label_boost(self):
+        """Should return the item matching label first, before matching summary"""
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+        volume_search_view.request.GET = {"query": "secondary test"}
+        volumes_queryset = volume_search_view.get_queryset()
+        # with multiple keywords, should return all matches
+        assert volumes_queryset.count() == 3
+        # should return "secondary" label match first
+        assert volumes_queryset.first().pk == self.volume2.pk

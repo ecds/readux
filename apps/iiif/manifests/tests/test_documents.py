@@ -3,13 +3,15 @@ Test class for Elasticsearch indexing.
 """
 
 from django.test import TestCase
+from django_elasticsearch_dsl.test import ESTestCase
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.documents import ManifestDocument
 from apps.iiif.manifests.tests.factories import ManifestFactory
 
-class ManifestDocumentTest(TestCase):
+class ManifestDocumentTest(ESTestCase, TestCase):
     """Tests for IIIF manifest indexing"""
     def setUp(self):
+        super().setUp()
         self.doc = ManifestDocument()
 
     def test_prepare_authors(self):

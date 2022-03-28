@@ -6,7 +6,7 @@ from elasticsearch_dsl import analyzer
 from .models import Manifest
 
 html_strip = analyzer(
-    'html_strip',
+    "html_strip",
     tokenizer="standard",
     filter=["lowercase", "stop", "snowball"],
     char_filter=["html_strip"]
@@ -19,10 +19,10 @@ class ManifestDocument(Document):
     # fields to map explicitly in Elasticsearch
     authors = fields.TextField(multi=True)
     collections = fields.NestedField(properties={
-        'summary': fields.TextField(analyzer=html_strip),
-        'attribution': fields.TextField(),
-        'pid': fields.TextField(),
-        'label': fields.TextField(),
+        "summary": fields.TextField(analyzer=html_strip),
+        "attribution": fields.TextField(),
+        "pid": fields.TextField(),
+        "label": fields.TextField(),
     })
     # TODO: date = DateRange()
     has_pdf = fields.BooleanField()
@@ -31,27 +31,24 @@ class ManifestDocument(Document):
 
     class Index:
         """Settings for Elasticsearch"""
-        name = 'manifests'
+        name = "manifests"
 
     class Django:
         """Settings for automatically pulling data from Django"""
         model = Manifest
+        queryset_pagination = 25
 
         # fields to map dynamically in Elasticsearch
         fields = [
-            'attribution',
-            'label',
-            'license',
-            'pid',
-            'published_city',
-            'publisher',
-            'viewingdirection',
+            "attribution",
+            "label",
+            "license",
+            "pid",
+            "published_city",
+            "publisher",
+            "viewingdirection",
         ]
-        related_models = ['collections']
-        # we can give these fields individual boosts using caret notation when searching,
-        # for example:
-        # query = MultiMatch(query="test", fields=["pid", "label^3", "summary"])
-        # search = ManifestDocument.search().query(query)
+        related_models = ["collections"]
 
     def prepare_authors(self, instance):
         """convert authors string into list"""
@@ -66,5 +63,5 @@ class ManifestDocument(Document):
     def get_queryset(self):
         """prefetch related to improve performance"""
         return super().get_queryset().prefetch_related(
-            'collections'
+            "collections"
         )

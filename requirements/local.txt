@@ -29,7 +29,7 @@ coveralls
 # Django
 # ------------------------------------------------------------------------------
 factory-boy==3.2.1  # https://github.com/FactoryBoy/factory_boy
-faker==13.3.3
+faker==13.3.4
 
 django-debug-toolbar==3.2.4  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.1.5  # https://github.com/django-extensions/django-extensions

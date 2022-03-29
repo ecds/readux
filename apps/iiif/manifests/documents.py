@@ -26,7 +26,7 @@ class ManifestDocument(Document):
     })
     # TODO: date = DateRange()
     has_pdf = fields.BooleanField()
-    # TODO: languages = fields.TextField()
+    languages = fields.TextField(multi=True)
     summary = fields.TextField(analyzer=html_strip)
 
     class Index:
@@ -59,6 +59,10 @@ class ManifestDocument(Document):
     def prepare_has_pdf(self, instance):
         """convert pdf field into boolean"""
         return bool(instance.pdf)
+    
+    def prepare_languages(self, instance):
+        """convert languages into list of strings"""
+        return [lang.name for lang in instance.languages.all()]
 
     def get_queryset(self):
         """prefetch related to improve performance"""

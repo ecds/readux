@@ -346,6 +346,9 @@ class VolumeSearchView(ListView, FormMixin):
             multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
             volumes = volumes.query(multimatch_query)
 
+        # sort by selected sort option
+        volumes = volumes.sort("_score") # TODO: Implement other sorting options
+
         # return elasticsearch_dsl Search instance
         return volumes
 

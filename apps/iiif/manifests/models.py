@@ -51,6 +51,12 @@ class ImageServer(models.Model):
 
     @property
     def bucket(self):
+        """
+        Convenience property to connect to an S3 bucket
+
+        :return: S3 bucket
+        :rtype: boto3.resources.factory.s3.Bucket
+        """
         if self.storage_service == 's3':
             s3 = resource('s3')
             return s3.Bucket(self.storage_path)
@@ -58,6 +64,12 @@ class ImageServer(models.Model):
 
     @property
     def sftp_connection(self):
+        """
+        Convenience property to create SFTP connection.
+
+        :return: A dict of SFTP connection options.
+        :rtype: dict
+        """
         return {
             'host': self.server_base,
             'username': self.sftp_user,

@@ -1,6 +1,7 @@
 """ Tests for local ingest """
 from os import path, remove, getlogin, getcwd
 from shutil import rmtree
+import logging
 import pytest
 import boto3
 import httpretty
@@ -10,17 +11,28 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
+from .mock_sftp import MockSFTP
 from ..models import Local
 from ..services import create_manifest
 from ..storages import IngestStorage
 
 pytestmark = pytest.mark.django_db(transaction=True) # pylint: disable = invalid-name
+LOGGER = logging.getLogger(__name__)
 
 @mock_s3
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
+    @classmethod
+    def setUpClass(cls):
+        cls.sftp_server = MockSFTP()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.sftp_server.stop_server()
+
     def setUp(self):
         """ Set instance variables. """
+        LOGGER.debug('SETTING UP')
         self.fixture_path = path.join(settings.APPS_DIR, 'ingest/fixtures/')
         self.image_server = ImageServerFactory(
             server_base='http://readux.s3.amazonaws.com',
@@ -56,6 +68,16 @@ class LocalTest(TestCase):
 
         return local
 
+    def sftp_image_server(self):
+        return ImageServerFactory(
+            server_base=self.sftp_server.host,
+            storage_service='sftp',
+            storage_path=getcwd(),
+            sftp_port=self.sftp_server.port,
+            private_key_path=self.sftp_server.key_file,
+            sftp_user=getlogin()
+        )
+
 
     def test_bundle_upload(self):
         """ It should upload the images using a fake S3 service from moto. """
@@ -72,6 +94,16 @@ class LocalTest(TestCase):
 
         assert f'{local.manifest.pid}/00000008.jpg' in image_files
 
+    def test_image_upload_to_sftp(self):
+        httpretty.disable()
+        local = self.mock_local('bundle.zip', with_manifest=True)
+        local.image_server = self.sftp_image_server()
+
+        image_files, _ = local.volume_to_sftp()
+
+        rmtree(local.manifest.pid)
+        assert f'{local.manifest.pid}/00000008.jpg' in image_files
+
     def test_ocr_upload_to_s3(self):
         local = self.mock_local('nested_volume.zip', with_manifest=True)
 
@@ -86,19 +118,12 @@ class LocalTest(TestCase):
         """ It should upload files via SFTP """
         httpretty.disable()
         local = self.mock_local('nested_volume.zip', with_manifest=True)
-        local.image_server = ImageServerFactory(
-            server_base='localhost',
-            storage_service='sftp',
-            storage_path=getcwd(),
-            sftp_port=3373,
-            private_key_path='/tmp/sshkey',
-            sftp_user=getlogin()
-        )
+        local.image_server = self.sftp_image_server()
 
         _, ocr_files = local.volume_to_sftp()
 
-        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
         rmtree(local.manifest.pid)
+        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadata supplied in an Excel file. """
@@ -150,7 +175,6 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('bundle_with_junk.zip', with_manifest=True)
 
-        local.volume_to_s3()
         local.volume_to_s3()
 
         ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]

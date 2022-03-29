@@ -1,5 +1,8 @@
 from os.path import join
+from os import getlogin, getcwd
+from shutil import rmtree
 import boto3
+import httpretty
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
 from django.core import files
@@ -19,17 +22,35 @@ from apps.ingest.models import Bulk, Local, Remote, IngestTaskWatcher
 from apps.ingest.admin import BulkAdmin, LocalAdmin, RemoteAdmin, TaskWatcherAdmin
 from apps.users.tests.factories import UserFactory
 from .factories import BulkFactory, LocalFactory, RemoteFactory, TaskResultFactory
+from .mock_sftp import MockSFTP
 
 @mock_s3
 class IngestAdminTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.sftp_server = MockSFTP()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.sftp_server.stop_server()
+
     def setUp(self):
         """ Set instance variables. """
         self.fixture_path = join(settings.APPS_DIR, 'ingest/fixtures/')
 
-        self.image_server = ImageServerFactory(
+        self.s3_image_server = ImageServerFactory(
             server_base='http://images.readux.ecds.emory',
             storage_service='s3',
             storage_path='readux'
+        )
+
+        self.sftp_image_server = ImageServerFactory(
+            server_base=self.sftp_server.host,
+            storage_service='sftp',
+            storage_path=getcwd(),
+            sftp_port=self.sftp_server.port,
+            private_key_path=self.sftp_server.key_file,
+            sftp_user=getlogin()
         )
 
         self.user = UserFactory.create(is_superuser=True)
@@ -47,10 +68,10 @@ class IngestAdminTest(TestCase):
         conn.create_bucket(Bucket='readux')
         conn.create_bucket(Bucket='readux-ingest')
 
-    def test_local_admin_save(self):
+    def test_local_admin_save_s3(self):
         """It should add a create a manifest and canvases and delete the Local object"""
         local = LocalFactory.build(
-            image_server=self.image_server
+            image_server=self.s3_image_server
         )
 
         original_manifest_count = Manifest.objects.count()
@@ -82,10 +103,48 @@ class IngestAdminTest(TestCase):
         assert Manifest.objects.count() == original_manifest_count + 1
         assert Canvas.objects.count() == original_canvas_count + 10
 
+    def test_local_admin_save_sftp(self):
+        """It should add a create a manifest and canvases and delete the Local object"""
+        httpretty.disable()
+        local = LocalFactory.build(
+            image_server=self.sftp_image_server
+        )
+
+        original_manifest_count = Manifest.objects.count()
+        original_canvas_count = Canvas.objects.count()
+
+        request_factory = RequestFactory()
+
+        with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as f:
+            content = files.base.ContentFile(f.read())
+
+        local.bundle = files.File(content.file, 'no_meta_file.zip')
+
+        req = request_factory.post('/admin/ingest/local/add/', data={})
+        req.user = self.user
+
+        local_model_admin = LocalAdmin(model=Local, admin_site=AdminSite())
+        local_model_admin.save_model(obj=local, request=req, form=None, change=None)
+
+        # Saving should kick off the task to create the canvases and then delete
+        # the `Local` ingest object when done.
+        try:
+            local.refresh_from_db()
+            assert False
+        except Local.DoesNotExist:
+            assert True
+
+        rmtree(local.manifest.pid)
+
+        # A new `Manifest` should have been created along with the canvases
+        # in the ingest
+        assert Manifest.objects.count() == original_manifest_count + 1
+        assert Canvas.objects.count() == original_canvas_count + 10
+
     def test_local_ingest_with_collections(self):
         """It should add chosen collections to the Local's manifests"""
         local = LocalFactory.build(
-            image_server=self.image_server
+            image_server=self.s3_image_server
         )
 
         # Force evaluation to get the true current list of manifests
@@ -221,7 +280,7 @@ class IngestAdminTest(TestCase):
 
     def test_bulk_admin_with_external_metadata(self):
         """It should add the metadata to the matching Local object"""
-        bulk = BulkFactory.create(image_server=self.image_server)
+        bulk = BulkFactory.create(image_server=self.s3_image_server)
 
         data = {}
         data['volume_files'] = []

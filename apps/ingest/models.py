@@ -29,6 +29,8 @@ logging.getLogger('botocore').setLevel(logging.ERROR)
 logging.getLogger('boto3').setLevel(logging.ERROR)
 logging.getLogger('s3transfer').setLevel(logging.ERROR)
 logging.getLogger('httpretty').setLevel(logging.ERROR)
+logging.getLogger('httpretty.core').setLevel(logging.ERROR)
+logging.getLogger('paramiko').setLevel(logging.ERROR)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
@@ -152,14 +154,12 @@ class Local(IngestAbstractModel):
             pass
 
     def volume_to_s3(self):
-        """ Upload images and OCR files to an S3 buckett
+        """ Upload images and OCR files to an S3 bucket
 
         :return: Tuple of two lists. One list of image files and one of OCR files
         :rtype: tuple
         """
         self.__unzip_bundle()
-        for file_path in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/'):
-            LOGGER.debug(f'File in S3 {file_path}')
 
         return (
             [file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid],
@@ -241,8 +241,6 @@ class Local(IngestAbstractModel):
             if not image_file:
                 continue
 
-            LOGGER.debug(f'Creating canvas from {image_file}')
-
             ocr_file_path = None
             if len(ocr_files) > 0:
                 image_name = '.'.join(image_file.split('.')[:-1])
@@ -304,7 +302,6 @@ class Local(IngestAbstractModel):
             if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
                 file_name = file_name.replace('_', '-')
                 if file_type and 'image' in file_type and 'images' in file_path:
-                    LOGGER.debug(f'Trying to upload {file_path}')
                     self.__upload_file(tmp_file, file_name, file_path)
                 if file_type:
                     is_ocr_file_type = (
@@ -323,16 +320,15 @@ class Local(IngestAbstractModel):
             remote_path = f'{self.manifest.pid}/{file_name}'
             if 'ocr' in path:
                 remote_path = f'{self.manifest.pid}/_*ocr*_/{file_name}'
-            LOGGER.debug(f'Upload to S3 {path}')
             self.image_server.bucket.upload_fileobj(
                 BytesIO(file),
                 remote_path
             )
         elif self.image_server.storage_service == 'sftp':
             local_path = os.path.join(gettempdir(), file_name)
-            LOGGER.debug(f'Tmp file path {local_path}')
             with open(local_path, 'wb') as f:
                 f.write(BytesIO(file).getbuffer())
+
             sftp = self.create_sftp_connection()
             with sftp.cd(self.manifest.pid):
                 if 'ocr' in path:
@@ -345,7 +341,7 @@ class Local(IngestAbstractModel):
         sftp = self.create_sftp_connection()
 
         files = (
-            [f'{self.manifest.pid}/{image}' for image in sftp.listdir(self.manifest.pid)],
+            [f'{self.manifest.pid}/{image}' for image in sftp.listdir(self.manifest.pid) if '_*ocr*_' not in image],
             [f'{self.manifest.pid}/_*ocr*_/{ocr}' for ocr in sftp.listdir(f'{self.manifest.pid}/_*ocr*_')]
         )
         sftp.close()

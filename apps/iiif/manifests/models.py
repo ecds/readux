@@ -67,6 +67,9 @@ class Language(models.Model):
     code = models.CharField(max_length=16, unique=True)
     name = models.CharField(max_length=255)
 
+    class Meta:
+        ordering = ["name"]
+
     def __str__(self):
         """String representation of the language"""
         return self.name

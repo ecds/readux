@@ -18,8 +18,6 @@ setattr(
 
 class ManifestAdminForm(forms.ModelForm):
     """Form for adding or changing a manifest"""
-    # sort language list by name
-    languages = forms.ModelMultipleChoiceField(queryset=Language.objects.order_by("name"))
     class Meta:
         model = Manifest
         fields = (

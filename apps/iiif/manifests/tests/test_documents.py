@@ -6,6 +6,7 @@ from django.test import TestCase
 from django_elasticsearch_dsl.test import ESTestCase
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.documents import ManifestDocument
+from apps.iiif.manifests.models import Language
 from apps.iiif.manifests.tests.factories import ManifestFactory
 
 class ManifestDocumentTest(ESTestCase, TestCase):
@@ -13,6 +14,8 @@ class ManifestDocumentTest(ESTestCase, TestCase):
     def setUp(self):
         super().setUp()
         self.doc = ManifestDocument()
+        (self.lang_en, _) = Language.objects.get_or_create(code="en", name="English")
+        (self.lang_la, _) = Language.objects.get_or_create(code="la", name="Latin")
 
     def test_prepare_authors(self):
         """Test authors returned as array instead of string"""
@@ -47,6 +50,18 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         # test with pdf
         manifest.pdf = "url"
         assert self.doc.prepare_has_pdf(instance=manifest)
+
+    def test_prepare_languages(self):
+        """Test languages converted into string array"""
+        # test no languages
+        manifest = ManifestFactory.create()
+        assert self.doc.prepare_languages(instance=manifest) == []
+        # test one language
+        manifest.languages.add(self.lang_en)
+        assert self.doc.prepare_languages(instance=manifest) == ["English"]
+        # test multiple languages
+        manifest.languages.add(self.lang_la)
+        assert len(self.doc.prepare_languages(instance=manifest)) == 2
 
     def test_get_queryset(self):
         """Test prefetching"""

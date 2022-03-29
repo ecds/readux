@@ -320,6 +320,7 @@ class VolumeSearchView(ListView, FormMixin):
     model = Manifest
     form_class = ManifestSearchForm
     template_name = "search_results.html"
+    context_object_name = "volumes"
     paginate_by = 25
     # default fields to search when using query box; ^ with number indicates a boosted field
     query_search_fields = ["pid", "label^3", "summary", "authors"]
@@ -340,11 +341,13 @@ class VolumeSearchView(ListView, FormMixin):
 
         form_data = form.cleaned_data
         # default to empty string if no query in form data
-        search_query = form_data.get("query", "")
+        search_query = form_data.get("q", "")
         if search_query:
             multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
             volumes = volumes.query(multimatch_query)
-        return volumes.to_queryset()
+
+        # return elasticsearch_dsl Search instance
+        return volumes
 
 
 # TODO: Replace with Elasticsearch

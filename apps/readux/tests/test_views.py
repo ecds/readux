@@ -94,23 +94,25 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         """Should be able to query by search term"""
         volume_search_view = views.VolumeSearchView()
         volume_search_view.request = Mock()
-        volume_search_view.request.GET = {"query": "primary"}
-        volumes_queryset = volume_search_view.get_queryset()
-        assert volumes_queryset.count() == 1
-        assert volumes_queryset.first().pk == self.volume1.pk
+        volume_search_view.request.GET = {"q": "primary"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute()
+        assert search_results.count() == 1
+        assert response.hits[0]['pid'] == self.volume1.pid
 
         # should get all volumes when request is empty
         volume_search_view.request.GET = {}
-        volumes_queryset = volume_search_view.get_queryset()
-        assert volumes_queryset.count() == 3
+        search_results = volume_search_view.get_queryset()
+        assert search_results.count() == 3
 
     def test_label_boost(self):
         """Should return the item matching label first, before matching summary"""
         volume_search_view = views.VolumeSearchView()
         volume_search_view.request = Mock()
-        volume_search_view.request.GET = {"query": "secondary test"}
-        volumes_queryset = volume_search_view.get_queryset()
+        volume_search_view.request.GET = {"q": "secondary test"}
+        search_results = volume_search_view.get_queryset()
         # with multiple keywords, should return all matches
-        assert volumes_queryset.count() == 3
+        response = search_results.execute()
+        assert search_results.count() == 3
         # should return "secondary" label match first
-        assert volumes_queryset.first().pk == self.volume2.pk
+        assert response.hits[0]['pid'] == self.volume2.pid

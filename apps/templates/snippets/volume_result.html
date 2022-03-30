@@ -20,6 +20,16 @@
         </dd>
         <dt>Added</dt>
         <dd>{{volume.created_at}}</dd>
+        {% if volume.languages %}
+            <dt>Language{{volume.languages|pluralize}}</dt>
+            <dd>
+                <ul class="uk-margin-remove">
+                    {% for lang in volume.languages %}
+                        <li>{{ lang }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        {% endif %}
         <dt>Summary</dt> 
         <dd class="result-volume-summary">
             {{volume.summary|striptags|safe}}

@@ -169,4 +169,5 @@ LOGGING = {
 # Elasticsearch
 # ------------------------------------------------------------------------------
 
-ELASTICSEARCH_URL = 'localhost:9200' # Must be configured to the host and port running Elasticsearch
+# Must be configured to the host and port running Elasticsearch
+ELASTICSEARCH_DSL['default']['hosts'] = 'user:pass@localhost:9200'

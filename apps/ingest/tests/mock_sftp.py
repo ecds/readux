@@ -3,8 +3,9 @@ Starts and stops a mock SFTP server using the Python `sftpserver` module.
 https://github.com/rspivak/sftpserver
 """
 import os
-import subprocess
 import signal
+import socket
+import subprocess
 import tempfile
 
 class MockSFTP:
@@ -26,16 +27,24 @@ class MockSFTP:
         server_command = f'sftpserver -k {self.key_file} -p {self.port} --host {self.host}'
 
         if not self.server:
-            self.server = subprocess.Popen(
-                server_command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                shell=True,
-                start_new_session=True
-            )
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.bind((self.hostname, self.port))
+                sock.close()
+                self.server = subprocess.Popen(
+                    server_command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    shell=True,
+                    start_new_session=True
+                )
+            except OSError:
+                # For CircleCI, the sftp server is started in the background.
+                pass
 
     def stop_server(self):
         """ Kill the process and remove the key file. """
-        os.killpg(self.server.pid, signal.SIGTERM)
-        os.remove(self.key_file)
-        os.remove(f'{self.key_file}.pub')
+        if self.server:
+            os.killpg(self.server.pid, signal.SIGTERM)
+            os.remove(self.key_file)
+            os.remove(f'{self.key_file}.pub')

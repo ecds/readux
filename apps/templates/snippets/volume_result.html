@@ -1,0 +1,28 @@
+
+<li class="uk-width-1-1@m uk-margin-small">
+    <h4>
+        <span>{{ forloop.counter0|add:page_obj.start_index }}.</span>
+        <a
+            class="nav-link"
+            href="{% url 'volumeall' volume.pid %}"
+        >
+            {% if volume.label %}{{ volume.label }}{% else %}No title{% endif %}
+        </a>
+    </h4>
+    <dl>
+        <dt>Author{{volume.authors|pluralize}}</dt>
+        <dd>
+            <ul class="uk-margin-remove">
+                {% for author in volume.authors %}
+                    <li>{{ author }}</li>
+                {% endfor %}
+            </ul>
+        </dd>
+        <dt>Added</dt>
+        <dd>{{volume.created_at}}</dd>
+        <dt>Summary</dt> 
+        <dd class="result-volume-summary">
+            {{volume.summary|striptags|safe}}
+        </dd>
+    </dl>
+</li>

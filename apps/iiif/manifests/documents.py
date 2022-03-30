@@ -36,11 +36,11 @@ class ManifestDocument(Document):
     class Django:
         """Settings for automatically pulling data from Django"""
         model = Manifest
-        queryset_pagination = 25
 
         # fields to map dynamically in Elasticsearch
         fields = [
             "attribution",
+            "created_at",
             "label",
             "license",
             "pid",

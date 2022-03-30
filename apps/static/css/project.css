@@ -1648,3 +1648,22 @@ a.nav-link {
   background-image: url("data:image/svg+xml;charset=UTF-8,%8Csvg+width%3D%2213%22+height%3D%2213%22+viewBox%3D%220+0+13+13%22+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0D%0A++++%3Crect+fill%3D%22rgba%28149%2C+9%2C+83%2C+1%29%22+width%3D%2213%22+height%3D%221%22+x%3D%220%22+y%3D%226%22+%2F%3E%0D%0A%3C%2Fsvg%3E") !important;
 }
 /*# sourceMappingURL=project.css.map */
+
+input[type="search"][name="q"] {
+  width: 100%;
+}
+
+ol#search-results {
+  list-style: none;
+}
+
+ol#search-results dd.result-volume-summary {  
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+ol#search-results dl {
+  margin-left: 2rem;
+}

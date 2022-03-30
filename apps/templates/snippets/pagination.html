@@ -1,0 +1,20 @@
+{% load url_replace %}
+
+<!--TODO: move inline styles into project CSS-->
+<div class="pagination uk-margin">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
+            <a href="?{% url_replace page=page_obj.previous_page_number %}" style="margin-right:5px;">previous</a>
+        {% endif %}
+
+        <span class="current" style="margin:0px,5px;">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace page=page_obj.next_page_number %}" style="margin-left:5px;">next</a>
+            <a href="?{% url_replace page=page_obj.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>

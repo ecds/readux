@@ -4,14 +4,15 @@ from django import forms
 
 class ManifestSearchForm(forms.Form):
     """Django form for searching Manifests via Elasticsearch"""
-    query = forms.CharField(
-        label="Search by word or phrase",
+    q = forms.CharField(
+        label="Search volumes by keyword",
         required=False,
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Search by word or phrase",
-                "aria-label": "Search by word or phrase",
+                "placeholder": "Search volumes by keyword",
+                "aria-label": "Search volumes by keyword",
                 "type": "search",
-            }
+                "class": "uk-input",
+            },
         ),
     )

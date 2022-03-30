@@ -83,11 +83,11 @@ class TestVolumeSearchView(ESTestCase, TestCase):
     def setUp(self):
         """Populate tests with sample data"""
         super().setUp()
-        self.volume1 = Manifest(label="primary", summary="test")
+        self.volume1 = Manifest(pid="uniquepid1", label="primary", summary="test")
         self.volume1.save()
-        self.volume2 = Manifest(label="secondary", summary="test")
+        self.volume2 = Manifest(pid="uniquepid2", label="secondary", summary="test")
         self.volume2.save()
-        self.volume3 = Manifest(label="tertiary", summary="secondary")
+        self.volume3 = Manifest(pid="uniquepid3", label="tertiary", summary="secondary")
         self.volume3.save()
 
     def test_get_queryset(self):

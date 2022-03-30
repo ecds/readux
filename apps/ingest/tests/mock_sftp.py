@@ -17,7 +17,7 @@ class MockSFTP:
     def __init__(self):
         self.key_file = os.path.join(tempfile.gettempdir(), 'readux_test_sshkey')
         self.port = 3373
-        self.host = 'localhost'
+        self.host = os.uname().nodename
         self.server = None
 
         if not os.path.exists(self.key_file):

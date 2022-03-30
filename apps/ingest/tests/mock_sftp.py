@@ -29,7 +29,7 @@ class MockSFTP:
         if not self.server:
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.bind((self.hostname, self.port))
+                sock.bind((self.host, self.port))
                 sock.close()
                 self.server = subprocess.Popen(
                     server_command,

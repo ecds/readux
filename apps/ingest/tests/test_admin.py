@@ -1,5 +1,6 @@
 from os.path import join
-from os import getlogin, getcwd
+from os import getcwd
+from getpass import getuser
 from shutil import rmtree
 import boto3
 import httpretty
@@ -50,7 +51,7 @@ class IngestAdminTest(TestCase):
             storage_path=getcwd(),
             sftp_port=self.sftp_server.port,
             private_key_path=self.sftp_server.key_file,
-            sftp_user=getlogin()
+            sftp_user=getuser()
         )
 
         self.user = UserFactory.create(is_superuser=True)

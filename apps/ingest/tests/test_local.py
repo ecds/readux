@@ -1,5 +1,6 @@
 """ Tests for local ingest """
-from os import path, remove, getlogin, getcwd
+from os import path, remove, getcwd
+from getpass import getuser
 from shutil import rmtree
 import logging
 import pytest
@@ -75,7 +76,7 @@ class LocalTest(TestCase):
             storage_path=getcwd(),
             sftp_port=self.sftp_server.port,
             private_key_path=self.sftp_server.key_file,
-            sftp_user=getlogin()
+            sftp_user=getuser()
         )
 
 

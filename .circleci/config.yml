@@ -9,7 +9,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.10
         environment:
           DATABASE_URL: postgres://root@127.0.0.1:5432/readux
           PGUSER: root
@@ -38,9 +38,10 @@ jobs:
           name: Install System packages
           command: |
             sudo apt update
-            sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full
+            sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full openssh-server
             mkdir logs && touch logs/debug.log
             sudo gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
+            sudo /etc/init.d/ssh start
       - run:
           name: Install Ruby Stuff
           command: |

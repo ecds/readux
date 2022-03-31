@@ -116,7 +116,7 @@ class Manifest(IiifBase):
     date_sort_ascending = models.FloatField(blank=True, null=True)
     date_sort_descending = models.FloatField(blank=True, null=True)
     publisher = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
-    languages = models.ManyToManyField(Language, help_text="Languages present in the manifest.")
+    languages = models.ManyToManyField(Language, help_text="Languages present in the manifest.", blank=True, null=True)
     attribution = models.CharField(
         max_length=255,
         null=True,

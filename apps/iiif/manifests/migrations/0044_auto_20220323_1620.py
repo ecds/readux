@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveIndex(
-            model_name='manifest',
-            name='manifests_m_search__bd83b2_gin',
-        ),
         migrations.AddField(
             model_name='imageserver',
             name='sftp_user',

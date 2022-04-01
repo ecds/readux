@@ -6,7 +6,7 @@ from pathlib import Path
 from django.test import RequestFactory, TestCase
 from django.http import HttpResponse
 from apps.readux import views
-from apps.iiif.manifests.models import Manifest
+from apps.iiif.manifests.models import Language, Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory
 from apps.iiif.kollections.tests.factories import CollectionFactory
 from apps.iiif.kollections.models import Collection
@@ -83,11 +83,31 @@ class TestVolumeSearchView(ESTestCase, TestCase):
     def setUp(self):
         """Populate tests with sample data"""
         super().setUp()
-        self.volume1 = Manifest(pid="uniquepid1", label="primary", summary="test")
+        (lang_en, _) = Language.objects.get_or_create(code="en", name="English")
+        (lang_la, _) = Language.objects.get_or_create(code="la", name="Latin")
+        self.volume1 = Manifest(
+            pid="uniquepid1",
+            label="primary",
+            summary="test",
+            author="Ben;An Author",
+        )
         self.volume1.save()
-        self.volume2 = Manifest(pid="uniquepid2", label="secondary", summary="test")
+        self.volume1.languages.add(lang_en)
+        self.volume2 = Manifest(
+            pid="uniquepid2",
+            label="secondary",
+            summary="test",
+            author="Ben",
+        )
         self.volume2.save()
-        self.volume3 = Manifest(pid="uniquepid3", label="tertiary", summary="secondary")
+        self.volume2.languages.add(lang_en)
+        self.volume2.languages.add(lang_la)
+        self.volume3 = Manifest(
+            pid="uniquepid3",
+            label="tertiary",
+            summary="secondary",
+            author="An Author",
+        )
         self.volume3.save()
 
     def test_get_queryset(self):
@@ -105,6 +125,39 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         search_results = volume_search_view.get_queryset()
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 3
+
+        # should filter on authors
+        volume_search_view.request.GET = {"author": ["Ben"]}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 2
+        for hit in response.hits:
+            assert "Ben" in hit["authors"]
+
+        # should get all manifests matching ANY passed author
+        volume_search_view.request.GET = {"author": ["Ben", "An Author"]}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 3
+
+        # should get 0 for bad author
+        volume_search_view.request.GET = {"author": ["Bad Author"]}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 0
+
+        # should filter on languages
+        volume_search_view.request.GET = {"language": ["Latin"]}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 1
+
+        # should get all manifests matching ANY passed language
+        volume_search_view.request.GET = {"language": ["English", "Latin"]}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 2
+
 
     def test_label_boost(self):
         """Should return the item matching label first, before matching summary"""

@@ -326,7 +326,7 @@ class VolumeSearchView(ListView, FormMixin):
     # default fields to search when using query box; ^ with number indicates a boosted field
     query_search_fields = ["pid", "label^5", "summary^2", "authors"]
 
-    # Facet fields: tuples with (name, facet) where "name" matches the form field name,
+    # Facet fields: tuples of (name, facet) where "name" matches the form field name,
     # and "facet" is an Elasticsearch facet (with field argument matching the ManifestDocument
     # field name for the desired field, and size argument accommodating all possible values)
     facets = [
@@ -361,14 +361,13 @@ class VolumeSearchView(ListView, FormMixin):
 
     def get_queryset(self):
         form = self.get_form()
-
         volumes = ManifestDocument.search()
 
         if not form.is_valid():
             # empty result on invalid form
             return volumes.filter("match_none")
-
         form_data = form.cleaned_data
+
         # default to empty string if no query in form data
         search_query = form_data.get("q", "")
         if search_query:

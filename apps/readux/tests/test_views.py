@@ -125,6 +125,8 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         search_results = volume_search_view.get_queryset()
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 3
+        # should sort by label alphabetically by default
+        assert response.hits[0]['label'] == self.volume1.label
 
         # should filter on authors
         volume_search_view.request.GET = {"author": ["Ben"]}
@@ -158,6 +160,18 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 2
 
+        # should sort by label, in reverse alphabetical order
+        volume_search_view.request.GET = {"sort": "-label_alphabetical"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['label'] == self.volume3.label
+
+        # should sort by relevance
+        volume_search_view.request.GET = {"q": "test", "sort": "_score"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['pid'] != self.volume3.pid
+
 
     def test_label_boost(self):
         """Should return the item matching label first, before matching summary"""
@@ -168,5 +182,5 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         # with multiple keywords, should return all matches
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 3
-        # should return "secondary" label match first
+        # should return "secondary" label match first (sort by relevance is default)
         assert response.hits[0]['pid'] == self.volume2.pid

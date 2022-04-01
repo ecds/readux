@@ -25,6 +25,7 @@
 
     <div>
         <form
+            id="search-form"
             class="uk-form uk-form-stacked uk-width-1-1"
             action="{% url 'search' %}"
             method="get"
@@ -39,6 +40,19 @@
                     Search for individual whole keywords. Multiple words will be searched as
                     'or' (e.g. Rome London = Rome or London). Stopwords (e.g. in, the) will be
                     dropped.
+                </span>
+            </fieldset>
+            <fieldset class="uk-margin uk-flex two-column">
+                <div class="uk-width-1-2">
+                    <div class="uk-form-label">{{ form.author.label }}</div>
+                    {{ form.author }}
+                </div>
+                <div class="uk-width-1-2">
+                    <div class="uk-form-label">{{ form.language.label }}</div>
+                    {{ form.language }}
+                </div>
+                <span class="uk-text-small">
+                    Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
                 </span>
             </fieldset>
             <fieldset class="uk-margin uk-width-1-1">

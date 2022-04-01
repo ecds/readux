@@ -17,7 +17,7 @@ class ManifestDocument(Document):
     """Elasticsearch Document class for IIIF Manifest"""
 
     # fields to map explicitly in Elasticsearch
-    authors = fields.TextField(multi=True)
+    authors = fields.KeywordField(multi=True)
     collections = fields.NestedField(properties={
         "summary": fields.TextField(analyzer=html_strip),
         "attribution": fields.TextField(),
@@ -26,7 +26,7 @@ class ManifestDocument(Document):
     })
     # TODO: date = DateRange()
     has_pdf = fields.BooleanField()
-    languages = fields.TextField(multi=True)
+    languages = fields.KeywordField(multi=True)
     summary = fields.TextField(analyzer=html_strip)
 
     class Index:

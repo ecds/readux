@@ -54,7 +54,7 @@ django-import-export==2.7.1
 gitpython==3.1.27
 
 # S3 Uploads
-boto3==1.21.28
+boto3==1.21.31
 django-storages==1.12.3  # https://github.com/jschneier/django-storages
 
 # Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.

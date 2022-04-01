@@ -44,7 +44,6 @@ class ManifestSearchForm(forms.Form):
             },
         ),
     )
-
     author = FacetedMultipleChoiceField(
         label="Author",
         required=False,
@@ -52,6 +51,20 @@ class ManifestSearchForm(forms.Form):
             attrs={
                 "aria-label": "Filter volumes by author",
                 "class": "uk-input",
+            },
+        ),
+    )
+    sort = forms.ChoiceField(
+        label="Sort",
+        required=False,
+        choices=(
+            ("label_alphabetical", "Label (A-Z)"),
+            ("-label_alphabetical", "Label (Z-A)"),
+            ("_score", "Relevance"),
+        ),
+        widget=forms.Select(
+            attrs={
+                "class":"uk-select",
             },
         ),
     )

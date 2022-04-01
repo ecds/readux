@@ -335,6 +335,7 @@ class VolumeSearchView(ListView, FormMixin):
         # TODO: Determine a good size for authors or consider alternate approach (i.e. not faceted)
         ("author", TermsFacet(field="authors", size=2000, min_doc_count=0)),
     ]
+    default_sort = "label_alphabetical"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -360,10 +361,12 @@ class VolumeSearchView(ListView, FormMixin):
 
     def get_queryset(self):
         form = self.get_form()
-        if not form.is_valid():
-            return Manifest.objects.none()
 
         volumes = ManifestDocument.search()
+
+        if not form.is_valid():
+            # empty result on invalid form
+            return volumes.filter("match_none")
 
         form_data = form.cleaned_data
         # default to empty string if no query in form data
@@ -387,8 +390,13 @@ class VolumeSearchView(ListView, FormMixin):
             volumes.aggs.bucket(facet_name, facet.get_aggregation())
 
         # sort by selected sort option
-        volumes = volumes.sort("_score") # TODO: Implement other sorting options
-
+        sort_option = form_data.get("sort", "")
+        if sort_option:
+            volumes = volumes.sort(sort_option)
+        elif search_query: # by default, if there is a search query, sort by relevance
+            volumes = volumes.sort("_score")
+        else: # by default, sort alphabetically by label
+            volumes = volumes.sort(self.default_sort)
 
         # return elasticsearch_dsl Search instance
         return volumes

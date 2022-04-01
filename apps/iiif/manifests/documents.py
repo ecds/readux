@@ -4,6 +4,7 @@ from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
 from .models import Manifest
+from unidecode import unidecode
 
 html_strip = analyzer(
     "html_strip",
@@ -26,6 +27,7 @@ class ManifestDocument(Document):
     })
     # TODO: date = DateRange()
     has_pdf = fields.BooleanField()
+    label_alphabetical = fields.KeywordField()
     languages = fields.KeywordField(multi=True)
     summary = fields.TextField(analyzer=html_strip)
 
@@ -60,6 +62,13 @@ class ManifestDocument(Document):
         """convert pdf field into boolean"""
         return bool(instance.pdf)
     
+    def prepare_label_alphabetical(self, instance):
+        """get the first 64 chars of a label, just for sorting purposes"""
+        if instance.label:
+            # use unidecode to unaccent characters
+            return unidecode(instance.label[0:64], "utf-8")
+        return "No title"
+
     def prepare_languages(self, instance):
         """convert languages into list of strings"""
         return [lang.name for lang in instance.languages.all()]

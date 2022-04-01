@@ -68,7 +68,7 @@
     <div class="uk-flex uk-flex-center">
         {% include "snippets/pagination.html" %}
     </div>
-    <ol class="uk-flex uk-flex-column uk-width-1-1@m" id="search-results">
+    <ol class="uk-flex uk-flex-column uk-width-1-1@m uk-list-divider" id="search-results">
         {% for volume in volumes %}
             {% include "snippets/volume_result.html" %}
         {% endfor %}

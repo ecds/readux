@@ -10,8 +10,8 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
         """Populate the field choices from the buckets returned by Elasticsearch."""
         self.choices = (
             (
-                bucket.key,
-                f'{truncatechars(bucket.key, 64)} ({bucket.doc_count})',
+                bucket["key"],
+                f'{truncatechars(bucket["key"], 64)} ({bucket["doc_count"]})',
             )
             for bucket in sorted(buckets, key=lambda b: b["key"]) # sort choices by name
         )

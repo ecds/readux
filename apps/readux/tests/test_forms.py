@@ -25,7 +25,7 @@ class TestFacetedMultipleChoiceField:
         # should truncate keys >= 64 characters for label
         random_100_chars = ''.join(random.choices(string.ascii_letters, k=100))
         fake_buckets = [{"key": random_100_chars, "doc_count": 120}]
-        facetfield.populate_from_buckets(buckets=fake_buckets)  
+        facetfield.populate_from_buckets(buckets=fake_buckets)
         assert (random_100_chars, f"{random_100_chars} (120)") not in facetfield.choices
         truncated = f"{random_100_chars[0:63]}…"
         assert (random_100_chars, f"{truncated} (120)") in facetfield.choices

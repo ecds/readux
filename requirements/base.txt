@@ -65,3 +65,6 @@ stream-unzip>=0.0.58
 
 # List of BCP 47 language codes
 bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
+
+# Elasticsearch
+django-elasticsearch-dsl>=7.0.0

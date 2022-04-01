@@ -30,7 +30,7 @@ urlpatterns = [
         name='user_annotations'
     ),
     path('annotations-crud/', annotations.AnnotationCrud.as_view(), name='crud_user_annotation'),
-    # path('search/', views.VolumeSearch.as_view(), name='search'),
+    path('search/', views.VolumeSearchView.as_view(), name='search'),
     path('_anno_count/<volume>/<page>', views.AnnotationsCount.as_view(), name='_anno_count'),
     # path('search/volume/pages', SearchManifestCanvas.as_view(), name='search_pages'),
 ]

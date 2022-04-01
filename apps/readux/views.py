@@ -5,11 +5,12 @@ from django.http import HttpResponse
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormMixin
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
 from django.db.models import Max, Q, Count
 from django.urls import reverse
-from django.utils.datastructures import MultiValueDictKeyError
+from elasticsearch_dsl.query import MultiMatch
+from apps.iiif.manifests.documents import ManifestDocument
+from apps.readux.forms import ManifestSearchForm
 import config.settings.local as settings
 from apps.export.export import JekyllSiteExport
 from apps.export.forms import JekyllExportForm
@@ -313,6 +314,44 @@ class ExportDownloadZip(View):
         resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
         resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
         return resp
+
+class VolumeSearchView(ListView, FormMixin):
+    """View to search across all volumes with Elasticsearch"""
+    model = Manifest
+    form_class = ManifestSearchForm
+    template_name = "search_results.html"
+    context_object_name = "volumes"
+    paginate_by = 25
+    # default fields to search when using query box; ^ with number indicates a boosted field
+    query_search_fields = ["pid", "label^3", "summary", "authors"]
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # use GET for form data so that query params appear in URL
+        form_data = self.request.GET.copy()
+        kwargs["data"] = form_data
+        return kwargs
+
+    def get_queryset(self):
+        form = self.get_form()
+        if not form.is_valid():
+            return Manifest.objects.none()
+
+        volumes = ManifestDocument.search()
+
+        form_data = form.cleaned_data
+        # default to empty string if no query in form data
+        search_query = form_data.get("q", "")
+        if search_query:
+            multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
+            volumes = volumes.query(multimatch_query)
+
+        # sort by selected sort option
+        volumes = volumes.sort("_score") # TODO: Implement other sorting options
+
+        # return elasticsearch_dsl Search instance
+        return volumes
+
 
 # TODO: Replace with Elasticsearch
 # class VolumeSearch(ListView):

@@ -17,12 +17,21 @@ jobs:
           AWS_SECRET_ACCESS_KEY: dummy-access-key-secret
           AWS_DEFAULT_REGION: us-east-1
           DJANGO_ENV: test
+          ELASTICSEARCH_URL: 127.0.0.1:9200
       - image: cimg/postgres:10.19
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: readux
       - image: cimg/ruby:2.5-node
       - image: cimg/rust:1.59.0
+      - image: docker.elastic.co/elasticsearch/elasticsearch:7.17.1
+        environment:
+          - STACK_VERSION: 7.17.1
+          - xpack.security.enabled: false
+          - cluster.name: readux-elasticsearch
+          - http.port: 9200
+          - discovery.type: single-node
+
     steps:
       - checkout
       - restore_cache:
@@ -46,6 +55,10 @@ jobs:
             pip install pyld==1.0.5
             pip install -r requirements/local.txt
             cp config/settings/local.dst config/settings/local.py
+      - run:
+          name: Wait for Elasticsearch startup
+          command: |
+            dockerize -wait tcp://localhost:9200
       - run:
           name: Running tests
           command: |

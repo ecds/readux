@@ -84,6 +84,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'crispy_forms',
     'django_celery_results',
+    'django_elasticsearch_dsl',
     'modelcluster',
     'sass_processor',
     'storages',
@@ -332,3 +333,11 @@ WAGTAIL_SITE_NAME = 'Readux'
 
 # CORS HEADERS
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Elasticsearch
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': env('ELASTICSEARCH_URL', default='http://localhost:9200')
+    },
+}

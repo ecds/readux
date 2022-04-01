@@ -67,7 +67,7 @@ class ManifestDocument(Document):
         if instance.label:
             # use unidecode to unaccent characters
             return unidecode(instance.label[0:64], "utf-8")
-        return "No title"
+        return "[No label]"
 
     def prepare_languages(self, instance):
         """convert languages into list of strings"""

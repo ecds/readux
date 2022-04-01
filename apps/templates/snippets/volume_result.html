@@ -7,10 +7,10 @@
                 class="nav-link"
                 href="{% url 'volumeall' volume.pid %}"
             >
-                {{ volume.label|default:"No title" }}
+                {{ volume.label|default:"[No label]" }}
             </a>
         {% else %}
-            {{ volume.label|default:"No title" }}
+            {{ volume.label|default:"[No label]" }}
         {% endif %}
     </h4>
     <dl class="uk-description-list">

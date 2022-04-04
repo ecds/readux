@@ -128,6 +128,12 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         # should sort by label alphabetically by default
         assert response.hits[0]['label'] == self.volume1.label
 
+
+    def test_get_queryset_filters(self):
+        """Should filter according to chosen filters"""
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+
         # should filter on authors
         volume_search_view.request.GET = {"author": ["Ben"]}
         search_results = volume_search_view.get_queryset()
@@ -160,6 +166,17 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 2
 
+    def test_get_queryset_sorting(self):
+        """Should sort according to default or chosen sort"""
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+
+        # should sort by label alphabetically when sort is specified but empty:
+        volume_search_view.request.GET = {"sort": ""}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['label'] == self.volume1.label
+
         # should sort by label, in reverse alphabetical order
         volume_search_view.request.GET = {"sort": "-label_alphabetical"}
         search_results = volume_search_view.get_queryset()
@@ -171,6 +188,24 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         search_results = volume_search_view.get_queryset()
         response = search_results.execute(ignore_cache=True)
         assert response.hits[0]['pid'] != self.volume3.pid
+
+        # should sort by relevance
+        volume_search_view.request.GET = {"q": "test", "sort": ""}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['pid'] != self.volume3.pid
+
+        # should sort by date added (asc)
+        volume_search_view.request.GET = {"sort": "created_at"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['pid'] == self.volume1.pid
+
+        # should sort by date added (desc)
+        volume_search_view.request.GET = {"sort": "-created_at"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['pid'] == self.volume3.pid
 
 
     def test_label_boost(self):

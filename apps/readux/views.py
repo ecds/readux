@@ -335,12 +335,30 @@ class VolumeSearchView(ListView, FormMixin):
         # TODO: Determine a good size for authors or consider alternate approach (i.e. not faceted)
         ("author", TermsFacet(field="authors", size=2000, min_doc_count=0)),
     ]
-    default_sort = "label_alphabetical"
+    defaults = {
+        "sort": "label_alphabetical"
+    }
 
     def get_form_kwargs(self):
+        # adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
         kwargs = super().get_form_kwargs()
         # use GET for form data so that query params appear in URL
         form_data = self.request.GET.copy()
+
+        # sort by form choice
+        if "sort" in form_data and bool(form_data.get("sort")):
+            form_data["sort"] = form_data.get("sort")
+        # by default, if there is a search query, sort by relevance
+        elif form_data.get("q"):
+            form_data["sort"] = "_score"
+        # by default, if sort is an empty string, sort by specified default
+        elif "sort" in form_data:
+            form_data["sort"] = self.defaults["sort"]
+
+        # set defaults for all form values
+        for key, val in self.defaults.items():
+            form_data.setdefault(key, val)
+
         kwargs["data"] = form_data
         return kwargs
 
@@ -388,14 +406,8 @@ class VolumeSearchView(ListView, FormMixin):
         for (facet_name, facet) in self.facets:
             volumes.aggs.bucket(facet_name, facet.get_aggregation())
 
-        # sort by selected sort option
-        sort_option = form_data.get("sort", "")
-        if sort_option:
-            volumes = volumes.sort(sort_option)
-        elif search_query: # by default, if there is a search query, sort by relevance
-            volumes = volumes.sort("_score")
-        else: # by default, sort alphabetically by label
-            volumes = volumes.sort(self.default_sort)
+        # sort
+        volumes = volumes.sort(form_data["sort"])
 
         # return elasticsearch_dsl Search instance
         return volumes

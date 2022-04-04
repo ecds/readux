@@ -5,6 +5,7 @@ from django.template.defaultfilters import truncatechars
 
 class FacetedMultipleChoiceField(forms.MultipleChoiceField):
     """MultipleChoiceField populated by Elasticsearch facets"""
+    # adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
 
     def populate_from_buckets(self, buckets):
         """Populate the field choices from the buckets returned by Elasticsearch."""
@@ -58,6 +59,8 @@ class ManifestSearchForm(forms.Form):
         label="Sort",
         required=False,
         choices=(
+            ("-created_at", "Date added (newest first)"),
+            ("created_at", "Date added (oldest first)"),
             ("label_alphabetical", "Label (A-Z)"),
             ("-label_alphabetical", "Label (Z-A)"),
             ("_score", "Relevance"),

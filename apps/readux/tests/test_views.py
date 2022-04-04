@@ -1,5 +1,5 @@
 import os
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import pytest
 from tempfile import gettempdir
 from pathlib import Path
@@ -184,3 +184,24 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         assert response.hits.total['value'] == 3
         # should return "secondary" label match first (sort by relevance is default)
         assert response.hits[0]['pid'] == self.volume2.pid
+
+    @patch("apps.readux.forms.ManifestSearchForm.set_facets")
+    def test_get_context_data(self, mock_set_facets):
+        """Should call form's set_facets method on returned facets from Elasticsearch"""
+        volume_search_view = views.VolumeSearchView(kwargs={})
+        volume_search_view.request = Mock()
+        volume_search_view.request.GET = {}
+        volume_search_view.facets = [
+            ("language", Mock()),
+            ("author", Mock()),
+        ]
+        with patch("apps.readux.views.VolumeSearchView.get_queryset") as mock_queryset:
+            volume_search_view.queryset = mock_queryset
+            volume_search_view.object_list = mock_queryset
+            mock_queryset.return_value.execute.return_value = Mock()
+            response = mock_queryset.return_value.execute.return_value
+            volume_search_view.get_context_data()
+            mock_set_facets.assert_called_with({
+                "language": response.aggregations.language.buckets,
+                "author": response.aggregations.author.buckets,
+            })

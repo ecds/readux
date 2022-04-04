@@ -3,6 +3,8 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
+
+from apps.iiif.kollections.models import Collection
 from .models import Manifest
 from unidecode import unidecode
 
@@ -20,10 +22,7 @@ class ManifestDocument(Document):
     # fields to map explicitly in Elasticsearch
     authors = fields.KeywordField(multi=True)
     collections = fields.NestedField(properties={
-        "summary": fields.TextField(analyzer=html_strip),
-        "attribution": fields.TextField(),
-        "pid": fields.TextField(),
-        "label": fields.TextField(),
+        "label": fields.KeywordField(),
     })
     # TODO: date = DateRange()
     has_pdf = fields.BooleanField()
@@ -50,7 +49,7 @@ class ManifestDocument(Document):
             "publisher",
             "viewingdirection",
         ]
-        related_models = ["collections"]
+        related_models = [Collection]
 
     def prepare_authors(self, instance):
         """convert authors string into list"""
@@ -78,3 +77,9 @@ class ManifestDocument(Document):
         return super().get_queryset().prefetch_related(
             "collections"
         )
+
+    def get_instances_from_related(self, related_instance):
+        """Retrieving item to index from related collections"""
+        if isinstance(related_instance, Collection):
+            # many to many relationship
+            return related_instance.manifests.all()

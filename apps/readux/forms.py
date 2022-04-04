@@ -55,6 +55,16 @@ class ManifestSearchForm(forms.Form):
             },
         ),
     )
+    collection = FacetedMultipleChoiceField(
+        label="Collection",
+        required=False,
+        widget=forms.SelectMultiple(
+            attrs={
+                "aria-label": "Filter volumes by collection",
+                "class": "uk-input",
+            },
+        ),
+    )
     sort = forms.ChoiceField(
         label="Sort",
         required=False,

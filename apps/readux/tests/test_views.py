@@ -110,6 +110,11 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         )
         self.volume3.save()
 
+        collection = Collection(label="test collection")
+        collection.save()
+        self.volume1.collections.add(collection)
+        self.volume3.collections.add(collection)
+
     def test_get_queryset(self):
         """Should be able to query by search term"""
         volume_search_view = views.VolumeSearchView()
@@ -162,6 +167,12 @@ class TestVolumeSearchView(ESTestCase, TestCase):
 
         # should get all manifests matching ANY passed language
         volume_search_view.request.GET = {"language": ["English", "Latin"]}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 2
+
+        # should filter on collections label
+        volume_search_view.request.GET = {"collection": ["test collection"]}
         search_results = volume_search_view.get_queryset()
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 2
@@ -229,14 +240,22 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         volume_search_view.facets = [
             ("language", Mock()),
             ("author", Mock()),
+            ("collections", Mock()),
         ]
         with patch("apps.readux.views.VolumeSearchView.get_queryset") as mock_queryset:
             volume_search_view.queryset = mock_queryset
             volume_search_view.object_list = mock_queryset
             mock_queryset.return_value.execute.return_value = Mock()
             response = mock_queryset.return_value.execute.return_value
+
+            # these are not nested facets, so delete "inner" attributes
+            del response.aggregations.language.inner
+            del response.aggregations.author.inner
+
             volume_search_view.get_context_data()
             mock_set_facets.assert_called_with({
                 "language": response.aggregations.language.buckets,
                 "author": response.aggregations.author.buckets,
+                # collections IS nested, so it should have "inner" attribute
+                "collections": response.aggregations.collections.inner.buckets,
             })

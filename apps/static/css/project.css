@@ -1659,7 +1659,7 @@ form#search-form fieldset.two-column div:first-child {
   padding-right: 1rem;
 }
 
-form#search-form fieldset.two-column select[multiple] {
+form#search-form select[multiple] {
   height: 150px;
   width: 100%;
   overflow-y: scroll;

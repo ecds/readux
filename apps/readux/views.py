@@ -8,7 +8,7 @@ from django.views.generic.edit import FormMixin
 from django.contrib.sitemaps import Sitemap
 from django.db.models import Max, Count
 from django.urls import reverse
-from elasticsearch_dsl import TermsFacet
+from elasticsearch_dsl import Q, NestedFacet, TermsFacet
 from elasticsearch_dsl.query import MultiMatch
 from apps.iiif.manifests.documents import ManifestDocument
 from apps.readux.forms import ManifestSearchForm
@@ -334,6 +334,7 @@ class VolumeSearchView(ListView, FormMixin):
         ("language", TermsFacet(field="languages", size=1000, min_doc_count=0)),
         # TODO: Determine a good size for authors or consider alternate approach (i.e. not faceted)
         ("author", TermsFacet(field="authors", size=2000, min_doc_count=0)),
+        ("collection", NestedFacet("collections", TermsFacet(field="collections.label", min_doc_count=0)))
     ]
     defaults = {
         "sort": "label_alphabetical"
@@ -369,9 +370,13 @@ class VolumeSearchView(ListView, FormMixin):
         facets = {}
         for (facet, _) in self.facets:
             if hasattr(volumes_response.aggregations, facet):
+                aggs = getattr(volumes_response.aggregations, facet)
+                # use "inner" to handle NestedFacet
+                if hasattr(aggs, "inner"):
+                    aggs = getattr(aggs,"inner")
                 facets.update({
                     # get buckets array from each facet in the aggregations dict
-                    facet: getattr(getattr(volumes_response.aggregations, facet), "buckets"),
+                    facet: getattr(aggs, "buckets"),
                 })
         context_data["form"].set_facets(facets)
 
@@ -401,6 +406,13 @@ class VolumeSearchView(ListView, FormMixin):
         language_filter = form_data.get("language", "")
         if language_filter:
             volumes = volumes.filter("terms", languages=language_filter)
+
+        # filter on collections
+        collection_filter = form_data.get("collection", "")
+        if collection_filter:
+            volumes = volumes.filter("nested", path="collections", query=Q(
+                "terms", **{ "collections.label": collection_filter}
+            ))
 
         # create aggregation buckets for facet fields
         for (facet_name, facet) in self.facets:

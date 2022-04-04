@@ -55,7 +55,7 @@ class ManifestDocument(Document):
         """convert authors string into list"""
         if instance.author:
             return [s.strip() for s in instance.author.split(";")]
-        return []
+        return ["[no author]"]
 
     def prepare_has_pdf(self, instance):
         """convert pdf field into boolean"""
@@ -66,11 +66,13 @@ class ManifestDocument(Document):
         if instance.label:
             # use unidecode to unaccent characters
             return unidecode(instance.label[0:64], "utf-8")
-        return "[No label]"
+        return "[no label]"
 
     def prepare_languages(self, instance):
         """convert languages into list of strings"""
-        return [lang.name for lang in instance.languages.all()]
+        if instance.languages.count():
+            return [lang.name for lang in instance.languages.all()]
+        return ["[no language]"]
 
     def get_queryset(self):
         """prefetch related to improve performance"""

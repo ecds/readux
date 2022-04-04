@@ -23,10 +23,10 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         """Test authors returned as array instead of string"""
         # test no author
         manifest = ManifestFactory.create()
-        assert self.doc.prepare_authors(instance=manifest) == []
+        assert self.doc.prepare_authors(instance=manifest) == ["[no author]"]
         # test empty string
         manifest.author = ""
-        assert self.doc.prepare_authors(instance=manifest) == []
+        assert self.doc.prepare_authors(instance=manifest) == ["[no author]"]
         # test no semicolon
         manifest.author = "test author"
         assert self.doc.prepare_authors(instance=manifest) == ["test author"]
@@ -63,17 +63,17 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         label_alphabetical = self.doc.prepare_label_alphabetical(instance=manifest)
         assert label_alphabetical == random_100_chars[0:64]
         assert len(label_alphabetical) == 64
-        # should return "[No label]" for no label
+        # should return "[no label]" for no label
         manifest.label = ""
-        assert self.doc.prepare_label_alphabetical(instance=manifest) == "[No label]"
+        assert self.doc.prepare_label_alphabetical(instance=manifest) == "[no label]"
         manifest.label = None
-        assert self.doc.prepare_label_alphabetical(instance=manifest) == "[No label]"
+        assert self.doc.prepare_label_alphabetical(instance=manifest) == "[no label]"
 
     def test_prepare_languages(self):
         """Test languages converted into string array"""
         # test no languages
         manifest = ManifestFactory.create()
-        assert self.doc.prepare_languages(instance=manifest) == []
+        assert self.doc.prepare_languages(instance=manifest) == ["[no language]"]
         # test one language
         manifest.languages.add(self.lang_en)
         assert self.doc.prepare_languages(instance=manifest) == ["English"]

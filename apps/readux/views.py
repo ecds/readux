@@ -331,10 +331,10 @@ class VolumeSearchView(ListView, FormMixin):
     # field name for the desired field, and size argument accommodating all possible values)
     facets = [
         # NOTE: This size is set to accommodate all languages, of which there are 830 at present
-        ("language", TermsFacet(field="languages", size=1000, min_doc_count=0)),
+        ("language", TermsFacet(field="languages", size=1000, min_doc_count=1)),
         # TODO: Determine a good size for authors or consider alternate approach (i.e. not faceted)
-        ("author", TermsFacet(field="authors", size=2000, min_doc_count=0)),
-        ("collection", NestedFacet("collections", TermsFacet(field="collections.label", min_doc_count=0)))
+        ("author", TermsFacet(field="authors", size=2000, min_doc_count=1)),
+        ("collection", NestedFacet("collections", TermsFacet(field="collections.label", min_doc_count=1)))
     ]
     defaults = {
         "sort": "label_alphabetical"

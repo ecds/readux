@@ -12,9 +12,9 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
         self.choices = (
             (
                 bucket["key"],
-                f'{truncatechars(bucket["key"], 64)} ({bucket["doc_count"]})',
+                f'{truncatechars(bucket["key"], 42)} ({bucket["doc_count"]})',
             )
-            for bucket in sorted(buckets, key=lambda b: b["key"]) # sort choices by name
+            for bucket in sorted(buckets, key=lambda b: -b["doc_count"]) # sort choices by count
         )
 
     def valid_value(self, value):

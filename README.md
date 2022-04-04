@@ -27,6 +27,7 @@ Administrators can organize digitized books into collections, facilitating user 
 
 1. Python 3
 2. PostgreSQL
+3. Elasticsearch (>7.0, <7.14.0)
 
 ### Set up development environment
 
@@ -48,7 +49,7 @@ pip install -r requirements/local.txt
 bundle install
 ~~~
 
-1. Copy and set up your local settings.
+5. Copy and set up your local settings.
 
 ~~~bash
 cp config/settings/local.dst config/settings/local.py
@@ -58,6 +59,7 @@ cp config/settings/local.dst config/settings/local.py
 
 ~~~bash
 export DATABASE_URL=postgres://<database user>:<database password>@127.0.0.1:5432/<database name>
+export ELASTICSEARCH_URL=http://<elastic user>:<elastic password>@127.0.0.1:9200
 ~~~
 
 7. Run the migrations and load the example data.

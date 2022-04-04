@@ -17,6 +17,9 @@
         content="Search Readux volumes"
     />
 {% endblock %}
+{% block extra_javascript %}
+    <script src="{% static 'js/search.js' %}"></script>
+{% endblock %}
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
@@ -25,6 +28,7 @@
 
     <div>
         <form
+            id="search-form"
             class="uk-form uk-form-stacked uk-width-1-1"
             action="{% url 'search' %}"
             method="get"
@@ -41,6 +45,23 @@
                     dropped.
                 </span>
             </fieldset>
+            <fieldset class="uk-margin uk-flex two-column">
+                <div class="uk-width-1-2">
+                    <div class="uk-form-label">{{ form.author.label }}</div>
+                    {{ form.author }}
+                </div>
+                <div class="uk-width-1-2">
+                    <div class="uk-form-label">{{ form.language.label }}</div>
+                    {{ form.language }}
+                </div>
+                <span class="uk-text-small">
+                    Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
+                </span>
+            </fieldset>
+            <fieldset clas="uk-margin uk-width-1-1">
+                <div class="uk-form-label">{{ form.sort.label }}</div>
+                {{ form.sort }}
+            </fieldset>
             <fieldset class="uk-margin uk-width-1-1">
                 <button class="uk-button uk-button-default" type="submit">
                     Search
@@ -54,7 +75,7 @@
     <div class="uk-flex uk-flex-center">
         {% include "snippets/pagination.html" %}
     </div>
-    <ol class="uk-flex uk-flex-column uk-width-1-1@m" id="search-results">
+    <ol class="uk-flex uk-flex-column uk-width-1-1@m uk-list-divider" id="search-results">
         {% for volume in volumes %}
             {% include "snippets/volume_result.html" %}
         {% endfor %}

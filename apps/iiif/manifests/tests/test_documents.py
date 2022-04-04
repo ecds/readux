@@ -2,6 +2,8 @@
 Test class for Elasticsearch indexing.
 """
 
+import random
+import string
 from django.test import TestCase
 from django_elasticsearch_dsl.test import ESTestCase
 from apps.iiif.kollections.models import Collection
@@ -50,6 +52,22 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         # test with pdf
         manifest.pdf = "url"
         assert self.doc.prepare_has_pdf(instance=manifest)
+
+    def test_prepare_label_alphabetical(self):
+        """Should strip accents from text"""
+        manifest = ManifestFactory.create(label="éclair")
+        assert self.doc.prepare_label_alphabetical(instance=manifest) == "eclair"
+        # should only return the first 64 characters
+        random_100_chars = ''.join(random.choices(string.ascii_letters, k=100))
+        manifest.label = random_100_chars
+        label_alphabetical = self.doc.prepare_label_alphabetical(instance=manifest)
+        assert label_alphabetical == random_100_chars[0:64]
+        assert len(label_alphabetical) == 64
+        # should return "[No label]" for no label
+        manifest.label = ""
+        assert self.doc.prepare_label_alphabetical(instance=manifest) == "[No label]"
+        manifest.label = None
+        assert self.doc.prepare_label_alphabetical(instance=manifest) == "[No label]"
 
     def test_prepare_languages(self):
         """Test languages converted into string array"""

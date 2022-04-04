@@ -70,3 +70,6 @@ bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
 
 # Elasticsearch
 django-elasticsearch-dsl>=7.0.0
+elasticsearch<7.14.0
+# used to unaccent strings for sorting
+unidecode

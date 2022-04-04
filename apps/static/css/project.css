@@ -1662,7 +1662,7 @@ div#search-grid :first-child {
 div#search-grid :first-child button {
   padding-left: 30px;
 }
-form#search-filters select[multiple] {
+#search-filters select[multiple] {
   height: 150px;
   width: 100%;
   overflow-y: scroll;

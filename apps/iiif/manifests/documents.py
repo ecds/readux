@@ -3,6 +3,8 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
+
+from apps.iiif.kollections.models import Collection
 from .models import Manifest
 from unidecode import unidecode
 
@@ -20,10 +22,7 @@ class ManifestDocument(Document):
     # fields to map explicitly in Elasticsearch
     authors = fields.KeywordField(multi=True)
     collections = fields.NestedField(properties={
-        "summary": fields.TextField(analyzer=html_strip),
-        "attribution": fields.TextField(),
-        "pid": fields.TextField(),
-        "label": fields.TextField(),
+        "label": fields.KeywordField(),
     })
     # TODO: date = DateRange()
     has_pdf = fields.BooleanField()
@@ -50,13 +49,13 @@ class ManifestDocument(Document):
             "publisher",
             "viewingdirection",
         ]
-        related_models = ["collections"]
+        related_models = [Collection]
 
     def prepare_authors(self, instance):
         """convert authors string into list"""
         if instance.author:
             return [s.strip() for s in instance.author.split(";")]
-        return []
+        return ["[no author]"]
 
     def prepare_has_pdf(self, instance):
         """convert pdf field into boolean"""
@@ -67,14 +66,22 @@ class ManifestDocument(Document):
         if instance.label:
             # use unidecode to unaccent characters
             return unidecode(instance.label[0:64], "utf-8")
-        return "[No label]"
+        return "[no label]"
 
     def prepare_languages(self, instance):
         """convert languages into list of strings"""
-        return [lang.name for lang in instance.languages.all()]
+        if instance.languages.count():
+            return [lang.name for lang in instance.languages.all()]
+        return ["[no language]"]
 
     def get_queryset(self):
         """prefetch related to improve performance"""
         return super().get_queryset().prefetch_related(
             "collections"
         )
+
+    def get_instances_from_related(self, related_instance):
+        """Retrieving item to index from related collections"""
+        if isinstance(related_instance, Collection):
+            # many to many relationship
+            return related_instance.manifests.all()

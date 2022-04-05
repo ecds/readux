@@ -1652,14 +1652,17 @@ a.nav-link {
 form#search-form input[type="search"][name="q"] {
   width: 100%;
 }
-form#search-form fieldset.two-column {
-  flex-wrap: wrap;
-}
-form#search-form fieldset.two-column div:first-child {
-  padding-right: 1rem;
-}
 
-form#search-form fieldset.two-column select[multiple] {
+div#search-grid {
+  margin-left: 0;
+}
+div#search-grid :first-child {
+  padding-left: 0;
+}
+div#search-grid :first-child button {
+  padding-left: 30px;
+}
+#search-filters select[multiple] {
   height: 150px;
   width: 100%;
   overflow-y: scroll;

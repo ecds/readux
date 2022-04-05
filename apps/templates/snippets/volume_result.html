@@ -7,14 +7,14 @@
                 class="nav-link"
                 href="{% url 'volumeall' volume.pid %}"
             >
-                {{ volume.label|default:"[No label]" }}
+                {{ volume.label|default:"[no label]" }}
             </a>
         {% else %}
-            {{ volume.label|default:"[No label]" }}
+            {{ volume.label|default:"[no label]" }}
         {% endif %}
     </h4>
     <dl class="uk-description-list">
-        {% if volume.authors %}
+        {% if volume.authors and "[no author]" not in volume.authors %}
             <dt>Author{{volume.authors|pluralize}}</dt>
             <dd>
                 <ul class="uk-margin-remove">
@@ -28,7 +28,7 @@
             <dt>Added</dt>
             <dd>{{volume.created_at}}</dd>
         {% endif %}
-        {% if volume.languages %}
+        {% if volume.languages and "[no language]" not in volume.languages %}
             <dt>Language{{volume.languages|pluralize}}</dt>
             <dd>
                 <ul class="uk-margin-remove">

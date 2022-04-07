@@ -324,7 +324,7 @@ class VolumeSearchView(ListView, FormMixin):
     context_object_name = "volumes"
     paginate_by = 25
     # default fields to search when using query box; ^ with number indicates a boosted field
-    query_search_fields = ["pid", "label^5", "summary^2", "authors"]
+    query_search_fields = ["pid", "label^5", "summary^2", "author"]
 
     # Facet fields: tuples of (name, facet) where "name" matches the form field name,
     # and "facet" is an Elasticsearch facet (with field argument matching the ManifestDocument

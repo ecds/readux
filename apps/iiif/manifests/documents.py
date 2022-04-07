@@ -15,12 +15,14 @@ html_strip = analyzer(
     char_filter=["html_strip"]
 )
 
+
 @registry.register_document
 class ManifestDocument(Document):
     """Elasticsearch Document class for IIIF Manifest"""
 
     # fields to map explicitly in Elasticsearch
-    authors = fields.KeywordField(multi=True)
+    authors = fields.KeywordField(multi=True)  # only used for faceting/filtering
+    author = fields.TextField()  # only used for searching
     collections = fields.NestedField(properties={
         "label": fields.KeywordField(),
     })
@@ -60,7 +62,7 @@ class ManifestDocument(Document):
     def prepare_has_pdf(self, instance):
         """convert pdf field into boolean"""
         return bool(instance.pdf)
-    
+
     def prepare_label_alphabetical(self, instance):
         """get the first 64 chars of a label, just for sorting purposes"""
         if instance.label:

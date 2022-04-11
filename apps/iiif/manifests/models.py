@@ -6,13 +6,12 @@ from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
-from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
-from modelcluster.models import ClusterableModel
 from edtf.fields import EDTFField
+from apps.iiif.manifests.validators import validate_edtf
 import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
@@ -120,11 +119,30 @@ class Manifest(IiifBase):
     )
     summary = models.TextField(null=True, blank=True)
     author = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
-    published_city = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
-    published_date = models.CharField(max_length=255, null=True, blank=True)
-    published_date_edtf = models.CharField(max_length=255, null=True, blank=True, help_text="Use standard EDTF dates. For examples go to <a target='_blank' href='https://github.com/ixc/python-edtf#natural-language-representation'>https://github.com/ixc/python-edtf#natural-language-representation</a>")
-    date_edtf = EDTFField(
-        "Date of creation (EDTF)",
+    published_city = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Enter multiple entities separated by a semicolon (;)."
+    )
+    published_date = models.CharField(
+        "Published date (display)",
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Used for display only."
+    )
+    published_date_edtf = models.CharField(  # Character field editable in admin
+        "Published date (EDTF)",
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="""Must be valid date conforming to the
+        <a href='https://www.loc.gov/standards/datetime/'>EDTF</a> standard. If left blank, volume
+        will be excluded from sorting and filtering by date of publication.""",
+        validators=[validate_edtf],
+    )
+    date_edtf = EDTFField(  # Read-only EDTF field that handles fuzzy date calculations
+        "Date of publication (EDTF)",
         natural_text_field='published_date_edtf',
         lower_fuzzy_field='date_earliest',
         upper_fuzzy_field='date_latest',

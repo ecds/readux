@@ -44,10 +44,13 @@ class ManifestDocument(Document):
         fields = [
             "attribution",
             "created_at",
+            "date_sort_ascending",
+            "date_sort_descending",
             "label",
             "license",
             "pid",
             "published_city",
+            "published_date",
             "publisher",
             "viewingdirection",
         ]

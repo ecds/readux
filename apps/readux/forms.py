@@ -68,9 +68,11 @@ class ManifestSearchForm(forms.Form):
     sort = forms.ChoiceField(
         label="Sort",
         required=False,
-        choices=(
+        choices=(  # The first value of these tuples must match an ES index (or meta, like _score)
             ("-created_at", "Date added (newest first)"),
             ("created_at", "Date added (oldest first)"),
+            ("-date_sort_descending", "Date published (newest first)"),
+            ("date_sort_ascending", "Date published (oldest first)"),
             ("label_alphabetical", "Label (A-Z)"),
             ("-label_alphabetical", "Label (Z-A)"),
             ("_score", "Relevance"),

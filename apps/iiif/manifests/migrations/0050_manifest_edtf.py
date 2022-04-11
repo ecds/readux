@@ -11,15 +11,23 @@ def dates_to_edtf(apps, _):  # pylint: disable=redefined-outer-name
     Manifest = apps.get_model("manifests", "Manifest")  # pylint: disable=invalid-name
     manifests = Manifest.objects.filter(published_date__isnull=False).exclude(published_date="")
     for manifest in manifests:
-        edtf_date = text_to_edtf(manifest.published_date)
+        # handle some specific cases for data the EDTF library had trouble with
+        if manifest.published_date in ["17th c.", "circa 17th century"]:
+            edtf_date = "16xx"
+        elif manifest.published_date == "ca. 1820s–40s":
+            edtf_date = "1820~/1850~"
+        else:
+            edtf_date = text_to_edtf(manifest.published_date)
+
+        # store on the model if it was able to parse
         if edtf_date:
             manifest.published_date_edtf = edtf_date
+            manifest.save()  # Must be called (rather than bulk_update) to trigger post-save behavior
         else:
             print(f"""
             Failed to convert {manifest.published_date} to EDTF (manifest with pid {
                 manifest.pid
             } and label {manifest.label}).""")
-    Manifest.objects.bulk_update(manifests, ["published_date_edtf"])
 
 
 class Migration(migrations.Migration):

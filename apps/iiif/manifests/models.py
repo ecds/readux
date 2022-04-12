@@ -152,8 +152,8 @@ class Manifest(IiifBase):
         null=True,
     )
     # use for filtering
-    date_earliest = models.FloatField(blank=True, null=True)
-    date_latest = models.FloatField(blank=True, null=True)
+    date_earliest = models.DateField(blank=True, null=True)
+    date_latest = models.DateField(blank=True, null=True)
     # use for sorting
     date_sort_ascending = models.FloatField(blank=True, null=True)
     date_sort_descending = models.FloatField(blank=True, null=True)

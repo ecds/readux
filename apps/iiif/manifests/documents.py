@@ -27,6 +27,8 @@ class ManifestDocument(Document):
         "label": fields.KeywordField(),
     })
     # TODO: date = DateRange()
+    date_earliest = fields.DateField()
+    date_latest = fields.DateField()
     has_pdf = fields.BooleanField()
     label_alphabetical = fields.KeywordField()
     languages = fields.KeywordField(multi=True)

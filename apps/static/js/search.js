@@ -5,6 +5,8 @@ let textInput;
 let sortElement;
 let relevanceSortOption;
 let defaultSortOption;
+let resetFiltersButton;
+let form;
 
 $(document).ready(function() {
     sortElement = document.querySelector("select#id_sort");
@@ -16,6 +18,11 @@ $(document).ready(function() {
     if (textInput.value.trim() == "") {
         disableRelevanceSort();
     }
+    // Add reset filters event listener
+    allFilters = document.querySelectorAll("#search-filters select");
+    resetFiltersButton = document.querySelector("button#reset-filters");
+    form = document.querySelector("form#search-form");
+    resetFiltersButton.addEventListener("click", resetFilters);
 });
 
 function autoUpdateSort() {
@@ -51,4 +58,12 @@ function disableRelevanceSort() {
     // disable relevance sort
     relevanceSortOption.disabled = true;
     relevanceSortOption.ariaDisabled = true;
+}
+
+function resetFilters() {
+    // Clears filters and submits the search
+    allFilters.forEach((filter) => { 
+        filter.selectedIndex = -1;
+    });
+    form.submit();
 }

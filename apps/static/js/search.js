@@ -5,26 +5,36 @@ let textInput;
 let sortElement;
 let relevanceSortOption;
 let defaultSortOption;
-let slider;
 let form;
+let slider;
+let resetFiltersButton;
+let allFilters;
+let resetting = false;
 
 $(document).ready(function() {
+    form = document.querySelector("form#search-form");
     sortElement = document.querySelector("select#id_sort");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
     textInput = document.querySelector("input[type='search']");
-    form = document.querySelector("form#search-form");
+
     // Attach event listeners to text input to update sort
     textInput.addEventListener("input", autoUpdateSort);
     if (textInput.value.trim() == "") {
         disableRelevanceSort();
     }
+
     // Set up slider
     slider = document.getElementById("date-range-slider");
     setUpSlider(slider);
     // Attach event listeners to form to handle slider input
     form.addEventListener("submit", handleSubmit);
     form.addEventListener("formdata", handleFormData);
+
+    // Add reset filters event listener
+    allFilters = document.querySelectorAll("#search-filters select");
+    resetFiltersButton = document.querySelector("button#reset-filters");
+    resetFiltersButton.addEventListener("click", resetFilters);
 });
 
 function setUpSlider(slider) {
@@ -103,7 +113,14 @@ function disableRelevanceSort() {
     relevanceSortOption.ariaDisabled = true;
 }
 
-// use in resetFilters: slider.noUiSlider.reset();
+function resetFilters() {
+    // Clears filters and submits the search
+    allFilters.forEach((filter) => { 
+        filter.selectedIndex = -1;
+    });
+    resetting = true; // Needed to reset start and end date on form
+    form.submit();
+}
 
 function handleSubmit() {
     // construct a FormData object, which fires the formdata event
@@ -112,8 +129,15 @@ function handleSubmit() {
 
 function handleFormData(e) {
     const formData = e.formData; 
-    // set start and end date on form, from slider values (year only)
-    const dateRange = slider.noUiSlider.get();
-    formData.set("start_date", `${String(dateRange[0]).padStart(4, "0")}-01-01`);
-    formData.set("end_date", `${String(dateRange[1]).padStart(4, "0")}-12-31`);
+    if (resetting === true) {
+        // unset start and end date
+        formData.set("start_date", "");
+        formData.set("end_date", "");
+
+    } else {
+        // set start and end date on form, from slider values (year only)
+        const dateRange = slider.noUiSlider.get();
+        formData.set("start_date", `${String(dateRange[0]).padStart(4, "0")}-01-01`);
+        formData.set("end_date", `${String(dateRange[1]).padStart(4, "0")}-12-31`);
+    }
 }

@@ -1668,6 +1668,10 @@ div#search-grid :first-child button {
   overflow-x: hidden;
 }
 
+#search-filters .noUi-target {
+  margin: 60px 20px 10px;
+}
+
 ol#search-results {
   list-style: none;
 }

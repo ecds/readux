@@ -19,6 +19,10 @@
 {% endblock %}
 {% block extra_javascript %}
     <script src="{% static 'js/search.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.js"></script>
+{% endblock %}
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.css" rel="stylesheet">
 {% endblock %}
 {% block body_class %}template-homepage{% endblock %}
 
@@ -78,6 +82,18 @@
                     <span class="uk-text-small">
                         Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
                     </span>
+                </fieldset>
+                <fieldset class="uk-margin uk-width-1-1">
+                    <div class="uk-form-label">
+                        Date published
+                    </div>
+                    <div id="date-range-slider"></div>
+                    <noscript>
+                        <div class="uk-form-label">{{ form.start_date.label }}</div>
+                        {{ form.start_date }}
+                        <div class="uk-form-label">{{ form.end_date.label }}</div>
+                        {{ form.end_date }}
+                    </noscript>
                 </fieldset>
                 <fieldset class="uk-margin uk-width-1-1">
                     <button class="uk-button uk-button-default" type="submit">

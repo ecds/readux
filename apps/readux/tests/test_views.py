@@ -232,7 +232,8 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         assert response.hits[0]['pid'] == self.volume2.pid
 
     @patch("apps.readux.forms.ManifestSearchForm.set_facets")
-    def test_get_context_data(self, mock_set_facets):
+    @patch("apps.readux.forms.ManifestSearchForm.set_date")
+    def test_get_context_data(self, mock_set_date, mock_set_facets):
         """Should call form's set_facets method on returned facets from Elasticsearch"""
         volume_search_view = views.VolumeSearchView(kwargs={})
         volume_search_view.request = Mock()
@@ -259,3 +260,9 @@ class TestVolumeSearchView(ESTestCase, TestCase):
                 # collections IS nested, so it should have "inner" attribute
                 "collections": response.aggregations.collections.inner.buckets,
             })
+
+            # should call set_date with the aggregated min and max dates (as strings)
+            mock_set_date.assert_called_with(
+                response.aggregations.min_date.value_as_string,
+                response.aggregations.max_date.value_as_string,
+            )

@@ -84,9 +84,13 @@
                     </span>
                 </fieldset>
                 <fieldset class="uk-margin uk-width-1-1">
-                    <div class="uk-form-label">
-                        Date published
+                    <div class="uk-flex uk-flex-middle">
+                        <span class="uk-form-label">Date published</span>
+                        <button id="clear-date" class="uk-button uk-button-small uk-button-default" type="button">
+                            <span uk-icon="icon: close; ratio: 0.75"></span>Clear
+                        </button>
                     </div>
+                    
                     <div id="date-range-slider"></div>
                     <noscript>
                         <div class="uk-form-label">{{ form.start_date.label }}</div>

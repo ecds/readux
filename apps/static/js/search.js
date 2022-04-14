@@ -1,5 +1,5 @@
 // Scripts to improve search functionality
-// Adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
+// Partially adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
 
 let textInput;
 let sortElement;
@@ -9,10 +9,30 @@ let form;
 let slider;
 let resetFiltersButton;
 let allFilters;
-let resetting = false;
+let clearDateButton;
+let shouldClearDate = false;
+let urlParams;
+let queryMinYear;
+let queryMaxYear;
 
 $(document).ready(function() {
     form = document.querySelector("form#search-form");
+    clearDateButton = document.getElementById("clear-date");
+
+    // Get URL params
+    if (window.location.search) {
+        urlParams = new URLSearchParams(window.location.search);
+        queryMinYear = urlParams.get('start_date');
+        queryMaxYear = urlParams.get('end_date');
+        // If there's no min and max year, disable date clear button
+        if (!queryMinYear && !queryMaxYear) {
+            clearDateButton.disabled = true;
+        }
+    } else {
+        // If there's no search at all, disable date clear button
+        clearDateButton.disabled = true;
+    }
+
     sortElement = document.querySelector("select#id_sort");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
@@ -27,14 +47,18 @@ $(document).ready(function() {
     // Set up slider
     slider = document.getElementById("date-range-slider");
     setUpSlider(slider);
-    // Attach event listeners to form to handle slider input
-    form.addEventListener("submit", handleSubmit);
-    form.addEventListener("formdata", handleFormData);
+
+    // Add clear dates event listener
+    clearDateButton.addEventListener("click", clearDateAndSubmit);
 
     // Add reset filters event listener
     allFilters = document.querySelectorAll("#search-filters select");
     resetFiltersButton = document.querySelector("button#reset-filters");
     resetFiltersButton.addEventListener("click", resetFilters);
+
+    // Attach event listeners to form to handle slider input
+    form.addEventListener("submit", handleSubmit);
+    form.addEventListener("formdata", handleFormData);
 });
 
 function setUpSlider(slider) {
@@ -48,10 +72,7 @@ function setUpSlider(slider) {
     let maxYear = parseInt(maxDate.split("-")[0]); 
 
     // If there is no min and max (i.e. query returned 0 results), use query params for date
-    if (!maxYear && !minYear && window.location.search) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const queryMinYear = urlParams.get('start_date');
-        const queryMaxYear = urlParams.get('end_date');
+    if (!maxYear && !minYear && urlParams) {
         if (queryMinYear) minYear = parseInt(queryMinYear.split("-")[0]);
         if (queryMaxYear) maxYear = parseInt(queryMaxYear.split("-")[0]);
     }
@@ -118,7 +139,11 @@ function resetFilters() {
     allFilters.forEach((filter) => { 
         filter.selectedIndex = -1;
     });
-    resetting = true; // Needed to reset start and end date on form
+    clearDateAndSubmit();
+}
+
+function clearDateAndSubmit() {
+    shouldClearDate = true; // Needed to reset start and end date on form
     form.submit();
 }
 
@@ -129,11 +154,10 @@ function handleSubmit() {
 
 function handleFormData(e) {
     const formData = e.formData; 
-    if (resetting === true) {
+    if (shouldClearDate === true) {
         // unset start and end date
         formData.set("start_date", "");
         formData.set("end_date", "");
-
     } else {
         // set start and end date on form, from slider values (year only)
         const dateRange = slider.noUiSlider.get();

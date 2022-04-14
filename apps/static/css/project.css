@@ -1658,8 +1658,16 @@ div#search-grid {
 div#search-grid :first-child {
   padding-left: 0;
 }
-div#search-grid :first-child button {
+div#search-grid :first-child button#reset-filters {
   padding-left: 30px;
+}
+div#search-grid button#clear-date {
+  font-size: 14px;
+  padding-left: 12px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 #search-filters select[multiple] {
   height: 150px;

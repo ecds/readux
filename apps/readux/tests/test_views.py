@@ -77,6 +77,7 @@ class TestReaduxViews:
         assert isinstance(response.serialize(), bytes)
         assert 'jekyll_site_export.zip' in str(response.serialize())
 
+
 class TestVolumeSearchView(ESTestCase, TestCase):
     """View tests for Elasticsearch"""
 
@@ -90,14 +91,17 @@ class TestVolumeSearchView(ESTestCase, TestCase):
             label="primary",
             summary="test",
             author="Ben;An Author",
+            published_date_edtf="2022-04-14",
         )
         self.volume1.save()
+        print(self.volume1.date_earliest)
         self.volume1.languages.add(lang_en)
         self.volume2 = Manifest(
             pid="uniquepid2",
             label="secondary",
             summary="test",
             author="Ben",
+            published_date_edtf="2022-11-23",
         )
         self.volume2.save()
         self.volume2.languages.add(lang_en)
@@ -107,6 +111,7 @@ class TestVolumeSearchView(ESTestCase, TestCase):
             label="tertiary",
             summary="secondary",
             author="An Author",
+            published_date_edtf="1900/1909",
         )
         self.volume3.save()
 
@@ -132,7 +137,6 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         assert response.hits.total['value'] == 3
         # should sort by label alphabetically by default
         assert response.hits[0]['label'] == self.volume1.label
-
 
     def test_get_queryset_filters(self):
         """Should filter according to chosen filters"""
@@ -177,6 +181,18 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total['value'] == 2
 
+        # should filter on start and end date
+        volume_search_view.request.GET = {"start_date": "2020-01-01", "end_date": "2024-01-01"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 2
+
+        # should filter on start and end date (fuzzy)
+        volume_search_view.request.GET = {"start_date": "1899-01-01", "end_date": "1910-01-01"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits.total['value'] == 1
+
     def test_get_queryset_sorting(self):
         """Should sort according to default or chosen sort"""
         volume_search_view = views.VolumeSearchView()
@@ -218,6 +234,17 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         response = search_results.execute(ignore_cache=True)
         assert response.hits[0]['pid'] == self.volume3.pid
 
+        # should sort by date published (asc)
+        volume_search_view.request.GET = {"sort": "date_sort_ascending"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['pid'] == self.volume3.pid
+
+        # should sort by date published (desc)
+        volume_search_view.request.GET = {"sort": "-date_sort_descending"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert response.hits[0]['pid'] == self.volume2.pid
 
     def test_label_boost(self):
         """Should return the item matching label first, before matching summary"""

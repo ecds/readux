@@ -6,7 +6,7 @@ from django.template.defaultfilters import truncatechars
 
 
 class MinMaxDateInput(forms.DateInput):
-    """Widget extending """
+    """Widget extending DateInput to include an initial date in its attrs"""
     date_initial = ""
 
     def get_context(self, name, value, attrs):

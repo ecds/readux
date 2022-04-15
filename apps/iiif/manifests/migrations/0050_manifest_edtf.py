@@ -19,6 +19,12 @@ def dates_to_edtf(apps, _):  # pylint: disable=redefined-outer-name
         else:
             edtf_standard_date = text_to_edtf(manifest.published_date)
 
+        # generate a failure message
+        failure_message = f"""
+            Failed to convert {manifest.published_date} to EDTF (manifest with pid {
+                manifest.pid
+            } and label {manifest.label})."""
+
         # store on the model if it was able to parse
         if edtf_standard_date:
             manifest.published_date_edtf = edtf_standard_date
@@ -27,15 +33,15 @@ def dates_to_edtf(apps, _):  # pylint: disable=redefined-outer-name
             # signals cannot be fired during migration, so we have to do it manually
             date_edtf = parse_edtf(edtf_standard_date)
             manifest.date_edtf = date_edtf
-            manifest.date_earliest = struct_time_to_date(getattr(date_edtf, "lower_fuzzy")())
-            manifest.date_latest = struct_time_to_date(getattr(date_edtf, "upper_fuzzy")())
-            manifest.date_sort_ascending = struct_time_to_jd(getattr(date_edtf, "lower_strict")())
-            manifest.date_sort_descending = struct_time_to_jd(getattr(date_edtf, "upper_strict")())
+            try:
+                manifest.date_earliest = struct_time_to_date(getattr(date_edtf, "lower_fuzzy")())
+                manifest.date_latest = struct_time_to_date(getattr(date_edtf, "upper_fuzzy")())
+                manifest.date_sort_ascending = struct_time_to_jd(getattr(date_edtf, "lower_strict")())
+                manifest.date_sort_descending = struct_time_to_jd(getattr(date_edtf, "upper_strict")())
+            except ValueError:
+                print(failure_message)
         else:
-            print(f"""
-            Failed to convert {manifest.published_date} to EDTF (manifest with pid {
-                manifest.pid
-            } and label {manifest.label}).""")
+            print(failure_message)
 
     Manifest.objects.bulk_update(manifests, [
         "published_date_edtf",

@@ -373,12 +373,27 @@ class VolumeSearchView(ListView, FormMixin):
                 aggs = getattr(volumes_response.aggregations, facet)
                 # use "inner" to handle NestedFacet
                 if hasattr(aggs, "inner"):
-                    aggs = getattr(aggs,"inner")
+                    aggs = getattr(aggs, "inner")
                 facets.update({
                     # get buckets array from each facet in the aggregations dict
                     facet: getattr(aggs, "buckets"),
                 })
         context_data["form"].set_facets(facets)
+
+        # get min and max date aggregations and set on form
+        if hasattr(volumes_response.aggregations, "min_date"):
+            min_date = getattr(volumes_response.aggregations, "min_date")
+            if hasattr(volumes_response.aggregations, "max_date"):
+                max_date = getattr(volumes_response.aggregations, "max_date")
+                if hasattr(
+                    min_date, "value_as_string"
+                ) and hasattr(
+                    max_date, "value_as_string"
+                ):
+                    context_data["form"].set_date(
+                        getattr(min_date, "value_as_string"),
+                        getattr(max_date, "value_as_string"),
+                    )
 
         return context_data
 
@@ -411,18 +426,31 @@ class VolumeSearchView(ListView, FormMixin):
         collection_filter = form_data.get("collection", "")
         if collection_filter:
             volumes = volumes.filter("nested", path="collections", query=Q(
-                "terms", **{ "collections.label": collection_filter}
+                "terms", **{"collections.label": collection_filter}
             ))
+
+        # filter on date published
+        min_date_filter = form_data.get("start_date", "")
+        if min_date_filter:
+            volumes = volumes.filter("range", date_earliest={"gte": min_date_filter})
+        max_date_filter = form_data.get("end_date", "")
+        if max_date_filter:
+            volumes = volumes.filter("range", date_latest={"lte": max_date_filter})
 
         # create aggregation buckets for facet fields
         for (facet_name, facet) in self.facets:
             volumes.aggs.bucket(facet_name, facet.get_aggregation())
+
+        # get min and max date published values
+        volumes.aggs.metric("min_date", "min", field="date_earliest")
+        volumes.aggs.metric("max_date", "max", field="date_latest")
 
         # sort
         volumes = volumes.sort(form_data["sort"])
 
         # return elasticsearch_dsl Search instance
         return volumes
+
 
 class ManifestsSitemap(Sitemap):
     """Django Sitemap for Manafests"""

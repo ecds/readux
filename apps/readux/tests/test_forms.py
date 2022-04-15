@@ -2,8 +2,8 @@
 
 import random
 import string
-from unittest.mock import Mock
-from apps.readux.forms import FacetedMultipleChoiceField, ManifestSearchForm
+from unittest.mock import Mock, call, patch
+from apps.readux import forms
 
 
 class TestFacetedMultipleChoiceField:
@@ -11,12 +11,12 @@ class TestFacetedMultipleChoiceField:
 
     def test_valid_value(self):
         """Should always return True"""
-        facetfield = FacetedMultipleChoiceField()
+        facetfield = forms.FacetedMultipleChoiceField()
         assert facetfield.valid_value("junk_string")
 
     def test_populate_from_buckets(self):
         """Should return choices based on passed buckets"""
-        facetfield = FacetedMultipleChoiceField()
+        facetfield = forms.FacetedMultipleChoiceField()
         fake_buckets = [{"key": "fake1", "doc_count": 0}, {"key": "fake2", "doc_count": 12}]
         facetfield.populate_from_buckets(buckets=fake_buckets)
         assert ("fake1", "fake1 (0)") in facetfield.choices
@@ -36,7 +36,7 @@ class TestManifestSearchForm:
 
     def test_set_facets(self):
         """Should call populate method on form fields based on facets retrieved from view"""
-        form = ManifestSearchForm()
+        form = forms.ManifestSearchForm()
         example_field = Mock()
         example_field.populate_from_buckets = Mock()
         fake_buckets = [{"key": "fake1", "doc_count": 0}, {"key": "fake2", "doc_count": 12}]
@@ -48,3 +48,35 @@ class TestManifestSearchForm:
         }
         form.set_facets(facets=facets)
         example_field.populate_from_buckets.assert_called_with(fake_buckets)
+
+    @patch("apps.readux.forms.MinMaxDateField.set_initial")
+    def test_set_date(self, mock_set_initial):
+        """Should call set_initial on start_date and end_date form fields with formatted dates"""
+        min_date = "2022-01-01T00:00:00.000Z"
+        max_date = "2022-12-31T00:00:00.000Z"
+        form = forms.ManifestSearchForm()
+        form.set_date(min_date, max_date)
+        mock_set_initial.assert_has_calls([call("2022-01-01"), call("2022-12-31")], any_order=True)
+
+
+class TestMinMaxDateField:
+    """Tests for DateField populated by elasticsearch min or max date"""
+
+    def test_set_initial(self):
+        """Should set initial and attribute on widget"""
+        date_field = forms.MinMaxDateField(widget=forms.MinMaxDateInput())
+        date_field.set_initial("2022-01-01")
+        assert date_field.initial == "2022-01-01"
+        assert date_field.widget.date_initial == "2022-01-01"
+
+
+class TestMinMaxDateInput:
+    """Tests for widget populated by an initial date"""
+
+    def test_get_context(self):
+        """Should set data-date-initial attribute"""
+        date_widget = forms.MinMaxDateInput()
+        date_widget.date_initial = "2022-01-01"
+        assert date_widget.get_context(
+            name="start_date", value="", attrs={}
+        )["widget"]["attrs"]["data-date-initial"] == "2022-01-01"

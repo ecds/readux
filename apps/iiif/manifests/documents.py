@@ -27,6 +27,8 @@ class ManifestDocument(Document):
         "label": fields.KeywordField(),
     })
     # TODO: date = DateRange()
+    date_earliest = fields.DateField()
+    date_latest = fields.DateField()
     has_pdf = fields.BooleanField()
     label_alphabetical = fields.KeywordField()
     languages = fields.KeywordField(multi=True)
@@ -44,10 +46,13 @@ class ManifestDocument(Document):
         fields = [
             "attribution",
             "created_at",
+            "date_sort_ascending",
+            "date_sort_descending",
             "label",
             "license",
             "pid",
             "published_city",
+            "published_date",
             "publisher",
             "viewingdirection",
         ]

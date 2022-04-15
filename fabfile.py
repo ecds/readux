@@ -38,6 +38,7 @@ def deploy(branch='release', path='/readux.io/readux', volume=None):
         _update_symlink(options)
         _restart_webserver()
         _restart_celery(options)
+        _rebuild_search_index(options)
         _clean_old_builds(options)
 
 def _get_latest_source(branch, options):
@@ -89,6 +90,9 @@ def _restart_webserver():
 
 def _restart_celery(options):
     run('sudo /bin/systemctl restart celeryd')
+
+def _rebuild_search_index(options):
+    run('{v}/bin/python manage.py search_index --rebuild -f'.format(v=options['VENV_PATH']))
 
 def _clean_old_builds(options):
     with cd(options['RELEASE_PATH']):

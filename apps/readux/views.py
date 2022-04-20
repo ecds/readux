@@ -458,9 +458,6 @@ class VolumeSearchView(ListView, FormMixin):
         # sort
         volumes = volumes.sort(form_data["sort"])
 
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(volumes.to_dict())
-
         # return elasticsearch_dsl Search instance
         return volumes
 

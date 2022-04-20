@@ -258,6 +258,15 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         # should return "secondary" label match first (sort by relevance is default)
         assert response.hits[0]['pid'] == self.volume2.pid
 
+    def test_highlighting(self):
+        """Should highlight text matching query"""
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+        volume_search_view.request.GET = {"q": "secondary"}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        assert "<em>secondary</em>" in response.hits[0].meta.highlight.label[0]
+
     @patch("apps.readux.forms.ManifestSearchForm.set_facets")
     @patch("apps.readux.forms.ManifestSearchForm.set_date")
     def test_get_context_data(self, mock_set_date, mock_set_facets):

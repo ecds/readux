@@ -15,7 +15,7 @@ let urlParams;
 let queryMinYear;
 let queryMaxYear;
 
-$(document).ready(function() {
+window.addEventListener("DOMContentLoaded", () => {
     form = document.querySelector("form#search-form");
     clearDateButton = document.getElementById("clear-date");
 

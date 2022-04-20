@@ -1,5 +1,6 @@
 """Django Views for the Readux app"""
 from os import path
+import pprint
 from urllib.parse import urlencode
 from django.http import HttpResponse
 from django.views.generic import ListView
@@ -412,6 +413,15 @@ class VolumeSearchView(ListView, FormMixin):
             multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
             volumes = volumes.query(multimatch_query)
 
+        # highlight
+        volumes = volumes.highlight_options(
+            require_field_match=False,
+            fragment_size=200,
+            number_of_fragments=10,
+        ).highlight(
+            "label", "author", "summary"
+        )
+
         # filter on authors
         author_filter = form_data.get("author", "")
         if author_filter:
@@ -447,6 +457,9 @@ class VolumeSearchView(ListView, FormMixin):
 
         # sort
         volumes = volumes.sort(form_data["sort"])
+
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(volumes.to_dict())
 
         # return elasticsearch_dsl Search instance
         return volumes

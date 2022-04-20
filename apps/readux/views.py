@@ -1,6 +1,5 @@
 """Django Views for the Readux app"""
 from os import path
-import pprint
 from urllib.parse import urlencode
 from django.http import HttpResponse
 from django.views.generic import ListView

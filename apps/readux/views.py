@@ -412,6 +412,15 @@ class VolumeSearchView(ListView, FormMixin):
             multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
             volumes = volumes.query(multimatch_query)
 
+        # highlight
+        volumes = volumes.highlight_options(
+            require_field_match=False,
+            fragment_size=200,
+            number_of_fragments=10,
+        ).highlight(
+            "label", "author", "summary"
+        )
+
         # filter on authors
         author_filter = form_data.get("author", "")
         if author_filter:

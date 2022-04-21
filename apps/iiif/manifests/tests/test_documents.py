@@ -81,6 +81,13 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         manifest.languages.add(self.lang_la)
         assert len(self.doc.prepare_languages(instance=manifest)) == 2
 
+    def test_prepare_summary(self):
+        """Test summary stripped of HTML tags"""
+        manifest = ManifestFactory.create(summary="No html tags")
+        assert self.doc.prepare_summary(instance=manifest) == manifest.summary
+        manifest.summary = "<p><strong>Has</strong> HTML tags</p>"
+        assert self.doc.prepare_summary(instance=manifest) == "Has HTML tags"
+
     def test_get_queryset(self):
         """Test prefetching"""
         manifest = ManifestFactory.create()

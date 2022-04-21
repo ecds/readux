@@ -7,10 +7,22 @@
                 class="nav-link"
                 href="{% url 'volumeall' volume.pid %}"
             >
-                {{ volume.label|default:"[no label]" }}
+                {% if volume.meta.highlight.label %}
+                    {% for fragment in volume.meta.highlight.label %}
+                        {{ fragment|safe }}
+                    {% endfor %}
+                {% else %}
+                    {{ volume.label }}
+                {% endif %}
             </a>
         {% else %}
-            {{ volume.label|default:"[no label]" }}
+            {% if volume.meta.highlight.label %}
+                {% for fragment in volume.meta.highlight.label %}
+                    {{ fragment|safe }}
+                {% endfor %}
+            {% else %}
+                {{ volume.label }}
+            {% endif %}
         {% endif %}
     </h4>
     <dl class="uk-description-list">
@@ -22,9 +34,15 @@
             <dt>Author{{volume.authors|pluralize}}</dt>
             <dd>
                 <ul class="uk-margin-remove">
-                    {% for author in volume.authors %}
-                        <li>{{ author }}</li>
-                    {% endfor %}
+                    {% if volume.meta.highlight.author %}
+                        {% for fragment in volume.meta.highlight.author %}
+                            {{ fragment|safe }}
+                        {% endfor %}
+                    {% else %}
+                        {% for author in volume.authors %}
+                            <li>{{ author }}</li>
+                        {% endfor %}
+                    {% endif %}
                 </ul>
             </dd>
         {% endif %}
@@ -45,7 +63,13 @@
         {% if volume.summary %}
             <dt>Summary</dt> 
             <dd class="result-volume-summary">
-                {{volume.summary|striptags|safe}}
+                {% if volume.meta.highlight.summary %}
+                    {% for fragment in volume.meta.highlight.summary %}
+                        {{ fragment|safe }}
+                    {% endfor %}
+                {% else %}
+                    {{ volume.summary|safe }}
+                {% endif %}
             </dd>
         {% endif %}
     </dl>

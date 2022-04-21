@@ -3,6 +3,7 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
+from django.utils.html import strip_tags
 
 from apps.iiif.kollections.models import Collection
 from .models import Manifest
@@ -80,6 +81,10 @@ class ManifestDocument(Document):
         if instance.languages.count():
             return [lang.name for lang in instance.languages.all()]
         return ["[no language]"]
+
+    def prepare_summary(self, instance):
+        """Strip HTML tags from summary"""
+        return strip_tags(instance.summary)
 
     def get_queryset(self):
         """prefetch related to improve performance"""

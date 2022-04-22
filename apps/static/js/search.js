@@ -9,30 +9,28 @@ let form;
 let slider;
 let resetFiltersButton;
 let allFilters;
-let clearDateButton;
-let shouldClearDate = false;
+let dateToggleSwitch;
+let dateToggleState;
 let urlParams;
 let queryMinYear;
 let queryMaxYear;
 
 window.addEventListener("DOMContentLoaded", () => {
-    form = document.querySelector("form#search-form");
-    clearDateButton = document.getElementById("clear-date");
-
     // Get URL params
     if (window.location.search) {
         urlParams = new URLSearchParams(window.location.search);
         queryMinYear = urlParams.get('start_date');
         queryMaxYear = urlParams.get('end_date');
-        // If there's no min and max year, disable date clear button
-        if (!queryMinYear && !queryMaxYear) {
-            clearDateButton.disabled = true;
-        }
+        // If there's a min or max year, assume date toggle is on
+        dateToggleState = Boolean(queryMinYear || queryMaxYear);
     } else {
-        // If there's no search at all, disable date clear button
-        clearDateButton.disabled = true;
+        // If there's no search at all, turn date toggle off
+        dateToggleState = false;
     }
 
+    // initialize elements
+    form = document.querySelector("form#search-form");
+    dateToggleSwitch = document.querySelector("input[type='checkbox']#toggle-date");
     sortElement = document.querySelector("select#id_sort");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
@@ -48,8 +46,9 @@ window.addEventListener("DOMContentLoaded", () => {
     slider = document.getElementById("date-range-slider");
     setUpSlider(slider);
 
-    // Add clear dates event listener
-    clearDateButton.addEventListener("click", clearDateAndSubmit);
+    // Initialize date toggle switch and add event listener
+    setDateFieldToggleState(dateToggleState);
+    dateToggleSwitch.addEventListener("change", toggleDate);
 
     // Add reset filters event listener
     allFilters = document.querySelectorAll("#search-filters select");
@@ -135,16 +134,30 @@ function disableRelevanceSort() {
 }
 
 function resetFilters() {
-    // Clears filters and submits the search
+    // Clear filters and submit the search
     allFilters.forEach((filter) => { 
         filter.selectedIndex = -1;
     });
-    clearDateAndSubmit();
+    dateToggleState = false;
+    setDateFieldToggleState(false);
+    form.submit();
 }
 
-function clearDateAndSubmit() {
-    shouldClearDate = true; // Needed to reset start and end date on form
-    form.submit();
+function toggleDate(e) {
+    // Use state of toggle button to turn on/off date filter
+    dateToggleState = e.currentTarget.checked;
+    setDateFieldToggleState(dateToggleState);
+}
+
+function setDateFieldToggleState(state) {
+    // Change the date toggle switch and slider to match toggle state
+    if (state === false) {
+        dateToggleSwitch.removeAttribute("checked");
+        slider.setAttribute("disabled", true);
+    } else {
+        dateToggleSwitch.setAttribute("checked", true);
+        slider.removeAttribute("disabled");
+    }
 }
 
 function handleSubmit() {
@@ -154,10 +167,10 @@ function handleSubmit() {
 
 function handleFormData(e) {
     const formData = e.formData; 
-    if (shouldClearDate === true) {
+    if (dateToggleState === false) {
         // unset start and end date
-        formData.set("start_date", "");
-        formData.set("end_date", "");
+        formData.delete("start_date");
+        formData.delete("end_date");
     } else {
         // set start and end date on form, from slider values (year only)
         const dateRange = slider.noUiSlider.get();

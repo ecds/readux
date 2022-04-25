@@ -23,6 +23,15 @@
 {% endblock %}
 {% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.css" rel="stylesheet">
+    <noscript>
+        <style type="text/css">
+            div#search-grid input#toggle-date,
+            div#search-grid input#toggle-date + label,
+            div#search-grid button#reset-filters {
+                display: none;
+            }
+        </style>
+    </noscript>
 {% endblock %}
 {% block body_class %}template-homepage{% endblock %}
 
@@ -58,7 +67,7 @@
                 </button>
             </fieldset>
         </div>
-        <div uk-grid id="search-grid">
+        <div uk-grid class="uk-grid" id="search-grid">
             <div
                 class="uk-form uk-form-stacked uk-width-1-3"
                 id="search-filters"
@@ -84,13 +93,9 @@
                     </span>
                 </fieldset>
                 <fieldset class="uk-margin uk-width-1-1">
-                    <div class="uk-flex uk-flex-middle">
-                        <span class="uk-form-label">Date published</span>
-                        <button id="clear-date" class="uk-button uk-button-small uk-button-default" type="button">
-                            <span uk-icon="icon: close; ratio: 0.75"></span>Clear
-                        </button>
-                    </div>
-                    
+                    <span class="uk-form-label uk-margin-remove-bottom">Date published</span>
+                    <input type="checkbox" name="date-filter" id="toggle-date" />
+                    <label for="toggle-date"><span>Filter by date published</span></label>
                     <div id="date-range-slider"></div>
                     <noscript>
                         <div class="uk-form-label">{{ form.start_date.label }}</div>

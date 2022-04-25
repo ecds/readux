@@ -36,6 +36,9 @@ window.addEventListener("DOMContentLoaded", () => {
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
     textInput = document.querySelector("input[type='search']");
 
+    // Attach event listener to sort dropdown to auto-submit
+    sortElement.addEventListener("change", handleSort);
+
     // Attach event listeners to text input to update sort
     textInput.addEventListener("input", autoUpdateSort);
     if (textInput.value.trim() == "") {
@@ -158,6 +161,10 @@ function setDateFieldToggleState(state) {
         dateToggleSwitch.setAttribute("checked", true);
         slider.removeAttribute("disabled");
     }
+}
+
+function handleSort(e) {
+    form.submit();
 }
 
 function handleSubmit() {

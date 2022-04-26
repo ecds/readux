@@ -14,6 +14,8 @@ let dateToggleState;
 let urlParams;
 let queryMinYear;
 let queryMaxYear;
+let authorsFilter;
+let authorsMultiselect;
 
 window.addEventListener("DOMContentLoaded", () => {
     // Get URL params
@@ -35,6 +37,8 @@ window.addEventListener("DOMContentLoaded", () => {
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
     textInput = document.querySelector("input[type='search']");
+    authorsFilter = document.querySelector("input[type='text']#authors-filter");
+    authorsMultiselect = document.querySelector("select[name='author']");
 
     // Attach event listener to sort dropdown to auto-submit
     sortElement.addEventListener("change", handleSort);
@@ -44,6 +48,9 @@ window.addEventListener("DOMContentLoaded", () => {
     if (textInput.value.trim() == "") {
         disableRelevanceSort();
     }
+
+    // Attach event listener to filter author multiselect options
+    authorsFilter.addEventListener("input", handleAuthorsFilter);
 
     // Set up slider
     slider = document.getElementById("date-range-slider");
@@ -164,7 +171,25 @@ function setDateFieldToggleState(state) {
 }
 
 function handleSort(e) {
+    // Submits the form on sort change
     form.submit();
+}
+
+function handleAuthorsFilter(e) {
+    // Simple "exact match" filter for authors multiselect;
+    // hides non-matching entries from the multiselect options
+    const term = e.currentTarget.value.toLowerCase();
+    const authors = Array.apply(null, authorsMultiselect.options)
+    authorsMultiselect.options = authors.filter(opt => opt.value.toLowerCase().includes(term));
+    for (let i = 0; i < authorsMultiselect.length; i++) {
+        let txt = authorsMultiselect.options[i].text.toLowerCase();
+        if (!txt.match(term)) {
+            authorsMultiselect.options[i].style.display = 'none';
+        } else {
+            authorsMultiselect.options[i].style.display = 'block';
+        }
+
+    }
 }
 
 function handleSubmit() {

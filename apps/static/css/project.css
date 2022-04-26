@@ -1736,6 +1736,10 @@ div#search-grid input[type="checkbox"]#toggle-date + label span {
   width: 170px;
 }
 
+#search-filters input[type="text"]#authors-filter {
+  width: 100%;
+}
+
 /* Multiselect filter */
 #search-filters select[multiple] {
   height: 150px;

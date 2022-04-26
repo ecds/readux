@@ -1,5 +1,6 @@
 """Elasticsearch indexing rules for IIIF manifests"""
 
+from html import unescape
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
@@ -10,11 +11,10 @@ from apps.iiif.kollections.models import Collection
 from .models import Manifest
 
 # TODO: Better English stemming (e.g. Rome to match Roman), multilingual stemming.
-html_strip_and_stem = analyzer(
-    "html_strip",
+stemmer = analyzer(
+    "en",
     tokenizer="standard",
-    filter=["lowercase", "stop", "snowball", "porter_stem"],
-    char_filter=["html_strip"]
+    filter=["lowercase", "stop", "porter_stem"],
 )
 
 
@@ -31,10 +31,10 @@ class ManifestDocument(Document):
     date_earliest = fields.DateField()
     date_latest = fields.DateField()
     has_pdf = fields.BooleanField()
-    label = fields.TextField(analyzer=html_strip_and_stem)
+    label = fields.TextField(analyzer=stemmer)
     label_alphabetical = fields.KeywordField()
     languages = fields.KeywordField(multi=True)
-    summary = fields.TextField(analyzer=html_strip_and_stem)
+    summary = fields.TextField(analyzer=stemmer)
 
     class Index:
         """Settings for Elasticsearch"""
@@ -84,7 +84,7 @@ class ManifestDocument(Document):
 
     def prepare_summary(self, instance):
         """Strip HTML tags from summary"""
-        return strip_tags(instance.summary)
+        return unescape(strip_tags(instance.summary))
 
     def get_queryset(self):
         """prefetch related to improve performance"""

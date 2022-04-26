@@ -29,6 +29,10 @@ Administrators can organize digitized books into collections, facilitating user 
 2. PostgreSQL
 3. Elasticsearch (>7.0, <7.14.0)
 
+### Set up Elasticsearch
+
+Elasticsearch will need to be running as a background process on port 9200. Read the Elastic guides for [setting up](https://www.elastic.co/guide/en/elasticsearch/reference/7.13/getting-started.html) (self-managed) and [securing your instance](https://www.elastic.co/guide/en/elasticsearch/reference/7.13/secure-cluster.html). Ignore all instructions related to Kibana.
+
 ### Set up development environment
 
 1. Clone this repository.
@@ -62,11 +66,12 @@ export DATABASE_URL=postgres://<database user>:<database password>@127.0.0.1:543
 export ELASTICSEARCH_URL=http://<elastic user>:<elastic password>@127.0.0.1:9200
 ~~~
 
-7. Run the migrations and load the example data.
+7. Run the migrations, load the example data, and build the search index.
 
 ~~~bash
 python manage.py migrate
 python manage.py loaddata apps/fixtures/dump.json
+python manage.py search_index --rebuild -f
 ~~~
 
 ### Running local development server

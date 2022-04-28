@@ -27,7 +27,8 @@
         <style type="text/css">
             div#search-grid input#toggle-date,
             div#search-grid input#toggle-date + label,
-            div#search-grid button#reset-filters {
+            div#search-grid button#reset-filters,
+            div#search-grid input#authors-filter {
                 display: none;
             }
         </style>
@@ -76,6 +77,7 @@
                 <fieldset class="uk-margin">
                     <div class="uk-width-1-1">
                         <div class="uk-form-label">{{ form.author.label }}</div>
+                        <input type="text" id="authors-filter" class="uk-input" placeholder="Start typing an author's name" />
                         {{ form.author }}
                     </div>
                 </fieldset>

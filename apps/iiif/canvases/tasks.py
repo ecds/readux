@@ -1,14 +1,8 @@
 """ Common tasks for canvases. """
 from celery import Celery
-from django.apps import apps
-from ..annotations.models import Annotation
 from .models import Canvas
-from .services import add_ocr_annotations, get_ocr
+from .services import add_ocr_annotations, get_ocr, add_oa_annotations
 from django.conf import settings
-
-# Use `apps.get_model` to avoid circular import error. Because the parameters used to
-# create a background task have to be serializable, we can't just pass in the model object.
-# Canvas = apps.get_model('canvases.canvas')
 
 app = Celery('apps.iiif.canvases')
 app.config_from_object('django.conf:settings')
@@ -22,3 +16,7 @@ def add_ocr_task(canvas_id, *args, **kwargs):
 
     if ocr is not None:
         add_ocr_annotations(canvas, ocr)
+
+@app.task(name='adding_oa_ocr_to_canvas', retry_backoff=5)
+def add_oa_ocr_task(annotation_list_url):
+    add_oa_annotations(annotation_list_url)

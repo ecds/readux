@@ -9,6 +9,7 @@ import tempfile
 from hocr_spec import HocrValidator
 from lxml import etree
 from django.conf import settings
+from django.core.serializers import deserialize
 import httpretty
 from apps.iiif.annotations.models import Annotation
 from apps.utils.fetch import fetch_url
@@ -503,3 +504,9 @@ def add_ocr_annotations(canvas, ocr):
         anno.order = word_order
         anno.save()
         word_order += 1
+
+def add_oa_annotations(annotation_list_url):
+    data = fetch_url(annotation_list_url)
+    for oa_annotation in data['resources']:
+        anno = deserialize('annotation', oa_annotation)
+        anno.save()

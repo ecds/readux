@@ -17,7 +17,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
 from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.canvases.tasks import add_ocr_task
+from apps.iiif.canvases.tasks import add_ocr_task, add_oa_ocr_task
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest, ImageServer
 from apps.ingest import services
@@ -401,15 +401,15 @@ class Remote(IngestAbstractModel):
 
     def create_canvases(self):
         # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
-        for position, canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
+        for position, sc_canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
             canvas_metadata = None
             # TODO: we will need some sort of check for IIIF API version, but not
             # everyone includes a context for each canvas.
             # if canvas['@context'] == 'http://iiif.io/api/presentation/2/context.json':
-            canvas_metadata = services.parse_iiif_v2_canvas(canvas)
+            canvas_metadata = services.parse_iiif_v2_canvas(sc_canvas)
 
             if canvas_metadata is not None:
-                canvas, _created = Canvas.objects.get_or_create(
+                canvas, _ = Canvas.objects.get_or_create(
                     pid=canvas_metadata['pid'],
                     manifest=self.manifest,
                     position=position
@@ -421,4 +421,12 @@ class Remote(IngestAbstractModel):
                 canvas.refresh_from_db()
 
                 if os.environ['DJANGO_ENV'] != 'test':
-                  add_ocr_task.delay(canvas.id)
+                    add_ocr_task.delay(canvas.id)
+
+                if 'otherContent' in sc_canvas and len(sc_canvas['otherContent']) > 0:
+                    for content in sc_canvas['otherContent']:
+                        if content['label'] == 'OCR Text':
+                            if os.environ['DJANGO_ENV'] != 'test':
+                                add_oa_ocr_task.delay(content['@id'])
+                            else:
+                                add_oa_ocr_task(content['@id'])

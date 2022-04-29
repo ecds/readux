@@ -1,8 +1,14 @@
 # pylint: disable = attribute-defined-outside-init, too-few-public-methods
 """Module for serializing IIIF Annotation"""
+import json
 from django.core.serializers.base import SerializerDoesNotExist
+from django.contrib.auth import get_user_model
 from apps.iiif.serializers.base import Serializer as JSONSerializer
+from apps.iiif.annotations.models import Annotation
+from apps.iiif.canvases.models import Canvas
 import config.settings.local as settings
+
+USER = get_user_model()
 
 class Serializer(JSONSerializer):
     """
@@ -116,10 +122,19 @@ class Serializer(JSONSerializer):
             "value": obj.style
         }
 
-class Deserializer:
-    """Deserialize IIIF Annotation
-
-    :raises SerializerDoesNotExist: Not yet implemented.
-    """
-    def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("annotation is a serialization-only serializer")
+def Deserializer(data):
+    # data = json.loads(stream_or_string)
+    annotation = Annotation()
+    if data['@type'] == 'oa:Annotation':
+        if data['annotatedBy']['name'] == 'OCR':
+            data['annotatedBy']['name'] = 'ocr'
+            annotation.owner = USER.objects.get(username='ocr', name='OCR')
+        annotation.oa_annotation = data
+        annotation.resource_type = annotation.OCR
+        annotation.motivation = data['motivation']
+        annotation.content = data['resource']['chars']
+        annotation.language = data['resource']['language']
+        annotation.canvas = Canvas.objects.get(pid=data['on']['full'].split('/')[-1])
+        dimensions = data['on']['selector']['value'].split('=')[-1].split(',')
+        annotation.x, annotation.y, annotation.w, annotation.h = [int(d) for d in dimensions]
+    return annotation

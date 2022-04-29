@@ -146,6 +146,7 @@ assets/upload/*
 !assets/upload/index.html
 
 *_dev
+snippets
 
 # profiler
 *.profile

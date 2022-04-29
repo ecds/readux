@@ -4,12 +4,16 @@ Test cases for :class:`apps.iiif.canvases`
 import json
 from os.path import join
 import boto3
+import httpretty
 from moto import mock_s3
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.core.serializers import serialize
 from lxml.etree import XMLSyntaxError
 import config.settings.local as settings
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
+from apps.iiif.annotations.tests.factories import AnnotationFactory
+from apps.users.tests.factories import UserFactory
 from apps.utils.noid import encode_noid
 from ..models import Canvas
 from .. import services
@@ -416,3 +420,34 @@ class CanvasTests(TestCase):
         not_tsv = 'test string'
         is_tsv = services.is_tsv(not_tsv)
         self.assertFalse(is_tsv)
+
+    @httpretty.httprettified(allow_net_connect=False)
+    def test_ocr_from_oa_annotation(self):
+        """ Test deserializing OA annotations """
+        canvas = CanvasFactory.create(manifest=ManifestFactory.create())
+
+        for _ in range(0, 12):
+            AnnotationFactory.create(canvas=canvas)
+
+        anno_list = serialize(
+            'annotation_list',
+            [canvas],
+            version='v2',
+            owners=[UserFactory.create(username='ocr')]
+        )
+
+        canvas.annotation_set.clear()
+        canvas.refresh_from_db()
+
+        assert canvas.annotation_set.count() == 0
+
+        httpretty.register_uri(
+            httpretty.GET,
+            f'https://readux.io/iiif/v2/{canvas.manifest.pid}/list/{canvas.pid}',
+            body=anno_list,
+            content_type="text/json"
+        )
+
+        services.add_oa_annotations(f'https://readux.io/iiif/v2/{canvas.manifest.pid}/list/{canvas.pid}')
+        canvas.refresh_from_db()
+        assert canvas.annotation_set.count() == 12

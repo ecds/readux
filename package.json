@@ -1,0 +1,37 @@
+{
+  "name": "readux",
+  "version": "1.0.0",
+  "description": "[![ECDS](https://circleci.com/gh/ecds/readux.svg?style=svg)](<LINK>)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "axios": "^0.23.0"
+  },
+  "devDependencies": {
+    "fontawesome": "^5.6.3",
+    "jquery": "^3.6.0",
+    "selectize": "^0.12.6",
+    "uikit": "^3.14.0",
+    "uikit-icons": "^0.5.0",
+    "vue": "^3.2.33",
+    "webpack": "^5.72.0",
+    "webpack-bundle-tracker": "^1.5.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecds/readux.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ecds/readux/issues"
+  },
+  "homepage": "https://github.com/ecds/readux#readme"
+}

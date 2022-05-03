@@ -5,12 +5,13 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3572679.svg)](https://doi.org/10.5281/zenodo.3572679)
 
 Readux is a platform developed by the Emory Center for Digital Scholarship which allows users to read, take notes on, and publish with digitized texts from libraries’ archival collections. With Readux, users are able to:
--	browse digitized page images,
--	search and select the texts of these digitized books,
--	annotate text or illustrations in these works, and then
--	publish digital copies of the texts with their annotations.
-Administrators can organize digitized books into collections, facilitating user access to digitized books available through the platform. Since its release, Readux has proved to be an innovative research and pedagogy tool for scholars and faculty at Emory University and beyond, with an array of use-cases ranging from teaching to publishing.
 
+- browse digitized page images,
+- search and select the texts of these digitized books,
+- annotate text or illustrations in these works, and then
+- publish digital copies of the texts with their annotations.
+
+Administrators can organize digitized books into collections, facilitating user access to digitized books available through the platform. Since its release, Readux has proved to be an innovative research and pedagogy tool for scholars and faculty at Emory University and beyond, with an array of use-cases ranging from teaching to publishing.
 
 ## Motivation
 
@@ -20,7 +21,6 @@ Administrators can organize digitized books into collections, facilitating user 
 
 ...
 
-
 ## Installation (development)
 
 ### Requirements
@@ -28,6 +28,7 @@ Administrators can organize digitized books into collections, facilitating user 
 1. Python 3
 2. PostgreSQL
 3. Elasticsearch (>7.0, <7.14.0)
+4. Node
 
 ### Set up Elasticsearch
 
@@ -51,6 +52,7 @@ Note: You will need to install Rust and have it in your path.
 ~~~bash
 pip install -r requirements/local.txt
 bundle install
+npm install && npx webpack
 ~~~
 
 5. Copy and set up your local settings.

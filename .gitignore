@@ -156,3 +156,4 @@ dev_*.json
 # Presentation Validator
 presentation-validator/
 nohup.out
+webpack-stats.json

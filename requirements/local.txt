@@ -35,7 +35,7 @@ faker==13.7.0
 
 django-debug-toolbar==3.4.0  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.1.5  # https://github.com/django-extensions/django-extensions
-django-coverage-plugin==2.0.2  # https://github.com/nedbat/django_coverage_plugin
+django-coverage-plugin==2.0.3  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https
 
 # Deployment

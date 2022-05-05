@@ -108,6 +108,8 @@ class Local(IngestAbstractModel):
         help_text="Optional: Collections to attach to the volume ingested in this form."
     )
 
+    remote_dir = None
+
     class Meta:
         verbose_name_plural = 'Local'
 
@@ -172,12 +174,12 @@ class Local(IngestAbstractModel):
         :return: Tuple of two lists. One list of image files and one of OCR files
         :rtype: tuple
         """
-        sftp = self.create_sftp_connection()
-        sftp.mkdir(self.manifest.pid)
-        with sftp.cd(self.manifest.pid):
-            sftp.mkdir('_*ocr*_')
+        # sftp = self.create_sftp_connection()
+        # sftp.mkdir(self.manifest.pid)
+        # with sftp.cd(self.manifest.pid):
+        #     sftp.mkdir('_*ocr*_')
 
-        sftp.close()
+        # sftp.close()
         self.__unzip_bundle()
         return self.__list_sftp_files()
 
@@ -316,8 +318,8 @@ class Local(IngestAbstractModel):
                     self.__upload_file(tmp_file, file_name, file_path)
 
     def __upload_file(self, file, file_name, path):
+        remote_path = f'{self.manifest.pid}{self.image_server.path_delineator}{file_name}'
         if self.image_server.storage_service == 's3':
-            remote_path = f'{self.manifest.pid}/{file_name}'
             if 'ocr' in path:
                 remote_path = f'{self.manifest.pid}/_*ocr*_/{file_name}'
             self.image_server.bucket.upload_fileobj(
@@ -325,24 +327,39 @@ class Local(IngestAbstractModel):
                 remote_path
             )
         elif self.image_server.storage_service == 'sftp':
-            local_path = os.path.join(gettempdir(), file_name)
+            # Check if the file will be stored in a sub directory.
+            self.remote_dir = os.path.dirname(remote_path)
+            # Make any needed local directories.
+            if self.remote_dir and not os.path.exists(os.path.join(gettempdir(), self.remote_dir)):
+                os.makedirs(os.path.join(gettempdir(), self.remote_dir))
+
+            # Define the full local path
+            local_path = os.path.join(gettempdir(), remote_path)
+
+            # Write the file to the local disk.
             with open(local_path, 'wb') as f:
                 f.write(BytesIO(file).getbuffer())
 
             sftp = self.create_sftp_connection()
-            with sftp.cd(self.manifest.pid):
-                if 'ocr' in path:
-                    sftp.chdir('_*ocr*_')
-                sftp.put(local_path)
-                os.remove(local_path)
+
+            if self.remote_dir:
+                # Make remote directories if needed.
+                if not sftp.isdir(self.remote_dir):
+                    sftp.makedirs(self.remote_dir)
+
+                # Change to the remote directory before upload.
+                sftp.chdir(self.remote_dir)
+
+            sftp.put(local_path)
+            os.remove(local_path)
             sftp.close()
 
     def __list_sftp_files(self):
         sftp = self.create_sftp_connection()
 
         files = (
-            [f'{self.manifest.pid}/{image}' for image in sftp.listdir(self.manifest.pid) if '_*ocr*_' not in image],
-            [f'{self.manifest.pid}/_*ocr*_/{ocr}' for ocr in sftp.listdir(f'{self.manifest.pid}/_*ocr*_')]
+            [os.path.join(self.remote_dir, image) for image in sftp.listdir(self.remote_dir) if 'image' in guess_type(image)[0]],
+            [os.path.join(self.remote_dir, ocr_file) for ocr_file in sftp.listdir(self.remote_dir) if 'image' not in guess_type(ocr_file)[0]],
         )
         sftp.close()
 

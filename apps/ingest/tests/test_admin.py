@@ -1,5 +1,5 @@
 from os.path import join
-from os import getcwd
+from os import mkdir
 from getpass import getuser
 from shutil import rmtree
 import boto3
@@ -48,7 +48,7 @@ class IngestAdminTest(TestCase):
         self.sftp_image_server = ImageServerFactory(
             server_base=self.sftp_server.host,
             storage_service='sftp',
-            storage_path=getcwd(),
+            storage_path='admin_images',
             sftp_port=self.sftp_server.port,
             private_key_path=self.sftp_server.key_file,
             sftp_user=getuser()
@@ -111,6 +111,8 @@ class IngestAdminTest(TestCase):
             image_server=self.sftp_image_server
         )
 
+        mkdir(local.image_server.storage_path)
+
         original_manifest_count = Manifest.objects.count()
         original_canvas_count = Canvas.objects.count()
 
@@ -135,7 +137,7 @@ class IngestAdminTest(TestCase):
         except Local.DoesNotExist:
             assert True
 
-        rmtree(local.manifest.pid)
+        rmtree(local.image_server.storage_path)
 
         # A new `Manifest` should have been created along with the canvases
         # in the ingest

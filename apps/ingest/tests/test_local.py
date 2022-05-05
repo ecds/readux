@@ -1,5 +1,5 @@
 """ Tests for local ingest """
-from os import path, remove, getcwd
+from os import path, remove, mkdir
 from getpass import getuser
 from shutil import rmtree
 import logging
@@ -70,10 +70,13 @@ class LocalTest(TestCase):
         return local
 
     def sftp_image_server(self):
+        if path.isdir('images'):
+            rmtree('images')
+        mkdir('images')
         return ImageServerFactory(
             server_base=self.sftp_server.host,
             storage_service='sftp',
-            storage_path=getcwd(),
+            storage_path='images',
             sftp_port=self.sftp_server.port,
             private_key_path=self.sftp_server.key_file,
             sftp_user=getuser()
@@ -95,15 +98,31 @@ class LocalTest(TestCase):
 
         assert f'{local.manifest.pid}/00000008.jpg' in image_files
 
-    def test_image_upload_to_sftp(self):
+    def test_upload_to_sftp_with_default_delineator(self):
         httpretty.disable()
         local = self.mock_local('bundle.zip', with_manifest=True)
         local.image_server = self.sftp_image_server()
 
-        image_files, _ = local.volume_to_sftp()
+        image_files, ocr_files = local.volume_to_sftp()
 
-        rmtree(local.manifest.pid)
-        assert f'{local.manifest.pid}/00000008.jpg' in image_files
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000005.jpg'
+            )
+        )
+
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000005.tsv'
+            )
+        )
+
+        rmtree(local.image_server.storage_path)
+
+        assert path.join(local.manifest.pid, '00000008.tsv') in ocr_files
+        assert path.join(local.manifest.pid, '00000008.jpg') in image_files
 
     def test_ocr_upload_to_s3(self):
         local = self.mock_local('nested_volume.zip', with_manifest=True)
@@ -114,17 +133,32 @@ class LocalTest(TestCase):
 
         assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
 
-    # @httpretty.httprettified(allow_net_connect=True)
-    def test_ocr_upload_to_sftp(self):
-        """ It should upload files via SFTP """
+    def test_upload_to_sftp_with_underscore_delineator(self):
         httpretty.disable()
-        local = self.mock_local('nested_volume.zip', with_manifest=True)
+        local = self.mock_local('bundle.zip', with_manifest=True)
         local.image_server = self.sftp_image_server()
+        local.image_server.path_delineator = '_'
 
-        _, ocr_files = local.volume_to_sftp()
+        image_files, ocr_files = local.volume_to_sftp()
 
-        rmtree(local.manifest.pid)
-        assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000005.jpg'
+            )
+        )
+
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000003.tsv'
+            )
+        )
+
+        rmtree(local.image_server.storage_path)
+
+        assert f'{local.manifest.pid}_00000008.jpg' in image_files
+        assert f'{local.manifest.pid}_00000008.tsv' in ocr_files
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadata supplied in an Excel file. """

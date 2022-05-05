@@ -40,10 +40,11 @@ class ImageServer(models.Model):
         default=settings.IIIF_IMAGE_SERVER_BASE
     )
     storage_service = models.CharField(max_length=10, choices=STORAGE_SERVICES, default='sftp')
-    storage_path = models.CharField(max_length=255)
+    storage_path = models.CharField(max_length=255, default='')
     sftp_user = models.CharField(max_length=100, null=True, blank=True)
     sftp_port = models.IntegerField(default=22)
     private_key_path = models.CharField(max_length=500, default='~/.ssh/id_rsa.pem')
+    path_delineator = models.CharField(max_length=10, default='/')
 
     def __str__(self):
         return f'{self.server_base}'
@@ -73,7 +74,8 @@ class ImageServer(models.Model):
             'host': self.server_base,
             'username': self.sftp_user,
             'private_key': self.private_key_path,
-            'port': self.sftp_port
+            'port': self.sftp_port,
+            'default_path': self.storage_path
         }
 
 class ValueByLanguage(models.Model):

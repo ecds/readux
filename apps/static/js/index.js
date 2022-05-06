@@ -7,3 +7,4 @@ require('/apps/static/js/project.js');
 require('/apps/static/js/vue-readux.js');
 window.UIkit = require('uikit');
 window.UIkitIcons = require('/apps/static/js/uikit-icons.min.js');
+require('/apps/static/js/project.js');

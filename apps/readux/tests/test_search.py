@@ -11,7 +11,7 @@ from ...iiif.canvases.tests.factories import CanvasFactory
 from ...iiif.annotations.tests.factories import AnnotationFactory
 from ..search import SearchManifestCanvas
 from .factories import UserAnnotationFactory
-from ..models import UserAnnotation
+
 
 class TestReaduxPageDetailSearch(TestCase):
     """
@@ -57,7 +57,6 @@ class TestReaduxPageDetailSearch(TestCase):
 
     def load_results(self, response):
         """Decode the json response
-
         :param response: search results
         :type response: client response
         :return: Dict of results

@@ -12,7 +12,7 @@ class AnnotationFactory(DjangoModelFactory):
     h = randrange(10, 100)
     w = randrange(10, 100)
     order = randrange(1, 100)
-    resource_type = 'cnt:ContentAsText'
+    resource_type = Annotation.OCR
     content = Faker('text')
     motivation = "sc:painting"
     format = "text/plain"

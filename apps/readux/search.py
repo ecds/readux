@@ -1,17 +1,13 @@
 """Search Endpoint(s)"""
 import json
-from urllib.parse import urlencode
 from django.http import JsonResponse
 from django.views import View
-from django.views.generic import ListView
 from django.db.models import Count, Q
-from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from ..iiif.annotations.models import Annotation
-from ..iiif.canvases.models import Canvas
-from ..iiif.kollections.models import Collection
 from ..iiif.manifests.models import Manifest
 from .models import UserAnnotation
+
 
 class SearchManifestCanvas(View):
     """
@@ -21,7 +17,6 @@ class SearchManifestCanvas(View):
     def get_queryresults(self):
         """
         Build query results.
-
         :return: [description]
         :rtype: JSON
         """
@@ -49,13 +44,12 @@ class SearchManifestCanvas(View):
             if search_type == 'partial':
                 for search_string in search_strings:
                     query = query | SearchQuery(search_string)
-                    fuzzy_search |= Q(content__icontains=search_string) ##
+                    fuzzy_search |= Q(content__icontains=search_string)
                 annotations = annotations.filter(fuzzy_search)
                 user_annotations = user_annotations.filter(fuzzy_search)
             else:
                 for search_string in search_strings:
                     query = query | SearchQuery(search_string)
-                    # fuzzy_search |= Q(content__contains=search_string)
 
                 annotations = annotations.annotate(
                     search=vector
@@ -99,10 +93,9 @@ class SearchManifestCanvas(View):
 
         return results
 
-    def get(self, request, *args, **kwargs): # pylint: disable = unused-argument
+    def get(self, request, *args, **kwargs):  # pylint: disable = unused-argument
         """
         Respond to GET requests for search queries.
-
         :rtype: JsonResponse
         """
         return JsonResponse(

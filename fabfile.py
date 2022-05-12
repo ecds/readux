@@ -38,6 +38,7 @@ def deploy(branch='release', path='/readux.io/readux', volume=None):
         _update_symlink(options)
         _restart_webserver()
         _restart_celery(options)
+        _rebuild_search_index(options)
         _clean_old_builds(options)
 
 def _get_latest_source(branch, options):
@@ -58,6 +59,8 @@ def _update_virtualenv(options):
     run('ln -s {rp}/.ruby-version .ruby-version'.format(rp=options['ROOT_PATH']))
     run('~/.rbenv/shims/gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"') # pylint: disable = line-too-long
     run('~/.rbenv/shims/bundle install')
+    run('~/.nvm/versions/node/v18.1.0/bin/npm install')
+    run('~/.nvm/versions/node/v18.1.0/bin/npx webpack')
 
 def _link_settings(options):
     """Make sym link to settings file stored on the server.
@@ -89,6 +92,9 @@ def _restart_webserver():
 
 def _restart_celery(options):
     run('sudo /bin/systemctl restart celeryd')
+
+def _rebuild_search_index(options):
+    run('{v}/bin/python manage.py search_index --rebuild -f'.format(v=options['VENV_PATH']))
 
 def _clean_old_builds(options):
     with cd(options['RELEASE_PATH']):

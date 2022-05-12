@@ -2,7 +2,7 @@
 import logging
 from django import forms
 from django.contrib.admin import site as admin_site, widgets
-from .models import Manifest
+from .models import Language, Manifest
 from ..canvases.models import Canvas
 
 LOGGER = logging.getLogger(__name__)
@@ -17,13 +17,14 @@ setattr(
 )
 
 class ManifestAdminForm(forms.ModelForm):
+    """Form for adding or changing a manifest"""
     class Meta:
         model = Manifest
         fields = (
             'id', 'pid', 'label', 'summary', 'author',
-            'published_city', 'published_date', 'publisher',
+            'published_city', 'published_date_edtf', 'published_date', 'publisher', 'languages',
             'pdf', 'metadata', 'viewingdirection', 'collections',
-            'image_server', 'start_canvas', 'attribution', 'logo', 'license'
+            'image_server', 'start_canvas', 'attribution', 'logo', 'license', 'scanned_by', 'identifier', 'identifier_uri'
         )
     def __init__(self, *args, **kwargs):
         super(ManifestAdminForm, self).__init__(*args, **kwargs)

@@ -9,7 +9,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.10
         environment:
           DATABASE_URL: postgres://root@127.0.0.1:5432/readux
           PGUSER: root
@@ -17,41 +17,54 @@ jobs:
           AWS_SECRET_ACCESS_KEY: dummy-access-key-secret
           AWS_DEFAULT_REGION: us-east-1
           DJANGO_ENV: test
-      - image: circleci/postgres:9.6.2-alpine
+          ELASTICSEARCH_URL: 127.0.0.1:9200
+      - image: cimg/postgres:10.19
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: readux
       - image: cimg/ruby:2.5-node
+      - image: cimg/rust:1.59.0
+      - image: docker.elastic.co/elasticsearch/elasticsearch:7.17.1
+        environment:
+          - STACK_VERSION: 7.17.1
+          - xpack.security.enabled: false
+          - cluster.name: readux-elasticsearch
+          - http.port: 9200
+          - discovery.type: single-node
+
     steps:
       - checkout
-      - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/local.txt" }}
       - run:
+          name: Install System packages
           command: |
-            sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full
+            sudo apt update
+            sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full openssh-server
             mkdir logs && touch logs/debug.log
             sudo gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
+            sudo /etc/init.d/ssh start
+      - run:
+          name: Install Ruby Stuff
+          command: |
             bundle install
             sudo gem install sass
-            python3 -m venv venv
-            . venv/bin/activate
+      - run:
+          name: Install Python Stuff and Setup App
+          command: |
             pip install --upgrade pip
             pip install pyld==1.0.5
             pip install -r requirements/local.txt
             cp config/settings/local.dst config/settings/local.py
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/local.txt" }}
-          paths:
-            - "venv"
+      - run:
+          name: Wait for Elasticsearch startup
+          command: |
+            dockerize -wait tcp://localhost:9200
       - run:
           name: Running tests
           command: |
-            . venv/bin/activate
             DJANGO_ENV=test pytest apps/ --cov=./apps
       - run:
           name: Sending Coverage Report
           when: on_success
           command: |
-            . venv/bin/activate
-            ./venv/bin/coveralls
+            coveralls
 

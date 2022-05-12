@@ -6,12 +6,12 @@ from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
-from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
-from modelcluster.models import ClusterableModel
+from edtf.fields import EDTFField
+from apps.iiif.manifests.validators import validate_edtf
 import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
@@ -40,26 +40,64 @@ class ImageServer(models.Model):
         default=settings.IIIF_IMAGE_SERVER_BASE
     )
     storage_service = models.CharField(max_length=10, choices=STORAGE_SERVICES, default='sftp')
-    storage_path = models.CharField(max_length=255)
+    storage_path = models.CharField(max_length=255, default='')
+    sftp_user = models.CharField(max_length=100, null=True, blank=True)
+    sftp_port = models.IntegerField(default=22)
+    private_key_path = models.CharField(max_length=500, default='~/.ssh/id_rsa.pem')
+    path_delineator = models.CharField(max_length=10, default='/')
 
     def __str__(self):
-        return "%s" % (self.server_base)
+        return f'{self.server_base}'
 
     @property
     def bucket(self):
+        """
+        Convenience property to connect to an S3 bucket
+
+        :return: S3 bucket
+        :rtype: boto3.resources.factory.s3.Bucket
+        """
         if self.storage_service == 's3':
             s3 = resource('s3')
             return s3.Bucket(self.storage_path)
         return None
 
+    @property
+    def sftp_connection(self):
+        """
+        Convenience property to create SFTP connection.
+
+        :return: A dict of SFTP connection options.
+        :rtype: dict
+        """
+        return {
+            'host': self.server_base,
+            'username': self.sftp_user,
+            'private_key': self.private_key_path,
+            'port': self.sftp_port,
+            'default_path': self.storage_path
+        }
+
 class ValueByLanguage(models.Model):
     """ Labels by language. """
     id = models.UUIDField(primary_key=True, default=uuid4)
-    language = models.CharField(max_length=10, choices=Choices.LANGUAGES, default=settings.DEFAULT_LANGUAGE)
+    language = models.CharField(max_length=16, choices=Choices.LANGUAGES, default=settings.DEFAULT_LANGUAGE)
     content = models.TextField()
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+class Language(models.Model):
+    """Model to store language names and codes for multiple choice fields"""
+    code = models.CharField(max_length=16, unique=True)
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        """String representation of the language"""
+        return self.name
 
 class ManifestManager(models.Manager): # pylint: disable = too-few-public-methods
     """Model manager for searches."""
@@ -81,11 +119,48 @@ class Manifest(IiifBase):
         ('left-to-right', 'Left to Right'),
         ('right-to-left', 'Right to Left')
     )
-    summary = models.TextField()
-    author = models.TextField(null=True)
-    published_city = models.TextField(null=True)
-    published_date = models.CharField(max_length=25)
-    publisher = models.CharField(max_length=255)
+    summary = models.TextField(null=True, blank=True)
+    author = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
+    published_city = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Enter multiple entities separated by a semicolon (;)."
+    )
+    published_date = models.CharField(
+        "Published date (display)",
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Used for display only."
+    )
+    published_date_edtf = models.CharField(  # Character field editable in admin
+        "Published date (EDTF)",
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="""Must be valid date conforming to the
+        <a href='https://www.loc.gov/standards/datetime/'>EDTF</a> standard. If left blank, volume
+        will be excluded from sorting and filtering by date of publication.""",
+        validators=[validate_edtf],
+    )
+    date_edtf = EDTFField(  # Read-only EDTF field that handles fuzzy date calculations
+        "Date of publication (EDTF)",
+        natural_text_field='published_date_edtf',
+        lower_fuzzy_field='date_earliest',
+        upper_fuzzy_field='date_latest',
+        lower_strict_field='date_sort_ascending',
+        upper_strict_field='date_sort_descending',
+        blank=True,
+        null=True,
+    )
+    # use for filtering
+    date_earliest = models.DateField(blank=True, null=True)
+    date_latest = models.DateField(blank=True, null=True)
+    # use for sorting
+    date_sort_ascending = models.FloatField(blank=True, null=True)
+    date_sort_descending = models.FloatField(blank=True, null=True)
+    publisher = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
+    languages = models.ManyToManyField(Language, help_text="Languages present in the manifest.", blank=True, null=True)
     attribution = models.CharField(
         max_length=255,
         null=True,
@@ -106,8 +181,11 @@ class Manifest(IiifBase):
         default="https://creativecommons.org/publicdomain/zero/1.0/",
         help_text="Only enter a URI to a license statement."
     )
+    scanned_by = models.CharField(max_length=255, null=True, blank=True)
+    identifier = models.CharField(max_length=255, null=True, blank=True, help_text="Call number or other unique id.")
+    identifier_uri = models.URLField(null=True, blank=True, help_text="Only enter a link to a catalog record.")
     collections = models.ManyToManyField(Collection, blank=True, related_name='manifests')
-    pdf = models.URLField()
+    pdf = models.URLField(null=True, blank=True, help_text="Enter a link to an online pdf.")
     metadata = JSONField(default=dict, blank=True)
     viewingdirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -116,7 +194,7 @@ class Manifest(IiifBase):
     # TODO: This has to be removed/redone before we upgrade to Django 3
     search_vector = SearchVectorField(null=True, editable=False)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
-    objects = ManifestManager()
+    # objects = ManifestManager()
     start_canvas = models.ForeignKey(
         'canvases.Canvas',
         on_delete=models.SET_NULL,
@@ -143,7 +221,7 @@ class Manifest(IiifBase):
 
     class Meta: # pylint: disable = too-few-public-methods, missing-class-docstring
         ordering = ['published_date']
-        indexes = [GinIndex(fields=['search_vector'])]
+        # indexes = [GinIndex(fields=['search_vector'])]
 
     @property
     def publisher_bib(self):
@@ -216,10 +294,10 @@ class Manifest(IiifBase):
         except Canvas.DoesNotExist:
             self.start_canvas = None
 
-        if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
-            instance = self._meta.default_manager.with_documents().get(pk=self.pk)
-            instance.search_vector = instance.document
-            instance.save(update_fields=['search_vector'])
+        # if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
+        #     instance = self._meta.default_manager.with_documents().get(pk=self.pk)
+        #     instance.search_vector = instance.document
+        #     instance.save(update_fields=['search_vector'])
 
 
     def delete(self, *args, **kwargs):

@@ -1,181 +1,137 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
-{% load static %}
+{% load wagtailcore_tags static %}
+
 {% block extra_head %}
     <meta property="og:title" content="Readux - Search" />
     <meta name="twitter:title" content="Readux - Site Search" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
-    <meta property="og:description" content="Search the Readux volumes. Get results of a full text search of all volumes." />
-    <meta name="twitter:description" content="Search the Readux volumes. Get results of a full text search of all volumes." />
+    <meta
+        property="og:image"
+        content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg"
+    />
+    <meta
+        property="og:description"
+        content="Search Readux volumes"
+    />
+    <meta
+        name="twitter:description"
+        content="Search Readux volumes"
+    />
+{% endblock %}
+{% block extra_javascript %}
+    <script src="{% static 'js/search.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.js"></script>
+{% endblock %}
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.css" rel="stylesheet">
+    <noscript>
+        <style type="text/css">
+            div#search-grid input#toggle-date,
+            div#search-grid input#toggle-date + label,
+            div#search-grid button#reset-filters,
+            div#search-grid input#authors-filter {
+                display: none;
+            }
+        </style>
+    </noscript>
 {% endblock %}
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h1 class='uk-heading-hero uk-text-center'>Readux</h1>
-<p class='uk-text-lead uk-text-center'>See results of a full text search of all volumes below.</p>
-<p class='uk-text-lead uk-text-center uk-text-small'> Search for individual whole keywords. Multiple words will be searched as 'or' (e.g. Rome London = Rome or London). Stopwords (e.g. in, the) will be dropped.</p>
-
-      <div>
-      <form class="uk-search uk-search-default" style="width: 100% !important;"
-        action="{% url 'search' %}" method="get" accept-charset="utf-8">
-        <fieldset>
-        <legend aria-label="search"><span uk-search-icon></span></legend>
-        <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-          value="{{request.GET.q}}" style="width: 80%; padding-left:40px;">
-        <span title="Click to include partial matches" class="tooltip">Partial<span class="tooltiptext">Searches for your term within any word (end matches end and bend). More specific words work better.</span></span>
-        {% if "exact" in request.GET.type %}
-        <input type="radio" name="type" aria-label="include partial" value="partial">
-        {% else %}
-        <input type="radio" name="type" aria-label="include partial" value="partial" checked>
-        {% endif %}
-        <span title="Click for exact matches only" class="tooltip">Exact<span class="tooltiptext">Searches for your exact term and stems the ending (ends matches end, ends, ended).</span></span>
-        {% if "exact" in request.GET.type %}
-        <input type="radio" name="type" aria-label="exact only" value="exact" checked>
-        {% else %}
-        <input type="radio" name="type" aria-label="exact only" value="exact">
-        {% endif %}
-        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
-        </fieldset>
-      </form>
-      </div>
+    <h1 class="uk-heading-medium uk-text-center">Search</h1>
+    <p class="uk-text-lead uk-text-center">Search and filter all volumes.</p>
 
 
-<!--
-                 {% if qs1 %}
-                 <ul class="uk-padding-remove">
-                  {% for answer in qs1 %}
-                  <li><a
-                      href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' answer.pid %}"
-                      target="_blank">{{ answer.label }} - number of results {{ answer.pidcount }}</a></li>
-                  {% endfor %}</ul>
-                {% elif request.GET.q  and not qs1 %}
-                <p>No results in the text in this volume</p>{% endif %}
- -->
-
-{% if search_string %}
-<div><span class="rx-card-title uk-margin-remove-bottom">Filter by Collection: </span>
-{% for option in COL_LIST %}
-<a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&collection={{ option.pid }}&type={{ request.GET.type }}"><button class="rx-btn rx-btn-extension rx-btn-small">{{ option.label }}</button></a>
-{% endfor %}  <a href="https://{{ request.META.HTTP_HOST }}{{ request.path }}?q={{ request.GET.q }}&type={{ request.GET.type }}"><button class="rx-btn rx-btn-extension rx-btn-small">ALL</button></a>
-</div>{% endif %}
-    {% if "?q=" in request.get_full_path %}
-{% if qs1.count > 0 %}<h2><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs1.count|pluralize:"was,were" }} {{ qs1.count }} result{{ qs1.count|pluralize }} for <em>{{ request.GET.q }}</em> in Full Text.</span></div></h2>{% endif %}
-<hr/>
-<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
-  {% for volume in qs1 %}
-  <div class="uk-width-1-2@m uk-grid-medium">
-
-    <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
-<img src="{{ value.canvas__manifest__image_server__server_base }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
-      </a>{% endif %}{% endfor %}
-    </div>
-    <div class="uk-width-3-4@m">
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
-      </a>
-      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
-        <li><span class="results" style="background:#fff1e4;font-size:2em;"> {{ volume.pidcount }} Result{{ volume.pidcount|pluralize }} for <em>{{ request.GET.q }}</em></span></li>
-        <li>Author: {{volume.author|truncatechars:150}}</li>
-        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-        <li>
-          {% for value in user_annotation_count %}
-          {% if volume.pid in value %}
-          {% if "0" not in value|safe|slice:"-3:-1" %}
-          <span class="count-icon">
-            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
-          </span>
-          {% endif %}
-          {% endif %}
-          {% endfor %}
-        </li>
-      </ul>
-    </div>
-  </div>
-  {% endfor %}
-  {% if not qs1 %}
-  <div><span class="results" style="background:#fff1e4;font-size:2em;"> There were no results for <em>{{ request.GET.q }}</em> in Full Text.</span></div>
-  {% endif %}
-  </div>
-      {% endif %}
-    {% if "?q=" in request.get_full_path %}
-{% if qs3.count > 0 %}<h2><div><span class="results" style="background:#fff1e4;font-size:1.5em;color:#707070;"> There {{ qs3.count|pluralize:"was,were" }} {{ qs3.count }} result{{ qs3.count|pluralize }} for <em>{{ request.GET.q }}</em> in Metadata: Title/Author/Summary.</span><span style="font-size:0.8em;color:#707070;"> (ordered by relevance)</span></div></h2>{% endif %}
-<hr/>
-<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
-  {% for volume in qs3 %}
-  {% if volume.canvas_set.first.pid is null %}
-      <div class="uk-width-1-2@m uk-grid-medium">
-        <div class=" uk-width-1-4@m">
-          <a class="nav-link" href="#">
-            <v-volume-image></v-volume-image>
-          </a>
+    <form
+        id="search-form"
+        action="{% url 'search' %}"
+        method="get"
+        accept-charset="utf-8"
+    >
+        <div class="uk-form uk-width-1-1">
+            <fieldset class="uk-margin uk-width-1-1">
+                <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: search" aria-label="search"></span>
+                    {{ form.q }}
+                </div>
+                <span class="uk-text-small">
+                    Search for individual whole keywords. Multiple words will be searched as
+                    'or' (e.g. Rome London = Rome or London).
+                </span>
+            </fieldset>
+            <fieldset class="uk-margin uk-width-1-1">
+                <div class="uk-form-label">{{ form.sort.label }}</div>
+                {{ form.sort }}
+            </fieldset>
+            <fieldset class="uk-margin uk-flex uk-flex-center uk-width-1-1">
+                <button class="uk-button uk-button-secondary" type="submit">
+                    Search
+                </button>
+            </fieldset>
         </div>
-        <div class="uk-width-3-4@m" tabindex="0">
-          <a class="nav-link" href="#">
-            <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-          </a>
-          <ul class="uk-padding-remove rx-card-text">
-            <li>Author: {{volume.author|truncatechars:150}}</li>
-            <li>Published: {{volume.published_date}}</li>
-            <li>Publisher: {{volume.publisher}}</li>
-            <li>Publication City: {{volume.published_city}}</li>
-            <li>Added: {{volume.created_at}}</li>
-            <li>
-              {% for value in user_annotation_count %}
-              {% if volume.pid in value %}
-              {% if "0" not in value|safe|slice:"-3:-1" %}
-              <span class="count-icon">
-                <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                  uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
-              </span>
-              {% endif %}
-              {% endif %}
-              {% endfor %}
-            </li>
-          </ul>
+        <div uk-grid class="uk-grid" id="search-grid">
+            <div
+                class="uk-form uk-form-stacked uk-width-1-3"
+                id="search-filters"
+            >
+                <h4 class="uk-flex uk-flex-center">Filters</h4>
+                <fieldset class="uk-margin">
+                    <div class="uk-width-1-1">
+                        <div class="uk-form-label">{{ form.author.label }}</div>
+                        <input type="text" id="authors-filter" class="uk-input" placeholder="Start typing an author's name" />
+                        {{ form.author }}
+                    </div>
+                </fieldset>
+                <fieldset class="uk-margin">
+                    <div class="uk-width-1-1">
+                        <div class="uk-form-label">{{ form.language.label }}</div>
+                        {{ form.language }}
+                    </div>
+                </fieldset>
+                <fieldset class="uk-margin uk-width-1-1">
+                    <div class="uk-form-label">{{ form.collection.label }}</div>
+                    {{ form.collection }}
+                    <span class="uk-text-small">
+                        Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
+                    </span>
+                </fieldset>
+                <fieldset class="uk-margin uk-width-1-1">
+                    <span class="uk-form-label uk-margin-remove-bottom">Date published</span>
+                    <input type="checkbox" name="date-filter" id="toggle-date" />
+                    <label for="toggle-date"><span>Filter by date published</span></label>
+                    <div id="date-range-slider"></div>
+                    <noscript>
+                        <div class="uk-form-label">{{ form.start_date.label }}</div>
+                        {{ form.start_date }}
+                        <div class="uk-form-label">{{ form.end_date.label }}</div>
+                        {{ form.end_date }}
+                    </noscript>
+                </fieldset>
+                <fieldset class="uk-margin uk-width-1-1 uk-flex uk-flex-between">
+                    <button id="reset-filters" class="uk-button uk-button-danger" type="button">
+                        Reset filters
+                    </button>
+                    <button class="uk-button uk-button-secondary" type="submit">
+                        Apply
+                    </button>
+                </fieldset>
+            </div>
+            <div class="uk-width-2-3">
+                <h4 class="uk-flex uk-flex-center">
+                    {{ volumes.count }} result{{ volumes.count|pluralize }}
+                </h4>
+                <div class="uk-flex uk-flex-center">
+                    {% include "snippets/pagination.html" %}
+                </div>
+                <ol class="uk-flex uk-flex-column uk-list-divider" id="search-results">
+                    {% for volume in volumes %}
+                        {% include "snippets/volume_result.html" %}
+                    {% endfor %}
+                </ol>
+                <div class="uk-flex uk-flex-center">
+                    {% include "snippets/pagination.html" %}
+                </div>
+            </div>
         </div>
-      </div>
-
-    {% else %}
-  <div class="uk-width-1-2@m uk-grid-medium">
-
-    <div class="uk-width-1-4@m rx-volume-image">  {% for value in qs2 %}{% if value.pid == volume.pid %}
-      <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
-<img src="{{ value.canvas__manifest__image_server__server_base }}/{{ value.canvas__pid }}/pct:5,5,90,90/,250/0/default.jpg" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
-      </a>{% endif %}{% endfor %}
-    </div>
-    <div class="uk-width-3-4@m">
-     <a class="nav-link" href="https://{{ request.META.HTTP_HOST }}{% url 'volumeall' volume.pid %}?q={{ request.GET.q }}&type={{ request.GET.type }}" target="">
-        <h3 class="rx-card-title uk-margin-remove-bottom">{{ volume.label|truncatechars:100 }}</h3>
-      </a>
-      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
-        <li>Author: {{volume.author|truncatechars:150}}</li>
-        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-        <li>
-          {% for value in user_annotation_count %}
-          {% if volume.pid in value %}
-          {% if "0" not in value|safe|slice:"-3:-1" %}
-          <span class="count-icon">
-            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-            <span class="count">{{ value|safe|slice:"-3:-1" }}</span>
-          </span>
-          {% endif %}
-          {% endif %}
-          {% endfor %}
-        </li>
-      </ul>
-    </div>
-  </div>
-  {% endif %}
-  {% endfor %}
-  {% if not qs3 %}
-  <div><span class="results" style="background:#fff1e4;font-size:2em;color:#707070;"> There were no results for <em>{{ request.GET.q }}</em> in Metadata: Title/Author/Summary.</span></div>
-  {% endif %}
-  </div>
-      {% endif %}
+    </form>
 
 {% endblock content %}

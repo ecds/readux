@@ -5,11 +5,13 @@ from django.http import HttpResponse
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormMixin
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
-from django.db.models import Max, Q, Count
+from django.db.models import Max, Count
 from django.urls import reverse
-from django.utils.datastructures import MultiValueDictKeyError
+from elasticsearch_dsl import Q, NestedFacet, TermsFacet
+from elasticsearch_dsl.query import MultiMatch
+from apps.iiif.manifests.documents import ManifestDocument
+from apps.readux.forms import ManifestSearchForm
 import config.settings.local as settings
 from apps.export.export import JekyllSiteExport
 from apps.export.forms import JekyllExportForm
@@ -314,157 +316,150 @@ class ExportDownloadZip(View):
         resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
         return resp
 
-# TODO: Replace with Elasticsearch
-class VolumeSearch(ListView):
-    '''Search across all volumes.'''
-    template_name = 'search_results.html'
+class VolumeSearchView(ListView, FormMixin):
+    """View to search across all volumes with Elasticsearch"""
+    model = Manifest
+    form_class = ManifestSearchForm
+    template_name = "search_results.html"
+    context_object_name = "volumes"
+    paginate_by = 25
+    # default fields to search when using query box; ^ with number indicates a boosted field
+    query_search_fields = ["pid", "label^5", "summary^2", "author"]
 
-    def get_queryset(self):
-        return Manifest.objects.all()
+    # Facet fields: tuples of (name, facet) where "name" matches the form field name,
+    # and "facet" is an Elasticsearch facet (with field argument matching the ManifestDocument
+    # field name for the desired field, and size argument accommodating all possible values)
+    facets = [
+        # NOTE: This size is set to accommodate all languages, of which there are 830 at present
+        ("language", TermsFacet(field="languages", size=1000, min_doc_count=1)),
+        # TODO: Determine a good size for authors or consider alternate approach (i.e. not faceted)
+        ("author", TermsFacet(field="authors", size=2000, min_doc_count=1)),
+        ("collection", NestedFacet("collections", TermsFacet(field="collections.label", min_doc_count=1)))
+    ]
+    defaults = {
+        "sort": "label_alphabetical"
+    }
+
+    def get_form_kwargs(self):
+        # adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
+        kwargs = super().get_form_kwargs()
+        # use GET for form data so that query params appear in URL
+        form_data = self.request.GET.copy()
+
+        # sort by form choice
+        if "sort" in form_data and bool(form_data.get("sort")):
+            form_data["sort"] = form_data.get("sort")
+        # by default, if there is a search query, sort by relevance
+        elif form_data.get("q"):
+            form_data["sort"] = "_score"
+        # by default, if sort is an empty string, sort by specified default
+        elif "sort" in form_data:
+            form_data["sort"] = self.defaults["sort"]
+
+        # set defaults for all form values
+        for key, val in self.defaults.items():
+            form_data.setdefault(key, val)
+
+        kwargs["data"] = form_data
+        return kwargs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        collection = self.request.GET.get('collection', None)
-        # pylint: disable = invalid-name
-        COLSET = Collection.objects.values_list('pid', flat=True)
-        COL_OPTIONS = list(COLSET)
-        COL_LIST = Collection.objects.values('pid', 'label').order_by('label').distinct('label')
-        # pylint: enable = invalid-name
-        collection_url_params = self.request.GET.copy()
+        context_data = super().get_context_data(**kwargs)
+        volumes_response = self.get_queryset().execute()
+        # populate a dict with "buckets" of extant categories for each facet
+        facets = {}
+        for (facet, _) in self.facets:
+            if hasattr(volumes_response.aggregations, facet):
+                aggs = getattr(volumes_response.aggregations, facet)
+                # use "inner" to handle NestedFacet
+                if hasattr(aggs, "inner"):
+                    aggs = getattr(aggs, "inner")
+                facets.update({
+                    # get buckets array from each facet in the aggregations dict
+                    facet: getattr(aggs, "buckets"),
+                })
+        context_data["form"].set_facets(facets)
 
-        qs = self.get_queryset()
-        try:
-            search_string = self.request.GET['q']
-            search_type = self.request.GET['type']
-            search_strings = self.request.GET['q'].split()
-            if search_strings:
-                if search_type == 'partial':
-                    qq = Q()
-                    qqq = Q()
-                    query = SearchQuery('')
-                    for search_string in search_strings:
-                        query = query | SearchQuery(search_string)
-                        qq |= Q(canvas__annotation__content__icontains=search_string)
-                        qqq |= Q(label__icontains=search_string) |Q(author__icontains=search_string) | Q(summary__icontains=search_string) # pylint: disable = line-too-long
-                    qs1 = qs.filter(qq)
-                    qs1 = qs1.values(
-                        'pid', 'label', 'author',
-                        'published_date', 'created_at'
-                    ).annotate(
-                        pidcount=Count('pid')
-                    ).order_by('-pidcount')
-
-                    vector2 = SearchVector(
-                        'label', weight='A'
-                    ) + SearchVector(
-                        'author', weight='B'
-                    ) + SearchVector(
-                        'summary', weight='C'
+        # get min and max date aggregations and set on form
+        if hasattr(volumes_response.aggregations, "min_date"):
+            min_date = getattr(volumes_response.aggregations, "min_date")
+            if hasattr(volumes_response.aggregations, "max_date"):
+                max_date = getattr(volumes_response.aggregations, "max_date")
+                if hasattr(
+                    min_date, "value_as_string"
+                ) and hasattr(
+                    max_date, "value_as_string"
+                ):
+                    context_data["form"].set_date(
+                        getattr(min_date, "value_as_string"),
+                        getattr(max_date, "value_as_string"),
                     )
 
-                    qs3 = qs.filter(qqq)
-                    qs2 = qs.values(
-                        'label', 'author', 'published_date', 'created_at', 'canvas__pid', 'pid',
-                        'canvas__manifest__image_server__server_base'
-                    ).order_by(
-                        'pid'
-                    ).distinct(
-                        'pid'
-                    )
+        return context_data
 
-                    if collection not in COL_OPTIONS:
-                        collection = None
+    def get_queryset(self):
+        form = self.get_form()
+        volumes = ManifestDocument.search()
 
-                    if collection is not None:
-                        qs1 = qs1.filter(collections__pid = collection)
-                        qs3 = qs3.filter(collections__pid = collection)
+        if not form.is_valid():
+            # empty result on invalid form
+            return volumes.filter("match_none")
+        form_data = form.cleaned_data
 
-                    if 'collection' in collection_url_params:
-                        del collection_url_params['collection']
-                elif search_type == 'exact':
-                    qq = Q()
-                    query = SearchQuery('')
-                    for search_string in search_strings:
-                        query = query | SearchQuery(search_string)
-                        qq |= Q(canvas__annotation__content__exact=search_string)
-                    vector = SearchVector('canvas__annotation__content')
-                    qs1 = qs.annotate(search=vector).filter(search=query)
-                    qs1 = qs1.annotate(
-                        rank=SearchRank(vector, query)
-                    ).values(
-                        'pid', 'label', 'author',
-                        'published_date', 'created_at'
-                    ).annotate(
-                        pidcount = Count('pid')
-                    ).order_by('-pidcount')
+        # default to empty string if no query in form data
+        search_query = form_data.get("q", "")
+        if search_query:
+            multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
+            volumes = volumes.query(multimatch_query)
 
-                    vector2 = SearchVector(
-                        'label', weight='A'
-                    ) + SearchVector(
-                        'author', weight='B'
-                    ) + SearchVector(
-                        'summary', weight='C'
-                    )
+        # highlight
+        volumes = volumes.highlight_options(
+            require_field_match=False,
+            fragment_size=200,
+            number_of_fragments=10,
+        ).highlight(
+            "label", "author", "summary"
+        )
 
-                    qs3 = qs.annotate(search=vector2).filter(search=query)
-                    qs3 = qs3.annotate(
-                        rank=SearchRank(vector2, query)
-                    ).values(
-                        'pid', 'label', 'author',
-                        'published_date', 'created_at'
-                    ).order_by('-rank')
+        # filter on authors
+        author_filter = form_data.get("author", "")
+        if author_filter:
+            volumes = volumes.filter("terms", authors=author_filter)
 
-                    qs2 = qs.values(
-                        'canvas__pid', 'pid',
-                        'canvas__manifest__image_server__server_base'
-                    ).order_by(
-                        'pid'
-                    ).distinct('pid')
+        # filter on languages
+        language_filter = form_data.get("language", "")
+        if language_filter:
+            volumes = volumes.filter("terms", languages=language_filter)
 
-                    if collection not in COL_OPTIONS:
-                        collection = None
+        # filter on collections
+        collection_filter = form_data.get("collection", "")
+        if collection_filter:
+            volumes = volumes.filter("nested", path="collections", query=Q(
+                "terms", **{"collections.label": collection_filter}
+            ))
 
-                    if collection is not None:
-                        qs1 = qs1.filter(collections__pid = collection)
-                        qs3 = qs3.filter(collections__pid = collection)
+        # filter on date published
+        min_date_filter = form_data.get("start_date", "")
+        if min_date_filter:
+            volumes = volumes.filter("range", date_earliest={"gte": min_date_filter})
+        max_date_filter = form_data.get("end_date", "")
+        if max_date_filter:
+            volumes = volumes.filter("range", date_latest={"lte": max_date_filter})
 
-                    if 'collection' in collection_url_params:
-                        del collection_url_params['collection']
-            else:
-                search_string = ''
-                search_strings = ''
-                qs1 = ''
-                qs2 = ''
-                qs3 = ''
-            context['qs1'] = qs1
-            context['qs2'] = qs2
-            context['qs3'] = qs3
-        except MultiValueDictKeyError:
-            q = ''
-            search_string = ''
-            search_strings = ''
+        # create aggregation buckets for facet fields
+        for (facet_name, facet) in self.facets:
+            volumes.aggs.bucket(facet_name, facet.get_aggregation())
 
-        context['volumes'] = qs.all
-        annocount_list = []
-        canvaslist = []
-        for volume in qs:
-            user_annotation_count = UserAnnotation.objects.filter(
-                owner_id=self.request.user.id
-            ).filter(
-                canvas__manifest__id=volume.id
-            ).count()
-            annocount_list.append({volume.pid: user_annotation_count})
-            context['user_annotation_count'] = annocount_list
-            canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-            canvasquery2 = list(canvasquery)
-            canvaslist.append({volume.pid: canvasquery2})
-            context['firstthumbnail'] = canvaslist
-        context.update({
-            'collection_url_params': urlencode(collection_url_params),
-            'collection': collection, 'COL_OPTIONS': COL_OPTIONS,
-            'COL_LIST': COL_LIST, 'search_string': search_string, 'search_strings': search_strings
-        })
-        return context
+        # get min and max date published values
+        volumes.aggs.metric("min_date", "min", field="date_earliest")
+        volumes.aggs.metric("max_date", "max", field="date_latest")
+
+        # sort
+        volumes = volumes.sort(form_data["sort"])
+
+        # return elasticsearch_dsl Search instance
+        return volumes
+
 
 class ManifestsSitemap(Sitemap):
     """Django Sitemap for Manafests"""

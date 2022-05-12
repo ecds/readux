@@ -103,17 +103,17 @@ class Collection(IiifBase):
         if ratio > img_ratio:
             image = image.resize(
                 (int(size[0]), int(size[0] * image.size[1] / image.size[0])),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
             # Crop in the top, middle or bottom
             box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
             image = image.crop(box)
         elif ratio < img_ratio:
             imageratio = (int(size[1] * image.size[0] / image.size[1]), int(size[1]))
-            image = image.resize(imageratio, Image.ANTIALIAS)
+            image = image.resize(imageratio, Image.Resampling.LANCZOS)
             box = ((image.size[0] - size[0]) / 2, 0, (image.size[0] + size[0]) / 2, image.size[1])
             image = image.crop(box)
         else:
-            image = image.resize((size[0], size[1]), Image.ANTIALIAS)
+            image = image.resize((size[0], size[1]), Image.Resampling.LANCZOS)
         # If the scale is the same, we do not need to crop
         thumb_name, thumb_extension = os.path.splitext(self.thumbnail.name)
         thumb_extension = thumb_extension.lower()
@@ -155,7 +155,7 @@ class Collection(IiifBase):
         if ratio_banner > img_ratio_banner: #then it needs to be shorter
             forcrop = forcrop.resize(
                 (int(sizebanner[0]), int(sizebanner[0] * forcrop.size[1] / forcrop.size[0])),
-                Image.ANTIALIAS)
+                Image.Resampling.LANCZOS)
             (width, height) = forcrop.size
             # pylint: disable = invalid-name
             x = (0)
@@ -169,7 +169,7 @@ class Collection(IiifBase):
             # Crop in the top, middle or bottom
         elif ratio_banner < img_ratio_banner: #then it needs to be narrower
             imagebannerratio = (int(sizebanner[1] * forcrop.size[0] / forcrop.size[1]), int(sizebanner[1]))
-            forcrop = forcrop.resize(imagebannerratio, Image.ANTIALIAS)
+            forcrop = forcrop.resize(imagebannerratio, Image.Resampling.LANCZOS)
             (width, height) = forcrop.size
             # pylint: disable = invalid-name
             x = (width - sizebanner[0]) / 2 #crop from middle
@@ -181,7 +181,7 @@ class Collection(IiifBase):
             box = (x, y, w, h)
             cropped_image = forcrop.crop(box)
         else:
-            cropped_image = forcrop.resize((sizebanner[0], sizebanner[1]), Image.ANTIALIAS)
+            cropped_image = forcrop.resize((sizebanner[0], sizebanner[1]), Image.Resampling.LANCZOS)
         # If the scale is the same, we do not need to crop
         thename, theextension = os.path.splitext(self.header.name)
         theextension = theextension.lower()

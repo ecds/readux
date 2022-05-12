@@ -1,27 +1,28 @@
-pytz==2021.3  # https://github.com/stub42/pytz
-python-slugify==5.0.2  # https://github.com/un33k/python-slugify
+pytz==2022.1  # https://github.com/stub42/pytz
+python-slugify==6.1.2  # https://github.com/un33k/python-slugify
 Pillow
-argon2-cffi==21.1.0  # https://github.com/hynek/argon2_cffi
-redis==4.0.0  # https://github.com/antirez/redis
+argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
 bs4
 pyyaml
 progress
 python-memcached==1.59
 pyld==1.0.5
 hocr-spec==0.2.0
+# edtf
+git+https://github.com/ecds/python-edtf@214972b
 
 # Django
 # ------------------------------------------------------------------------------
 # TODO: To upgrade to Django 3, we have to redo the full text search on the manifest model.
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django==2.2.24  # https://www.djangoproject.com/
+Django>=3.2.0,<4.0  # https://www.djangoproject.com/
 #django-environ==0.4.5  # https://github.com/joke2k/django-environ
 git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
-django-allauth>=0.45.0  # https://github.com/pennersr/django-allauth
-django-crispy-forms==1.13.0  # https://github.com/django-crispy-forms/django-crispy-forms
-django-redis==5.0.0  # https://github.com/niwinz/django-redis
+django-allauth>=0.49.0  # https://github.com/pennersr/django-allauth
+django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
+django-redis==5.2.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
 django-modeltranslation>=0.17.2 # https://github.com/deschler/django-modeltranslation
 django-taggit>=1.5.0 # https://github.com/jazzband/django-taggit
@@ -38,26 +39,37 @@ django-compressor
 django-sass-processor
 
 # Django rules for PyLint
-pylint-django==2.4.4
+pylint-django==2.5.3
 
 # Wagtail
-wagtail==2.13.4
-# wagtailmenus==2.13
-git+git://github.com/jayvarner/wagtailmenus.git@master
-git+git://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
+wagtail==2.16.2
+git+https://github.com/jazzband/wagtailmenus.git@master#egg=wagtailmenus
+git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
 wagtail-cache==1.0.2
 
 # Import/Export
-django-import-export==2.6.1
-gitpython==3.1.24
+django-import-export==2.8.0
+gitpython==3.1.27
 
 # S3 Uploads
-boto3==1.20.7
+boto3==1.22.12
 django-storages==1.12.3  # https://github.com/jschneier/django-storages
+
+# SFTP Uploads
+pysftp>=0.2.9,<1.0 # https://pysftp.readthedocs.io/
 
 # Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.
 stream-unzip>=0.0.58
 
 # jekyll theme for zipfile used in export functionality
 -e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme
+
+# List of BCP 47 language codes
+bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
+
+# Elasticsearch
+django-elasticsearch-dsl>=7.0.0
+elasticsearch<7.14.0
+# used to unaccent strings for sorting
+unidecode

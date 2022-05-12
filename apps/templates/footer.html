@@ -17,9 +17,15 @@
   </div>
   <div class="uk-width-1-1">
     <ul class="rx-footer uk-padding-remove">
-      <a href="http://digitalscholarship.emory.edu/projects/software/readux.html" target="_blank" alt="Readux by Emory Center for Digital Scholarship">
-        <li>Readux {{APP_VERSION}}</li>
-      </a>
+      {% if DJANGO_ENV == 'production' %}
+        <a href="http://digitalscholarship.emory.edu/projects/software/readux.html" target="_blank" alt="Readux by Emory Center for Digital Scholarship">
+          <li>Readux {{APP_VERSION}}</li>
+        </a>
+      {% else %}
+        <li>Branch: {{BRANCH}}</li>
+        <li>Commit: {{COMMIT}}</li>
+        <li>Commit Date: {{COMMIT_DATE}}</li>
+      {% endif %}
     </ul>
   </div>
 </footer>

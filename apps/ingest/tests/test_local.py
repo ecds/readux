@@ -1,24 +1,39 @@
 """ Tests for local ingest """
-from os import path, remove
+from os import path, remove, mkdir
+from getpass import getuser
+from shutil import rmtree
+import logging
 import pytest
 import boto3
+import httpretty
 from moto import mock_s3
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
+from .mock_sftp import MockSFTP
 from ..models import Local
 from ..services import create_manifest
 from ..storages import IngestStorage
 
 pytestmark = pytest.mark.django_db(transaction=True) # pylint: disable = invalid-name
+LOGGER = logging.getLogger(__name__)
 
 @mock_s3
 class LocalTest(TestCase):
     """ Tests for ingest.models.Local """
+    @classmethod
+    def setUpClass(cls):
+        cls.sftp_server = MockSFTP()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.sftp_server.stop_server()
+
     def setUp(self):
         """ Set instance variables. """
+        LOGGER.debug('SETTING UP')
         self.fixture_path = path.join(settings.APPS_DIR, 'ingest/fixtures/')
         self.image_server = ImageServerFactory(
             server_base='http://readux.s3.amazonaws.com',
@@ -54,12 +69,24 @@ class LocalTest(TestCase):
 
         return local
 
+    def sftp_image_server(self):
+        if path.isdir('images'):
+            rmtree('images')
+        mkdir('images')
+        return ImageServerFactory(
+            server_base=self.sftp_server.host,
+            storage_service='sftp',
+            storage_path='images',
+            sftp_port=self.sftp_server.port,
+            private_key_path=self.sftp_server.key_file,
+            sftp_user=getuser()
+        )
+
 
     def test_bundle_upload(self):
         """ It should upload the images using a fake S3 service from moto. """
         for bundle in ['bundle.zip', 'nested_volume.zip', 'csv_meta.zip']:
-            local = self.mock_local(bundle)
-
+            self.mock_local(bundle)
             assert bundle in [f.key for f in IngestStorage().bucket.objects.all()]
 
     def test_image_upload_to_s3(self):
@@ -71,6 +98,32 @@ class LocalTest(TestCase):
 
         assert f'{local.manifest.pid}/00000008.jpg' in image_files
 
+    def test_upload_to_sftp_with_default_delineator(self):
+        httpretty.disable()
+        local = self.mock_local('bundle.zip', with_manifest=True)
+        local.image_server = self.sftp_image_server()
+
+        image_files, ocr_files = local.volume_to_sftp()
+
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000005.jpg'
+            )
+        )
+
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000005.tsv'
+            )
+        )
+
+        rmtree(local.image_server.storage_path)
+
+        assert path.join(local.manifest.pid, '00000008.tsv') in ocr_files
+        assert path.join(local.manifest.pid, '00000008.jpg') in image_files
+
     def test_ocr_upload_to_s3(self):
         local = self.mock_local('nested_volume.zip', with_manifest=True)
 
@@ -79,6 +132,33 @@ class LocalTest(TestCase):
         ocr_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
         assert f'{local.manifest.pid}/_*ocr*_/00000008.tsv' in ocr_files
+
+    def test_upload_to_sftp_with_underscore_delineator(self):
+        httpretty.disable()
+        local = self.mock_local('bundle.zip', with_manifest=True)
+        local.image_server = self.sftp_image_server()
+        local.image_server.path_delineator = '_'
+
+        image_files, ocr_files = local.volume_to_sftp()
+
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000005.jpg'
+            )
+        )
+
+        assert path.exists(
+            path.join(
+                local.image_server.storage_path,
+                f'{local.manifest.pid}{local.image_server.path_delineator}00000003.tsv'
+            )
+        )
+
+        rmtree(local.image_server.storage_path)
+
+        assert f'{local.manifest.pid}_00000008.jpg' in image_files
+        assert f'{local.manifest.pid}_00000008.tsv' in ocr_files
 
     def test_metadata_from_excel(self):
         """ It should create a manifest with metadata supplied in an Excel file. """
@@ -131,7 +211,6 @@ class LocalTest(TestCase):
         local = self.mock_local('bundle_with_junk.zip', with_manifest=True)
 
         local.volume_to_s3()
-        local.volume_to_s3()
 
         ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
 
@@ -165,8 +244,7 @@ class LocalTest(TestCase):
         """
         local = self.mock_local('metadata.zip', with_manifest=True)
 
-        local.volume_to_s3()
-        local.volume_to_s3()
+        image_files, ocr_files = local.volume_to_s3()
 
         files_in_zip = local.file_list
         ingest_files = [f.key for f in local.image_server.bucket.objects.filter(Prefix=local.manifest.pid)]
@@ -180,8 +258,8 @@ class LocalTest(TestCase):
         assert local.metadata['pid'] == 't9wtf-sample'
         assert local.metadata['label'] == 't9wtf-sample'
         assert '~$metadata.xlsx' not in ingest_files
-        assert f'{local.manifest.pid}/_*ocr*_/0001.tsv' in ingest_files
-        assert f'{local.manifest.pid}/0001.jpg' in ingest_files
+        assert f'{local.manifest.pid}/_*ocr*_/0001.tsv' in ocr_files
+        assert f'{local.manifest.pid}/0001.jpg' in image_files
         assert len(ingest_files) == 2
 
     def test_when_underscore_in_pid(self):

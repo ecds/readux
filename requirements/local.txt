@@ -1,39 +1,41 @@
 -r ./base.txt
 
-Werkzeug==2.0.2  # https://github.com/pallets/werkzeug
+# TODO: Upgrade after https://github.com/django-extensions/django-extensions/issues/1715 is fixed
+Werkzeug<2.1.0  # https://github.com/pallets/werkzeug
 ipdb==0.13.9  # https://github.com/gotcha/ipdb
-Sphinx==4.3.0  # https://github.com/sphinx-doc/sphinx
+Sphinx==4.5.0  # https://github.com/sphinx-doc/sphinx
 # TODO: Upgrade after moving to Django 3
-psycopg2-binary==2.8.4  # https://github.com/psycopg/psycopg2
+psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
 
 # Testing
 # ------------------------------------------------------------------------------
-mypy==0.910  # https://github.com/python/mypy
-pytest==6.2.5  # https://github.com/pytest-dev/pytest
+mypy==0.950  # https://github.com/python/mypy
+pytest==7.1.2  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.4  # https://github.com/Frozenball/pytest-sugar
 pytest-cov==3.0.0
-requests==2.26.0
+requests==2.27.1
 iiif-prezi==0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty==1.1.4 # https://pypi.org/project/httpretty/
 #mock==4.0.2
-cssutils==2.3.0 # https://pypi.org/project/cssutils/
-pytest-django==4.4.0  # https://github.com/pytest-dev/pytest-django
-moto==2.2.15 # https://github.com/spulec/moto
+cssutils==2.4.0 # https://pypi.org/project/cssutils/
+pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
+moto==3.1.8 # https://github.com/spulec/moto
+sftpserver==0.3
 
 # Code quality
 # ------------------------------------------------------------------------------
 flake8==4.0.1  # https://github.com/PyCQA/flake8
-coverage==6.1.2  # https://github.com/nedbat/coveragepy
+coverage==6.3.2  # https://github.com/nedbat/coveragepy
 coveralls
 
 # Django
 # ------------------------------------------------------------------------------
 factory-boy==3.2.1  # https://github.com/FactoryBoy/factory_boy
-faker==9.8.2
+faker==13.11.0
 
-django-debug-toolbar==3.2.2  # https://github.com/jazzband/django-debug-toolbar
+django-debug-toolbar==3.4.0  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.1.5  # https://github.com/django-extensions/django-extensions
-django-coverage-plugin==2.0.2  # https://github.com/nedbat/django_coverage_plugin
+django-coverage-plugin==2.0.3  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https
 
 # Deployment
@@ -41,5 +43,5 @@ pyopenssl # for running dev server under https
 # TODO: Why are we using this fork?
 Fabric3==1.14.post1 # https://github.com/mathiasertl/fabric
 
-celery==5.2.1
-django-celery-results==2.2.0
+celery==5.2.6
+django-celery-results==2.3.1

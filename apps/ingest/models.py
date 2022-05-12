@@ -3,7 +3,9 @@ import os
 import uuid
 import logging
 import json
+from tempfile import gettempdir
 from io import BytesIO
+import pysftp
 from mimetypes import guess_type
 from requests import get
 from stream_unzip import stream_unzip, TruncatedDataError
@@ -15,7 +17,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
 from django_celery_results.models import TaskResult
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.canvases.tasks import add_ocr_task
+from apps.iiif.canvases.tasks import add_ocr_task, add_oa_ocr_task
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest, ImageServer
 from apps.ingest import services
@@ -23,6 +25,12 @@ from apps.utils.fetch import fetch_url
 from .storages import IngestStorage
 
 LOGGER = logging.getLogger(__name__)
+logging.getLogger('botocore').setLevel(logging.ERROR)
+logging.getLogger('boto3').setLevel(logging.ERROR)
+logging.getLogger('s3transfer').setLevel(logging.ERROR)
+logging.getLogger('httpretty').setLevel(logging.ERROR)
+logging.getLogger('httpretty.core').setLevel(logging.ERROR)
+logging.getLogger('paramiko').setLevel(logging.ERROR)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
@@ -100,6 +108,8 @@ class Local(IngestAbstractModel):
         help_text="Optional: Collections to attach to the volume ingested in this form."
     )
 
+    remote_dir = None
+
     class Meta:
         verbose_name_plural = 'Local'
 
@@ -107,6 +117,19 @@ class Local(IngestAbstractModel):
     def s3_client(self):
         if self.image_server.storage_service == 's3':
             return client('s3')
+
+        return None
+
+    def create_sftp_connection(self):
+
+        if self.image_server.storage_service == 'sftp':
+            connection_options = pysftp.CnOpts()
+
+            # if os.environ['DJANGO_ENV'] == 'test':
+            connection_options.hostkeys = None
+
+            return pysftp.Connection(**self.image_server.sftp_connection, cnopts=connection_options)
+
         return None
 
     def open_metadata(self):
@@ -133,38 +156,32 @@ class Local(IngestAbstractModel):
             pass
 
     def volume_to_s3(self):
+        """ Upload images and OCR files to an S3 bucket
+
+        :return: Tuple of two lists. One list of image files and one of OCR files
+        :rtype: tuple
         """
-        Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
-        into memory or any of its uncompressed files.
+        self.__unzip_bundle()
+
+        return (
+            [file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid],
+            [file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid]
+        )
+
+    def volume_to_sftp(self):
+        """ Upload images and OCR files via SFTP
+
+        :return: Tuple of two lists. One list of image files and one of OCR files
+        :rtype: tuple
         """
-        for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
-            file_path, file_name, file_type = self.__file_info(zipped_file)
-            has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
-            tmp_file = bytes()
-            for chunk in unzipped_chunks:
-                if has_type_or_is_hocr and not self.__is_junk(file_name):
-                    tmp_file += chunk
-            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
-                file_name = file_name.replace('_', '-')
-                if file_type and 'image' in file_type and 'images' in file_path:
-                    self.image_server.bucket.upload_fileobj(
-                        BytesIO(tmp_file),
-                        f'{self.manifest.pid}/{file_name}'
-                    )
-                if file_type:
-                    is_ocr_file_type = (
-                        'text' in file_type
-                        or 'xml' in file_type
-                        or 'json' in file_type
-                        or 'html' in file_type
-                    )
-                if 'ocr' in file_path and (
-                    file_name.endswith('.hocr') or is_ocr_file_type
-                ):
-                    self.image_server.bucket.upload_fileobj(
-                        BytesIO(tmp_file),
-                        f'{self.manifest.pid}/_*ocr*_/{file_name}'
-                    )
+        # sftp = self.create_sftp_connection()
+        # sftp.mkdir(self.manifest.pid)
+        # with sftp.cd(self.manifest.pid):
+        #     sftp.mkdir('_*ocr*_')
+
+        # sftp.close()
+        self.__unzip_bundle()
+        return self.__list_sftp_files()
 
     def bundle_to_s3(self):
         """Uploads the zipfile stored in bundle_from_bulk to S3
@@ -200,7 +217,7 @@ class Local(IngestAbstractModel):
             file_path, file_name, file_type = self.__file_info(zipped_file)
             files.append(file_path)
             # Not looping through the chunks throws an UnexpectedSignatureError
-            for chunk in unzipped_chunks:
+            for _ in unzipped_chunks:
                 pass
 
         return files
@@ -209,27 +226,22 @@ class Local(IngestAbstractModel):
         """
         Create Canvas objects for each image file.
         """
-        self.volume_to_s3()
+        image_files, ocr_files = ([], [])
 
-        image_files = [
-            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' not in file.key and file.key.split('/')[0] == self.manifest.pid
-        ]
+        if self.image_server.storage_service == 's3':
+            image_files, ocr_files = self.volume_to_s3()
+        elif self.image_server.storage_service == 'sftp':
+            image_files, ocr_files = self.volume_to_sftp()
 
         if len(image_files) == 0:
             # TODO: Throw an error here?
             pass
-
-        ocr_files = [
-            file.key for file in self.image_server.bucket.objects.filter(Prefix=f'{self.manifest.pid}/') if '_*ocr*_' in file.key and file.key.split('/')[0] == self.manifest.pid
-        ]
 
         for index, key in enumerate(sorted(image_files)):
             image_file = key.split('/')[-1].replace('_', '-')
 
             if not image_file:
                 continue
-
-            LOGGER.debug(f'Creating canvas from {image_file}')
 
             ocr_file_path = None
             if len(ocr_files) > 0:
@@ -275,6 +287,83 @@ class Local(IngestAbstractModel):
         else:
             # TODO: Log or though an error/waring?
             pass
+
+    def __unzip_bundle(self):
+        """
+        Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
+        into memory or any of its uncompressed files.
+        """
+        for zipped_file, _, unzipped_chunks in stream_unzip(self.__zipped_chunks()):
+            file_path, file_name, file_type = self.__file_info(zipped_file)
+
+            has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
+            tmp_file = bytes()
+            for chunk in unzipped_chunks:
+                if has_type_or_is_hocr and not self.__is_junk(file_name):
+                    tmp_file += chunk
+            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
+                file_name = file_name.replace('_', '-')
+                if file_type and 'image' in file_type and 'images' in file_path:
+                    self.__upload_file(tmp_file, file_name, file_path)
+                if file_type:
+                    is_ocr_file_type = (
+                        'text' in file_type
+                        or 'xml' in file_type
+                        or 'json' in file_type
+                        or 'html' in file_type
+                    )
+                if 'ocr' in file_path and (
+                    file_name.endswith('.hocr') or is_ocr_file_type
+                ):
+                    self.__upload_file(tmp_file, file_name, file_path)
+
+    def __upload_file(self, file, file_name, path):
+        remote_path = f'{self.manifest.pid}{self.image_server.path_delineator}{file_name}'
+        if self.image_server.storage_service == 's3':
+            if 'ocr' in path:
+                remote_path = f'{self.manifest.pid}/_*ocr*_/{file_name}'
+            self.image_server.bucket.upload_fileobj(
+                BytesIO(file),
+                remote_path
+            )
+        elif self.image_server.storage_service == 'sftp':
+            # Check if the file will be stored in a sub directory.
+            self.remote_dir = os.path.dirname(remote_path)
+            # Make any needed local directories.
+            if self.remote_dir and not os.path.exists(os.path.join(gettempdir(), self.remote_dir)):
+                os.makedirs(os.path.join(gettempdir(), self.remote_dir))
+
+            # Define the full local path
+            local_path = os.path.join(gettempdir(), remote_path)
+
+            # Write the file to the local disk.
+            with open(local_path, 'wb') as f:
+                f.write(BytesIO(file).getbuffer())
+
+            sftp = self.create_sftp_connection()
+
+            if self.remote_dir:
+                # Make remote directories if needed.
+                if not sftp.isdir(self.remote_dir):
+                    sftp.makedirs(self.remote_dir)
+
+                # Change to the remote directory before upload.
+                sftp.chdir(self.remote_dir)
+
+            sftp.put(local_path)
+            os.remove(local_path)
+            sftp.close()
+
+    def __list_sftp_files(self):
+        sftp = self.create_sftp_connection()
+
+        files = (
+            [os.path.join(self.remote_dir, image) for image in sftp.listdir(self.remote_dir) if 'image' in guess_type(image)[0]],
+            [os.path.join(self.remote_dir, ocr_file) for ocr_file in sftp.listdir(self.remote_dir) if 'image' not in guess_type(ocr_file)[0]],
+        )
+        sftp.close()
+
+        return files
 
     @staticmethod
     def __is_junk(path):
@@ -329,15 +418,15 @@ class Remote(IngestAbstractModel):
 
     def create_canvases(self):
         # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
-        for position, canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
+        for position, sc_canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
             canvas_metadata = None
             # TODO: we will need some sort of check for IIIF API version, but not
             # everyone includes a context for each canvas.
             # if canvas['@context'] == 'http://iiif.io/api/presentation/2/context.json':
-            canvas_metadata = services.parse_iiif_v2_canvas(canvas)
+            canvas_metadata = services.parse_iiif_v2_canvas(sc_canvas)
 
             if canvas_metadata is not None:
-                canvas, _created = Canvas.objects.get_or_create(
+                canvas, _ = Canvas.objects.get_or_create(
                     pid=canvas_metadata['pid'],
                     manifest=self.manifest,
                     position=position
@@ -349,4 +438,12 @@ class Remote(IngestAbstractModel):
                 canvas.refresh_from_db()
 
                 if os.environ['DJANGO_ENV'] != 'test':
-                  add_ocr_task.delay(canvas.id)
+                    add_ocr_task.delay(canvas.id)
+
+                if 'otherContent' in sc_canvas and len(sc_canvas['otherContent']) > 0:
+                    for content in sc_canvas['otherContent']:
+                        if content['label'] == 'OCR Text':
+                            if os.environ['DJANGO_ENV'] != 'test':
+                                add_oa_ocr_task.delay(content['@id'])
+                            else:
+                                add_oa_ocr_task(content['@id'])

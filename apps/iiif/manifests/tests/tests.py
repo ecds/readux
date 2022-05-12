@@ -122,11 +122,11 @@ class ManifestTests(TestCase):
     def test_absolute_url(self):
         assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)
 
-    def test_manifest_search_vector_exists(self):
-        assert self.volume.search_vector is None
-        self.volume.save()
-        self.volume.refresh_from_db()
-        assert self.volume.search_vector is not None
+    # def test_manifest_search_vector_exists(self):
+    #     assert self.volume.search_vector is None
+    #     self.volume.save()
+    #     self.volume.refresh_from_db()
+    #     assert self.volume.search_vector is not None
 
     def test_multiple_starting_canvases(self):
         volume = ManifestFactory.create()

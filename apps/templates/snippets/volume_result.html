@@ -1,0 +1,76 @@
+
+<li class="uk-width-1-1@m uk-margin-small">
+    <h4>
+        <span>{{ forloop.counter0|add:page_obj.start_index }}.</span>
+        {% if volume.pid %}
+            <a
+                class="nav-link"
+                href="{% url 'volumeall' volume.pid %}"
+            >
+                {% if volume.meta.highlight.label %}
+                    {% for fragment in volume.meta.highlight.label %}
+                        {{ fragment|safe }}
+                    {% endfor %}
+                {% else %}
+                    {{ volume.label }}
+                {% endif %}
+            </a>
+        {% else %}
+            {% if volume.meta.highlight.label %}
+                {% for fragment in volume.meta.highlight.label %}
+                    {{ fragment|safe }}
+                {% endfor %}
+            {% else %}
+                {{ volume.label }}
+            {% endif %}
+        {% endif %}
+    </h4>
+    <dl class="uk-description-list">
+        {% if volume.published_date %}
+            <dt>Published</dt>
+            <dd>{{volume.published_date}}</dd>
+        {% endif %}
+        {% if volume.authors and "[no author]" not in volume.authors %}
+            <dt>Author{{volume.authors|pluralize}}</dt>
+            <dd>
+                <ul class="uk-margin-remove">
+                    {% if volume.meta.highlight.author %}
+                        {% for fragment in volume.meta.highlight.author %}
+                            {{ fragment|safe }}
+                        {% endfor %}
+                    {% else %}
+                        {% for author in volume.authors %}
+                            <li>{{ author }}</li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </dd>
+        {% endif %}
+        {% if volume.created_at %}
+            <dt>Added</dt>
+            <dd>{{volume.created_at}}</dd>
+        {% endif %}
+        {% if volume.languages and "[no language]" not in volume.languages %}
+            <dt>Language{{volume.languages|pluralize}}</dt>
+            <dd>
+                <ul class="uk-margin-remove">
+                    {% for lang in volume.languages %}
+                        <li>{{ lang }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        {% endif %}
+        {% if volume.summary %}
+            <dt>Summary</dt> 
+            <dd class="result-volume-summary">
+                {% if volume.meta.highlight.summary %}
+                    {% for fragment in volume.meta.highlight.summary %}
+                        {{ fragment|safe }}
+                    {% endfor %}
+                {% else %}
+                    {{ volume.summary|safe }}
+                {% endif %}
+            </dd>
+        {% endif %}
+    </dl>
+</li>

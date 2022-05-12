@@ -59,8 +59,8 @@ def _update_virtualenv(options):
     run('ln -s {rp}/.ruby-version .ruby-version'.format(rp=options['ROOT_PATH']))
     run('~/.rbenv/shims/gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"') # pylint: disable = line-too-long
     run('~/.rbenv/shims/bundle install')
-    run('~/.nvm/versions/node/v18.1.0/bin/npm install')
-    run('~/.nvm/versions/node/v18.1.0/bin/npx webpack')
+    run('/usr/bin/npm install')
+    run('/usr/bin/npx webpack')
 
 def _link_settings(options):
     """Make sym link to settings file stored on the server.

@@ -2,6 +2,12 @@
 
 CHANGELOG
 =========
+Release 2.3.0
+-------------
+* Add Elasticsearch for searching volumes.
+* Bundle JavaScript dependencies with Webpack.
+* Improvements to ingest for IIIF servers using SFTP.
+
 Release 2.2.4
 ---------------------
 * Export updates

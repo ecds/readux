@@ -3,7 +3,7 @@
 # TODO: Upgrade after https://github.com/django-extensions/django-extensions/issues/1715 is fixed
 Werkzeug<2.1.0  # https://github.com/pallets/werkzeug
 ipdb==0.13.9  # https://github.com/gotcha/ipdb
-Sphinx==4.5.0  # https://github.com/sphinx-doc/sphinx
+Sphinx==5.0.0  # https://github.com/sphinx-doc/sphinx
 # TODO: Upgrade after moving to Django 3
 psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
 

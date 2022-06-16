@@ -25,7 +25,6 @@ class Annotations(ListView):
     def get(self, request, *args, **kwargs):
         username = kwargs['username']
         try:
-            query_set = self.get_queryset()
             owner = USER.objects.get(username=username)
             if self.request.user == owner:
                 return JsonResponse(

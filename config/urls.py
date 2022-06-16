@@ -59,6 +59,7 @@ urlpatterns = [
     ),
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    re_path(r'^', include('apps.ocr.urls')),
     re_path(r'^', include('apps.readux.urls')),
     re_path(r'', include(wagtail_urls)),
     path(r'^summernote/', include('django_summernote.urls')),

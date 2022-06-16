@@ -115,7 +115,8 @@ LOCAL_APPS = [
     'apps.templates',
     'apps.custom_styles.apps.CustomStylesConfig',
     'apps.ingest.apps.IngestConfig',
-    'apps.export.apps.ExportConfig'
+    'apps.export.apps.ExportConfig',
+    'apps.ocr.apps.OCRConfig'
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -327,6 +328,8 @@ SERIALIZATION_MODULES = {
     "collection_manifest": "apps.iiif.serializers.collection_manifest",
     "startingcanvas": "apps.iiif.serializers.startingcanvas",
     "user_annotation_list": "apps.iiif.serializers.user_annotation_list",
+    "annotation_page_v3": "apps.iiif.serializers.v3.annotation_page",
+    "annotation_v3": "apps.iiif.serializers.v3.annotation",
 }
 
 WAGTAIL_SITE_NAME = 'Readux'

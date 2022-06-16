@@ -61,6 +61,13 @@ class UserAnnotation(AbstractAnnotation):
             return []
 
     def update(self, attrs=None, tags=None):
+        """Method to update an annotation object with a dict of attributes and a list of tags
+
+        :param attrs: _description_, defaults to None
+        :type attrs: dict, optional
+        :param tags: _description_, defaults to None
+        :type tags: list, optional
+        """
         if isinstance(attrs, dict):
             for attr, value in attrs.items():
                 setattr(self, attr, value)

@@ -109,6 +109,7 @@ class Local(IngestAbstractModel):
     )
 
     remote_dir = None
+    remote_files = []
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -145,7 +146,7 @@ class Local(IngestAbstractModel):
                         tmp_file += chunk
                 if len(tmp_file) > 0 and file_type and not self.__is_junk(file_name):
                     if 'csv' in file_type or 'tab-separated' in file_type:
-                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'))
+                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'),Z)
                     elif 'officedocument' in file_type:
                         metadata = Dataset().load(BytesIO(tmp_file))
                     if metadata is not None:
@@ -238,7 +239,7 @@ class Local(IngestAbstractModel):
             pass
 
         for index, key in enumerate(sorted(image_files)):
-            image_file = key.split('/')[-1].replace('_', '-')
+            image_file = key.split('/')[-1]#.replace('_', '-')
 
             if not image_file:
                 continue
@@ -255,10 +256,11 @@ class Local(IngestAbstractModel):
                     ocr_file_path = None
                     pass
 
+            pid = image_file if self.manifest.pid in image_file else f'{self.manifest.pid}_{image_file}'
             position = index + 1
             canvas, created = Canvas.objects.get_or_create(
                 manifest=self.manifest,
-                pid=f'{self.manifest.pid}_{image_file}',
+                pid=pid,
                 ocr_file_path=ocr_file_path,
                 position=position
             )
@@ -304,7 +306,7 @@ class Local(IngestAbstractModel):
             if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
                 file_name = file_name.replace('_', '-')
                 if file_type and 'image' in file_type and 'images' in file_path:
-                    self.__upload_file(tmp_file, file_name, file_path)
+                    self.remote_files.append(self.__upload_file(tmp_file, file_name, file_path))
                 if file_type:
                     is_ocr_file_type = (
                         'text' in file_type
@@ -315,7 +317,7 @@ class Local(IngestAbstractModel):
                 if 'ocr' in file_path and (
                     file_name.endswith('.hocr') or is_ocr_file_type
                 ):
-                    self.__upload_file(tmp_file, file_name, file_path)
+                    self.remote_files.append(self.__upload_file(tmp_file, file_name, file_path))
 
     def __upload_file(self, file, file_name, path):
         remote_path = f'{self.manifest.pid}{self.image_server.path_delineator}{file_name}'
@@ -354,12 +356,14 @@ class Local(IngestAbstractModel):
             os.remove(local_path)
             sftp.close()
 
+        return remote_path
+
     def __list_sftp_files(self):
         sftp = self.create_sftp_connection()
 
         files = (
-            [os.path.join(self.remote_dir, image) for image in sftp.listdir(self.remote_dir) if 'image' in guess_type(image)[0]],
-            [os.path.join(self.remote_dir, ocr_file) for ocr_file in sftp.listdir(self.remote_dir) if 'image' not in guess_type(ocr_file)[0]],
+            [os.path.join(self.remote_dir, image) for image in self.remote_files if 'image' in guess_type(image)[0]],
+            [os.path.join(self.remote_dir, ocr_file) for ocr_file in self.remote_files if 'image' not in guess_type(ocr_file)[0]],
         )
         sftp.close()
 

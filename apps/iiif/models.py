@@ -1,7 +1,8 @@
 from time import time
 from uuid import uuid4, UUID
 from dirtyfields import DirtyFieldsMixin
-from django.db import models, IntegrityError
+from django.db import models
+from django.utils import timezone
 from modelcluster.models import ClusterableModel
 from apps.utils.noid import encode_noid
 
@@ -13,7 +14,17 @@ class IiifBase(DirtyFieldsMixin, ClusterableModel):
         blank=False,
         help_text="Unique ID. Do not use _'s or spaces in the pid."
     )
-    label = models.CharField(max_length=1000)
+    label = models.CharField(max_length=1000, default='')
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    @property
+    def created_at_iso(self):
+        return self.__js_isoformat(self.created_at)
+
+    @property
+    def modified_at_iso(self):
+        return self.__js_isoformat(self.modified_at)
 
     def save(self, *args, **kwargs): # pylint: disable = arguments-differ
         self.clean_pid()
@@ -26,6 +37,10 @@ class IiifBase(DirtyFieldsMixin, ClusterableModel):
 
 
         super().save(*args, **kwargs)
+
+    @staticmethod
+    def __js_isoformat(date):
+        return date.astimezone(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
     def clean_pid(self):
         """ Cantaloupe is generally configured substitute a slash (/)

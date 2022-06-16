@@ -1,7 +1,8 @@
 """Django models for IIIF manifests"""
-from boto3 import resource
 from uuid import uuid4, UUID
 from json import JSONEncoder
+from boto3 import resource
+from urllib.parse import urlparse
 from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
@@ -71,7 +72,7 @@ class ImageServer(models.Model):
         :rtype: dict
         """
         return {
-            'host': self.server_base,
+            'host': urlparse(self.server_base).netloc,
             'username': self.sftp_user,
             'private_key': self.private_key_path,
             'port': self.sftp_port,

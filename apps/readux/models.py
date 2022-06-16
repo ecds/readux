@@ -60,8 +60,21 @@ class UserAnnotation(AbstractAnnotation):
         else:
             return []
 
+    def update(self, attrs=None, tags=None):
+        if isinstance(attrs, dict):
+            for attr, value in attrs.items():
+                setattr(self, attr, value)
+
+
+        if isinstance(tags, list):
+            self.tags.clear()
+            for tag in tags:
+                self.tags.add(tag)
+
+        self.save()
+
     def parse_mirador_annotation(self):
-        self.motivation = AbstractAnnotation.COMMENTING
+        self.motivation = AbstractAnnotation.OA_COMMENTING
 
         if type(self.oa_annotation) == str:
             self.oa_annotation = json.loads(self.oa_annotation)

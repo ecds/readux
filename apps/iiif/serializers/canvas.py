@@ -19,14 +19,22 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
+
+            ocr_web_annotation_path = reverse('web_annotation_ocr', kwargs={ 'volume': obj.manifest.pid, 'canvas': obj.pid})
+
             otherContent = [ # pylint: disable=invalid-name
                 {
                     "@id": '{m}/list/{c}'.format(m=obj.manifest.baseurl, c=obj.pid),
                     "@type": "sc:AnnotationList",
                     "label": "OCR Text"
+                },
+                {
+                    "@id": f'{settings.HOSTNAME}{ocr_web_annotation_path}',
+                    "@type": "AnnotationPage",
+                    "label": "OCR Text"
                 }
             ]
-            #
+            #'<volume>/comments/<canvas>/<username>'
             # Only list annotation lists for current user. I'm going to leave the code below
             # for when eventually implement groups.
             #
@@ -57,15 +65,28 @@ class Serializer(JSONSerializer):
                     'volume': obj.manifest.pid,
                     'canvas': obj.pid
                 }
-                url = "{h}{k}".format(
+                annotation_list_url = "{h}{k}".format(
                     h=settings.HOSTNAME,
                     k=reverse('user_annotations', kwargs=kwargs)
                 )
+                web_annotation_page_url = "{h}{k}".format(
+                    h=settings.HOSTNAME,
+                    k=reverse('user_comments', kwargs=kwargs)
+                )
+
                 otherContent.append(
                     {
-                        "label": 'Annotations by {u}'.format(u=self.current_user.username),
+                        "label": f'Annotations by {self.current_user.username}',
                         "@type": "sc:AnnotationList",
-                        "@id": url
+                        "@id": annotation_list_url
+                    }
+                )
+
+                otherContent.append(
+                    {
+                        "label": f'Comments by {self.current_user.username}',
+                        "@type": 'AnnotationPage',
+                        "@id": web_annotation_page_url
                     }
                 )
             data = {

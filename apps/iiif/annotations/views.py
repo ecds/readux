@@ -20,14 +20,14 @@ class AnnotationsForPage(View):
         """
         canvas = Canvas.objects.get(pid=self.kwargs['page'])
         return Annotation.objects.filter(canvas=canvas).distinct('order')
-    
+
     def get(self, request, *args, **kwargs): # pylint: disable = unused-argument
         """
         Function to respond to HTTP GET requests for annotations for a given canvas.
 
         :param request: HTTP GET request
         :type request: django request object?
-        :return: Serialized JSON based on the IIIF presentation API standads.
+        :return: Serialized JSON based on the IIIF presentation API standards.
         :rtype: JSON
         """
         # TODO: Does this view need owners?

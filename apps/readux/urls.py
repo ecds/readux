@@ -29,8 +29,20 @@ urlpatterns = [
         annotations.Annotations.as_view(),
         name='user_annotations'
     ),
+    # path(
+    #     '<volume>/comments/<canvas>/<username>',
+    #     annotations.WebAnnotations.as_view(),
+    #     name='user_comments'
+    # ),
     path('annotations-crud/', annotations.AnnotationCrud.as_view(), name='crud_user_annotation'),
     path('search/', views.VolumeSearchView.as_view(), name='search'),
     path('_anno_count/<volume>/<page>', views.AnnotationsCount.as_view(), name='_anno_count'),
     path('search/volume/pages', SearchManifestCanvas.as_view(), name='search_pages'),
+
+    path(
+        'iiif/<version>/<vol>/annotations/<canvas>/<username>',
+        annotations.Annotations.as_view(),
+        name='user_comments'
+    ),
+
 ]

@@ -7,10 +7,8 @@ from ..models import UserAnnotation
 
 class UserAnnotationFactory(AnnotationFactory):
     """Creates UserAnnotation object for testing."""
-    resource_type = 'oa:SvgSelector'
     content = Faker('text')
     motivation = "commenting"
-    format = "text/html"
     owner = SubFactory(UserFactory)
     oa_annotation = {}
 

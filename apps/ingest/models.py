@@ -28,9 +28,10 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger('botocore').setLevel(logging.ERROR)
 logging.getLogger('boto3').setLevel(logging.ERROR)
 logging.getLogger('s3transfer').setLevel(logging.ERROR)
-logging.getLogger('httpretty').setLevel(logging.ERROR)
-logging.getLogger('httpretty.core').setLevel(logging.ERROR)
+logging.getLogger('httpretty').setLevel(logging.CRITICAL)
+logging.getLogger('httpretty.core').setLevel(logging.CRITICAL)
 logging.getLogger('paramiko').setLevel(logging.ERROR)
+logging.getLogger('elasticsearch.base').setLevel(logging.ERROR)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
@@ -109,6 +110,7 @@ class Local(IngestAbstractModel):
     )
 
     remote_dir = None
+    remote_files = []
 
     class Meta:
         verbose_name_plural = 'Local'
@@ -145,7 +147,8 @@ class Local(IngestAbstractModel):
                         tmp_file += chunk
                 if len(tmp_file) > 0 and file_type and not self.__is_junk(file_name):
                     if 'csv' in file_type or 'tab-separated' in file_type:
-                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'))
+                        format = 'csv' if 'csv' in file_type else 'tsv'
+                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'), format=format)
                     elif 'officedocument' in file_type:
                         metadata = Dataset().load(BytesIO(tmp_file))
                     if metadata is not None:
@@ -174,6 +177,7 @@ class Local(IngestAbstractModel):
         :return: Tuple of two lists. One list of image files and one of OCR files
         :rtype: tuple
         """
+
         # sftp = self.create_sftp_connection()
         # sftp.mkdir(self.manifest.pid)
         # with sftp.cd(self.manifest.pid):
@@ -238,7 +242,7 @@ class Local(IngestAbstractModel):
             pass
 
         for index, key in enumerate(sorted(image_files)):
-            image_file = key.split('/')[-1].replace('_', '-')
+            image_file = key.split('/')[-1]#.replace('_', '-')
 
             if not image_file:
                 continue
@@ -255,10 +259,11 @@ class Local(IngestAbstractModel):
                     ocr_file_path = None
                     pass
 
+            pid = image_file if self.manifest.pid in image_file else f'{self.manifest.pid}_{image_file}'
             position = index + 1
             canvas, created = Canvas.objects.get_or_create(
                 manifest=self.manifest,
-                pid=f'{self.manifest.pid}_{image_file}',
+                pid=pid,
                 ocr_file_path=ocr_file_path,
                 position=position
             )
@@ -336,9 +341,12 @@ class Local(IngestAbstractModel):
             # Define the full local path
             local_path = os.path.join(gettempdir(), remote_path)
 
+
             # Write the file to the local disk.
             with open(local_path, 'wb') as f:
                 f.write(BytesIO(file).getbuffer())
+            for _ in range(0,5):
+                print(f'local {local_path}')
 
             sftp = self.create_sftp_connection()
 
@@ -354,12 +362,21 @@ class Local(IngestAbstractModel):
             os.remove(local_path)
             sftp.close()
 
+        return remote_path
+
     def __list_sftp_files(self):
         sftp = self.create_sftp_connection()
 
+        remote_files = []
+
+        if self.remote_dir:
+            remote_files = [remote_file for remote_file in sftp.listdir(self.manifest.pid)]
+        else:
+            remote_files = [remote_file for remote_file in sftp.listdir() if f'{self.manifest.pid}{self.image_server.path_delineator}' in remote_file]
+
         files = (
-            [os.path.join(self.remote_dir, image) for image in sftp.listdir(self.remote_dir) if 'image' in guess_type(image)[0]],
-            [os.path.join(self.remote_dir, ocr_file) for ocr_file in sftp.listdir(self.remote_dir) if 'image' not in guess_type(ocr_file)[0]],
+            [os.path.join(self.remote_dir, image) for image in remote_files if 'image' in guess_type(image)[0]],
+            [os.path.join(self.remote_dir, ocr_file) for ocr_file in remote_files if 'image' not in guess_type(ocr_file)[0]],
         )
         sftp.close()
 

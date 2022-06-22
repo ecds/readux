@@ -1,11 +1,11 @@
 # pylint: disable = attribute-defined-outside-init, too-few-public-methods
 """Module for serializing IIIF Annotation"""
-import json
-from django.core.serializers.base import SerializerDoesNotExist
+from re import findall
 from django.contrib.auth import get_user_model
 from apps.iiif.serializers.base import Serializer as JSONSerializer
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.canvases.models import Canvas
+from apps.readux.models import UserAnnotation
 import config.settings.local as settings
 
 USER = get_user_model()
@@ -125,7 +125,7 @@ class Serializer(JSONSerializer):
 def Deserializer(data):
     # data = json.loads(stream_or_string)
     annotation = Annotation()
-    if data['@type'] == 'oa:Annotation':
+    if '@type' in data and data['@type'] == 'oa:Annotation':
         if data['annotatedBy']['name'] == 'OCR':
             data['annotatedBy']['name'] = 'ocr'
             annotation.owner = USER.objects.get(username='ocr', name='OCR')
@@ -137,4 +137,88 @@ def Deserializer(data):
         annotation.canvas = Canvas.objects.get(pid=data['on']['full'].split('/')[-1])
         dimensions = data['on']['selector']['value'].split('=')[-1].split(',')
         annotation.x, annotation.y, annotation.w, annotation.h = [int(d) for d in dimensions]
+
+        # {
+        #     "type": "Annotation",
+        #     "body": [
+        #         {
+        #             "purpose": "commenting",
+        #             "type": "TextualBody",
+        #             "created": "2022-06-06T20:38:37.123Z",
+        #             "value": "<p>poopeveve</p>",
+        #             "creator": {
+        #                 "id": "jay",
+        #                 "name": "Jay S. Varner"
+        #             },
+        #             "modified": "2022-06-06T20:38:37.123Z"
+        #         },
+        #         {
+        #             "type": "TextualBody",
+        #             "value": "aaaaa",
+        #             "purpose": "tagging",
+        #             "creator": {
+        #                 "id": "jay",
+        #                 "name": "Jay S. Varner"
+        #             },
+        #             "created": "2022-06-06T20:38:43.052Z",
+        #             "modified": "2022-06-06T20:38:43.720Z"
+        #         }
+        #     ],
+        #     "target": {
+        #         "source": "https://iip.readux.io/iiif/2/t4vc6_00000009.tif",
+        #         "selector": {
+        #             "type": "SvgSelector",
+        #             "value": "<svg><circle cx=\"837.1289215087891\" cy=\"2624.0111083984375\" r=\"558.2640706617552\"></circle></svg>"
+        #         }
+        #     },
+        #     "@context": "http://www.w3.org/ns/anno.jsonld",
+        #     "id": "#db7cd136-cdb7-4b1e-b33c-f0afd66c1aee"
+        # }
+    elif 'type' in data and data['type'] == 'Annotation':
+        annotation.owner = USER.objects.get(username = data['body'][0]['creator']['id'])
+        if annotation.owner.username == 'ocr':
+            pass
+        else:
+            annotation = UserAnnotation(owner=annotation.owner)
+            annotation.canvas = Canvas.objects.get(pid=data['target']['source'].split('/')[-1])
+
+            for body in data['body']:
+                if body['purpose'] == 'commenting':
+                    annotation.content = body['value']
+                if body['purpose'] == 'tagging':
+                    annotation.save()
+                    annotation.tags.add(body['value'])
+
+            if data['target']['selector']['type'] == 'SvgSelector':
+                annotation.svg = data['target']['selector']['value']
+
+                if 'refinedBy' in data['target']['selector'] and data['target']['selector']['refinedBy']['type'] == 'FragmentSelector':
+                    annotation.x, annotation.y, annotation.w, annotation.h = [float(n) for n in data['target']['selector']['refinedBy']['value'].split('=')[-1].split(',')]
+
+            if data['target']['selector']['type'] == 'FragmentSelector':
+               annotation.x, annotation.y, annotation.w, annotation.h = [float(n) for n in data['target']['selector']['value'].split(':')[-1].split(',')]
+
+            if data['target']['selector']['type'] == 'RangeSelector':
+                annotation.start_selector = Annotation.objects.get(id=findall(r"([A-Za-z0-9\-]+)", data['target']['selector']['startSelector']['value'])[-1])
+                annotation.end_selector = Annotation.objects.get(id=findall(r"([A-Za-z0-9\-]+)", data['target']['selector']['endSelector']['value'])[-1])
+                annotation.start_offset = data['target']['selector']['startSelector']['refinedBy']['start']
+                annotation.end_offset = data['target']['selector']['endSelector']['refinedBy']['end']
+
+                start_position = annotation.start_selector.order
+                end_position = annotation.end_selector.order
+                text = Annotation.objects.filter(
+                    canvas=annotation.canvas,
+                    order__lt=end_position,
+                    order__gte=start_position
+                ).order_by('order')
+
+                try:
+                    annotation['x'] = min(text.values_list('x', flat=True))
+                    annotation['y'] = max(text.values_list('y', flat=True))
+                    annotation['h'] = max(text.values_list('h', flat=True))
+                    annotation['w'] = text.last().x + text.last().w - annotation['x']
+                except ValueError:
+                    pass
+
+
     return annotation

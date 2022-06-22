@@ -46,6 +46,8 @@ Vue.component("v-volume-export-annotation-btn", {
   mounted() {
     var vm = this;
     window.addEventListener("canvasswitch", function (event) {
+      if (!event) return;
+
       if (event.detail.annotationsOnPage) {
         if (event.detail.annotationAdded) {
           vm.localManifestCount++;
@@ -55,8 +57,13 @@ Vue.component("v-volume-export-annotation-btn", {
         }
         vm.isExportVisible = vm.localManifestCount >= 1 ? true : false;
       }
+
+      if (event.detail && event.detail.canvas && !location.pathname.includes(event.detail.canvas)) {
+        history.pushState({}, '', event.detail.canvas);
+      }
     });
     vm.isExportVisible = vm.localManifestCount >= 1 ? true : false;
+
   },
 });
 
@@ -283,24 +290,25 @@ Vue.component("v-info-content-url-image-link", {
   },
   mounted() {
     var vm = this;
+    console.log("🚀 ~ file: vue-readux.js ~ line 293 ~ mounted ~ vm", vm)
     window.addEventListener("canvasswitch", function (event) {
-      if (event.detail) {
+      console.log("🚀 ~ file: vue-readux.js ~ line 296 ~ vm.canvas !== event.detail.canvas", vm.canvas !== event.detail.canvas)
+      if (event.detail && vm.canvas !== event.detail.canvas) {
         var protocol = window.location.protocol;
         var host = window.location.host;
-        var canvas = event.detail.canvas;
+        vm.canvas = event.detail.canvas;
         var volume = event.detail.volume;
         var localpagelink = vm.pagelink;
+
         axios.get(`iiif/resource/${event.detail.canvas}`)
           .then(response => {
-            console.log(response.data.resource);
-            console.log(response.data.text);
             vm.pageresource = response.data.resource;
             vm.pagetext = response.data.text;
           }).catch(error => {console.log(error);})
         var url =
-          localpagelink + "/" + canvas + "/full/full/0/default.jpg";
+          localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
         vm.localUrls = url;
-        vm.can = canvas;
+        vm.can = vm.canvas;
       }
     });
   },
@@ -328,23 +336,21 @@ Vue.component("v-info-content-url-page-text", {
   mounted() {
     var vm = this;
     window.addEventListener("canvasswitch", function (event) {
-      if (event.detail) {
+      if (event.detail && vm.canvas !== event.detail.canvas) {
         var protocol = window.location.protocol;
         var host = window.location.host;
-        var canvas = event.detail.canvas;
+        vm.canvas = event.detail.canvas;
         var volume = event.detail.volume;
         var localpagelink = vm.pagelink;
         axios.get(`iiif/resource/${event.detail.canvas}`)
           .then(response => {
-            console.log(response.data.resource);
-            console.log(response.data.text);
             vm.pageresource = response.data.resource;
             vm.pagetext = response.data.text;
           }).catch(error => {console.log(error);})
         var url =
-          localpagelink + "/" + canvas + "/full/full/0/default.jpg";
+          localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
         vm.localUrls = url;
-        vm.can = canvas;
+        vm.can = vm.canvas;
       }
     });
   },

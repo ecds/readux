@@ -60,8 +60,28 @@ class UserAnnotation(AbstractAnnotation):
         else:
             return []
 
+    def update(self, attrs=None, tags=None):
+        """Method to update an annotation object with a dict of attributes and a list of tags
+
+        :param attrs: _description_, defaults to None
+        :type attrs: dict, optional
+        :param tags: _description_, defaults to None
+        :type tags: list, optional
+        """
+        if isinstance(attrs, dict):
+            for attr, value in attrs.items():
+                setattr(self, attr, value)
+
+
+        if isinstance(tags, list):
+            self.tags.clear()
+            for tag in tags:
+                self.tags.add(tag)
+
+        self.save()
+
     def parse_mirador_annotation(self):
-        self.motivation = AbstractAnnotation.COMMENTING
+        self.motivation = AbstractAnnotation.OA_COMMENTING
 
         if type(self.oa_annotation) == str:
             self.oa_annotation = json.loads(self.oa_annotation)
@@ -198,7 +218,7 @@ class UserAnnotation(AbstractAnnotation):
 
 # TODO: Override the save method and move this there.
 @receiver(signals.pre_save, sender=UserAnnotation)
-def parse_payload(sender, instance, **kwargs):
+def parse_payload(sender, instance, **kwargs):  # pylint: disable=unused-argument
     # if service.validate_oa_annotation(instance.oa_annotation):
     if isinstance(instance.oa_annotation, dict) and 'on' not in instance.oa_annotation.keys():
         return None

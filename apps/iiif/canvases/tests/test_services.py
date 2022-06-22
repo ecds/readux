@@ -191,11 +191,7 @@ class CanvasTests(TestCase):
     def test_wide_image_crops(self):
         pid = '15210893.5622.emory.edu$95'
         canvas = Canvas.objects.get(pid=pid)
-        # canvas.save()
-        # canvas.refresh_from_db()
         assert canvas.thumbnail_crop_landscape == "%s/%s/pct:25,0,50,100/,250/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
-        for x in range(1, 20):
-            print(canvas.thumbnail_crop_tallwide)
         assert canvas.thumbnail_crop_tallwide == "%s/%s/pct:5,5,90,90/250,/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
         assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
 

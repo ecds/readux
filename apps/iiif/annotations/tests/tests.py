@@ -1,22 +1,20 @@
 # pylint: disable = missing-function-docstring, invalid-name, line-too-long
 """Test cases for :class:`apps.iiif.annotations`."""
+import json
+from io import StringIO
+from bs4 import BeautifulSoup
 from django.test import TestCase, Client
 from django.test import RequestFactory
-from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
+from apps.users.tests.factories import UserFactory
 from ..views import AnnotationsForPage
 from ..models import Annotation
 from ..apps import AnnotationsConfig
 from ...canvases.models import Canvas
 from ...manifests.models import Manifest
-from bs4 import BeautifulSoup
-from io import StringIO
-import warnings
-import json
 
 USER = get_user_model()
 
@@ -25,23 +23,24 @@ class AnnotationTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
 
     def setUp(self):
+        ocr_user = UserFactory.create(username='ocr', name='OCR')
         self.factory = RequestFactory()
         self.client = Client()
         self.view = AnnotationsForPage.as_view()
         self.volume = Manifest.objects.get(pid='readux:st7r6')
         self.canvas = Canvas.objects.get(pid='fedora:emory:5622')
-        self.annotations = Annotation.objects.filter(canvas=self.canvas)
+        self.annotations = Annotation.objects.filter(canvas=self.canvas, owner=ocr_user)
 
     def test_app_config(self): # pylint: disable = no-self-use
         assert AnnotationsConfig.verbose_name == 'Annotations'
         assert AnnotationsConfig.name == 'apps.iiif.annotations'
 
     def test_get_annotations_for_page(self):
-        kwargs = {'vol': self.volume.pid, 'page': self.canvas.pid, 'version': 'v2'}
-        url = reverse('page_annotations', kwargs=kwargs)
+        kwargs = {'vol': self.volume.pid, 'canvas': self.canvas.pid, 'version': 'v2', 'username': 'ocr'}
+        url = reverse('user_comments', kwargs=kwargs)
         response = self.client.get(url)
         annotations = json.loads(response.content.decode('UTF-8-sig'))
-        assert len(annotations) == self.annotations.count()
+        assert len(annotations['resources']) == self.annotations.count()
         assert response.status_code == 200
 
     def test_order(self):
@@ -60,6 +59,7 @@ class AnnotationTests(TestCase):
         ocr.w = 100
         ocr.h = 10
         ocr.content = "Obviously you're not a golfer"
+        ocr.resource_type = Annotation.OCR
         ocr.save()
         assert ocr.content == "<span id='{pk}' class='anno-{pk}' data-letter-spacing='0.003232758620689655'>Obviously you're not a golfer</span>".format(pk=ocr.pk)
         assert ocr.owner == USER.objects.get(username='ocr')
@@ -72,6 +72,7 @@ class AnnotationTests(TestCase):
         ocr.w = 100
         ocr.h = 10
         ocr.format = Annotation.HTML
+        ocr.resource_type = Annotation.OCR
         ocr.save()
         assert '> </span>' in ocr.content
 
@@ -89,9 +90,9 @@ class AnnotationTests(TestCase):
         assert anno.format == 'cnt:ContentAsText'
         anno.format = Annotation.TEXT
         assert anno.format == 'dctypes:Text'
-        anno.format = Annotation.COMMENTING
+        anno.format = Annotation.OA_COMMENTING
         assert anno.format == 'oa:commenting'
-        anno.format = Annotation.PAINTING
+        anno.format = Annotation.SC_PAINTING
         assert anno.format == 'sc:painting'
         assert Annotation.FORMAT_CHOICES == (('text/plain', 'plain text'), ('text/html', 'html'))
         assert Annotation.TYPE_CHOICES == (('cnt:ContentAsText', 'ocr'), ('dctypes:Text', 'text'))
@@ -131,6 +132,7 @@ class AnnotationTests(TestCase):
         ocr.h = 10
         ocr.content = 'nice marmot'
         ocr.format = Annotation.HTML
+        ocr.resource_type = Annotation.OCR
         ocr.save()
         assert ocr.content == "<span id='{a}' class='anno-{a}' data-letter-spacing='0'>nice marmot</span>".format(a=ocr.id)
         assert ocr.style == ".anno-{a}: {{ height: 10px; width: 0px; font-size: 6.25px; letter-spacing: 0px;}}".format(a=ocr.id)
@@ -145,6 +147,7 @@ class AnnotationTests(TestCase):
         ocr.h = 0
         ocr.content = 'nice marmot'
         ocr.format = Annotation.HTML
+        ocr.resource_type = Annotation.OCR
         ocr.save()
         assert ocr.content == "<span id='{a}' class='anno-{a}' data-letter-spacing='0.09090909090909091'>nice marmot</span>".format(a=ocr.id)
         assert ocr.style == ".anno-{a}: {{ height: 0px; width: 10px; font-size: 0.0px; letter-spacing: 0.9090909090909091px;}}".format(a=ocr.id)

@@ -67,8 +67,10 @@ function rxFormSubmit(formId) {
 
 // component resize
 $(document).ready(function() {
-  var offset = $(".rx-home-right-column").offset().top;
-  $(".rx-splash").css("top", offset);
+  if ($(".rx-home-right-column").offset()) {
+    var offset = $(".rx-home-right-column").offset().top;
+    $(".rx-splash").css("top", offset);
+  }
 
   if (document.URL.replace(/\/+$/, "") == window.location.origin) {
     $("#rx-nav").addClass("rx-sticky");
@@ -172,8 +174,8 @@ $(document).ready(function() {
   2) make sure Mirador does all the stuff it needs to do to load a
   different canvas.
 */
-function goToCanvas(canvas) {
-  console.log("goToCanvas -> canvas", canvas)
-  history.pushState({}, '', canvas);
-  dispatchEvent(popStateEvent);
-}
+// function goToCanvas(canvas) {
+//   console.log("goToCanvas -> canvas", canvas)
+//   history.pushState({}, '', canvas);
+//   dispatchEvent(popStateEvent);
+// }

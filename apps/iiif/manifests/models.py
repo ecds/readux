@@ -1,7 +1,8 @@
 """Django models for IIIF manifests"""
-from boto3 import resource
 from uuid import uuid4, UUID
 from json import JSONEncoder
+from boto3 import resource
+from urllib.parse import urlparse
 from django.apps import apps
 from django.db import models
 from django.contrib.postgres.fields import JSONField
@@ -71,7 +72,7 @@ class ImageServer(models.Model):
         :rtype: dict
         """
         return {
-            'host': self.server_base,
+            'host': urlparse(self.server_base).netloc,
             'username': self.sftp_user,
             'private_key': self.private_key_path,
             'port': self.sftp_port,
@@ -120,7 +121,11 @@ class Manifest(IiifBase):
         ('right-to-left', 'Right to Left')
     )
     summary = models.TextField(null=True, blank=True)
-    author = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
+    author = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Enter multiple entities separated by a semicolon (;)."
+    )
     published_city = models.TextField(
         null=True,
         blank=True,
@@ -159,8 +164,17 @@ class Manifest(IiifBase):
     # use for sorting
     date_sort_ascending = models.FloatField(blank=True, null=True)
     date_sort_descending = models.FloatField(blank=True, null=True)
-    publisher = models.TextField(null=True, blank=True, help_text="Enter multiple entities separated by a semicolon (;).")
-    languages = models.ManyToManyField(Language, help_text="Languages present in the manifest.", blank=True, null=True)
+    publisher = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Enter multiple entities separated by a semicolon (;)."
+    )
+    languages = models.ManyToManyField(
+        Language,
+        help_text="Languages present in the manifest.",
+        blank=True,
+        null=True
+    )
     attribution = models.CharField(
         max_length=255,
         null=True,
@@ -209,7 +223,7 @@ class Manifest(IiifBase):
         :return: Manifest's absolute URL
         :rtype: str
         """
-        return '{h}/volume/{p}'.format(h=settings.HOSTNAME, p=self.pid)
+        return f'{settings.HOSTNAME}/volume/{self.pid}'
 
     def get_volume_url(self):
         """Convenience method for IIIF qualified URL.
@@ -217,7 +231,7 @@ class Manifest(IiifBase):
         :return: IIIF manifest URL
         :rtype: str
         """
-        return '{h}/volume/{p}/page/all'.format(h=settings.HOSTNAME, p=self.pid)
+        return f'{settings.HOSTNAME}/volume/{self.pid}/page/all'
 
     class Meta: # pylint: disable = too-few-public-methods, missing-class-docstring
         ordering = ['published_date']
@@ -229,7 +243,7 @@ class Manifest(IiifBase):
 
         :rtype: str
         """
-        return '{c} : {p}'.format(c=self.published_city, p=self.publisher)
+        return f'{self.published_city} : {self.publisher}'
 
     @property
     def thumbnail_logo(self):
@@ -238,12 +252,12 @@ class Manifest(IiifBase):
         :return: URL for logo thumbnail.
         :rtype: str
         """
-        return '{h}/media/{l}'.format(h=settings.HOSTNAME, l=self.logo)
+        return f'{settings.HOSTNAME}/media/{self.logo}'
 
     @property
     def baseurl(self):
         """Convenience method to provide the base URL for a manifest."""
-        return "%s/iiif/v2/%s" % (settings.HOSTNAME, self.pid)
+        return f'{settings.HOSTNAME}/iiif/v2/{self.pid}'
 
     @property
     def related_links(self):
@@ -285,10 +299,13 @@ class Manifest(IiifBase):
 
         super().save(*args, **kwargs)
 
+        for collection in self.collections.all():
+            collection.modified_at = self.modified_at
+            collection.save()
+
         Canvas = apps.get_model('canvases.canvas')
         try:
             if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
-                print([c.position] for c in self.canvas_set.all())
                 self.start_canvas = self.canvas_set.all().order_by('position').first()
                 self.save()
         except Canvas.DoesNotExist:

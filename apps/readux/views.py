@@ -10,9 +10,9 @@ from django.db.models import Max, Count
 from django.urls import reverse
 from elasticsearch_dsl import Q, NestedFacet, TermsFacet
 from elasticsearch_dsl.query import MultiMatch
+import config.settings.local as settings
 from apps.iiif.manifests.documents import ManifestDocument
 from apps.readux.forms import ManifestSearchForm
-import config.settings.local as settings
 from apps.export.export import JekyllSiteExport
 from apps.export.forms import JekyllExportForm
 from .models import UserAnnotation
@@ -478,7 +478,7 @@ class CollectionsSitemap(Sitemap):
     """Django Sitemap for Collections"""
     # priority unknown
     def items(self):
-        return Collection.objects.all().annotate(modified_at=Max('manifests__updated_at'))
+        return Collection.objects.all()
 
     def location(self, item):
         return reverse('collection', kwargs={'collection': item.pid})

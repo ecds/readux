@@ -19,6 +19,9 @@ class Serializer(JSONSerializer):
     def get_dump_object(self, obj):
         obj.label = str(obj.position)
         if ((self.version == 'v2') or (self.version is None)):
+
+            ocr_web_annotation_path = reverse('web_annotation_ocr', kwargs={ 'volume': obj.manifest.pid, 'canvas': obj.pid})
+
             otherContent = [ # pylint: disable=invalid-name
                 {
                     "@id": '{m}/list/{c}'.format(m=obj.manifest.baseurl, c=obj.pid),
@@ -26,26 +29,7 @@ class Serializer(JSONSerializer):
                     "label": "OCR Text"
                 }
             ]
-            #
-            # Only list annotation lists for current user. I'm going to leave the code below
-            # for when eventually implement groups.
-            #
-            # for user in USER.objects.filter(userannotation__canvas=obj).distinct():
-            #     kwargs = {
-            #       'username': user.username,
-            #       'volume': obj.manifest.pid,
-            #       'canvas': obj.pid
-            #     }
-            #     url = "{h}{k}".format(
-            #         h=settings.HOSTNAME,
-            #         k=reverse('user_annotations', kwargs=kwargs)
-            #     )
-            #     user_endpoint = {
-            #         "label": 'Annotations by {u}'.format(u=user.username),
-            #         "@type": "sc:AnnotationList",
-            #         "@id": url
-            #     }
-            #     otherContent.append(user_endpoint)
+
             current_user_has_annotations = (
                 self.current_user
                 and self.current_user.is_authenticated
@@ -57,17 +41,19 @@ class Serializer(JSONSerializer):
                     'volume': obj.manifest.pid,
                     'canvas': obj.pid
                 }
-                url = "{h}{k}".format(
+                annotation_list_url = "{h}{k}".format(
                     h=settings.HOSTNAME,
                     k=reverse('user_annotations', kwargs=kwargs)
                 )
+
                 otherContent.append(
                     {
-                        "label": 'Annotations by {u}'.format(u=self.current_user.username),
+                        "label": f'Annotations by {self.current_user.username}',
                         "@type": "sc:AnnotationList",
-                        "@id": url
+                        "@id": annotation_list_url
                     }
                 )
+
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,

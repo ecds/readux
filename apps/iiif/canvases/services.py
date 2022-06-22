@@ -1,9 +1,11 @@
 # pylint: disable=invalid-name
 """Module to provide some common functions for Canvas objects."""
 import csv
+import pysftp
+from tempfile import gettempdir
 from io import BytesIO
 import json
-from os import environ, path, unlink
+from os import environ, path, unlink, remove
 import re
 import tempfile
 from hocr_spec import HocrValidator
@@ -36,7 +38,8 @@ def activate_fake_canvas_info(canvas):
     """
     with open('apps/iiif/canvases/fixtures/info.json', 'r') as file:
         iiif_image_info = file.read().replace('\n', '')
-    httpretty.register_uri(httpretty.GET, canvas.service_id, body=iiif_image_info)
+
+    httpretty.register_uri(httpretty.GET, f'{canvas.resource_id}/info.json', body=iiif_image_info)
 
 def get_ocr(canvas):
     """Function to determine method for fetching OCR for a canvas.
@@ -68,10 +71,11 @@ def get_canvas_info(canvas):
         # return response
 
     response = fetch_url(
-        canvas.resource_id,
+        f'{canvas.resource_id}/info.json',
         timeout=settings.HTTP_REQUEST_TIMEOUT,
         data_format='json'
     )
+
     return response
 
 def fetch_tei_ocr(canvas):
@@ -153,14 +157,29 @@ def fetch_positional_ocr(canvas):
     ):
         fake_json = open(path.join(settings.APPS_DIR, 'iiif/canvases/fixtures/ocr_words.json'))
         words = fake_json.read()
-        httpretty.enable()
+        httpretty.enable(allow_net_connect=True)
         httpretty.register_uri(httpretty.GET, url, body=words)
 
     if canvas.ocr_file_path is not None:
         if canvas.image_server.storage_service == 's3':
             return canvas.image_server.bucket.Object(canvas.ocr_file_path).get()['Body'].read()
-        #  if canvas.image_server.storage_service == 'sftp':
-        #     Do something different
+        if canvas.image_server.storage_service == 'sftp':
+            try:
+                httpretty.enable(allow_net_connect=True)
+                connection_options = pysftp.CnOpts()
+                connection_options.hostkeys = None
+                sftp = pysftp.Connection(**canvas.image_server.sftp_connection, cnopts=connection_options)
+                ocr_local_file_path = path.join(gettempdir(), canvas.ocr_file_path)
+                sftp.get(canvas.ocr_file_path, localpath=ocr_local_file_path)
+
+                with open(ocr_local_file_path, 'r') as ocr_file:
+                    ocr_contents = ocr_file.read()
+
+                remove(ocr_local_file_path)
+
+                return ocr_contents.encode()
+            except:
+                return None
 
     return fetch_url(url, data_format='text/plain')
 

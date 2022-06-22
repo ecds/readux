@@ -103,8 +103,8 @@ class TestCanvasModels(TestCase):
         image_server = ImageServerFactory.create(server_base='http://fake.info')
         manifest = ManifestFactory.create(image_server=image_server)
         canvas = CanvasFactory.build()
-        canvas.height = None
-        canvas.width = None
+        canvas.height = 0
+        canvas.width = 0
         assert canvas.height != 3000
         assert canvas.width != 3000
         canvas.manifest = manifest

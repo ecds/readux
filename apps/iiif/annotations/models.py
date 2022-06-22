@@ -9,14 +9,15 @@ from django.utils.translation import gettext as _
 from django.contrib.auth import get_user_model
 from abc import abstractmethod
 from bs4 import BeautifulSoup
-import json
 import uuid
 import logging
+from ..models import IiifBase
+from .choices import AnnotationSelector, AnnotationPurpose
 
 USER = get_user_model()
 LOGGER = logging.getLogger(__name__)
 
-class AbstractAnnotation(models.Model):
+class AbstractAnnotation(IiifBase):
     """Base class for IIIF annotations."""
     OCR = 'cnt:ContentAsText'
     TEXT = 'dctypes:Text'
@@ -25,11 +26,11 @@ class AbstractAnnotation(models.Model):
         (TEXT, 'text')
     )
 
-    COMMENTING = 'oa:commenting'
-    PAINTING = 'sc:painting'
+    OA_COMMENTING = 'oa:commenting'
+    SC_PAINTING = 'sc:painting'
     MOTIVATION_CHOICES = (
-        (COMMENTING, 'commenting'),
-        (PAINTING, 'painting')
+        (OA_COMMENTING, 'commenting'),
+        (SC_PAINTING, 'painting')
     )
 
     PLAIN = 'text/plain'
@@ -40,14 +41,17 @@ class AbstractAnnotation(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    x = models.IntegerField()
-    y = models.IntegerField()
-    w = models.IntegerField()
-    h = models.IntegerField()
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
+    w = models.IntegerField(default=0)
+    h = models.IntegerField(default=0)
     order = models.IntegerField(default=0)
     content = models.TextField(blank=True, null=True, default=' ')
     resource_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default=TEXT)
-    motivation = models.CharField(max_length=50, choices=MOTIVATION_CHOICES, default=PAINTING)
+    # TODO: replace
+    motivation = models.CharField(max_length=50, choices=MOTIVATION_CHOICES, default=SC_PAINTING)
+    purpose = models.CharField(max_length=2, choices=AnnotationPurpose.choices, default=AnnotationPurpose('SP'))
+    primary_selector = models.CharField(max_length=2, choices=AnnotationSelector.choices, default=AnnotationSelector('FR'))
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)
     canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE, null=True)
     language = models.CharField(max_length=10, default='en')
@@ -59,6 +63,20 @@ class AbstractAnnotation(models.Model):
     item = None
 
     ordering = ['order']
+
+    @property
+    def content_is_html(self):
+        """
+        Is the content of the annotation HTML?
+
+        :return: True if HTML tags are present in the content.
+        :rtype: bool
+        """
+        return bool(BeautifulSoup(self.content, 'html.parser').find())
+
+    @property
+    def fragment(self):
+        return f'xywh=pixel:{self.x},{self.y},{self.w},{self.h}'
 
     def __str__(self):
         return str(self.pk)
@@ -92,7 +110,7 @@ def set_span_element(sender, instance, **kwargs):
     # Without this, it would nest the current span in a new span.
     if instance.content.startswith('<span'):
         instance.content = BeautifulSoup(instance.content, 'html.parser').span.string
-    if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation['annotatedBy']['name'] == "ocr"): # pylint: disable = line-too-long
+    if (instance.resource_type in (sender.OCR,)):
         instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
         instance.owner = USER.objects.get_or_create(username='ocr', name='OCR')[0]
         character_count = len(instance.content)

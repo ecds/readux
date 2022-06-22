@@ -1,6 +1,5 @@
 """Django model for Collection app"""
 import os.path
-import uuid
 from io import BytesIO
 from PIL import Image
 from django.db import models

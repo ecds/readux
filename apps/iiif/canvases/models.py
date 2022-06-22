@@ -55,10 +55,7 @@ class Canvas(IiifBase):
 
             return None
 
-        return '{h}/{c}'.format(
-            h=self.image_server.server_base,
-            c=quote(self.pid)
-        )
+        return f'{self.image_server.server_base}/{quote(self.pid)}'
 
     @property
     def resource_id(self):
@@ -67,10 +64,7 @@ class Canvas(IiifBase):
         if self.image_server is None:
             return None
 
-        return '{h}/{r}'.format(
-            h=self.image_server.server_base,
-            r=self.resource or self.pid
-        )
+        return f'{self.image_server.server_base}/{self.resource}'
 
     @property
     def anno_id(self):

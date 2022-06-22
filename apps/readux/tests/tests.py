@@ -181,7 +181,7 @@ class AnnotationTests(TestCase):
         self.collection = self.manifest.collections.first()
 
     def create_user_annotations(self, count, user):
-        for anno in range(count):
+        for _ in range(count):
             text_anno = UserAnnotation(
                 oa_annotation=json.loads(self.valid_mirador_annotations['text']['oa_annotation']),
                 owner=user
@@ -207,12 +207,12 @@ class AnnotationTests(TestCase):
         kwargs = {'username': self.user_a.username, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
-        annotation = self.load_anno(response)
+        # annotation = self.load_anno(response)
         assert response.status_code == 401
-#        assert len(annotation) == 0
+        # assert len(annotation) == 0
 
     def test_mirador_svg_annotation_creation(self):
-        request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['svg']), content_type="application/json")
+        request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['svg']), content_type='application/json')
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
@@ -227,7 +227,7 @@ class AnnotationTests(TestCase):
 
 
     def test_mirador_text_annotation_creation(self):
-        request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['text']), content_type="application/json")
+        request = self.factory.post('/annotations-crud/', data=json.dumps(self.valid_mirador_annotations['text']), content_type='application/json')
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
@@ -237,7 +237,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 201
 
     def test_creating_annotation_from_string(self):
-        request = self.factory.post('/annotations-crud/', data=self.valid_mirador_annotations['text'], content_type="application/json")
+        request = self.factory.post('/annotations-crud/', data=self.valid_mirador_annotations['text'], content_type='application/json')
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
@@ -264,12 +264,21 @@ class AnnotationTests(TestCase):
         url = reverse('user_annotations', kwargs=kwargs)
         request = self.factory.get(url)
         request.user = self.user_b
-        response = self.view(request, username=self.user_b.username, volume=self.manifest.pid, canvas=self.canvas.pid)
+        response = self.view(
+            request,
+            username=self.user_b.username,
+            volume=self.manifest.pid,
+            canvas=self.canvas.pid
+        )
         annotation = self.load_anno(response)
         assert len(annotation) == 5
         assert response.status_code == 200
         assert len(UserAnnotation.objects.all()) == 9
-        kwargs = {'username': self.user_a.username, 'volume': 'readux:st7r6', 'canvas': 'fedora:emory:5622'}
+        kwargs = {
+            'username': self.user_a.username,
+            'volume': 'readux:st7r6',
+            'canvas': 'fedora:emory:5622'
+        }
         url = reverse('user_annotations', kwargs=kwargs)
         response = self.client.get(url)
         annotation = self.load_anno(response)
@@ -286,7 +295,11 @@ class AnnotationTests(TestCase):
         resource['chars'] = 'updated annotation'
         data['oa_annotation']['resource'] = resource
         data['id'] = str(existing_anno.id)
-        request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.put(
+            '/annotations-crud/',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
@@ -299,20 +312,26 @@ class AnnotationTests(TestCase):
         new_id = str(uuid.uuid4())
         data['@id'] = new_id
         data['id'] = new_id
-        request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.put(
+            '/annotations-crud/',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
         request.user = self.user_a
         response = self.crud_view(request)
-        annotation = self.load_anno(response)
         assert response.status_code == 404
 
     def test_update_someone_elses_annotation(self):
         self.create_user_annotations(4, self.user_a)
         rando_anno = self.rando_anno()
         data = {'id': str(rando_anno.pk)}
-        request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.put(
+            '/annotations-crud/',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
         request.user = self.user_b
         response = self.crud_view(request)
-        annotation = self.load_anno(response)
         assert response.status_code == 401
 
     def test_updating_annotation_unauthenticated(self):
@@ -324,7 +343,7 @@ class AnnotationTests(TestCase):
         resource = data['oa_annotation']['resource'][0]
         data['oa_annotation']['resource'] = resource
         data['id'] = str(existing_anno.id)
-        request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.put('/annotations-crud/', data=json.dumps(data), content_type='application/json')
         response = self.crud_view(request)
         message = self.load_anno(response)
         assert response.status_code == 401
@@ -333,7 +352,7 @@ class AnnotationTests(TestCase):
     def test_delete_user_annotation_as_owner(self):
         self.create_user_annotations(1, self.user_a)
         data = {'id': str(uuid.uuid4())}
-        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type='application/json')
         request.user = self.user_a
         response = self.crud_view(request)
         assert response.status_code == 404
@@ -342,7 +361,7 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = {'id': str(existing_anno.pk)}
-        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type='application/json')
         request.user = self.user_a
         response = self.crud_view(request)
         message = self.load_anno(response)
@@ -353,7 +372,7 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(1, self.user_a)
         rando_anno = self.rando_anno()
         data = {'id': str(rando_anno.pk)}
-        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type='application/json')
         request.user = self.user_b
         response = self.crud_view(request)
         message = self.load_anno(response)
@@ -364,7 +383,11 @@ class AnnotationTests(TestCase):
         self.create_user_annotations(1, self.user_a)
         rando_anno = self.rando_anno()
         data = {'id': str(rando_anno.pk)}
-        request = self.factory.delete('/annotations-crud/', data=json.dumps(data), content_type="application/json")
+        request = self.factory.delete(
+            '/annotations-crud/',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
         response = self.crud_view(request)
         message = self.load_anno(response)
         assert response.status_code == 401

@@ -37,21 +37,34 @@ class ManifestDetail(View):
         if request.user.is_authenticated:
             annotators.append(request.user)
         annotators_string = ', '.join([str(i.name) for i in annotators])
-        return JsonResponse(
-            json.loads(
-                serialize(
-                    'manifest',
-                    self.get_queryset(),
-                    version=kwargs['version'],
-                    annotators=annotators_string,
-                    exportdate=datetime.utcnow(),
-                    current_user=request.user
-                )
-            ),
-            safe=False)
+        if '2' in kwargs['version']:
+            return JsonResponse(
+                json.loads(
+                    serialize(
+                        'manifest',
+                        self.get_queryset(),
+                        version=kwargs['version'],
+                        annotators=annotators_string,
+                        exportdate=datetime.utcnow(),
+                        current_user=request.user
+                    )
+                ),
+                safe=False
+            )
+        elif '3' in kwargs['version']:
+            return JsonResponse(
+                json.loads(
+                    serialize(
+                        'manifest_v3',
+                        self.get_queryset(),
+                        current_user=request.user
+                    )
+                ),
+                safe=False
+            )
 
 class ManifestSitemap(Sitemap):
-    """Django site map for mainfests"""
+    """Django site map for manifests"""
     # priority unknown
     def items(self):
         return Manifest.objects.all()

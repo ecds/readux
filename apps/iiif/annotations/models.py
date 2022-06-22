@@ -50,7 +50,7 @@ class AbstractAnnotation(IiifBase):
     resource_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default=TEXT)
     # TODO: replace
     motivation = models.CharField(max_length=50, choices=MOTIVATION_CHOICES, default=SC_PAINTING)
-    purpose = models.CharField(max_length=2, choices=AnnotationPurpose.choices, default=AnnotationPurpose('CM'))
+    purpose = models.CharField(max_length=2, choices=AnnotationPurpose.choices, default=AnnotationPurpose('SP'))
     primary_selector = models.CharField(max_length=2, choices=AnnotationSelector.choices, default=AnnotationSelector('FR'))
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default=PLAIN)
     canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE, null=True)
@@ -108,12 +108,9 @@ def set_span_element(sender, instance, **kwargs):
     """
     # Guard for when an OCR annotation gets re-saved.
     # Without this, it would nest the current span in a new span.
-    if instance.oa_annotation == {}:
-        return
-
     if instance.content.startswith('<span'):
         instance.content = BeautifulSoup(instance.content, 'html.parser').span.string
-    if (instance.resource_type in (sender.OCR,)) or (instance.oa_annotation['annotatedBy']['name'] == "ocr"): # pylint: disable = line-too-long
+    if (instance.resource_type in (sender.OCR,)):
         instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
         instance.owner = USER.objects.get_or_create(username='ocr', name='OCR')[0]
         character_count = len(instance.content)

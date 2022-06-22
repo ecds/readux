@@ -74,7 +74,7 @@ class LocalTest(TestCase):
             rmtree('images')
         mkdir('images')
         return ImageServerFactory(
-            server_base=self.sftp_server.host,
+            server_base=f'http://{self.sftp_server.host}',
             storage_service='sftp',
             storage_path='images',
             sftp_port=self.sftp_server.port,

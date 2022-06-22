@@ -27,33 +27,9 @@ class Serializer(JSONSerializer):
                     "@id": '{m}/list/{c}'.format(m=obj.manifest.baseurl, c=obj.pid),
                     "@type": "sc:AnnotationList",
                     "label": "OCR Text"
-                },
-                {
-                    "@id": f'{settings.HOSTNAME}{ocr_web_annotation_path}',
-                    "@type": "AnnotationPage",
-                    "label": "OCR Text"
                 }
             ]
-            #'<volume>/comments/<canvas>/<username>'
-            # Only list annotation lists for current user. I'm going to leave the code below
-            # for when eventually implement groups.
-            #
-            # for user in USER.objects.filter(userannotation__canvas=obj).distinct():
-            #     kwargs = {
-            #       'username': user.username,
-            #       'volume': obj.manifest.pid,
-            #       'canvas': obj.pid
-            #     }
-            #     url = "{h}{k}".format(
-            #         h=settings.HOSTNAME,
-            #         k=reverse('user_annotations', kwargs=kwargs)
-            #     )
-            #     user_endpoint = {
-            #         "label": 'Annotations by {u}'.format(u=user.username),
-            #         "@type": "sc:AnnotationList",
-            #         "@id": url
-            #     }
-            #     otherContent.append(user_endpoint)
+
             current_user_has_annotations = (
                 self.current_user
                 and self.current_user.is_authenticated
@@ -69,10 +45,6 @@ class Serializer(JSONSerializer):
                     h=settings.HOSTNAME,
                     k=reverse('user_annotations', kwargs=kwargs)
                 )
-                web_annotation_page_url = "{h}{k}".format(
-                    h=settings.HOSTNAME,
-                    k=reverse('user_comments', kwargs=kwargs)
-                )
 
                 otherContent.append(
                     {
@@ -82,13 +54,6 @@ class Serializer(JSONSerializer):
                     }
                 )
 
-                otherContent.append(
-                    {
-                        "label": f'Comments by {self.current_user.username}',
-                        "@type": 'AnnotationPage',
-                        "@id": web_annotation_page_url
-                    }
-                )
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
                 "@id": obj.identifier,

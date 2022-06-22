@@ -49,7 +49,7 @@ class Serializer(JSONSerializer):
 
             data = {
                 "@context": "http://iiif.io/api/presentation/2/context.json",
-                "@id": "%s/manifest" % (obj.baseurl),
+                "@id": f'{obj.v2_baseurl}/manifest',
                 "@type": "sc:Manifest",
                 "label": obj.label,
                 "metadata": [

@@ -218,7 +218,7 @@ class UserAnnotation(AbstractAnnotation):
 
 # TODO: Override the save method and move this there.
 @receiver(signals.pre_save, sender=UserAnnotation)
-def parse_payload(sender, instance, **kwargs):
+def parse_payload(sender, instance, **kwargs):  # pylint: disable=unused-argument
     # if service.validate_oa_annotation(instance.oa_annotation):
     if isinstance(instance.oa_annotation, dict) and 'on' not in instance.oa_annotation.keys():
         return None

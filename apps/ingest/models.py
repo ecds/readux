@@ -28,9 +28,10 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger('botocore').setLevel(logging.ERROR)
 logging.getLogger('boto3').setLevel(logging.ERROR)
 logging.getLogger('s3transfer').setLevel(logging.ERROR)
-logging.getLogger('httpretty').setLevel(logging.ERROR)
-logging.getLogger('httpretty.core').setLevel(logging.ERROR)
+logging.getLogger('httpretty').setLevel(logging.CRITICAL)
+logging.getLogger('httpretty.core').setLevel(logging.CRITICAL)
 logging.getLogger('paramiko').setLevel(logging.ERROR)
+logging.getLogger('elasticsearch.base').setLevel(logging.ERROR)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
@@ -146,7 +147,8 @@ class Local(IngestAbstractModel):
                         tmp_file += chunk
                 if len(tmp_file) > 0 and file_type and not self.__is_junk(file_name):
                     if 'csv' in file_type or 'tab-separated' in file_type:
-                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'),Z)
+                        format = 'csv' if 'csv' in file_type else 'tsv'
+                        metadata = Dataset().load(tmp_file.decode('utf-8-sig'), format=format)
                     elif 'officedocument' in file_type:
                         metadata = Dataset().load(BytesIO(tmp_file))
                     if metadata is not None:
@@ -175,6 +177,7 @@ class Local(IngestAbstractModel):
         :return: Tuple of two lists. One list of image files and one of OCR files
         :rtype: tuple
         """
+
         # sftp = self.create_sftp_connection()
         # sftp.mkdir(self.manifest.pid)
         # with sftp.cd(self.manifest.pid):
@@ -306,7 +309,7 @@ class Local(IngestAbstractModel):
             if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
                 file_name = file_name.replace('_', '-')
                 if file_type and 'image' in file_type and 'images' in file_path:
-                    self.remote_files.append(self.__upload_file(tmp_file, file_name, file_path))
+                    self.__upload_file(tmp_file, file_name, file_path)
                 if file_type:
                     is_ocr_file_type = (
                         'text' in file_type
@@ -317,7 +320,7 @@ class Local(IngestAbstractModel):
                 if 'ocr' in file_path and (
                     file_name.endswith('.hocr') or is_ocr_file_type
                 ):
-                    self.remote_files.append(self.__upload_file(tmp_file, file_name, file_path))
+                    self.__upload_file(tmp_file, file_name, file_path)
 
     def __upload_file(self, file, file_name, path):
         remote_path = f'{self.manifest.pid}{self.image_server.path_delineator}{file_name}'
@@ -338,9 +341,12 @@ class Local(IngestAbstractModel):
             # Define the full local path
             local_path = os.path.join(gettempdir(), remote_path)
 
+
             # Write the file to the local disk.
             with open(local_path, 'wb') as f:
                 f.write(BytesIO(file).getbuffer())
+            for _ in range(0,5):
+                print(f'local {local_path}')
 
             sftp = self.create_sftp_connection()
 
@@ -361,9 +367,16 @@ class Local(IngestAbstractModel):
     def __list_sftp_files(self):
         sftp = self.create_sftp_connection()
 
+        remote_files = []
+
+        if self.remote_dir:
+            remote_files = [remote_file for remote_file in sftp.listdir(self.manifest.pid)]
+        else:
+            remote_files = [remote_file for remote_file in sftp.listdir() if f'{self.manifest.pid}{self.image_server.path_delineator}' in remote_file]
+
         files = (
-            [os.path.join(self.remote_dir, image) for image in self.remote_files if 'image' in guess_type(image)[0]],
-            [os.path.join(self.remote_dir, ocr_file) for ocr_file in self.remote_files if 'image' not in guess_type(ocr_file)[0]],
+            [os.path.join(self.remote_dir, image) for image in remote_files if 'image' in guess_type(image)[0]],
+            [os.path.join(self.remote_dir, ocr_file) for ocr_file in remote_files if 'image' not in guess_type(ocr_file)[0]],
         )
         sftp.close()
 

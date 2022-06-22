@@ -9,12 +9,11 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib.auth import get_user_model
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.canvases.models import Manifest
 from .models import UserAnnotation
 
 USER = get_user_model()
 
-class Annotations(ListView):
+class Annotations(View):
     """
     Display a list of UserAnnotations for a specific user.
     :rtype: json
@@ -24,25 +23,55 @@ class Annotations(ListView):
 
     def get(self, request, *args, **kwargs):
         username = kwargs['username']
+        if 'version' not in kwargs:
+            kwargs['version'] = 'v2'
         try:
             owner = USER.objects.get(username=username)
-            if self.request.user == owner:
-                return JsonResponse(
-                    json.loads(
-                        serialize(
-                            'user_annotation_list',
-                            self.get_queryset(),
-                            owners=[owner]
-                        )
-                    ),
-                    safe=False
-                )
-            return JsonResponse(
-                status=401,
-                data={"Permission to see annotations not allowed for logged in account.": username}
-            )
 
-        except ObjectDoesNotExist:
+            if self.request.user != owner and username != 'ocr':
+                return JsonResponse(
+                    status=401,
+                    data={
+                        "Permission to see annotations not allowed for logged in account.": username
+                    }
+                )
+
+            queryset = self.get_queryset()
+
+
+            if '2' in kwargs['version']:
+                anno_serializer = 'user_annotation_list' if username != 'ocr' else 'annotation_list'
+                if self.request.user == owner or username == 'ocr':
+                    return JsonResponse(
+                        json.loads(
+                            serialize(
+                                anno_serializer,
+                                queryset,
+                                owners=[owner]
+                            )
+                        ),
+                        safe=False
+                    )
+
+                if '3' in kwargs['version']:
+                    if username == 'ocr':
+                        annotations = queryset.first().annotation_set.all()
+                    else:
+                        annotations = queryset.first().userannotation_set.filter(owner=owner)
+
+                    return JsonResponse(
+                        json.loads(
+                            serialize(
+                                'annotation_page_v3',
+                                queryset,
+                                annotations=annotations
+                            )
+                        )
+                    )
+
+                raise ObjectDoesNotExist()
+
+        except (ObjectDoesNotExist, USER.DoesNotExist):
             return JsonResponse(status=404, data={"USER not found.": username})
 
 class WebAnnotations(ListView):
@@ -157,6 +186,7 @@ class AnnotationCrud(View):
                 updated_annotation, tags = deserialize('annotation_v3', self.payload)
                 annotation.update(updated_annotation, tags)
 
+            annotation.save()
             annotation.refresh_from_db()
 
             return JsonResponse(

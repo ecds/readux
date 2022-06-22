@@ -78,7 +78,10 @@ class ManifestExportTests(TestCase):
             ocr_annotation_list = json.load(json_file)
         assert ocr_annotation_list['@id'] == ocr_annotation_list_id
 
-        comment_annotation_list_id = manifest['sequences'][0]['canvases'][0]['otherContent'][1]['@id']
+        other_content = manifest['sequences'][0]['canvases'][0]['otherContent']
+
+        comment_annotation_list_id = [x['@id'] for x in other_content if x['@type'] == 'sc:AnnotationList' and 'OCR' not in x['label']][0]
+
         comment_annotation_list_path = os.path.join(
             tmpdir,
             re.sub(r'\W', '_', comment_annotation_list_id) + ".json"

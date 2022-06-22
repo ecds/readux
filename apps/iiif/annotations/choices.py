@@ -1,3 +1,4 @@
+ # pylint: disable=invalid-name
 from django.db.models import TextChoices
 
 class AnnotationSelector(TextChoices):
@@ -21,7 +22,8 @@ class AnnotationPurpose(TextChoices):
     identifying = 'ID'
     linking = 'LK'
     moderating = 'MO'
+    painting = 'PT'
     questioning = 'QT'
     replying = 'RE'
+    supplementing = 'SP'
     tagging = 'TG'
-

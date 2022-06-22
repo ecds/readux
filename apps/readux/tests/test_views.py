@@ -51,7 +51,7 @@ class TestReaduxViews:
         view = views.ManifestsSitemap()
         manifest = Manifest.objects.all().first()
         assert view.items().count() == Manifest.objects.all().count()
-        assert view.location(manifest) == '/volume/{m}/page/all'.format(m=manifest.pid)
+        assert view.location(manifest) == f'/volume/{manifest.pid}/page/all'
         assert view.lastmod(manifest) == manifest.updated_at
 
     def test_collections_sitemap(self):
@@ -60,7 +60,7 @@ class TestReaduxViews:
         view = views.CollectionsSitemap()
         collection = Collection.objects.all().first()
         assert view.items().count() == Collection.objects.all().count()
-        assert view.location(collection) == '/collection/{c}/'.format(c=collection.pid)
+        assert view.location(collection) == f'/collection/{collection.pid}/'
         assert view.lastmod(collection) == collection.updated_at
 
     def test_export_download_zip(self):
@@ -94,7 +94,6 @@ class TestVolumeSearchView(ESTestCase, TestCase):
             published_date_edtf="2022-04-14",
         )
         self.volume1.save()
-        print(self.volume1.date_earliest)
         self.volume1.languages.add(lang_en)
         self.volume2 = Manifest(
             pid="uniquepid2",

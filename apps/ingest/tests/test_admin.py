@@ -46,12 +46,13 @@ class IngestAdminTest(TestCase):
         )
 
         self.sftp_image_server = ImageServerFactory(
-            server_base=self.sftp_server.host,
+            server_base=f'http://{self.sftp_server.host}',
             storage_service='sftp',
             storage_path='admin_images',
             sftp_port=self.sftp_server.port,
             private_key_path=self.sftp_server.key_file,
-            sftp_user=getuser()
+            sftp_user=getuser(),
+            path_delineator='_'
         )
 
         self.user = UserFactory.create(is_superuser=True)
@@ -104,6 +105,7 @@ class IngestAdminTest(TestCase):
         assert Manifest.objects.count() == original_manifest_count + 1
         assert Canvas.objects.count() == original_canvas_count + 10
 
+    @httpretty.httprettified(allow_net_connect=True)
     def test_local_admin_save_sftp(self):
         """It should add a create a manifest and canvases and delete the Local object"""
         httpretty.disable()
@@ -118,8 +120,8 @@ class IngestAdminTest(TestCase):
 
         request_factory = RequestFactory()
 
-        with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as f:
-            content = files.base.ContentFile(f.read())
+        with open(join(self.fixture_path, 'no_meta_file.zip'), 'rb') as file:
+            content = files.base.ContentFile(file.read())
 
         local.bundle = files.File(content.file, 'no_meta_file.zip')
 

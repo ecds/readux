@@ -3,7 +3,7 @@ import json
 from django.test import TestCase
 from django.core.serializers import serialize, deserialize
 from apps.iiif.annotations.models import Annotation
-from apps.iiif.annotations.choices import AnnotationSelector
+from apps.iiif.annotations.choices import AnnotationPurpose, AnnotationSelector
 from apps.iiif.annotations.tests.factories import AnnotationFactory
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tests.factories import CanvasFactory
@@ -254,7 +254,8 @@ class DeserializerTests(TestCase):
         svg_anno = UserAnnotationFactory.create(
             canvas=canvas,
             svg='<svg><path></path></svg>',
-            primary_selector=AnnotationSelector('SV')
+            primary_selector=AnnotationSelector('SV'),
+            purpose=AnnotationPurpose('CM')
         )
         serialized_svg_anno = json.loads(serialize('annotation_v3', [svg_anno]))
         body = serialized_svg_anno['body'][0]
@@ -263,7 +264,7 @@ class DeserializerTests(TestCase):
         assert serialized_svg_anno['body'][0]['value'] == svg_anno.content
         assert serialized_svg_anno['id'].replace('#', '') == str(svg_anno.id)
         assert svg_anno.content != new_content
-        body['value'] = new_content
+        serialized_svg_anno['body'][0]['value'] = new_content
 
         serialized_svg_anno['body'].append(
             {

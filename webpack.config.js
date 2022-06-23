@@ -9,6 +9,7 @@ module.exports = {
     path: path.resolve('./apps/static/js/'),
     filename: "[name].js"
   },
+  devtool: 'source-map',
   plugins: [
     new BundleTracker({filename: './webpack-stats.json'})
   ]

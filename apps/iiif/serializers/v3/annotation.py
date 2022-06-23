@@ -168,12 +168,15 @@ class Serializer(JSONSerializer):
 def Deserializer(data):
     annotation = {}
     annotation['owner'] = USER.objects.get(username = data['body'][0]['creator']['id'])
-    annotation['canvas'] = Canvas.objects.get(pid=data['target']['source'].split('/')[-1])
+    source_parts = data['target']['source'].split('/')
+    canvas_pid = source_parts[-1] if source_parts[-1] != 'canvas' else source_parts[-2]
+    annotation['canvas'] = Canvas.objects.get(pid=canvas_pid)
     tags = []
 
     for body in data['body']:
         if body['purpose'] == 'commenting':
             annotation['content'] = body['value']
+            annotation['purpose'] = AnnotationPurpose('CM')
         if body['purpose'] == 'tagging':
             tags.append(body['value'])
 

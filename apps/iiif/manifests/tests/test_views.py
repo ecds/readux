@@ -54,8 +54,10 @@ class ManifestTests(TestCase):
     def test_properties(self):
         assert self.volume.publisher_bib == 'Atlanta : ECDS'
         assert self.volume.thumbnail_logo.endswith("/media/logos/ecds.png")
-        assert self.volume.baseurl.endswith("/iiif/v2/%s" % (self.volume.pid))
-        assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.volume.start_canvas.pid))
+        assert self.volume.baseurl.endswith(f'/iiif/v2/{self.volume.pid}')
+        assert self.volume.start_canvas.identifier.endswith(
+            f'/iiif/{self.volume.pid}/canvas/{self.volume.start_canvas.pid}'
+        )
 
     def test_default_start_canvas(self):
         self.start_canvas.is_starting_page = False
@@ -63,7 +65,9 @@ class ManifestTests(TestCase):
         self.volume.start_canvas = None
         self.volume.save()
         self.volume.refresh_from_db()
-        assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.default_start_canvas.pid))
+        assert self.volume.start_canvas.identifier.endswith(
+            f'/iiif/{self.volume.pid}/canvas/{self.default_start_canvas.pid}'
+        )
 
     def test_meta(self):
         assert str(self.volume) == self.volume.label

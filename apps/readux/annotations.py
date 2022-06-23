@@ -53,23 +53,25 @@ class Annotations(View):
                         safe=False
                     )
 
-                if '3' in kwargs['version']:
-                    if username == 'ocr':
-                        annotations = queryset.first().annotation_set.all()
-                    else:
-                        annotations = queryset.first().userannotation_set.filter(owner=owner)
+            if '3' in kwargs['version']:
+                annotations = []
 
-                    return JsonResponse(
-                        json.loads(
-                            serialize(
-                                'annotation_page_v3',
-                                queryset,
-                                annotations=annotations
-                            )
+                if username == 'ocr':
+                    annotations = queryset.first().annotation_set.all()
+                elif owner.username == username:
+                    annotations = queryset.first().userannotation_set.filter(owner=owner)
+
+                return JsonResponse(
+                    json.loads(
+                        serialize(
+                            'annotation_page_v3',
+                            queryset,
+                            annotations=annotations
                         )
                     )
+                )
 
-                raise ObjectDoesNotExist()
+            return JsonResponse(status=404, data={"Invalid IIIF Version": kwargs['version']})
 
         except (ObjectDoesNotExist, USER.DoesNotExist):
             return JsonResponse(status=404, data={"USER not found.": username})

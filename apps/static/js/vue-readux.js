@@ -290,9 +290,7 @@ Vue.component("v-info-content-url-image-link", {
   },
   mounted() {
     var vm = this;
-    console.log("🚀 ~ file: vue-readux.js ~ line 293 ~ mounted ~ vm", vm)
     window.addEventListener("canvasswitch", function (event) {
-      console.log("🚀 ~ file: vue-readux.js ~ line 296 ~ vm.canvas !== event.detail.canvas", vm.canvas !== event.detail.canvas)
       if (event.detail && vm.canvas !== event.detail.canvas) {
         var protocol = window.location.protocol;
         var host = window.location.host;
@@ -300,15 +298,18 @@ Vue.component("v-info-content-url-image-link", {
         var volume = event.detail.volume;
         var localpagelink = vm.pagelink;
 
-        axios.get(`iiif/resource/${event.detail.canvas}`)
-          .then(response => {
-            vm.pageresource = response.data.resource;
-            vm.pagetext = response.data.text;
-          }).catch(error => {console.log(error);})
-        var url =
-          localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
-        vm.localUrls = url;
-        vm.can = vm.canvas;
+        if (vm.canvas !== 'all') {
+          axios.get(`iiif/resource/${event.detail.canvas}`)
+            .then(response => {
+              vm.pageresource = response.data.resource;
+              vm.pagetext = response.data.text;
+            }).catch(error => {console.log(error);})
+          var url =
+            localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
+          vm.localUrls = url;
+          vm.can = vm.canvas;
+        }
+
       }
     });
   },

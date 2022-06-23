@@ -53,7 +53,7 @@ function descaddURL(element) {
   });
 }
 
-window.descaddURL = ascaddURL;
+window.descaddURL = descaddURL;
 
 
 // use an a element to log out

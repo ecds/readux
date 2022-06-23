@@ -77,7 +77,7 @@ def _create_staticfiles_symlink(options):
 
 def _update_static_files(options):
     run('rm package-lock.json && npm install && npx webpack')
-    run('{v}/python manage.py compilescss && {v}/bin/python manage.py collectstatic --noinput'.format(v=options['VENV_PATH']))
+    run('{v}/bin/python manage.py compilescss && {v}/bin/python manage.py collectstatic --noinput'.format(v=options['VENV_PATH']))
 
 def _update_database(options):
     run('{v}/bin/python manage.py migrate --noinput'.format(v=options['VENV_PATH']))

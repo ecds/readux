@@ -40,7 +40,7 @@ pyopenssl # for running dev server under https
 
 # Deployment
 # ------------------------------------------------------------------------------
-Fabric==1.15 # https://github.com/fabric/fabric
+Fabric==2.7.0 # https://github.com/fabric/fabric
 
 celery==5.2.7
 django-celery-results==2.3.1

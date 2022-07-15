@@ -257,7 +257,6 @@ class Local(IngestAbstractModel):
                 except IndexError:
                     # Every image may not have a matching OCR file
                     ocr_file_path = None
-                    pass
 
             pid = image_file if self.manifest.pid in image_file else f'{self.manifest.pid}_{image_file}'
             position = index + 1

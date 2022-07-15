@@ -1,14 +1,15 @@
 # pylint: disable = unused-argument
 
 """ Common tasks for ingest. """
+from os import environ
 import logging
 from celery import Celery
 from celery.signals import task_success, task_failure
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 from django_celery_results.models import TaskResult
+from apps.iiif.canvases.models import Canvas
 from apps.ingest.models import IngestTaskWatcher
 from .services import create_manifest
 from .mail import send_email_on_failure, send_email_on_success
@@ -40,15 +41,35 @@ def create_canvas_form_local_task(ingest_id):
         local_ingest.refresh_from_db()
 
     local_ingest.create_canvases()
-    # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
-    # the database. As a double check loop through to make sure the height and width has been saved.
-    for canvas in local_ingest.manifest.canvas_set.all():
-        if canvas.width == 0 or canvas.height == 0:
-            canvas.save()
+    # Sometimes, the IIIF server is not ready to process the image by the time the
+    # canvas is saved to the database. As a double check loop through to make
+    # sure the height and width has been saved.
+    if environ['DJANGO_ENV'] != 'test':
+        for canvas in local_ingest.manifest.canvas_set.all():
+            ensure_dimensions.delay(canvas.id)
+
+@app.task(name='ensure_dimensions', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
+def ensure_dimensions(canvas_id, attempts=0):
+    """_summary_
+
+    :param canvas_id: ID of Canvas to check.
+    :type canvas_id: int
+    :param attempts: Number of times the check has been attempted.
+    :type attempts: int
+    """
+    if attempts == 20:
+        return
+
+    attempts += 1
+    canvas = Canvas.objects.get(id=canvas_id)
+    if canvas.width == 0 or canvas.height == 0:
+        canvas.save()
+    else:
+        ensure_dimensions.delay(canvas_id, attempts, countdown=180)
 
 @app.task(name='creating_canvases_from_remote', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def create_remote_canvases(ingest_id, *args, **kwargs):
-    """Task to create Canavs objects from remote IIIF manifest
+    """Task to create Canvas objects from remote IIIF manifest
 
     :param ingest_id: Primary key for .models.Remote object
     :type ingest: UUID

@@ -1,12 +1,11 @@
 """Django models representing IIIF canvases and IIIF image server info."""
-from genericpath import exists
 import os
+from urllib.parse import quote
 from boto3 import resource
 from bs4 import BeautifulSoup
-from urllib.parse import quote
-import config.settings.local as settings
 from django.db import models
 from django.contrib.auth import get_user_model
+import config.settings.local as settings
 from ..models import IiifBase
 from ..manifests.models import Manifest, ImageServer
 from ..annotations.models import Annotation
@@ -30,7 +29,7 @@ class Canvas(IiifBase):
         ('line', 'line'),
         ('both', 'both')
     )
-    # TODO: move this to the mainfest level.
+    # TODO: move this to the manifest level.
     default_ocr = models.CharField(max_length=30, choices=preferred_ocr, default="word")
     ocr_file_path = models.CharField(max_length=500, null=True, blank=True)
 

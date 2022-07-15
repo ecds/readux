@@ -158,9 +158,9 @@ const documentReady = function() {
   }
 
   if (document.URL.replace(/\/+$/, "") == window.location.origin) {
-    document.getElementById('rx-nav').addClass('rx-sticky');
+    document.getElementById('rx-nav').classList.add('rx-sticky');
   } else {
-    document.getElementById('rx-nav').removeClass('rx-sticky');
+    document.getElementById('rx-nav').classList.remove('rx-sticky');
   }
 
   // show/hide collection info

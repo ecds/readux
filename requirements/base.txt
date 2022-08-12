@@ -53,7 +53,7 @@ django-import-export==2.8.0
 gitpython==3.1.27
 
 # S3 Uploads
-boto3==1.22.12
+boto3==1.24.50
 django-storages==1.12.3  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads

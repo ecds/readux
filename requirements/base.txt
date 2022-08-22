@@ -63,7 +63,7 @@ pysftp>=0.2.9,<1.0 # https://pysftp.readthedocs.io/
 stream-unzip>=0.0.58
 
 # jekyll theme for zipfile used in export functionality
--e git+https://github.com/emory-libraries-ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme
+-e git+https://github.com/ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme
 
 # List of BCP 47 language codes
 bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py

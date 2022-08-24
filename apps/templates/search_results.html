@@ -74,6 +74,13 @@
                 id="search-filters"
             >
                 <h4 class="uk-flex uk-flex-center">Filters</h4>
+                <fieldset class="uk-margin uk-width-1-1">
+                    <div class="uk-form-label">{{ form.collection.label }}</div>
+                    {{ form.collection }}
+                    <span class="uk-text-small">
+                        Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
+                    </span>
+                </fieldset>
                 <fieldset class="uk-margin">
                     <div class="uk-width-1-1">
                         <div class="uk-form-label">{{ form.author.label }}</div>
@@ -86,13 +93,6 @@
                         <div class="uk-form-label">{{ form.language.label }}</div>
                         {{ form.language }}
                     </div>
-                </fieldset>
-                <fieldset class="uk-margin uk-width-1-1">
-                    <div class="uk-form-label">{{ form.collection.label }}</div>
-                    {{ form.collection }}
-                    <span class="uk-text-small">
-                        Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
-                    </span>
                 </fieldset>
                 <fieldset class="uk-margin uk-width-1-1">
                     <span class="uk-form-label uk-margin-remove-bottom">Date published</span>

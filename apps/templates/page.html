@@ -311,10 +311,6 @@
             target="_blank">Export Citation in RIS</a>
         </div>
 
-       <div class="rx-info-content">
-       <button class="rx-action-btn" type="button" onclick="document.querySelector('div.openseadragon-canvas div span').classList.add('ShowOCR');">
-View/Hide OCR Overlay</button></div>
-
         <v-volume-export-annotation-btn :manifest-count="{{ user_annotation_count }}">
           <form action="{% url 'export' volume.pid %}" class="button_to" method="GET" id="rx-annotation-export-form">
             <a class="rx-action-btn" href="#" onclick="rxFormSubmit('rx-annotation-export-form');">Export
@@ -329,6 +325,17 @@ View/Hide OCR Overlay</button></div>
         </div>
 
         <!--Text overlay modal-->
+
+        <div class="rx-info-content">
+          <button class="rx-btn rx-btn-collection" type="button" onclick="document.querySelector('div.openseadragon-canvas div span').classList.add('ShowOCR');">
+ View OCR Overlay</button>
+        </div>
+
+        <div class="rx-info-content">
+          <button class="rx-btn rx-btn-collection" type="button" onclick="document.querySelector('div.openseadragon-canvas div span').classList.remove('ShowOCR');">
+ Hide OCR Overlay</button>
+        </div>
+
 
         <button class="rx-btn rx-btn-collection" type="button" uk-toggle="target: #text-overlay-modal">View Text Overlay</button>
 

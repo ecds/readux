@@ -216,10 +216,10 @@ class AnnotationTests(TestCase):
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
-        assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
-        assert annotation['on']['selector']['value'] == 'xywh=535,454,681,425'
+        assert annotation['body'][0]['creator']['name'] == 'Zaphod Beeblebrox'
+        # assert annotation['on']['selector']['value'] == 'xywh=535,454,681,425'
         assert response.status_code == 201
-        annotation_object = UserAnnotation.objects.get(pk=annotation['@id'])
+        annotation_object = UserAnnotation.objects.get(pk=annotation['id'].replace('#', ''))
         assert annotation_object.x == 535
         assert annotation_object.y == 454
         assert annotation_object.w == 681
@@ -231,9 +231,9 @@ class AnnotationTests(TestCase):
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
-        assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
-        assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
-        assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
+        assert annotation['body'][0]['creator']['name'] == 'Zaphod Beeblebrox'
+        # assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
+        # assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
         assert response.status_code == 201
 
     def test_creating_annotation_from_string(self):
@@ -241,9 +241,9 @@ class AnnotationTests(TestCase):
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
-        assert annotation['annotatedBy']['name'] == 'Zaphod Beeblebrox'
-        assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
-        assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
+        assert annotation['body'][0]['creator']['name'] == 'Zaphod Beeblebrox'
+        # assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
+        # assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
         assert response.status_code == 201
 
     def test_get_user_annotations(self):
@@ -304,7 +304,7 @@ class AnnotationTests(TestCase):
         response = self.crud_view(request)
         annotation = self.load_anno(response)
         assert response.status_code == 200
-        assert annotation['resource']['chars'] == 'updated annotation'
+        assert annotation['body'][0]['value'] == 'updated annotation'
 
     def test_update_non_existing_user_annotation(self):
         self.create_user_annotations(1, self.user_a)

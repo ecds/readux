@@ -30,9 +30,9 @@ def deploy(branch='release', path='/readux.io/readux', volume=None):
         _get_latest_source(branch, options)
         _update_virtualenv(options)
         _link_settings(options)
-        _create_staticfiles_symlink(options)
-        if volume is not None:
-            _mount_media(volume)
+        # _create_staticfiles_symlink(options)
+        # if volume is not None:
+        #     _mount_media(volume)
         _update_static_files(options)
         _update_database(options)
         _update_symlink(options)

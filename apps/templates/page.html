@@ -256,6 +256,19 @@
           </div>
         </div>
 
+        {% if volume.languages is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Language(s)</div>
+          <div class="rx-info-content-value">
+            <ul>
+              {% for language in volume.languages.all %}
+              <li>{{ language.name }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
           <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
@@ -295,6 +308,21 @@
         <div class="rx-info-content">
           <div class="rx-info-content-label">License</div>
           <div class="rx-info-content-value">{{ volume.license }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Identifier</div>
+          <div class="rx-info-content-value">{{ volume.identifier }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Link to Resource</div>
+          <div class="rx-info-content-value">{{ volume.identifier_uri }}</div>
+        </div>
+
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Scanned By</div>
+          <div class="rx-info-content-value">{{ volume.scanned_by }}</div>
         </div>
 
       </div>

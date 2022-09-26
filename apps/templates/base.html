@@ -26,6 +26,16 @@
     <meta property="og:description" content="{{ volume.summary|escape }}" />
     <meta name="twitter:description" content="{{ volume.summary|escape }}" />
     <meta property="og:type" content="book" />
+    <!-- Zotero metadata -->
+    <meta name="citation_title" content="{{ volume.label|escape }}">
+    <meta name="citation_authors" content="{{ volume.author|safe }}">
+    <meta name="citation_date" content="{{ volume.published_date|safe }}">
+    <meta name="citation_publisher" content="{{ volume.publisher|safe }}">
+    <meta name="citation_public_url" content="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+    {% for lang in volume.languages.all %}
+    <meta name="citation_language" content="{{ lang.name }}">
+    {% endfor %}
+    <!-- End Zotero metadata -->
 
     {% for page in volume.canvas_set.all %}{% if forloop.first %}
     <meta property="og:image" content="{{ page.social_media }}" />

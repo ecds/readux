@@ -6,7 +6,7 @@ from tablib.core import Dataset
 from apps.iiif.manifests.models import Manifest, RelatedLink
 
 def clean_metadata(metadata):
-    """Remove keys that do not aligin with Manifest fields.
+    """Remove keys that do not align with Manifest fields.
 
     :param metadata:
     :type metadata: tablib.Dataset
@@ -75,7 +75,7 @@ def create_manifest(ingest):
     return manifest
 
 def extract_image_server(canvas):
-    """Determins the IIIF image server URL for a given IIIF Canvas
+    """Determines the IIIF image server URL for a given IIIF Canvas
 
     :param canvas: IIIF Canvas
     :type canvas: dict
@@ -163,7 +163,7 @@ def get_metadata_from(files):
         if 'metadata' in file.name.casefold():
             stream = file.read()
             if 'csv' in guess_type(file.name)[0] or 'tab-separated' in guess_type(file.name)[0]:
-                metadata = Dataset().load(stream.decode('utf-8-sig')).dict
+                metadata = Dataset().load(stream.decode('utf-8-sig'), format='csv').dict
             else:
                 metadata = Dataset().load(stream).dict
     return metadata

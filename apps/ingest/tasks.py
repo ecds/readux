@@ -1,8 +1,8 @@
 # pylint: disable = unused-argument
 
 """ Common tasks for ingest. """
-from os import environ
 import logging
+from os import environ
 from celery import Celery
 from celery.signals import task_success, task_failure
 from django.apps import apps
@@ -41,9 +41,8 @@ def create_canvas_form_local_task(ingest_id):
         local_ingest.refresh_from_db()
 
     local_ingest.create_canvases()
-    # Sometimes, the IIIF server is not ready to process the image by the time the
-    # canvas is saved to the database. As a double check loop through to make
-    # sure the height and width has been saved.
+    # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
+    # the database. As a double check loop through to make sure the height and width has been saved.
     if environ['DJANGO_ENV'] != 'test':
         for canvas in local_ingest.manifest.canvas_set.all():
             ensure_dimensions.delay(canvas.id)
@@ -59,13 +58,13 @@ def ensure_dimensions(canvas_id, attempts=0):
     """
     if attempts == 20:
         return
-
-    attempts += 1
-    canvas = Canvas.objects.get(id=canvas_id)
-    if canvas.width == 0 or canvas.height == 0:
-        canvas.save()
     else:
-        ensure_dimensions.delay(canvas_id, attempts, countdown=180)
+        attempts += 1
+        canvas = Canvas.objects.get(id=canvas_id)
+        if canvas.width == 0 or canvas.height == 0:
+            canvas.save()
+        else:
+            ensure_dimensions.delay(canvas_id, attempts, countdown=180)
 
 @app.task(name='creating_canvases_from_remote', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def create_remote_canvases(ingest_id, *args, **kwargs):
@@ -85,7 +84,7 @@ def create_remote_canvases(ingest_id, *args, **kwargs):
 
 @app.task(name='uploading_to_s3', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def upload_to_s3_task(local_id):
-    """Task to create Canavs objects from remote IIIF manifest
+    """Task to create Canvas objects from remote IIIF manifest
 
     :param local_id: Primary key for .models.Local object
     :type local_id: UUID

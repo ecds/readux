@@ -158,7 +158,7 @@ class AnnotationCrud(View):
         return JsonResponse(
             json.loads(
                 serialize(
-                    'annotation',
+                    'annotation_v3',
                     [annotation]
                 )
             ),
@@ -194,7 +194,7 @@ class AnnotationCrud(View):
             return JsonResponse(
                 json.loads(
                     serialize(
-                        'annotation',
+                        'annotation_v3',
                         [annotation]
                     )
                 ),

@@ -25,7 +25,7 @@ sftpserver==0.3
 # Code quality
 # ------------------------------------------------------------------------------
 flake8==4.0.1  # https://github.com/PyCQA/flake8
-coverage==6.4.1  # https://github.com/nedbat/coveragepy
+coverage==6.5.0  # https://github.com/nedbat/coveragepy
 coveralls
 
 # Django
@@ -40,7 +40,7 @@ pyopenssl # for running dev server under https
 
 # Deployment
 # ------------------------------------------------------------------------------
-Fabric==1.15 # https://github.com/fabric/fabric
+Fabric==2.7.1 # https://github.com/fabric/fabric
 
 celery==5.2.7
 django-celery-results==2.4.0

@@ -25,6 +25,18 @@ a.nav-link {
 .uk-button-default {
   font-size: 1.25rem; }
 
+#search-form .uk-button-danger {
+  background-color: #f0506e;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+#search-form .uk-button-secondary {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
 .uk-tab > .uk-active > a {
   border-color: var(--link-color) !important;
   color: var(--link-color) !important; }

@@ -26,6 +26,10 @@ a.nav-link {
   text-decoration: none;
 }
 
+em {
+  color: inherit !important;
+}
+
 .uk-button-primary {
   background-color: var(--link-color);
 }

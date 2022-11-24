@@ -24,7 +24,7 @@ sftpserver==0.3
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8==4.0.1  # https://github.com/PyCQA/flake8
+flake8==6.0.0  # https://github.com/PyCQA/flake8
 coverage==6.4.1  # https://github.com/nedbat/coveragepy
 coveralls
 

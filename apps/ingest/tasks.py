@@ -3,16 +3,20 @@
 """ Common tasks for ingest. """
 import logging
 from os import environ
+
 from celery import Celery
-from celery.signals import task_success, task_failure
+from celery.signals import task_failure, task_success
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from django_celery_results.models import TaskResult
+
 from apps.iiif.canvases.models import Canvas
 from apps.ingest.models import IngestTaskWatcher
-from .services import create_manifest
+
 from .mail import send_email_on_failure, send_email_on_success
+from .services import create_manifest
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
@@ -47,24 +51,18 @@ def create_canvas_form_local_task(ingest_id):
         for canvas in local_ingest.manifest.canvas_set.all():
             ensure_dimensions.delay(canvas.id)
 
-@app.task(name='ensure_dimensions', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
-def ensure_dimensions(canvas_id, attempts=0):
-    """_summary_
+@app.task(name='ensure_dimensions', autoretry_for=(AssertionError,), retry_backoff=True, max_retries=20)
+def ensure_dimensions(canvas_id):
+    """Task to ensure all the canvases have a height and width. Often, the IIF server has not processed
+       the image file by the time the Canvas object is saved.
 
     :param canvas_id: ID of Canvas to check.
     :type canvas_id: int
-    :param attempts: Number of times the check has been attempted.
-    :type attempts: int
     """
-    if attempts == 20:
-        return
-    else:
-        attempts += 1
-        canvas = Canvas.objects.get(id=canvas_id)
-        if canvas.width == 0 or canvas.height == 0:
-            canvas.save()
-        else:
-            ensure_dimensions.delay(canvas_id, attempts, countdown=180)
+    canvas = Canvas.objects.get(id=canvas_id)
+    canvas.save()
+    canvas.refresh_from_db()
+    assert canvas.width > 0
 
 @app.task(name='creating_canvases_from_remote', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def create_remote_canvases(ingest_id, *args, **kwargs):

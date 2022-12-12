@@ -45,6 +45,13 @@ jobs:
       - run:
           name: Install Ruby Stuff
           command: |
+            sudo apt-get install make
+            wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
+            tar -xzvf openssl-1.0.2l.tar.gz
+            cd openssl-1.0.2l
+            sudo ./config
+            sudo make install
+            sudo ln -sf /usr/local/ssl/bin/openssl `which openssl`
             bundle install
             sudo gem install sass
       - run:
@@ -67,4 +74,3 @@ jobs:
           when: on_success
           command: |
             coveralls
-

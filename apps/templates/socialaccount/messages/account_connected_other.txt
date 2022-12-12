@@ -1,2 +1,2 @@
 {% load i18n %}
-{% blocktrans %}ERROR - This social media login has been authorized for use with another Readux account. Social media logins (Google, Facebook, Twitter, GitHub) can only be associated with one Readux account.{% endblocktrans %}
+{% blocktrans %}ERROR - This social media login has already been authorized for use with another Readux account. Social media logins (Google, Facebook, Twitter, GitHub) can only be associated with one Readux account. Please contact a Readux administrator for assistance at readux@emory.edu.{% endblocktrans %}

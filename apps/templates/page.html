@@ -230,21 +230,29 @@
         {% endif %}
         -->
 
+
+        {% if volume.label|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Title</div>
           <div class="rx-info-content-value">{{ volume.label }}</div>
         </div>
+        {% endif %}
 
+        {% if volume.author|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Authors</div>
           <div class="rx-info-content-value">{{ volume.author }}</div>
         </div>
+        {% endif %}
 
+        {% if volume.published_date|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publication Date</div>
           <div class="rx-info-content-value">{{ volume.published_date }}</div>
         </div>
+        {% endif %}
 
+        {% if volume.collections is not None %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Collections</div>
           <div class="rx-info-content-value uk-margin-small-top">
@@ -255,8 +263,9 @@
             {% endfor %}
           </div>
         </div>
+        {% endif %}
 
-        {% if volume.languages is not None %}
+        {% if volume.languages.all|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Language(s)</div>
           <div class="rx-info-content-value">
@@ -269,15 +278,19 @@
         </div>
         {% endif %}
 
+        {% if volume.published_city|length or volume.publisher|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
           <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
         </div>
+        {% endif %}
 
+        {% if volume.summary|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Summary</div>
           <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
         </div>
+        {% endif %}
 
         {% if volume.note_set|length %}
         <div class="rx-info-content">
@@ -310,20 +323,26 @@
           <div class="rx-info-content-value">{{ volume.license }}</div>
         </div>
 
+        {% if volume.identifier is not None %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Identifier</div>
           <div class="rx-info-content-value">{{ volume.identifier }}</div>
         </div>
+        {% endif %}
 
+        {% if volume.identifier_uri is not None %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Link to Resource</div>
           <div class="rx-info-content-value">{{ volume.identifier_uri }}</div>
         </div>
+        {% endif %}
 
+        {% if volume.scanned_by is not None %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Scanned By</div>
           <div class="rx-info-content-value">{{ volume.scanned_by }}</div>
         </div>
+        {% endif %}
 
       </div>
     </div>

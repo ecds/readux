@@ -1,17 +1,21 @@
 """[summary]"""
 import logging
 from mimetypes import guess_type
-from os import environ, path, remove, listdir, rmdir
-from django.core.files.base import ContentFile
+from os import environ, listdir, path, remove, rmdir
+
 from django.contrib import admin
+from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.html import format_html
 from django_celery_results.models import TaskResult
+
 from apps.ingest import tasks
-from .models import Bulk, IngestTaskWatcher, Local, Remote
-from .services import clean_metadata, create_manifest, get_associated_meta, get_metadata_from
+
 from .forms import BulkVolumeUploadForm
+from .models import Bulk, IngestTaskWatcher, Local, Remote
+from .services import (clean_metadata, create_manifest, get_associated_meta,
+                       get_metadata_from)
 
 LOGGER = logging.getLogger(__name__)
 class LocalAdmin(admin.ModelAdmin):
@@ -27,7 +31,7 @@ class LocalAdmin(admin.ModelAdmin):
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
         if environ["DJANGO_ENV"] != 'test': # pragma: no cover
-            local_task_id = tasks.create_canvas_form_local_task.delay(obj.id)
+            local_task_id = tasks.create_canvas_form_local_task.apply_async(obj.id)
             local_task_result = TaskResult(task_id=local_task_id)
             local_task_result.save()
             file = request.FILES['bundle']
@@ -91,10 +95,12 @@ class BulkAdmin(admin.ModelAdmin):
         files = request.FILES.getlist("volume_files")
         # Find the metadata file and load it into list of dicts
         all_metadata = get_metadata_from(files)
-        for file in files:
+        for index, file in enumerate(files):
             # Skip metadata file now
             if 'metadata' in file.name.casefold() and 'zip' not in guess_type(file.name)[0]:
                 continue
+
+            LOGGER.debug(f'Creating local ingest for {file.name}')
 
             # Associate metadata with zipfile
             if all_metadata is not None:
@@ -120,8 +126,10 @@ class BulkAdmin(admin.ModelAdmin):
 
             # Queue task to upload to S3
             if environ["DJANGO_ENV"] != 'test': # pragma: no cover
-                upload_task = tasks.upload_to_s3_task.delay(
-                    local_id=new_local.id,
+                delay = index * 60
+                upload_task = tasks.upload_to_s3_task.apply_async(
+                    (new_local.id,),
+                    countdown=delay
                 )
                 upload_task_result = TaskResult(task_id=upload_task.id)
                 upload_task_result.save()

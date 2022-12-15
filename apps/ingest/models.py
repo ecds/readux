@@ -1,27 +1,30 @@
 """ Model classes for ingesting volumes. """
+import json
+import logging
 import os
 import uuid
-import logging
-import json
-from tempfile import gettempdir
 from io import BytesIO
-import pysftp
 from mimetypes import guess_type
-from requests import get
-from stream_unzip import stream_unzip, TruncatedDataError
+from tempfile import gettempdir
+
+import pysftp
 from boto3 import client
-from tablib import Dataset
-from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
+from django.db import models
 from django_celery_results.models import TaskResult
+from requests import get
+from stream_unzip import TruncatedDataError, stream_unzip
+from tablib import Dataset
+
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.canvases.tasks import add_ocr_task, add_oa_ocr_task
+from apps.iiif.canvases.tasks import add_oa_ocr_task, add_ocr_task
 from apps.iiif.kollections.models import Collection
-from apps.iiif.manifests.models import Manifest, ImageServer
+from apps.iiif.manifests.models import ImageServer, Manifest
 from apps.ingest import services
 from apps.utils.fetch import fetch_url
+
 from .storages import IngestStorage
 
 LOGGER = logging.getLogger(__name__)
@@ -200,7 +203,15 @@ class Local(IngestAbstractModel):
                 bulk_name = self.bundle_from_bulk.name
                 with ContentFile(self.bundle_from_bulk.read()) as file_content:
                     self.bundle.save(bulk_name, file_content)
+
             # Delete tempfile
+            key_count = client('s3').list_objects_v2(
+                Bucket=self.bundle.field.storage.bucket_name,
+                Prefix=f'bulk/{self.id}'
+            )['KeyCount']
+
+            assert key_count == 1
+
             if bool(self.bundle):
                 old_path = self.bundle_from_bulk.path
                 os.remove(old_path)
@@ -257,6 +268,7 @@ class Local(IngestAbstractModel):
                 except IndexError:
                     # Every image may not have a matching OCR file
                     ocr_file_path = None
+                    pass
 
             pid = image_file if self.manifest.pid in image_file else f'{self.manifest.pid}_{image_file}'
             position = index + 1

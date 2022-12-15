@@ -1,9 +1,12 @@
 """ Module of service classes and methods for ingest. """
 from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
+
 from django.apps import apps
 from tablib.core import Dataset
+
 from apps.iiif.manifests.models import Manifest, RelatedLink
+
 
 def clean_metadata(metadata):
     """Remove keys that do not align with Manifest fields.

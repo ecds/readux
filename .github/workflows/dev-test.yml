@@ -51,7 +51,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          cache: pip
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -63,13 +62,13 @@ jobs:
           sudo apt update
           sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full openssh-server
 
-      - name: Install Ruby gems
+      - name: Install Ruby dependencies
         run: |
           sudo gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
           bundle install
           sudo gem install sass
 
-      - name: Setup Python env
+      - name: Install Python dependencies
         run: |
           mkdir logs && touch logs/debug.log
           cp config/settings/local.dst config/settings/local.py

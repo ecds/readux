@@ -19,7 +19,7 @@ httpretty==1.1.4 # https://pypi.org/project/httpretty/
 #mock==4.0.2
 cssutils==2.4.0 # https://pypi.org/project/cssutils/
 pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
-moto==3.1.8 # https://github.com/spulec/moto
+moto==4.0.11 # https://github.com/spulec/moto
 sftpserver==0.3
 
 # Code quality

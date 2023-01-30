@@ -14,6 +14,18 @@ Certbot should auto-renew the certificates. The most current certificates are lo
 /etc/letsencrypt/live/iip.readux.io/
 ~~~
 
+If cert has not been renewed, follow these steps as the root user.
+
+~~~sh
+certbot certonly -d iip.readux.io
+~~~
+
+Select option 2 "Place files in webroot directory (webroot)". Supply the following webroot:
+
+~~~sh
+/home/dh_bb3cmt/iip
+~~~
+
 New certs can be be added via the DreamHost panel Websites -> Secure certificates -> Settings -> Import
 
 For the "Certificate", paste the contents of
@@ -25,7 +37,7 @@ For the "Certificate", paste the contents of
 For the "RSA Private Key", paste the contents of
 
 ~~~sh
-/etc/letsencrypt/live/iip.readux.io/privkey.pen
+/etc/letsencrypt/live/iip.readux.io/privkey.pem
 ~~~
 
 The other optional fields can be left blank.

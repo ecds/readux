@@ -182,7 +182,12 @@ class ManifestExportTests(TestCase):
         kwargs['mode'] = 'download'
         request = self.factory.post(url, data=kwargs)
         request.user = self.user
-        response = self.jekyll_export_view(request, pid=self.volume.pid, version='v2', content_type="application/x-www-form-urlencoded")
+        response = self.jekyll_export_view(
+            request,
+            pid=self.volume.pid,
+            version='v2',
+            content_type="application/x-www-form-urlencoded"
+        )
         assert isinstance(response.getvalue(), bytes)
 
     def test_jekyll_export_include_download(self):

@@ -408,7 +408,11 @@ class Local(IngestAbstractModel):
         ]
 
     def __zipped_chunks(self):
-        yield from self.bundle.file.obj.get()['Body'].iter_chunks(chunk_size=10240)
+        try:
+            yield from self.bundle.file.obj.get()['Body'].iter_chunks(chunk_size=10240)
+        except Exception as error:
+            LOGGER.error(error)
+
 
 class Remote(IngestAbstractModel):
     """ Model class for ingesting a volume from remote manifest. """

@@ -15,6 +15,7 @@ USER = get_user_model()
 
 class Canvas(IiifBase):
     """Django model for IIIF Canvas objects."""
+    label = models.CharField(max_length=1000, default='', blank=True, null=True)
     summary = models.TextField(blank=True, null=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.CASCADE)
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)

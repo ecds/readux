@@ -11,6 +11,11 @@ from .models import Canvas
 from .tasks import add_ocr_task
 from . import services
 
+def resave_gethw_admin_action(modeladmin, request, queryset):
+    for canvas in queryset:
+        canvas.save()
+resave_gethw_admin_action.short_description = 'Resave for Height Width'
+
 class CanvasResource(resources.ModelResource):
     """Django admin Canvas resource"""
     manifest_id = fields.Field(
@@ -38,6 +43,7 @@ class CanvasAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'pid', 'is_starting_page',
         'manifest__pid', 'manifest__label'
     )
+    actions = (resave_gethw_admin_action, )
 
     def save_model(self, request, obj, form, change):
         obj.save()

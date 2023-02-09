@@ -31,7 +31,7 @@ class LocalAdmin(admin.ModelAdmin):
         obj.refresh_from_db()
         super().save_model(request, obj, form, change)
         if environ["DJANGO_ENV"] != 'test': # pragma: no cover
-            local_task_id = tasks.create_canvas_form_local_task.apply_async(obj.id)
+            local_task_id = tasks.create_canvas_form_local_task.apply_async(args=[obj.id])
             local_task_result = TaskResult(task_id=local_task_id)
             local_task_result.save()
             file = request.FILES['bundle']

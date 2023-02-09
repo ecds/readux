@@ -303,13 +303,14 @@ Vue.component("v-info-content-url-image-link", {
             .then(response => {
               vm.pageresource = response.data.resource;
               vm.pagetext = response.data.text;
-            }).catch(error => {console.log(error);})
+            }).catch(error => {
+              console.error(error);
+            });
           var url =
             localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
           vm.localUrls = url;
           vm.can = vm.canvas;
         }
-
       }
     });
   },
@@ -343,11 +344,13 @@ Vue.component("v-info-content-url-page-text", {
         vm.canvas = event.detail.canvas;
         var volume = event.detail.volume;
         var localpagelink = vm.pagelink;
-        axios.get(`iiif/resource/${event.detail.canvas}`)
-          .then(response => {
-            vm.pageresource = response.data.resource;
-            vm.pagetext = response.data.text;
-          }).catch(error => {console.log(error);})
+        if (event.detail.canvas && event.detail.canvas !== 'all') {
+          axios.get(`iiif/resource/${event.detail.canvas}`)
+            .then(response => {
+              vm.pageresource = response.data.resource;
+              vm.pagetext = response.data.text;
+            }).catch(error => {console.log(error);})
+        }
         var url =
           localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
         vm.localUrls = url;

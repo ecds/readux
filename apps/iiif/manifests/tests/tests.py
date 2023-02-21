@@ -86,7 +86,7 @@ class ManifestTests(TestCase):
 
     def test_properties(self):
         assert self.volume.publisher_bib == "Atlanta : ECDS"
-        assert self.volume.thumbnail_logo.endswith('/media/logos/ecds.png')
+        assert self.volume.logo.url.endswith('/media/logos/ecds.png')
         assert self.volume.baseurl.endswith("/iiif/v2/%s" % (self.volume.pid))
         assert self.volume.start_canvas.identifier.endswith("/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid))
 

@@ -13,7 +13,7 @@ mypy==0.961  # https://github.com/python/mypy
 pytest==7.1.2  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.4  # https://github.com/Frozenball/pytest-sugar
 pytest-cov==3.0.0
-requests==2.27.1
+requests==2.28.2
 iiif-prezi==0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty==1.1.4 # https://pypi.org/project/httpretty/
 #mock==4.0.2

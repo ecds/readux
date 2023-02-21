@@ -106,7 +106,7 @@ class Serializer(JSONSerializer):
                     }
                 },
                 "attribution": obj.attribution,
-                "logo": obj.thumbnail_logo,
+                "logo": obj.logo_url or (obj.logo.url if obj.logo else ""),
                 "license": obj.license,
                 "viewingDirection": obj.viewingdirection,
                 "viewingHint": "paged",

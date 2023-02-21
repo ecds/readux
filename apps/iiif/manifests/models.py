@@ -5,12 +5,14 @@ from boto3 import resource
 from urllib.parse import urlparse
 from django.apps import apps
 from django.db import models
+from django.db.models import signals
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.dispatch import receiver
 from edtf.fields import EDTFField
 from apps.iiif.manifests.validators import validate_edtf
 import config.settings.local as settings
@@ -188,6 +190,10 @@ class Manifest(IiifBase):
         default="logos/lits-logo-web.png",
         help_text="Upload the Logo of the institution holding the manifest."
     )
+    logo_url = models.URLField(
+        blank=True,
+        help_text = "A URL in this field will take precedence over any logo file uploaded in the file field. Clear this field (if populated) to use an uploaded logo file instead."
+    )
     license = models.CharField(
         max_length=255,
         null=True,
@@ -244,15 +250,6 @@ class Manifest(IiifBase):
         :rtype: str
         """
         return f'{self.published_city} : {self.publisher}'
-
-    @property
-    def thumbnail_logo(self):
-        """Thumbnail of holding institution's logo
-
-        :return: URL for logo thumbnail.
-        :rtype: str
-        """
-        return f'{settings.HOSTNAME}/media/{self.logo}'
 
     @property
     def baseurl(self):

@@ -5,14 +5,12 @@ from boto3 import resource
 from urllib.parse import urlparse
 from django.apps import apps
 from django.db import models
-from django.db.models import signals
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
-from django.dispatch import receiver
 from edtf.fields import EDTFField
 from apps.iiif.manifests.validators import validate_edtf
 import config.settings.local as settings

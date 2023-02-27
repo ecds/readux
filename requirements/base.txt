@@ -1,8 +1,9 @@
 pytz==2022.1  # https://github.com/stub42/pytz
 python-slugify==6.1.2  # https://github.com/un33k/python-slugify
-Pillow
+Pillow==9.1.1
 argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
-bs4
+beautifulsoup4==4.9.3
+lxml==4.6.3
 pyyaml
 progress
 python-memcached==1.59
@@ -43,14 +44,14 @@ pylint-django==2.5.3
 
 # Wagtail
 wagtail==2.16.2
-git+https://github.com/jazzband/wagtailmenus.git@master#egg=wagtailmenus
+wagtailmenus==3.1.1
 git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
 wagtail-cache==1.0.2
 
 # Import/Export
 django-import-export==2.8.0
-gitpython==3.1.27
+gitpython==3.1.31
 
 # S3 Uploads
 boto3==1.26.31

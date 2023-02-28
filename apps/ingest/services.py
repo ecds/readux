@@ -124,8 +124,8 @@ def parse_iiif_v2_manifest(data):
     properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
     properties['summary'] = data['description'] if 'description' in data else ''
 
-    # TODO: Work out adding remote logos
     if 'logo' in properties:
+        properties['logo_url'] = properties['logo']
         properties.pop('logo')
 
     manifest_metadata = clean_metadata(properties)

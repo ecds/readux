@@ -77,15 +77,20 @@ def create_manifest(ingest):
 
     return manifest
 
-def extract_image_server(canvas):
+def extract_image_server(canvas, type):
     """Determines the IIIF image server URL for a given IIIF Canvas
 
     :param canvas: IIIF Canvas
     :type canvas: dict
+    :param type: IIIF Canvas listing type ('sequences' or 'items')
+    :type type: str
     :return: IIIF image server URL
     :rtype: str
     """
-    url = urlparse(canvas['images'][0]['resource']['service']['@id'])
+    if type == 'sequences':
+        url = urlparse(canvas['images'][0]['resource']['service']['@id'])
+    elif type == 'items':
+        url = urlparse(canvas["body"]["service"][0]["@id"])
     parts = url.path.split('/')
     parts.pop()
     base_path = '/'.join(parts)

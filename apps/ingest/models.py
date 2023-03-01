@@ -424,9 +424,17 @@ class Remote(IngestAbstractModel):
     @property
     def image_server(self):
         """ Image server the Manifest """
-        iiif_url = services.extract_image_server(
-            self.remote_manifest['sequences'][0]['canvases'][0]
-        )
+        manifest_keys = self.remote_manifest.keys()
+        if 'sequences' in manifest_keys:
+            iiif_url = services.extract_image_server(
+                self.remote_manifest['sequences'][0]['canvases'][0],
+                'sequences'
+            )
+        elif 'items' in manifest_keys:
+            iiif_url = services.extract_image_server(
+                self.remote_manifest["items"][0]["items"][0]["items"][0],
+                'items'
+            )
         server, _created = ImageServer.objects.get_or_create(server_base=iiif_url)
 
         return server

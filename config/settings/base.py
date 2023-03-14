@@ -328,6 +328,7 @@ SERIALIZATION_MODULES = {
     "collection_manifest": "apps.iiif.serializers.collection_manifest",
     "startingcanvas": "apps.iiif.serializers.startingcanvas",
     "user_annotation_list": "apps.iiif.serializers.user_annotation_list",
+    "all_volumes_manifest": "apps.iiif.serializers.all_volumes_manifest",
     "annotation_page_v3": "apps.iiif.serializers.v3.annotation_page",
     "annotation_v3": "apps.iiif.serializers.v3.annotation",
     "canvas_v3": "apps.iiif.serializers.v3.canvas",

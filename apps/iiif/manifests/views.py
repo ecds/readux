@@ -63,6 +63,38 @@ class ManifestDetail(View):
                 safe=False
             )
 
+class AllVolumesCollection(View):
+    """Endpoint for all volumes collection."""
+    def get_queryset(self):
+        """Get all manifest objects.
+
+        :return: All manifest objects
+        :rtype: django.db.models.QuerySet
+        """
+        return Manifest.objects.all()
+
+    def get(self, request, *args, **kwargs): # pylint: disable = unused-argument
+        """Responds to HTTP GET request for all manifests.
+
+        :return: IIIF representation of all volumes collection
+        :rtype: JSON
+        """
+        collection = {
+            "@id": request.build_absolute_uri(),
+            "@type": "sc:Collection",
+            "@context": "http://iiif.io/api/presentation/2/context.json",
+            "label": "All Readux volumes",
+            "manifests": json.loads(
+                serialize(
+                    'all_volumes_manifest',
+                    self.get_queryset(),
+                    is_list=True
+                )
+            )
+        }
+
+        return JsonResponse(collection,safe=False)
+
 class ManifestSitemap(Sitemap):
     """Django site map for manifests"""
     # priority unknown

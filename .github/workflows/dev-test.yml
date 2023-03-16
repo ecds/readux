@@ -57,6 +57,11 @@ jobs:
         with:
           ruby-version: '2.5.1'
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.12'
+
       - name: Install system requirements
         run: |
           sudo apt update
@@ -82,3 +87,8 @@ jobs:
           DJANGO_ENV: test
         run: |
           pytest apps/ --cov-report html --cov-report term --cov=./apps
+
+      - name: Test Webpack build
+        run: |
+          npm install
+          npx webpack

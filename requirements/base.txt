@@ -1,8 +1,8 @@
 pytz==2022.1  # https://github.com/stub42/pytz
-python-slugify==6.1.2  # https://github.com/un33k/python-slugify
-Pillow==9.1.1
+python-slugify==8.0.1  # https://github.com/un33k/python-slugify
+Pillow==9.4.0
 argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
-beautifulsoup4==4.9.3
+beautifulsoup4==4.9.3 # CANNOT UPDATE DUE TO WAGTAIL
 lxml==4.6.3
 pyyaml
 progress
@@ -44,7 +44,7 @@ pylint-django==2.5.3
 
 # Wagtail
 wagtail==2.16.2
-wagtailmenus==3.1.1
+wagtailmenus==3.1.1 # CANNOT UPDATE
 git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
 wagtail-cache==1.0.2
@@ -54,7 +54,7 @@ django-import-export==2.8.0
 gitpython==3.1.31
 
 # S3 Uploads
-boto3==1.26.31
+boto3==1.26.92
 django-storages==1.12.3  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads

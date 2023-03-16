@@ -8,4 +8,4 @@ raven==6.10.0  # https://github.com/getsentry/raven-python
 
 # Django
 # ------------------------------------------------------------------------------
-django-anymail[mailgun]==8.6  # https://github.com/anymail/django-anymail
+django-anymail[mailgun]==9.1  # https://github.com/anymail/django-anymail

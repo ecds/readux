@@ -26,18 +26,18 @@ Select option 2 "Place files in webroot directory (webroot)". Supply the followi
 /home/dh_bb3cmt/iip
 ~~~
 
-New certs can be be added via the DreamHost panel Websites -> Secure certificates -> Settings -> Import
+New certs can be be added via the DreamHost panel Websites -> Secure certificates -> Settings -> Add New Cert -> Import
 
 For the "Certificate", paste the contents of
 
 ~~~sh
-/etc/letsencrypt/live/iip.readux.io/cert.pem
+cat /etc/letsencrypt/live/iip.readux.io/cert.pem
 ~~~
 
 For the "RSA Private Key", paste the contents of
 
 ~~~sh
-/etc/letsencrypt/live/iip.readux.io/privkey.pem
+cat /etc/letsencrypt/live/iip.readux.io/privkey.pem
 ~~~
 
 The other optional fields can be left blank.
@@ -52,7 +52,7 @@ import re
 
 for ua in j.userannotation_set.all():
     if ua.svg:
-        soup = BeautifulSoup(ua.svg, 'xml')
+        soup = BeautifulSoup(ua.svg, 'xml')`
         d_path = soup.find('path')['d']
         path = Path(d_path)
         new_path = re.sub('[A-Za-z]\s', '', path.d())

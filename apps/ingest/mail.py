@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 def send_email_on_failure(task_watcher=None, exception=None, traceback=None):
-    """Function to send an email on task success signal from Celery.
+    """Function to send an email on task failure signal from Celery.
 
     :param task_watcher: The task watcher object
     :type task_watcher: app.ingest.models.TaskWatcher

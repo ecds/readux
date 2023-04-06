@@ -112,7 +112,7 @@ def upload_to_s3_task(local_id):
 
 @task_failure.connect
 def send_email_on_failure_task(sender=None, exception=None, task_id=None, traceback=None, *args, **kwargs):
-    """Function to send an email on task success signal from Celery.
+    """Function to send an email on task failure signal from Celery.
 
     :param sender: The task object
     :type sender: celery.task

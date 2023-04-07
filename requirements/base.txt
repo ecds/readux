@@ -1,4 +1,4 @@
-pytz==2022.1  # https://github.com/stub42/pytz
+pytz==2023.3  # https://github.com/stub42/pytz
 python-slugify==8.0.1  # https://github.com/un33k/python-slugify
 Pillow==9.4.0
 argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
@@ -43,8 +43,8 @@ django-sass-processor
 pylint-django==2.5.3
 
 # Wagtail
-wagtail==2.16.2
-wagtailmenus==3.1.1 # CANNOT UPDATE
+wagtail==3.0.3
+wagtailmenus==3.1.5 # CANNOT UPDATE
 git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
 wagtail-cache==1.0.2
@@ -55,7 +55,7 @@ gitpython==3.1.31
 
 # S3 Uploads
 boto3==1.26.92
-django-storages==1.12.3  # https://github.com/jschneier/django-storages
+django-storages==1.13.2  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads
 pysftp>=0.2.9,<1.0 # https://pysftp.readthedocs.io/

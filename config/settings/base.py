@@ -347,3 +347,5 @@ ELASTICSEARCH_DSL={
         'hosts': env('ELASTICSEARCH_URL', default='http://localhost:9200')
     },
 }
+
+SOCIALACCOUNT_STORE_TOKENS=True

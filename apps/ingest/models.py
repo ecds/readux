@@ -6,6 +6,7 @@ import uuid
 from io import BytesIO
 from mimetypes import guess_type
 from tempfile import gettempdir
+from django.forms import ValidationError
 
 import pysftp
 from boto3 import client
@@ -146,9 +147,9 @@ class Local(IngestAbstractModel):
                 _, file_name, file_type = self.__file_info(zipped_file)
                 tmp_file = bytes()
                 for chunk in unzipped_chunks:
-                    if file_type and not self.__is_junk(file_name) and 'metadata' in file_name:
+                    if file_type and not self._is_junk(file_name) and 'metadata' in file_name:
                         tmp_file += chunk
-                if len(tmp_file) > 0 and file_type and not self.__is_junk(file_name):
+                if len(tmp_file) > 0 and file_type and not self._is_junk(file_name):
                     if 'csv' in file_type or 'tab-separated' in file_type:
                         format = 'csv' if 'csv' in file_type else 'tsv'
                         metadata = Dataset().load(tmp_file.decode('utf-8-sig'), format=format)
@@ -315,9 +316,9 @@ class Local(IngestAbstractModel):
             has_type_or_is_hocr = file_name.endswith('.hocr') or file_type
             tmp_file = bytes()
             for chunk in unzipped_chunks:
-                if has_type_or_is_hocr and not self.__is_junk(file_name):
+                if has_type_or_is_hocr and not self._is_junk(file_name):
                     tmp_file += chunk
-            if (file_type or file_name.endswith('.hocr')) and not self.__is_junk(file_name):
+            if (file_type or file_name.endswith('.hocr')) and not self._is_junk(file_name):
                 file_name = file_name.replace('_', '-')
                 if file_type and 'image' in file_type and 'images' in file_path:
                     self.__upload_file(tmp_file, file_name, file_path)
@@ -394,7 +395,7 @@ class Local(IngestAbstractModel):
         return files
 
     @staticmethod
-    def __is_junk(path):
+    def _is_junk(path):
         file = path.split('/')[-1]
         return file.startswith('.') or file.startswith('~') or file.startswith('__')
 
@@ -479,3 +480,250 @@ class Remote(IngestAbstractModel):
                                 add_oa_ocr_task.delay(content['@id'])
                             else:
                                 add_oa_ocr_task(content['@id'])
+
+def validate_is_csv(value):
+    if value.file.content_type != 'text/csv':
+        raise ValidationError(u'File must be of type CSV')
+
+class S3Ingest(models.Model):
+    """ Model class for bulk ingesting volumes from an Amazon AWS S3 bucket. """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    s3_bucket = models.CharField(
+        null=False,
+        blank=False,
+        max_length=255,
+        help_text="""The name of a publicly-accessible S3 bucket containing volumes to ingest,
+        either at the bucket root or within subfolder(s). Each volume should have its own
+        subfolder, with the volume's PID as its name.""",
+    )
+    s3_prefix = models.CharField(
+        null=True,
+        blank=True,
+        max_length=255,
+        help_text="Optional: Subfolder(s) within the S3 bucket containing your volumes to ingest.",
+    )
+    metadata_spreadsheet = models.FileField(
+        null=False,
+        blank=False,
+        storage=IngestStorage(),
+        help_text="""A spreadsheet file (CSV) with a row for each volume, including the
+        volume PID, which must match the subfolder name in the S3 bucket.""",
+        validators=[validate_is_csv],
+    )
+    image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
+    collections = models.ManyToManyField(
+        Collection,
+        blank=True,
+        help_text="Optional: Collections to attach to ALL volumes ingested in this form."
+    )
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="created_s3ingests"
+    )
+
+    class Meta:
+        verbose_name_plural = 'Amazon S3 Ingests'
+
+    def create_canvases_for(self, pid):
+        """Create Canvas objects for each image file in a single volume, by pid."""
+        image_files, ocr_files = ([], [])
+
+        # get the list of all subfolders (aws parlance "Common Prefixes") at the root, specified
+        # by the s3_bucket and the s3_prefix
+        root_prefix = f"{self.s3_prefix}/" or ""
+        s3 = client("s3")
+        # use paginator in case list is > 1000 items
+        paginator = s3.get_paginator("list_objects_v2")
+        root = paginator.paginate(Bucket=self.s3_bucket, Prefix=root_prefix, Delimiter="/")
+        for prefix_result in root.search("CommonPrefixes"):
+            subfolder_name = prefix_result.get("Prefix")
+            subfolder_name = subfolder_name[:-1] if subfolder_name.endswith("/") else subfolder_name
+            # if this subfolder does not match the pid name, skip it
+            if subfolder_name.split("/")[-1] != pid:
+                continue
+            LOGGER.debug(f"Subfolder found for pid: {pid}")
+            subfolder_pages = paginator.paginate(
+                Bucket=self.s3_bucket,
+                Prefix=f"{root_prefix}{pid}/" if root_prefix else f"{pid}/",
+            )
+            for page in subfolder_pages:
+                for s3_object in page.get("Contents"):
+                    key = s3_object.get("Key")
+                    # at this point, we just want to handle all files and ignore folder structure,
+                    # so we can ignore keys ending in /
+                    if key.endswith("/"):
+                        continue
+                    # determine if this is image or ocr and upload it
+                    self.disambiguate_and_upload(pid, key)
+
+            # collect all uploaded files
+            image_files, ocr_files = self.image_server_paths(pid)
+
+        # the following is adapted closely from Local.create_canvases:
+
+        if len(image_files) == 0:
+            raise Exception(f"No images found for pid {pid} in s3 bucket {self.s3_bucket}")
+
+        # retrieve the manifest; will have been created in task function if not already present
+        manifest = Manifest.objects.get(pid=pid)
+
+        # create canvases for each image
+        for index, img_key in enumerate(sorted(image_files)):
+            image_file = img_key.split("/")[-1]
+            if not image_file:
+                continue
+            ocr_file_path = None
+            if len(ocr_files) > 0:
+                image_name = ".".join(image_file.split(".")[:-1])
+                try:
+                    ocr_key = [k for k in ocr_files if image_name in k][0]
+                    ocr_file_path = ocr_key
+                except IndexError:
+                    # Every image may not have a matching OCR file
+                    ocr_file_path = None
+                    pass
+            canvas_pid = image_file if manifest.pid in image_file else f"{manifest.pid}_{image_file}"
+            position = index + 1
+            canvas, created = Canvas.objects.get_or_create(
+                manifest=manifest,
+                pid=canvas_pid,
+                ocr_file_path=ocr_file_path,
+                position=position
+            )
+
+            if created and canvas.ocr_file_path is not None:
+                if os.environ["DJANGO_ENV"] == "test":
+                    add_ocr_task(canvas.id)
+                else:
+                    ocr_task_id = add_ocr_task.delay(canvas.id)
+                    ocr_task_result = TaskResult(task_id=ocr_task_id)
+                    ocr_task_result.save()
+                    IngestTaskWatcher.manager.create_watcher(
+                        task_id=ocr_task_id,
+                        task_result=ocr_task_result,
+                        task_creator=self.creator,
+                        filename=canvas.ocr_file_path
+                    )
+
+            # Request the thumbnail so a cached version is created on IIIF server.
+            if os.environ["DJANGO_ENV"] != "test":
+                get(canvas.thumbnail)
+
+        # cleanup by deleting ingest if there is a canvas for each image
+        if manifest.canvas_set.count() == len(image_files):
+            self.delete()
+        else:
+            # TODO: Log or though an error/waring?
+            pass
+
+
+    def image_server_paths(self, pid):
+        """ Retrieve paths from image server (S3 bucket or SFTP)
+
+        :return: Tuple of two lists. One list of image files and one of OCR files
+        :rtype: tuple
+        """
+        if self.image_server.storage_service == "s3":
+            return (
+                [
+                    file.key
+                    for file in self.image_server.bucket.objects.filter(
+                        Prefix=f"{pid}/"
+                    )
+                    if "_*ocr*_" not in file.key
+                    and file.key.split("/")[0] == pid
+                ],
+                [
+                    file.key
+                    for file in self.image_server.bucket.objects.filter(
+                        Prefix=f"{pid}/"
+                    )
+                    if "_*ocr*_" in file.key
+                    and file.key.split("/")[0] == pid
+                ],
+            )
+        elif self.image_server.storage_service == "sftp":
+            return self.__list_sftp_files(pid)
+        return ([], [])
+
+    def disambiguate_and_upload(self, pid, key):
+        """Determine if a file is an image or OCR and send to the upload function appropriately"""
+        file_path, file_name, file_type = self.__file_info(key)
+        if (file_type or file_name.endswith(".hocr")) and not Local._is_junk(file_name):
+            file_name = file_name.replace("_", "-")
+            if file_type and "image" in file_type and "images" in file_path:
+                self.__upload_file(pid, key, file_name, is_ocr=False)
+            if file_type:
+                is_ocr_file_type = (
+                    "text" in file_type
+                    or "xml" in file_type
+                    or "json" in file_type
+                    or "html" in file_type
+                )
+            if "ocr" in file_path and (
+                file_name.endswith(".hocr") or is_ocr_file_type
+            ):
+                self.__upload_file(pid, key, file_name, is_ocr=True)
+
+    def __upload_file(self, pid, key, file_name, is_ocr):
+        """Get a file from the s3 bucket and upload to the image server"""
+        # if we're uploading to s3 image server, just use s3 bucket copy function!
+        remote_path = f"{pid}{self.image_server.path_delineator}{file_name}"
+        if self.image_server.storage_service == "s3":
+            if is_ocr:
+                remote_path = f"{pid}/_*ocr*_/{file_name}"
+            LOGGER.debug(f"Copying {key} to s3 bucket")
+            self.image_server.bucket.copy({ "Bucket": self.s3_bucket, "Key": key }, remote_path)
+        # otherwise we need to actually download the file and reupload it to sftp
+        elif self.image_server.storage_service == "sftp":
+            # Check if the file will be stored in a sub directory
+            remote_dir = os.path.dirname(remote_path)
+            # Make any needed local directories
+            if remote_dir and not os.path.exists(os.path.join(gettempdir(), remote_dir)):
+                os.makedirs(os.path.join(gettempdir(), remote_dir))
+            # Define the full local path
+            local_path = os.path.join(gettempdir(), remote_path)
+            # Download the file from S3 and write the file to the local disk
+            LOGGER.debug(f"Downloading {key} from s3 bucket")
+            with open(local_path, "wb") as f:
+                client("s3").download_fileobj(self.s3_bucket, key, f)
+            # Upload via sftp
+            sftp = self.create_sftp_connection()
+            if remote_dir:
+                # Make remote directories if needed.
+                if not sftp.isdir(remote_dir):
+                    sftp.makedirs(remote_dir)
+                # Change to the remote directory before upload.
+                sftp.chdir(remote_dir)
+            LOGGER.debug(f"Uploading {file_name} to SFTP server")
+            sftp.put(local_path)
+            os.remove(local_path)
+            sftp.close()
+
+    def create_sftp_connection(self):
+        """Pared-down adaptation of Local.create_sftp_connection"""
+        connection_options = pysftp.CnOpts()
+        connection_options.hostkeys = None
+        return pysftp.Connection(**self.image_server.sftp_connection, cnopts=connection_options)
+
+    def __list_sftp_files(self, pid):
+        """Pared-down adaptation of Local.__list_sftp_files"""
+        sftp = self.create_sftp_connection()
+        remote_files = [remote_file for remote_file in sftp.listdir() if f"{pid}{self.image_server.path_delineator}" in remote_file]
+        files = (
+            [image for image in remote_files if "image" in guess_type(image)[0]],
+            [ocr_file for ocr_file in remote_files if "image" not in guess_type(ocr_file)[0]],
+        )
+        sftp.close()
+        return files
+
+    @staticmethod
+    def __file_info(path):
+        """Pared-down adaptation of Local.__file_info"""
+        return [
+            path,
+            path.split('/')[-1],
+            guess_type(path)[0]
+        ]

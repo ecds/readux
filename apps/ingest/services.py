@@ -1,4 +1,5 @@
 """ Module of service classes and methods for ingest. """
+import itertools
 from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
 
@@ -188,3 +189,7 @@ def get_associated_meta(all_metadata, file):
         if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
             file_meta = meta_dict
     return file_meta
+
+def lowercase_first_line(iterator):
+    """Lowercase the first line of a text file (such as the header row of a CSV)"""
+    return itertools.chain([next(iterator).lower()], iterator)

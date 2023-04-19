@@ -2,10 +2,11 @@
 import json
 import logging
 import os
+import subprocess
 import uuid
 from io import BytesIO
 from mimetypes import guess_type
-from tempfile import gettempdir
+from tempfile import NamedTemporaryFile, gettempdir
 from django.forms import ValidationError
 
 import pysftp
@@ -13,8 +14,10 @@ from boto3 import client
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django_celery_results.models import TaskResult
+from exiftool import ExifToolHelper
 from requests import get
 from stream_unzip import TruncatedDataError, stream_unzip
 from tablib import Dataset
@@ -305,6 +308,44 @@ class Local(IngestAbstractModel):
             # TODO: Log or though an error/waring?
             pass
 
+    @staticmethod
+    def is_ptif(path):
+        """Determine whether a file (by path) is a ptif using tiffinfo"""
+        LOGGER.debug(f"Checking {path} is ptif")
+        with ExifToolHelper() as et:
+            for metadata in et.get_metadata(path):
+                # check for presence of any of the tile-related metadata
+                if any([key in metadata.keys() for key in [
+                    'EXIF:TileWidth',
+                    'EXIF:TileLength',
+                    'EXIF:TileOffsets',
+                    'EXIF:TileByteCounts',
+                ]]):
+                    return True
+        return False
+
+    def is_ptif_bytes(self, file_bytes):
+        """Determine whether a file (bytes) is a ptif"""
+        with NamedTemporaryFile(mode='w+b') as temp:
+            temp.write(file_bytes)
+            return Local.is_ptif(temp.name)
+
+    @staticmethod
+    def convert_ptif(path):
+        """Convert an image (by path) to a ptif, and return the bytes of the output file."""
+        LOGGER.debug(f"Converting {path} to ptif")
+        return subprocess.check_output(
+            [
+                'convert',
+                path,
+                '-define',
+                'tiff:tile-geometry=256x256',
+                '-compress',
+                'jpeg',
+                'ptif:-', # send resulting bytes to stdout
+            ],
+        )
+
     def __unzip_bundle(self):
         """
         Unzip and upload image and OCR files in the bundle, without loading the entire ZIP file
@@ -321,7 +362,15 @@ class Local(IngestAbstractModel):
             if (file_type or file_name.endswith('.hocr')) and not self._is_junk(file_name):
                 file_name = file_name.replace('_', '-')
                 if file_type and 'image' in file_type and 'images' in file_path:
-                    self.__upload_file(tmp_file, file_name, file_path)
+                    if self.image_server.requires_ptif and not self.is_ptif_bytes(tmp_file):
+                        # convert to ptif if required, upload file
+                        with NamedTemporaryFile(mode='w+b') as temp:
+                            temp.write(tmp_file)
+                            ptif_bytes = Local.convert_ptif(temp.name)
+                        ptif_name = f'{os.path.splitext(file_name)[0]}.tif'
+                        self.__upload_file(ptif_bytes, ptif_name, file_path)
+                    else:
+                        self.__upload_file(tmp_file, file_name, file_path)
                 if file_type:
                     is_ocr_file_type = (
                         'text' in file_type
@@ -667,28 +716,45 @@ class S3Ingest(models.Model):
             ):
                 self.__upload_file(pid, key, file_name, is_ocr=True)
 
+    def download_file_from_s3(self, key, remote_path):
+        """Download a file from S3 and write the file to the local disk, then return its path"""
+        # Define the full local path
+        local_path = os.path.join(gettempdir(), remote_path)
+        # download from s3
+        LOGGER.debug(f"Downloading {key} from s3 bucket")
+        with open(local_path, "wb") as f:
+            client("s3").download_fileobj(self.s3_bucket, key, f)
+        return local_path
+
     def __upload_file(self, pid, key, file_name, is_ocr):
         """Get a file from the s3 bucket and upload to the image server"""
-        # if we're uploading to s3 image server, just use s3 bucket copy function!
         remote_path = f"{pid}{self.image_server.path_delineator}{file_name}"
+        # Download the file from S3 and write the file to the local disk
+        local_path = self.download_file_from_s3(key, remote_path)
+        # determine if this file is a ptif already
+        is_ptif = not is_ocr and Local.is_ptif(local_path)
         if self.image_server.storage_service == "s3":
             if is_ocr:
                 remote_path = f"{pid}/_*ocr*_/{file_name}"
-            LOGGER.debug(f"Copying {key} to s3 bucket")
-            self.image_server.bucket.copy({ "Bucket": self.s3_bucket, "Key": key }, remote_path)
-        # otherwise we need to actually download the file and reupload it to sftp
+            elif is_ptif:
+                # if we're uploading to s3 image server, and it's already a ptif,
+                # just use s3 bucket copy function!
+                LOGGER.debug(f"Copying {key} to s3 bucket")
+                self.image_server.bucket.copy({ "Bucket": self.s3_bucket, "Key": key }, remote_path)
+            else:
+                LOGGER.debug(f"Converting {key} and uploading to s3 bucket")
+                # otherwise, we need to convert ptif first
+                self.image_server.bucket.upload_fileobj(
+                    BytesIO(Local.convert_ptif(local_path)),
+                    remote_path,
+                )
         elif self.image_server.storage_service == "sftp":
+            # otherwise, upload local file to sftp
             # Check if the file will be stored in a sub directory
             remote_dir = os.path.dirname(remote_path)
             # Make any needed local directories
             if remote_dir and not os.path.exists(os.path.join(gettempdir(), remote_dir)):
                 os.makedirs(os.path.join(gettempdir(), remote_dir))
-            # Define the full local path
-            local_path = os.path.join(gettempdir(), remote_path)
-            # Download the file from S3 and write the file to the local disk
-            LOGGER.debug(f"Downloading {key} from s3 bucket")
-            with open(local_path, "wb") as f:
-                client("s3").download_fileobj(self.s3_bucket, key, f)
             # Upload via sftp
             sftp = self.create_sftp_connection()
             if remote_dir:
@@ -697,10 +763,22 @@ class S3Ingest(models.Model):
                     sftp.makedirs(remote_dir)
                 # Change to the remote directory before upload.
                 sftp.chdir(remote_dir)
-            LOGGER.debug(f"Uploading {file_name} to SFTP server")
-            sftp.put(local_path)
-            os.remove(local_path)
+            if is_ptif or is_ocr:
+                # upload as-is to sftp
+                LOGGER.debug(f"Uploading {file_name} to SFTP server")
+                sftp.put(local_path)
+            else:
+                ptif = Local.convert_ptif(local_path)
+                # rename to .tif before saving bytes to file (could overwrite)
+                ptif_path = f'{os.path.splitext(local_path)[0]}.tif'
+                LOGGER.debug(f"Uploading {ptif_path} to SFTP server")
+                # write converted ptif to file and upload to sftp
+                with open(ptif_path, 'wb') as f:
+                    f.write(BytesIO(ptif).getbuffer())
+                sftp.put(ptif_path)
             sftp.close()
+        # remove the local file
+        os.remove(local_path)
 
     def create_sftp_connection(self):
         """Pared-down adaptation of Local.create_sftp_connection"""

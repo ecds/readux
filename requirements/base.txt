@@ -44,7 +44,7 @@ pylint-django==2.5.3
 
 # Wagtail
 wagtail==3.0.3
-wagtailmenus==3.1.5 # CANNOT UPDATE
+wagtailmenus==3.1.7 # CANNOT UPDATE
 git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 #wagtail-autocomplete==0.3.1
 wagtail-cache==1.0.2

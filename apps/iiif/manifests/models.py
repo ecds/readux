@@ -46,6 +46,7 @@ class ImageServer(models.Model):
     sftp_port = models.IntegerField(default=22)
     private_key_path = models.CharField(max_length=500, default='~/.ssh/id_rsa.pem')
     path_delineator = models.CharField(max_length=10, default='/')
+    requires_ptif = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.server_base}'

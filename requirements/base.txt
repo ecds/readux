@@ -74,3 +74,6 @@ django-elasticsearch-dsl>=7.0.0
 elasticsearch<7.14.0
 # used to unaccent strings for sorting
 unidecode
+
+# used to determine if a file is a pyramidal tiff
+pyexiftool

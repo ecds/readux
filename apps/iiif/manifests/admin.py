@@ -71,7 +71,7 @@ class ImageServerResource(resources.ModelResource):
     """Django admin ImageServer resource."""
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = ImageServer
-        fields = ('id', 'server_base', 'storage_service', 'storage_path')
+        fields = ('id', 'server_base', 'storage_service', 'storage_path', 'requires_ptif')
 
 class ImageServerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     """Django admin settings for ImageServer."""

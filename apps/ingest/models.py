@@ -735,7 +735,10 @@ class S3Ingest(models.Model):
         is_ptif = not is_ocr and Local.is_ptif(local_path)
         if self.image_server.storage_service == "s3":
             if is_ocr:
-                remote_path = f"{pid}/_*ocr*_/{file_name}"
+                self.image_server.bucket.copy(
+                    { "Bucket": self.s3_bucket, "Key": key },
+                    f"{pid}/_*ocr*_/{file_name}",
+                )
             elif is_ptif:
                 # if we're uploading to s3 image server, and it's already a ptif,
                 # just use s3 bucket copy function!

@@ -6,13 +6,13 @@ import uuid
 from io import BytesIO
 from mimetypes import guess_type
 from tempfile import gettempdir
-from django.forms import ValidationError
 
 import pysftp
 from boto3 import client
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django_celery_results.models import TaskResult
 from requests import get
@@ -481,9 +481,9 @@ class Remote(IngestAbstractModel):
                             else:
                                 add_oa_ocr_task(content['@id'])
 
-def validate_is_csv(value):
-    if value.file.content_type != 'text/csv':
-        raise ValidationError(u'File must be of type CSV')
+def validate_is_csv():
+    # invalid but required for old migration
+    raise NotImplementedError
 
 class S3Ingest(models.Model):
     """ Model class for bulk ingesting volumes from an Amazon AWS S3 bucket. """
@@ -505,10 +505,9 @@ class S3Ingest(models.Model):
     metadata_spreadsheet = models.FileField(
         null=False,
         blank=False,
-        storage=IngestStorage(),
         help_text="""A spreadsheet file (CSV) with a row for each volume, including the
         volume PID, which must match the subfolder name in the S3 bucket.""",
-        validators=[validate_is_csv],
+        validators=[FileExtensionValidator(allowed_extensions=['csv'])],
     )
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     collections = models.ManyToManyField(

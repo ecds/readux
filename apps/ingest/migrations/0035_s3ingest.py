@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('s3_bucket', models.CharField(help_text="The name of a publicly-accessible S3 bucket containing volumes to ingest,\n        either at the bucket root or within subfolder(s). Each volume should have its own\n        subfolder, with the volume's PID as its name.", max_length=255)),
                 ('s3_prefix', models.CharField(blank=True, help_text='Optional: Subfolder(s) within the S3 bucket containing your volumes to ingest.', max_length=255, null=True)),
-                ('metadata_spreadsheet', models.FileField(help_text='A spreadsheet file (CSV) with a row for each volume, including the\n        volume PID, which must match the subfolder name in the S3 bucket.', storage=apps.ingest.storages.IngestStorage(), upload_to='', validators=[apps.ingest.models.validate_is_csv])),
+                ('metadata_spreadsheet', models.FileField(help_text='A spreadsheet file (CSV) with a row for each volume, including the\n        volume PID, which must match the subfolder name in the S3 bucket.', storage=apps.ingest.storages.IngestStorage(), upload_to='')),
                 ('collections', models.ManyToManyField(blank=True, help_text='Optional: Collections to attach to ALL volumes ingested in this form.', to='kollections.Collection')),
                 ('creator', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_s3ingests', to=settings.AUTH_USER_MODEL)),
                 ('image_server', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='manifests.imageserver')),

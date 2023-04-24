@@ -481,9 +481,6 @@ class Remote(IngestAbstractModel):
                             else:
                                 add_oa_ocr_task(content['@id'])
 
-def validate_is_csv():
-    # invalid but required for old migration
-    raise NotImplementedError
 
 class S3Ingest(models.Model):
     """ Model class for bulk ingesting volumes from an Amazon AWS S3 bucket. """

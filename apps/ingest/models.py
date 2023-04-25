@@ -6,13 +6,13 @@ import uuid
 from io import BytesIO
 from mimetypes import guess_type
 from tempfile import gettempdir
-from django.forms import ValidationError
 
 import pysftp
 from boto3 import client
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django_celery_results.models import TaskResult
 from requests import get
@@ -481,9 +481,6 @@ class Remote(IngestAbstractModel):
                             else:
                                 add_oa_ocr_task(content['@id'])
 
-def validate_is_csv(value):
-    if value.file.content_type != 'text/csv':
-        raise ValidationError(u'File must be of type CSV')
 
 class S3Ingest(models.Model):
     """ Model class for bulk ingesting volumes from an Amazon AWS S3 bucket. """
@@ -492,23 +489,29 @@ class S3Ingest(models.Model):
         null=False,
         blank=False,
         max_length=255,
-        help_text="""The name of a publicly-accessible S3 bucket containing volumes to ingest,
-        either at the bucket root or within subfolder(s). Each volume should have its own
-        subfolder, with the volume's PID as its name.""",
+        help_text="""The name of a publicly-accessible S3 bucket containing volumes to
+        ingest, either at the bucket root or within subfolder(s). Each volume should have its own
+        subfolder, with the volume's PID as its name.
+        <br />        
+        <strong>Example:</strong> if the bucket's URL is
+        https://my-bucket.s3.us-east-1.amazonaws.com/, its name is <strong>my-bucket</strong>.""",
     )
     s3_prefix = models.CharField(
         null=True,
         blank=True,
         max_length=255,
-        help_text="Optional: Subfolder(s) within the S3 bucket containing your volumes to ingest.",
+        help_text="""Optional: Subfolder(s) within the S3 bucket containing your volumes to ingest.
+        <br />
+        <strong>NOTE: If the volume PID subfolders are not at the bucket root, this field is
+        required.</strong>""",
     )
     metadata_spreadsheet = models.FileField(
         null=False,
         blank=False,
-        storage=IngestStorage(),
         help_text="""A spreadsheet file (CSV) with a row for each volume, including the
-        volume PID, which must match the subfolder name in the S3 bucket.""",
-        validators=[validate_is_csv],
+        volume PID (column name <strong>pid</strong>), which must match the subfolder name in the
+        S3 bucket.""",
+        validators=[FileExtensionValidator(allowed_extensions=['csv'])],
     )
     image_server = models.ForeignKey(ImageServer, on_delete=models.DO_NOTHING, null=True)
     collections = models.ManyToManyField(

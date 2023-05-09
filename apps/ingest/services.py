@@ -192,4 +192,7 @@ def get_associated_meta(all_metadata, file):
 
 def lowercase_first_line(iterator):
     """Lowercase the first line of a text file (such as the header row of a CSV)"""
-    return itertools.chain([next(iterator).lower()], iterator)
+    return itertools.chain(
+        # ignore unicode characters, set lowercase, and strip whitespace
+        [next(iterator).encode('ascii', 'ignore').decode().casefold().strip()], iterator
+    )

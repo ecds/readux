@@ -5,6 +5,7 @@ import logging
 from mimetypes import guess_type
 from os import environ, listdir, path, remove, rmdir
 
+from django import forms
 from django.contrib import admin
 from django.core.files.base import ContentFile
 from django.shortcuts import redirect
@@ -230,13 +231,46 @@ class TaskWatcherAdmin(admin.ModelAdmin):
         return False
 
 
-class S3IngestAdmin(admin.ModelAdmin):
-    """Django admin for ingest.models.S3Ingest resource."""
-
-    exclude = ("creator",)
+class S3IngestForm(forms.ModelForm):
+    """Override the admin form in order to add validation to clean method"""
 
     class Meta:  # pylint: disable=too-few-public-methods, missing-class-docstring
         model = S3Ingest
+        exclude = ("creator",)
+
+    def clean(self):
+        # check s3 bucket is name not url, and csv has pid column
+        super().clean()
+        if any(
+            self.cleaned_data.get('s3_bucket').casefold().startswith(protocol)
+            for protocol in ('http:', 'https:', 's3:')
+        ):
+            self.add_error(
+                's3_bucket',
+                forms.ValidationError('S3 Bucket should use name, not URL'),
+            )
+        csv_file = self.cleaned_data.get('metadata_spreadsheet')
+        if csv_file:
+            reader = csv.DictReader(
+                lowercase_first_line(
+                    StringIO(csv_file.read().decode('utf-8'))
+                ),
+            )
+            if 'pid' not in reader.fieldnames:
+                self.add_error(
+                    'metadata_spreadsheet',
+                    forms.ValidationError(
+                        """Spreadsheet must have pid column. Check to ensure there
+                        are no stray characters in the header row."""
+                    ),
+                )
+
+        return self.cleaned_data
+
+class S3IngestAdmin(admin.ModelAdmin):
+    """Django admin for ingest.models.S3Ingest resource."""
+
+    form = S3IngestForm
 
     def save_model(self, request, obj, form, change):
         # Save M2M relationships with collections so we can access them later
@@ -247,6 +281,7 @@ class S3IngestAdmin(admin.ModelAdmin):
         obj.save()
         obj.refresh_from_db()
         # Get spreadsheet with metadata to match each volume
+        obj.metadata_spreadsheet.seek(0)
         metadata = csv.DictReader(
             lowercase_first_line(
                 StringIO(obj.metadata_spreadsheet.read().decode('utf-8'))

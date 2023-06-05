@@ -38,7 +38,7 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
     exclude = ('id',)
     filter_horizontal = ('collections',)
     list_display = ('id', 'pid', 'label', 'created_at', 'author', 'published_date', 'published_city', 'publisher')
-    search_fields = ('id', 'label', 'author', 'published_date')
+    search_fields = ('id', 'pid', 'label', 'author', 'published_date')
     summernote_fields = ('summary',)
     form = ManifestAdminForm
     actions = ['add_to_collections_action']

@@ -101,9 +101,9 @@ class VolumesPage(Page):
                 query_set = query_set.order_by('-author')
         elif sort == 'date published':
             if order == 'asc':
-                query_set = query_set.order_by('published_date')
+                query_set = query_set.order_by('published_date_edtf')
             elif order == 'desc':
-                query_set = query_set.order_by('-published_date')
+                query_set = query_set.order_by('-published_date_edtf')
         elif sort == 'date added':
             if order == 'asc':
                 query_set = query_set.order_by('created_at')

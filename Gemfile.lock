@@ -45,12 +45,10 @@ GEM
       activesupport (>= 3.2.18)
       faraday (>= 0.9)
       json
-    ipaddr (1.2.4)
     json (2.6.1)
     minitest (5.15.0)
     multipart-post (2.1.1)
-    openssl (2.2.1)
-      ipaddr
+    openssl (3.1.0)
     ruby2_keywords (0.0.5)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)

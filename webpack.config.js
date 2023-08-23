@@ -6,6 +6,7 @@ module.exports = {
   context: __dirname,
   mode: 'production',
   entry: './apps/static/js/index',
+  watch: true,
   output: {
     path: path.resolve('./apps/static/js/'),
     filename: "[name].js"
@@ -20,6 +21,10 @@ module.exports = {
         test: /\.js$/,
         enforce: 'pre',
         use: ['source-map-loader'],
+      }, 
+      {
+        test: /\.css$/i,
+        use: ["css-loader"],
       },
     ],
   }

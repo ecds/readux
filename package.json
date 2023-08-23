@@ -7,10 +7,18 @@
     "doc": "docs"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.8.1",
+    "@riophae/vue-treeselect": "^0.4.0",
+    "@selectize/selectize": "^0.15.2",
     "axios": "^0.23.0",
-    "ecds-annotator": "github:ecds/ecds-annotator#develop"
+    "bodybuilder": "^2.5.1",
+    "ecds-annotator": "github:ecds/ecds-annotator#develop",
+    "elastic-builder": "^2.21.0",
+    "vue-multiselect": "^2.1.7",
+    "vue-slider-component": "^2.8.14"
   },
   "devDependencies": {
+    "css-loader": "^6.8.1",
     "fontawesome": "^5.6.3",
     "jquery": "^3.6.0",
     "selectize": "^0.12.6",

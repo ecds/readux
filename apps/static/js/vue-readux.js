@@ -430,3 +430,19 @@ var readux = new Vue({
     }
   }
 });
+
+// Initialize selectize for search filters
+jQuery(function () {
+  jQuery("#id_collection").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...',
+  });
+  jQuery("#id_author").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...',
+  });
+  jQuery("#id_language").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...'
+  });
+});

@@ -4,7 +4,6 @@ from dateutil import parser
 from django import forms
 from django.template.defaultfilters import truncatechars
 
-
 class MinMaxDateInput(forms.DateInput):
     """Widget extending DateInput to include an initial date in its attrs"""
     date_initial = ""
@@ -46,7 +45,7 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
 class ManifestSearchForm(forms.Form):
     """Django form for searching Manifests via Elasticsearch"""
     q = forms.CharField(
-        label="Search volumes by keyword",
+        label="Search for individual whole keywords. Multiple words will be searched as 'or' (e.g. Rome London = Rome or London).",
         required=False,
         widget=forms.TextInput(
             attrs={
@@ -63,7 +62,7 @@ class ManifestSearchForm(forms.Form):
         widget=forms.SelectMultiple(
             attrs={
                 "aria-label": "Filter volumes by language",
-                "class": "uk-input",
+                # "class": "uk-input",
             },
         ),
     )
@@ -73,7 +72,7 @@ class ManifestSearchForm(forms.Form):
         widget=forms.SelectMultiple(
             attrs={
                 "aria-label": "Filter volumes by author",
-                "class": "uk-input",
+                # "class": "uk-input",
             },
         ),
     )
@@ -83,7 +82,7 @@ class ManifestSearchForm(forms.Form):
         widget=forms.SelectMultiple(
             attrs={
                 "aria-label": "Filter volumes by collection",
-                "class": "uk-input",
+                # "class": "uk-input",
             },
         ),
     )

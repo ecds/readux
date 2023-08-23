@@ -20,118 +20,119 @@
 {% block extra_javascript %}
     <script src="{% static 'js/search.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+        integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
 {% endblock %}
 {% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/nouislider/dist/nouislider.css" rel="stylesheet">
-    <noscript>
-        <style type="text/css">
-            div#search-grid input#toggle-date,
-            div#search-grid input#toggle-date + label,
-            div#search-grid button#reset-filters,
-            div#search-grid input#authors-filter {
-                display: none;
-            }
-        </style>
-    </noscript>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+        integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
 {% endblock %}
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-    <h1 class="uk-heading-medium uk-text-center">Search</h1>
-    <p class="uk-text-lead uk-text-center">Search and filter all volumes.</p>
+<form
+    id="search-form"
+    action="{% url 'search' %}"
+    method="get"
+    accept-charset="utf-8"
+>
 
+    <div class="uk-margin-small-top uk-margin-bottom uk-grid uk-grid-small">
+        <fieldset class="uk-width-expand">
+            <div class="uk-search uk-search-default uk-width-1-1">                
+                <!-- <span uk-search-icon></span> -->
+                <input class="uk-search-input" type="search" value="{{form.q.value|default_if_none:''}}" id="{{form.q.id}}" placeholder="Search volumes by keyword" aria-label="Search volumes by keyword" name="q">
+            </div>
+            <!-- <div class="uk-text-small uk-margin-small-left">{{ form.q.label }}</div> -->
+        </fieldset>
+        <fieldset class="uk-width-auto uk-padding-remove-left">
+            <button class="uk-button uk-button-default" style="background-color: #950953; color: white; padding: 0 9px; border:none; height: 40px;" type="submit">
+                <span uk-icon="icon:search" style="position: relative; top: 3px;"></span>
+            </button>
+        </fieldset>
+        <fieldset>
+            {{ form.sort }}
+            <!-- <div class="uk-text-small uk-margin-small-left">{{ form.sort.label }}</div> -->
+        </fieldset>
+    </div>
 
-    <form
-        id="search-form"
-        action="{% url 'search' %}"
-        method="get"
-        accept-charset="utf-8"
-    >
-        <div class="uk-form uk-width-1-1">
-            <fieldset class="uk-margin uk-width-1-1">
-                <div class="uk-inline uk-width-1-1">
-                    <span class="uk-form-icon" uk-icon="icon: search" aria-label="search"></span>
-                    {{ form.q }}
+    <div uk-grid id="search-grid" class="uk-margin-remove">
+        <div
+            class="uk-width-1-4@m uk-padding-remove-left"
+            style="margin-top: 45px" 
+            id="search-filters"
+        >
+
+            <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
+                <div class="uk-flex uk-flex-between sui-item-heading uk-margin-small-left">
+                    <label >{{ form.collection.label }}</label>
                 </div>
-                <span class="uk-text-small">
-                    Search for individual whole keywords. Multiple words will be searched as
-                    'or' (e.g. Rome London = Rome or London).
-                </span>
+                {{ form.collection }}
             </fieldset>
-            <fieldset class="uk-margin uk-width-1-1">
-                <div class="uk-form-label">{{ form.sort.label }}</div>
-                {{ form.sort }}
+
+            <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
+                <div class="uk-flex uk-flex-between sui-item-heading uk-margin-small-left">
+                    <label >{{ form.author.label }}</label>
+                </div>
+                {{ form.author }}
             </fieldset>
-            <fieldset class="uk-margin uk-flex uk-flex-center uk-width-1-1">
-                <button class="uk-button uk-button-secondary" type="submit">
-                    Search
-                </button>
+
+            <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
+                <div class="uk-flex uk-flex-between sui-item-heading uk-margin-small-left">
+                    <label >{{ form.language.label }}</label>
+                </div>
+                {{ form.language }}
+            </fieldset>
+
+            <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
+                <div class="uk-flex uk-flex-between sui-item-heading uk-margin-small-left">
+                    <label >Filter by Date published</label>
+                    <input type="checkbox" name="date-filter" id="toggle-date" class="uk-checkbox uk-margin-remove"/>
+                </div>
+                <div id="date-range-slider"></div>
+                <noscript>
+                    <div class="uk-label">{{ form.start_date.label }}</div>
+                    {{ form.start_date }}
+                    <div class="uk-label">{{ form.end_date.label }}</div>
+                    {{ form.end_date }}
+                </noscript>
+            </fieldset>
+
+            <fieldset uk-margin class="uk-align-center uk-text-center">
+                <button id="reset-filters" type="button" class="uk-button uk-button-small">Reset</button>
+                <button class="uk-button uk-button-primary uk-button-small" type="submit">Apply</button>
             </fieldset>
         </div>
-        <div uk-grid class="uk-grid" id="search-grid">
-            <div
-                class="uk-form uk-form-stacked uk-width-1-3"
-                id="search-filters"
-            >
-                <h4 class="uk-flex uk-flex-center">Filters</h4>
-                <fieldset class="uk-margin uk-width-1-1">
-                    <div class="uk-form-label">{{ form.collection.label }}</div>
-                    {{ form.collection }}
-                    <span class="uk-text-small">
-                        Hold down “Control”, or “Command” on a Mac, to select more than one, or to deselect a selected item. Selecting multiple options will include all results matching any of the options.
-                    </span>
-                </fieldset>
-                <fieldset class="uk-margin">
-                    <div class="uk-width-1-1">
-                        <div class="uk-form-label">{{ form.author.label }}</div>
-                        <input type="text" id="authors-filter" class="uk-input" placeholder="Start typing an author's name" />
-                        {{ form.author }}
-                    </div>
-                </fieldset>
-                <fieldset class="uk-margin">
-                    <div class="uk-width-1-1">
-                        <div class="uk-form-label">{{ form.language.label }}</div>
-                        {{ form.language }}
-                    </div>
-                </fieldset>
-                <fieldset class="uk-margin uk-width-1-1">
-                    <span class="uk-form-label uk-margin-remove-bottom">Date published</span>
-                    <input type="checkbox" name="date-filter" id="toggle-date" />
-                    <label for="toggle-date"><span>Filter by date published</span></label>
-                    <div id="date-range-slider"></div>
-                    <noscript>
-                        <div class="uk-form-label">{{ form.start_date.label }}</div>
-                        {{ form.start_date }}
-                        <div class="uk-form-label">{{ form.end_date.label }}</div>
-                        {{ form.end_date }}
-                    </noscript>
-                </fieldset>
-                <fieldset class="uk-margin uk-width-1-1 uk-flex uk-flex-between">
-                    <button id="reset-filters" class="uk-button uk-button-danger" type="button">
-                        Reset filters
-                    </button>
-                    <button class="uk-button uk-button-secondary" type="submit">
-                        Apply
-                    </button>
-                </fieldset>
+        
+        <div class="uk-width-expand@m">
+            <div uk-grid class="uk-flex uk-flex-between uk-margin-small-bottom">
+                <div class="sui-item-heading" >{{ volumes.count }} result{{ volumes.count|pluralize }}</div>
+                <div class="sui-item-heading">{% include "snippets/pagination.html" %}</div>
             </div>
-            <div class="uk-width-2-3">
-                <h4 class="uk-flex uk-flex-center">
-                    {{ volumes.count }} result{{ volumes.count|pluralize }}
-                </h4>
-                <div class="uk-flex uk-flex-center">
-                    {% include "snippets/pagination.html" %}
-                </div>
-                <ol class="uk-flex uk-flex-column uk-list-divider" id="search-results">
-                    {% for volume in volumes %}
-                        {% include "snippets/volume_result.html" %}
-                    {% endfor %}
-                </ol>
-                <div class="uk-flex uk-flex-center">
-                    {% include "snippets/pagination.html" %}
-                </div>
+            <ul class="uk-flex uk-flex-column uk-list-divider" id="search-results">
+                {% for volume in volumes %}
+                    {% include "snippets/volume_result.html" %}
+                {% endfor %}
+            </ul>
+            <div class="uk-flex uk-flex-center">
+                {% include "snippets/pagination.html" %}
             </div>
         </div>
-    </form>
 
+    </div>
+</form>
 {% endblock content %}

@@ -1,7 +1,6 @@
 {% load url_replace %}
 
 <!--TODO: move inline styles into project CSS-->
-<div class="pagination uk-margin">
     <span class="step-links">
         {% if page_obj.has_previous %}
             <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
@@ -17,4 +16,3 @@
             <a href="?{% url_replace page=page_obj.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
         {% endif %}
     </span>
-</div>

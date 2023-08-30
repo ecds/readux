@@ -122,8 +122,22 @@ def parse_iiif_v2_manifest(data):
     for datum in manifest_data:
         properties.update(datum)
 
-    properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
-    properties['summary'] = data['description'] if 'description' in data else ''
+    uri = urlparse(data['@id'])
+
+    if not uri.query:
+        properties['pid'] = uri.path.split('/')[-2]
+    else:
+        properties['pid'] = uri.query
+
+    if 'description' in data.keys():
+        if isinstance(data['description'], list):
+            if isinstance(data['description'][0], dict):
+                en = [lang['@value'] for lang in data['description'] if lang['@language'] == 'en']
+                properties['summary'] = data['description'][0]['@value'] if not en else en[0]
+            else:
+                properties['summary'] = data['description'][0]
+        else:
+            properties['summary'] = data['description']
 
     if 'logo' in properties:
         properties['logo_url'] = properties['logo']

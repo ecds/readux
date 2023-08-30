@@ -19,7 +19,7 @@ class ManifestFactory(DjangoModelFactory):
     """Creates a Manifest object for testing."""
     pid = encode_noid()
     label = Faker("name")
-    canvase = RelatedFactory(CanvasFactory, 'manifest')
+    canvases = RelatedFactory(CanvasFactory, 'manifest')
     logo = ImageField(from_path='apps/iiif/canvases/tests/ecds.png')
     image_server = SubFactory(ImageServerFactory)
     summary = Faker('sentence')

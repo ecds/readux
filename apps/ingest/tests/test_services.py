@@ -2,6 +2,7 @@
 import os
 import json
 import boto3
+import httpretty
 from moto import mock_s3
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -72,12 +73,27 @@ class ServicesTest(TestCase):
         assert image_server_url == 'https://readux.org/iiif'
 
     def test_adding_related_link_to_remote_ingest_manifest(self):
+        httpretty.enable(allow_net_connect=True)
+
+        body = None
+        with open(os.path.join(self.fixture_path, 'manifest.json'), 'r') as file:
+            body = file.read()
+
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://swoop.net/manifest.json',
+            body=body.replace('\n', ''),
+            content_type="text/json"
+        )
+
         remote = RemoteFactory.create(
             remote_url='https://swoop.net/manifest.json' # pylint: disable=line-too-long
         )
         manifest = services.create_manifest(remote)
         related_link = manifest.relatedlink_set.first()
         assert related_link.link == remote.remote_url
+
+        httpretty.disable()
 
     def test_parse_v2_manifest_with_label_as_list(self):
         data = json.loads(open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest-label-as-array.json')).read())

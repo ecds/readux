@@ -7,5 +7,5 @@ class BulkVolumeUploadForm(forms.ModelForm):
         model = Bulk
         fields = ['image_server', 'volume_files', 'collections']
         widgets = {
-            'volume_files': ClearableFileInput(attrs={'multiple': True}),
+            'volume_files': ClearableFileInput(attrs={'allow_multiple_selected': True}),
         }

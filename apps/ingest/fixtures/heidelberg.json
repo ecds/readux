@@ -1,0 +1,1841 @@
+{
+   "@context" : "http://iiif.io/api/presentation/2/context.json",
+   "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/manifest",
+   "@type" : "sc:Manifest",
+   "attribution" : [
+      {
+         "@language" : "de",
+         "@value" : "Universit\u00e4tsbibliothek Heidelberg"
+      },
+      {
+         "@language" : "en",
+         "@value" : "Heidelberg University Library"
+      }
+   ],
+   "description" : [
+      {
+         "@language" : "de",
+         "@value" : "Nvovi Disegni Dell' Architettvre, E Piante De Palazzi Di Roma De Piv Celebri Architetti; Universit\u00e4tsbibliothek Heidelberg, C 6426-2-10 GROSS RES"
+      },
+      {
+         "@language" : "en",
+         "@value" : "Nvovi Disegni Dell' Architettvre, E Piante De Palazzi Di Roma De Piv Celebri Architetti; Universit\u00e4tsbibliothek Heidelberg, C 6426-2-10 GROSS RES"
+      }
+   ],
+   "label" : "Nvovi Disegni Dell' Architettvre, E Piante De Palazzi Di Roma De Piv Celebri Architetti",
+   "license" : "http://creativecommons.org/publicdomain/mark/1.0/deed.de",
+   "logo" : "https://www.ub.uni-heidelberg.de/nav4/grafik/layout/ub_logo2.gif",
+   "metadata" : [
+      {
+         "label" : "Author",
+         "value" : [
+            "Ferrerio, Pietro; Rossi, Giovanni Giacomo de  [Editor]"
+         ]
+      },
+      {
+         "label" : "Location",
+         "value" : [
+            "[Rom]"
+         ]
+      },
+      {
+         "label" : "Date",
+         "value" : [
+            "[1655]"
+         ]
+      },
+      {
+         "label" : "Published",
+         "value" : [
+            "[Rom], [1655]"
+         ]
+      },
+      {
+         "label" : "Identifier (URN)",
+         "value" : [
+            "http://nbn-resolving.de/urn:nbn:de:bsz:16-diglit-25939"
+         ]
+      },
+      {
+         "label" : "Identifier (DOI)",
+         "value" : [
+            "https://doi.org/10.11588/diglit.2593"
+         ]
+      },
+      {
+         "label" : "Local Identifier",
+         "value" : [
+            "Cicognara, 3719-2"
+         ]
+      },
+      {
+         "label" : "Local Identifier",
+         "value" : [
+            "dcl:d2v"
+         ]
+      },
+      {
+         "label" : "Bibliographic Information",
+         "value" : [
+            "http://katalog.ub.uni-heidelberg.de/cgi-bin/search.cgi?query=si:1355847117+-(teil:ezblf)&pos=1"
+         ]
+      },
+      {
+         "label" : "Shelfmark",
+         "value" : [
+            "Universit\u00e4tsbibliothek Heidelberg, C 6426-2-10 GROSS RES"
+         ]
+      }
+   ],
+   "seeAlso" : "https://digi.ub.uni-heidelberg.de/diglit/ferrerio1655bd2/mets",
+   "sequences" : [
+      {
+         "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/sequence/normal",
+         "@type" : "sc:Sequence",
+         "canvases" : [
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0001",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0001-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0001",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_001.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_001.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_001",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0002",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0002-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0002",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_002.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_002.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_002",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0003",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0003-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0003",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_003.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_003.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_003",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0004",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0004-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0004",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_004.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_004.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_004",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0005",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0005-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0005",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_005.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_005.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_005",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0006",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0006-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0006",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_006.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_006.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_006",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0007",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0007-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0007",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_007.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_007.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_007",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0008",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0008-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0008",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_008.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_008.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_008",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0009",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0009-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0009",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_009.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_009.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_009",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0010",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0010-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0010",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_010.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_010.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_010",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0011",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0011-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0011",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_011.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_011.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_011",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0012",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0012-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0012",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_012.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_012.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_012",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0013",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0013-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0013",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_013.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_013.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_013",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0014",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0014-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0014",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_014.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_014.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_014",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0015",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0015-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0015",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_015.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_015.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_015",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0016",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0016-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0016",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_016.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_016.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_016",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0017",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0017-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0017",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_017.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_017.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_017",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0018",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0018-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0018",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_018.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_018.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_018",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0019",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0019-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0019",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_019.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_019.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_019",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0020",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0020-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0020",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_020.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_020.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_020",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0021",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0021-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0021",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_021.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_021.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_021",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0022",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0022-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0022",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_022.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_022.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_022",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0023",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0023-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0023",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_023.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_023.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_023",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0024",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0024-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0024",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_024.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_024.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_024",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0025",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0025-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0025",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_025.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_025.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_025",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0026",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0026-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0026",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_026.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_026.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_026",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0027",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0027-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0027",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_027.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_027.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_027",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0028",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0028-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0028",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_028.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_028.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_028",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0029",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0029-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0029",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_029.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_029.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_029",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0030",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0030-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0030",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_030.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_030.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_030",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0031",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0031-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0031",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_031.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_031.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_031",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0032",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0032-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0032",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_032.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_032.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_032",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0033",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0033-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0033",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_033.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_033.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_033",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0034",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0034-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0034",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_034.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_034.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_034",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0035",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0035-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0035",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_035.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_035.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_035",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0036",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0036-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0036",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_036.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_036.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_036",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0037",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0037-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0037",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_037.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_037.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_037",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0038",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0038-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0038",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_038.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_038.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_038",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0039",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0039-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0039",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_039.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_039.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_039",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0040",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0040-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0040",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_040.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_040.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_040",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0041",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0041-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0041",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_041.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_041.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_041",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0042",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0042-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0042",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_042.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_042.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_042",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0043",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0043-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0043",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_043.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_043.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_043",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0044",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0044-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0044",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_044.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_044.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_044",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0045",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0045-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0045",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_045.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_045.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_045",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0046",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0046-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0046",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_046.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_046.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_046",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0047",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0047-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0047",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_047.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_047.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_047",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0048",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0048-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0048",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_048.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_048.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_048",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0049",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0049-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0049",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_049.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_049.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_049",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0050",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0050-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0050",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_050.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_050.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_050",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0051",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0051-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0051",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_051.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_051.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_051",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0052",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0052-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0052",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_052.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_052.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_052",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0053",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0053-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0053",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_053.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_053.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_053",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0054",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0054-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0054",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_054.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_054.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_054",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0055",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0055-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0055",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_055.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_055.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_055",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0056",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0056-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0056",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_056.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_056.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_056",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0057",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0057-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0057",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_057.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_057.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_057",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0058",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0058-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0058",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_058.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_058.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_058",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0059",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0059-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0059",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_059.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_059.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_059",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0060",
+               "@type" : "sc:Canvas",
+               "height" : 3729,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0060-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0060",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_060.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3729,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_060.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 5053
+                     }
+                  }
+               ],
+               "label" : "Tafel_060",
+               "width" : 5053
+            },
+            {
+               "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0061",
+               "@type" : "sc:Canvas",
+               "height" : 3556,
+               "images" : [
+                  {
+                     "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/annotation/0061-image",
+                     "@type" : "oa:Annotation",
+                     "motivation" : "sc:painting",
+                     "on" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0061",
+                     "resource" : {
+                        "@id" : "https://digi.ub.uni-heidelberg.de/diglitData/image/ferrerio1655bd2/4/Tafel_061.jpg",
+                        "@type" : "dctypes:Image",
+                        "format" : "image/jpeg",
+                        "height" : 3556,
+                        "service" : {
+                           "@context" : "http://iiif.io/api/image/2/context.json",
+                           "@id" : "https://digi.ub.uni-heidelberg.de/iiif/2/ferrerio1655bd2%3ATafel_061.jpg",
+                           "profile" : "http://iiif.io/api/image/2/profiles/level2.json"
+                        },
+                        "width" : 4455
+                     }
+                  }
+               ],
+               "label" : "Tafel_061",
+               "width" : 4455
+            }
+         ],
+         "label" : [
+            {
+               "@language" : "de",
+               "@value" : "Standardabfolge"
+            },
+            {
+               "@language" : "en",
+               "@value" : "Normal Sequence"
+            }
+         ],
+         "startCanvas" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0001",
+         "viewingDirection" : "left-to-right",
+         "viewingHint" : "paged"
+      }
+   ],
+   "service" : "https://digi.ub.uni-heidelberg.de/diglit/ferrerio1655bd2",
+   "structures" : [
+      {
+         "@id" : "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/range/r0",
+         "@type" : "sc:Range",
+         "canvases" : [
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0001",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0002",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0003",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0004",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0005",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0006",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0007",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0008",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0009",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0010",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0011",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0012",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0013",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0014",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0015",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0016",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0017",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0018",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0019",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0020",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0021",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0022",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0023",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0024",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0025",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0026",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0027",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0028",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0029",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0030",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0031",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0032",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0033",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0034",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0035",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0036",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0037",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0038",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0039",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0040",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0041",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0042",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0043",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0044",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0045",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0046",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0047",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0048",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0049",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0050",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0051",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0052",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0053",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0054",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0055",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0056",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0057",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0058",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0059",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0060",
+            "https://digi.ub.uni-heidelberg.de/diglit/iiif/ferrerio1655bd2/canvas/0061"
+         ],
+         "label" : "Tafel 1 - 61"
+      }
+   ],
+   "thumbnail" : {
+      "@id" : "https://digi.ub.uni-heidelberg.de/diglit/ferrerio1655bd2/introimage",
+      "format" : "image/jpeg",
+      "height" : 283,
+      "width" : 399
+   },
+   "viewingDirection" : "left-to-right",
+   "viewingHint" : "paged",
+   "within" : [
+      "https://digi.ub.uni-heidelberg.de/diglit/ferrerio1655ga"
+   ]
+}

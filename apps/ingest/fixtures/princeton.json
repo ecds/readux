@@ -2,8 +2,8 @@
   "@context": "http://iiif.io/api/presentation/2/context.json",
   "@type": "sc:Manifest",
   "@id": "https://figgy.princeton.edu/concern/scanned_resources/e38d7ebb-3ae6-4eb8-a3ef-d70b5184b005/manifest",
-  "label": ["Nvova pianta et alzata della città di Roma con tvtte le strade, piazze et edificii de tempi, palazzi, giardini et altre fabbriche antiche e moderne come si trovano al presente nel pontificato di N.S. Papa Innocentio XI con le loro dichiarationi nomi et indice copiosissimo / disegniata et intagliata da Gio. Battista Falda da Valdvggio et date al pvblico da Gio. Giacomo de Rossi dalle sve stampe in Roma alla pace l'anno 1676 con privileggio del Som. Pont"],
-  "description": ["\"Con l'aggivunta delle nove fabriche di chiese et altri edificij fatti sin' all'anno presente, MDCCXXX\"", "In lower right corner: Giorgio Widman intagliole littere.", "Oriented with North to the left.", "Pictorial map of Rome within the city walls as they existed in 1676.", "Includes indexes of 495 buildings and inset (smaller scale) of Rome and its environs.", "In case, mounted on fabric and folded."],
+  "label": ["Nvova pianta et alzata della citt"],
+  "description": ["Con l'aggivunta delle nove"],
   "viewingHint": "paged",
   "viewingDirection": "left-to-right",
   "metadata": [{
@@ -24,7 +24,7 @@
   }, {
     "label": "Title",
     "value": [{
-      "@value": "Nvova pianta et alzata della città di Roma con tvtte le strade, piazze et edificii de tempi, palazzi, giardini et altre fabbriche antiche e moderne come si trovano al presente nel pontificato di N.S. Papa Innocentio XI con le loro dichiarationi nomi et indice copiosissimo / disegniata et intagliata da Gio. Battista Falda da Valdvggio et date al pvblico da Gio. Giacomo de Rossi dalle sve stampe in Roma alla pace l'anno 1676 con privileggio del Som. Pont",
+      "@value": "Nvova pianta et alzata della città di Roma con tvtte le strade, piazze et edificii de tempi, palazzi, giardini et altre fabbriche antiche e moderne come si trovano al presente nel pontificato di N.S. Papa Innocentio XI con le loro dichiarationi nomi et indice copiosissimo / disegniata et intagliata da Gio",
       "@language": "ita"
     }]
   }, {

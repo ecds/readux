@@ -8,6 +8,7 @@ import json
 from os import environ, path, unlink, remove
 import re
 import tempfile
+import logging
 from hocr_spec import HocrValidator
 from lxml import etree
 from django.conf import settings
@@ -15,6 +16,8 @@ from django.core.serializers import deserialize
 import httpretty
 from apps.iiif.annotations.models import Annotation
 from apps.utils.fetch import fetch_url
+
+LOGGER = logging.getLogger(__name__)
 
 class IncludeQuotesDialect(csv.Dialect): # pylint: disable=too-few-public-methods
     """Subclass of csv.Dialect to include the quote marks in OCR content."""
@@ -165,7 +168,9 @@ def fetch_positional_ocr(canvas):
             return canvas.image_server.bucket.Object(canvas.ocr_file_path).get()['Body'].read()
         if canvas.image_server.storage_service == 'sftp':
             try:
-                httpretty.enable(allow_net_connect=True)
+                if environ['DJANGO_ENV'] == 'test':
+                    httpretty.disable()
+
                 connection_options = pysftp.CnOpts()
                 connection_options.hostkeys = None
                 sftp = pysftp.Connection(**canvas.image_server.sftp_connection, cnopts=connection_options)
@@ -178,7 +183,8 @@ def fetch_positional_ocr(canvas):
                 remove(ocr_local_file_path)
 
                 return ocr_contents.encode()
-            except:
+            except Exception as error:
+                LOGGER.error(f'Failed to get OCR files from SFTP server with exception: {error}')
                 return None
 
     return fetch_url(url, data_format='text/plain')

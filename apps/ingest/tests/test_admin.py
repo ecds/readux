@@ -1,5 +1,5 @@
 from os.path import join
-from os import mkdir
+from os import mkdir, path
 from getpass import getuser
 from shutil import rmtree
 import boto3
@@ -195,6 +195,19 @@ class IngestAdminTest(TestCase):
 
     def test_remote_admin_save(self):
         """It should add a manifest to the Local object"""
+        httpretty.enable(allow_net_connect=True)
+
+        body = None
+        with open(path.join(self.fixture_path, 'manifest.json'), 'r') as file:
+            body = file.read()
+
+        httpretty.register_uri(
+            httpretty.GET,
+            'https://dooley.net/manifest.json',
+            body=body.replace('\n', ''),
+            content_type="text/json"
+        )
+
         remote = RemoteFactory.create(
             remote_url='https://dooley.net/manifest.json'
         )
@@ -206,6 +219,8 @@ class IngestAdminTest(TestCase):
 
         remote.refresh_from_db()
         assert remote.manifest is not None
+
+        httpretty.disable()
 
     def test_remote_admin_response_add(self):
         """It should redirect to new manifest"""

@@ -8,6 +8,7 @@ from mimetypes import guess_type
 from tempfile import gettempdir
 
 import pysftp
+import httpretty
 from boto3 import client
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
@@ -34,8 +35,9 @@ logging.getLogger('boto3').setLevel(logging.ERROR)
 logging.getLogger('s3transfer').setLevel(logging.ERROR)
 logging.getLogger('httpretty').setLevel(logging.CRITICAL)
 logging.getLogger('httpretty.core').setLevel(logging.CRITICAL)
-logging.getLogger('paramiko').setLevel(logging.ERROR)
+logging.getLogger('paramiko').setLevel(logging.CRITICAL)
 logging.getLogger('elasticsearch.base').setLevel(logging.ERROR)
+logging.getLogger('responses').setLevel(logging.ERROR)
 
 def bulk_path(instance, filename):
     return os.path.join('bulk', str(instance.id), filename )
@@ -357,8 +359,8 @@ class Local(IngestAbstractModel):
             # Write the file to the local disk.
             with open(local_path, 'wb') as f:
                 f.write(BytesIO(file).getbuffer())
-            for _ in range(0,5):
-                print(f'local {local_path}')
+            # for _ in range(0,5):
+            #     print(f'local {local_path}')
 
             sftp = self.create_sftp_connection()
 
@@ -387,8 +389,8 @@ class Local(IngestAbstractModel):
             remote_files = [remote_file for remote_file in sftp.listdir() if f'{self.manifest.pid}{self.image_server.path_delineator}' in remote_file]
 
         files = (
-            [os.path.join(self.remote_dir, image) for image in remote_files if 'image' in guess_type(image)[0]],
-            [os.path.join(self.remote_dir, ocr_file) for ocr_file in remote_files if 'image' not in guess_type(ocr_file)[0]],
+            [os.path.join(self.remote_dir or '', image) for image in remote_files if 'image' in guess_type(image)[0]],
+            [os.path.join(self.remote_dir or '', ocr_file) for ocr_file in remote_files if 'image' not in guess_type(ocr_file)[0]],
         )
         sftp.close()
 
@@ -439,8 +441,8 @@ class Remote(IngestAbstractModel):
         :return: IIIF Manifest
         :rtype: dict
         """
-        if os.environ['DJANGO_ENV'] == 'test':
-            return json.loads(open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest.json')).read())
+        # if os.environ['DJANGO_ENV'] == 'test':
+        #     return json.loads(open(os.path.join(settings.APPS_DIR, 'ingest/fixtures/manifest.json')).read())
 
         return fetch_url(self.remote_url)
 
@@ -492,7 +494,7 @@ class S3Ingest(models.Model):
         help_text="""The name of a publicly-accessible S3 bucket containing volumes to
         ingest, either at the bucket root or within subfolder(s). Each volume should have its own
         subfolder, with the volume's PID as its name.
-        <br />        
+        <br />
         <strong>Example:</strong> if the bucket's URL is
         https://my-bucket.s3.us-east-1.amazonaws.com/, its name is <strong>my-bucket</strong>.""",
     )
@@ -537,22 +539,15 @@ class S3Ingest(models.Model):
         # by the s3_bucket and the s3_prefix
         root_prefix = f"{self.s3_prefix}/" or ""
         s3 = client("s3")
+
         # use paginator in case list is > 1000 items
         paginator = s3.get_paginator("list_objects_v2")
         root = paginator.paginate(Bucket=self.s3_bucket, Prefix=root_prefix, Delimiter="/")
         for prefix_result in root.search("CommonPrefixes"):
-            subfolder_name = prefix_result.get("Prefix")
-            subfolder_name = subfolder_name[:-1] if subfolder_name.endswith("/") else subfolder_name
-            # if this subfolder does not match the pid name, skip it
-            if subfolder_name.split("/")[-1] != pid:
-                continue
-            LOGGER.debug(f"Subfolder found for pid: {pid}")
-            subfolder_pages = paginator.paginate(
-                Bucket=self.s3_bucket,
-                Prefix=f"{root_prefix}{pid}/" if root_prefix else f"{pid}/",
-            )
-            for page in subfolder_pages:
-                for s3_object in page.get("Contents"):
+            # This really only seems to be an issue when testing.
+            # Maybe Moto doesn't properly mock this?
+            if prefix_result is None:
+                for s3_object in s3.list_objects_v2(Bucket=self.s3_bucket, Prefix=pid)['Contents']:
                     key = s3_object.get("Key")
                     # at this point, we just want to handle all files and ignore folder structure,
                     # so we can ignore keys ending in /
@@ -560,9 +555,31 @@ class S3Ingest(models.Model):
                         continue
                     # determine if this is image or ocr and upload it
                     self.disambiguate_and_upload(pid, key)
+            else:
+                subfolder_name = prefix_result.get("Prefix")
+                subfolder_name = subfolder_name[:-1] if subfolder_name.endswith("/") else subfolder_name
+                # if this subfolder does not match the pid name, skip it
+                if subfolder_name.split("/")[-1] != pid:
+                    continue
 
-            # collect all uploaded files
-            image_files, ocr_files = self.image_server_paths(pid)
+                LOGGER.debug(f"Subfolder found for pid: {pid}")
+
+                subfolder_pages = paginator.paginate(
+                    Bucket=self.s3_bucket,
+                    Prefix=f"{root_prefix}{pid}/" if root_prefix else f"{pid}/",
+                )
+                for page in subfolder_pages:
+                    for s3_object in page.get("Contents"):
+                        key = s3_object.get("Key")
+                        # at this point, we just want to handle all files and ignore folder structure,
+                        # so we can ignore keys ending in /
+                        if key.endswith("/"):
+                            continue
+                        # determine if this is image or ocr and upload it
+                        self.disambiguate_and_upload(pid, key)
+
+        # collect all uploaded files
+        image_files, ocr_files = self.image_server_paths(pid)
 
         # the following is adapted closely from Local.create_canvases:
 
@@ -648,6 +665,8 @@ class S3Ingest(models.Model):
                 ],
             )
         elif self.image_server.storage_service == "sftp":
+            if os.environ['DJANGO_ENV'] == 'test':
+                httpretty.disable()
             return self.__list_sftp_files(pid)
         return ([], [])
 
@@ -707,18 +726,24 @@ class S3Ingest(models.Model):
 
     def create_sftp_connection(self):
         """Pared-down adaptation of Local.create_sftp_connection"""
+        if os.environ['DJANGO_ENV'] == 'test':
+            httpretty.disable()
         connection_options = pysftp.CnOpts()
         connection_options.hostkeys = None
         return pysftp.Connection(**self.image_server.sftp_connection, cnopts=connection_options)
 
     def __list_sftp_files(self, pid):
         """Pared-down adaptation of Local.__list_sftp_files"""
+        if os.environ['DJANGO_ENV'] == 'test':
+            httpretty.disable()
         sftp = self.create_sftp_connection()
         remote_files = [remote_file for remote_file in sftp.listdir() if f"{pid}{self.image_server.path_delineator}" in remote_file]
+
         files = (
             [image for image in remote_files if "image" in guess_type(image)[0]],
             [ocr_file for ocr_file in remote_files if "image" not in guess_type(ocr_file)[0]],
         )
+
         sftp.close()
         return files
 

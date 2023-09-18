@@ -179,11 +179,12 @@ class TaskWatcherAdmin(admin.ModelAdmin):
         "filename",
         "task_name",
         "task_status",
+        "associated_manifest",
         "task_creator",
         "date_created",
         "date_done",
     )
-    list_filter = ('task_creator', 'task_result__task_name')
+    list_filter = ('task_result__task_name', 'task_result__status', 'task_creator', 'associated_manifest__pid')
     search_fields = ('filename',)
     date_hierarchy = 'task_result__date_created'
     empty_value_display = '(none)'

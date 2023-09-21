@@ -10,6 +10,7 @@ from apps.iiif.manifests.models import Manifest, RelatedLink
 
 
 def clean_metadata(metadata):
+    print(metadata)
     """Remove keys that do not align with Manifest fields.
 
     :param metadata:
@@ -17,16 +18,25 @@ def clean_metadata(metadata):
     :return: Dictionary with keys matching Manifest fields
     :rtype: dict
     """
-    metadata = {k.casefold().replace(' ', '_'): v for k, v in metadata.items()}
+    metadata = {key.casefold().replace(' ', '_'): value for key, value in metadata.items()}
     fields = [f.name for f in Manifest._meta.get_fields()]
     invalid_keys = []
 
     for key in metadata.keys():
+        if key != 'metadata' and isinstance(metadata[key], list):
+            if isinstance(metadata[key][0], dict):
+                for meta_key in metadata[key][0].keys():
+                    if 'value' in meta_key:
+                        metadata[key] = metadata[key][0][meta_key]
+            else:
+                metadata[key] = ', '.join(metadata[key])
         if key not in fields:
             invalid_keys.append(key)
 
     for invalid_key in invalid_keys:
         metadata.pop(invalid_key)
+
+
 
     return metadata
 

@@ -293,7 +293,8 @@ class Local(IngestAbstractModel):
                         task_id=ocr_task_id,
                         task_result=ocr_task_result,
                         task_creator=self.creator,
-                        filename=canvas.ocr_file_path
+                        filename=canvas.ocr_file_path,
+                        associated_manifest=self.manifest
                     )
 
             # Request the thumbnail so a cached version is created on IIIF server.
@@ -624,7 +625,8 @@ class S3Ingest(models.Model):
                         task_id=ocr_task_id,
                         task_result=ocr_task_result,
                         task_creator=self.creator,
-                        filename=canvas.ocr_file_path
+                        filename=canvas.ocr_file_path,
+                        associated_manifest=manifest
                     )
 
             # Request the thumbnail so a cached version is created on IIIF server.

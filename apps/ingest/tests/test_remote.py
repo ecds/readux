@@ -96,6 +96,7 @@ class RemoteTest(TestCase):
         assert remote.metadata['summary'] == "Nvovi Disegni Dell' Architettvre, E Piante De Palazzi Di Roma De Piv Celebri Architetti; Universitätsbibliothek Heidelberg, C 6426-2-10 GROSS RES"
         assert remote.metadata['viewingdirection'] == 'left-to-right'
         assert remote.metadata['logo_url'] == 'https://www.ub.uni-heidelberg.de/nav4/grafik/layout/ub_logo2.gif'
+        assert remote.metadata['author'] == 'Ferrerio, Pietro; Rossi, Giovanni Giacomo de  [Editor]'
         assert isinstance(remote.metadata['metadata'], list)
 
         remote.create_canvases()

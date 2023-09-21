@@ -86,11 +86,10 @@ jobs:
           DATABASE_URL: postgres://user:password@localhost:5432/readux
           DJANGO_ENV: test
         run: |
-          pytest apps/iiif/ --cov-report html --cov-report term --cov=./apps/iiif
-          pytest apps/export/ --cov-report html --cov-report term --cov=./apps/export
-          pytest apps/ingest/ --cov-report html --cov-report term --cov=./apps/ingest
-          pytest apps/readux/ --cov-report html --cov-report term --cov=./apps/readux
-          pytest apps/users/ --cov-report html --cov-report term --cov=./apps/users
+          pytest apps/iiif/
+          pytest apps/ingest/
+          pytest apps/readux/
+          pytest apps/users/
 
       - name: Test Webpack build
         run: |

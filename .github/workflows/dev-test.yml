@@ -55,7 +55,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.5.1'
+          ruby-version: '2.6.3'
 
       - name: Setup Node
         uses: actions/setup-node@v3

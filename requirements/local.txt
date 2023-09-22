@@ -25,7 +25,7 @@ sftpserver==0.3
 
 # Code quality
 # ------------------------------------------------------------------------------
-coverage==6.5.0  # https://github.com/nedbat/coveragepy
+coverage==7.3.1  # https://github.com/nedbat/coveragepy
 coveralls==3.3.1
 
 # Django

@@ -20,7 +20,14 @@ module.exports = {
         test: /\.js$/,
         enforce: 'pre',
         use: ['source-map-loader'],
+        exclude: '/node_modules/',
       },
+      {
+        test: /\.ts?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      }
     ],
-  }
+  },
+  ignoreWarnings: [/Failed to parse source map/],
 }

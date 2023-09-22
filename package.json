@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.23.0",
-    "ecds-annotator": "file:/Users/jay/data/ecds-annotator"
+    "ecds-annotator": "github:ecds/ecds-annotator#develop"
   },
   "devDependencies": {
     "fontawesome": "^5.6.3",

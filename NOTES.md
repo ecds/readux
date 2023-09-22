@@ -42,6 +42,39 @@ cat /etc/letsencrypt/live/iip.readux.io/privkey.pem
 
 The other optional fields can be left blank.
 
+## Elasticsearch Notes
+
+### Expired Certs
+
+The certs are managed by certbot but they have to be readable by the elasticsearch group. So we have to 1) add the elasticsearch group to the ownership and 2) copy the certs to a directory readable by the elasticsearch group. Certbot really locks down access to the certs it create.
+
+Certbot should automatically create new certs, but if you need to make one, run:
+
+~~~sh
+sudo certbot renew --force-renewal
+~~~
+
+To copy the certs, we have to go full root:
+
+~~~sh
+sudo su -
+cp /etc/letsencrypt/archive/search.readux.io/privkey{biggest number}.pem /etc/elasticsearch/certs/privkey.pem
+cp /etc/letsencrypt/archive/search.readux.io/fullchain{biggest number}.pem /etc/elasticsearch/certs/fullchain.pem
+exit
+~~~
+
+Add the elasticsearch group as an owner:
+
+~~~sh
+sudo chown root:elasticsearch /etc/elasticsearch/certs/*
+~~~
+
+Restart Elasticsearch
+
+~~~sh
+sudo service elasticsearch restart
+~~~
+
 ## Convert existing SVG annotations
 
 ~~~python

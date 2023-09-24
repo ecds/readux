@@ -21,6 +21,8 @@ jobs:
           cluster.name: readux-elasticsearch
           http.port: 9200
           discovery.type: single-node
+          DATABASE_URL: postgres://user:password@localhost:5432/readux
+          DJANGO_ENV: test
         options: >-
           --health-cmd "curl http://localhost:9200/_cluster/health"
           --health-interval 10s
@@ -81,15 +83,17 @@ jobs:
           pip install pyld==1.0.5
           pip install -r requirements/local.txt
 
-      - name: Test with PyTest
-        env:
-          DATABASE_URL: postgres://user:password@localhost:5432/readux
-          DJANGO_ENV: test
-        run: |
-          pytest apps/iiif/
-          pytest apps/ingest/
-          pytest apps/readux/
-          pytest apps/users/
+      - name: Test IIIF
+        run: pytest apps/iiif/
+
+      - name: Test Ingest
+        run: pytest apps/ingest/
+
+      - name: Test Readux
+        run: pytest apps/readux/
+
+      - name: Test Users
+        run: pytest apps/users/
 
       - name: Test Webpack build
         run: |

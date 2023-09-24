@@ -8,6 +8,10 @@ on:
     branches:
       - develop
 
+env:
+  DATABASE_URL: postgres://user:password@localhost:5432/readux
+  DJANGO_ENV: test
+
 jobs:
   pytest:
     runs-on: ubuntu-22.04
@@ -21,8 +25,6 @@ jobs:
           cluster.name: readux-elasticsearch
           http.port: 9200
           discovery.type: single-node
-          DATABASE_URL: postgres://user:password@localhost:5432/readux
-          DJANGO_ENV: test
         options: >-
           --health-cmd "curl http://localhost:9200/_cluster/health"
           --health-interval 10s

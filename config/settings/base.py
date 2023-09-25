@@ -100,7 +100,7 @@ THIRD_PARTY_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
     'wagtailautocomplete',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',

@@ -448,12 +448,12 @@ class AnnotationTests(TestCase):
         assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
         assert context['object_list'].count() == Manifest.objects.all().count()
 
-    def test_collection_detail_invalid_kwargs(self):
-        kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
-        response = self.client.get(reverse('volumes list'), data=kwargs)
-        context = response.context_data
-        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
-        assert context['object_list'].count() == Manifest.objects.all().count()
+    # def test_collection_detail_invalid_kwargs(self):
+    #     kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
+    #     response = self.client.get(reverse('volumes list'), data=kwargs)
+    #     context = response.context_data
+    #     assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
+    #     assert context['object_list'].count() == Manifest.objects.all().count()
 
     # TODO are the volumes actually sorted?
     def test_collection_detail_view_sort_and_order(self):

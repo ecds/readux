@@ -44,6 +44,7 @@ DATABASES = {
     'default': env.db('DATABASE_URL', default='postgres:///readux'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
 
@@ -337,6 +338,7 @@ SERIALIZATION_MODULES = {
 }
 
 WAGTAIL_SITE_NAME = 'Readux'
+WAGTAILADMIN_BASE_URL = 'https://localhost'
 
 # CORS HEADERS
 CORS_ORIGIN_ALLOW_ALL = True

@@ -1,5 +1,4 @@
 """ Model classes for ingesting volumes. """
-import json
 import logging
 import os
 import uuid
@@ -11,7 +10,6 @@ import pysftp
 import httpretty
 from boto3 import client
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -76,7 +74,7 @@ class IngestTaskWatcher(models.Model):
         verbose_name_plural = 'Ingest Statuses'
 
 class IngestAbstractModel(models.Model):
-    metadata = JSONField(default=dict, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
     manifest = models.ForeignKey(Manifest, on_delete=models.DO_NOTHING, null=True)
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring

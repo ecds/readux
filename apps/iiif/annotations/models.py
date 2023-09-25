@@ -1,6 +1,5 @@
 """Django models for :class:`apps.iiif.annotations`"""
-from django.contrib.postgres.fields import JSONField
-from django.db import models, IntegrityError
+from django.db import models
 from django.conf import settings
 from django.db.models import signals
 from django.core.exceptions import ValidationError
@@ -56,7 +55,7 @@ class AbstractAnnotation(IiifBase):
     canvas = models.ForeignKey('canvases.Canvas', on_delete=models.CASCADE, null=True)
     language = models.CharField(max_length=10, default='en')
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True)
-    oa_annotation = JSONField(default=dict, blank=False)
+    oa_annotation = models.JSONField(default=dict, blank=False)
     # TODO: Should we keep this for annotations from Mirador, or just get rid of it?
     svg = models.TextField(blank=True, null=True)
     style = models.CharField(max_length=1000, blank=True, null=True)

@@ -85,5 +85,19 @@ jobs:
           pip install pyld==1.0.5
           pip install -r requirements/local.txt
 
+      - name: Test IIIF
+        run: pytest apps/iiif/
+
+      - name: Test Ingest
+        run: pytest apps/ingest/
+
       - name: Test Readux
         run: pytest apps/readux/
+
+      - name: Test Users
+        run: pytest apps/users/
+
+      - name: Test Webpack build
+        run: |
+          npm install
+          npx webpack

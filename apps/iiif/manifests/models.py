@@ -171,8 +171,7 @@ class Manifest(IiifBase):
     languages = models.ManyToManyField(
         Language,
         help_text="Languages present in the manifest.",
-        blank=True,
-        null=True
+        blank=True
     )
     attribution = models.CharField(
         max_length=255,

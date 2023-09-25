@@ -41,7 +41,7 @@ JEKYLL_THEME_ZIP = digitaledition_jekylltheme.ZIPFILE_PATH
 
 # The GitHub action env does not seem to find the zip file.
 if os.environ['DJANGO_ENV'] == 'test' and not os.path.exists(JEKYLL_THEME_ZIP):
-    JEKYLL_THEME_ZIP = os.path.join(settings.APPS_DIR, 'export', 'tests', 'digitaledition-jekylltheme.zip')
+    JEKYLL_THEME_ZIP = os.path.join(settings.APPS_DIR, 'export', 'tests', 'fixtures', 'digitaledition-jekylltheme.zip')
 
 class ExportException(Exception):
     """Custom exception"""

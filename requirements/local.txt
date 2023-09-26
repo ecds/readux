@@ -42,5 +42,5 @@ pyopenssl # for running dev server under https
 # ------------------------------------------------------------------------------
 Fabric==1.15 # https://github.com/fabric/fabric
 
-celery==5.2.7
+celery==5.3.4
 django-celery-results==2.4.0

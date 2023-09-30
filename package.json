@@ -24,7 +24,7 @@
     "selectize": "^0.12.6",
     "source-map-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.3",
-    "uikit": "^3.14.0",
+    "uikit": "^3.16.24",
     "uikit-icons": "^0.5.0",
     "vue": "^3.2.33",
     "webpack": "^5.76.0",

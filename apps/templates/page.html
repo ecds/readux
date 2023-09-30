@@ -17,6 +17,7 @@
 {{ json_data|json_script:"context" }}
 {% block inner %}
 
+
 <!-- This is the modal -->
 <div id="rx-page-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
@@ -139,88 +140,81 @@
 
   </nav>
 
+  <div>
+    <a href="#modal-full" uk-toggle uk-icon="icon: info" uk-tooltip="title: Additional information about this volume, such as annotations and attribution.; pos: bottom"></a>
+    <div class="uk-inline" style="vertical-align: top;" uk-tooltip="title: View options; pos: top">
+      {% include "_page/_options.html" %}    
+    </div>
+  </div>
+
+  <div id="modal-full" class="uk-modal-full" uk-modal>
+      <div class="uk-modal-dialog">
+          <button class="uk-modal-close-full uk-padding uk-close-large" type="button" uk-close></button>
+          
+          <div class="uk-grid-collapse uk-flex-middle uk-grid-stack" >
+            <div class="uk-background-cover uk-width-1-1" uk-height-viewport="" style="min-height: max(0px, 630.4px);">
+              <div class="uk-padding">
+                <h1 class="uk-margin-bottom uk-text-large uk-text-bold">Additional Information</h1>
+                <div uk-grid>
+                  <ul class="uk-tab-left uk-width-auto@m" uk-tab="connect: #volume-modal">
+                    <li class="uk-active"><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Search</a></li>
+                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Annotations</a></li>
+                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Volume Information</a></li>
+                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Attribution</a></li>
+                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">URLs</a></li>
+                  </ul>
+                  
+                  <ul id="volume-modal" class="uk-switcher uk-width-expand@m uk-padding-small-left">
+                    <li tab-name="annotations" class="">
+                      {% include '_page/_search.html' %}
+                    </li>
+                    
+                    <li tab-name="annotations" class="uk-grid">
+                      {% include '_page/_annotations.html' %}
+                    </li>
+                    
+                    <li tab-name="basic information">
+                      {% include '_page/_information.html' %}
+                    </li>
+                    
+                    <li tab-name="attribution">
+                      {% include '_page/_attribution.html' %}
+                    </li>
+                    
+                    <li tab-name="urls">
+                      {% include '_page/_urls.html' %}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+  </div>
+
+
   <div id="offcanvas-usage" uk-offcanvas="flip: true">
     <div class="uk-offcanvas-bar rx-offcanvas-bar">
-
     <div class="rx-info">
       <a type="button" role="button" tabindex="0" class="uk-offcanvas-close rx-offcanvas-close rx-page-info-btn">close</a>
     </div>
 
     <div class="rx-info">
       <!-- new search form -->
-      <nav class="uk-navbar-container" uk-navbar>
-          <div class="uk-navbar-item" style="width: 100%;">
-            {% if page.pid is not None %}
-            <form class="uk-search uk-search-default uk-search-navbar rx-page-search-container"
-              id="manifest-search-form" uk-grid>
-              <div class="uk-width-3-4">
-                <input type="hidden" value={{ volume.pid }} name="volume-pid" id="search-volume-pid" />
-                <span uk-search-icon class="rx-search-icon"></span>
-                <input class="uk-search-input uk-input-remove rx-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="query"
-                value="{{request.GET.q}}" id="search-query-text"/>
-              </div>
-              <fieldset class="uk-margin uk-grid-small uk-width-expand uk-child-width-auto uk-grid rx-page-search-options" style="border:0;">
-                <legend style="display:none;">Search Type:</legend>
-                <label title="Click to include partial matches" class="rx-page-search-option-label">
-                  <input class="uk-radio" type="radio" {%if 'exact' not in request.GET.type %}checked{% endif %} aria-label="include partial" value="partial" name="search-type">
-                  Partial
-                </label>
-                <label title="Click for exact matches only" class="rx-page-search-option-label">
-                  <input class="uk-radio" type="radio" {%if 'exact' in request.GET.type %}checked{% endif %} aria-label="exact only" value="exact" name="search-type" id="search-exact">
-                  Exact
-                </label>
-              </fieldset>
-            </form>
-            {% else %}
-            <!-- <form class="uk-search uk-search-default"
-              action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
-              {% csrf_token %}
-              <span uk-search-icon></span>
-              <input class="uk-search-input" type="text" placeholder="Search this volume" aria-label="Search" name="q"
-                value="{{request.GET.q}}">
-            </form> -->
-
-            {% endif %}
-          </div>
-      </nav>
-
+      
       <!-- new search form -->
     </div>
 
     <div class="rx-info uk-hidden" id="rdx-search-results">
       <div class="rx-info-content-container uk-padding-remove-vertical">
         <div class="rx-info-content">
-          <div>
-            <!-- nav head -->
-            <ul class="uk-tab" uk-switcher>
-              <li><a href="#"><span id="annotation-count"></span> hits in text</a></li>
-              <li><a href="#"><span id="user-annotation-count"></span> hits in your annotations</a></li>
-            </ul>
-            <!-- end of nav head -->
-            <!-- nav body -->
-            <ul class="uk-switcher uk-margin-small rx-search-result">
-              <li>
-                <!-- Search results list are populated by project.js -->
-                <ul class="uk-padding-remove" id="ocr-annotation-results"></ul>
-              </li>
-              <li>
-                <!-- Search results list are populated by project.js -->
-                <ul class="uk-padding-remove" id="user-annotation-results"></ul>
-              </li>
-            </ul>
-            <!-- end of nav body -->
-          </div>
         </div>
       </div>
     </div>
 
-
     <div class="rx-info">
       <div class="rx-info-title">Basic Information</div>
-
       <div class="rx-info-content-container">
-
-        <v-volume-annotations :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></v-volume-annotations>
         <!--
         {% if user_annotation_count > 0 %}
         <ul class="uk-subnav uk-subnav-pill" uk-switcher>
@@ -229,122 +223,12 @@
         </ul>
         {% endif %}
         -->
-
-
-        {% if volume.label|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Title</div>
-          <div class="rx-info-content-value">{{ volume.label }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.author|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Authors</div>
-          <div class="rx-info-content-value">{{ volume.author }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.published_date|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Publication Date</div>
-          <div class="rx-info-content-value">{{ volume.published_date }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.collections is not None %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Collections</div>
-          <div class="rx-info-content-value uk-margin-small-top">
-            {% for col in volume.collections.all %}
-            <a class="nav-link" href="{% url 'collection' col.pid %}">
-              <div class="rx-btn rx-btn-collection">{{ col.label }}</div>
-            </a>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-
-        {% if volume.languages.all|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Language(s)</div>
-          <div class="rx-info-content-value">
-            <ul>
-              {% for language in volume.languages.all %}
-              <li>{{ language.name }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        {% endif %}
-
-        {% if volume.published_city|length or volume.publisher|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Publisher</div>
-          <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.summary|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Summary</div>
-          <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.note_set|length %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Notes</div>
-          <div class="rx-info-content-value">
-            <ul>
-              {% for note in volume.note_set.all %}
-              <li>{{ note.label }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        {% endif %}
-
       </div>
     </div>
 
     <div class="rx-info">
       <div class="rx-info-title">Attribution</div>
-
-      <div class="rx-info-content-container">
-
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Institution</div>
-          <div class="rx-info-content-value">{{ volume.attribution }}</div>
-        </div>
-
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">License</div>
-          <div class="rx-info-content-value">{{ volume.license }}</div>
-        </div>
-
-        {% if volume.identifier is not None %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Identifier</div>
-          <div class="rx-info-content-value">{{ volume.identifier }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.identifier_uri is not None %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Link to Resource</div>
-          <div class="rx-info-content-value">{{ volume.identifier_uri }}</div>
-        </div>
-        {% endif %}
-
-        {% if volume.scanned_by is not None %}
-        <div class="rx-info-content">
-          <div class="rx-info-content-label">Scanned By</div>
-          <div class="rx-info-content-value">{{ volume.scanned_by }}</div>
-        </div>
-        {% endif %}
-
-      </div>
+      <div class="rx-info-content-container"></div>
     </div>
 
     <div class="rx-info">
@@ -374,17 +258,15 @@
         <!--Text overlay modal-->
 
         <div class="rx-info-content">
-          <button class="rx-btn rx-btn-collection" type="button" onclick="showOCR()">
- View OCR Overlay</button>
+          
         </div>
 
         <div class="rx-info-content">
-          <button class="rx-btn rx-btn-collection" type="button" onclick="hideOCR()">
- Hide OCR Overlay</button>
+          
         </div>
 
 
-        <button class="rx-btn rx-btn-collection" type="button" uk-toggle="target: #text-overlay-modal">View Text Overlay</button>
+        
 
         <v-info-content-url-page-text label="Page Text">
         </v-info-content-url-page-text>
@@ -404,32 +286,7 @@
       <div class="rx-info-title">URLs</div>
       <div class="rx-info-content-container">
 
-        <v-info-content-url-single label="Manifest"
-          url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
-        </v-info-content-url-single>
-
-        <v-info-content-url-multiple label="Collection Manifest">
-          {% for col in volume.collections.all %}
-          <v-info-content-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
-          </v-info-content-url-unit>
-          {% endfor %}
-        </v-info-content-url-multiple>
-
-        <v-info-content-url-single label="Stable Volume"
-          url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
-        </v-info-content-url-single>
-
-        <!-- <p><a href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg" target="_blank">{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg</a></p> -->
-        <v-info-content-url-image-link label="Image Link" pagelink="{{ pagelink }}" url="{{ localUrls }}">
-        </v-info-content-url-image-link>
-
-        {% if "/page/all" in request.get_full_path in request.get_full_path %}
-          <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
-          </v-info-content-url-external>
-        {% else %}
-          <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ page.pid }}">
-          </v-info-content-url-external>
-        {% endif %}
+        
       </div>
     </div>
 
@@ -464,6 +321,14 @@
 {% block extra_javascript %}
 
 <!-- <script src="{% static 'js/ecds-annotator.min.js' %}"></script> -->
+<script
+  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+  
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.js"
+  crossorigin="anonymous"></script>
 
 <script type="text/javascript">
   function showOCR() {

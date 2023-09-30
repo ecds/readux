@@ -1,0 +1,25 @@
+    <a uk-icon="icon: download" type="button"></a>
+    <div uk-dropdown="mode: click; pos: bottom-center">
+      <ul class="uk-nav uk-dropdown-nav">
+        <li class="uk-inline">
+          <a>
+            <span uk-icon="icon: file-pdf"></span>View Volume PDF
+          </a>
+        </li>
+        <li class="uk-padding-bottom-small">
+          <a uk-toggle="target: #text-overlay-modal">
+            <span uk-icon="icon: copy"></span>View Text Overlay
+          </a>
+        </li>
+        <li class="uk-padding-bottom-small">
+          <a onclick="showOCR()">
+            <span uk-icon="icon: eye"></span>View OCR Overlay
+          </a>
+        </li>
+        <li class="uk-padding-bottom-small">
+          <a onclick="hideOCR()">
+            <span uk-icon="icon: eye-slash"></span>Hide OCR Overlay
+          </a>
+        </li>
+      </ul>
+    </div>

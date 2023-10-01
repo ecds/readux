@@ -508,13 +508,12 @@ p {
   word-break: break-word; }
 
 .rx-info-content {
-  padding: 0.5em 0;
+  padding: 0 0 1.25em;
   font-size: 0.9rem; }
 
 .rx-info-content-label {
   color: #595959 !important;
   font-weight: 600 !important;
-  line-height: 1em !important;
   font-size: 0.9rem !important; }
 
 .rx-info-content-value {
@@ -667,10 +666,12 @@ p {
 .rx-anchor {
   color: var(--link-color) !important;
   opacity: 0.75;
+  word-break: break-all;
   transition: all ease-in-out 100ms; }
-  .rx-anchor:hover {
-    color: var(--link-color);
-    opacity: 1; }
+
+.rx-anchor:hover {
+  color: var(--link-color);
+  opacity: 1; }
 
 .rx-label-copy {
   background: white;
@@ -937,10 +938,10 @@ fieldset {
   top: 0; }
 
 .rx-page-search-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  width: 100% !important;
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: space-between; */
   color: #595959 !important; }
 
 .rx-page-search-options,
@@ -1891,5 +1892,15 @@ ol#search-results dd.result-volume-summary {
     font-size: 13px;
 }
 
+.reader-modal {
+  /* display: block !important; */
+  width: 400px !important;
+  height: 600px !important;
+  padding: 0 !important;
+  left: 75px !important;
+  top: 60px !important;
+}
+
 /*# sourceMappingURL=project.css.map */
+
 

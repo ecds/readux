@@ -141,7 +141,7 @@ Vue.component("v-info-content-url-single", {
   props: ["label", "url"],
   template: `
     <div class="rx-info-content">
-      <div class="rx-info-content-label uk-flex-between rx-flex ">
+      <div class="rx-info-content-label uk-flex-between rx-flex">
         <span>{{label}}</span>
         <div>
           <span class="uk-label rx-label-copy"

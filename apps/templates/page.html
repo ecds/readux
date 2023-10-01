@@ -4,7 +4,6 @@
 {% load crispy_forms_tags %}
 
 {% block extra_css %}
-
 <style>
   #rx-nav {
     display: none;
@@ -13,7 +12,6 @@
 {% endblock extra_css %}
 
 {% block content %}
-
 {{ json_data|json_script:"context" }}
 {% block inner %}
 
@@ -32,9 +30,6 @@
       {% endif %}
       <li> {{volume.label}}</li>
     </ul>
-  </div>
-  <div class="uk-navbar-center">
-    <a href="#modal-full" uk-toggle uk-icon="icon: info" uk-tooltip="title: Additional information about this volume, such as annotations and attribution.; pos: bottom"></a>
   </div>
   <div class="uk-navbar-right">
     <div class="rx-page-breadcrumb">
@@ -55,59 +50,80 @@
 </nav>
 <!-- reader's navbar -->
 
-
-
-
-
-<div id="modal-full" class="uk-modal-full" uk-modal>
-  <div class="uk-modal-dialog">
-      <button class="uk-modal-close-full uk-padding uk-close-large" type="button" uk-close></button>
-      
-      <div class="uk-grid-collapse uk-flex-middle uk-grid-stack" >
-      <div class="uk-background-cover uk-width-1-1" uk-height-viewport="" style="min-height: max(0px, 630.4px);">
-          <div class="uk-padding">
-          <h1 class="uk-margin-bottom uk-text-large uk-text-bold">Additional Information</h1>
-          <div uk-grid>
-              <ul class="uk-tab-left uk-width-auto@m" uk-tab="connect: #volume-modal">
-              <li class="uk-active"><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Search</a></li>
-              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Annotations</a></li>
-              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Volume Information</a></li>
-              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Attribution</a></li>
-              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">URLs</a></li>
-              </ul>
-              
-              <ul id="volume-modal" class="uk-switcher uk-width-expand@m uk-padding-small-left">
-              <li tab-name="annotations" class="">
-                  {% include '_page/_search.html' %}
-              </li>
-              
-              <li tab-name="annotations" class="uk-grid">
-                  {% include '_page/_annotations.html' %}
-              </li>
-              
-              <li tab-name="basic information">
-                  {% include '_page/_information.html' %}
-              </li>
-              
-              <li tab-name="attribution">
-                  {% include '_page/_attribution.html' %}
-              </li>
-              
-              <li tab-name="urls">
-                  {% include '_page/_urls.html' %}
-              </li>
-              </ul>
+<!-- uiAction search -->
+<div id="modal-search" class="reader-modal" uk-modal>
+  <div class="uk-modal-dialog uk-padding-small">
+    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
+    {% include '_page/_search.html' %}
+    <ul uk-accordion="multiple: true" class="uk-width-1-1 ">
+      <li class="uk-open">
+          <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#"><span id="annotation-count"></span> Match(es) in Text</a>
+          <div class="uk-accordion-content uk-margin-small-top" id="ocr-annotation-results">
+              <p class="uk-text-default">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
           </div>
+      </li>
+      <li class="uk-open">
+          <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#"><span id="user-annotation-count"></span> Match(es) in Annotations</a>
+          <div class="uk-accordion-content uk-margin-small-top" id="user-annotation-results">
+              <p class="uk-text-default">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit.</p>
           </div>
-      </div>
-  </div>
+      </li>
+  </ul>
   </div>
 </div>
+<!-- uiAction search -->
 
+<!-- uiAction information -->
+<div id="modal-info" class="reader-modal" uk-modal>
+  <div class="uk-modal-dialog uk-padding-small">
+    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
+    <ul uk-tab>
+        <li class="uk-active"><a href="#">Metadata</a></li>
+        <li><a href="#">Attribution</a></li>
+    </ul>
+    <ul class="uk-switcher uk-margin-top">
+        <li>{% include '_page/_information.html' %}</li>
+        <li>{% include '_page/_attribution.html' %}</li>
+    </ul>
+  </div>
+</div>
+<!-- uiAction information -->
 
+<!-- uiAction urls -->
+<div id="modal-urls" class="reader-modal" uk-modal>
+  <div class="uk-modal-dialog uk-padding-small">
+    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
+    <ul uk-tab>
+      <li class="uk-active"><a href="#">URLs</a></li>
+      <li><a href="#">Share and Export</a></li>
+    </ul>
+    <ul class="uk-switcher uk-margin-top">
+        <li>{% include '_page/_urls.html' %}</li>
+        <li>{% include '_page/_exports.html' %}</li>
+    </ul>
+  </div>
+</div>
+<!-- uiAction urls -->
 
+<!-- uiAction visibility -->
+<div id="modal-visibility" class="reader-modal" uk-modal>
+  <div class="uk-modal-dialog uk-padding-small">
+    <div class="uk-text-bold uk-text-large uk-margin-small-bottom">Layer Visibility</div>
+    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
+    {% include '_page/_visibility.html' %}
+  </div>
+</div>
+<!-- uiAction visibility -->
 
-
+<!-- uiAction exports -->
+<div id="modal-exports" class="reader-modal" uk-modal>
+  <div class="uk-modal-dialog uk-padding-small">
+    <div class="uk-text-bold uk-text-large uk-margin-small-bottom">Exports</div>
+    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
+    {% include '_page/_exports.html' %}
+  </div>
+</div>
+<!-- uiAction exports -->
 
 <!-- This is the modal -->
 <div id="rx-page-modal" uk-modal>
@@ -125,36 +141,29 @@
     {% include "snippets/socialaccount_buttons.html" %}
   </div>
 </div>
-{% endblock %}
-
+{% endblock inner %}
 {% endblock content %}
 
 {% block viewer %}
-
 <div class="rdx-viewer-container">
   <div id="rdx-viewer" role="region"></div>
 </div>
-
-
 {% if page.pid is not None %}
-
 <!--
         <p id="test"></p>
         <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
         <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
 -->
 {% endif %}
-
 {% endblock viewer %}
 
 {% block extra_javascript %}
-
 <!-- <script src="{% static 'js/ecds-annotator.min.js' %}"></script> -->
 <script
   src="https://code.jquery.com/jquery-3.3.1.js"
   integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
   crossorigin="anonymous"></script>
-  
+
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.js"
   crossorigin="anonymous"></script>
@@ -187,7 +196,29 @@ window.onload = function() {
     manifest: 'https://{{ request.META.HTTP_HOST }}/iiif/v3/{{ volume.pid }}/manifest',
     id: 'rdx-viewer',
     token: document.getElementsByName('csrfmiddlewaretoken')[0].value,
-    uiActions: []
+    uiActions: [
+      {
+        id: 'action-info',
+        tooltipContent: 'Information',
+        onClick: () => UIkit.modal('#modal-info').show(),
+        icon: "<span uk-icon='icon: info'></span>"
+      }, {
+        id: 'action-search',
+        tooltipContent: 'Search within this volume',
+        onClick: () => UIkit.modal('#modal-search').show(),
+        icon: "<span uk-icon='icon: search'></span>"
+      }, {
+        id: 'action-links',
+        tooltipContent: 'Get URLs',
+        onClick: () => UIkit.modal('#modal-urls').show(),
+        icon: "<span uk-icon='icon: link'></span>"
+      }, {
+        id: 'action-visibility',
+        tooltipContent: 'Layer Visibility',
+        onClick: () => UIkit.modal('#modal-visibility').show(),
+        icon: "<span uk-icon='icon: eye-slash'></span>"
+      }
+    ]
   };
 
   {% if not user.is_anonymouns %}
@@ -200,13 +231,12 @@ window.onload = function() {
   ECDSAnnotator.init(options);
 }
 </script>
-<script type="text/javascript">
 
+<script type="text/javascript">
   {% if request.GET.q in request.get_full_path %}
     UIkit.offcanvas($('#offcanvas-usage')).show();
     fetchResults();
     // document.getElementById('manifest-search-form').submit();
-
   {% endif %}
 </script>
 {% endblock extra_javascript %}

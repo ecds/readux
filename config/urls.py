@@ -11,7 +11,7 @@ from wagtail.contrib.sitemaps.sitemap_generator import Sitemap
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
-from wagtail.core import urls as wagtail_urls
+from wagtail import urls as wagtail_urls
 from wagtailautocomplete.urls.admin import urlpatterns as autocomplete_admin_urls
 
 from apps.iiif.manifests.views import ManifestSitemap
@@ -33,7 +33,7 @@ urlpatterns = [
     path('sitemap.xml', index, {'sitemaps': sitemaps}),
     path('sitemap-<section>.xml', sitemap, {'sitemaps': sitemaps},
          name='django.contrib.sitemaps.views.sitemap'),
-    url(r'^cms/autocomplete/', include(autocomplete_admin_urls)),
+    re_path(r'^cms/autocomplete/', include(autocomplete_admin_urls)),
     re_path(r'^cms/', include(wagtailadmin_urls)),
     re_path(r'^documents/', include(wagtaildocs_urls)),
     re_path(r'^pages/', include(wagtail_urls)),
@@ -62,7 +62,7 @@ urlpatterns = [
     re_path(r'^', include('apps.ocr.urls')),
     re_path(r'^', include('apps.readux.urls')),
     re_path(r'', include(wagtail_urls)),
-    path(r'^summernote/', include('django_summernote.urls')),
+    re_path(r'^summernote/', include('django_summernote.urls')),
 
 
 

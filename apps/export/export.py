@@ -23,6 +23,7 @@ except ImportError: # pragma: no cover
 import git
 from git.cmd import Git
 from yaml import load, safe_dump
+from django.conf import settings
 from django.core.mail import send_mail
 from django.core.serializers import serialize
 from django.template.loader import get_template
@@ -37,6 +38,10 @@ LOGGER = logging.getLogger(__name__)
 
 # zip file of base jekyll site with digital edition templates
 JEKYLL_THEME_ZIP = digitaledition_jekylltheme.ZIPFILE_PATH
+
+# FIXME: The GitHub action env does not seem to find the zip file.
+if os.environ['DJANGO_ENV'] == 'test' and not os.path.exists(JEKYLL_THEME_ZIP):
+    JEKYLL_THEME_ZIP = os.path.join(settings.APPS_DIR, 'export', 'tests', 'fixtures', 'digitaledition-jekylltheme.zip')
 
 class ExportException(Exception):
     """Custom exception"""

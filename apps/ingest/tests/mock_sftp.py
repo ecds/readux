@@ -7,6 +7,10 @@ import signal
 import socket
 import subprocess
 import tempfile
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
 
 class MockSFTP:
     """
@@ -45,6 +49,9 @@ class MockSFTP:
     def stop_server(self):
         """ Kill the process and remove the key file. """
         if self.server:
-            os.killpg(self.server.pid, signal.SIGTERM)
-            os.remove(self.key_file)
-            os.remove(f'{self.key_file}.pub')
+            try:
+                os.killpg(self.server.pid, signal.SIGTERM)
+                os.remove(self.key_file)
+                os.remove(f'{self.key_file}.pub')
+            except PermissionError:
+                LOGGER.error(f'Failed to kill mock SFTP server with pit {self.server.pid}')

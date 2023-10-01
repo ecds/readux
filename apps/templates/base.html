@@ -164,45 +164,48 @@
       </nav>
 
       <main id='main'>
+        {% if messages %}
+            {% for message in messages %}
+              <div class="uk-alert-{{ message.tags }}" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+        {% endif %}
 
-      {% if messages %}
-          {% for message in messages %}
-            <div class="uk-alert-{{ message.tags }}" uk-alert>
-              <a class="uk-alert-close" uk-close></a>
-              <p>{{ message }}</p>
-            </div>
-          {% endfor %}
-      {% endif %}
+        {% block modal %}
+        {% endblock modal %}
 
-      {% block modal %}
-      {% endblock modal %}
+        {% block content %}
+        <p>Use this document as a way to quick start any new project.</p>
+        {% endblock content %}
 
-      {% block content %}
-      <p>Use this document as a way to quick start any new project.</p>
-      {% endblock content %}
-
-      {# Modal for signin #}
-      <div id="signin-modal" class="uk-flex-top" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-          <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
-          <section class="uk-modal-header">
-            <h2 class="uk-modal-title uk-text-center">
-            {% if user.is_authenticated %}
-                Connect Accounts
-            {% else %}
-              Sign in
-            {% endif %}
-            </h2>
-          </section>
-          {% include "snippets/socialaccount_buttons.html" %}
+        {# Modal for signin #}
+        <div id="signin-modal" class="uk-flex-top" uk-modal>
+          <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+            <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
+            <section class="uk-modal-header">
+              <h2 class="uk-modal-title uk-text-center">
+              {% if user.is_authenticated %}
+                  Connect Accounts
+              {% else %}
+                Sign in
+              {% endif %}
+              </h2>
+            </section>
+            {% include "snippets/socialaccount_buttons.html" %}
+          </div>
         </div>
-      </div>
 
-      {% block viewer %}{% endblock viewer %}
+        {% block viewer %}{% endblock viewer %}
 
-    </main>
+      </main>
 
     </div>
+
+    <!-- Matomo Image Tracker-->
+    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" style="border:0" alt="" />
+    <!-- End Matomo -->
 
     {% block javascript %}
       <script

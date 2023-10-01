@@ -4,6 +4,7 @@
 import logging
 from os import environ
 
+from boto3 import client
 from celery import Celery
 from celery.signals import task_failure, task_success
 from django.apps import apps
@@ -22,6 +23,8 @@ from .services import create_manifest
 # create a background task have to be serializable, we can't just pass in the model object.
 Local = apps.get_model('ingest.local') # pylint: disable = invalid-name
 Remote = apps.get_model('ingest.remote')
+S3Ingest = apps.get_model('ingest.S3Ingest')
+Manifest = apps.get_model('manifests.Manifest')
 
 LOGGER = logging.getLogger(__name__)
 
@@ -110,9 +113,45 @@ def upload_to_s3_task(local_id):
         filename=local.bundle.name
     )
 
+@app.task(name='creating_canvases_from_s3', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
+def create_canvases_from_s3_ingest(metadata, ingest_id):
+    """Background task to create canvases and upload images.
+
+    :param metadata: Dict containing key/value pairs for manifest metadata of a single volume
+    :type ingest_id: dict
+    :param ingest_id: Primary key for .models.S3Ingest object
+    :type ingest_id: UUID
+    """
+    # Associate metadata with correct volume
+    pid = metadata["pid"].replace("_", "-")
+    try:
+        manifest = Manifest.objects.get(pid=pid)
+    except Manifest.DoesNotExist:
+        manifest = Manifest.objects.create(pid=pid)
+    for (key, value) in metadata.items():
+        setattr(manifest, key, value)
+    # Image server: set from ingest
+    ingest = S3Ingest.objects.get(pk=ingest_id)
+    manifest.image_server = ingest.image_server
+    # Collections: Ensure that manifest has an ID before updating the M2M relationship
+    manifest.save()
+    manifest.refresh_from_db()
+    # Collections: set from ingest
+    manifest.collections.set(ingest.collections.all())
+    # Save again once relationship is set
+    manifest.save()
+    LOGGER.debug(f"creating canvases for {pid}")
+    ingest.create_canvases_for(pid)
+    # Sometimes, the IIIF server is not ready to process the image by the time the canvas is saved to
+    # the database. As a double check loop through to make sure the height and width has been saved.
+    if environ['DJANGO_ENV'] != 'test':
+        for canvas in manifest.canvas_set.all():
+            ensure_dimensions.delay(canvas.id)
+
+
 @task_failure.connect
 def send_email_on_failure_task(sender=None, exception=None, task_id=None, traceback=None, *args, **kwargs):
-    """Function to send an email on task success signal from Celery.
+    """Function to send an email on task failure signal from Celery.
 
     :param sender: The task object
     :type sender: celery.task

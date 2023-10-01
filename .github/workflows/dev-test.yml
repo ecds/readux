@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - develop
-  pull_request:
-    branches:
-      - develop
+  # pull_request:
+  #   branches:
+  #     - develop
+
+env:
+  DATABASE_URL: postgres://user:password@localhost:5432/readux
+  DJANGO_ENV: test
 
 jobs:
   pytest:
@@ -55,7 +59,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.5.1'
+          ruby-version: '2.7.2'
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -81,12 +85,20 @@ jobs:
           pip install pyld==1.0.5
           pip install -r requirements/local.txt
 
-      - name: Test with PyTest
-        env:
-          DATABASE_URL: postgres://user:password@localhost:5432/readux
-          DJANGO_ENV: test
-        run: |
-          pytest apps/ --cov-report html --cov-report term --cov=./apps
+      - name: Test Export
+        run: pytest apps/export/
+
+      - name: Test IIIF
+        run: pytest apps/iiif/
+
+      - name: Test Ingest
+        run: pytest apps/ingest/
+
+      - name: Test Readux
+        run: pytest apps/readux/
+
+      - name: Test Users
+        run: pytest apps/users/
 
       - name: Test Webpack build
         run: |

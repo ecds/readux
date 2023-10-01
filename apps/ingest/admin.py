@@ -1,8 +1,11 @@
 """[summary]"""
+import csv
+from io import StringIO
 import logging
 from mimetypes import guess_type
 from os import environ, listdir, path, remove, rmdir
 
+from django import forms
 from django.contrib import admin
 from django.core.files.base import ContentFile
 from django.shortcuts import redirect
@@ -13,9 +16,9 @@ from django_celery_results.models import TaskResult
 from apps.ingest import tasks
 
 from .forms import BulkVolumeUploadForm
-from .models import Bulk, IngestTaskWatcher, Local, Remote
+from .models import Bulk, IngestTaskWatcher, Local, Remote, S3Ingest
 from .services import (clean_metadata, create_manifest, get_associated_meta,
-                       get_metadata_from)
+                       get_metadata_from, lowercase_first_line)
 
 LOGGER = logging.getLogger(__name__)
 class LocalAdmin(admin.ModelAdmin):
@@ -176,11 +179,12 @@ class TaskWatcherAdmin(admin.ModelAdmin):
         "filename",
         "task_name",
         "task_status",
+        "associated_manifest",
         "task_creator",
         "date_created",
         "date_done",
     )
-    list_filter = ('task_creator', 'task_result__task_name')
+    list_filter = ('task_result__task_name', 'task_result__status', 'task_creator', 'associated_manifest__pid')
     search_fields = ('filename',)
     date_hierarchy = 'task_result__date_created'
     empty_value_display = '(none)'
@@ -227,7 +231,92 @@ class TaskWatcherAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
+
+class S3IngestForm(forms.ModelForm):
+    """Override the admin form in order to add validation to clean method"""
+
+    class Meta:  # pylint: disable=too-few-public-methods, missing-class-docstring
+        model = S3Ingest
+        exclude = ("creator",)
+
+    def clean(self):
+        # check s3 bucket is name not url, and csv has pid column
+        super().clean()
+        if any(
+            self.cleaned_data.get('s3_bucket').casefold().startswith(protocol)
+            for protocol in ('http:', 'https:', 's3:')
+        ):
+            self.add_error(
+                's3_bucket',
+                forms.ValidationError('S3 Bucket should use name, not URL'),
+            )
+        csv_file = self.cleaned_data.get('metadata_spreadsheet')
+        if csv_file:
+            reader = csv.DictReader(
+                lowercase_first_line(
+                    StringIO(csv_file.read().decode('utf-8'))
+                ),
+            )
+            if 'pid' not in reader.fieldnames:
+                self.add_error(
+                    'metadata_spreadsheet',
+                    forms.ValidationError(
+                        """Spreadsheet must have pid column. Check to ensure there
+                        are no stray characters in the header row."""
+                    ),
+                )
+
+        return self.cleaned_data
+
+class S3IngestAdmin(admin.ModelAdmin):
+    """Django admin for ingest.models.S3Ingest resource."""
+
+    form = S3IngestForm
+
+    def save_model(self, request, obj, form, change):
+        # Save M2M relationships with collections so we can access them later
+        if form.is_valid():
+            form.save(commit=False)
+            form.save_m2m()
+        obj.creator = request.user
+        obj.save()
+        obj.refresh_from_db()
+        # Get spreadsheet with metadata to match each volume
+        obj.metadata_spreadsheet.seek(0)
+        metadata = csv.DictReader(
+            lowercase_first_line(
+                StringIO(obj.metadata_spreadsheet.read().decode('utf-8'))
+            ),
+        )
+        for index, row in enumerate(metadata):
+            # each row needs to have a pid to match it with a volume directory in s3
+            if "pid" not in row:
+                LOGGER.error(f'No pid found in row {index}')
+                continue
+
+            LOGGER.debug(f'Creating manifest for {row["pid"]}')
+            file_meta = clean_metadata(row)
+            # Queue task to create canvases
+            if environ["DJANGO_ENV"] != 'test': # pragma: no cover
+                create_canvases_task = tasks.create_canvases_from_s3_ingest.apply_async(
+                    (file_meta, obj.pk)
+                )
+                create_canvases_task_result = TaskResult(task_id=create_canvases_task.id)
+                create_canvases_task_result.save()
+                IngestTaskWatcher.manager.create_watcher(
+                    task_id=create_canvases_task.id,
+                    task_result=create_canvases_task_result,
+                    task_creator=request.user,
+                    filename=f"s3://{obj.s3_bucket}/{obj.s3_prefix}/{row['pid']}"
+                )
+        super().save_model(request, obj, form, change)
+
+    def response_add(self, request, obj, post_url_continue=None):
+        # redirect to the task results list after saving
+        return redirect(reverse("admin:django_celery_results_taskresult_changelist"))
+
 admin.site.register(Local, LocalAdmin)
 admin.site.register(Remote, RemoteAdmin)
 admin.site.register(Bulk, BulkAdmin)
 admin.site.register(IngestTaskWatcher, TaskWatcherAdmin)
+admin.site.register(S3Ingest, S3IngestAdmin)

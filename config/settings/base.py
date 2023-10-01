@@ -44,6 +44,7 @@ DATABASES = {
     'default': env.db('DATABASE_URL', default='postgres:///readux'),
 }
 DATABASES['default']['ATOMIC_REQUESTS'] = True
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
 
@@ -99,7 +100,7 @@ THIRD_PARTY_APPS = [
     'wagtail.images',
     'wagtail.search',
     'wagtail.admin',
-    'wagtail.core',
+    'wagtail',
     'wagtailautocomplete',
     'wagtail.contrib.modeladmin',  # Don't repeat if it's there already
     'wagtailmenus',
@@ -182,6 +183,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 # STATIC
@@ -336,6 +338,7 @@ SERIALIZATION_MODULES = {
 }
 
 WAGTAIL_SITE_NAME = 'Readux'
+WAGTAILADMIN_BASE_URL = 'https://localhost'
 
 # CORS HEADERS
 CORS_ORIGIN_ALLOW_ALL = True
@@ -347,3 +350,5 @@ ELASTICSEARCH_DSL={
         'hosts': env('ELASTICSEARCH_URL', default='http://localhost:9200')
     },
 }
+
+SOCIALACCOUNT_STORE_TOKENS=True

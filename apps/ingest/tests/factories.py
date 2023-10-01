@@ -19,7 +19,6 @@ class RemoteFactory(DjangoModelFactory):
     class Meta:
         model = Remote
 
-    manifest = None
     remote_url = Faker('url')
 
 class BulkFactory(DjangoModelFactory):

@@ -1,9 +1,9 @@
 """CMS Models."""
 from urllib.parse import urlencode
 from modelcluster.fields import ParentalManyToManyField
-from wagtail.core.models import Page
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.models import Page
+from wagtail.fields import RichTextField, StreamField
+from wagtail.admin.panels import FieldPanel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 from django.db import models
 from apps.cms.blocks import BaseStreamBlock
@@ -17,11 +17,11 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 class ContentPage(Page):
     """Content page"""
     body = StreamField(
-        BaseStreamBlock(), verbose_name="Page body", blank=True
+        BaseStreamBlock(), verbose_name="Page body", blank=True, use_json_field=False
     )
 
     content_panels = Page.content_panels + [
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
     ]
 
 class CollectionsPage(Page):
@@ -101,9 +101,9 @@ class VolumesPage(Page):
                 query_set = query_set.order_by('-author')
         elif sort == 'date published':
             if order == 'asc':
-                query_set = query_set.order_by('published_date')
+                query_set = query_set.order_by('published_date_edtf')
             elif order == 'desc':
-                query_set = query_set.order_by('-published_date')
+                query_set = query_set.order_by('-published_date_edtf')
         elif sort == 'date added':
             if order == 'asc':
                 query_set = query_set.order_by('created_at')

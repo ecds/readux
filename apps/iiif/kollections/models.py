@@ -3,7 +3,6 @@ import os.path
 from io import BytesIO
 from PIL import Image
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.core.files.base import ContentFile
 import config.settings.local as settings
 from ..models import IiifBase
@@ -18,7 +17,7 @@ class Collection(IiifBase):
         null=True,
         help_text="Repository holding the collection. List multiple if the manifests are from multiple collections." # pylint: disable = line-too-long
     )
-    metadata = JSONField(null=True)
+    metadata = models.JSONField(null=True)
     upload = models.FileField(upload_to='uploads/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

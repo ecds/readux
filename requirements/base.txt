@@ -1,9 +1,9 @@
-pytz==2022.1  # https://github.com/stub42/pytz
+pytz==2023.3  # https://github.com/stub42/pytz
 python-slugify==8.0.1  # https://github.com/un33k/python-slugify
-Pillow==9.4.0
-argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
+Pillow==9.4.0 # wagtail 4.2.4 depends on Pillow<10.0.0 and >=4.0.0
+argon2-cffi==23.1.0  # https://github.com/hynek/argon2_cffi
 beautifulsoup4==4.9.3 # CANNOT UPDATE DUE TO WAGTAIL
-lxml==4.6.3
+lxml==4.9.3
 pyyaml
 progress
 python-memcached==1.59
@@ -17,11 +17,11 @@ git+https://github.com/ecds/python-edtf@214972b
 # TODO: To upgrade to Django 3, we have to redo the full text search on the manifest model.
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
 Django>=3.2.0,<4.0  # https://www.djangoproject.com/
-django-environ==0.9.0  # https://github.com/joke2k/django-environ
+django-environ==0.11.2  # https://github.com/joke2k/django-environ
 # git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
-django-allauth>=0.52.0  # https://github.com/pennersr/django-allauth
+django-allauth>=0.57.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
 django-redis==5.2.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
@@ -43,22 +43,22 @@ django-sass-processor
 pylint-django==2.5.3
 
 # Wagtail
-wagtail==2.16.2
-wagtailmenus==3.1.1 # CANNOT UPDATE
-git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
-#wagtail-autocomplete==0.3.1
-wagtail-cache==1.0.2
+wagtail==4.2.4
+wagtailmenus==3.1.9
+#git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
+wagtail-autocomplete==0.10.0
+wagtail-cache==2.3.0
 
 # Import/Export
 django-import-export==2.8.0
-gitpython==3.1.31
+gitpython==3.1.37
 
 # S3 Uploads
-boto3==1.26.92
-django-storages==1.12.3  # https://github.com/jschneier/django-storages
+boto3==1.28.54
+django-storages==1.14  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads
-pysftp>=0.2.9,<1.0 # https://pysftp.readthedocs.io/
+pysftp==0.2.9 # https://pysftp.readthedocs.io/
 
 # Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.
 stream-unzip>=0.0.58

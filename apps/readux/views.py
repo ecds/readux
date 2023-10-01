@@ -65,9 +65,9 @@ class VolumesList(ListView):
                 q = q.order_by('-author')
         elif sort == 'date published':
             if order == 'asc':
-                q = q.order_by('published_date')
+                q = q.order_by('published_date_edtf')
             elif order == 'desc':
-                q = q.order_by('-published_date')
+                q = q.order_by('-published_date_edtf')
         elif sort == 'date added':
             if order == 'asc':
                 q = q.order_by('created_at')
@@ -117,9 +117,9 @@ class CollectionDetail(ListView):
                 q = q.order_by('-author')
         elif sort == 'date published':
             if order == 'asc':
-                q = q.order_by('published_date')
+                q = q.order_by('published_date_edtf')
             elif order == 'desc':
-                q = q.order_by('-published_date')
+                q = q.order_by('-published_date_edtf')
         elif sort == 'date added':
             if order == 'asc':
                 q = q.order_by('created_at')
@@ -152,9 +152,9 @@ class CollectionDetail(ListView):
                 q = q.order_by('-author')
         elif sort == 'date published':
             if order == 'asc':
-                q = q.order_by('published_date')
+                q = q.order_by('published_date_edtf')
             elif order == 'desc':
-                q = q.order_by('-published_date')
+                q = q.order_by('-published_date_edtf')
         elif sort == 'date added':
             if order == 'asc':
                 q = q.order_by('created_at')

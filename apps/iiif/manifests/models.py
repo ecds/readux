@@ -5,7 +5,6 @@ from boto3 import resource
 from urllib.parse import urlparse
 from django.apps import apps
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -172,8 +171,7 @@ class Manifest(IiifBase):
     languages = models.ManyToManyField(
         Language,
         help_text="Languages present in the manifest.",
-        blank=True,
-        null=True
+        blank=True
     )
     attribution = models.CharField(
         max_length=255,
@@ -204,7 +202,7 @@ class Manifest(IiifBase):
     identifier_uri = models.URLField(null=True, blank=True, help_text="Only enter a link to a catalog record.")
     collections = models.ManyToManyField(Collection, blank=True, related_name='manifests')
     pdf = models.URLField(null=True, blank=True, help_text="Enter a link to an online pdf.")
-    metadata = JSONField(default=dict, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
     viewingdirection = models.CharField(max_length=13, choices=DIRECTIONS, default="left-to-right")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

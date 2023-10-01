@@ -186,7 +186,8 @@ window.onload = function() {
   const options = {
     manifest: 'https://{{ request.META.HTTP_HOST }}/iiif/v3/{{ volume.pid }}/manifest',
     id: 'rdx-viewer',
-    token: document.getElementsByName('csrfmiddlewaretoken')[0].value
+    token: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+    uiActions: []
   };
 
   {% if not user.is_anonymouns %}

@@ -10,5 +10,5 @@
 <p class="lead">{{page.tagline}}</p>
 {% endif %}
 
-  {{ page.body }}
+  {% include_block page.body %}
 {% endblock %}

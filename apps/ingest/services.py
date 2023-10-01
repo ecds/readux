@@ -1,4 +1,5 @@
 """ Module of service classes and methods for ingest. """
+import itertools
 from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
 
@@ -9,6 +10,7 @@ from apps.iiif.manifests.models import Manifest, RelatedLink
 
 
 def clean_metadata(metadata):
+    print(metadata)
     """Remove keys that do not align with Manifest fields.
 
     :param metadata:
@@ -16,16 +18,25 @@ def clean_metadata(metadata):
     :return: Dictionary with keys matching Manifest fields
     :rtype: dict
     """
-    metadata = {k.casefold().replace(' ', '_'): v for k, v in metadata.items()}
+    metadata = {key.casefold().replace(' ', '_'): value for key, value in metadata.items()}
     fields = [f.name for f in Manifest._meta.get_fields()]
     invalid_keys = []
 
     for key in metadata.keys():
+        if key != 'metadata' and isinstance(metadata[key], list):
+            if isinstance(metadata[key][0], dict):
+                for meta_key in metadata[key][0].keys():
+                    if 'value' in meta_key:
+                        metadata[key] = metadata[key][0][meta_key]
+            else:
+                metadata[key] = ', '.join(metadata[key])
         if key not in fields:
             invalid_keys.append(key)
 
     for invalid_key in invalid_keys:
         metadata.pop(invalid_key)
+
+
 
     return metadata
 
@@ -121,8 +132,22 @@ def parse_iiif_v2_manifest(data):
     for datum in manifest_data:
         properties.update(datum)
 
-    properties['pid'] = urlparse(data['@id']).path.split('/')[-2]
-    properties['summary'] = data['description'] if 'description' in data else ''
+    uri = urlparse(data['@id'])
+
+    if not uri.query:
+        properties['pid'] = uri.path.split('/')[-2]
+    else:
+        properties['pid'] = uri.query
+
+    if 'description' in data.keys():
+        if isinstance(data['description'], list):
+            if isinstance(data['description'][0], dict):
+                en = [lang['@value'] for lang in data['description'] if lang['@language'] == 'en']
+                properties['summary'] = data['description'][0]['@value'] if not en else en[0]
+            else:
+                properties['summary'] = data['description'][0]
+        else:
+            properties['summary'] = data['description']
 
     if 'logo' in properties:
         properties['logo_url'] = properties['logo']
@@ -188,3 +213,10 @@ def get_associated_meta(all_metadata, file):
         if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
             file_meta = meta_dict
     return file_meta
+
+def lowercase_first_line(iterator):
+    """Lowercase the first line of a text file (such as the header row of a CSV)"""
+    return itertools.chain(
+        # ignore unicode characters, set lowercase, and strip whitespace
+        [next(iterator).encode('ascii', 'ignore').decode().casefold().strip()], iterator
+    )

@@ -1,15 +1,27 @@
-<a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">View Volume PDF</a>
+<ul class="uk-list">
+  <li>
+    <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">View Volume PDF</a>
+  </li>
+  <li>
+    <a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
+    target="_blank">Export Citation in RIS</a>
+  </li>
+  <li>
+    <v-volume-export-annotation-btn :manifest-count="{{ user_annotation_count }}">
+      <form action="{% url 'export' volume.pid %}" class="button_to" method="GET" id="rx-annotation-export-form">
+        <a class="rx-action-btn" href="#" onclick="rxFormSubmit('rx-annotation-export-form');">Export
+          Annotations</a>
+        {% csrf_token %}
+      </form>
+    </v-volume-export-annotation-btn>
+  </li>
+  <li>
+    <a class="rx-action-btn" href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
+    target="_blank">Send to Voyant</a>
+  </li>
+</ul>
 
-<a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
-target="_blank">Export Citation in RIS</a>
 
-<v-volume-export-annotation-btn :manifest-count="{{ user_annotation_count }}">
-  <form action="{% url 'export' volume.pid %}" class="button_to" method="GET" id="rx-annotation-export-form">
-    <a class="rx-action-btn" href="#" onclick="rxFormSubmit('rx-annotation-export-form');">Export
-      Annotations</a>
-    {% csrf_token %}
-  </form>
-</v-volume-export-annotation-btn>
 
-<a class="rx-action-btn" href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
-  target="_blank">Send to Voyant</a>
+
+

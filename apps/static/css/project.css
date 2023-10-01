@@ -14,7 +14,7 @@
 
 .uk-link, a {
   color: var(--link-color);
-  text-decoration: underline dotted; }
+}
 
 a.nav-link {
   text-decoration: none; }
@@ -442,11 +442,16 @@ p {
   filter: brightness(0.4%);
   text-transform: uppercase;
   font-weight: bold;
-  letter-spacing: 0.1em;
+  /* letter-spacing: 0.1em; */
   display: inline-flex;
   padding: 0;
   margin: 0; 
   user-select: auto;
+}
+
+.rx-action-btn {
+  letter-spacing: 0.1em;
+  font-size: small;
 }
 
 .rx-page-breadcrumb-item a {
@@ -1234,8 +1239,7 @@ a.nav-link {
 
 .uk-link, a {
   color: var(--link-color);
-  -webkit-text-decoration: underline dotted;
-  text-decoration: underline dotted; }
+ }
 
 a.nav-link {
   text-decoration: none; }
@@ -1895,7 +1899,7 @@ ol#search-results dd.result-volume-summary {
 .reader-modal {
   /* display: block !important; */
   width: 400px !important;
-  height: 600px !important;
+  height: fit-content !important;
   padding: 0 !important;
   left: 75px !important;
   top: 60px !important;

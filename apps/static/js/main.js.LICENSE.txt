@@ -29,6 +29,4 @@
  * Date: 2021-03-02T17:08Z
  */
 
-/*! UIkit 3.13.7 | https://www.getuikit.com | (c) 2014 - 2022 YOOtheme | MIT License */
-
-/*! UIkit 3.16.24 | https://www.getuikit.com | (c) 2014 - 2023 YOOtheme | MIT License */
+/*! UIkit 3.17.0 | https://www.getuikit.com | (c) 2014 - 2023 YOOtheme | MIT License */

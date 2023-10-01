@@ -17,6 +17,97 @@
 {{ json_data|json_script:"context" }}
 {% block inner %}
 
+<!-- reader's navbar -->
+<nav uk-navbar>
+  <div class="uk-navbar-left">
+    <a href="/" alt="Readux Logo/Home"><img src="{% static 'images/readux-graphics.svg'%}" style="height: 40px;"></img></a>
+    <ul class="rx-page-breadcrumb long-and-truncated uk-margin-left">
+      <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+      {% if volume.collections.first.pid %}
+      <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
+          alt="Collections">{{ volume.collections.first.label }}</a>
+      </li>
+      {% else %}
+      <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink.slug }}">All Volumes</a></li>
+      {% endif %}
+      <li> {{volume.label}}</li>
+    </ul>
+  </div>
+  <div class="uk-navbar-center">
+    <a href="#modal-full" uk-toggle uk-icon="icon: info" uk-tooltip="title: Additional information about this volume, such as annotations and attribution.; pos: bottom"></a>
+  </div>
+  <div class="uk-navbar-right">
+    <div class="rx-page-breadcrumb">
+      <a href="/search/" aria-label="fudiv site search" title="Full Site Search"
+        uk-tooltip="title: Full Site Search; pos: right">
+        <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: search"></span>
+      </a>
+      <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right"
+        aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
+        <span class="uk-user uk-margin-small-right" aria-hidden="true" uk-icon="icon: cog"></span>
+      </a>
+      <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right"
+        aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
+        <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: user"></span>
+      </a>
+    </div>
+  </div>
+</nav>
+<!-- reader's navbar -->
+
+
+
+
+
+<div id="modal-full" class="uk-modal-full" uk-modal>
+  <div class="uk-modal-dialog">
+      <button class="uk-modal-close-full uk-padding uk-close-large" type="button" uk-close></button>
+      
+      <div class="uk-grid-collapse uk-flex-middle uk-grid-stack" >
+      <div class="uk-background-cover uk-width-1-1" uk-height-viewport="" style="min-height: max(0px, 630.4px);">
+          <div class="uk-padding">
+          <h1 class="uk-margin-bottom uk-text-large uk-text-bold">Additional Information</h1>
+          <div uk-grid>
+              <ul class="uk-tab-left uk-width-auto@m" uk-tab="connect: #volume-modal">
+              <li class="uk-active"><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Search</a></li>
+              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Annotations</a></li>
+              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Volume Information</a></li>
+              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Attribution</a></li>
+              <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">URLs</a></li>
+              </ul>
+              
+              <ul id="volume-modal" class="uk-switcher uk-width-expand@m uk-padding-small-left">
+              <li tab-name="annotations" class="">
+                  {% include '_page/_search.html' %}
+              </li>
+              
+              <li tab-name="annotations" class="uk-grid">
+                  {% include '_page/_annotations.html' %}
+              </li>
+              
+              <li tab-name="basic information">
+                  {% include '_page/_information.html' %}
+              </li>
+              
+              <li tab-name="attribution">
+                  {% include '_page/_attribution.html' %}
+              </li>
+              
+              <li tab-name="urls">
+                  {% include '_page/_urls.html' %}
+              </li>
+              </ul>
+          </div>
+          </div>
+      </div>
+  </div>
+  </div>
+</div>
+
+
+
+
+
 
 <!-- This is the modal -->
 <div id="rx-page-modal" uk-modal>
@@ -35,268 +126,6 @@
   </div>
 </div>
 {% endblock %}
-
-
-  <nav class="rx-flex-parent" uk-navbar id="rx-page-info-panel">
-
-    <div class="rx-flex-child">
-      <a class="uk-navbar-item uk-logo uk-padding-remove-left rx-page-logo" href="/">
-        <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 0 0 0 0" alt="Readux">
-      </a>
-    </div>
-
-    <div class="rx-flex-child uk-navbar-nav rx-page-navbar-nav long-and-truncated">
-      <div class="rx-page-title-container long-and-truncated">
-        <ul class="rx-page-breadcrumb long-and-truncated">
-          <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-          <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-          {% if volume.collections.first.pid %}
-          <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-              alt="Collections">{{ volume.collections.first.label }}</a>
-          </li>
-          {% else %}
-          <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink.slug }}">All Volumes</a></li>
-          {% endif %}
-          <!-- <li>
-            {{ request.GET.type }}
-          </li> -->
-        </ul>
-
-        <!-- This is the modal -->
-        <div id="rx-volume-title" uk-modal>
-          <div class="uk-modal-dialog uk-modal-body">
-            <ul class="rx-page-breadcrumb">
-              <li class="rx-page-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-              <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-              {% if volume.collections.first.pid %}
-              <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-                  alt="Collections">{{ volume.collections.first.label }}</a>
-              </li>
-              {% else %}
-              <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink. }}">All Volumes</a></li>
-              {% endif %}
-              <!-- <li>
-                        {{ request.GET.type }}
-                      </li> -->
-            </ul>
-            <button class="uk-modal-close-default" aria-label="close the modal" type="button" uk-close></button>
-            <p>{{volume.label}}</p>
-          </div>
-        </div>
-
-        <a href="#rx-volume-title" class="rx-nav-item" uk-toggle>
-          <div id="main" class="rx-page-title long-and-truncated" >{{volume.label}}</div>
-        </a>
-      </div>
-    </div>
-
-    <div class="rx-flex-child short-and-fixed">
-      <ul class="uk-navbar-nav">
-        <li>
-          <a href="/search/" aria-label="full site search" title="Full Site Search"
-            uk-tooltip="title: Full Site Search; pos: right">
-            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search"></span>
-          </a>
-        </li>
-        {% if request.user.is_authenticated %}
-        <li>
-          {# URL provided by django-allauth/account/urls.py #}
-          <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right"
-            aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
-            <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog"></span>
-          </a>
-        </li>
-        <li>
-          {# URL provided by django-allauth/account/urls.py #}
-          <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right"
-            aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
-            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user"></span>
-          </a>
-        </li>
-        <li>
-          {# URL provided by django-allauth/account/urls.py #}
-          <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right"
-            uk-tooltip="title: Logout; pos: right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
-            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out"></span>
-          </a>
-        </li>
-        {% else %}
-        <li>
-          {# URL provided by django-allauth/account/urls.py #}
-          <!-- <a href="{% url 'account_login' %}"> -->
-          <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-tooltip="title: Sign in; pos: right" uk-toggle>
-            <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in"></span>
-          </a>
-        </li>
-        {% endif %}
-        <li>
-          <a href="#" aria-label="Page options" title="Page options" uk-tooltip="title: Page options; pos: right"
-            uk-toggle="target: #offcanvas-usage">
-            <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: menu"></span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-  </nav>
-
-  <div>
-    <a href="#modal-full" uk-toggle uk-icon="icon: info" uk-tooltip="title: Additional information about this volume, such as annotations and attribution.; pos: bottom"></a>
-    <div class="uk-inline" style="vertical-align: top;" uk-tooltip="title: View options; pos: top">
-      {% include "_page/_options.html" %}    
-    </div>
-  </div>
-
-  <div id="modal-full" class="uk-modal-full" uk-modal>
-      <div class="uk-modal-dialog">
-          <button class="uk-modal-close-full uk-padding uk-close-large" type="button" uk-close></button>
-          
-          <div class="uk-grid-collapse uk-flex-middle uk-grid-stack" >
-            <div class="uk-background-cover uk-width-1-1" uk-height-viewport="" style="min-height: max(0px, 630.4px);">
-              <div class="uk-padding">
-                <h1 class="uk-margin-bottom uk-text-large uk-text-bold">Additional Information</h1>
-                <div uk-grid>
-                  <ul class="uk-tab-left uk-width-auto@m" uk-tab="connect: #volume-modal">
-                    <li class="uk-active"><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Search</a></li>
-                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Annotations</a></li>
-                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Volume Information</a></li>
-                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">Attribution</a></li>
-                    <li><a href="#" class="uk-align-right uk-margin-small uk-text-bold">URLs</a></li>
-                  </ul>
-                  
-                  <ul id="volume-modal" class="uk-switcher uk-width-expand@m uk-padding-small-left">
-                    <li tab-name="annotations" class="">
-                      {% include '_page/_search.html' %}
-                    </li>
-                    
-                    <li tab-name="annotations" class="uk-grid">
-                      {% include '_page/_annotations.html' %}
-                    </li>
-                    
-                    <li tab-name="basic information">
-                      {% include '_page/_information.html' %}
-                    </li>
-                    
-                    <li tab-name="attribution">
-                      {% include '_page/_attribution.html' %}
-                    </li>
-                    
-                    <li tab-name="urls">
-                      {% include '_page/_urls.html' %}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-        </div>
-      </div>
-  </div>
-
-
-  <div id="offcanvas-usage" uk-offcanvas="flip: true">
-    <div class="uk-offcanvas-bar rx-offcanvas-bar">
-    <div class="rx-info">
-      <a type="button" role="button" tabindex="0" class="uk-offcanvas-close rx-offcanvas-close rx-page-info-btn">close</a>
-    </div>
-
-    <div class="rx-info">
-      <!-- new search form -->
-      
-      <!-- new search form -->
-    </div>
-
-    <div class="rx-info uk-hidden" id="rdx-search-results">
-      <div class="rx-info-content-container uk-padding-remove-vertical">
-        <div class="rx-info-content">
-        </div>
-      </div>
-    </div>
-
-    <div class="rx-info">
-      <div class="rx-info-title">Basic Information</div>
-      <div class="rx-info-content-container">
-        <!--
-        {% if user_annotation_count > 0 %}
-        <ul class="uk-subnav uk-subnav-pill" uk-switcher>
-          <li><a href="#" id="rx-annotation-manifest">{{ user_annotation_count }} annotations in manifest</a></li>
-          <li><a href="#" id="rx-annotation-page"> annotations on page</a></li>
-        </ul>
-        {% endif %}
-        -->
-      </div>
-    </div>
-
-    <div class="rx-info">
-      <div class="rx-info-title">Attribution</div>
-      <div class="rx-info-content-container"></div>
-    </div>
-
-    <div class="rx-info">
-      <div class="rx-info-title">Actions</div>
-      <div class="rx-info-content-container">
-        <div class="rx-info-content">
-          <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">View Volume PDF</a>
-        </div>
-        <div class="rx-info-content">
-          <a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
-            target="_blank">Export Citation in RIS</a>
-        </div>
-
-        <v-volume-export-annotation-btn :manifest-count="{{ user_annotation_count }}">
-          <form action="{% url 'export' volume.pid %}" class="button_to" method="GET" id="rx-annotation-export-form">
-            <a class="rx-action-btn" href="#" onclick="rxFormSubmit('rx-annotation-export-form');">Export
-              Annotations</a>
-            {% csrf_token %}
-          </form>
-        </v-volume-export-annotation-btn>
-
-        <div class="rx-info-content">
-          <a class="rx-action-btn" href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
-            target="_blank">Send to Voyant</a>
-        </div>
-
-        <!--Text overlay modal-->
-
-        <div class="rx-info-content">
-          
-        </div>
-
-        <div class="rx-info-content">
-          
-        </div>
-
-
-        
-
-        <v-info-content-url-page-text label="Page Text">
-        </v-info-content-url-page-text>
-
-        <!-- <div id="text-overlay-modal" uk-modal>
-          <div class="uk-modal-dialog uk-modal-body">
-              <button class="uk-modal-close-default" type="button" uk-close></button>
-              <h2 class="uk-modal-title">Text</h2>
-              <p>{{page.result}}</p>
-          </div>
-        </div> -->
-
-      </div>
-    </div>
-
-    <div class="rx-info">
-      <div class="rx-info-title">URLs</div>
-      <div class="rx-info-content-container">
-
-        
-      </div>
-    </div>
-
-    <!-- start ocr el -->
-    <div id="ocr" style="opacity: 0;"  role="region" aria-live="polite"></div>
-    <!-- end ocr el -->
-
-    </div>
-  </div>
-
 
 {% endblock content %}
 

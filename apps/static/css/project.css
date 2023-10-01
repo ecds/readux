@@ -54,9 +54,6 @@ em {
 .uk-radio {
   border: 1px solid #ccc !important; }
 
-.uk-navbar-right {
-  padding-top: 1rem; }
-
 .uk-container ul {
   list-style: none; }
 
@@ -76,8 +73,8 @@ em {
   background-color: #f2dede;
   border-color: #eed3d7; }
 
-.rdx-viewer-container {
-  height: calc(100vh - 120px); }
+/* .rdx-viewer-container {
+  height: calc(100vh - 120px); } */
 
 .manifest-info > a,
 .manifest-info > h3 {
@@ -448,7 +445,9 @@ p {
   letter-spacing: 0.1em;
   display: inline-flex;
   padding: 0;
-  margin: 0; }
+  margin: 0; 
+  user-select: auto;
+}
 
 .rx-page-breadcrumb-item a {
   color: var(--link-color); }
@@ -672,9 +671,6 @@ p {
   .rx-anchor:hover {
     color: var(--link-color);
     opacity: 1; }
-
-::selection {
-  background-color: #595959; }
 
 .rx-label-copy {
   background: white;
@@ -1263,8 +1259,6 @@ a.nav-link {
 .uk-radio {
   border: 1px solid #ccc !important; }
 
-.uk-navbar-right {
-  padding-top: 1rem; }
 
 .uk-container ul {
   list-style: none; }
@@ -1286,12 +1280,24 @@ a.nav-link {
   border-color: #eed3d7; }
 
 .rdx-viewer-container {
-  width: 100%;
-  height: calc(100% - 120px);
+  /* width: 100%;
+  height: calc(100% - 120px); */
   position: absolute;
   left: 0;
   bottom: 0px;
-  background: none !important; }
+  /* background: none !important; */
+
+  height: -webkit-calc(100% - 40px);
+  height:    -moz-calc(100% - 40px);
+  height:         calc(100% - 40px);
+  width: 100%;
+  /* Remove any browser-default margins. */
+  margin: 0;
+}
+
+#rdx-viewer > div > div > div.py-8.grid.grid-cols-2.gap-2 {
+  padding-bottom: 0;
+}
 
 .manifest-info > a,
 .manifest-info > h3 {

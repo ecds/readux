@@ -98,9 +98,9 @@ em {
   border-color: #eed3d7;
 }
 
-.rdx-viewer-container {
-  height: calc(100vh - 120px);
-}
+// .rdx-viewer-container {
+//   height: calc(100vh - 120px);
+// }
 
 .manifest-info > a,
 .manifest-info > h3 {
@@ -541,6 +541,7 @@ p {
   display: inline-flex;
   padding: 0;
   margin: 0;
+  user-select: auto;
 }
 
 .rx-page-breadcrumb-item a {
@@ -1669,14 +1670,14 @@ a.nav-link {
   border-color: #eed3d7;
 }
 
-.rdx-viewer-container {
-  width: 100%;
-  height: calc(100% - 120px);
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  background: none !important;
-}
+// .rdx-viewer-container {
+//   width: 100%;
+//   height: calc(100% - 120px);
+//   position: absolute;
+//   left: 0;
+//   bottom: 0px;
+//   background: none !important;
+// }
 
 .manifest-info > a,
 .manifest-info > h3 {

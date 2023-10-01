@@ -20,38 +20,7 @@
 {% block inner %}
 
 <!-- reader's navbar -->
-<nav uk-navbar>
-  <div class="uk-navbar-left">
-    <a href="/" alt="Readux Logo/Home"><img src="{% static 'images/readux-graphics.svg'%}" style="height: 40px;"></img></a>
-    <ul class="rx-page-breadcrumb long-and-truncated">
-      {% if volume.collections.first.pid %}
-      <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-      <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-          alt="Collections">{{ volume.collections.first.label }}</a>
-      </li>
-      {% else %}
-      <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink.slug }}">All Volumes</a></li>
-      {% endif %}
-      <li class="uk-text-truncate"> {{volume.label}}</li>
-    </ul>
-  </div>
-  <div class="uk-navbar-right uk-width-auto">
-    <div class="rx-page-breadcrumb">
-      <a href="/search/" aria-label="fudiv site search" title="Full Site Search"
-        uk-tooltip="title: Full Site Search; pos: right">
-        <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: search"></span>
-      </a>
-      <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right"
-        aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
-        <span class="uk-user uk-margin-small-right" aria-hidden="true" uk-icon="icon: cog"></span>
-      </a>
-      <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right"
-        aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
-        <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: user"></span>
-      </a>
-    </div>
-  </div>
-</nav>
+{% include '_page/_navbar.html' %}
 <!-- reader's navbar -->
 
 <!-- uiAction search -->
@@ -59,20 +28,6 @@
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
     {% include '_page/_search.html' %}
-    <ul uk-accordion="multiple: true" class="uk-width-1-1 ">
-      <li class="uk-open">
-          <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#"><span id="annotation-count"></span> Match(es) in Text</a>
-          <div class="uk-accordion-content uk-margin-small-top" id="ocr-annotation-results">
-              <p class="uk-text-default">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          </div>
-      </li>
-      <li class="uk-open">
-          <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#"><span id="user-annotation-count"></span> Match(es) in Annotations</a>
-          <div class="uk-accordion-content uk-margin-small-top" id="user-annotation-results">
-              <p class="uk-text-default">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit.</p>
-          </div>
-      </li>
-  </ul>
   </div>
 </div>
 <!-- uiAction search -->
@@ -93,7 +48,7 @@
 </div>
 <!-- uiAction information -->
 
-<!-- uiAction urls -->
+<!-- uiAction urls and exports -->
 <div id="modal-urls" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
@@ -107,7 +62,7 @@
     </ul>
   </div>
 </div>
-<!-- uiAction urls -->
+<!-- uiAction urls and exports -->
 
 <!-- uiAction visibility -->
 <div id="modal-visibility" class="reader-modal" uk-modal>
@@ -118,33 +73,6 @@
   </div>
 </div>
 <!-- uiAction visibility -->
-
-<!-- uiAction exports -->
-<div id="modal-exports" class="reader-modal" uk-modal>
-  <div class="uk-modal-dialog uk-padding-small">
-    <div class="uk-text-bold uk-text-large uk-margin-small-bottom">Exports</div>
-    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    {% include '_page/_exports.html' %}
-  </div>
-</div>
-<!-- uiAction exports -->
-
-<!-- This is the modal -->
-<div id="rx-page-modal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-    <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
-    <section class="uk-modal-header">
-      <h2 class="uk-modal-title uk-text-center">
-        {% if user.is_authenticated %}
-        Connect Accounts
-        {% else %}
-        Sign in
-        {% endif %}
-      </h2>
-    </section>
-    {% include "snippets/socialaccount_buttons.html" %}
-  </div>
-</div>
 {% endblock inner %}
 {% endblock content %}
 
@@ -154,9 +82,9 @@
 </div>
 {% if page.pid is not None %}
 <!--
-        <p id="test"></p>
-        <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
-        <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
+  <p id="test"></p>
+  <a class="facebook" href='http://www.facebook.com/sharer.php?s=100&p[url]=http://{{ request.META.HTTP_HOST }}{{ request.path }}&p[images][0]{{ page.IIIF_IMAGE_SERVER_BASE }}{{ page.pid }}/full/600,/0/default.jpg' target="_blank">
+  <img src="https://www.cabq.gov/culturalservices/biopark/images/share-on-facebook.png/@@images/image.png" title="Facebook" alt="Facebook" ></a>
 -->
 {% endif %}
 {% endblock viewer %}

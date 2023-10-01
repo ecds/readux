@@ -1,0 +1,67 @@
+{% load static i18n %}
+
+<nav uk-navbar>
+    <div class="uk-navbar-left">
+      <a href="/" alt="Readux Logo/Home"><img src="{% static 'images/readux-graphics.svg'%}" style="height: 40px;"></img></a>
+      <ul class="rx-page-breadcrumb long-and-truncated">
+        {% if volume.collections.first.pid %}
+        <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+        <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
+            alt="Collections">{{ volume.collections.first.label }}</a>
+        </li>
+        {% else %}
+        <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink.slug }}">All Volumes</a></li>
+        {% endif %}
+        <li class="uk-text-truncate"> {{volume.label}}</li>
+      </ul>
+    </div>
+    <div class="uk-navbar-right uk-width-auto">
+      <div class="rx-page-breadcrumb">
+        <a href="/search/" aria-label="fudiv site search" title="Full Site Search"
+          uk-tooltip="title: Full Site Search; pos: right">
+          <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: search"></span>
+        </a>
+        {% if request.user.is_authenticated %}
+        {# URL provided by django-allauth/account/urls.py #}
+        <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right"
+          aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
+          <span class="uk-user uk-margin-small-right" aria-hidden="true" uk-icon="icon: cog"></span>
+        </a>
+        {# URL provided by django-allauth/account/urls.py #}
+        <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right"
+          aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update' %}">
+          <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: user"></span>
+        </a>
+        {# URL provided by django-allauth/account/urls.py #}
+        <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right"
+            uk-tooltip="title: Logout; pos: right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
+            <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-out"></span>
+        </a>
+        {% else %}
+        {# URL provided by django-allauth/account/urls.py #}
+        <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-tooltip="title: Sign in; pos: right" uk-toggle>
+            <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in"></span>
+        </a>
+        {% endif %}
+
+      </div>
+    </div>
+</nav>
+
+<!--modal for login-->
+<div id="rx-page-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+      <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
+      <section class="uk-modal-header">
+        <h2 class="uk-modal-title uk-text-center">
+          {% if user.is_authenticated %}
+          Connect Accounts
+          {% else %}
+          Sign in
+          {% endif %}
+        </h2>
+      </section>
+      {% include "snippets/socialaccount_buttons.html" %}
+    </div>
+</div>
+<!--modal for login-->

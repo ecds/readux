@@ -18,3 +18,18 @@
     </a>
   </li>
 </ul>
+
+<!-- start ocr el -->
+<div id="ocr" role="region" aria-live="polite"> <!--style="opacity: 0;"-->
+Is this an area for OCR? Functional?
+Determine if OCR text is available so that we can reflect that in the "View OCR"  button
+</div>
+<!-- end ocr el -->
+
+<div id="text-overlay-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 class="uk-modal-title">Text</h2>
+      <p>{{page.result}}</p>
+  </div>
+</div>

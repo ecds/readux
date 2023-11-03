@@ -4,11 +4,14 @@ from html import unescape
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
+from django.db.models.query import Prefetch
 from django.utils.html import strip_tags
 from unidecode import unidecode
 
+from apps.iiif.annotations.models import Annotation
+from apps.iiif.canvases.models import Canvas
 from apps.iiif.kollections.models import Collection
-from .models import Manifest
+from apps.iiif.manifests.models import Manifest
 
 # TODO: Better English stemming (e.g. Rome to match Roman), multilingual stemming.
 stemmer = analyzer(
@@ -25,9 +28,15 @@ class ManifestDocument(Document):
     # fields to map explicitly in Elasticsearch
     authors = fields.KeywordField(multi=True)  # only used for faceting/filtering
     author = fields.TextField()  # only used for searching
-    collections = fields.NestedField(properties={
-        "label": fields.KeywordField(),
-    })
+    canvas_set = fields.NestedField(
+        properties={
+            "result": fields.TextField(analyzer=stemmer),
+            "position": fields.IntegerField(),
+            "thumbnail": fields.KeywordField(),
+            "pid": fields.KeywordField(),
+        }
+    )  # canvas_set.result = OCR annotation text on each canvas
+    collections = fields.NestedField(properties={"label": fields.KeywordField()})
     date_earliest = fields.DateField()
     date_latest = fields.DateField()
     has_pdf = fields.BooleanField()
@@ -38,10 +47,12 @@ class ManifestDocument(Document):
 
     class Index:
         """Settings for Elasticsearch"""
+
         name = "manifests"
 
     class Django:
         """Settings for automatically pulling data from Django"""
+
         model = Manifest
 
         # fields to map dynamically in Elasticsearch
@@ -57,7 +68,7 @@ class ManifestDocument(Document):
             "publisher",
             "viewingdirection",
         ]
-        related_models = [Collection]
+        related_models = [Collection, Canvas, Annotation]
 
     def prepare_authors(self, instance):
         """convert authors string into list"""
@@ -88,12 +99,33 @@ class ManifestDocument(Document):
 
     def get_queryset(self):
         """prefetch related to improve performance"""
-        return super().get_queryset().prefetch_related(
-            "collections"
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "collections",
+                "image_server",
+                "languages",
+                Prefetch(
+                    "canvas_set",
+                    queryset=Canvas.objects.prefetch_related(
+                        Prefetch(
+                            "annotation_set",
+                            queryset=Annotation.objects.select_related("owner"),
+                        ),
+                    ),
+                ),
+            )
         )
 
     def get_instances_from_related(self, related_instance):
-        """Retrieving item to index from related collections"""
+        """Retrieving item to index from related objects"""
         if isinstance(related_instance, Collection):
             # many to many relationship
             return related_instance.manifests.all()
+        elif isinstance(related_instance, Canvas):
+            # many to many relationship
+            return related_instance.manifest
+        elif isinstance(related_instance, Annotation):
+            # many to many relationship
+            return related_instance.canvas.manifest

@@ -41,6 +41,20 @@ em {
   border: 1px solid transparent;
 }
 
+#search-form .scope-and-keyword {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 1rem 0 0;
+  gap: 0.5rem;
+}
+
+#search-form .scope-and-keyword .scope {
+ flex: 0 1 auto;
+}
+#search-form .scope-and-keyword .keyword {
+  flex: 1 0 auto;
+}
+
 .uk-tab > .uk-active > a {
   border-color: var(--link-color) !important;
   color: var(--link-color) !important; }
@@ -1829,11 +1843,34 @@ ol#search-results dl {
   margin-left: 2rem; }
 
 /* Clamp summary to 3 lines */
-ol#search-results dd.result-volume-summary {
+ol#search-results .result-volume-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden; }
+
+/* search result highlighting */
+ol#search-results em {
+  color: #510029 !important;
+  font-weight: bold;
+  font-style: normal; }
+
+/* results within full text */
+ol#search-results .result-page a {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 0.8rem;
+  gap: 1rem;
+  padding: 0.25rem 1rem; }
+
+ol#search-results .result-page .page-number {
+  min-width: 2rem;
+  max-width: 2rem;}
+ol#search-results .result-page img {
+  max-width: 100px;
+  max-height: 100px; }
 
 .sr-only {
   position: absolute;

@@ -1,3 +1,4 @@
+{% load readux_templatetags %}
 
 <li class="uk-width-1-1@m uk-margin-small">
     <h4>
@@ -7,7 +8,7 @@
                 class="nav-link"
                 href="{% url 'volumeall' volume.pid %}"
             >
-                {% if volume.meta.highlight.label %}
+                {% if 'highlight' in volume.meta and volume.meta.highlight.label %}
                     {% for fragment in volume.meta.highlight.label %}
                         {{ fragment|safe }}
                     {% endfor %}
@@ -16,7 +17,7 @@
                 {% endif %}
             </a>
         {% else %}
-            {% if volume.meta.highlight.label %}
+            {% if 'highlight' in volume.meta and volume.meta.highlight.label %}
                 {% for fragment in volume.meta.highlight.label %}
                     {{ fragment|safe }}
                 {% endfor %}
@@ -34,7 +35,7 @@
             <dt>Author{{volume.authors|pluralize}}</dt>
             <dd>
                 <ul class="uk-margin-remove">
-                    {% if volume.meta.highlight.author %}
+                    {% if 'highlight' in volume.meta and volume.meta.highlight.author %}
                         {% for fragment in volume.meta.highlight.author %}
                             {{ fragment|safe }}
                         {% endfor %}
@@ -63,7 +64,7 @@
         {% if volume.summary %}
             <dt>Summary</dt> 
             <dd class="result-volume-summary">
-                {% if volume.meta.highlight.summary %}
+                {% if 'highlight' in volume.meta and volume.meta.highlight.summary %}
                     {% for fragment in volume.meta.highlight.summary %}
                         {{ fragment|safe }}
                     {% endfor %}
@@ -71,6 +72,24 @@
                     {{ volume.summary|safe }}
                 {% endif %}
             </dd>
+        {% endif %}
+        {% if 'inner_hits' in volume.meta and volume.meta.inner_hits.canvases.hits.total.value %}
+            <dt>Full Text</dt> 
+            {% for canvas in volume.meta.inner_hits.canvases %}
+                <dd class="result-page">
+                    <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
+                        <span class="page-number">{{ canvas.position|add:1 }}</span>
+                        {% if canvas.thumbnail %}<img src="{{ canvas.thumbnail }}" loading="lazy" />{% endif %}
+                        {% if canvas.meta.highlight %}
+                            <ul class="highlights">
+                            {% for fragment in canvas.meta.highlight|dict_item:"canvas_set.result" %}
+                                <li class="result-volume-summary">{{ fragment|safe }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </a>
+                </dd>
+            {% endfor %}
         {% endif %}
     </dl>
 </li>

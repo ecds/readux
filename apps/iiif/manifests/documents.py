@@ -32,7 +32,6 @@ class ManifestDocument(Document):
         properties={
             "result": fields.TextField(analyzer=stemmer),
             "position": fields.IntegerField(),
-            "thumbnail": fields.KeywordField(),
             "pid": fields.KeywordField(),
         }
     )  # canvas_set.result = OCR annotation text on each canvas

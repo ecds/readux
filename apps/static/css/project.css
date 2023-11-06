@@ -1860,17 +1860,20 @@ ol#search-results .result-page a {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   font-size: 0.8rem;
   gap: 1rem;
-  padding: 0.25rem 1rem; }
+  margin: 0.5rem 0;
+}
 
 ol#search-results .result-page .page-number {
-  min-width: 2rem;
-  max-width: 2rem;}
-ol#search-results .result-page img {
-  max-width: 100px;
-  max-height: 100px; }
+  min-width: 4rem;
+  max-width: 4rem;
+}
+
+ol#search-results .result-page ul li {
+  list-style: disc;
+}
 
 .sr-only {
   position: absolute;

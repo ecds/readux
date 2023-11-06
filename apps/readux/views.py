@@ -431,9 +431,11 @@ class VolumeSearchView(ListView, FormMixin):
                     inner_hits={
                         "name": "canvases",
                         "size": 3,  # max number of pages shown in full-text results
-                        "sort": [{"canvas_set.position": {"order": "asc"}}],
                         "highlight": {"fields": {"canvas_set.result": {}}},
                     },
+                    # sum scores if in full text only search, so vols with most hits show up first.
+                    # if also searching metadata, use avg (default) instead, to not over-inflate.
+                    score_mode="sum" if scope == "text" else "avg",
                 )
                 queries.append(nested_query)
 

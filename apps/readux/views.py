@@ -476,7 +476,10 @@ class VolumeSearchView(ListView, FormMixin):
                         inner_hits={ **inner_hits_dict, "name": f"canvases_{i}" },
                         **nested_kwargs,
                     )
-                    es_queries_exact[i]["bool"]["should"].append(nested_exact)
+                    if scope == "all":
+                        es_queries_exact[i]["bool"]["should"].append(nested_exact)
+                    else:
+                        es_queries_exact.append({"bool": {"should": [nested_exact]}})
 
             # combine them with bool: { should, must }
             q = Q("bool", should=es_queries, must=es_queries_exact)

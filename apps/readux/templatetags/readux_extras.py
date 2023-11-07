@@ -7,10 +7,13 @@ register = Library()
 @register.filter
 def has_inner_hits(volume):
     """Template filter to determine if there are any inner hits across the volume"""
-    inner_hits = volume.meta.inner_hits
-    for key in inner_hits.to_dict().keys():
-        if inner_hits[key].hits.total.value:
-            return True
+    try:
+        inner_hits = volume.meta.inner_hits
+        for key in inner_hits.to_dict().keys():
+            if inner_hits[key].hits.total.value:
+                return True
+    except AttributeError:
+        pass
     return False
 
 

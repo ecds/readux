@@ -73,23 +73,21 @@
                 {% endif %}
             </dd>
         {% endif %}
-        {% if 'inner_hits' in volume.meta and volume.meta.inner_hits|has_inner_hits %}
+        {% if volume|has_inner_hits %}
             <dt>Full Text</dt>
-            {% for key in volume.meta.inner_hits.to_dict.keys %}
-                {% for canvas in volume.meta.inner_hits|dict_item:key %}
-                    <dd class="result-page">
-                        <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
-                            <span class="page-number">p. {{ canvas.position|add:1 }}</span>
-                            {% if canvas.meta.highlight %}
-                                <ul class="highlights">
-                                {% for fragment in canvas.meta.highlight|dict_item:"canvas_set.result" %}
-                                    <li>{{ fragment|safe }}</li>
-                                {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </a>
-                    </dd>
-                {% endfor %}
+            {% for canvas in volume.meta.inner_hits|group_by_canvas %}
+                <dd class="result-page">
+                    <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
+                        <span class="page-number">p. {{ canvas.position|add:1 }}</span>
+                        {% if canvas.highlights|length %}
+                            <ul class="highlights">
+                            {% for fragment in canvas.highlights %}
+                                <li>{{ fragment|safe }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </a>
+                </dd>
             {% endfor %}
         {% endif %}
     </dl>

@@ -17,3 +17,12 @@ def dict_item(dictionary, key):
         # fail silently if something other than a dict is passed
         return None
 
+
+@register.filter
+def has_inner_hits(inner_hits):
+    """Template filter to"""
+    hits_dict = inner_hits.to_dict()
+    for key in hits_dict.keys():
+        if hits_dict[key].hits.total.value:
+            return True
+    return False

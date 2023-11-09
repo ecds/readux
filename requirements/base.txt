@@ -50,7 +50,7 @@ wagtail-autocomplete==0.10.0
 wagtail-cache==2.3.0
 
 # Import/Export
-django-import-export==2.8.0
+django-import-export==3.3.2
 gitpython==3.1.37
 
 # S3 Uploads

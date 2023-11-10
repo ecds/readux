@@ -67,7 +67,7 @@ class ManifestDocument(Document):
             "publisher",
             "viewingdirection",
         ]
-        related_models = [Collection, Canvas, Annotation]
+        related_models = [Collection, Canvas]
 
     def prepare_authors(self, instance):
         """convert authors string into list"""
@@ -125,6 +125,3 @@ class ManifestDocument(Document):
         elif isinstance(related_instance, Canvas):
             # many to many relationship
             return related_instance.manifest
-        elif isinstance(related_instance, Annotation):
-            # many to many relationship
-            return related_instance.canvas.manifest

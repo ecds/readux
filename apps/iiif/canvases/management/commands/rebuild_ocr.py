@@ -123,4 +123,5 @@ class Command(BaseCommand):
                     anno.content = word['content']
                     anno.save()
                     prog_bar.next()
+                canvas.save()
                 prog_bar.finish()

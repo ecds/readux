@@ -1,5 +1,6 @@
 """Django models representing IIIF canvases and IIIF image server info."""
 import os
+from functools import cached_property
 from urllib.parse import quote
 from boto3 import resource
 from bs4 import BeautifulSoup
@@ -144,23 +145,21 @@ class Canvas(IiifBase):
         # landscape
         return f'{self.resource_id}/pct:25,15,50,85/,600/0/default.jpg'
 
-    @property
+    @cached_property
     def result(self):
-        """Empty attribute to hold the result of requests to get OCR data."""
-        words = Annotation.objects.filter(
-            owner=USER.objects.get(username='ocr'),
-            canvas=self.id).order_by('order')
+        """Cached property containing OCR text content from associated annotations."""
+        words = self.annotation_set.filter(owner__username="ocr").order_by("order")
         clean_words = []
         for word in words:
-            clean_word = BeautifulSoup(word.content, 'html.parser').text
+            clean_word = BeautifulSoup(word.content, "html.parser").text
             clean_words.append(clean_word)
-        return ' '.join(clean_words)
+        return " ".join(clean_words)
 
     def save(self, *args, **kwargs): # pylint: disable = signature-differs
         """
         Override save function to set `resource_id` add OCR,
         set as manifest's `start_canvas` if manifest does not have one,
-        and set
+        and set position
         """
         self.__check_image_server()
 

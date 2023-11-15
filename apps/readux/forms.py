@@ -57,6 +57,21 @@ class ManifestSearchForm(forms.Form):
             },
         ),
     )
+    scope = forms.ChoiceField(
+        label="Limit search to",
+        required=False,
+        initial="all",
+        choices=(
+            ("all", "All"),
+            ("metadata", "Metadata only"),
+            ("text", "Textual contents only"),
+        ),
+        widget=forms.Select(
+            attrs={
+                "class": "uk-select",
+            },
+        ),
+    )
     language = FacetedMultipleChoiceField(
         label="Language",
         required=False,

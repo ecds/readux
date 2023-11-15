@@ -407,42 +407,74 @@ class VolumeSearchView(ListView, FormMixin):
         form_data = form.cleaned_data
 
         # default to empty string if no query in form data
-        search_query = form_data.get("q", "")
+        search_query = form_data.get("q") or ""
+        scope = form_data.get("scope") or "all"
         if search_query:
-            multimatch_query = MultiMatch(query=search_query, fields=self.query_search_fields)
-            volumes = volumes.query(multimatch_query)
+            queries = []
+            if scope in ["all", "metadata"]:
+                # query for root level fields
+                multimatch_query = Q(
+                    "multi_match", query=search_query, fields=self.query_search_fields
+                )
+                queries.append(multimatch_query)
+            
+            if scope in ["all", "text"]:
+                # query for nested fields (i.e. canvas position and text)
+                nested_query = Q(
+                    "nested",
+                    path="canvas_set",
+                    query=Q(
+                        "multi_match",
+                        query=search_query,
+                        fields=["canvas_set.result"],
+                    ),
+                    inner_hits={
+                        "name": "canvases",
+                        "size": 3,  # max number of pages shown in full-text results
+                        "highlight": {"fields": {"canvas_set.result": {}}},
+                    },
+                    # sum scores if in full text only search, so vols with most hits show up first.
+                    # if also searching metadata, use avg (default) instead, to not over-inflate.
+                    score_mode="sum" if scope == "text" else "avg",
+                )
+                queries.append(nested_query)
+
+            # combine them with bool: { should }
+            q = Q("bool", should=queries)
+            volumes = volumes.query(q)
 
         # highlight
         volumes = volumes.highlight_options(
             require_field_match=False,
             fragment_size=200,
             number_of_fragments=10,
+            max_analyzed_offset=999999,
         ).highlight(
             "label", "author", "summary"
         )
 
         # filter on authors
-        author_filter = form_data.get("author", "")
+        author_filter = form_data.get("author") or ""
         if author_filter:
             volumes = volumes.filter("terms", authors=author_filter)
 
         # filter on languages
-        language_filter = form_data.get("language", "")
+        language_filter = form_data.get("language") or ""
         if language_filter:
             volumes = volumes.filter("terms", languages=language_filter)
 
         # filter on collections
-        collection_filter = form_data.get("collection", "")
+        collection_filter = form_data.get("collection") or ""
         if collection_filter:
             volumes = volumes.filter("nested", path="collections", query=Q(
                 "terms", **{"collections.label": collection_filter}
             ))
 
         # filter on date published
-        min_date_filter = form_data.get("start_date", "")
+        min_date_filter = form_data.get("start_date") or ""
         if min_date_filter:
             volumes = volumes.filter("range", date_earliest={"gte": min_date_filter})
-        max_date_filter = form_data.get("end_date", "")
+        max_date_filter = form_data.get("end_date") or ""
         if max_date_filter:
             volumes = volumes.filter("range", date_latest={"lte": max_date_filter})
 

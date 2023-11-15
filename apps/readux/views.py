@@ -1,4 +1,5 @@
 """Django Views for the Readux app"""
+import re
 from os import path
 from urllib.parse import urlencode
 from django.http import HttpResponse
@@ -340,6 +341,9 @@ class VolumeSearchView(ListView, FormMixin):
         "sort": "label_alphabetical"
     }
 
+    # regex to match terms in doublequotes
+    re_exact_match = re.compile(r'\B(".+?")\B')
+
     def get_form_kwargs(self):
         # adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
         kwargs = super().get_form_kwargs()
@@ -410,37 +414,75 @@ class VolumeSearchView(ListView, FormMixin):
         search_query = form_data.get("q") or ""
         scope = form_data.get("scope") or "all"
         if search_query:
-            queries = []
+            # find exact match queries (words or phrases in double quotes)
+            exact_queries = self.re_exact_match.findall(search_query)
+            # remove exact queries from the original search query to search separately
+            search_query = re.sub(self.re_exact_match , "", search_query).strip()
+
+            es_queries = []
+            es_queries_exact = []
             if scope in ["all", "metadata"]:
                 # query for root level fields
-                multimatch_query = Q(
-                    "multi_match", query=search_query, fields=self.query_search_fields
-                )
-                queries.append(multimatch_query)
-            
+                if search_query:
+                    multimatch_query = Q(
+                        "multi_match", query=search_query, fields=self.query_search_fields
+                    )
+                    es_queries.append(multimatch_query)
+                for exq in exact_queries:
+                    # separate exact searches so we can put them in "must" boolean query
+                    multimatch_exact = Q(
+                        "multi_match",
+                        query=exq.replace('"', "").strip(),  # strip double quotes
+                        fields=self.query_search_fields,
+                        type="phrase",  # type = "phrase" for exact phrase matches
+                    )
+                    es_queries_exact.append({"bool": {"should": [multimatch_exact]}})
+
             if scope in ["all", "text"]:
                 # query for nested fields (i.e. canvas position and text)
-                nested_query = Q(
-                    "nested",
-                    path="canvas_set",
-                    query=Q(
-                        "multi_match",
-                        query=search_query,
-                        fields=["canvas_set.result"],
-                    ),
-                    inner_hits={
-                        "name": "canvases",
-                        "size": 3,  # max number of pages shown in full-text results
-                        "highlight": {"fields": {"canvas_set.result": {}}},
-                    },
+                nested_kwargs = {
+                    "path": "canvas_set",
                     # sum scores if in full text only search, so vols with most hits show up first.
                     # if also searching metadata, use avg (default) instead, to not over-inflate.
-                    score_mode="sum" if scope == "text" else "avg",
-                )
-                queries.append(nested_query)
+                    "score_mode": "sum" if scope == "text" else "avg",
+                }
+                inner_hits_dict = {
+                    "size": 3,  # max number of pages shown in full-text results
+                    "highlight": {"fields": {"canvas_set.result": {}}},
+                }
+                if search_query:
+                    nested_query = Q(
+                        "nested",
+                        query=Q(
+                            "multi_match",
+                            query=search_query,
+                            fields=["canvas_set.result"],
+                        ),
+                        inner_hits={ **inner_hits_dict, "name": "canvases" },
+                        **nested_kwargs,
+                    )
+                    es_queries.append(nested_query)
+                for i, exq in enumerate(exact_queries):
+                    # separate exact searches so we can put them in "must" boolean query
+                    nested_exact = Q(
+                        "nested",
+                        query=Q(
+                            "multi_match",
+                            query=exq.replace('"', "").strip(),
+                            fields=["canvas_set.result"],
+                            type="phrase",
+                        ),
+                        # each inner_hits set needs to have a different name in elasticsearch
+                        inner_hits={ **inner_hits_dict, "name": f"canvases_{i}" },
+                        **nested_kwargs,
+                    )
+                    if scope == "all":
+                        es_queries_exact[i]["bool"]["should"].append(nested_exact)
+                    else:
+                        es_queries_exact.append({"bool": {"should": [nested_exact]}})
 
-            # combine them with bool: { should }
-            q = Q("bool", should=queries)
+            # combine them with bool: { should, must }
+            q = Q("bool", should=es_queries, must=es_queries_exact)
             volumes = volumes.query(q)
 
         # highlight

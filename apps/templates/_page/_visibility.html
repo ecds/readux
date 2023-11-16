@@ -1,0 +1,35 @@
+<ul class="uk-list">
+  <li>
+    <a uk-toggle="target: #text-overlay-modal" class="rx-action-btn">
+      <!-- <span uk-icon="icon: copy"></span> -->
+      View Text Overlay
+    </a>
+  </li>
+  <li>
+    <a class="rx-action-btn" onclick="showOCR()">
+      <!-- <span uk-icon="icon: eye"></span> -->
+      View OCR Overlay
+    </a>
+  </li>
+  <li>
+    <a class="rx-action-btn" onclick="hideOCR()">
+      <!-- <span uk-icon="icon: eye-slash"></span> -->
+      Hide OCR Overlay
+    </a>
+  </li>
+</ul>
+
+<!-- start ocr el -->
+<div id="ocr" role="region" aria-live="polite"> <!--style="opacity: 0;"-->
+Is this an area for OCR? Functional?
+Determine if OCR text is available so that we can reflect that in the "View OCR"  button
+</div>
+<!-- end ocr el -->
+
+<div id="text-overlay-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 class="uk-modal-title">Text</h2>
+      <p>{{page.result}}</p>
+  </div>
+</div>

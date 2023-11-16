@@ -7,6 +7,10 @@ $rx-color-accent-2: #510029;
 
 @import './ecds-annotator.min.css';
 
+.selectize-control.plugin-clear_button .clear {
+  top: -3px !important;
+}
+
 :root {
   --link-color: $rx-color-accent-1;
   --contrast: 200%;
@@ -94,9 +98,9 @@ em {
   border-color: #eed3d7;
 }
 
-.rdx-viewer-container {
-  height: calc(100vh - 120px);
-}
+// .rdx-viewer-container {
+//   height: calc(100vh - 120px);
+// }
 
 .manifest-info > a,
 .manifest-info > h3 {
@@ -537,6 +541,7 @@ p {
   display: inline-flex;
   padding: 0;
   margin: 0;
+  user-select: auto;
 }
 
 .rx-page-breadcrumb-item a {
@@ -1665,14 +1670,14 @@ a.nav-link {
   border-color: #eed3d7;
 }
 
-.rdx-viewer-container {
-  width: 100%;
-  height: calc(100% - 120px);
-  position: absolute;
-  left: 0;
-  bottom: 0px;
-  background: none !important;
-}
+// .rdx-viewer-container {
+//   width: 100%;
+//   height: calc(100% - 120px);
+//   position: absolute;
+//   left: 0;
+//   bottom: 0px;
+//   background: none !important;
+// }
 
 .manifest-info > a,
 .manifest-info > h3 {
@@ -3253,12 +3258,12 @@ form#search-form input[type="search"][name="q"] {
 div#search-grid {
   margin-left: 0;
 }
-div#search-grid :first-child {
-  padding-left: 0;
-}
-div#search-grid :first-child button#reset-filters {
-  padding-left: 30px;
-}
+// div#search-grid :first-child {
+//   padding-left: 0;
+// }
+// div#search-grid :first-child button#reset-filters {
+//   padding-left: 30px;
+// }
 
 /* Date published filter toggle
  * Adapted from https://codepen.io/adamhutch/pen/JoKEPp
@@ -3372,6 +3377,24 @@ ol#search-results dd.result-volume-summary {
   clip: rect(0,0,0,0);
   border: 0;
 }
+
+.sui-item-heading {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: "Helvetica Neue";
+  font-size: 13px;
+}
+
+.sui-selector-heading {
+
+}
+
+/* Set the theme color of the component */
+// $themeColor: #df3f13;
+
+/* import theme style */
+// @import '~vue-slider-component/lib/theme/default.scss';
 
 // .ShowOCR {
 //   color: red !important;

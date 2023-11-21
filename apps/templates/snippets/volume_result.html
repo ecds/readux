@@ -1,4 +1,4 @@
-{% load readux_templatetags %}
+{% load readux_extras %}
 
 <li class="uk-width-1-1@m uk-margin-small">
     <h4>
@@ -73,15 +73,15 @@
                 {% endif %}
             </dd>
         {% endif %}
-        {% if 'inner_hits' in volume.meta and volume.meta.inner_hits.canvases.hits.total.value %}
-            <dt>Full Text</dt> 
-            {% for canvas in volume.meta.inner_hits.canvases %}
+        {% if volume|has_inner_hits %}
+            <dt>Full Text</dt>
+            {% for canvas in volume.meta.inner_hits|group_by_canvas %}
                 <dd class="result-page">
                     <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
                         <span class="page-number">p. {{ canvas.position|add:1 }}</span>
-                        {% if canvas.meta.highlight %}
+                        {% if canvas.highlights|length %}
                             <ul class="highlights">
-                            {% for fragment in canvas.meta.highlight|dict_item:"canvas_set.result" %}
+                            {% for fragment in canvas.highlights %}
                                 <li>{{ fragment|safe }}</li>
                             {% endfor %}
                             </ul>

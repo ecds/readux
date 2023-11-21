@@ -242,7 +242,6 @@ class PageDetail(TemplateView):
         ).filter(
             canvas__manifest__id=manifest.id
         ).count()
-        context['mirador_url'] = settings.MIRADOR_URL
 
         user_annotation_index = UserAnnotation.objects.all()
 

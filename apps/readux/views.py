@@ -241,7 +241,6 @@ class PageDetail(TemplateView):
         ).filter(
             canvas__manifest__id=manifest.id
         ).count()
-        context['mirador_url'] = settings.MIRADOR_URL
 
         user_annotation_index = UserAnnotation.objects.all()
 
@@ -417,7 +416,7 @@ class VolumeSearchView(ListView, FormMixin):
                     "multi_match", query=search_query, fields=self.query_search_fields
                 )
                 queries.append(multimatch_query)
-            
+
             if scope in ["all", "text"]:
                 # query for nested fields (i.e. canvas position and text)
                 nested_query = Q(

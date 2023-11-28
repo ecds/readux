@@ -156,3 +156,6 @@ dev_*.json
 presentation-validator/
 nohup.out
 webpack-stats.json
+
+# compiled scss
+apps/static/css/project.css

@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - develop
-  # pull_request:
-  #   branches:
-  #     - develop
 
 env:
   DATABASE_URL: postgres://user:password@localhost:5432/readux

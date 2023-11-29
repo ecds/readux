@@ -15,9 +15,9 @@ permissions:
   contents: read    # This is required for actions/checkout
 
 jobs:
-  on-success:
+  deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

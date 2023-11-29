@@ -2,10 +2,8 @@ name: Dev-Deploy
 
 on:
   workflow_run:
-    workflows:
-      - 'Dev-Test'
-    types:
-      - 'completed'
+    workflows: [Dev-Test]
+    types: [completed]
 
 permissions:
   id-token: write   # This is required for requesting the JWT

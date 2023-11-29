@@ -32,7 +32,7 @@ jobs:
       - name: Checkout Docker configs
         run: |
           eval `ssh-agent -s`
-          ssh-add - <<< '${{ secrets.PDEPLOY_KEY_FOR_CONFIG_REPO }}'
+          ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
           git clone -b develop https://github.com/ecds/readux-configs.git
           mv readux-configs/* .
           chmod +x deploy.sh

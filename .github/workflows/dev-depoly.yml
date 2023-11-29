@@ -1,9 +1,14 @@
 name: Dev-Deploy
 
+# on:
+#   workflow_run:
+#     workflows: [Dev-Test]
+#     types: [completed]
+
 on:
-  workflow_run:
-    workflows: [Dev-Test]
-    types: [completed]
+  push:
+    branches:
+      - develop
 
 permissions:
   id-token: write   # This is required for requesting the JWT
@@ -26,6 +31,8 @@ jobs:
 
       - name: Checkout Docker configs
         run: |
+          eval `ssh-agent -s`
+          ssh-add - <<< '${{ secrets.PDEPLOY_KEY_FOR_CONFIG_REPO }}'
           git clone -b develop https://github.com/ecds/readux-configs.git
           mv readux-configs/* .
           chmod +x deploy.sh

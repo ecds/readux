@@ -29,7 +29,7 @@ coverage==6.5.0  # https://github.com/nedbat/coveragepy
 # Django
 # ------------------------------------------------------------------------------
 factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
-faker~=19.6.2
+faker~=20.1.0
 
 django-debug-toolbar~=4.2.0  # https://github.com/jazzband/django-debug-toolbar
 django-extensions~=3.2.3  # https://github.com/django-extensions/django-extensions

@@ -9,7 +9,7 @@ psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
 # Testing
 # ------------------------------------------------------------------------------
 mypy==1.5.1  # https://github.com/python/mypy
-pytest==7.4.2  # https://github.com/pytest-dev/pytest
+pytest>7.4.2  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.7  # https://github.com/Frozenball/pytest-sugar
 pytest-cov==4.1.0
 pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
@@ -21,6 +21,8 @@ httpretty~=1.1.4 # https://pypi.org/project/httpretty/
 cssutils~=2.6.0 # https://pypi.org/project/cssutils/
 moto==4.2.0 # https://github.com/spulec/moto
 sftpserver==0.3
+factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
+faker~=faker~=20.1.0
 
 # Code quality
 # ------------------------------------------------------------------------------
@@ -28,9 +30,6 @@ coverage==6.5.0  # https://github.com/nedbat/coveragepy
 
 # Django
 # ------------------------------------------------------------------------------
-factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
-faker~=19.6.2
-
 django-debug-toolbar~=4.2.0  # https://github.com/jazzband/django-debug-toolbar
 django-extensions~=3.2.3  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin~=3.1.0  # https://github.com/nedbat/django_coverage_plugin

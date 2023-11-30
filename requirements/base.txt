@@ -23,7 +23,7 @@ django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
 django-allauth>=0.57.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
-django-redis==5.2.0  # https://github.com/niwinz/django-redis
+django-redis==5.4.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
 django-modeltranslation>=0.17.2 # https://github.com/deschler/django-modeltranslation
 django-taggit>=1.5.0 # https://github.com/jazzband/django-taggit
@@ -54,7 +54,7 @@ django-import-export==2.8.0
 gitpython==3.1.37
 
 # S3 Uploads
-boto3==1.28.54
+boto3==1.33.4
 django-storages==1.14  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads
@@ -70,7 +70,7 @@ stream-unzip>=0.0.58
 bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
 
 # Elasticsearch
-django-elasticsearch-dsl>=7.0.0
+django-elasticsearch-dsl>7.0,<8.0
 elasticsearch<7.14.0
 # used to unaccent strings for sorting
 unidecode

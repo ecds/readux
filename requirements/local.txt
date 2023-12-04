@@ -12,7 +12,7 @@ mypy==1.5.1  # https://github.com/python/mypy
 pytest>=7.4.3  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.7  # https://github.com/Frozenball/pytest-sugar
 pytest-cov==4.1.0
-pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
+pytest-django==4.7.0  # https://github.com/pytest-dev/pytest-django
 py==1.11.0 # https://github.com/pytest-dev/pytest/issues/10420
 requests~=2.31.0
 iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi

@@ -18,7 +18,7 @@ requests~=2.31.0
 iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty~=1.1.4 # https://pypi.org/project/httpretty/
 #mock~=4.0.2
-cssutils~=2.6.0 # https://pypi.org/project/cssutils/
+cssutils~=2.9.0 # https://pypi.org/project/cssutils/
 moto==4.2.0 # https://github.com/spulec/moto
 sftpserver==0.3
 factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy

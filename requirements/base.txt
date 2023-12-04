@@ -55,7 +55,7 @@ gitpython==3.1.37
 
 # S3 Uploads
 boto3==1.33.4
-django-storages==1.14  # https://github.com/jschneier/django-storages
+django-storages==1.14.2  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads
 pysftp==0.2.9 # https://pysftp.readthedocs.io/

@@ -58,7 +58,7 @@ def create_related_links(manifest, related_str):
             manifest=manifest,
             link=link,
             format=format or "text/html",  # assume web page if MIME type cannot be determined
-            data_type="Document",  # assume this is not meant for seeAlso
+            is_structured_data=False,  # assume this is not meant for seeAlso
         )
 
 def create_manifest(ingest):
@@ -108,7 +108,8 @@ def create_manifest(ingest):
         RelatedLink(
             manifest=manifest,
             link=ingest.remote_url,
-            format='application/ld+json'
+            format='application/ld+json',
+            is_structured_data=True,
         ).save()
 
     return manifest

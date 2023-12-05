@@ -39,7 +39,7 @@ class RelatedLinksInline(admin.TabularInline):
     exclude = ("id",)
     fields = (
         "link",
-        "data_type",
+        "is_structured_data",
         "format",
     )
     extra = 1

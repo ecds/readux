@@ -288,12 +288,12 @@ class Manifest(IiifBase):
             "see_also": [
                 link.link
                 for link in related_links
-                if link.data_type.lower() == "dataset"
+                if link.is_structured_data
             ],
             "related": [
                 link.link
                 for link in related_links
-                if link.data_type.lower() != "dataset"
+                if not link.is_structured_data
             ],
         }
 
@@ -304,18 +304,15 @@ class Manifest(IiifBase):
         :return: List of links to structured data describing Manifest
         :rtype: list
         """
-        links = []
-        for link in self.relatedlink_set.all():
-            if link.data_type.lower() == "dataset":
-                links.append(
-                    {
-                        "@id": link.link,
-                        "format": link.format,
-                    }
-                    if link.format
-                    else link.link
-                )
-        return links
+        return [
+            {
+                "@id": link.link,
+                "format": link.format,
+            }
+            if link.format
+            else link.link
+            for link in self.relatedlink_set.filter(is_structured_data=True)
+        ]
 
     # TODO: Is this needed? It doesn't seem to be called anywhere.
     # Could we just use the label as is?
@@ -398,9 +395,12 @@ class RelatedLink(models.Model):
     data_type = models.CharField(
         max_length=255,
         default='Dataset',
-        help_text="Leave as 'Dataset' for structured data describing this document (e.g. a " +
-        "remote manifest) and this link will appear in 'seeAlso'; change to any other value and " +
-        "it will only appear in the 'related' property of the manifest.",
+    )
+    is_structured_data = models.BooleanField(
+        default=False,
+        help_text="True if this link is structured data that should appear in the manifest's " +
+        "'seeAlso' field; if false, the link will appear in the 'related' field instead. Leave " +
+        "unchecked if unsure.",
     )
     label = GenericRelation(ValueByLanguage)
     format = models.CharField(max_length=255, choices=Choices.MIMETYPES, blank=True, null=True)

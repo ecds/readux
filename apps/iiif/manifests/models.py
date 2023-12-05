@@ -341,7 +341,13 @@ class RelatedLink(models.Model):
     """ Links to related resources """
     id = models.UUIDField(primary_key=True, default=uuid4)
     link = models.CharField(max_length=255)
-    data_type = models.CharField(max_length=255, default='Dataset')
+    data_type = models.CharField(
+        max_length=255,
+        default='Dataset',
+        help_text="Leave as 'Dataset' for structured data describing this document (e.g. a " +
+        "remote manifest) and this link will appear in 'seeAlso'; change to any other value and " +
+        "it will only appear in the 'related' property of the manifest.",
+    )
     label = GenericRelation(ValueByLanguage)
     format = models.CharField(max_length=255, choices=Choices.MIMETYPES, blank=True, null=True)
     profile = models.CharField(max_length=255, blank=True, null=True)

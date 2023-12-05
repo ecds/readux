@@ -175,7 +175,7 @@ class ManifestTests(TestCase):
                 [manifest]
             )
         )
-        assert 'seeAlso' not in no_links.keys()
+        assert not no_links['seeAlso']
 
         link = RelatedLink(link='images.org', manifest=manifest)
         link.save()

@@ -259,8 +259,37 @@ class Manifest(IiifBase):
         :return: List of links related to Manifest
         :rtype: list
         """
-        links = [link.link for link in self.relatedlink_set.all()]
-        links.append(self.get_volume_url())
+        links = [
+            {
+                "@id": link.link,
+                "format": link.format,
+            } if link.format else link.link
+            for link in self.relatedlink_set.all()
+        ]
+        links.append({
+            "@id": self.get_volume_url(),
+            "format": "text/html"
+        })
+        return links
+
+    @property
+    def see_also_links(self):
+        """List of links for IIIF v2 'seeAlso' field (structured data).
+
+        :return: List of links to structured data describing Manifest
+        :rtype: list
+        """
+        links = []
+        for link in self.relatedlink_set.all():
+            if link.data_type.lower() == "dataset":
+                links.append(
+                    {
+                        "@id": link.link,
+                        "format": link.format,
+                    }
+                    if link.format
+                    else link.link
+                )
         return links
 
     # TODO: Is this needed? It doesn't seem to be called anywhere.

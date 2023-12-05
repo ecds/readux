@@ -279,7 +279,11 @@ class Manifest(IiifBase):
         :return: Dict of external links ("related" and "seeAlso")
         :rtype: dict
         """
-        related_links = self.relatedlink_set.all()
+        # exclude internal links from related link set
+        related_links = self.relatedlink_set.exclude(
+            link__icontains=settings.HOSTNAME
+        )
+        # dict keys correspond to headings in sidebar
         return {
             "see_also": [
                 link.link

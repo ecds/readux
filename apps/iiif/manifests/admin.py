@@ -1,6 +1,7 @@
 """Django admin module for maninfests"""
 from django.contrib import admin
 from django.http import HttpResponseRedirect
+from django.http.request import HttpRequest
 from django.urls.conf import path
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
@@ -35,6 +36,7 @@ class ManifestResource(resources.ModelResource):
 
 class RelatedLinksInline(admin.TabularInline):
     model = RelatedLink
+    exclude = ("id",)
     fields = (
         "link",
         "data_type",

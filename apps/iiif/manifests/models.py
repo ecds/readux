@@ -368,7 +368,7 @@ class Note(models.Model):
 
 class RelatedLink(models.Model):
     """ Links to related resources """
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     link = models.CharField(max_length=255)
     data_type = models.CharField(
         max_length=255,

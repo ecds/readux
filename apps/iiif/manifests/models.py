@@ -273,6 +273,27 @@ class Manifest(IiifBase):
         return links
 
     @property
+    def external_links(self):
+        """Dict of lists of external links for display on volume pages
+        
+        :return: Dict of external links ("related" and "seeAlso")
+        :rtype: dict
+        """
+        related_links = self.relatedlink_set.all()
+        return {
+            "see_also": [
+                link.link
+                for link in related_links
+                if link.data_type.lower() == "dataset"
+            ],
+            "related": [
+                link.link
+                for link in related_links
+                if link.data_type.lower() != "dataset"
+            ],
+        }
+
+    @property
     def see_also_links(self):
         """List of links for IIIF v2 'seeAlso' field (structured data).
 

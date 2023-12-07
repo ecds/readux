@@ -78,7 +78,7 @@
             {% for canvas in volume.meta.inner_hits|group_by_canvas %}
                 <dd class="result-page">
                     <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
-                        <span class="page-number">p. {{ canvas.position|add:1 }}</span>
+                        <span class="page-number">p. {{ canvas.position }}</span>
                         {% if canvas.highlights|length %}
                             <ul class="highlights">
                             {% for fragment in canvas.highlights %}

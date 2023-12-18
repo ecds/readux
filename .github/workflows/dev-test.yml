@@ -20,7 +20,7 @@ jobs:
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
         env:
-          STACK_VERSION: 7.17.1
+          STACK_VERSION: 7.17.5
           xpack.security.enabled: false
           cluster.name: readux-elasticsearch
           http.port: 9200

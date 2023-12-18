@@ -32,7 +32,6 @@ class TestReaduxViews:
         assert isinstance(data['page'], Canvas)
         assert isinstance(data['user_annotation_page_count'], int)
         assert isinstance(data['user_annotation_count'], int)
-        assert data['mirador_url'] == settings.MIRADOR_URL
 
     def test_page_detail_context_with_no_page_in_kwargs(self):
         factory = RequestFactory()

@@ -1865,18 +1865,39 @@ div#search-grid input[type="checkbox"]#toggle-date + label span {
 }
 
 /* Individual search results */
-ol#search-results {
-  list-style: none; }
-
-ol#search-results dl {
-  margin-left: 2rem; }
-
 /* Clamp summary to 3 lines */
-ol#search-results dd.result-volume-summary {
+#search-results .result-volume-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden; }
+
+/* search result highlighting */
+#search-results em {
+  color: #510029 !important;
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* results within full text */
+#search-results .result-page a {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 0.8rem;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+#search-results .result-page .page-number {
+  min-width: 4rem;
+  max-width: 4rem;
+}
+
+#search-results .result-page ul li {
+  list-style: disc;
+}
 
 .sr-only {
   position: absolute;

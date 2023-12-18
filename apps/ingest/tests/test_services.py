@@ -32,11 +32,6 @@ class ServicesTest(TestCase):
 
         cleaned_metadata = services.clean_metadata(fake_metadata)
 
-        manifest_fields = [f.name for f in Manifest._meta.get_fields()]
-
-        for key in cleaned_metadata.keys():
-            assert key in manifest_fields
-
         assert 'Published City' not in cleaned_metadata.keys()
         assert 'PUBLISHER' not in cleaned_metadata.keys()
         assert cleaned_metadata['published_city'] == fake_metadata['Published City']

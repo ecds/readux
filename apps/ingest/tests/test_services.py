@@ -21,8 +21,7 @@ class ServicesTest(TestCase):
         self.fixture_path = os.path.join(settings.APPS_DIR, 'ingest/fixtures/')
 
     def test_cleaning_metadata(self):
-        """ It should normalize keys and remove key/value pairs that
-        do not match a Manifest field. """
+        """ It should normalize keys that match a Manifest field. """
         fake_metadata = {
             'pid': 'blm',
             'invalid': 'trump',
@@ -40,7 +39,6 @@ class ServicesTest(TestCase):
 
         assert 'Published City' not in cleaned_metadata.keys()
         assert 'PUBLISHER' not in cleaned_metadata.keys()
-        assert 'invalid' not in cleaned_metadata.keys()
         assert cleaned_metadata['published_city'] == fake_metadata['Published City']
         assert cleaned_metadata['publisher'] == fake_metadata['PUBLISHER']
 

@@ -1,5 +1,6 @@
 """ Module of service classes and methods for ingest. """
 import itertools
+import re
 from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
 
@@ -10,15 +11,21 @@ from apps.iiif.manifests.models import Manifest, RelatedLink
 
 
 def clean_metadata(metadata):
-    print(metadata)
-    """Remove keys that do not align with Manifest fields.
+    """Normalize names of fields that align with Manifest fields.
 
     :param metadata:
     :type metadata: tablib.Dataset
     :return: Dictionary with keys matching Manifest fields
     :rtype: dict
     """
-    metadata = {key.casefold().replace(' ', '_'): value for key, value in metadata.items()}
+    fields = [f.name for f in Manifest._meta.get_fields()]
+    metadata = {
+        (
+            key.casefold().replace(" ", "_")
+            if key.casefold().replace(" ", "_") in fields
+            else key
+        ): value for key, value in metadata.items()
+    }
 
     for key in metadata.keys():
         if key != 'metadata' and isinstance(metadata[key], list):
@@ -249,6 +256,7 @@ def get_associated_meta(all_metadata, file):
     file_meta = {}
     extless_filename = file.name[0:file.name.rindex('.')]
     for meta_dict in all_metadata:
+        metadata_found_filename = None
         for key, val in meta_dict.items():
             if key.casefold() == 'filename':
                 metadata_found_filename = val
@@ -257,9 +265,10 @@ def get_associated_meta(all_metadata, file):
             file_meta = meta_dict
     return file_meta
 
-def lowercase_first_line(iterator):
-    """Lowercase the first line of a text file (such as the header row of a CSV)"""
-    return itertools.chain(
-        # ignore unicode characters, set lowercase, and strip whitespace
-        [next(iterator).encode('ascii', 'ignore').decode().casefold().strip()], iterator
-    )
+def normalize_header(iterator):
+    """Normalize the header row of a metadata CSV"""
+    # ignore unicode characters and strip whitespace
+    header_row = next(iterator).encode("ascii", "ignore").decode().strip()
+    # lowercase the word "pid" in this row so we can access it easily
+    header_row = re.sub(r"[Pp][Ii][Dd]", lambda m: m.group(0).casefold(), header_row)
+    return itertools.chain([header_row], iterator)

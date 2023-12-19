@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags static %}
+{% load wagtailcore_tags static readux_extras %}
 
 {% block extra_head %}
     <meta property="og:title" content="Readux - Search" />
@@ -112,6 +112,16 @@
                         {{ form.end_date }}
                     </noscript>
                 </fieldset>
+                {% for key in CUSTOM_METADATA_KEYS %}
+                    <fieldset class="uk-margin">
+                        <div class="uk-width-1-1">
+                            {% with form|dict_item:key as field %}
+                                <div class="uk-form-label">{{ field.label }}</div>
+                                {{ field }}
+                            {% endwith %}
+                        </div>
+                    </fieldset>
+                {% endfor %}
                 <fieldset class="uk-margin uk-width-1-1 uk-flex uk-flex-between">
                     <button id="reset-filters" class="uk-button uk-button-danger" type="button">
                         Reset filters

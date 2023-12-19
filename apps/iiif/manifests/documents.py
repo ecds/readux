@@ -3,7 +3,7 @@
 from html import unescape
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
-from elasticsearch_dsl import analyzer
+from elasticsearch_dsl import MetaField, Keyword, analyzer
 from django.db.models.query import Prefetch
 from django.utils.html import strip_tags
 from unidecode import unidecode
@@ -26,6 +26,7 @@ class ManifestDocument(Document):
     """Elasticsearch Document class for IIIF Manifest"""
 
     # fields to map explicitly in Elasticsearch
+    attribution = fields.TextField()
     authors = fields.KeywordField(multi=True)  # only used for faceting/filtering
     author = fields.TextField()  # only used for searching
     canvas_set = fields.NestedField(
@@ -42,6 +43,10 @@ class ManifestDocument(Document):
     label = fields.TextField(analyzer=stemmer)
     label_alphabetical = fields.KeywordField()
     languages = fields.KeywordField(multi=True)
+    license = fields.TextField()
+    metadata = fields.NestedField()
+    published_city = fields.TextField()
+    publisher = fields.TextField()
     summary = fields.TextField(analyzer=stemmer)
 
     class Index:
@@ -56,18 +61,27 @@ class ManifestDocument(Document):
 
         # fields to map dynamically in Elasticsearch
         fields = [
-            "attribution",
             "created_at",
             "date_sort_ascending",
             "date_sort_descending",
-            "license",
             "pid",
-            "published_city",
             "published_date",
-            "publisher",
             "viewingdirection",
         ]
         related_models = [Collection, Canvas]
+
+    class Meta:
+        # make Keyword type default for strings, for custom dynamically-mapped facet fields
+        dynamic_templates = MetaField(
+            [
+                {
+                    "strings": {
+                        "match_mapping_type": "string",
+                        "mapping": Keyword().to_dict(),
+                    }
+                }
+            ]
+        )
 
     def prepare_authors(self, instance):
         """convert authors string into list"""

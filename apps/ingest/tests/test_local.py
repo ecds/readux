@@ -331,6 +331,23 @@ class LocalTest(TestCase):
         assert local.manifest.pid == '808'
         assert local.manifest.title == 'Goodie Mob'
 
+    def test_create_related_links(self):
+        metadata = {
+            'pid': '808',
+            'related': 'https://github.com/ecds/readux/tree/develop;https://archive.org/download/cherokeehymnbook00boud/cherokeehymnbook00boud.pdf'
+        }
+        local = self.mock_local('no_meta_file.zip', metadata=metadata)
+        local.manifest = create_manifest(local)
+        related_links = local.manifest.related_links
+        # should get 2 from metadata, 1 from volume url
+        assert len(related_links) == 3
+        # should get github link format as text/html
+        assert any([link["@id"] == "https://github.com/ecds/readux/tree/develop" for link in related_links])
+        assert any([link["format"] == "text/html" for link in related_links])
+        # should get pdf format too
+        assert any([link["@id"] == "https://archive.org/download/cherokeehymnbook00boud/cherokeehymnbook00boud.pdf" for link in related_links])
+        assert any([link["format"] == "application/pdf" for link in related_links])
+
     def test_moving_bulk_bundle_to_s3(self):
         """
         It should upload Local.bundle_from_bulk to mock S3 by saving it to

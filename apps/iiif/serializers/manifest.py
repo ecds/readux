@@ -125,10 +125,9 @@ class Serializer(JSONSerializer):
                             )
                         )
                     }
-                ]
+                ],
+                "seeAlso": obj.see_also_links,
             }
-            if obj.relatedlink_set.exists():
-                data["seeAlso"] = [related.link for related in obj.relatedlink_set.all()]
             return data
         return None
 

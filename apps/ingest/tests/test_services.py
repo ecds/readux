@@ -90,8 +90,8 @@ class ServicesTest(TestCase):
             remote_url='https://swoop.net/manifest.json' # pylint: disable=line-too-long
         )
         manifest = services.create_manifest(remote)
-        related_link = manifest.relatedlink_set.first()
-        assert related_link.link == remote.remote_url
+        related_links = manifest.relatedlink_set.all()
+        assert any([link.link == remote.remote_url for link in related_links])
 
         httpretty.disable()
 

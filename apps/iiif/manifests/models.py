@@ -259,9 +259,60 @@ class Manifest(IiifBase):
         :return: List of links related to Manifest
         :rtype: list
         """
-        links = [link.link for link in self.relatedlink_set.all()]
-        links.append(self.get_volume_url())
+        links = [
+            {
+                "@id": link.link,
+                "format": link.format,
+            } if link.format else link.link
+            for link in self.relatedlink_set.all()
+        ]
+        links.append({
+            "@id": self.get_volume_url(),
+            "format": "text/html"
+        })
         return links
+
+    @property
+    def external_links(self):
+        """Dict of lists of external links for display on volume pages
+        
+        :return: Dict of external links ("related" and "seeAlso")
+        :rtype: dict
+        """
+        # exclude internal links from related link set
+        related_links = self.relatedlink_set.exclude(
+            link__icontains=settings.HOSTNAME
+        )
+        # dict keys correspond to headings in sidebar
+        return {
+            "see_also": [
+                link.link
+                for link in related_links
+                if link.is_structured_data
+            ],
+            "related": [
+                link.link
+                for link in related_links
+                if not link.is_structured_data
+            ],
+        }
+
+    @property
+    def see_also_links(self):
+        """List of links for IIIF v2 'seeAlso' field (structured data).
+
+        :return: List of links to structured data describing Manifest
+        :rtype: list
+        """
+        return [
+            {
+                "@id": link.link,
+                "format": link.format,
+            }
+            if link.format
+            else link.link
+            for link in self.relatedlink_set.filter(is_structured_data=True)
+        ]
 
     # TODO: Is this needed? It doesn't seem to be called anywhere.
     # Could we just use the label as is?
@@ -339,9 +390,18 @@ class Note(models.Model):
 
 class RelatedLink(models.Model):
     """ Links to related resources """
-    id = models.UUIDField(primary_key=True, default=uuid4)
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     link = models.CharField(max_length=255)
-    data_type = models.CharField(max_length=255, default='Dataset')
+    data_type = models.CharField(
+        max_length=255,
+        default='Dataset',
+    )
+    is_structured_data = models.BooleanField(
+        default=False,
+        help_text="True if this link is structured data that should appear in the manifest's " +
+        "'seeAlso' field; if false, the link will appear in the 'related' field instead. Leave " +
+        "unchecked if unsure.",
+    )
     label = GenericRelation(ValueByLanguage)
     format = models.CharField(max_length=255, choices=Choices.MIMETYPES, blank=True, null=True)
     profile = models.CharField(max_length=255, blank=True, null=True)

@@ -109,5 +109,5 @@ django-extensions~=3.2.3  # https://github.com/django-extensions/django-extensio
 django-coverage-plugin~=3.1.0  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https
 
-celery~=5.3.4
+celery~=5.3.6
 django-celery-results~=2.4.0

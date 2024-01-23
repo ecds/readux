@@ -18,7 +18,7 @@ from apps.ingest import tasks
 from .forms import BulkVolumeUploadForm
 from .models import Bulk, IngestTaskWatcher, Local, Remote, S3Ingest
 from .services import (clean_metadata, create_manifest, get_associated_meta,
-                       get_metadata_from, lowercase_first_line)
+                       get_metadata_from, normalize_header)
 
 LOGGER = logging.getLogger(__name__)
 class LocalAdmin(admin.ModelAdmin):
@@ -253,7 +253,7 @@ class S3IngestForm(forms.ModelForm):
         csv_file = self.cleaned_data.get('metadata_spreadsheet')
         if csv_file:
             reader = csv.DictReader(
-                lowercase_first_line(
+                normalize_header(
                     StringIO(csv_file.read().decode('utf-8'))
                 ),
             )
@@ -284,7 +284,7 @@ class S3IngestAdmin(admin.ModelAdmin):
         # Get spreadsheet with metadata to match each volume
         obj.metadata_spreadsheet.seek(0)
         metadata = csv.DictReader(
-            lowercase_first_line(
+            normalize_header(
                 StringIO(obj.metadata_spreadsheet.read().decode('utf-8'))
             ),
         )

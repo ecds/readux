@@ -321,15 +321,15 @@ class LocalTest(TestCase):
     #     except Local.DoesNotExist:
     #         pass
 
-    def test_it_creates_mainfest_with_metadata_property(self):
+    def test_it_creates_manifest_with_metadata_property(self):
         metadata = {
             'pid': '808',
-            'title': 'Goodie Mob'
+            'label': 'Goodie Mob'
         }
         local = self.mock_local('no_meta_file.zip', metadata=metadata)
         local.manifest = create_manifest(local)
         assert local.manifest.pid == '808'
-        assert local.manifest.title == 'Goodie Mob'
+        assert local.manifest.label == 'Goodie Mob'
 
     def test_create_related_links(self):
         metadata = {

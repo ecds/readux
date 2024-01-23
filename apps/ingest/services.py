@@ -1,5 +1,6 @@
 """ Module of service classes and methods for ingest. """
 import itertools
+import re
 from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
 
@@ -10,20 +11,21 @@ from apps.iiif.manifests.models import Manifest, RelatedLink
 
 
 def clean_metadata(metadata):
-    print(metadata)
-    """Remove keys that do not align with Manifest fields.
+    """Normalize names of fields that align with Manifest fields.
 
     :param metadata:
     :type metadata: tablib.Dataset
     :return: Dictionary with keys matching Manifest fields
     :rtype: dict
     """
-    metadata = {key.casefold().replace(' ', '_'): value for key, value in metadata.items()}
-    fields = [
-        *(f.name for f in Manifest._meta.get_fields()),
-        "related",  # used for related external links
-    ]
-    invalid_keys = []
+    fields = [f.name for f in Manifest._meta.get_fields()]
+    metadata = {
+        (
+            key.casefold().replace(" ", "_")
+            if key.casefold().replace(" ", "_") in fields
+            else key
+        ): value for key, value in metadata.items()
+    }
 
     for key in metadata.keys():
         if key != 'metadata' and isinstance(metadata[key], list):
@@ -33,12 +35,6 @@ def clean_metadata(metadata):
                         metadata[key] = metadata[key][0][meta_key]
             else:
                 metadata[key] = ', '.join(metadata[key])
-        if key not in fields:
-            invalid_keys.append(key)
-
-    # TODO: Update this method to allow all "invalid" keys to populate Manifest.metadata JSONField
-    for invalid_key in invalid_keys:
-        metadata.pop(invalid_key)
 
     return metadata
 
@@ -47,7 +43,7 @@ def create_related_links(manifest, related_str):
     Create RelatedLink objects from supplied related links string and associate each with supplied
     Manifest. String should consist of semicolon-separated URLs.
     :param manifest:
-    :type related_str: iiif.manifest.models.Manifest
+    :type manifest: iiif.manifest.models.Manifest
     :param related_str:
     :type related_str: str
     :rtype: None
@@ -60,6 +56,41 @@ def create_related_links(manifest, related_str):
             format=format or "text/html",  # assume web page if MIME type cannot be determined
             is_structured_data=False,  # assume this is not meant for seeAlso
         )
+
+def set_metadata(manifest, metadata):
+    """
+    Update Manifest.metadata using supplied metadata dict
+    :param manifest:
+    :type manifest: iiif.manifest.models.Manifest
+    :param metadata:
+    :type metadata: dict
+    :rtype: None
+    """
+    fields = [f.name for f in Manifest._meta.get_fields()]
+    for (key, value) in metadata.items():
+        if key == "related":
+            # add RelatedLinks from metadata spreadsheet key "related"
+            create_related_links(manifest, value)
+        elif key in fields:
+            setattr(manifest, key, value)
+        else:
+            # all other keys go into Manifest.metadata JSONField
+            if isinstance(manifest.metadata, list):
+                # add label and value to list
+                manifest.metadata.append({"label": key, "value": value})
+            elif isinstance(manifest.metadata, dict):
+                # convert to list of {label, value} as expected by iiif spec
+                manifest.metadata = [
+                    *[
+                        {"label": k, "value": v}
+                        for (k, v) in manifest.metadata.items()
+                    ],
+                    {"label": key, "value": value},
+                ]
+            else:
+                # instantiate as list
+                manifest.metadata = [{"label": key, "value": value}]
+    manifest.save()
 
 def create_manifest(ingest):
     """
@@ -81,14 +112,7 @@ def create_manifest(ingest):
             manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
         else:
             manifest = Manifest.objects.create()
-        for (key, value) in metadata.items():
-            if key == "related":
-                # add RelatedLinks from metadata spreadsheet key "related"
-                create_related_links(manifest, value)
-            else:
-                # all other keys should exist as fields on Manifest (for now)
-                setattr(manifest, key, value)
-            # TODO: if the key doesn't exist on Manifest model, add it to Manifest.metadata
+        set_metadata(manifest, metadata)
     else:
         manifest = Manifest()
 
@@ -232,6 +256,7 @@ def get_associated_meta(all_metadata, file):
     file_meta = {}
     extless_filename = file.name[0:file.name.rindex('.')]
     for meta_dict in all_metadata:
+        metadata_found_filename = None
         for key, val in meta_dict.items():
             if key.casefold() == 'filename':
                 metadata_found_filename = val
@@ -240,9 +265,10 @@ def get_associated_meta(all_metadata, file):
             file_meta = meta_dict
     return file_meta
 
-def lowercase_first_line(iterator):
-    """Lowercase the first line of a text file (such as the header row of a CSV)"""
-    return itertools.chain(
-        # ignore unicode characters, set lowercase, and strip whitespace
-        [next(iterator).encode('ascii', 'ignore').decode().casefold().strip()], iterator
-    )
+def normalize_header(iterator):
+    """Normalize the header row of a metadata CSV"""
+    # ignore unicode characters and strip whitespace
+    header_row = next(iterator).encode("ascii", "ignore").decode().strip()
+    # lowercase the word "pid" in this row so we can access it easily
+    header_row = re.sub(r"[Pp][Ii][Dd]", lambda m: m.group(0).casefold(), header_row)
+    return itertools.chain([header_row], iterator)

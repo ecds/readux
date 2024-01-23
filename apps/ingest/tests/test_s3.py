@@ -17,7 +17,7 @@ from .mock_sftp import MockSFTP
 from apps.iiif.manifests.tests.factories import ManifestFactory, ImageServerFactory
 from ..models import S3Ingest
 from ..services import (clean_metadata, create_manifest, get_associated_meta,
-                       get_metadata_from, lowercase_first_line)
+                       get_metadata_from, normalize_header)
 
 pytestmark = pytest.mark.django_db(transaction=True) # pylint: disable = invalid-name
 

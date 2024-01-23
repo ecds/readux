@@ -6,7 +6,7 @@ from django.conf import settings
 from apps.iiif.manifests.tests.factories import ManifestFactory
 from .factories import RemoteFactory
 from ..services import (clean_metadata, create_manifest, get_associated_meta,
-                       get_metadata_from, lowercase_first_line)
+                       get_metadata_from, normalize_header)
 
 
 class RemoteTest(TestCase):

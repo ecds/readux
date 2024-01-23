@@ -171,3 +171,24 @@ LOGGING = {
 
 # Must be configured to the host and port running Elasticsearch
 ELASTICSEARCH_DSL['default']['hosts'] = 'user:pass@localhost:9200'
+
+# Custom faceted metadata fields configuration. Must be a dict with key names
+# matching exactly the ingest metadata spradsheet column names to be indexed.
+# For each column, configure options for whether it should accept multiple
+# values in a single record ("multi": True), and if so, what separator will be
+# used ("separator": ";", semicolon by default).
+# Note that these key names will also correspond to "label" names in the Manifest
+# metadata list.
+# 
+# Example:
+# CUSTOM_METADATA = {
+#     "Column Name": {
+#         "multi": True,
+#         "separator": ";",
+#     },
+#     "Other Column": {
+#         "multi": False,
+#     },
+# }
+
+CUSTOM_METADATA = {}

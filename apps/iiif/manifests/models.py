@@ -32,6 +32,7 @@ class ImageServer(models.Model):
         ('sftp', 'SFTP'),
         ('s3', 'S3'),
         ('remote', 'Remote'),
+        ('local', 'Local')
     )
 
     id = models.UUIDField(primary_key=True, default=uuid4)
@@ -275,7 +276,7 @@ class Manifest(IiifBase):
     @property
     def external_links(self):
         """Dict of lists of external links for display on volume pages
-        
+
         :return: Dict of external links ("related" and "seeAlso")
         :rtype: dict
         """

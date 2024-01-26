@@ -32,7 +32,7 @@ jobs:
           - 9200:9200
 
       postgres:
-        image: postgres:10
+        image: postgres:12
         env:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: user

@@ -86,6 +86,7 @@ class AbstractAnnotation(IiifBase):
 class Annotation(AbstractAnnotation):
     """Model class for IIIF annotations."""
     def save(self, *args, **kwargs):
+        self.set_span_element()
         # if not self.content or self.content.isspace():
             # raise ValidationError('Content cannot be empty')
             # self.content = '  '
@@ -95,43 +96,43 @@ class Annotation(AbstractAnnotation):
         ordering = ['order']
         abstract = False
 
-@receiver(signals.pre_save, sender=Annotation)
-def set_span_element(sender, instance, **kwargs):
-    """
-    Post save function to wrap the OCR content in a `<span>` to be overlayed in OpenSeadragon.
+    # @receiver(signals.pre_save, sender=Annotation)
+    def set_span_element(self):
+        """
+        Post save function to wrap the OCR content in a `<span>` to be overlaid in OpenSeadragon.
 
-    :param sender: Class calling function
-    :type sender: apps.iiif.annotations.models.Annotation
-    :param instance: Annotation object
-    :type instance: apps.iiif.annotations.models.Annotation
-    """
-    # Guard for when an OCR annotation gets re-saved.
-    # Without this, it would nest the current span in a new span.
-    if instance.content.startswith('<span'):
-        instance.content = BeautifulSoup(instance.content, 'html.parser').span.string
-    if (instance.resource_type in (sender.OCR,)):
-        instance.oa_annotation['annotatedBy'] = {'name': 'ocr'}
-        instance.owner = USER.objects.get_or_create(username='ocr', name='OCR')[0]
-        character_count = len(instance.content)
-        # 1.6 is a "magic number" that seems to work pretty well ¯\_(ツ)_/¯
-        font_size = instance.h / 1.6
-        # Assuming a character's width is half the height. This was my first guess.
-        # This should give us how long all the characters will be.
-        string_width = (font_size / 2) * character_count
-        letter_spacing = 0
-        relative_letter_spacing = 0
-        if instance.w > 0:
-            # And this is what we're short.
-            space_to_fill = instance.w - string_width
-            # Divide up the space to fill and space the letters.
-            letter_spacing = space_to_fill / character_count
-            # Percent of letter spacing of overall width.
-            # This is used by OpenSeadragon. OSD will update the letter spacing relative to
-            # the width of the overlayed element when someone zooms in and out.
-            relative_letter_spacing = letter_spacing / instance.w
-        instance.content = "<span id='{pk}' class='anno-{pk}' data-letter-spacing='{p}'>{content}</span>".format(
-            pk=instance.pk, content=instance.content, p=str(relative_letter_spacing)
-        )
-        instance.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {ls}px;}}".format(
-            c=(instance.pk), h=str(instance.h), w=str(instance.w), f=str(font_size), ls=str(letter_spacing)
-        )
+        :param sender: Class calling function
+        :type sender: apps.iiif.annotations.models.Annotation
+        :param instance: Annotation object
+        :type instance: apps.iiif.annotations.models.Annotation
+        """
+        # Guard for when an OCR annotation gets re-saved.
+        # Without this, it would nest the current span in a new span.
+        if self.content.startswith('<span'):
+            self.content = BeautifulSoup(self.content, 'html.parser').span.string
+        if (self.resource_type in (self.OCR,)):
+            self.oa_annotation['annotatedBy'] = {'name': 'ocr'}
+            self.owner = USER.objects.get_or_create(username='ocr', name='OCR')[0]
+            character_count = len(self.content)
+            # 1.6 is a "magic number" that seems to work pretty well ¯\_(ツ)_/¯
+            font_size = self.h / 1.6
+            # Assuming a character's width is half the height. This was my first guess.
+            # This should give us how long all the characters will be.
+            string_width = (font_size / 2) * character_count
+            letter_spacing = 0
+            relative_letter_spacing = 0
+            if self.w > 0:
+                # And this is what we're short.
+                space_to_fill = self.w - string_width
+                # Divide up the space to fill and space the letters.
+                letter_spacing = space_to_fill / character_count
+                # Percent of letter spacing of overall width.
+                # This is used by OpenSeadragon. OSD will update the letter spacing relative to
+                # the width of the overlaid element when someone zooms in and out.
+                relative_letter_spacing = letter_spacing / self.w
+            self.content = "<span id='{pk}' class='anno-{pk}' data-letter-spacing='{p}'>{content}</span>".format(
+                pk=self.pk, content=self.content, p=str(relative_letter_spacing)
+            )
+            self.style = ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: {ls}px;}}".format(
+                c=(self.pk), h=str(self.h), w=str(self.w), f=str(font_size), ls=str(letter_spacing)
+            )

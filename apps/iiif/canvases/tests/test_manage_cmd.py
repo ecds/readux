@@ -5,10 +5,11 @@ from io import StringIO
 from bs4 import BeautifulSoup
 from django.test import TestCase
 from django.core.management import call_command
+from apps.users.tests.factories import UserFactory
+from .factories import CanvasFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
 from ...manifests.tests.factories import ImageServerFactory
-from .factories import CanvasFactory
 
 class CanvasTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
@@ -17,12 +18,13 @@ class CanvasTests(TestCase):
         self.canvas = Canvas.objects.get(pk='7261fae2-a24e-4a1c-9743-516f6c4ea0c9')
 
     def test_command_output_rebuild_manifest(self):
-        # manifest = Manifest.objects
+        UserFactory.create(username='ocr', name='OCR')
         out = StringIO()
         call_command('rebuild_ocr', manifest=self.canvas.manifest.pid, stdout=out)
         assert 'OCR rebuilt for manifest' in out.getvalue()
 
     def test_command_output_rebuild_canvas(self):
+        UserFactory.create(username='ocr', name='OCR')
         out = StringIO()
         call_command('rebuild_ocr', canvas=Canvas.objects.all().first().pid, stdout=out)
         assert 'OCR rebuilt for canvas' in out.getvalue()
@@ -52,6 +54,8 @@ class CanvasTests(TestCase):
         original_anno_count = self.canvas.annotation_set.all().count()
         # Check the OCR attributes before rebuilding.
         first_anno = self.canvas.annotation_set.all().first()
+        first_anno.save()
+        first_anno.refresh_from_db()
         assert first_anno.h == 22
         assert first_anno.w == 22
         assert first_anno.x == 1146
@@ -84,6 +88,8 @@ class CanvasTests(TestCase):
         original_anno_count = canvas.annotation_set.all().count()
         # Check the OCR attributes before rebuilding.
         first_anno = canvas.annotation_set.all().first()
+        first_anno.save()
+        first_anno.refresh_from_db()
         assert first_anno.h == 22
         assert first_anno.w == 22
         assert first_anno.x == 1146

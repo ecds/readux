@@ -18,7 +18,7 @@ from apps.export.export import IiifManifestExport, JekyllSiteExport, GithubExpor
 from apps.export.github import GithubApi
 from apps.readux.tests.factories import UserAnnotationFactory
 from apps.readux.models import UserAnnotation
-from apps.users.tests.factories import SocialAccountFactory, SocialAppFactory, SocialTokenFactory
+from apps.users.tests.factories import SocialAccountFactory, SocialAppFactory, SocialTokenFactory, UserFactory
 from apps.export.views import JekyllExport, ManifestExport
 
 User = get_user_model()
@@ -28,9 +28,13 @@ class ManifestExportTests(TestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.get(pk=111)
+        UserFactory.create(username='ocr', name='OCR')
         self.factory = RequestFactory()
         self.client = Client()
         self.volume = Manifest.objects.get(pk='464d82f6-6ae5-4503-9afc-8e3cdd92a3f1')
+        for canvas in self.volume.canvas_set.all():
+            for ocr in canvas.annotation_set.all():
+                ocr.save()
         self.start_canvas = self.volume.canvas_set.filter(is_starting_page=True).first()
         self.default_start_canvas = self.volume.canvas_set.filter(is_starting_page=False).first()
         self.assumed_label = ' Descrizione del Palazzo Apostolico Vaticano '

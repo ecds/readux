@@ -17,7 +17,8 @@ def dict_item(dictionary, key):
     except AttributeError:
         # fail silently if something other than a dict is passed
         return None
-    
+
+
 @register.filter
 def has_inner_hits(volume):
     """Template filter to determine if there are any inner hits across the volume"""
@@ -32,7 +33,7 @@ def has_inner_hits(volume):
 
 
 @register.filter
-def group_by_canvas(inner_hits):
+def group_by_canvas(inner_hits, limit=3):
     """Template filter to group inner hits by canvas #, then flatten into list"""
     hits_dict = inner_hits.to_dict()
     # dict keyed on canvas
@@ -58,11 +59,11 @@ def group_by_canvas(inner_hits):
     # flatten values into list for display
     grouped = []
     for canvas in canvases.values():
-        # result should generally be of length 3 or less, but if there are multiple exact queries
-        # in this search, ensure at least one highlighted page per exact query (i.e. if none of the
-        # search terms matched on this page are matched on any of the pages we've selected for
-        # display, ensure this page gets displayed too)
-        if len(grouped) < 3 or not any(
+        # result should generally be of length "limit" or less, but if there are multiple exact
+        # queries in this search, ensure at least one highlighted page per exact query (i.e. if
+        # none of the search terms matched on this page are matched on any of the pages we've
+        # selected for display, ensure this page gets displayed too)
+        if len(grouped) < limit or not any(
             [
                 set(c["search_terms"]).intersection(canvas["search_terms"])
                 for c in grouped

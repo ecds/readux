@@ -46,6 +46,7 @@ class ManifestDocument(Document):
     languages = fields.KeywordField(multi=True)
     license = fields.TextField()
     metadata = fields.NestedField()
+    pid = fields.KeywordField()
     published_city = fields.TextField()
     publisher = fields.TextField()
     summary = fields.TextField(analyzer=stemmer)
@@ -65,7 +66,6 @@ class ManifestDocument(Document):
             "created_at",
             "date_sort_ascending",
             "date_sort_descending",
-            "pid",
             "published_date",
             "viewingdirection",
         ]

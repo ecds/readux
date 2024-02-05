@@ -17,7 +17,7 @@ from apps.iiif.canvases.models import Canvas
 from apps.ingest.models import IngestTaskWatcher
 
 from .mail import send_email_on_failure, send_email_on_success
-from .services import create_manifest
+from .services import create_manifest, create_related_links, set_metadata
 
 # Use `apps.get_model` to avoid circular import error. Because the parameters used to
 # create a background task have to be serializable, we can't just pass in the model object.
@@ -128,8 +128,7 @@ def create_canvases_from_s3_ingest(metadata, ingest_id):
         manifest = Manifest.objects.get(pid=pid)
     except Manifest.DoesNotExist:
         manifest = Manifest.objects.create(pid=pid)
-    for (key, value) in metadata.items():
-        setattr(manifest, key, value)
+    set_metadata(manifest, metadata)
     # Image server: set from ingest
     ingest = S3Ingest.objects.get(pk=ingest_id)
     manifest.image_server = ingest.image_server

@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - develop
-  # pull_request:
-  #   branches:
-  #     - develop
+  workflow_dispatch:
 
 env:
   DATABASE_URL: postgres://user:password@localhost:5432/readux
@@ -18,7 +16,7 @@ jobs:
 
     services:
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
         env:
           STACK_VERSION: 7.17.5
           xpack.security.enabled: false
@@ -34,7 +32,7 @@ jobs:
           - 9200:9200
 
       postgres:
-        image: postgres:10
+        image: postgres:12
         env:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: user
@@ -54,17 +52,17 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7.2'
+          ruby-version: "2.7.2"
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18.12'
+          node-version: "18.12"
 
       - name: Install system requirements
         run: |

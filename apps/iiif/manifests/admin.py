@@ -1,12 +1,13 @@
 """Django admin module for maninfests"""
 from django.contrib import admin
 from django.http import HttpResponseRedirect
+from django.http.request import HttpRequest
 from django.urls.conf import path
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget, ForeignKeyWidget
 from django_summernote.admin import SummernoteModelAdmin
-from .models import Manifest, Note, ImageServer
+from .models import Manifest, Note, ImageServer, RelatedLink
 from .forms import ManifestAdminForm
 from .views import AddToCollectionsView
 from ..kollections.models import Collection
@@ -32,6 +33,18 @@ class ManifestResource(resources.ModelResource):
             'pdf', 'metadata', 'attribution', 'logo', 'logo_url', 'license', 'viewingdirection', 'collection_id'
         )
 
+
+class RelatedLinksInline(admin.TabularInline):
+    model = RelatedLink
+    exclude = ("id",)
+    fields = (
+        "link",
+        "is_structured_data",
+        "format",
+    )
+    extra = 1
+    min_num = 0
+
 class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdmin):
     """Django admin configuration for manifests"""
     resource_class = ManifestResource
@@ -42,6 +55,7 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
     summernote_fields = ('summary',)
     form = ManifestAdminForm
     actions = ['add_to_collections_action']
+    inlines = [RelatedLinksInline]
 
     def add_to_collections_action(self, request, queryset):
         """Action choose manifests to add to collections"""

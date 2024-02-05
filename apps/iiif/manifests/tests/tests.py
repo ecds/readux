@@ -175,9 +175,9 @@ class ManifestTests(TestCase):
                 [manifest]
             )
         )
-        assert 'seeAlso' not in no_links.keys()
+        assert not no_links['seeAlso']
 
-        link = RelatedLink(link='images.org', manifest=manifest)
+        link = RelatedLink(link='images.org', manifest=manifest, is_structured_data=True)
         link.save()
         manifest.refresh_from_db()
 

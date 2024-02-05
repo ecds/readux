@@ -27,6 +27,17 @@ class Serializer(JSONSerializer):
     def end_serialization(self):
         self.stream.write('')
 
+    def serialize_metadata(self, obj):
+        """Convert metadata on object into list of {label, value} dicts"""
+        if isinstance(obj.metadata, list):
+            # most common case: metadata is already a list of {label, value} dicts
+            return obj.metadata
+        elif isinstance(obj.metadata, dict):
+            # convert dict into list of label/value pair dicts
+            return [{"label": key, "value": val} for (key, val) in obj.metadata.items()]
+        else:
+            return []
+
     def get_dump_object(self, obj):
         # TODO: Raise error if version is not v2 or v3
         if self.version == 'v2' or self.version is None:
@@ -70,10 +81,6 @@ class Serializer(JSONSerializer):
                         "value": obj.published_date
                     },
                     {
-                        "label": "Notes",
-                        "value": obj.metadata
-                    },
-                    {
                         "label": "Record Created",
                         "value": obj.created_at
                     },
@@ -92,7 +99,9 @@ class Serializer(JSONSerializer):
                     {
                         "label": "Export Date",
                         "value": self.exportdate
-                    }
+                    },
+                    # unpack serialized metadata (list of label, value pairs)
+                    *self.serialize_metadata(obj),
                 ],
                 "description": obj.summary,
                 "related": obj.related_links,
@@ -125,10 +134,9 @@ class Serializer(JSONSerializer):
                             )
                         )
                     }
-                ]
+                ],
+                "seeAlso": obj.see_also_links,
             }
-            if obj.relatedlink_set.exists():
-                data["seeAlso"] = [related.link for related in obj.relatedlink_set.all()]
             return data
         return None
 

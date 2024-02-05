@@ -452,7 +452,7 @@ class Remote(IngestAbstractModel):
 
     def create_canvases(self):
         # TODO: What if there are multiple sequences? Is that even allowed in IIIF?
-        for position, sc_canvas in enumerate(self.remote_manifest['sequences'][0]['canvases']):
+        for position, sc_canvas in enumerate(self.remote_manifest['sequences'][0]['canvases'], start=1):
             canvas_metadata = None
             # TODO: we will need some sort of check for IIIF API version, but not
             # everyone includes a context for each canvas.

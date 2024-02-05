@@ -321,15 +321,32 @@ class LocalTest(TestCase):
     #     except Local.DoesNotExist:
     #         pass
 
-    def test_it_creates_mainfest_with_metadata_property(self):
+    def test_it_creates_manifest_with_metadata_property(self):
         metadata = {
             'pid': '808',
-            'title': 'Goodie Mob'
+            'label': 'Goodie Mob'
         }
         local = self.mock_local('no_meta_file.zip', metadata=metadata)
         local.manifest = create_manifest(local)
         assert local.manifest.pid == '808'
-        assert local.manifest.title == 'Goodie Mob'
+        assert local.manifest.label == 'Goodie Mob'
+
+    def test_create_related_links(self):
+        metadata = {
+            'pid': '808',
+            'related': 'https://github.com/ecds/readux/tree/develop;https://archive.org/download/cherokeehymnbook00boud/cherokeehymnbook00boud.pdf'
+        }
+        local = self.mock_local('no_meta_file.zip', metadata=metadata)
+        local.manifest = create_manifest(local)
+        related_links = local.manifest.related_links
+        # should get 2 from metadata, 1 from volume url
+        assert len(related_links) == 3
+        # should get github link format as text/html
+        assert any([link["@id"] == "https://github.com/ecds/readux/tree/develop" for link in related_links])
+        assert any([link["format"] == "text/html" for link in related_links])
+        # should get pdf format too
+        assert any([link["@id"] == "https://archive.org/download/cherokeehymnbook00boud/cherokeehymnbook00boud.pdf" for link in related_links])
+        assert any([link["format"] == "application/pdf" for link in related_links])
 
     def test_moving_bulk_bundle_to_s3(self):
         """

@@ -139,9 +139,10 @@ class CanvasTests(TestCase):
             assert anno.order == num
 
     def test_ocr_from_tsv(self):
-        self.manifest.image_server = ImageServerFactory(server_base='https://images.readux.ecds.emory.fake/')
-        canvas = CanvasFactory(manifest=self.canvas.manifest, pid='boo')
-        canvas.save()
+        manifest = ManifestFactory.create(image_server=ImageServerFactory.create(server_base='https://images.readux.ecds.emory.fake/'))
+        canvas = CanvasFactory(manifest=manifest, pid='boo')
+        # AnnotationFactory.create(x=459, y=391, w=89, h=43, order=1, canvas=canvas)
+        # AnnotationFactory.create(x=453, y=397, w=397, h=3, order=2, canvas=canvas)
         # TODO: TOO MANY STEPS TO MAKE OCR????
         fetched_ocr = services.fetch_positional_ocr(canvas)
         parsed_ocr = services.add_positional_ocr(canvas, fetched_ocr)
@@ -196,7 +197,10 @@ class CanvasTests(TestCase):
         assert canvas.thumbnail_crop_volume == "%s/%s/pct:25,15,50,85/,600/0/default.jpg" % (canvas.manifest.image_server.server_base, canvas.resource)
 
     def test_result_property(self):
-        assert self.canvas.result == "a retto , dio Quef\u00eca de'"
+        canvas = CanvasFactory.create(manifest=ManifestFactory.create())
+        for order, word in enumerate(["a", "retto", ",", "dio", "Quefìa", "de'"]):
+            AnnotationFactory.create(content=word, canvas=canvas, order=order+1)
+        assert canvas.result == "a retto , dio Quef\u00eca de'"
 
     def test_no_tei_for_internet_archive(self):
         self.canvas.manifest.image_server.server_base = 'https://iiif.archivelab.org/iiif/'

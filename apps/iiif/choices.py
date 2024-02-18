@@ -6,11 +6,13 @@ class Choices():
 
     """ List of Mime type choices. """
     MIMETYPES = (
-            ('text/html', 'HTML'),
+            ('text/html', 'HTML or web page'),
             ('application/json', 'JSON'),
             ('application/ld+json', 'JSON-LD'),
+            ('application/pdf', 'PDF'),
+            ('text/plain', 'Text'),
             ('application/xml', 'XML'),
-            ('text/plan', 'Text'),
+            ('application/octet-stream', 'Other'),
         )
 
     """

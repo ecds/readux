@@ -340,6 +340,20 @@ class VolumeSearchView(ListView, FormMixin):
         "sort": "label_alphabetical"
     }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # pull additional facets from Elasticsearch
+        if (
+            settings
+            and hasattr(settings, "CUSTOM_METADATA")
+            and isinstance(settings.CUSTOM_METADATA, dict)
+        ):
+            for key in settings.CUSTOM_METADATA.keys():
+                self.facets.append((key, NestedFacet(
+                    "metadata",
+                    TermsFacet(field=f"metadata.{key}", size=2000, min_doc_count=1),
+                )))
+
     # regex to match terms in doublequotes
     re_exact_match = re.compile(r'\B(".+?")\B')
 
@@ -368,6 +382,18 @@ class VolumeSearchView(ListView, FormMixin):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+        # add configured custom metadata keys to context data
+        context_data["CUSTOM_METADATA_KEYS"] = (
+            [
+                # use django-friendly form field names
+                key.casefold().replace(" ", "_")
+                for key in settings.CUSTOM_METADATA.keys()
+            ]
+            if hasattr(settings, "CUSTOM_METADATA")
+            and isinstance(settings.CUSTOM_METADATA, dict)
+            else []
+        )
+
         volumes_response = self.get_queryset().execute()
         # populate a dict with "buckets" of extant categories for each facet
         facets = {}
@@ -518,6 +544,18 @@ class VolumeSearchView(ListView, FormMixin):
         max_date_filter = form_data.get("end_date") or ""
         if max_date_filter:
             volumes = volumes.filter("range", date_latest={"lte": max_date_filter})
+
+        # filter on custom metadata fields
+        if hasattr(settings, "CUSTOM_METADATA") and isinstance(
+            settings.CUSTOM_METADATA, dict
+        ):
+            for key in settings.CUSTOM_METADATA.keys():
+                field_name = key.casefold().replace(" ", "_")
+                meta_filter = form_data.get(field_name) or ""
+                if meta_filter:
+                    volumes = volumes.filter("nested", path="metadata", query=Q(
+                        "terms", **{f"metadata.{key}": meta_filter}
+                    ))
 
         # create aggregation buckets for facet fields
         for (facet_name, facet) in self.facets:

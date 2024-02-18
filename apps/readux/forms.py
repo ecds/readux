@@ -2,6 +2,7 @@
 
 from dateutil import parser
 from django import forms
+from django.conf import settings
 from django.template.defaultfilters import truncatechars
 
 class MinMaxDateInput(forms.DateInput):
@@ -138,12 +139,41 @@ class ManifestSearchForm(forms.Form):
         )
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # pull additional facets from Elasticsearch
+        if (
+            settings
+            and hasattr(settings, "CUSTOM_METADATA")
+            and isinstance(settings.CUSTOM_METADATA, dict)
+        ):
+            # should be a dict like {meta_key: {"multi": bool, "separator": str}}
+            for key in settings.CUSTOM_METADATA.keys():
+                self.fields[
+                    # use django-friendly form field names
+                    key.casefold().replace(" ", "_")
+                ] = FacetedMultipleChoiceField(
+                    label=key,
+                    required=False,
+                    widget=forms.SelectMultiple(
+                        attrs={
+                            "aria-label": f"Filter volumes by {key}",
+                            "class": "uk-input",
+                        },
+                    ),
+                )
+
     def set_facets(self, facets):
         """Use facets from Elasticsearch to populate form fields"""
         for name, buckets in facets.items():
             if name in self.fields:
                 # Assumes that name passed in the view's facets list matches form field name
                 self.fields[name].populate_from_buckets(buckets)
+            elif name.casefold().replace(" ", "_") in self.fields:
+                self.fields[name.casefold().replace(" ", "_")].populate_from_buckets(
+                    buckets
+                )
 
     def set_date(self, min_date, max_date):
         """Use min and max aggregations from Elasticsearch to populate date range fields"""

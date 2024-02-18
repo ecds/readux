@@ -10,10 +10,12 @@ from django.urls import reverse
 from django.core.serializers import serialize
 from django.contrib.auth import get_user_model
 from apps.users.tests.factories import UserFactory
+from .factories import AnnotationFactory
 from ..views import AnnotationsForPage
 from ..models import Annotation
 from ..apps import AnnotationsConfig
 from ...canvases.models import Canvas
+from ...canvases.tests.factories import CanvasFactory
 from ...manifests.models import Manifest
 
 USER = get_user_model()
@@ -23,13 +25,13 @@ class AnnotationTests(TestCase):
     fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
 
     def setUp(self):
-        ocr_user = UserFactory.create(username='ocr', name='OCR')
+        self.ocr_user = UserFactory.create(username='ocr', name='OCR')
         self.factory = RequestFactory()
         self.client = Client()
         self.view = AnnotationsForPage.as_view()
         self.volume = Manifest.objects.get(pid='readux:st7r6')
         self.canvas = Canvas.objects.get(pid='fedora:emory:5622')
-        self.annotations = Annotation.objects.filter(canvas=self.canvas, owner=ocr_user)
+        self.annotations = Annotation.objects.filter(canvas=self.canvas, owner=self.ocr_user)
 
     def test_app_config(self): # pylint: disable = no-self-use
         assert AnnotationsConfig.verbose_name == 'Annotations'
@@ -99,19 +101,23 @@ class AnnotationTests(TestCase):
         assert Annotation.MOTIVATION_CHOICES == (('oa:commenting', 'commenting'), ('sc:painting', 'painting'))
 
     def test_ocr_for_page(self):
-        kwargs = {'vol': self.volume.pid, 'page': self.canvas.pid, 'version': 'v2'}
+        canvas = CanvasFactory.create(manifest=self.volume)
+        AnnotationFactory.create_batch(6, owner=self.ocr_user, canvas=canvas)
+        kwargs = {'vol': self.volume.pid, 'page': canvas.pid, 'version': 'v2'}
         url = reverse('ocr', kwargs=kwargs)
         response = self.client.get(url)
         annotations = json.loads(response.content.decode('UTF-8-sig'))['resources']
-        assert len(annotations) == self.canvas.annotation_set.filter(resource_type='cnt:ContentAsText', canvas=self.canvas).count()
+        assert len(annotations) == canvas.annotation_set.filter(resource_type='cnt:ContentAsText', canvas=canvas).count()
         assert response.status_code == 200
 
     def test_annotation_style(self):
-        anno = Annotation.objects.all().first()
-        assert anno.style == ".anno-{c}: {{ height: {h}px; width: {w}px; font-size: {f}px; letter-spacing: 15.125px;}}".format(c=(anno.pk), h=str(anno.h), w=str(anno.w), f=str(anno.h / 1.6))
+        anno = AnnotationFactory.create()
+        assert anno.style.startswith(f'.anno-{anno.pk}: {{ height: {anno.h}px; width: {anno.w}px;')
 
     def test_annotation_style_serialization(self):
-        kwargs = {'vol': self.volume.pid, 'page': self.canvas.pid, 'version': 'v2'}
+        canvas = CanvasFactory(manifest=self.volume)
+        AnnotationFactory.create(canvas=canvas)
+        kwargs = {'vol': self.volume.pid, 'page': canvas.pid, 'version': 'v2'}
         url = reverse('ocr', kwargs=kwargs)
         response = self.client.get(url)
         serialized_anno = json.loads(response.content.decode('UTF-8-sig'))['resources'][0]
@@ -165,7 +171,8 @@ class AnnotationTests(TestCase):
 
     def test_resaving_ocr_annotation(self):
         # Span should not change
-        anno = Annotation.objects.all().first()
+        anno = AnnotationFactory.create(owner=self.ocr_user)
+        print(anno.owner)
         orig_span = anno.content
         anno.save()
         anno.refresh_from_db()

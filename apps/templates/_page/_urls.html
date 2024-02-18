@@ -24,3 +24,23 @@
   <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ page.pid }}">
   </v-info-content-url-external>
 {% endif %}
+
+{# External links from IIIF manifest #}
+
+{% if volume.external_links.see_also %}
+<v-info-content-url-multiple label="See Also">
+  {% for link in volume.external_links.see_also %}
+    <v-info-content-url-unit url="{{ link }}">
+    </v-info-content-url-unit>
+  {% endfor %}
+</v-info-content-url-multiple>
+{% endif %}
+
+{% if volume.external_links.related %}
+<v-info-content-url-multiple label="External Links">
+  {% for link in volume.external_links.related %}
+    <v-info-content-url-unit url="{{ link }}">
+    </v-info-content-url-unit>
+  {% endfor %}
+</v-info-content-url-multiple>
+{% endif %}

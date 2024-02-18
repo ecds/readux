@@ -23,7 +23,7 @@ django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
 django-allauth>=0.57.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
-django-redis==5.2.0  # https://github.com/niwinz/django-redis
+django-redis==5.4.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
 django-modeltranslation>=0.17.2 # https://github.com/deschler/django-modeltranslation
 django-taggit>=1.5.0 # https://github.com/jazzband/django-taggit
@@ -40,7 +40,7 @@ django-compressor
 django-sass-processor
 
 # Django rules for PyLint
-pylint-django==2.5.3
+pylint-django==2.5.5
 
 # Wagtail
 wagtail==4.2.4
@@ -51,11 +51,11 @@ wagtail-cache==2.3.0
 
 # Import/Export
 django-import-export==2.8.0
-gitpython==3.1.37
+gitpython==3.1.40
 
 # S3 Uploads
-boto3==1.28.54
-django-storages==1.14  # https://github.com/jschneier/django-storages
+boto3==1.33.4
+django-storages==1.14.2  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads
 pysftp==0.2.9 # https://pysftp.readthedocs.io/
@@ -70,7 +70,44 @@ stream-unzip>=0.0.58
 bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
 
 # Elasticsearch
-django-elasticsearch-dsl>=7.0.0
+django-elasticsearch-dsl>7.0,<8.0
 elasticsearch<7.14.0
 # used to unaccent strings for sorting
 unidecode
+
+# TODO: Upgrade after https://github.com/django-extensions/django-extensions/issues/1715 is fixed
+Werkzeug<2.4.0  # https://github.com/pallets/werkzeug
+ipdb~=0.13.13  # https://github.com/gotcha/ipdb
+# TODO: Upgrade after moving to Django 3
+psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
+
+# Testing
+# ------------------------------------------------------------------------------
+mypy==1.8.0  # https://github.com/python/mypy
+pytest>=7.4.3  # https://github.com/pytest-dev/pytest
+pytest-sugar==0.9.7  # https://github.com/Frozenball/pytest-sugar
+pytest-cov==4.1.0
+pytest-django==4.7.0  # https://github.com/pytest-dev/pytest-django
+py==1.11.0 # https://github.com/pytest-dev/pytest/issues/10420
+requests~=2.31.0
+iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi
+httpretty~=1.1.4 # https://pypi.org/project/httpretty/
+#mock~=4.0.2
+cssutils~=2.9.0 # https://pypi.org/project/cssutils/
+moto==4.2.13 # https://github.com/spulec/moto
+factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
+faker~=20.1.0
+
+# Code quality
+# ------------------------------------------------------------------------------
+coverage==7.4.0  # https://github.com/nedbat/coveragepy
+
+# Django
+# ------------------------------------------------------------------------------
+django-debug-toolbar~=4.2.0  # https://github.com/jazzband/django-debug-toolbar
+django-extensions~=3.2.3  # https://github.com/django-extensions/django-extensions
+django-coverage-plugin~=3.1.0  # https://github.com/nedbat/django_coverage_plugin
+pyopenssl # for running dev server under https
+
+celery~=5.3.4
+django-celery-results~=2.4.0

@@ -1,0 +1,48 @@
+name: Dev-Deploy
+
+on:
+  workflow_run:
+    workflows: [Dev-Test]
+    types: [completed]
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Checkout Docker configs
+        run: |
+          eval `ssh-agent -s`
+          ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
+          git clone -b develop git@github.com:ecds/readux-configs.git
+          mv readux-configs/* .
+          chmod +x config.sh
+          chmod +x deploy.sh
+
+      - name: Run Config
+        run: ./config.sh
+        env:
+          AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_DEV }}
+          aws-region: us-east-1
+          role-session-name: GitHub-OIDC-frontend
+
+      - name: Run Deploy
+        run: ./deploy.sh
+

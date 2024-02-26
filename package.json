@@ -17,7 +17,7 @@
     "source-map-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.3",
     "ts-loader": "^9.4.4",
-    "uikit": "^3.14.0",
+    "uikit": "^3.17.0",
     "uikit-icons": "^0.5.0",
     "vue": "^3.2.33",
     "webpack": "^5.88.2",

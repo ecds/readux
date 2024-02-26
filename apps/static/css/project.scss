@@ -7,6 +7,10 @@ $rx-color-accent-2: #510029;
 
 @import './ecds-annotator.min.css';
 
+.selectize-control.plugin-clear_button .clear {
+  top: -3px !important;
+}
+
 :root {
   --link-color: $rx-color-accent-1;
   --contrast: 200%;
@@ -19,7 +23,6 @@ $rx-color-accent-2: #510029;
 
 .uk-link, a {
   color: var(--link-color);
-  text-decoration: underline dotted;
 }
 
 a.nav-link {
@@ -56,21 +59,6 @@ em {
   border: 1px solid transparent;
 }
 
-#search-form .scope-and-keyword {
-  display: flex;
-  flex-flow: row nowrap;
-  margin: 1rem 0 0;
-  gap: 0.5rem;
-}
-
-#search-form .scope-and-keyword .scope {
- flex: 0 1 auto;
-}
-
-#search-form .scope-and-keyword .keyword {
-  flex: 1 0 auto;
-}
-
 .uk-tab > .uk-active > a {
   border-color: var(--link-color) !important;
   color: var(--link-color) !important;
@@ -79,10 +67,6 @@ em {
 .uk-checkbox,
 .uk-radio {
   border: 1px solid #ccc !important;
-}
-
-.uk-navbar-right {
-  padding-top: 1rem;
 }
 
 .uk-container ul {
@@ -109,9 +93,9 @@ em {
   border-color: #eed3d7;
 }
 
-.rdx-viewer-container {
-  height: calc(100vh - 120px);
-}
+// .rdx-viewer-container {
+//   height: calc(100vh - 120px);
+// }
 
 .manifest-info > a,
 .manifest-info > h3 {
@@ -548,10 +532,16 @@ p {
   filter: brightness(0.4%);
   text-transform: uppercase;
   font-weight: bold;
-  letter-spacing: 0.1em;
+  /* letter-spacing: 0.1em; */
   display: inline-flex;
   padding: 0;
   margin: 0;
+  user-select: auto;
+}
+
+.rx-action-btn {
+  letter-spacing: 0.1em;
+  font-size: small;
 }
 
 .rx-page-breadcrumb-item a {
@@ -624,14 +614,13 @@ p {
 }
 
 .rx-info-content {
-  padding: 0.5em 0;
+  padding: 0 0 1.25em;
   font-size: 0.9rem;
 }
 
 .rx-info-content-label {
   color: $rx-color-grey-1 !important;
   font-weight: 600 !important;
-  line-height: 1em !important;
   font-size: 0.9rem !important;
 }
 
@@ -823,6 +812,7 @@ p {
 .rx-anchor {
   color: var(--link-color) !important;
   opacity: 0.75;
+  word-break: break-all;
   transition: all ease-in-out 100ms;
 
   &:hover {
@@ -1209,10 +1199,10 @@ fieldset {
 
 // page search
 .rx-page-search-container {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  width: 100% !important;
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: space-between; */
   color: $rx-color-grey-1 !important;
 }
 
@@ -1619,8 +1609,6 @@ fieldset {
 
 .uk-link, a {
   color: var(--link-color);
-  -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
 }
 
 a.nav-link {
@@ -1681,12 +1669,23 @@ a.nav-link {
 }
 
 .rdx-viewer-container {
-  width: 100%;
-  height: calc(100% - 120px);
+  /* width: 100%;
+  height: calc(100% - 120px); */
   position: absolute;
   left: 0;
   bottom: 0px;
-  background: none !important;
+  /* background: none !important; */
+
+  height: -webkit-calc(100% - 40px);
+  height:    -moz-calc(100% - 40px);
+  height:         calc(100% - 40px);
+  width: 100%;
+  /* Remove any browser-default margins. */
+  margin: 0;
+}
+
+#rdx-viewer > div > div > div.py-8.grid.grid-cols-2.gap-2 {
+  padding-bottom: 0;
 }
 
 .manifest-info > a,
@@ -3268,16 +3267,18 @@ form#search-form input[type="search"][name="q"] {
 div#search-grid {
   margin-left: 0;
 }
-div#search-grid :first-child {
-  padding-left: 0;
-}
-div#search-grid :first-child button#reset-filters {
-  padding-left: 30px;
-}
+// div#search-grid :first-child {
+//   padding-left: 0;
+// }
+// div#search-grid :first-child button#reset-filters {
+//   padding-left: 30px;
+// }
 
 /* Date published filter toggle
  * Adapted from https://codepen.io/adamhutch/pen/JoKEPp
  */
+ 
+/*
 div#search-grid input[type="checkbox"]#toggle-date {
   font-size: 14px;
   display: none;
@@ -3343,7 +3344,7 @@ div#search-grid input[type="checkbox"]#toggle-date + label span {
   top: 0;
   left: 55px;
   width: 170px;
-}
+}*/
 
 #search-filters input[type="text"]#authors-filter {
   width: 100%;
@@ -3357,9 +3358,34 @@ div#search-grid input[type="checkbox"]#toggle-date + label span {
   overflow-x: hidden;
 }
 
+/* Selectize */
+
+.selectize-control.multi .selectize-input>div {
+  background: #950953 !important;
+  border: none !important;
+}
+.selectize-dropdown .active:not(.selected) {
+  background-color: #fff7fb !important;
+}
+.noUi-connect {
+  background: #950953 !important;
+}
+[disabled] .noUi-connect {
+  background: #950953 !important;
+  opacity: 0.2;
+}
+
 /* Date slider */
+.noUi-tooltip {
+  font-size: .875rem;
+  font-family: monospace;
+  font-weight: normal;
+  padding: 0.125rem 0.25rem !important;
+  background-color: none;
+  border: none !important;
+}
 #search-filters .noUi-target {
-  margin: 60px 20px 10px;
+  margin: 45px 21px 10px; 
 }
 
 /* Individual search results */
@@ -3370,7 +3396,7 @@ ol#search-results dl {
   margin-left: 2rem;
 }
 /* Clamp summary to 3 lines */
-ol#search-results .result-volume-summary {
+#search-results .result-volume-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -3378,13 +3404,14 @@ ol#search-results .result-volume-summary {
 }
 
 /* search result highlighting */
-ol#search-results em {
+#search-results em {
   color: #510029 !important;
   font-weight: bold;
-  font-style: normal; }
+  font-style: normal;
+}
 
 /* results within full text */
-ol#search-results .result-page a {
+#search-results .result-page a {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -3394,12 +3421,12 @@ ol#search-results .result-page a {
   margin: 0.5rem 0;
 }
 
-ol#search-results .result-page .page-number {
+#search-results .result-page .page-number {
   min-width: 4rem;
   max-width: 4rem;
 }
 
-ol#search-results .result-page ul li {
+#search-results .result-page ul li {
   list-style: disc;
 }
 
@@ -3413,6 +3440,29 @@ ol#search-results .result-page ul li {
   clip: rect(0,0,0,0);
   border: 0;
 }
+
+.sui-item-heading {
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: "Helvetica Neue";
+  font-size: 13px;
+}
+
+.reader-modal {
+  /* display: block !important; */
+  width: 400px !important;
+  height: fit-content !important;
+  padding: 0 !important;
+  left: 75px !important;
+  top: 60px !important;
+}
+
+/* Set the theme color of the component */
+// $themeColor: #df3f13;
+
+/* import theme style */
+// @import '~vue-slider-component/lib/theme/default.scss';
 
 // .ShowOCR {
 //   color: red !important;

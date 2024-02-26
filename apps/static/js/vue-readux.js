@@ -141,7 +141,7 @@ Vue.component("v-info-content-url-single", {
   props: ["label", "url"],
   template: `
     <div class="rx-info-content">
-      <div class="rx-info-content-label uk-flex-between rx-flex ">
+      <div class="rx-info-content-label uk-flex-between rx-flex">
         <span>{{label}}</span>
         <div>
           <span class="uk-label rx-label-copy"
@@ -429,4 +429,20 @@ var readux = new Vue({
       this.showMoreInfo = true;
     }
   }
+});
+
+// Initialize selectize for search filters
+jQuery(function () {
+  jQuery("#id_collection").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...',
+  });
+  jQuery("#id_author").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...',
+  });
+  jQuery("#id_language").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...'
+  });
 });

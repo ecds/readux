@@ -1,0 +1,30 @@
+  <div class="rx-info-content">
+    <div class="rx-info-content-label">Institution</div>
+    <div class="rx-info-content-value">{{ volume.attribution }}</div>
+  </div>
+
+  <div class="rx-info-content">
+    <div class="rx-info-content-label">License</div>
+    <div class="rx-info-content-value">{{ volume.license }}</div>
+  </div>
+
+  {% if volume.identifier is not None %}
+  <div class="rx-info-content">
+    <div class="rx-info-content-label">Identifier</div>
+    <div class="rx-info-content-value">{{ volume.identifier }}</div>
+  </div>
+  {% endif %}
+
+  {% if volume.identifier_uri is not None %}
+  <div class="rx-info-content">
+    <div class="rx-info-content-label">Link to Resource</div>
+    <div class="rx-info-content-value">{{ volume.identifier_uri }}</div>
+  </div>
+  {% endif %}
+
+  {% if volume.scanned_by is not None %}
+  <div class="rx-info-content">
+    <div class="rx-info-content-label">Scanned By</div>
+    <div class="rx-info-content-value">{{ volume.scanned_by }}</div>
+  </div>
+  {% endif %}

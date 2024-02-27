@@ -852,6 +852,34 @@ p {
   }
 }
 
+
+.rx-label-solid {
+  background: var(--link-color);
+  color: white;
+  border: var(--link-color) 1px solid;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  opacity: 0.75;
+  cursor: pointer;
+  transition: all ease-in-out 100ms;
+  font-weight: 600;
+
+  &:active {
+    background-color: $rx-color-accent-2 !important;
+    border: 1px solid $rx-color-accent-2 !important;
+    opacity: 1;
+  }
+
+  &:hover {
+    background: var(--link-color);
+    color: white !important;
+    font-size: 0.75rem;
+    letter-spacing: 0.1rem;
+    cursor: pointer;
+    opacity: 1;
+  }
+}
+
 .rx-page-navbar-right > a {
   margin-left: 1em;
 }
@@ -1199,7 +1227,7 @@ fieldset {
 
 // page search
 .rx-page-search-container {
-  width: 100% !important;
+  width: calc(100% - 30px) !important;
   /* display: flex; */
   /* align-items: center; */
   /* justify-content: space-between; */
@@ -3456,8 +3484,28 @@ ol#search-results dl {
   padding: 0 !important;
   left: 75px !important;
   top: 60px !important;
+  background: white;
 }
 
+.rx-line-height-sm {
+  line-height: 1.25em;
+}
+
+.rx-volume-search em {
+  color: #950953 !important;
+}
+
+.rx-volume-search {
+  max-height: 75vh;
+}
+
+.rx-padding-extra-small {
+  padding: 10px;
+}
+
+.rx-scrollable {
+
+}
 /* Set the theme color of the component */
 // $themeColor: #df3f13;
 
@@ -3470,3 +3518,4 @@ ol#search-results dl {
 //   background-color: white !important;
 // }
 /*# sourceMappingURL=project.css.map */
+

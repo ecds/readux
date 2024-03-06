@@ -1,10 +1,14 @@
 <ul class="uk-list">
   <li>
-    <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">View Volume PDF</a>
+    <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">
+      <button class="rx-btn">PDF</button>View Volume PDF
+    </a>
   </li>
   <li>
     <a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
-    target="_blank">Export Citation in RIS</a>
+      target="_blank">
+      <button class="rx-btn">RIS</button>Export Citation in RIS
+    </a>
   </li>
   <li>
     <v-info-content-url-page-text label="Page Text">
@@ -20,12 +24,9 @@
     </v-volume-export-annotation-btn>
   </li>
   <li>
-    <a class="rx-action-btn" href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
-    target="_blank">Send to Voyant</a>
+    <a class="rx-action-btn"
+      href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
+      target="_blank">
+      <button class="rx-btn">VOY</button>Send to Voyant</a>
   </li>
 </ul>
-
-
-
-
-

@@ -1,73 +1,123 @@
-{% if volume.label|length %}
 <div class="rx-info-content">
-  <div class="rx-info-content-label">Title</div>
-  <div class="rx-info-content-value">{{ volume.label }}</div>
-</div>
-{% endif %}
-
-{% if volume.author|length %}
-<div class="rx-info-content">
-  <div class="rx-info-content-label">Authors</div>
-  <div class="rx-info-content-value">{{ volume.author }}</div>
-</div>
-{% endif %}
-
-{% if volume.published_date|length %}
-<div class="rx-info-content">
-  <div class="rx-info-content-label">Publication Date</div>
-  <div class="rx-info-content-value">{{ volume.published_date }}</div>
-</div>
-{% endif %}
-
-{% if volume.collections is not None %}
-<div class="rx-info-content">
-  <div class="rx-info-content-label">Collections</div>
-  <div class="rx-info-content-value uk-margin-small-top">
-    {% for col in volume.collections.all %}
-    <a class="nav-link" href="{% url 'collection' col.pid %}">
-      <div class="rx-btn rx-btn-collection">{{ col.label }}</div>
-    </a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
-
-{% if volume.languages.all|length %}
-<div class="rx-info-content">
-  <div class="rx-info-content-label">Language(s)</div>
+  <div class="rx-info-content-label uk-flex-between rx-flex"><span>OCR Overlay</span> 
+    <div>
+      <label class="uk-switch" for="ocr-overlay">
+        <input type="checkbox" id="ocr-overlay">
+        <div class="uk-switch-slider"></div>
+      </label>
+    </div>
+  </div> 
   <div class="rx-info-content-value">
-    <ul>
-      {% for language in volume.languages.all %}
-      <li>{{ language.name }}</li>
-      {% endfor %}
-    </ul>
+    Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
   </div>
 </div>
-{% endif %}
 
-{% if volume.published_city|length or volume.publisher|length %}
 <div class="rx-info-content">
-  <div class="rx-info-content-label">Publisher</div>
-  <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
-</div>
-{% endif %}
-
-{% if volume.summary|length %}
-<div class="rx-info-content">
-  <div class="rx-info-content-label">Summary</div>
-  <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
-</div>
-{% endif %}
-
-{% if volume.note_set|length %}
-<div class="rx-info-content">
-  <div class="rx-info-content-label">Notes</div>
+  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Text Overlay</span> 
+    <div>
+      <div class="uk-label rx-label-copy">
+        <span uk-icon="icon: expand; ratio: 0.5"></span>
+        Open in Popup
+      </div>
+    </div>
+  </div> 
   <div class="rx-info-content-value">
-    <ul>
-      {% for note in volume.note_set.all %}
-      <li>{{ note.label }}</li>
-      {% endfor %}
-    </ul>
+    Display the plain text in the OCR in a popup. All formats are stripped away in the text.
   </div>
 </div>
-{% endif %}
+
+<div class="rx-info-content">
+  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Metadata Fields</span> 
+  </div> 
+  <div class="rx-info-content-value">
+    Advanced metadata fields are custom fields available only in certain volumes.
+  </div>
+  <div class="rx-info-content-value">
+   
+    <ul uk-tab>
+      <li><a href="info-basic">Basic</a></li>
+      <li><a href="info-advanced">Advanced</a></li>
+    </ul>
+    
+    <ul class="uk-switcher uk-margin">
+      <li>
+        {% if volume.label|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Title</div>
+          <div class="rx-info-content-value">{{ volume.label }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.author|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Authors</div>
+          <div class="rx-info-content-value">{{ volume.author }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.published_date|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Publication Date</div>
+          <div class="rx-info-content-value">{{ volume.published_date }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.collections is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Collections</div>
+          <div class="rx-info-content-value uk-margin-small-top">
+            {% for col in volume.collections.all %}
+            <a class="nav-link" href="{% url 'collection' col.pid %}">
+              <div class="rx-btn rx-btn-collection">{{ col.label }}</div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+    
+        {% if volume.languages.all|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Language(s)</div>
+          <div class="rx-info-content-value">
+            <ul>
+              {% for language in volume.languages.all %}
+              <li>{{ language.name }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+    
+        {% if volume.published_city|length or volume.publisher|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Publisher</div>
+          <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.summary|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Summary</div>
+          <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.note_set|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Notes</div>
+          <div class="rx-info-content-value">
+            <ul>
+              {% for note in volume.note_set.all %}
+              <li>{{ note.label }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </li>
+      <li>Unavailable</li>
+    </ul>
+        
+  </div>
+</div>
+

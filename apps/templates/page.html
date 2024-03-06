@@ -37,11 +37,13 @@
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
     <ul uk-tab class="uk-text-bold uk-text-large">
-        <li class="uk-active"><a href="#">Metadata</a></li>
+        <li class="uk-active"><a href="#">Info</a></li>
+        <li><a href="#">URLs</a></li>
         <li><a href="#">Attribution</a></li>
     </ul>
     <ul class="uk-switcher uk-margin-top">
         <li>{% include '_page/_information.html' %}</li>
+        <li>{% include '_page/_urls.html' %}</li>
         <li>{% include '_page/_attribution.html' %}</li>
     </ul>
   </div>
@@ -52,14 +54,7 @@
 <div id="modal-urls" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    <ul uk-tab class="uk-text-bold uk-text-large">
-      <li class="uk-active"><a href="#">URLs</a></li>
-      <li><a href="#">Share and Export</a></li>
-    </ul>
-    <ul class="uk-switcher uk-margin-top">
-        <li>{% include '_page/_urls.html' %}</li>
-        <li>{% include '_page/_exports.html' %}</li>
-    </ul>
+    {% include '_page/_exports.html' %}
   </div>
 </div>
 <!-- uiAction urls and exports -->

@@ -1,11 +1,6 @@
-// Colors
-$rx-color-grey-1: #595959;
-$rx-color-grey-2: #737373;
-$rx-color-grey-3: #eeeeee;
-$rx-color-accent-1: #950953;
-$rx-color-accent-2: #510029;
-
 @import './ecds-annotator.min.css';
+@import './_components/colors.scss';
+@import './_components/uk-switch.scss';
 
 .selectize-control.plugin-clear_button .clear {
   top: -3px !important;

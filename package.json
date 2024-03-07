@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "dependencies": {
-    "axios": "^0.23.0",
+    "axios": "^0.28.0",
     "ecds-annotator": "github:ecds/ecds-annotator#develop"
   },
   "devDependencies": {

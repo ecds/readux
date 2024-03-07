@@ -111,3 +111,4 @@ pyopenssl # for running dev server under https
 
 celery~=5.3.4
 django-celery-results~=2.4.0
+more-itertools~=10.2.0 # https://github.com/more-itertools/more-itertools

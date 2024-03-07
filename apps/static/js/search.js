@@ -16,6 +16,7 @@ let queryMinYear;
 let queryMaxYear;
 let authorsFilter;
 let authorsMultiselect;
+let dateRange;
 
 window.addEventListener("DOMContentLoaded", () => {
     // Get URL params
@@ -33,11 +34,12 @@ window.addEventListener("DOMContentLoaded", () => {
     // initialize elements
     form = document.querySelector("form#search-form");
     dateToggleSwitch = document.querySelector("input[type='checkbox']#toggle-date");
+    dateRange = document.querySelector(".noUi-tooltip");
     sortElement = document.querySelector("select#id_sort");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
     textInput = document.querySelector("input[type='search']");
-    authorsFilter = document.querySelector("input[type='text']#authors-filter");
+    // authorsFilter = document.querySelector("input[type='text']#authors-filter");
     authorsMultiselect = document.querySelector("select[name='author']");
 
     // Attach event listener to sort dropdown to auto-submit
@@ -50,7 +52,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Attach event listener to filter author multiselect options
-    authorsFilter.addEventListener("input", handleAuthorsFilter);
+    // authorsFilter.addEventListener("input", handleAuthorsFilter);
 
     // Set up slider
     slider = document.getElementById("date-range-slider");
@@ -162,10 +164,10 @@ function toggleDate(e) {
 function setDateFieldToggleState(state) {
     // Change the date toggle switch and slider to match toggle state
     if (state === false) {
-        dateToggleSwitch.removeAttribute("checked");
+        // dateToggleSwitch.removeAttribute("checked");
         slider.setAttribute("disabled", true);
     } else {
-        dateToggleSwitch.setAttribute("checked", true);
+        // dateToggleSwitch.setAttribute("checked", true);
         slider.removeAttribute("disabled");
     }
 }

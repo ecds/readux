@@ -1,0 +1,46 @@
+<v-info-content-url-single label="Manifest"
+  url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
+</v-info-content-url-single>
+
+<v-info-content-url-multiple label="Collection Manifest">
+  {% for col in volume.collections.all %}
+  <v-info-content-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
+  </v-info-content-url-unit>
+  {% endfor %}
+</v-info-content-url-multiple>
+
+<v-info-content-url-single label="Stable Volume"
+  url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+</v-info-content-url-single>
+
+<!-- <p><a href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg" target="_blank">{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg</a></p> -->
+<v-info-content-url-image-link label="Image Link" pagelink="{{ pagelink }}" url="{{ localUrls }}">
+</v-info-content-url-image-link>
+
+{% if "/page/all" in request.get_full_path in request.get_full_path %}
+  <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+  </v-info-content-url-external>
+{% else %}
+  <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ page.pid }}">
+  </v-info-content-url-external>
+{% endif %}
+
+{# External links from IIIF manifest #}
+
+{% if volume.external_links.see_also %}
+<v-info-content-url-multiple label="See Also">
+  {% for link in volume.external_links.see_also %}
+    <v-info-content-url-unit url="{{ link }}">
+    </v-info-content-url-unit>
+  {% endfor %}
+</v-info-content-url-multiple>
+{% endif %}
+
+{% if volume.external_links.related %}
+<v-info-content-url-multiple label="External Links">
+  {% for link in volume.external_links.related %}
+    <v-info-content-url-unit url="{{ link }}">
+    </v-info-content-url-unit>
+  {% endfor %}
+</v-info-content-url-multiple>
+{% endif %}

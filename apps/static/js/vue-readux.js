@@ -30,6 +30,99 @@ Vue.component("v-volume-image", {
   },
 });
 
+Vue.component("v-volume-search", {
+  template: `
+  <div class="rx-volume-search">
+    <div class="uk-search uk-search-default rx-page-search-container">
+      <span uk-search-icon></span>
+      <input class="uk-search-input" type="search" id="volume-search" placeholder="Search in volume text or annotations" name="q" 
+        v-model="keyword" @keypress.enter="getSearchResults()"/>
+    </div>
+    <div class="uk-text-small uk-margin-small-top uk-margin-small-left">Use "" to match whole words.</div>
+    
+    <div v-if="hasResults">
+        <ul class="uk-text-bold uk-text-large uk-tab" data-uk-tab="{connect:'#rx-search-panel'}">
+          <li><a href="">Text ({{inText}})</a></li>
+          <li><a href="">Annotation ({{inAnnotations}})</a></li>
+        </ul>
+        <ul id="rx-search-panel" class="uk-switcher uk-overflow-auto uk-width-expand" uk-height-viewport="offset-bottom: 100">
+          <li>
+              <div v-if="inText==0" class="rx-padding-extra-small uk-text-small"> No matches in text. </div>
+              <div v-else v-for="(match, index) in textData" :key="index" class="rx-padding-extra-small">
+                  <div class="uk-text-small">
+                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Canvas {{match.canvas_index }}</div></a>
+                    <div class="uk-inline-block" style="vertical-align: middle"> · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></div>
+                  </div>
+                  <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
+                      <li v-for="(context, contextIndex) in match.context" :key="contextIndex" v-html="context" class="uk-margin-small-top"></li>
+                  </ul>
+              </div>
+          </li>
+          <li>
+              <div v-if="inAnnotations==0" class="rx-padding-extra-small uk-text-small"> No matches in annotations. </div>
+              <div v-else v-for="(match, index) in annotationData" :key="index" class="rx-padding-extra-small">
+                  <div class="uk-text-small">
+                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Canvas {{match.canvas_index }}</div></a>
+                    <div class="uk-inline-block" style="vertical-align: middle"> · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></div>
+                  </div>
+                  <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
+                      <li v-for="(context, contextIndex) in match.context" :key="contextIndex" v-html="context" class="uk-margin-small-top"></li>
+                  </ul>
+              </div>
+          </li>
+        </ul>
+    </div>
+    <div v-else>
+      <div v-if="emptyMessage != ''" class="uk-alert uk-margin-small-top uk-margin-remove-bottom">{{emptyMessage}}</div>
+    </div>
+  </div>
+  `,
+  props: ['pid'],
+  data() {
+    return {
+      searchResults: [],
+      annotationData: [],
+      textData: [],
+      keyword: this.keyword,
+      inAnnotations: 0,
+      inText: 0,
+      emptyMessage: ""
+    };
+  },
+  methods: {
+    getSearchResults() {
+      try {
+        if (this.keyword=="" || this.keyword==undefined) {
+          this.emptyMessage =  "Type a keyword to search";
+        } else {
+          $this = this;
+          axios.get('/search/volume/pages?keyword=' + this.keyword + '&volume_id=' + this.pid)
+            .then(function (response) {
+              this.searchResults = response.data; // Assuming data is an array of results
+              if (this.searchResults.hasOwnProperty("matches_in_annotations")) {
+                $this.inAnnotations = this.searchResults.matches_in_annotations.total_matches_in_volume;
+                $this.inText = this.searchResults.matches_in_text.total_matches_in_volume;
+                $this.annotationData = this.searchResults.matches_in_annotations.volume_matches;
+                $this.textData = this.searchResults.matches_in_text.volume_matches;
+              }
+              $this.emptyMessage = ($this.hasResults == 0) ? "No matches in either annotations or text." : this.emptyMessage;
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      } catch (error) {
+        console.error('Error fetching volume search data via API call to ElasticSearch:', error);
+      }
+    }
+  },
+  computed: {
+    hasResults: function () {
+        return this.inAnnotations + this.inText;
+    },
+  },
+});
+
 Vue.component("v-volume-export-annotation-btn", {
   props: ["manifestCount"],
   template: `
@@ -141,7 +234,7 @@ Vue.component("v-info-content-url-single", {
   props: ["label", "url"],
   template: `
     <div class="rx-info-content">
-      <div class="rx-info-content-label uk-flex-between rx-flex ">
+      <div class="rx-info-content-label uk-flex-between rx-flex">
         <span>{{label}}</span>
         <div>
           <span class="uk-label rx-label-copy"
@@ -349,7 +442,7 @@ Vue.component("v-info-content-url-page-text", {
             .then(response => {
               vm.pageresource = response.data.resource;
               vm.pagetext = response.data.text;
-            }).catch(error => {console.log(error);})
+            }).catch(error => { console.log(error); })
         }
         var url =
           localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
@@ -374,14 +467,14 @@ var readux = new Vue({
     showMoreInfo: false,
   },
   methods: {
-    sortBy: function(selection) {
+    sortBy: function (selection) {
       var value = this.searchPrefix + selection;
       if (window.location !== value) {
         window.location = value;
       }
     },
 
-    toggleMoreInfo: function(){
+    toggleMoreInfo: function () {
       this.showMoreInfo = !this.showMoreInfo
     }
 
@@ -418,7 +511,7 @@ var readux = new Vue({
     // }
   },
 
-  mounted: function() {
+  mounted: function () {
     if (this.$refs["v-attr-sort"]) {
       this.currentSelection = this.$refs["v-attr-sort"].getAttribute(
         "data-sort"
@@ -429,4 +522,20 @@ var readux = new Vue({
       this.showMoreInfo = true;
     }
   }
+});
+
+// Initialize selectize for search filters
+jQuery(function () {
+  jQuery("#id_collection").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...',
+  });
+  jQuery("#id_author").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...',
+  });
+  jQuery("#id_language").selectize({
+    plugins: ["clear_button"],
+    placeholder: 'Select one or more...'
+  });
 });

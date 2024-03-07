@@ -46,7 +46,7 @@ pylint-django==2.5.5
 wagtail==4.2.4
 wagtailmenus==3.1.9
 #git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
-wagtail-autocomplete==0.10.0
+wagtail-autocomplete==0.11.0
 wagtail-cache==2.3.0
 
 # Import/Export

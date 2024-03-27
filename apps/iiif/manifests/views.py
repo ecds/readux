@@ -1,4 +1,6 @@
 """Django views for manifests"""
+import csv
+from io import StringIO
 import json
 import logging
 from datetime import datetime
@@ -10,8 +12,10 @@ from django.views.generic.edit import FormView
 from django.core.serializers import serialize
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
+
+from apps.ingest.services import normalize_header, set_metadata
 from .models import Manifest
-from .forms import ManifestsCollectionsForm
+from .forms import ManifestCSVImportForm, ManifestsCollectionsForm
 
 LOGGER = logging.getLogger(__name__)
 
@@ -152,5 +156,41 @@ class AddToCollectionsView(FormView):
     def get_success_url(self):
         messages.add_message(
             self.request, messages.SUCCESS, 'Successfully added manifests to collections'
+        )
+        return reverse('admin:manifests_manifest_changelist')
+
+class MetadataImportView(FormView):
+    """Admin page to import a CSV and update multiple Manifests' metadata"""
+
+    template_name = 'manifest_metadata_import.html'
+    form_class = ManifestCSVImportForm
+
+    def get_context_data(self, **kwargs):
+        """Set page title on context data"""
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Manifest metadata bulk update (CSV import)'
+        return context
+
+    def form_valid(self, form):
+        """Read the CSV file and, find associated manifests, and update metadata"""
+        csv_file = form.cleaned_data.get('csv_file')
+        csv_io = StringIO(csv_file.read().decode('utf-8'))
+        reader = csv.DictReader(normalize_header(csv_io))
+        for row in reader:
+            try:
+                # try to find manifest
+                manifest = Manifest.objects.get(pid=row['pid'])
+                # use ingest set_metadata function
+                set_metadata(manifest, metadata=row)
+            except Manifest.DoesNotExist:
+                messages.add_message(
+                    self.request, messages.ERROR, f'Manifest with pid {row["pid"]} not found'
+                )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return to the manifest change list with a success message"""
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Successfully updated manifests'
         )
         return reverse('admin:manifests_manifest_changelist')

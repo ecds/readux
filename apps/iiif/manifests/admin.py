@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.http.request import HttpRequest
+from django.urls import reverse
 from django.urls.conf import path
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
@@ -9,7 +10,7 @@ from import_export.widgets import ManyToManyWidget, ForeignKeyWidget
 from django_summernote.admin import SummernoteModelAdmin
 from .models import Manifest, Note, ImageServer, RelatedLink
 from .forms import ManifestAdminForm
-from .views import AddToCollectionsView
+from .views import AddToCollectionsView, MetadataImportView
 from ..kollections.models import Collection
 
 class ManifestResource(resources.ModelResource):
@@ -56,6 +57,7 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
     form = ManifestAdminForm
     actions = ['add_to_collections_action']
     inlines = [RelatedLinksInline]
+    change_list_template = 'admin/change_list_override.html'
 
     def add_to_collections_action(self, request, queryset):
         """Action choose manifests to add to collections"""
@@ -72,6 +74,12 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
                 self.admin_site.admin_view(AddToCollectionsView.as_view()),
                 {'model_admin': self, },
                 name="AddManifestsToCollections",
+            ),
+            path(
+                'manifest_metadata_import/',
+                self.admin_site.admin_view(MetadataImportView.as_view()),
+                {'model_admin': self, },
+                name="MultiManifestMetadataImport",
             )
         ]
         return my_urls + urls

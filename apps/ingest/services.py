@@ -68,11 +68,12 @@ def set_metadata(manifest, metadata):
     """
     fields = [f.name for f in Manifest._meta.get_fields()]
     for (key, value) in metadata.items():
-        if key == "related":
+        casefolded_key = key.casefold().replace(" ", "_")
+        if casefolded_key == "related":
             # add RelatedLinks from metadata spreadsheet key "related"
             create_related_links(manifest, value)
-        elif key in fields:
-            setattr(manifest, key, value)
+        elif casefolded_key in fields:
+            setattr(manifest, casefolded_key, value)
         else:
             # all other keys go into Manifest.metadata JSONField
             if isinstance(manifest.metadata, list):

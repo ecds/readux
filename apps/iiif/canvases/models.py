@@ -179,19 +179,8 @@ class Canvas(IiifBase):
                 self.width = self.image_info['width']
                 self.height = self.image_info['height']
 
-        print("$$$$$$$$$$$$$$$$$$")
-        print(self.pid)
-        print("$$$$$$$$$$$$$$$$$$")
-
         if self.resource is None:
             self.resource = self.pid
-
-        print("################")
-        print(self.resource_id)
-        print("################")
-
-        if self.manifest and self.manifest.start_canvas is None:
-            Manifest.objects.filter(id=self.manifest.id).update(start_canvas=self)
 
     def save(self, *args, **kwargs): # pylint: disable = signature-differs
         """

@@ -342,25 +342,20 @@ class Manifest(IiifBase):
         if not self._state.adding and 'pid' in self.get_dirty_fields() and self.image_server and self.image_server.storage_service == 's3':
             self.__rename_s3_objects()
 
+        try:
+            Canvas = apps.get_model('canvases.canvas')
+            if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
+                self.start_canvas = self.canvas_set.all().order_by('position').first()
+                Canvas.objects.filter(manifest=self).update(is_starting_page=False)
+                Canvas.objects.filter(pk=self.start_canvas.id).update(is_starting_page=True)
+        except Canvas.DoesNotExist:
+            self.start_canvas = None
+
         super().save(*args, **kwargs)
 
         for collection in self.collections.all():
             collection.modified_at = self.modified_at
             collection.save()
-
-        Canvas = apps.get_model('canvases.canvas')
-        try:
-            if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
-                self.start_canvas = self.canvas_set.all().order_by('position').first()
-                self.save()
-        except Canvas.DoesNotExist:
-            self.start_canvas = None
-
-        # if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
-        #     instance = self._meta.default_manager.with_documents().get(pk=self.pk)
-        #     instance.search_vector = instance.document
-        #     instance.save(update_fields=['search_vector'])
-
 
     def delete(self, *args, **kwargs):
         """

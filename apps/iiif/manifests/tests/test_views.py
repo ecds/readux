@@ -104,6 +104,7 @@ class ManifestTests(TestCase):
         assert volume.canvas_set.exists() is False
         for index, _ in enumerate(range(4)):
             CanvasFactory.create(manifest=volume, is_starting_page=True, position=index+1)
+        volume.save()
         volume.refresh_from_db()
         manifest = json.loads(
             serialize(

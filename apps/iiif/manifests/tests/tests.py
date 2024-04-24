@@ -97,6 +97,7 @@ class ManifestTests(TestCase):
         assert manifest.start_canvas is None
         canvas = CanvasFactory.create(manifest=manifest)
         canvas.save()
+        manifest.save()
         manifest.refresh_from_db()
         assert manifest.start_canvas == canvas
 

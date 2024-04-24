@@ -1,5 +1,6 @@
 """Elasticsearch indexing rules for IIIF manifests"""
 
+from os import environ
 from html import unescape
 from django.conf import settings
 from django_elasticsearch_dsl import Document, fields
@@ -60,7 +61,7 @@ class ManifestDocument(Document):
         """Settings for automatically pulling data from Django"""
 
         model = Manifest
-        ignore_signals = True
+        ignore_signals = environ['DJANGO_ENV'] != 'test'
 
         # fields to map dynamically in Elasticsearch
         fields = [

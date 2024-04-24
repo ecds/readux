@@ -1,7 +1,7 @@
 '''
 '''
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.conf import settings
@@ -9,7 +9,6 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.core.serializers import serialize
-from allauth.socialaccount.models import SocialAccount
 
 from ..admin import ManifestAdmin
 from ..views import AddToCollectionsView, ManifestSitemap, ManifestRis
@@ -105,13 +104,14 @@ class ManifestTests(TestCase):
         assert volume.canvas_set.exists() is False
         for index, _ in enumerate(range(4)):
             CanvasFactory.create(manifest=volume, is_starting_page=True, position=index+1)
+        volume.refresh_from_db()
         manifest = json.loads(
             serialize(
                 'manifest',
                 [volume],
                 version='v2',
                 annotators='Tom',
-                exportdate=datetime.utcnow()
+                exportdate=datetime.now(timezone.utc)
             )
         )
         first_canvas = volume.canvas_set.all().first()

@@ -141,6 +141,7 @@ class CanvasTests(TestCase):
     def test_ocr_from_tsv(self):
         manifest = ManifestFactory.create(image_server=ImageServerFactory.create(server_base='https://images.readux.ecds.emory.fake/'))
         canvas = CanvasFactory(manifest=manifest, pid='boo')
+        manifest.refresh_from_db()
         # AnnotationFactory.create(x=459, y=391, w=89, h=43, order=1, canvas=canvas)
         # AnnotationFactory.create(x=453, y=397, w=397, h=3, order=2, canvas=canvas)
         # TODO: TOO MANY STEPS TO MAKE OCR????

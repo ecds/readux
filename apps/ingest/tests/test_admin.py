@@ -1,5 +1,5 @@
 from os.path import join
-from os import mkdir, path
+from os import path, makedirs
 from getpass import getuser
 from shutil import rmtree
 import boto3
@@ -113,7 +113,7 @@ class IngestAdminTest(TestCase):
             image_server=self.sftp_image_server
         )
 
-        mkdir(local.image_server.storage_path)
+        makedirs(local.image_server.storage_path, exist_ok=True)
 
         original_manifest_count = Manifest.objects.count()
         original_canvas_count = Canvas.objects.count()

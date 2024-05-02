@@ -90,7 +90,7 @@ class Annotation(AbstractAnnotation):
         # if not self.content or self.content.isspace():
             # raise ValidationError('Content cannot be empty')
             # self.content = '  '
-        super(Annotation, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         ordering = ['order']

@@ -9,6 +9,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget, ForeignKeyWidget
 from django_summernote.admin import SummernoteModelAdmin
 from .models import Manifest, Note, ImageServer, RelatedLink
+from .documents import ManifestDocument
 from .forms import ManifestAdminForm
 from .views import AddToCollectionsView, MetadataImportView
 from ..kollections.models import Collection
@@ -83,6 +84,12 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
             )
         ]
         return my_urls + urls
+
+    def save_model(self, request, obj, form, change):
+        # Add/update Volume in the Elasticsearch index.
+        index = ManifestDocument()
+        index.update(obj, True, 'index')
+        super().save_model(request, obj, form, change)
 
 class NoteAdmin(admin.ModelAdmin):
     """Django admin configuration for a note."""

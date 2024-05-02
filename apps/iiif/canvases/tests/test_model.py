@@ -120,3 +120,9 @@ class TestCanvasModels(TestCase):
         canvas.save()
         assert canvas.height == 3000
         assert canvas.width == 3000
+
+    def test_setting_resource(self):
+        canvas = CanvasNoDimensionsFactory.build(manifest=ManifestFactory.create())
+        assert canvas.resource is None
+        canvas.before_save()
+        assert canvas.resource == canvas.pid

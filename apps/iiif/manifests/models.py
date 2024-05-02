@@ -367,7 +367,13 @@ class Manifest(IiifBase):
         for canvas in self.canvas_set.all():
             canvas.delete()
 
+        # Delete from Elasticsearch index
+        from .documents import ManifestDocument
+        index = ManifestDocument()
+        index.update(self, True, 'delete')
+
         super().delete(*args, **kwargs)
+
 
     def __rename_s3_objects(self):
         original_pid = self.get_dirty_fields()['pid']

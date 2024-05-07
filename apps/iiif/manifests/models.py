@@ -1,4 +1,5 @@
 """Django models for IIIF manifests"""
+from os import environ
 from uuid import uuid4, UUID
 from json import JSONEncoder
 from boto3 import resource
@@ -16,6 +17,8 @@ import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
 from..models import IiifBase
+from .tasks import index_manifest_task, de_index_manifest_task
+
 JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
 
 def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
@@ -357,9 +360,15 @@ class Manifest(IiifBase):
             collection.modified_at = self.modified_at
             collection.save()
 
+        if environ["DJANGO_ENV"] != 'test': # pragma: no cover
+            index_manifest_task.apply_async(args=[str(self.id)])
+        else:
+            index_manifest_task(str(self.id))
+
+
     def delete(self, *args, **kwargs):
         """
-        When a manifest is delted, the related canvas objects are deleted (`on_delete`=models.CASCADE).
+        When a manifest is deleted, the related canvas objects are deleted (`on_delete`=models.CASCADE).
         However, the `delete` method is not called on the canvas objects. We need to do that so
         the files can be cleaned up.
         https://docs.djangoproject.com/en/3.2/ref/models/fields/#django.db.models.CASCADE
@@ -367,12 +376,12 @@ class Manifest(IiifBase):
         for canvas in self.canvas_set.all():
             canvas.delete()
 
-        # Delete from Elasticsearch index
-        from .documents import ManifestDocument
-        index = ManifestDocument()
-        index.update(self, True, 'delete')
-
         super().delete(*args, **kwargs)
+
+        # if environ["DJANGO_ENV"] != 'test': # pragma: no cover
+        #     de_index_manifest_task.apply_async(args=[str(self.id)])
+        # else:
+        #     de_index_manifest_task(str(self.id))
 
 
     def __rename_s3_objects(self):

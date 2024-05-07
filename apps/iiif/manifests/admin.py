@@ -1,4 +1,4 @@
-"""Django admin module for maninfests"""
+"""Django admin module for manifests"""
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.http.request import HttpRequest
@@ -84,12 +84,6 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdm
             )
         ]
         return my_urls + urls
-
-    def save_model(self, request, obj, form, change):
-        # Add/update Volume in the Elasticsearch index.
-        index = ManifestDocument()
-        index.update(obj, True, 'index')
-        super().save_model(request, obj, form, change)
 
 class NoteAdmin(admin.ModelAdmin):
     """Django admin configuration for a note."""

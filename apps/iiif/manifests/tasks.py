@@ -1,7 +1,9 @@
 from celery import Celery
-from django.apps import apps
+from django.conf import settings
 
 app = Celery('apps.iiif.manifests', result_extended=True)
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(name='index_manifest', autoretry_for=(Exception,), retry_backoff=True, max_retries=20)
 def index_manifest_task(manifest_id):

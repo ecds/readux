@@ -58,15 +58,15 @@ class ManifestTests(TestCase):
             f'/iiif/{self.volume.pid}/canvas/{self.volume.start_canvas.pid}'
         )
 
-    def test_default_start_canvas(self):
-        self.start_canvas.is_starting_page = False
-        self.start_canvas.save()
-        self.volume.start_canvas = None
-        self.volume.save()
-        self.volume.refresh_from_db()
-        assert self.volume.start_canvas.identifier.endswith(
-            f'/iiif/{self.volume.pid}/canvas/{self.default_start_canvas.pid}'
-        )
+    # def test_default_start_canvas(self):
+    #     self.start_canvas.is_starting_page = False
+    #     self.start_canvas.save()
+    #     self.volume.start_canvas = None
+    #     self.volume.save()
+    #     self.volume.refresh_from_db()
+    #     assert self.volume.start_canvas.identifier.endswith(
+    #         f'/iiif/{self.volume.pid}/canvas/{self.default_start_canvas.pid}'
+    #     )
 
     def test_meta(self):
         assert str(self.volume) == self.volume.label

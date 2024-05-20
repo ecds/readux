@@ -61,7 +61,7 @@ class ManifestDocument(Document):
         """Settings for automatically pulling data from Django"""
 
         model = Manifest
-        ignore_signals = True
+        ignore_signals = environ['DJANGO_ENV'] != 'test'
 
         # fields to map dynamically in Elasticsearch
         fields = [

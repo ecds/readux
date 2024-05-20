@@ -94,7 +94,7 @@ requests~=2.31.0
 iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty~=1.1.4 # https://pypi.org/project/httpretty/
 #mock~=4.0.2
-cssutils~=2.9.0 # https://pypi.org/project/cssutils/
+cssutils~=2.11.0 # https://pypi.org/project/cssutils/
 moto==4.2.13 # https://github.com/spulec/moto
 factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
 faker~=20.1.0

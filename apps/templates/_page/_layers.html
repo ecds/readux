@@ -1,0 +1,27 @@
+<h1 class="uk-text-large uk-text-bold uk-margin-small-bottom">Layers to Display</h1>
+
+<div class="rx-info-content">
+  <div class="rx-info-content-label uk-flex-between rx-flex"><span>OCR Overlay</span> 
+    <div>
+      <label class="uk-switch" for="ocr-overlay" >
+        <input type="checkbox" id="ocr-overlay" onclick="toggleOCR()">
+        <div class="uk-switch-slider"></div>
+      </label>
+    </div>
+  </div> 
+  <div class="rx-info-content-value">
+    Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
+  </div>
+</div>
+
+<div class="rx-info-content">
+  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Text Overlay</span> 
+    <div class="uk-label rx-label-copy" uk-toggle="target: #text-overlay-modal">
+      <span uk-icon="icon: expand; ratio: 0.5"></span>
+      Open in Popup
+    </div>
+  </div>
+  <div class="rx-info-content-value">
+    Display the plain text in the OCR in a popup. All formats are stripped away in the text.
+  </div>
+</div>

@@ -551,11 +551,11 @@ p {
   min-width: 65px;
 }
 
-.rx-breadcrumb-item:not(:last-child)::after,
-.rx-page-breadcrumb-item:not(:last-child)::after {
-  content: "-";
-  padding: 0 0.5em;
-}
+// .rx-breadcrumb-item:not(:last-child)::after,
+// .rx-page-breadcrumb-item:not(:last-child)::after {
+//   content: "-";
+//   padding: 0 0.5em;
+// }
 
 .rx-page-title-container {
   padding: 0 15px;
@@ -611,6 +611,9 @@ p {
 .rx-info-content {
   padding: 0 0 1.25em;
   font-size: 0.9rem;
+  &:last-child {
+    padding: 0;
+  }
 }
 
 .rx-info-content-label {
@@ -826,10 +829,10 @@ p {
   border: var(--link-color) 1px solid;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
-  opacity: 0.75;
   cursor: pointer;
   transition: all ease-in-out 100ms;
   font-weight: 600;
+  font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
 
   &:active {
     background-color: $rx-color-accent-2 !important;
@@ -847,6 +850,14 @@ p {
   }
 }
 
+.rx-action-btn:hover .rx-label-copy {
+  background: var(--link-color);
+  color: white !important;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  opacity: 1;
+}
 
 .rx-label-solid {
   background: var(--link-color);
@@ -1329,7 +1340,58 @@ fieldset {
   height: 150px;
   width: 100%;
 }
+
+.rx-volume-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--link-color);
+
+  &:hover {
+    color: $rx-color-accent-2;
+  }
+}
 // end of rx-title
+
+.rx-breadcrumb-item {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--link-color);
+  &:hover {
+    color: $rx-color-accent-2;
+  }
+}
+
+// properly indent bullet items in the breadcrumb
+.uk-navbar li {
+  text-indent: -1em !important; /* Negative indent to pull first line back */
+  padding-left: 1em !important; /* Padding to offset the negative indent */
+
+  &::marker {
+    content: "↳  "; /* Custom bullet symbol */
+    position: absolute;
+    left: 0;
+  }
+}
+
+.uk-navbar li:first-child {
+  &::marker {
+    content: ""; /* Custom bullet symbol */
+    position: absolute;
+    left: 0;
+  }
+}
+
+.long-and-truncated.rx-volume-title {
+  display: flex;
+  align-items: center;
+}
+
+.long-and-truncated.rx-volume-title .uk-icon {
+  display: flex;
+  align-items: center;
+  margin-left: 8px; /* Optional: Add space between text and icon */
+}
+// End of breadcrumb
 
 @media (max-width: 395px) {
   header#page-bg .collection-label h1 {
@@ -1591,6 +1653,37 @@ fieldset {
     columns: 1;
     -webkit-columns: 1;
     -moz-columns: 1;
+  }
+}
+
+.rx-accordion-head {
+  background: white;
+  color: var(--link-color);
+  border: var(--link-color) 1px solid;
+  font-size: 0.85rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  transition: all ease-in-out 100ms;
+  font-weight: 600;
+  font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
+  
+  &::before {
+    color: white;
+  }
+  
+  &:active {
+    background-color: $rx-color-accent-2 !important;
+    border: 1px solid $rx-color-accent-2 !important;
+    opacity: 1;
+  }
+
+  &:hover {
+    background: var(--link-color);
+    color: white !important;
+    font-size: 0.85rem;
+    letter-spacing: 0.1rem;
+    cursor: pointer;
+    opacity: 1;
   }
 }
 
@@ -3498,8 +3591,57 @@ ol#search-results dl {
   padding: 10px;
 }
 
-.rx-scrollable {
+.uk-accordion>:nth-child(n+2) {
+  margin-top: 10px;
+}
 
+.rx-scrollable-area {
+  max-height: 75vh; /* Maximum height set to 100% of the viewport height */
+  overflow-y: auto;  /* Enables vertical scrolling */
+  margin-right: -5px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+}
+
+
+.padding-right-1rem {
+  padding-right: 1rem;
+}
+
+/* Override the minus sign in UI Kit accordion */
+.uk-open > .uk-accordion-title::before {
+  /* "-" Change the stroke color of the accordion icons to white */
+  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23950953%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E);
+}
+
+.uk-open > .uk-accordion-title:hover {
+  /* "-" Change the stroke color of the accordion icons to white */
+  &::before {
+    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E)
+  }
+}
+
+.uk-accordion-title::before {
+  /* "+" Change the stroke color of the accordion icons to white */
+  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23950953%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23950953%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+}
+
+.uk-accordion-title:hover {
+  /* "+" Change the stroke color of the accordion icons to white */
+  &::before {
+    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+  }
+}
+
+/* End */
+
+
+.uk-padding-1-2 {
+  padding: 0.5rem;
 }
 /* Set the theme color of the component */
 // $themeColor: #df3f13;

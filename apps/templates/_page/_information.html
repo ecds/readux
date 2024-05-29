@@ -1,46 +1,33 @@
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex"><span>OCR Overlay</span> 
-    <div>
-      <label class="uk-switch" for="ocr-overlay">
-        <input type="checkbox" id="ocr-overlay">
-        <div class="uk-switch-slider"></div>
-      </label>
-    </div>
+<div class="rx-info-content rx-scrollable-area">
+  <div class="rx-info-content-label uk-flex-between rx-flex uk-margin-small-bottom">
+    <span>Showing [#TODO] metadata fields</span> 
   </div> 
-  <div class="rx-info-content-value">
-    Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
-  </div>
-</div>
 
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Text Overlay</span> 
-    <div>
-      <div class="uk-label rx-label-copy">
-        <span uk-icon="icon: expand; ratio: 0.5"></span>
-        Open in Popup
-      </div>
+  <div class="rx-info-content-value uk-margin-small-bottom uk-flex" >
+    <div class="uk-flex-between">
+      <!-- <a class="rx-action-btn">
+        <div class="uk-label rx-label-copy uk-expand-btn">
+          <span uk-icon="icon: plus; ratio: 0.5"></span> Expand all
+        </div>
+      </a>
+      <a class="rx-action-btn">
+        <div class="uk-label rx-label-copy uk-collapse-btn">
+          <span uk-icon="icon: minus; ratio: 0.5"></span> Collapse all
+        </div>
+      </a> -->
+      <a class="rx-action-btn">
+        <div class="uk-label rx-label-copy">
+          <span uk-icon="icon: download; ratio: 0.5"></span> CSV (TODO)
+        </div>
+      </a>
     </div>
-  </div> 
-  <div class="rx-info-content-value">
-    Display the plain text in the OCR in a popup. All formats are stripped away in the text.
   </div>
-</div>
-
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Metadata Fields</span> 
-  </div> 
-  <div class="rx-info-content-value">
-    Advanced metadata fields are custom fields available only in certain volumes.
-  </div>
-  <div class="rx-info-content-value">
-   
-    <ul uk-tab>
-      <li><a href="info-basic">Basic</a></li>
-      <li><a href="info-advanced">Advanced</a></li>
-    </ul>
-    
-    <ul class="uk-switcher uk-margin">
-      <li>
+  
+  <div class="rx-info-content-value padding-right-1rem">
+    <ul uk-accordion="multiple: true">
+      <li class="uk-open">
+        <a class="uk-accordion-title uk-label rx-accordion-head" href>Basic</a>
+        <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2">
         {% if volume.label|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Title</div>
@@ -114,10 +101,49 @@
           </div>
         </div>
         {% endif %}
+      </div>
       </li>
-      <li>Unavailable</li>
+
+      <li>
+        <a class="uk-accordion-title uk-label rx-label-copy" href>Advanced</a>
+        <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2"> Advanced area</div>
+      </li>
+      <li>
+        <a class="uk-accordion-title uk-label rx-label-copy" href>Attribution</a>
+        <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2"> 
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Institution</div>
+          <div class="rx-info-content-value">{{ volume.attribution }}</div>
+        </div>
+      
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">License</div>
+          <div class="rx-info-content-value">{{ volume.license }}</div>
+        </div>
+      
+        {% if volume.identifier is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Identifier</div>
+          <div class="rx-info-content-value">{{ volume.identifier }}</div>
+        </div>
+        {% endif %}
+      
+        {% if volume.identifier_uri is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Link to Resource</div>
+          <div class="rx-info-content-value">{{ volume.identifier_uri }}</div>
+        </div>
+        {% endif %}
+      
+        {% if volume.scanned_by is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Scanned By</div>
+          <div class="rx-info-content-value">{{ volume.scanned_by }}</div>
+        </div>
+        {% endif %}
+      </div>
+      </li>
     </ul>
         
   </div>
 </div>
-

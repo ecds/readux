@@ -1,3 +1,10 @@
+console.log("HEY");
+
+$( document ).ready(function() {
+  console.log( "ready!" );
+});
+
+
 Vue.component("v-volume-image", {
   props: ["imgSrc", "volumeLabel"],
   template: `
@@ -133,7 +140,7 @@ Vue.component("v-volume-export-annotation-btn", {
   data: function () {
     return {
       localManifestCount: this.manifestCount,
-      isExportVisible: false,
+      isExportVisible: true,
     };
   },
   mounted() {

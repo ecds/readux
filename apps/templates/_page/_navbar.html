@@ -3,17 +3,21 @@
 <nav uk-navbar>
     <div class="uk-navbar-left">
       <a href="/" alt="Readux Logo/Home"><img src="{% static 'images/readux-graphics.svg'%}" style="height: 40px;"></img></a>
-      <ul class="rx-page-breadcrumb long-and-truncated">
-        {% if volume.collections.first.pid %}
-        <li class="rx-page-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-        <li class="rx-page-breadcrumb-item"><a href="{% url 'collection' volume.collections.first.pid %}"
-            alt="Collections">{{ volume.collections.first.label }}</a>
-        </li>
-        {% else %}
-        <li class="rx-page-breadcrumb-item"><a class="nav-link" href="/{{ volumelink.slug }}">All Volumes</a></li>
-        {% endif %}
-        <li class="uk-text-truncate"> {{volume.label}}</li>
-      </ul>
+      
+      <div class="uk-inline">
+          <button class="long-and-truncated rx-volume-title" type="button"> {{volume.label}} <span uk-icon="icon: triangle-down"></span></button>
+          <div uk-dropdown="mode: click" class="uk-width-large">
+            {% if volume.collections.first.pid %}
+            <li class=""><a class="rx-breadcrumb-item" href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+            <li class="uk-margin-left"><a class="rx-breadcrumb-item" href="{% url 'collection' volume.collections.first.pid %}"
+                alt="Collections">{{ volume.collections.first.label }}</a>
+            </li>
+            {% else %}
+            <li class=""><a class="nav-link rx-breadcrumb-item" href="/{{ volumelink.slug }}">All Volumes</a></li>
+            {% endif %}
+            <li class="uk-margin-medium-left uk-text-bold"> {{volume.label}}</li>
+          </div>
+      </div>
     </div>
     <div class="uk-navbar-right uk-width-auto">
       <div class="rx-page-breadcrumb">

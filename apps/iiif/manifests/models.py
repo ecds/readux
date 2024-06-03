@@ -356,9 +356,9 @@ class Manifest(IiifBase):
 
         super().save(*args, **kwargs)
 
-        for collection in self.collections.all():
-            collection.modified_at = self.modified_at
-            collection.save()
+        # for collection in self.collections.all():
+        #     collection.modified_at = self.modified_at
+        #     collection.save()
 
         if environ["DJANGO_ENV"] != 'test': # pragma: no cover
             index_manifest_task.apply_async(args=[str(self.id)])

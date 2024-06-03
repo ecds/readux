@@ -1,4 +1,6 @@
 """Django views for manifests"""
+
+import os
 import csv
 from io import StringIO
 import json
@@ -173,6 +175,7 @@ class MetadataImportView(FormView):
 
     def form_valid(self, form):
         """Read the CSV file and, find associated manifests, and update metadata"""
+        form.is_valid()
         csv_file = form.cleaned_data.get('csv_file')
         csv_io = StringIO(csv_file.read().decode('utf-8'))
         reader = csv.DictReader(normalize_header(csv_io))
@@ -190,7 +193,9 @@ class MetadataImportView(FormView):
 
     def get_success_url(self):
         """Return to the manifest change list with a success message"""
-        messages.add_message(
-            self.request, messages.SUCCESS, 'Successfully updated manifests'
-        )
+        # https://stackoverflow.com/questions/11938164/why-dont-my-django-unittests-know-that-messagemiddleware-is-installed
+        if os.environ['DJANGO_ENV'] != 'test':
+            messages.add_message(
+                self.request, messages.SUCCESS, 'Successfully updated manifests'
+            )
         return reverse('admin:manifests_manifest_changelist')

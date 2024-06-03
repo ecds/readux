@@ -1,9 +1,10 @@
-'''
-'''
 import json
+import os
 from datetime import datetime, timezone
 from django.test import TestCase, Client
 from django.test import RequestFactory
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
@@ -11,9 +12,9 @@ from django.urls import reverse
 from django.core.serializers import serialize
 
 from ..admin import ManifestAdmin
-from ..views import AddToCollectionsView, ManifestSitemap, ManifestRis
+from ..views import AddToCollectionsView, ManifestSitemap, ManifestRis, MetadataImportView
 from ..models import Manifest
-from ..forms import ManifestsCollectionsForm
+from ..forms import ManifestsCollectionsForm, ManifestCSVImportForm
 from .factories import ManifestFactory, EmptyManifestFactory
 from ...canvases.models import Canvas
 from ...canvases.tests.factories import CanvasFactory
@@ -121,6 +122,8 @@ class ManifestTests(TestCase):
         assert first_canvas.pid in manifest['thumbnail']['@id']
 
     def test_no_starting_canvases(self):
+        """_summary_
+        """
         manifest = ManifestFactory.create()
         try:
             manifest.canvas_set.all().get(is_starting_page=True)
@@ -175,3 +178,39 @@ class ManifestTests(TestCase):
         view.add_manifests_to_collections(form)
         assert len(manifest1.collections.all()) == 2
         assert len(manifest2.collections.all()) == 2
+
+    def test_bulk_metadata_update(self):
+        """
+        Should update manifest metadata from CSV file.
+        """
+
+        manifests = [
+            ManifestFactory.create(pid='1925-Temple-EMU'),
+            ManifestFactory.create(pid='1829-Chahta-UTL')
+        ]
+
+        self.assertNotEqual(manifests[0].label, 'The Temple Star')
+        self.assertNotEqual(manifests[1].label, 'Chahta Uba Isht Taloa')
+
+        file_path = os.path.join(
+            settings.APPS_DIR,
+            'iiif',
+            'manifests',
+            'fixtures',
+            'metadata-update.csv'
+        )
+        with open(file_path, 'rb') as metadata_file:
+            content = SimpleUploadedFile(
+                name='metadata-update.csv',
+                content=metadata_file.read()
+            )
+
+            csv_form = ManifestCSVImportForm(files={'csv_file': content})
+            view = MetadataImportView()
+            view.request = self.factory.get('/')
+            view.form_valid(csv_form)
+
+        manifests[0].refresh_from_db()
+        manifests[1].refresh_from_db()
+        self.assertEqual(manifests[0].label, 'The Temple Star')
+        self.assertEqual(manifests[1].label, 'Chahta Uba Isht Taloa')

@@ -104,10 +104,21 @@
       </div>
       </li>
 
-      <li>
-        <a class="uk-accordion-title uk-label rx-label-copy" href>Advanced</a>
-        <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2"> Advanced area</div>
-      </li>
+      {# Advanced fields: custom metadata configured via django settings #}
+      {% if custom_metadata %}
+        <li>
+          <a class="uk-accordion-title uk-label rx-label-copy" href>Advanced</a>
+          <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2">
+            {% for key, value in custom_metadata.items %}
+              <div class="rx-info-content">
+                <div class="rx-info-content-label">{{ key }}</div>
+                <div class="rx-info-content-value">{{ value }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </li>
+      {% endif %}
+
       <li>
         <a class="uk-accordion-title uk-label rx-label-copy" href>Attribution</a>
         <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2"> 

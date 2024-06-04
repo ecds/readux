@@ -13,11 +13,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from edtf.fields import EDTFField
 from apps.iiif.manifests.validators import validate_edtf
-import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
 from..models import IiifBase
-from .tasks import index_manifest_task, de_index_manifest_task
+from .tasks import index_manifest_task
 
 JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
 
@@ -101,7 +100,7 @@ class Language(models.Model):
 
     def __str__(self):
         """String representation of the language"""
-        return self.name
+        return str(self.name)
 
 class ManifestManager(models.Manager): # pylint: disable = too-few-public-methods
     """Model manager for searches."""
@@ -328,7 +327,7 @@ class Manifest(IiifBase):
         return self.label
 
     def __str__(self):
-        return self.label
+        return str(self.label)
 
     # FIXME: This creates a circular dependency - Importing UserAnnotation here.
     # Furthermore, we shouldn't have any of the IIIF apps depend on Readux. Need
@@ -346,19 +345,19 @@ class Manifest(IiifBase):
             self.__rename_s3_objects()
 
         try:
-            Canvas = apps.get_model('canvases.canvas')
+            canvas_model = apps.get_model('canvases.canvas')
             if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
                 self.start_canvas = self.canvas_set.all().order_by('position').first()
-                Canvas.objects.filter(manifest=self).update(is_starting_page=False)
-                Canvas.objects.filter(pk=self.start_canvas.id).update(is_starting_page=True)
-        except Canvas.DoesNotExist:
+                canvas_model.objects.filter(manifest=self).update(is_starting_page=False)
+                canvas_model.objects.filter(pk=self.start_canvas.id).update(is_starting_page=True)
+        except canvas_model.DoesNotExist:
             self.start_canvas = None
 
         super().save(*args, **kwargs)
 
-        # for collection in self.collections.all():
-        #     collection.modified_at = self.modified_at
-        #     collection.save()
+        for collection in self.collections.all(): # pylint: disable = no-member
+            collection.modified_at = self.modified_at
+            collection.save()
 
         if environ["DJANGO_ENV"] != 'test': # pragma: no cover
             index_manifest_task.apply_async(args=[str(self.id)])

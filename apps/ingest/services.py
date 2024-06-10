@@ -77,15 +77,27 @@ def set_metadata(manifest, metadata):
         else:
             # all other keys go into Manifest.metadata JSONField
             if isinstance(manifest.metadata, list):
-                # add label and value to list
-                manifest.metadata.append({"label": key, "value": value})
+                found_index = next(
+                    (
+                        idx
+                        for (idx, d) in enumerate(manifest.metadata)
+                        if d["label"] == key
+                    ),
+                    None,
+                )
+                if found_index:
+                    # if value with this label exists, pop and re-insert
+                    manifest.metadata.pop(found_index)
+                    manifest.metadata.insert(
+                        found_index, {"label": key, "value": value}
+                    )
+                else:
+                    # if not, add label and value to end of list
+                    manifest.metadata.append({"label": key, "value": value})
             elif isinstance(manifest.metadata, dict):
                 # convert to list of {label, value} as expected by iiif spec
                 manifest.metadata = [
-                    *[
-                        {"label": k, "value": v}
-                        for (k, v) in manifest.metadata.items()
-                    ],
+                    *[{"label": k, "value": v} for (k, v) in manifest.metadata.items()],
                     {"label": key, "value": value},
                 ]
             else:

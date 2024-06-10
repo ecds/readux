@@ -70,7 +70,7 @@ class ManifestTests(TestCase):
     #     )
 
     def test_meta(self):
-        assert str(self.volume) == self.volume.label
+        assert str(self.volume) == f"{self.volume.pid} - title: {self.volume.label}"
 
     def test_sitemap(self):
         site_map = ManifestSitemap()
@@ -88,7 +88,7 @@ class ManifestTests(TestCase):
         assert response.status_code == 200
 
     def test_autocomplete_label(self):
-        assert Manifest.objects.all().first().autocomplete_label() == Manifest.objects.all().first().label
+        assert Manifest.objects.all().first().autocomplete_label() == Manifest.objects.all().first().pid
 
     def test_absolute_url(self):
         assert Manifest.objects.all().first().get_absolute_url() == "%s/volume/%s" % (settings.HOSTNAME, Manifest.objects.all().first().pid)

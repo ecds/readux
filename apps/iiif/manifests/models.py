@@ -324,10 +324,10 @@ class Manifest(IiifBase):
 
         :rtype: str
         """
-        return self.label
+        return self.pid
 
     def __str__(self):
-        return str(self.label)
+        return f"{self.pid} - title: {self.label}"
 
     # FIXME: This creates a circular dependency - Importing UserAnnotation here.
     # Furthermore, we shouldn't have any of the IIIF apps depend on Readux. Need

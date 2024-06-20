@@ -81,7 +81,7 @@ def set_metadata(manifest, metadata):
                     (
                         idx
                         for (idx, d) in enumerate(manifest.metadata)
-                        if d["label"] == key
+                        if "label" in d and d["label"] == key
                     ),
                     None,
                 )

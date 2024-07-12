@@ -1366,19 +1366,19 @@ fieldset {
   text-indent: -1em !important; /* Negative indent to pull first line back */
   padding-left: 1em !important; /* Padding to offset the negative indent */
 
-  &::marker {
-    content: "↳  "; /* Custom bullet symbol */
-    position: absolute;
-    left: 0;
-  }
+  // &::marker {
+  //   content: "↳  "; /* Custom bullet symbol */
+  //   position: absolute;
+  //   left: 0;
+  // }
 }
 
 .uk-navbar li:first-child {
-  &::marker {
-    content: ""; /* Custom bullet symbol */
-    position: absolute;
-    left: 0;
-  }
+  // &::marker {
+  //   content: ""; /* Custom bullet symbol */
+  //   position: absolute;
+  //   left: 0;
+  // }
 }
 
 .long-and-truncated.rx-volume-title {
@@ -1757,7 +1757,7 @@ a.nav-link {
 }
 
 .uk-navbar-right {
-  padding-top: 1rem;
+  // padding-top: 1rem;
 }
 
 .uk-container ul {

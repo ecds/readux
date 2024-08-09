@@ -14,7 +14,6 @@ git+https://github.com/ecds/python-edtf@214972b
 
 # Django
 # ------------------------------------------------------------------------------
-# TODO: To upgrade to Django 3, we have to redo the full text search on the manifest model.
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
 Django>=3.2.0,<4.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
@@ -96,7 +95,7 @@ iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty~=1.1.4 # https://pypi.org/project/httpretty/
 #mock~=4.0.2
 cssutils~=2.9.0 # https://pypi.org/project/cssutils/
-moto==4.2.13 # https://github.com/spulec/moto
+moto==5.0.12 # https://github.com/spulec/moto
 factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
 faker~=20.1.0
 

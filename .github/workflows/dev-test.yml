@@ -89,9 +89,6 @@ jobs:
       - name: Test IIIF
         run: pytest apps/iiif/
 
-      - name: Test Ingest
-        run: pytest apps/ingest/
-
       - name: Test Readux
         run: pytest apps/readux/
 

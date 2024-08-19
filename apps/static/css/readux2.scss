@@ -108,8 +108,7 @@
     border-radius: 4px; /* Rounded corners */
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
     padding: 10px 0 !important;
-    margin-top: 10px !important; /* Force a gap between the trigger and dropdown */
-    margin-right: -25px !important; /* Force a gap between the trigger and dropdown */
+    // margin-top: 10px !important; /* Force a gap between the trigger and dropdown */
     min-width: 0 !important;
 }
 
@@ -205,6 +204,8 @@
     text-decoration: underline; /* Underline for title */
     color: #1D3557;
     font-weight: 600;
+    font-size: medium;
+    margin: 0;
 }
 
 /* search bar */

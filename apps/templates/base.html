@@ -81,7 +81,7 @@
     {% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
     <link href="{% static 'css/selectize.css' %}" rel="stylesheet">
-    <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
+    <!-- <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet"> -->
     <link type="text/css" href="{% sass_src 'css/readux2.scss' %}" rel="stylesheet">
     <!-- <link type="text/css" href="css/project.scss" rel="stylesheet"> -->
 
@@ -101,7 +101,7 @@
 
   <div id="v-readux"></div>
   
-  <a class="sr-only" href="#main">Jump to main content</a>
+  <!-- <a class="sr-only" href="#main">Jump to main content</a> -->
   {% if request.get_host == "readux2.ecdsdev.org" %}
   {% elif request.get_host == "readux.ecdsdev.org" %}
   <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
@@ -111,7 +111,7 @@
   {% endif %}
   
     <!-- Matomo Image Tracker-->
-    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" style="border:0" alt="" />
+    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" hidden alt="" />
     <!-- End Matomo -->
 
     {% block javascript %}

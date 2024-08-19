@@ -1,4 +1,5 @@
 """ Module of service classes and methods for ingest. """
+
 import itertools
 import re
 from mimetypes import guess_type
@@ -7,7 +8,7 @@ from urllib.parse import unquote, urlparse
 from django.apps import apps
 from tablib.core import Dataset
 
-from apps.iiif.manifests.models import Manifest, RelatedLink
+from .models import Manifest, RelatedLink
 
 
 def clean_metadata(metadata):
@@ -24,19 +25,21 @@ def clean_metadata(metadata):
             key.casefold().replace(" ", "_")
             if key.casefold().replace(" ", "_") in fields
             else key
-        ): value for key, value in metadata.items()
+        ): value
+        for key, value in metadata.items()
     }
 
     for key in metadata.keys():
-        if key != 'metadata' and isinstance(metadata[key], list):
+        if key != "metadata" and isinstance(metadata[key], list):
             if isinstance(metadata[key][0], dict):
                 for meta_key in metadata[key][0].keys():
-                    if 'value' in meta_key:
+                    if "value" in meta_key:
                         metadata[key] = metadata[key][0][meta_key]
             else:
-                metadata[key] = ', '.join(metadata[key])
+                metadata[key] = ", ".join(metadata[key])
 
     return metadata
+
 
 def create_related_links(manifest, related_str):
     """
@@ -53,9 +56,11 @@ def create_related_links(manifest, related_str):
         RelatedLink.objects.create(
             manifest=manifest,
             link=link,
-            format=format or "text/html",  # assume web page if MIME type cannot be determined
+            format=format
+            or "text/html",  # assume web page if MIME type cannot be determined
             is_structured_data=False,  # assume this is not meant for seeAlso
         )
+
 
 def set_metadata(manifest, metadata):
     """
@@ -67,30 +72,44 @@ def set_metadata(manifest, metadata):
     :rtype: None
     """
     fields = [f.name for f in Manifest._meta.get_fields()]
-    for (key, value) in metadata.items():
-        if key == "related":
+    for key, value in metadata.items():
+        casefolded_key = key.casefold().replace(" ", "_")
+        if casefolded_key == "related":
             # add RelatedLinks from metadata spreadsheet key "related"
             create_related_links(manifest, value)
-        elif key in fields:
-            setattr(manifest, key, value)
+        elif casefolded_key in fields:
+            setattr(manifest, casefolded_key, value)
         else:
             # all other keys go into Manifest.metadata JSONField
             if isinstance(manifest.metadata, list):
-                # add label and value to list
-                manifest.metadata.append({"label": key, "value": value})
+                found_index = next(
+                    (
+                        idx
+                        for (idx, d) in enumerate(manifest.metadata)
+                        if "label" in d and d["label"] == key
+                    ),
+                    None,
+                )
+                if found_index:
+                    # if value with this label exists, pop and re-insert
+                    manifest.metadata.pop(found_index)
+                    manifest.metadata.insert(
+                        found_index, {"label": key, "value": value}
+                    )
+                else:
+                    # if not, add label and value to end of list
+                    manifest.metadata.append({"label": key, "value": value})
             elif isinstance(manifest.metadata, dict):
                 # convert to list of {label, value} as expected by iiif spec
                 manifest.metadata = [
-                    *[
-                        {"label": k, "value": v}
-                        for (k, v) in manifest.metadata.items()
-                    ],
+                    *[{"label": k, "value": v} for (k, v) in manifest.metadata.items()],
                     {"label": key, "value": value},
                 ]
             else:
                 # instantiate as list
                 manifest.metadata = [{"label": key, "value": value}]
     manifest.save()
+
 
 def create_manifest(ingest):
     """
@@ -108,8 +127,10 @@ def create_manifest(ingest):
     except TypeError:
         metadata = None
     if metadata:
-        if 'pid' in metadata:
-            manifest, created = Manifest.objects.get_or_create(pid=metadata['pid'].replace('_', '-'))
+        if "pid" in metadata:
+            manifest, created = Manifest.objects.get_or_create(
+                pid=metadata["pid"].replace("_", "-")
+            )
         else:
             manifest = Manifest.objects.create()
         set_metadata(manifest, metadata)
@@ -119,7 +140,7 @@ def create_manifest(ingest):
     manifest.image_server = ingest.image_server
 
     # This was giving me a 'django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet' error.
-    Remote = apps.get_model('ingest.remote')
+    Remote = apps.get_model("ingest.remote")
 
     # Ensure that manifest has an ID before updating the M2M relationship
     manifest.save()
@@ -132,11 +153,12 @@ def create_manifest(ingest):
         RelatedLink(
             manifest=manifest,
             link=ingest.remote_url,
-            format='application/ld+json',
+            format="application/ld+json",
             is_structured_data=True,
         ).save()
 
     return manifest
+
 
 def extract_image_server(canvas):
     """Determines the IIIF image server URL for a given IIIF Canvas
@@ -146,14 +168,15 @@ def extract_image_server(canvas):
     :return: IIIF image server URL
     :rtype: str
     """
-    url = urlparse(canvas['images'][0]['resource']['service']['@id'])
-    parts = url.path.split('/')
+    url = urlparse(canvas["images"][0]["resource"]["service"]["@id"])
+    parts = url.path.split("/")
     parts.pop()
-    base_path = '/'.join(parts)
+    base_path = "/".join(parts)
     host = url.hostname
     if url.port is not None:
-        host = '{h}:{p}'.format(h=url.hostname, p=url.port)
-    return '{s}://{h}{p}'.format(s=url.scheme, h=host, p=base_path)
+        host = "{h}:{p}".format(h=url.hostname, p=url.port)
+    return "{s}://{h}{p}".format(s=url.scheme, h=host, p=base_path)
+
 
 def parse_iiif_v2_manifest(data):
     """Parse IIIF Manifest based on v2.1.1 or the presentation API.
@@ -167,64 +190,76 @@ def parse_iiif_v2_manifest(data):
     properties = {}
     manifest_data = []
 
-    if 'metadata' in data:
-        manifest_data.append({ 'metadata': data['metadata'] })
+    if "metadata" in data:
+        manifest_data.append({"metadata": data["metadata"]})
 
-        for iiif_metadata in [{prop['label']: prop['value']} for prop in data['metadata']]:
+        for iiif_metadata in [
+            {prop["label"]: prop["value"]} for prop in data["metadata"]
+        ]:
             properties.update(iiif_metadata)
 
     # Sometimes, the label appears as a list.
-    if 'label' in data.keys() and isinstance(data['label'], list):
-        data['label'] = ' '.join(data['label'])
+    if "label" in data.keys() and isinstance(data["label"], list):
+        data["label"] = " ".join(data["label"])
 
-    manifest_data.extend([{prop: data[prop]} for prop in data if isinstance(data[prop], str)])
+    manifest_data.extend(
+        [{prop: data[prop]} for prop in data if isinstance(data[prop], str)]
+    )
 
     for datum in manifest_data:
         properties.update(datum)
 
-    uri = urlparse(data['@id'])
+    uri = urlparse(data["@id"])
 
     if not uri.query:
-        properties['pid'] = uri.path.split('/')[-2]
+        properties["pid"] = uri.path.split("/")[-2]
     else:
-        properties['pid'] = uri.query
+        properties["pid"] = uri.query
 
-    if 'description' in data.keys():
-        if isinstance(data['description'], list):
-            if isinstance(data['description'][0], dict):
-                en = [lang['@value'] for lang in data['description'] if lang['@language'] == 'en']
-                properties['summary'] = data['description'][0]['@value'] if not en else en[0]
+    if "description" in data.keys():
+        if isinstance(data["description"], list):
+            if isinstance(data["description"][0], dict):
+                en = [
+                    lang["@value"]
+                    for lang in data["description"]
+                    if lang["@language"] == "en"
+                ]
+                properties["summary"] = (
+                    data["description"][0]["@value"] if not en else en[0]
+                )
             else:
-                properties['summary'] = data['description'][0]
+                properties["summary"] = data["description"][0]
         else:
-            properties['summary'] = data['description']
+            properties["summary"] = data["description"]
 
-    if 'logo' in properties:
-        properties['logo_url'] = properties['logo']
-        properties.pop('logo')
+    if "logo" in properties:
+        properties["logo_url"] = properties["logo"]
+        properties.pop("logo")
 
     manifest_metadata = clean_metadata(properties)
 
     return manifest_metadata
 
+
 def parse_iiif_v2_canvas(canvas):
     """ """
-    canvas_id = canvas['@id'].split('/')
-    pid = canvas_id[-1] if canvas_id[-1] != 'canvas' else canvas_id[-2]
+    canvas_id = canvas["@id"].split("/")
+    pid = canvas_id[-1] if canvas_id[-1] != "canvas" else canvas_id[-2]
 
-    service = urlparse(canvas['images'][0]['resource']['service']['@id'])
-    resource = unquote(service.path.split('/').pop())
+    service = urlparse(canvas["images"][0]["resource"]["service"]["@id"])
+    resource = unquote(service.path.split("/").pop())
 
-    summary = canvas['description'] if 'description' in canvas.keys() else ''
-    label = canvas['label'] if 'label' in canvas.keys() else ''
+    summary = canvas["description"] if "description" in canvas.keys() else ""
+    label = canvas["label"] if "label" in canvas.keys() else ""
     return {
-        'pid': pid,
-        'height': canvas['height'],
-        'width': canvas['width'],
-        'summary': summary,
-        'label': label,
-        'resource': resource
+        "pid": pid,
+        "height": canvas["height"],
+        "width": canvas["width"],
+        "summary": summary,
+        "label": label,
+        "resource": resource,
     }
+
 
 def get_metadata_from(files):
     """
@@ -236,15 +271,19 @@ def get_metadata_from(files):
     for file in files:
         if metadata is not None:
             continue
-        if 'zip' in guess_type(file.name)[0]:
+        if "zip" in guess_type(file.name)[0]:
             continue
-        if 'metadata' in file.name.casefold():
+        if "metadata" in file.name.casefold():
             stream = file.read()
-            if 'csv' in guess_type(file.name)[0] or 'tab-separated' in guess_type(file.name)[0]:
-                metadata = Dataset().load(stream.decode('utf-8-sig'), format='csv').dict
+            if (
+                "csv" in guess_type(file.name)[0]
+                or "tab-separated" in guess_type(file.name)[0]
+            ):
+                metadata = Dataset().load(stream.decode("utf-8-sig"), format="csv").dict
             else:
                 metadata = Dataset().load(stream).dict
     return metadata
+
 
 def get_associated_meta(all_metadata, file):
     """
@@ -254,16 +293,20 @@ def get_associated_meta(all_metadata, file):
     :rtype: dict
     """
     file_meta = {}
-    extless_filename = file.name[0:file.name.rindex('.')]
+    extless_filename = file.name[0 : file.name.rindex(".")]
     for meta_dict in all_metadata:
         metadata_found_filename = None
         for key, val in meta_dict.items():
-            if key.casefold() == 'filename':
+            if key.casefold() == "filename":
                 metadata_found_filename = val
         # Match filename column, case-sensitive, against filename
-        if metadata_found_filename and metadata_found_filename in (extless_filename, file.name):
+        if metadata_found_filename and metadata_found_filename in (
+            extless_filename,
+            file.name,
+        ):
             file_meta = meta_dict
     return file_meta
+
 
 def normalize_header(iterator):
     """Normalize the header row of a metadata CSV"""

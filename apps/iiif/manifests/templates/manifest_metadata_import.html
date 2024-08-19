@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+{% load static %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:manifests_manifest_changelist' %}">Manifests</a>  
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+  <form enctype="multipart/form-data" method="post">{% csrf_token %}
+    <fieldset class="module aligned ">
+      <div class="form-row">
+        {{ form }}
+      </div>
+    </fieldset>
+    {% block submit_buttons_bottom %}
+      <div class="submit-row">
+        <input type="submit" value="{% trans 'Submit' %}" class="default" name="_save">
+      </div>
+    {% endblock %}
+  </form>
+{% endblock %}

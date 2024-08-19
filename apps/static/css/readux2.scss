@@ -1,9 +1,4 @@
 /* base.html */
-
-a {
-    // text-decoration: underline;
-}
-
 .landing {
     margin: 0;
     padding: 0;
@@ -69,6 +64,11 @@ a {
     }
 }
 
+/* util */
+.slash-gap {
+    margin: 0 0.5rem;
+}
+
 /* breadcrumb */
 .breadcrumb {
     list-style: none;
@@ -110,7 +110,7 @@ a {
     padding: 10px 0 !important;
     margin-top: 10px !important; /* Force a gap between the trigger and dropdown */
     margin-right: -25px !important; /* Force a gap between the trigger and dropdown */
-
+    min-width: 0 !important;
 }
 
 .uk-navbar-dropdown-nav a {
@@ -125,13 +125,95 @@ a {
     background-color: rgba(29, 53, 87, 0.1); /* Light blue hover effect */
 }
 
+/* page */
+.page-title {
+    font-size: xx-large;
+    font-weight: bold;
+    color: #000000;
+}
+
+.page-text-lead {
+    font-size: medium;
+    color: #000000;
+}
+
+/* volume grid */
+.info-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-weight: 600; /* Font weight for the information line */
+    color: #1D3557; /* Color for the information line */
+}
+
+.info-line .info-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-line .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-line a, .info-line select {
+    color: #E60000; /* Clickable item color */
+    text-decoration: underline; /* Underline for clickable items */
+}
+
+.pagination-controls .uk-icon-button {
+    color: #1D3557; /* Arrow button color */
+}
+
+.pagination-controls .uk-icon-button[disabled] {
+    color: #ccc; /* Greyed out for disabled state */
+    cursor: not-allowed;
+}
+
+.volume-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Four items per row */
+    gap: 2.5rem; /* Space between items */
+}
+
+.volume-item {
+    text-align: left;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    color: #1D3557; /* Title text color */
+    opacity: 0.9; /* Normal state opacity */
+    transition: opacity 0.1s ease;
+}
+
+.volume-item img {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio of images */
+    display: block;
+    margin-bottom: 10px; /* Space between image and title */
+    border-radius: 4px;
+}
+
+.volume-item:hover {
+    opacity: 1.0; /* Change opacity on hover */
+}
+
+.volume-item h2 {
+    text-decoration: underline; /* Underline for title */
+    color: #1D3557;
+    font-weight: 600;
+}
+
 /* search bar */
 .search-bar {
     display: flex;
     align-items: center;
     width: 100%;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 2rem auto;
 }
 
 .search-bar input {

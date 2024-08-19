@@ -16,38 +16,67 @@
 {% include '_home/_nav.html' %}
 
 <div class="uk-container">
-<ul class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li>
-    <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-    <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-      <ul class="uk-nav uk-navbar-dropdown-nav">
-          <li><a href="#">All Collections</a></li>
-          <li><a href="#">Featured Collections</a></li>
-      </ul>
-    </div>
-  </li>
-  <li>Volumes</li>
-</ul>
 
-</div>
-<div class="rx-title-container">
-  <ul class="rx-breadcrumb uk-text-truncate">
-    <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-    <li class="rx-breadcrumb-item">Volumes</li>
+  <!-- Breadcrumb -->
+  <ul class="breadcrumb uk-margin-small-top">
+    <li><a href="/">Home</a></li>
+    <li>
+      <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+        <ul class="uk-nav uk-navbar-dropdown-nav">
+            <li><a href="#">[All Collections]</a></li>
+            <li><a href="#">[Featured Collections]</a></li>
+        </ul>
+      </div>
+    </li>
+    <li>Volumes</li>
   </ul>
+  <!-- End -->
 
-  <div><h2 class="rx-title" style="margin-bottom:0;line-height: 1.5;">{{ page.page_title }}</h2></div>
-  <div class="rx-title-tagline">{{page.tagline}}</div>
+  <!-- Page title & text lead -->
+  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">[All Volumes]{{ page.page_title }}</h1>
+  <p class="page-text-lead">
+    [PAGE_TAGLINE_IS_THIS_IN_USE?]{{page.tagline}}
+  </p>
+  <p class="page-text-lead uk-margin-small-top">
+    [These all volumes available in this Readux instance. You may use pagination to browse or use the search feature to locate a volume.]{{ page.paragraph }}
+  </p>
+  <!-- End -->
+
+  {% include "snippets/_search_box.html" %}
+  <!-- {% include "snippets/sort_dropdown.html" %} -->
+
+  {% include "snippets/_volumes_page_information.html" %}
+
+  <!-- Volume Grid -->
+  <div class="volume-grid uk-margin-large-bottom">
+    <!-- Volume Item -->
+    <a href="#" class="volume-item">
+        <img src="https://via.placeholder.com/150x200" alt="Volume 1">
+        <h2>[Culpeper's complete herbal: with nearly four hundred medicines (1653)]</h2>
+    </a>
+    <!-- Repeat the volume item block for additional volumes -->
+    <a href="#" class="volume-item">
+        <img src="https://via.placeholder.com/150x200" alt="Volume 2">
+        <h2>[Il nuovo teatro delle fabbriche, et edificii, in prospettiva di Roma moderna. 5 vols. (1725)]</h2>
+    </a>
+    <a href="#" class="volume-item">
+        <img src="https://via.placeholder.com/150x200" alt="Volume 3">
+        <h2>[Magnenij Rabani Mauri de laudi[Bus] Sancte Crucis opus (1785)]</h2>
+    </a>
+    <a href="#" class="volume-item">
+        <img src="https://via.placeholder.com/150x200" alt="Volume 4">
+        <h2>[Breue racconto della trasportatione del corpo di Papa Paolo V (1590)]</h2>
+    </a>
+    <a href="#" class="volume-item">
+        <img src="https://via.placeholder.com/150x200" alt="Volume 5">
+        <h2>[Breue racconto della trasportatione del corpo di Papa Paolo V (1590)]</h2>
+    </a>
+  </div>
 </div>
 
-<div class="rx-head-container">
-  <p>{{ page.paragraph }}</p>
-</div>
-
-{% include "snippets/sort_dropdown.html" %}
-
-{% if page.layout == 'Grid' %}
+<!-- TODO: Integrate GRID content into design -->
+{% if page.layout == 'Grid_COMMENTED_OUT' %}
 <div class="pagination" style="margin-bottom:20px">
     <span class="step-links">
         {% if volumes.has_previous %}
@@ -122,8 +151,10 @@
     </span>
 </div>
 {% endif %}
+<!-- END -->
 
-{% if page.layout == 'List' %}
+<!-- TODO: Integrate LIST content into design -->
+{% if page.layout == 'List_COMMENTED_OUT' %}
 <div class="pagination" style="margin-bottom:20px">
     <span class="step-links">
         {% if volumes.has_previous %}
@@ -198,26 +229,28 @@
   {% endif %}
   {% endfor %}
 </div>
-
 <div class="pagination" style="margin-bottom:20px">
-    <span class="step-links">
-        {% if volumes.has_previous %}
-            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
-            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
-        {% endif %}
+  <span class="step-links">
+      {% if volumes.has_previous %}
+          <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
+          <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
+      {% endif %}
 
-        <span class="current" style="margin:0px,5px;">
-            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
-        </span>
+      <span class="current" style="margin:0px,5px;">
+          Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
+      </span>
 
-        {% if volumes.has_next %}
-            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
-            <a href="?{% url_replace page=volumes.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
-        {% endif %}
-    </span>
+      {% if volumes.has_next %}
+          <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
+          <a href="?{% url_replace page=volumes.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
+      {% endif %}
+  </span>
 </div>
-    {% include "footer.html" %}
-
 {% endif %}
+
+<!-- END -->
+
+
+{% include '_home/_footer.html' %}
 
 {% endblock content %}

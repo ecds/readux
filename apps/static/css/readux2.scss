@@ -21,17 +21,38 @@
 .content {
     position: relative;
     z-index: 2;
-    color: white;
+}
+
+.paragraph {
+    color: #1D3557;
+    line-height: normal;
+}
+
+.text-anchor {
+    color: #E60000;
+    text-decoration: underline;
+    transition: ease 0.1s;
+
+    &:hover {
+        color: darken(#E60000, 10%); /* Darken the color when hovered */
+    }
+    
+    &:active {
+        color: #990000; /* Darken even further when clicked */
+    }
 }
 
 .hero {
     padding-top: 15vh;
+    color: white;
 }
 
 .menu-item {
     color: white !important;
     text-decoration: none !important;
     transition: color 0.1s ease !important;
+    text-transform: unset !important;
+    font-weight: 500;
 
     &:hover {
         color: rgba(255, 255, 255, 0.8) !important; // Slightly dim
@@ -64,9 +85,42 @@
     }
 }
 
+.title {
+    color: #1D3557;
+    font-size: x-large;
+    font-weight: bold;
+}
+
 /* util */
 .slash-gap {
     margin: 0 0.5rem;
+}
+
+.color-black {
+    color: black;
+}
+
+/* Overrides */
+.uk-slidenav {
+    color: rgba(29, 53, 87, 0.6); /* Override the default colors with the blue */
+    
+    &:hover {
+        color: rgba(29, 53, 87, 1); /* Override the default colors with the blue */
+    }
+}
+
+/* ui kit slider */
+
+/* Add gap between items */
+.uk-slider-items {
+    gap: 4rem; /* Adjust the gap size as needed */
+}
+
+/* Make images square */
+.square-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover; /* Ensure the image covers the entire square without distorting */
 }
 
 /* breadcrumb */
@@ -268,6 +322,10 @@
 }
 
 /* featured books */
+.book-title {
+    line-height: normal;
+}
+
 .book-title a {
     color: #1D3557;
     font-size: 1em;
@@ -292,7 +350,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
-    padding: 0 20px;
     cursor: pointer;
     z-index: 2;
 }
@@ -352,9 +409,6 @@ iframe {
     background-color: #457B9D;
     color: white;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .footer-content {
@@ -368,12 +422,12 @@ iframe {
 .footer-links {
     display: flex;
     flex-direction: column;
+    font-weight: bold;
 }
 
 .footer-links a {
     color: white;
     text-decoration: none;
-    margin-bottom: 10px;
 }
 
 .footer-links a:hover {
@@ -391,7 +445,7 @@ iframe {
 }
 
 .footer-bottom {
-    text-align: center;
+    text-align: left;
     margin-top: 10px;
 }
 
@@ -430,6 +484,7 @@ iframe {
     margin-top: 4rem;
     color: #1D3557;
     font-size: 1.75rem;
+    line-height: 2.5rem;
 }
 
 .section-title {

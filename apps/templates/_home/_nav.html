@@ -12,7 +12,8 @@
                     <li class=""><a href="/all-volumes/" class="menu-item">Volumes</a></li>
                     <li>
                         <a href="#" class="menu-item">About <span uk-drop-parent-icon></span></a>
-                        <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left; offset: -20;">
+                        <div class="uk-navbar-dropdown uk-padding-remove"
+                            uk-dropdown="mode: click; pos: bottom-left; offset: -20;">
                             <ul class="uk-nav uk-navbar-dropdown-nav">
                                 <li class="uk-active"><a href="#">What is Sounding Spirit?</a></li>
                                 <li><a href="#">What is Readux?</a></li>
@@ -23,14 +24,22 @@
                         </div>
                     </li>
                 </ul>
-
             </div>
 
             <div class="uk-navbar-right">
                 <ul class="uk-navbar-nav">
-                    <li class=""><a href="#" class="menu-item">Login/Sign up</a></li>
-                    <li class=""><a href="#" class="menu-item">Partner with us</a></li>
-                    <li class=""><a href="/search/" class="menu-item">Search</a></li>
+                    <!-- Login/Sign up with Icon -->
+                    <li class="">
+                        <a href="#" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Login/Sign up"></a>
+                    </li>
+                    <!-- Partner with Us with Icon -->
+                    <li class="">
+                        <a href="#" class="menu-item" uk-icon="icon: users;" uk-tooltip="Partner with us"></a>
+                    </li>
+                    <!-- Search with Icon -->
+                    <li class="">
+                        <a href="/search/" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+                    </li>
                 </ul>
             </div>
         </div>

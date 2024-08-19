@@ -15,6 +15,22 @@
 
 {% include '_home/_nav.html' %}
 
+<div class="uk-container">
+<ul class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li>
+    <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+    <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+      <ul class="uk-nav uk-navbar-dropdown-nav">
+          <li><a href="#">All Collections</a></li>
+          <li><a href="#">Featured Collections</a></li>
+      </ul>
+    </div>
+  </li>
+  <li>Volumes</li>
+</ul>
+
+</div>
 <div class="rx-title-container">
   <ul class="rx-breadcrumb uk-text-truncate">
     <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
@@ -169,7 +185,7 @@
           {% has_user_annotations volume user as result %}
           {% if result %}
           <span class="count-icon">
-            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
+            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5;"
               uk-tooltip="title: Number of your annotations; pos: bottom"></span>
             <span class="count">{% user_annotation_count volume user %}</span>
           </span>

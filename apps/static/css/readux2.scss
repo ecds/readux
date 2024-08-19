@@ -69,7 +69,61 @@ a {
     }
 }
 
+/* breadcrumb */
+.breadcrumb {
+    list-style: none;
+    display: flex;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+}
 
+.breadcrumb>li {
+    margin-right: 5px;
+}
+
+.breadcrumb>li + li::before {
+    content: "/";
+    margin-right: 5px;
+    color: #1D3557; /* Color of the separator */
+}
+
+.breadcrumb a {
+    text-decoration: underline;
+    color: rgba(29, 53, 87, 1.0); /* Link color */
+    transition: color 0.1s ease;
+    &:hover {
+        color: rgba(29, 53, 87, 0.8); /* Hover state */
+    }
+}
+
+.breadcrumb .icon-chevron-down {
+    margin-left: 3px;
+}
+
+/* breadcrumb dropdown */
+.uk-navbar-dropdown {
+    background-color: #f8fdf4; /* Light greenish background color */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    padding: 10px 0 !important;
+    margin-top: 10px !important; /* Force a gap between the trigger and dropdown */
+    margin-right: -25px !important; /* Force a gap between the trigger and dropdown */
+
+}
+
+.uk-navbar-dropdown-nav a {
+    color: #1D3557 !important; /* Dark blue text color */
+    font-weight: 600; /* Bold text */
+    padding: 5px 15px !important; /* Add padding to the items */
+    display: block;
+    transition: background-color 0.1s ease;
+}
+
+.uk-navbar-dropdown-nav a:hover {
+    background-color: rgba(29, 53, 87, 0.1); /* Light blue hover effect */
+}
 
 /* search bar */
 .search-bar {

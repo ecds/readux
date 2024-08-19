@@ -1,5 +1,10 @@
 /* base.html */
-body {
+
+a {
+    // text-decoration: underline;
+}
+
+.landing {
     margin: 0;
     padding: 0;
     height: 80vh;
@@ -7,6 +12,7 @@ body {
     background: url('/static/images/bg.jpg') no-repeat center center fixed;
     background-size: cover;
 }
+
 .overlay {
     position: absolute;
     top: 0;
@@ -16,18 +22,21 @@ body {
     min-height: 500px;
     background-color: rgba(29, 53, 87, 0.8); /* Adjust the opacity as needed */
 }
+
 .content {
     position: relative;
     z-index: 2;
     color: white;
-    text-align: center;
-    padding-top: 20vh;
+}
+
+.hero {
+    padding-top: 15vh;
 }
 
 .menu-item {
     color: white !important;
     text-decoration: none !important;
-    transition: color 0.3s ease !important;
+    transition: color 0.1s ease !important;
 
     &:hover {
         color: rgba(255, 255, 255, 0.8) !important; // Slightly dim
@@ -37,6 +46,30 @@ body {
         color: rgba(255, 255, 255, 0.6) !important; // A bit darker
     }
 }
+
+.brand-logo {
+    transition: color 0.1s ease !important;
+    &:hover {
+        color: rgba(255, 255, 255, 0.8) !important; // Slightly dim
+    }
+    &:active {
+        color: rgba(255, 255, 255, 0.6) !important; // A bit darker
+    }
+}
+
+.brand-readux {
+    color: white;
+    text-decoration: underline;
+    &:hover {
+        color: rgba(255, 255, 255, 0.8) !important; // Slightly dim
+    }
+
+    &:active {
+        color: rgba(255, 255, 255, 0.6) !important; // A bit darker
+    }
+}
+
+
 
 /* search bar */
 .search-bar {
@@ -267,4 +300,15 @@ iframe {
     font-size: 2em;
     font-weight: bold;
     margin-bottom: 4rem;
+}
+
+.brand-logo {
+    font-size: large; 
+    color: white; 
+    font-weight: bold;
+}
+
+.brand-tagline {
+    font-size: small; 
+    color: white; 
 }

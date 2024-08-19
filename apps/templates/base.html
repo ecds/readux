@@ -94,17 +94,21 @@
   </head>
 
   <body>
-  <div class="overlay"></div>
-  {% include '_home/_nav.html' %}
-  {% include '_home/_hero.html' %}
-  {% include '_home/_featured_story.html' %}
-  {% include '_home/_featured_volumes.html' %}
-  {% include '_home/_featured_volumes.html' %}
-  {% include '_home/_video.html' %}
-  {% include '_home/_highlights.html' %}
-  {% include '_home/_footer.html' %}
+
+  {% block content %}
+  
+  {% endblock content %}
 
   <div id="v-readux"></div>
+  
+  <a class="sr-only" href="#main">Jump to main content</a>
+  {% if request.get_host == "readux2.ecdsdev.org" %}
+  {% elif request.get_host == "readux.ecdsdev.org" %}
+  <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
+  DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning
+  <a href="https://readux.ecds.emory.edu/" style="color:darkblue;text-decoration:underline;">Readux</a>.
+  </div>
+  {% endif %}
   
     <!-- Matomo Image Tracker-->
     <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" style="border:0" alt="" />

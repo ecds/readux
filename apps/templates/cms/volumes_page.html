@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
+{% load sass_tags %}
+
 {% load static %}
 {% load has_user_annotations %}
 {% load user_annotation_count %}
 {% load url_replace %}
 
+
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
+<link type="text/css" href="{% sass_src 'css/menu-inverse.scss' %}" rel="stylesheet">
+
+{% include '_home/_nav.html' %}
+
 <div class="rx-title-container">
   <ul class="rx-breadcrumb uk-text-truncate">
     <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>

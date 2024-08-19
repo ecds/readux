@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags static readux_extras %}
-{% load sass_tags %}
 
 {% block extra_head %}
     <meta property="og:title" content="Readux - Search" />
@@ -45,12 +44,6 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<link type="text/css" href="{% sass_src 'css/menu-inverse.scss' %}" rel="stylesheet">
-<link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
-
-{% include '_home/_nav.html' %}
-
-<div class="uk-container">
 <form
     id="search-form"
     action="{% url 'search' %}"
@@ -156,5 +149,4 @@
 
     </div>
 </form>
-</div>
 {% endblock content %}

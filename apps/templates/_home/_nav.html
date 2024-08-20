@@ -38,7 +38,7 @@
                     </li>
                     <!-- Search with Icon -->
                     <li class="">
-                        <a href="/search/" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+                        <a href="{% url 'search' %}" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
                     </li>
                 </ul>
             </div>
@@ -74,8 +74,8 @@
                     <button type="submit" class="uk-button sign-in-btn">Sign In</button>
                 </div>
                 <div class="uk-flex uk-flex-between">
-                    <a href="#" class="uk-link text-anchor-blue">Forgot Password?</a>
-                    <a href="#" class="uk-link text-anchor-blue">New User?</a>
+                    <a href="{% url 'account_reset_password' %}" class="uk-link text-anchor-blue">Forgot Password?</a>
+                    <a href="{% url 'account_signup' %}" class="uk-link text-anchor-blue">New User?</a>
                 </div>
             </form>
 

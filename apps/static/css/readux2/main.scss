@@ -42,6 +42,22 @@
     }
 }
 
+.text-anchor-blue {
+    color: #1D3557;
+    font-weight: bold;
+    transition: ease 0.1s;
+
+    &:hover {
+        color: darken(#1D3557, 10%); /* Darken the color when hovered */
+        text-decoration: underline;
+    }
+    
+    &:active {
+        color: darken(#1D3557, 25%); /* Darken the color when hovered */
+        text-decoration: underline;
+    }
+}
+
 .hero {
     padding-top: 15vh;
     color: white;
@@ -104,6 +120,8 @@
     color: #1D3557;
 }
 
+
+
 /* Overrides */
 .uk-slidenav {
     color: rgba(29, 53, 87, 0.6); /* Override the default colors with the blue */
@@ -113,6 +131,29 @@
     }
 }
 
+.uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+    border-color: #1D3557;
+}
+
+.uk-button-default {
+    transition: ease 0.1s;
+    &:hover {
+        border-color: darken(#1D3557, 10%);
+    }
+    &:active {
+        border-color: darken(#1D3557, 25%);
+    }
+}
+
+.uk-close {
+    color: #1D3557;
+    &:hover {
+        border-color: darken(#1D3557, 10%);
+    } 
+    &:active {
+        border-color: darken(#1D3557, 25%);
+    }
+}
 /* ui kit slider */
 
 /* Add gap between items */

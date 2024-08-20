@@ -4,6 +4,11 @@
 {% load wagtailcore_tags %}
 {% load has_user_annotations %}
 {% load user_annotation_count %}
+{% load sass_tags %}
+
+{% block extra_css %}
+<link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 

@@ -104,13 +104,14 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         assert prefetched['collections'].count() == 1
         assert prefetched['collections'].first().pk == collection.pk
 
-    def test_get_instances_from_related(self):
-        """Should get manifests from related collections"""
-        manifest = ManifestFactory.create()
-        # connect a collection and manifest
-        collection = Collection(label="test collection")
-        collection.save()
-        manifest.collections.add(collection)
-        instances = self.doc.get_instances_from_related(related_instance=collection)
-        # should get the manifest related to this collection
-        self.assertQuerysetEqual(instances, [manifest])
+    # Removed test because we don't want to trigger a re-index when a collection is saved.
+    # def test_get_instances_from_related(self):
+    #     """Should get manifests from related collections"""
+    #     manifest = ManifestFactory.create()
+    #     # connect a collection and manifest
+    #     collection = Collection(label="test collection")
+    #     collection.save()
+    #     manifest.collections.add(collection)
+    #     instances = self.doc.get_instances_from_related(related_instance=collection)
+    #     # should get the manifest related to this collection
+    #     self.assertQuerysetEqual(instances, [manifest])

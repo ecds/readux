@@ -155,15 +155,18 @@ class Canvas(IiifBase):
             clean_words.append(clean_word)
         return " ".join(clean_words)
 
-    def save(self, *args, **kwargs): # pylint: disable = signature-differs
+    def before_save(self):
         """
-        Override save function to set `resource_id` add OCR,
+        Pre-save function to set `resource_id` add OCR,
         set as manifest's `start_canvas` if manifest does not have one,
         and set position
         """
+        if self.manifest:
+           self.manifest.refresh_from_db()
+
         self.__check_image_server()
 
-        if self.manifest and self.position is None:
+        if self.position is None:
             self.position = self.manifest.canvas_set.count() + 1
 
         if self.image_info is not None:
@@ -176,14 +179,15 @@ class Canvas(IiifBase):
                 self.width = self.image_info['width']
                 self.height = self.image_info['height']
 
-        super().save(*args, **kwargs)
-
         if self.resource is None:
             self.resource = self.pid
-            self.save()
 
-        if self.manifest and self.manifest.start_canvas is None:
-            self.manifest.save()
+    def save(self, *args, **kwargs): # pylint: disable = signature-differs
+        """
+        Override save to call the before_save function.
+        """
+        self.before_save()
+        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """

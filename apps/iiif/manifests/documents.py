@@ -1,5 +1,6 @@
 """Elasticsearch indexing rules for IIIF manifests"""
 
+from os import environ
 from html import unescape
 from django.conf import settings
 from django_elasticsearch_dsl import Document, fields
@@ -60,6 +61,7 @@ class ManifestDocument(Document):
         """Settings for automatically pulling data from Django"""
 
         model = Manifest
+        ignore_signals = environ['DJANGO_ENV'] != 'test'
 
         # fields to map dynamically in Elasticsearch
         fields = [
@@ -69,7 +71,7 @@ class ManifestDocument(Document):
             "published_date",
             "viewingdirection",
         ]
-        related_models = [Collection, Canvas]
+        related_models = [Canvas]
 
     class Meta:
         # make Keyword type default for strings, for custom dynamically-mapped facet fields
@@ -166,9 +168,6 @@ class ManifestDocument(Document):
 
     def get_instances_from_related(self, related_instance):
         """Retrieving item to index from related objects"""
-        if isinstance(related_instance, Collection):
-            # many to many relationship
-            return related_instance.manifests.all()
-        elif isinstance(related_instance, Canvas):
+        if isinstance(related_instance, Canvas):
             # many to many relationship
             return related_instance.manifest

@@ -67,7 +67,7 @@ class Collection(IiifBase):
         return self.label
 
     def __str__(self):
-        return self.label
+        return str(self.label)
 
     def get_absolute_url(self):
         """Concatenated property for collection's URI"""
@@ -95,7 +95,8 @@ class Collection(IiifBase):
         size = (400, 500)
         image = Image.open(self.thumbnail)
 
-        # We need to test that this if else works correctly so that new files can be uploaded and existing files are not renamed.
+        # We need to test that this if else works correctly so that new files can be
+        # uploaded and existing files are not renamed.
         if 'thumbnails/' in self.thumbnail.name:
             return True
         else:
@@ -138,6 +139,7 @@ class Collection(IiifBase):
             temp_thumb.seek(0)
 
             # set save=False, otherwise it will run in an infinite loop
+            # pylint: disable = no-member
             self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
             temp_thumb.close()
             return True
@@ -211,6 +213,7 @@ class Collection(IiifBase):
             temp_header.seek(0)
 
             # set save=False, otherwise it will run in an infinite loop
+            # pylint: disable = no-member
             self.header.save(thefilename, ContentFile(temp_header.read()), save=False)
             temp_header.close()
 

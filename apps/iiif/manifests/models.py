@@ -1,4 +1,5 @@
 """Django models for IIIF manifests"""
+from os import environ
 from uuid import uuid4, UUID
 from json import JSONEncoder
 from boto3 import resource
@@ -12,10 +13,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from edtf.fields import EDTFField
 from apps.iiif.manifests.validators import validate_edtf
-import config.settings.local as settings
 from ..choices import Choices
 from ..kollections.models import Collection
 from..models import IiifBase
+from .tasks import index_manifest_task
+
 JSONEncoder_olddefault = JSONEncoder.default # pylint: disable = invalid-name
 
 def JSONEncoder_newdefault(self, o): # pylint: disable = invalid-name
@@ -98,7 +100,7 @@ class Language(models.Model):
 
     def __str__(self):
         """String representation of the language"""
-        return self.name
+        return str(self.name)
 
 class ManifestManager(models.Manager): # pylint: disable = too-few-public-methods
     """Model manager for searches."""
@@ -322,10 +324,10 @@ class Manifest(IiifBase):
 
         :rtype: str
         """
-        return self.label
+        return self.pid
 
     def __str__(self):
-        return self.label
+        return f"{self.pid} - title: {self.label}"
 
     # FIXME: This creates a circular dependency - Importing UserAnnotation here.
     # Furthermore, we shouldn't have any of the IIIF apps depend on Readux. Need
@@ -342,29 +344,30 @@ class Manifest(IiifBase):
         if not self._state.adding and 'pid' in self.get_dirty_fields() and self.image_server and self.image_server.storage_service == 's3':
             self.__rename_s3_objects()
 
+        try:
+            canvas_model = apps.get_model('canvases.canvas')
+            if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
+                self.start_canvas = self.canvas_set.all().order_by('position').first()
+                canvas_model.objects.filter(manifest=self).update(is_starting_page=False)
+                canvas_model.objects.filter(pk=self.start_canvas.id).update(is_starting_page=True)
+        except canvas_model.DoesNotExist:
+            self.start_canvas = None
+
         super().save(*args, **kwargs)
 
-        for collection in self.collections.all():
+        for collection in self.collections.all(): # pylint: disable = no-member
             collection.modified_at = self.modified_at
             collection.save()
 
-        Canvas = apps.get_model('canvases.canvas')
-        try:
-            if self.start_canvas is None and hasattr(self, 'canvas_set') and self.canvas_set.exists():
-                self.start_canvas = self.canvas_set.all().order_by('position').first()
-                self.save()
-        except Canvas.DoesNotExist:
-            self.start_canvas = None
-
-        # if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
-        #     instance = self._meta.default_manager.with_documents().get(pk=self.pk)
-        #     instance.search_vector = instance.document
-        #     instance.save(update_fields=['search_vector'])
+        if environ["DJANGO_ENV"] != 'test': # pragma: no cover
+            index_manifest_task.apply_async(args=[str(self.id)])
+        else:
+            index_manifest_task(str(self.id))
 
 
     def delete(self, *args, **kwargs):
         """
-        When a manifest is delted, the related canvas objects are deleted (`on_delete`=models.CASCADE).
+        When a manifest is deleted, the related canvas objects are deleted (`on_delete`=models.CASCADE).
         However, the `delete` method is not called on the canvas objects. We need to do that so
         the files can be cleaned up.
         https://docs.djangoproject.com/en/3.2/ref/models/fields/#django.db.models.CASCADE
@@ -373,6 +376,12 @@ class Manifest(IiifBase):
             canvas.delete()
 
         super().delete(*args, **kwargs)
+
+        # if environ["DJANGO_ENV"] != 'test': # pragma: no cover
+        #     de_index_manifest_task.apply_async(args=[str(self.id)])
+        # else:
+        #     de_index_manifest_task(str(self.id))
+
 
     def __rename_s3_objects(self):
         original_pid = self.get_dirty_fields()['pid']

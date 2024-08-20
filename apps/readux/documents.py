@@ -36,7 +36,7 @@ class UserAnnotationDocument(Document):
 
     def prepare_canvas_index(self, instance):
         return instance.canvas.position
-    
+
     def prepare_canvas_pid(self, instance):
         return instance.canvas.pid
 
@@ -44,4 +44,6 @@ class UserAnnotationDocument(Document):
         return instance.canvas.manifest.pid
 
     def prepare_owner_username(self, instance):
-        return instance.owner.username
+        if instance.owner:
+            return instance.owner.username
+        return None

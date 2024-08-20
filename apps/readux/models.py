@@ -8,7 +8,7 @@ from django.db.models import signals
 from django.dispatch import receiver
 from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from apps.iiif.canvases.models import Canvas
-
+from apps.iiif.manifests.documents import ManifestDocument
 class TaggedUserAnnotations(TaggedItemBase):
     """Model for tagging :class:`UserAnnotation`s using Django Taggit."""
     content_object = models.ForeignKey('UserAnnotation', on_delete=models.CASCADE)
@@ -59,6 +59,18 @@ class UserAnnotation(AbstractAnnotation):
             return [tag.name for tag in self.tags.all()]
         else:
             return []
+
+    def save(self, *args, **kwargs):
+        if self.canvas:
+            index = ManifestDocument()
+            index.update(self.canvas.manifest, True, 'index')
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.canvas:
+            index = ManifestDocument()
+            index.update(self.canvas.manifest, True, 'delete')
+        super().delete(*args, **kwargs)
 
     def update(self, attrs=None, tags=None):
         """Method to update an annotation object with a dict of attributes and a list of tags

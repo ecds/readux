@@ -94,7 +94,10 @@
 
     {# Primary container; host for Vue application #}
     <div class="uk-container" id="v-readux">
-      {# TODO: Remove  #}
+      {% comment %}
+        TODO: Remove existing nav and replace with the following partial.
+        It seems it may be added elsewhere; vue? needs investigation.
+      {% endcomment %}
       {% comment %} {% include "_home/_nav.html" %} {% endcomment %}
 
       {# Content container #}

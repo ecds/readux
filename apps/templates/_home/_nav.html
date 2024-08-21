@@ -1,3 +1,5 @@
+{% load menu_tags %}
+
 <nav class="uk-navbar-container" style="background:none;">
     <div class="uk-container">
         <div uk-navbar="mode: click">
@@ -7,23 +9,7 @@
                     <div class="brand-tagline">built on <a class="brand-readux">Readux</a></div>
                 </div>
 
-                <ul class="uk-navbar-nav">
-                    <li class=""><a href="/all-collections/" class="menu-item">Collections</a></li>
-                    <li class=""><a href="/all-volumes/" class="menu-item">Volumes</a></li>
-                    <li>
-                        <a href="#" class="menu-item">About <span uk-drop-parent-icon></span></a>
-                        <div class="uk-navbar-dropdown uk-padding-remove"
-                            uk-dropdown="mode: click; pos: bottom-left; offset: -20;">
-                            <ul class="uk-nav uk-navbar-dropdown-nav">
-                                <li class="uk-active"><a href="#">What is Sounding Spirit?</a></li>
-                                <li><a href="#">What is Readux?</a></li>
-                                <li><a href="#">Team</a></li>
-                                <li><a href="#">Terms of Service</a></li>
-                                <li><a href="#">Contact us</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
+                {% main_menu add_sub_menus_inline=True %}
             </div>
 
             <div class="uk-navbar-right">

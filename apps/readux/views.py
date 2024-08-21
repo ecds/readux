@@ -32,63 +32,6 @@ class CollectionsList(ListView):
     context_object_name = 'collections'
     queryset = Collection.objects.all()
 
-class VolumesList(ListView):
-    """Django List View for :class:`apps.iiif.manifests.models.Manifest`s"""
-    template_name = "volumes.html"
-    SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
-    ORDER_OPTIONS = ['asc', 'desc']
-    context_object_name = 'volumes'
-
-    def get_queryset(self):
-        return Manifest.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        sort = self.request.GET.get('sort', None)
-        order = self.request.GET.get('order', None)
-
-        q = self.get_queryset()
-
-        if sort not in SORT_OPTIONS:
-            sort = 'title'
-        if order not in ORDER_OPTIONS:
-            order = 'asc'
-
-        if sort == 'title':
-            if order == 'asc':
-                q = q.order_by('label')
-            elif order == 'desc':
-                q = q.order_by('-label')
-        elif sort == 'author':
-            if order == 'asc':
-                q = q.order_by('author')
-            elif order == 'desc':
-                q = q.order_by('-author')
-        elif sort == 'date published':
-            if order == 'asc':
-                q = q.order_by('published_date_edtf')
-            elif order == 'desc':
-                q = q.order_by('-published_date_edtf')
-        elif sort == 'date added':
-            if order == 'asc':
-                q = q.order_by('created_at')
-            elif order == 'desc':
-                q = q.order_by('-created_at')
-
-        sort_url_params = {'sort': sort, 'order': order}
-        order_url_params = {'sort': sort, 'order': order}
-        if 'sort' in sort_url_params:
-            del sort_url_params['sort']
-
-        context['volumes'] = q.all
-        context.update({
-            'sort_url_params': urlencode(sort_url_params),
-            'order_url_params': urlencode(order_url_params),
-            'sort': sort, 'SORT_OPTIONS': SORT_OPTIONS,
-            'order': order, 'ORDER_OPTIONS': ORDER_OPTIONS,
-        })
-        return context
-
 class CollectionDetail(ListView):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""
     template_name = "collection.html"

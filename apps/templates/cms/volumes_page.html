@@ -11,6 +11,7 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
+
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
 
 {% include '_home/_nav.html' %}
@@ -29,54 +30,38 @@
         </ul>
       </div>
     </li>
-    <li>Volumes</li>
+    <li>{{ page.page_title|default:page.title }}</li>
   </ul>
   <!-- End -->
 
   <!-- Page title & text lead -->
-  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">[All Volumes]{{ page.page_title }}</h1>
-  <p class="page-text-lead">
-    [PAGE_TAGLINE_IS_THIS_IN_USE?]{{page.tagline}}
-  </p>
-  <p class="page-text-lead uk-margin-small-top">
-    [These all volumes available in this Readux instance. You may use pagination to browse or use the search feature to locate a volume.]{{ page.paragraph }}
-  </p>
+  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">{{ page.page_title|default:page.title }}</h1>
+  <p class="page-text-lead uk-margin-small-top">{{ page.tagline }}</p>
+  <p class="uk-margin-small-top">{{ page.paragraph }}</p>
   <!-- End -->
 
+
   {% include "snippets/_search_box.html" %}
-  <!-- {% include "snippets/sort_dropdown.html" %} -->
 
   {% include "snippets/_volumes_page_information.html" %}
 
   <!-- Volume Grid -->
   <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
-    <!-- Volume Item -->
-    <a href="#" class="volume-item">
-        <img src="https://via.placeholder.com/150x200" alt="Volume 1">
-        <h2>[Culpeper's complete herbal: with nearly four hundred medicines]</h2>
-        <div class="color-black">1653</div>
-    </a>
-    <!-- Repeat the volume item block for additional volumes -->
-    <a href="#" class="volume-item">
-        <img src="https://via.placeholder.com/150x200" alt="Volume 2">
-        <h2>[Il nuovo teatro delle fabbriche, et edificii, in prospettiva di Roma moderna. 5 vols.]</h2>
-        <div class="color-black">1663</div>
-      </a>
-    <a href="#" class="volume-item">
-        <img src="https://via.placeholder.com/150x200" alt="Volume 3">
-        <h2>[Magnenij Rabani Mauri de laudi[Bus] Sancte Crucis opus]</h2>
-        <div class="color-black">1233</div>
-    </a>
-    <a href="#" class="volume-item">
-        <img src="https://via.placeholder.com/150x200" alt="Volume 4">
-        <h2>[Breue racconto della trasportatione del corpo di Papa Paolo V]</h2>
-        <div class="color-black">1590</div>
-    </a>
-    <a href="#" class="volume-item">
-        <img src="https://via.placeholder.com/150x200" alt="Volume 5">
-        <h2>[Breue racconto della trasportatione del corpo di Papa Paolo V]</h2>
-        <div class="color-black">1590</div>
-    </a>
+    {% for volume in volumes %}
+        <!-- Volume Item -->
+        <a class="volume-item" href="{% url 'volumeall' volume.pid %}">
+            <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
+            <h2>{{ volume.label }}</h2>
+            <div class="color-black">{{ volume.published_date|default_if_none:"Unknown date" }}</div>
+            {# TODO: Do we want the following metadata visible here? If not, we can remove. #}
+            {% comment %}
+              <em>Author:</em> {{volume.author}}<br/>
+              Added {{volume.created_at}}
+            {% endcomment %}
+        </a>
+      {% empty %}
+        There are no volumes available to browse.
+      {% endfor %}
   </div>
 </div>
 

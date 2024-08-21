@@ -185,7 +185,7 @@ class ManifestSearchForm(forms.Form):
 
 class CustomDropdownSelect(widgets.ChoiceWidget):
     input_type = 'radio'
-    template_name = 'widgets/sort_dropdown.html'
+    template_name = 'widgets/custom_dropdown_select.html'
     option_template_name = 'django/forms/widgets/radio_option.html'
 
     def get_context(self, name, value, attrs):

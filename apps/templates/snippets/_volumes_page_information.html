@@ -2,6 +2,7 @@
 <!-- Information Line -->
 <div class="info-line">
   <div class="info-group">
+    {# numeric pagination #}
     <span>Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} volumes</span>
     <span class="slash-gap">/</span> Page
     <a href="#">{{ page_obj.number }}</a>
@@ -19,6 +20,8 @@
       </ul>
     </div> of {{ page_obj.paginator.num_pages }}
     <span class="slash-gap">/</span>
+
+    {# form for setting sort, order, and page display (list/grid) #}
     <form method="get">
       <label for="{{ form.sort.auto_id }}">
           <span class="fieldname">{{ form.sort.label }}</span>
@@ -29,16 +32,15 @@
           <span class="fieldname">{{ form.order.label }}</span>
           {{ form.order }}
       </label>
+      <span class="slash-gap">/</span>
+      <label for="{{ form.display.auto_id }}">
+          <span class="fieldname">{{ form.display.label }}</span>
+          {{ form.display }}
+      </label>
     </form>
-    <span class="slash-gap">/</span>Display in
-    <a href="#">Grid</a>
-    <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
-      <ul class="uk-nav uk-navbar-dropdown-nav">
-        <li><a href="#">Grid</a></li>
-        <li><a href="#">List</a></li>
-      </ul>
-    </div>
   </div>
+
+  {# previous and next page pagination #}
   <div class="pagination-controls">
     <a
       class="uk-icon-button"

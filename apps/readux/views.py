@@ -40,7 +40,7 @@ class VolumesList(ListView, FormMixin):
     paginate_by = 8
     queryset = Manifest.objects.all()
     form_class = ManifestListForm
-    initial = {"sort": "title", "order": "asc"}
+    initial = {"sort": "title", "order": "asc", "display": "grid"}
 
     def get_queryset(self):
         """Get the sorted set of objects to display"""

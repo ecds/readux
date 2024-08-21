@@ -13,7 +13,7 @@ from elasticsearch_dsl import Q, NestedFacet, TermsFacet
 from elasticsearch_dsl.query import MultiMatch
 import config.settings.local as settings
 from apps.iiif.manifests.documents import ManifestDocument
-from apps.readux.forms import ManifestSearchForm
+from apps.readux.forms import ManifestListForm, ManifestSearchForm
 from apps.export.export import JekyllSiteExport
 from apps.export.forms import JekyllExportForm
 from .models import UserAnnotation
@@ -32,62 +32,77 @@ class CollectionsList(ListView):
     context_object_name = 'collections'
     queryset = Collection.objects.all()
 
-class VolumesList(ListView):
+
+class VolumesList(ListView, FormMixin):
     """Django List View for :class:`apps.iiif.manifests.models.Manifest`s"""
+
     template_name = "volumes.html"
-    SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
-    ORDER_OPTIONS = ['asc', 'desc']
-    context_object_name = 'volumes'
+    paginate_by = 8
+    queryset = Manifest.objects.all()
+    form_class = ManifestListForm
+    initial = {"sort": "title", "order": "asc"}
 
     def get_queryset(self):
-        return Manifest.objects.all()
+        """Get the sorted set of objects to display"""
+        q = super().get_queryset()
+
+        form = self.get_form()
+        # return empty queryset if not valid
+        if not form.is_valid():
+            return q.none()
+
+        search_opts = form.cleaned_data
+
+        if search_opts["sort"] == "title":
+            if search_opts["order"] == "asc":
+                q = q.order_by("label")
+            elif search_opts["order"] == "desc":
+                q = q.order_by("-label")
+        elif search_opts["sort"] == "author":
+            if search_opts["order"] == "asc":
+                q = q.order_by("author")
+            elif search_opts["order"] == "desc":
+                q = q.order_by("-author")
+        elif search_opts["sort"] == "date":
+            if search_opts["order"] == "asc":
+                q = q.order_by("published_date_edtf")
+            elif search_opts["order"] == "desc":
+                q = q.order_by("-published_date_edtf")
+        elif search_opts["sort"] == "added":
+            if search_opts["sort"] == "asc":
+                q = q.order_by("created_at")
+            elif search_opts["order"] == "desc":
+                q = q.order_by("-created_at")
+
+        return q
+
+    def get_form_kwargs(self):
+        """get form arguments from request and configured defaults"""
+        kwargs = super().get_form_kwargs()
+        # use GET instead of default POST/PUT for form data
+        form_data = self.request.GET.copy()
+
+        # sort by chosen sort
+        if "sort" in form_data and bool(form_data.get("sort")):
+            form_data["sort"] = form_data.get("sort")
+
+        # Otherwise set all form values to default
+        for key, val in self.initial.items():
+            form_data.setdefault(key, val)
+
+        kwargs["data"] = form_data
+
+        return kwargs
 
     def get_context_data(self, **kwargs):
+        """Add sort and order params to context if set"""
         context = super().get_context_data(**kwargs)
-        sort = self.request.GET.get('sort', None)
-        order = self.request.GET.get('order', None)
 
-        q = self.get_queryset()
+        page = context['page_obj']
+        context['paginator_range'] = page.paginator.get_elided_page_range(page.number, on_each_side=2)
 
-        if sort not in SORT_OPTIONS:
-            sort = 'title'
-        if order not in ORDER_OPTIONS:
-            order = 'asc'
-
-        if sort == 'title':
-            if order == 'asc':
-                q = q.order_by('label')
-            elif order == 'desc':
-                q = q.order_by('-label')
-        elif sort == 'author':
-            if order == 'asc':
-                q = q.order_by('author')
-            elif order == 'desc':
-                q = q.order_by('-author')
-        elif sort == 'date published':
-            if order == 'asc':
-                q = q.order_by('published_date_edtf')
-            elif order == 'desc':
-                q = q.order_by('-published_date_edtf')
-        elif sort == 'date added':
-            if order == 'asc':
-                q = q.order_by('created_at')
-            elif order == 'desc':
-                q = q.order_by('-created_at')
-
-        sort_url_params = {'sort': sort, 'order': order}
-        order_url_params = {'sort': sort, 'order': order}
-        if 'sort' in sort_url_params:
-            del sort_url_params['sort']
-
-        context['volumes'] = q.all
-        context.update({
-            'sort_url_params': urlencode(sort_url_params),
-            'order_url_params': urlencode(order_url_params),
-            'sort': sort, 'SORT_OPTIONS': SORT_OPTIONS,
-            'order': order, 'ORDER_OPTIONS': ORDER_OPTIONS,
-        })
         return context
+
 
 class CollectionDetail(ListView):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""

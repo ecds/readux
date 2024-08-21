@@ -3,6 +3,7 @@
 from dateutil import parser
 from django import forms
 from django.conf import settings
+from django.forms import widgets
 from django.template.defaultfilters import truncatechars
 
 class MinMaxDateInput(forms.DateInput):
@@ -181,3 +182,39 @@ class ManifestSearchForm(forms.Form):
         self.fields["start_date"].set_initial(min_date_object.strftime("%Y-%m-%d"))
         max_date_object = parser.isoparse(max_date)
         self.fields["end_date"].set_initial(max_date_object.strftime("%Y-%m-%d"))
+
+class CustomDropdownSelect(widgets.ChoiceWidget):
+    input_type = 'radio'
+    template_name = 'widgets/sort_dropdown.html'
+    option_template_name = 'django/forms/widgets/radio_option.html'
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["selected_value_label"] = dict(self.choices)[value]
+        return context
+
+class ManifestListForm(forms.Form):
+    """Simple form for sorting Manifests"""
+
+    SORT_CHOICES = [
+        ('title', "Title"),
+        ('author', "Author"),
+        ('date', "Publication Year"),
+        ('added', "Date Added"),
+    ]
+    ORDER_CHOICES = [
+        ('asc', "Ascending"),
+        ('desc', "Descending"),
+    ]
+    sort = forms.ChoiceField(
+        label="Sort by",
+        choices=SORT_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )
+    order = forms.ChoiceField(
+        label="Order",
+        choices=ORDER_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )

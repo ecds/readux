@@ -1,26 +1,35 @@
+{% load url_replace %}
 <!-- Information Line -->
 <div class="info-line">
   <div class="info-group">
-    <span>Showing 8 of 28 volumes</span>
+    <span>Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} volumes</span>
     <span class="slash-gap">/</span> Page
-    <a href="#">[1]</a>
+    <a href="#">{{ page_obj.number }}</a>
     <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
-      <ul class="uk-nav uk-navbar-dropdown-nav">
-        <li><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
+      <ul class="uk-nav uk-navbar-dropdown-nav pagination-nav">
+        {% for pg in paginator_range %}
+          <li>
+            {% if pg == "…" %}
+              <span>{{ pg }}</span>
+            {% else %}
+              <a href="?{% url_replace page=pg %}">{{ pg }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
       </ul>
-    </div> of [4]
+    </div> of {{ page_obj.paginator.num_pages }}
     <span class="slash-gap">/</span>
-    Sort by
-    <a href="#"> Title </a>
-    <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
-      <ul class="uk-nav uk-navbar-dropdown-nav">
-        <li><a href="#">Title</a></li>
-        <li><a href="#">Publication Year</a></li>
-      </ul>
-    </div>
+    <form method="get">
+      <label for="{{ form.sort.auto_id }}">
+          <span class="fieldname">{{ form.sort.label }}</span>
+          {{ form.sort }}
+      </label>
+      <span class="slash-gap">/</span>
+      <label for="{{ form.order.auto_id }}">
+          <span class="fieldname">{{ form.order.label }}</span>
+          {{ form.order }}
+      </label>
+    </form>
     <span class="slash-gap">/</span>Display in
     <a href="#">Grid</a>
     <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
@@ -31,7 +40,29 @@
     </div>
   </div>
   <div class="pagination-controls">
-    <button class="uk-icon-button" uk-icon="chevron-left" uk-tooltip="This is the first page" disabled></button>
-    <button class="uk-icon-button" uk-icon="chevron-right" uk-tooltip="Go to next page"></button>
+    <a
+      class="uk-icon-button"
+      uk-icon="chevron-left"
+      {% if page_obj.has_previous %}
+        uk-tooltip="Go to previous page"
+        href="?{% url_replace page=page_obj.previous_page_number %}"
+      {% else %}
+        uk-tooltip="This is the first page"
+        disabled
+      {% endif %}
+    >
+    </a>
+    <a
+      class="uk-icon-button"
+      uk-icon="chevron-right"
+      {% if page_obj.has_next %}
+        uk-tooltip="Go to next page"
+        href="?{% url_replace page=page_obj.next_page_number %}"
+      {% else %}
+        uk-tooltip="This is the last page"
+        disabled
+      {% endif %}
+    >
+    </a>
   </div>
 </div>

@@ -1,32 +1,66 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
+{% load sass_tags %}
 {% load static %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h1 class='uk-heading-xlarge uk-text-center'>Readux</h1>
-<h2 class='uk-heading-medium uk-text-center'>Read. Annotate. Publish.</h2>
-<p class='uk-text-lead uk-text-center'>Log in to Readux to read digitized collections, make your own notes, and publish your marked-up edition online.</p>
 
-{% include "snippets/sort_dropdown.html" %}
+<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
+
+{% include '_home/_nav.html' %}
+
+<div class="uk-container">
+
+  <!-- Breadcrumb -->
+  <ul class="breadcrumb uk-margin-small-top">
+    <li><a href="/">Home</a></li>
+    <li>
+      <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+        <ul class="uk-nav uk-navbar-dropdown-nav">
+            <li><a href="#">[All Collections]</a></li>
+            <li><a href="#">[Featured Collections]</a></li>
+        </ul>
+      </div>
+    </li>
+    <li>Volumes</li>
+  </ul>
+  <!-- End -->
+
+  <!-- Page title & text lead -->
+  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">All Volumes</h1>
+  <p class="page-text-lead uk-margin-small-top">
+    These are all volumes available in this Readux instance. You may use pagination to browse or use the search feature to locate a volume.
+  </p>
+  <!-- End -->
 
 
-  <div id="wrap">
-  {% for volume in volumes %}
-    <div id="box">
-    <div id="boxInner">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';"/>
-      </a>
-      <div class="innerContent"><p>
-      <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-      <p>{{ volume.label }}</p>
-  </a></p>
-  <p><em>Author:</em> {{volume.author}}<br/>
-  <em>Date Published:</em> {{volume.published_date}}<br/>
-  Added {{volume.created_at}}</p></div>
-    </div></div>
-  {% endfor %}
+  {% include "snippets/_search_box.html" %}
+
+  {% include "snippets/_volumes_page_information.html" %}
+
+  <!-- Volume Grid -->
+  <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
+    {% for volume in page_obj %}
+      {% comment %} {% if volume.canvas_set.exists %} {% endcomment %}
+        <!-- Volume Item -->
+        <a class="volume-item" href="{% url 'volumeall' volume.pid %}">
+            <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
+            <h2>{{ volume.label }}</h2>
+            <div class="color-black">{{ volume.published_date|default_if_none:"Unknown date" }}</div>
+
+              {# TODO: Do we want the following metadata visible here? If not, we can remove. #}
+              {% comment %}
+                <em>Author:</em> {{volume.author}}<br/>
+                Added {{volume.created_at}}
+              {% endcomment %}
+        </a>
+      {% empty %}
+        There are no volumes available to browse.
+      {% endfor %}
   </div>
+</div>
+{% include '_home/_footer.html' %}
 {% endblock content %}

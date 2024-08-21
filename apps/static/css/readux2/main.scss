@@ -211,7 +211,9 @@
     min-width: 0 !important;
 }
 
-.uk-navbar-dropdown-nav a {
+.uk-navbar-dropdown-nav a,
+.uk-navbar-dropdown-nav.sort-dropdown label {
+    cursor: pointer;
     color: #1D3557 !important; /* Dark blue text color */
     font-weight: 600; /* Bold text */
     padding: 5px 15px !important; /* Add padding to the items */
@@ -219,8 +221,17 @@
     transition: background-color 0.1s ease;
 }
 
-.uk-navbar-dropdown-nav a:hover {
+.uk-navbar-dropdown-nav a:hover,
+.uk-navbar-dropdown-nav.sort-dropdown label:hover {
     background-color: rgba(29, 53, 87, 0.1); /* Light blue hover effect */
+}
+
+.uk-navbar-dropdown-nav.sort-dropdown label input {
+    display: none;
+}
+.pagination-nav span {
+    padding: 5px 15px !important;
+    display: block;
 }
 
 /* page */

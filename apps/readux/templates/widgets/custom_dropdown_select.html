@@ -3,18 +3,18 @@
 {% with id=widget.attrs.id %}
 <a href="#">{{ selected_value_label }}</a>
 <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
-	<ul class="uk-nav uk-navbar-dropdown-nav sort-dropdown"{% if id %} id="{{ id }}"{% endif %}>
-		{% for group, options, index in widget.optgroups %}
-			{% for option in options %}
-				<li>
-					<label {% if option.attrs.id %} for="{{ option.attrs.id }}"{% endif %}>
-						{# NOTE: Uses a tiny bit of inline JS to submit the form on change #}
-						<input onclick="this.form.submit()" type="{{ option.type }}" name="{{ option.name }}" value="{{ option.value }}" {% include "django/forms/widgets/attrs.html" with widget=option %}>
-						{{ option.label }}
-					</label>
-				</li>
-			{% endfor %}
-		{% endfor %}
-	</ul>
+  <ul class="uk-nav uk-navbar-dropdown-nav sort-dropdown"{% if id %} id="{{ id }}"{% endif %}>
+    {% for group, options, index in widget.optgroups %}
+      {% for option in options %}
+        <li>
+          <label {% if option.attrs.id %} for="{{ option.attrs.id }}"{% endif %}>
+            {# NOTE: Uses a tiny bit of inline JS to submit the form on change #}
+            <input onclick="this.form.submit()" type="{{ option.type }}" name="{{ option.name }}" value="{{ option.value }}" {% include "django/forms/widgets/attrs.html" with widget=option %}>
+            {{ option.label }}
+          </label>
+        </li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
 </div>
 {% endwith %}

@@ -41,6 +41,12 @@ class VolumesList(ListView, FormMixin):
     queryset = Manifest.objects.all()
     form_class = ManifestListForm
     initial = {"sort": "title", "order": "asc", "display": "grid"}
+    sort_fields = {
+        "title": "label",
+        "author": "author",
+        "date": "published_date_edtf",
+        "added": "created_at",
+    }
 
     def get_queryset(self):
         """Get the sorted set of objects to display"""
@@ -51,28 +57,16 @@ class VolumesList(ListView, FormMixin):
         if not form.is_valid():
             return q.none()
 
+        # get sort and order selections from form
         search_opts = form.cleaned_data
+        sort = search_opts.get("sort", "title")
+        if sort not in self.sort_fields:
+            sort = "title"
+        order = search_opts.get("order", "asc")
+        sign = "-" if order == "desc" else ""
 
-        if search_opts["sort"] == "title":
-            if search_opts["order"] == "asc":
-                q = q.order_by("label")
-            elif search_opts["order"] == "desc":
-                q = q.order_by("-label")
-        elif search_opts["sort"] == "author":
-            if search_opts["order"] == "asc":
-                q = q.order_by("author")
-            elif search_opts["order"] == "desc":
-                q = q.order_by("-author")
-        elif search_opts["sort"] == "date":
-            if search_opts["order"] == "asc":
-                q = q.order_by("published_date_edtf")
-            elif search_opts["order"] == "desc":
-                q = q.order_by("-published_date_edtf")
-        elif search_opts["sort"] == "added":
-            if search_opts["sort"] == "asc":
-                q = q.order_by("created_at")
-            elif search_opts["order"] == "desc":
-                q = q.order_by("-created_at")
+        # build order_by query to sort results
+        q = q.order_by(f"{sign}{self.sort_fields[sort]}")
 
         return q
 

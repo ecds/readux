@@ -211,10 +211,6 @@ class AllVolumesForm(forms.Form):
         ("asc", "Ascending"),
         ("desc", "Descending"),
     ]
-    DISPLAY_CHOICES = [
-        ("grid", "Grid"),
-        ("list", "List"),
-    ]
     sort = forms.ChoiceField(
         label="Sort by",
         choices=SORT_CHOICES,
@@ -224,12 +220,6 @@ class AllVolumesForm(forms.Form):
     order = forms.ChoiceField(
         label="Order",
         choices=ORDER_CHOICES,
-        required=False,
-        widget=CustomDropdownSelect,
-    )
-    display = forms.ChoiceField(
-        label="Display",
-        choices=DISPLAY_CHOICES,
         required=False,
         widget=CustomDropdownSelect,
     )

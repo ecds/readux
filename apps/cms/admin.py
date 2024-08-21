@@ -1,6 +1,6 @@
 """Admin module for managing pages."""
 from django.contrib import admin
-from apps.cms.models import ContentPage, HomePage, CollectionsPage, VolumesPage
+from apps.cms.models import ContentPage, HomePage, CollectionsPage
 
 class HomePageAdmin(admin.ModelAdmin):
     """Home page admin class."""
@@ -20,13 +20,6 @@ class CollectionsPageAdmin(admin.ModelAdmin):
     class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
         model = CollectionsPage
 
-class VolumesPageAdmin(admin.ModelAdmin):
-    """Volumes page admin class."""
-    class Meta: # pylint: disable=too-few-public-methods, missing-class-docstring
-        model = VolumesPage
-
 admin.site.register(ContentPage, ContentPageAdmin)
 admin.site.register(HomePage, HomePageAdmin)
 admin.site.register(CollectionsPage, CollectionsPageAdmin)
-admin.site.register(VolumesPage, VolumesPageAdmin)
-# Register your models here.

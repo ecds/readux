@@ -44,18 +44,16 @@
   <!-- Volume Grid -->
   <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
     {% for volume in page_obj %}
-      {% comment %} {% if volume.canvas_set.exists %} {% endcomment %}
         <!-- Volume Item -->
         <a class="volume-item" href="{% url 'volumeall' volume.pid %}">
             <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
             <h2>{{ volume.label }}</h2>
             <div class="color-black">{{ volume.published_date|default_if_none:"Unknown date" }}</div>
-
-              {# TODO: Do we want the following metadata visible here? If not, we can remove. #}
-              {% comment %}
-                <em>Author:</em> {{volume.author}}<br/>
-                Added {{volume.created_at}}
-              {% endcomment %}
+            {# TODO: Do we want the following metadata visible here? If not, we can remove. #}
+            {% comment %}
+              <em>Author:</em> {{volume.author}}<br/>
+              Added {{volume.created_at}}
+            {% endcomment %}
         </a>
       {% empty %}
         There are no volumes available to browse.

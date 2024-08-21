@@ -17,7 +17,7 @@ from apps.readux.forms import ManifestListForm, ManifestSearchForm
 from apps.export.export import JekyllSiteExport
 from apps.export.forms import JekyllExportForm
 from .models import UserAnnotation
-from ..cms.models import Page, CollectionsPage, VolumesPage
+from ..cms.models import Page, CollectionsPage
 from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
@@ -267,7 +267,6 @@ class PageDetail(TemplateView):
         context['volume'] = manifest
         context['pagelink'] = manifest.image_server
         context['collectionlink'] = Page.objects.type(CollectionsPage).first()
-        context['volumelink'] = Page.objects.type(VolumesPage).first()
         context['user_annotation_page_count'] = UserAnnotation.objects.filter(
             owner_id=self.request.user.id
         ).filter(

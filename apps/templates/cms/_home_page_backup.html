@@ -222,7 +222,7 @@
       {% endif %}
       {% endfor %}
 
-      <a class="nav-link" href="/{{ volumesurl.slug }}">
+      <a class="nav-link" href="{% url 'volumes list' %}">
         <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
       </a>
     </ul>

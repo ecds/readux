@@ -13,7 +13,7 @@
                 alt="Collections">{{ volume.collections.first.label }}</a>
             </li>
             {% else %}
-            <li class=""><a class="nav-link rx-breadcrumb-item" href="/{{ volumelink.slug }}">All Volumes</a></li>
+            <li class=""><a class="nav-link rx-breadcrumb-item" href="{% url 'volumes list' %}">All Volumes</a></li>
             {% endif %}
             <li class="uk-margin-medium-left uk-text-bold"> {{volume.label}}</li>
           </div>

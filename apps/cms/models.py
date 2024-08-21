@@ -48,115 +48,6 @@ class CollectionsPage(Page):
         FieldPanel('layout', classname="full"),
     ]
 
-class VolumesPage(Page):
-    """Content page"""
-    page_title = models.TextField(blank=True)
-    tagline = models.TextField(blank=True)
-    paragraph = models.TextField(blank=True)
-    layout = models.CharField(
-        max_length=20,
-        choices=(
-            ("Grid", "Grid"),
-            ("List", "List"),
-        ),
-        default="Grid",
-        help_text="Select to show all volumes as a list or a grid of icons."
-    )
-    collections = Collection.objects.all
-    volumes = Manifest.objects.all()
-    content_panels = Page.content_panels + [
-        FieldPanel('page_title', classname="full"),
-        FieldPanel('tagline', classname="full"),
-        FieldPanel('paragraph', classname="full"),
-        FieldPanel('layout', classname="full"),
-    ]
-
-    def get_context(self, request):
-        """Context function."""
-        context = super().get_context(request)
-        sort = request.GET.get('sort', None)
-        order = request.GET.get('order', None)
-        query_set = self.volumes
-
-
-        sort_options = ['title', 'author', 'date published', 'date added']
-        order_options = ['asc', 'desc']
-        if sort not in sort_options and order not in order_options:
-            sort = 'title'
-            order = 'asc'
-        elif sort not in sort_options:
-            sort = 'title'
-        elif order not in order_options:
-            order = 'asc'
-
-        if sort == 'title':
-            if order == 'asc':
-                query_set = query_set.order_by('label')
-            elif order == 'desc':
-                query_set = query_set.order_by('-label')
-        elif sort == 'author':
-            if order == 'asc':
-                query_set = query_set.order_by('author')
-            elif order == 'desc':
-                query_set = query_set.order_by('-author')
-        elif sort == 'date published':
-            if order == 'asc':
-                query_set = query_set.order_by('published_date_edtf')
-            elif order == 'desc':
-                query_set = query_set.order_by('-published_date_edtf')
-        elif sort == 'date added':
-            if order == 'asc':
-                query_set = query_set.order_by('created_at')
-            elif order == 'desc':
-                query_set = query_set.order_by('-created_at')
-
-        sort_url_params = request.GET.copy()
-        order_url_params = request.GET.copy()
-        if 'sort' in sort_url_params and 'order' in order_url_params:
-            del sort_url_params['sort']
-            del order_url_params['order']
-        elif 'sort' in sort_url_params:
-            del sort_url_params['sort']
-        elif 'order' in order_url_params:
-            del order_url_params['order']
-
-        paginator = Paginator(query_set, 10) # Show 10 volumes per page
-
-        page = request.GET.get('page')
-        try:
-            volumes = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            volumes = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            volumes = paginator.page(paginator.num_pages)
-
-        # make the variable 'volumes' available on the template
-        context['volumes'] = volumes
-#        context['volumespage'] = query_set.all
-        context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
-        # annocount_list = []
-        # canvaslist = []
-        # for volume in query_set:
-        #     user_annotation_count = UserAnnotation.objects.filter(owner_id=request.user.id).filter(canvas__manifest__id=volume.id).count()
-            # annocount_list.append({volume.pid: user_annotation_count})
-            # context['user_annotation_count'] = annocount_list
-        #     canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-        #     canvasquery2 = list(canvasquery)
-        #     canvaslist.append({volume.pid: canvasquery2})
-        #     context['firstthumbnail'] = canvaslist
-        # value = 0
-        # context['value'] = value
-
-        context.update({
-            'sort_url_params': urlencode(sort_url_params),
-            'order_url_params': urlencode(order_url_params),
-            'sort': sort, 'sort_options': sort_options,
-            'order': order, 'order_options': order_options,
-        })
-        return context
-
 
 class HomePage(Page):
     """Home page"""
@@ -217,7 +108,6 @@ class HomePage(Page):
 
         # context['volumespage'] = query_set.all
         # context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
-        context['volumesurl'] = Page.objects.type(VolumesPage).first()
         context['collectionsurl'] = Page.objects.type(CollectionsPage).first()
         # annocount_list = []
         # canvaslist = []

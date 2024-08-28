@@ -62,7 +62,7 @@
     <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
     <meta property="og:description" content="Read, Annotate, Publish" />
     <meta name="twitter:description" content="Read, Annotate, Publish" />
-    <!--<meta property="og:url" content="https://readux.ecds.emory.edu" />-->
+    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}" />
     {% endif %}
     <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta property="og:site_name" content="{{ current_site.site_name }}" />
@@ -81,35 +81,48 @@
     {% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
     <link href="{% static 'css/selectize.css' %}" rel="stylesheet">
-    <!-- <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet"> -->
-    <link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet">
+    <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
     <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
-    <!-- <link type="text/css" href="css/project.scss" rel="stylesheet"> -->
-
-    <style>
-      {{ css }}
-    </style>
     {% endblock %}
     {% block extra_css %}{% endblock extra_css %}
 
   </head>
 
   <body>
+    {# NOTE: Jump to main content required for accessibility #}
+    <a class="sr-only" href="#main">Jump to main content</a>
 
-  {% block content %}
-  
-  {% endblock content %}
+    {# Primary container; host for Vue application #}
+    <div class="uk-container" id="v-readux">
+      {% comment %}
+        TODO: Remove existing nav and replace with the following partial.
+        It seems it may be added elsewhere; vue? needs investigation.
+      {% endcomment %}
+      {% comment %} {% include "_home/_nav.html" %} {% endcomment %}
 
-  <div id="v-readux"></div>
-  
-  <!-- <a class="sr-only" href="#main">Jump to main content</a> -->
-  {% if request.get_host == "readux2.ecdsdev.org" %}
-  {% elif request.get_host == "readux.ecdsdev.org" %}
-  <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
-  DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning
-  <a href="https://readux.ecds.emory.edu/" style="color:darkblue;text-decoration:underline;">Readux</a>.
-  </div>
-  {% endif %}
+      {# Content container #}
+      <main id='main'>
+        {# Django errors and alerts #}
+        {% if messages %}
+            {% for message in messages %}
+              <div class="uk-alert-{{ message.tags }}" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block modal %}
+        {% endblock modal %}
+
+        {% block content %}
+        {% endblock content %}
+
+        {# IIIF viewer #}
+        {% block viewer %}{% endblock viewer %}
+      </main>
+
+    </div>
   
     <!-- Matomo Image Tracker-->
     <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" hidden alt="" />

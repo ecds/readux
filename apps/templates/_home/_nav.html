@@ -1,0 +1,128 @@
+
+
+<nav class="uk-navbar-container" style="background:none;">
+    <div class="uk-container">
+        <div uk-navbar="mode: click">
+            <div class="uk-navbar-left">
+                <div class="uk-logo">
+                    <div><a class="brand-logo" href="/">Sounding Spirit</a></div>
+                    <div class="brand-tagline">built on <a class="brand-readux">Readux</a></div>
+                </div>
+
+                <ul class="uk-navbar-nav">
+                    <li class=""><a href="/all-collections/" class="menu-item">Collections</a></li>
+                    <li class=""><a href="/all-volumes/" class="menu-item">Volumes</a></li>
+                    <li>
+                        <a href="#" class="menu-item">About <span uk-drop-parent-icon></span></a>
+                        <div class="uk-navbar-dropdown uk-padding-remove"
+                            uk-dropdown="mode: click; pos: bottom-left; offset: -20;">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                                <li class="uk-active"><a href="#">What is Sounding Spirit?</a></li>
+                                <li><a href="#">What is Readux?</a></li>
+                                <li><a href="#">Team</a></li>
+                                <li><a href="#">Terms of Service</a></li>
+                                <li><a href="#">Contact us</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav">
+                    <!-- Login/Sign up with Icon -->
+                    <li class="">
+                        <a href="#" class="menu-item" uk-icon="icon: sign-in;" uk-toggle="target: #login-modal" uk-tooltip="Login/Sign up"></a>
+                    </li>
+                    <!-- Partner with Us with Icon -->
+                    <li class="">
+                        <a href="#" class="menu-item" uk-icon="icon: users;" uk-tooltip="Partner with us"></a>
+                    </li>
+                    <!-- Search with Icon -->
+                    <li class="">
+                        <a href="/search/" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Login Modal -->
+<div id="login-modal" uk-modal>
+    <div class="uk-modal-dialog custom-modal">
+        <button class="uk-modal-close-default uk-close-large uk-padding-small" type="button" uk-close></button>
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2 class="uk-text-x-large uk-text-bold">Log in to Readux</h2>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="modal-content uk-padding">
+            <!-- Username and Password -->
+            <form>
+                <div class="uk-margin uk-input-icon">
+                    <span uk-icon="icon: user"></span>
+                    <input class="uk-input" type="text" placeholder="Username">
+                </div>
+                <div class="uk-margin uk-input-icon">
+                    <span uk-icon="icon: lock"></span>
+                    <input class="uk-input" type="password" placeholder="Password">
+                </div>
+                <!-- Action Buttons -->
+                <div class="action-buttons uk-margin-bottom">
+                    <button type="button" class="uk-button uk-button-default" id="reset-btn">Reset Form</button>
+                    <button type="submit" class="uk-button sign-in-btn">Sign In</button>
+                </div>
+                <div class="uk-flex uk-flex-between">
+                    <a href="#" class="uk-link text-anchor-blue">Forgot Password?</a>
+                    <a href="#" class="uk-link text-anchor-blue">New User?</a>
+                </div>
+            </form>
+
+            <!-- Divider -->
+            <hr class="uk-divider-icon">
+
+            <!-- SSO Text -->
+            <div class="sso-text color-black uk-text-medium">Login via one of the following services:</div>
+
+            <!-- SSO Buttons -->
+            <div class="sso-buttons">
+                <div class="uk-grid uk-child-width-expand@s uk-margin-remove" uk-grid>
+                    <button class="uk-button uk-button-default sso-button uk-margin-remove-top">
+                        <span uk-icon="google" class="uk-margin-small-right"></span>Google
+                    </button>
+                    <button class="uk-button uk-button-default sso-button uk-margin-remove-top">
+                        <span uk-icon="github" class="uk-margin-small-right"></span>GitHub
+                    </button>
+                    <button class="uk-button uk-button-default sso-button uk-margin-remove-top">
+                        <span uk-icon="user" class="uk-margin-small-right"></span>X
+                    </button>
+                </div>
+            </div>
+
+            <!-- Help Link -->
+            <div class="uk-text-center uk-margin-top">Need help? <a href="#" class="uk-link text-anchor-blue"> Contact us</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- <script>
+    document.getElementById('reset-btn').addEventListener('click', function() {
+        document.getElementById('login-form').reset();
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        if(username && password) {
+            alert('Sign In successful!');
+            // Here you would normally handle the form submission, e.g., via AJAX
+        } else {
+            alert('Please enter both username and password.');
+        }
+    });
+</script> -->

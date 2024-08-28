@@ -1,0 +1,67 @@
+.custom-modal .uk-modal-dialog {
+  width: 400px;
+  padding: 20px;
+}
+.modal-header {
+  color: #1D3557;
+  padding: 20px;
+  text-align: center;
+}
+.modal-content {
+  padding: 20px;
+}
+.uk-input-icon {
+  display: flex;
+  align-items: center;
+}
+.uk-input-icon input {
+  padding-left: 40px;
+}
+.uk-input-icon span {
+  position: absolute;
+  padding-left: 10px;
+  color: #1D3557;
+}
+.uk-divider {
+  margin: 20px 0;
+}
+.sso-buttons .uk-button {
+  margin-bottom: 10px;
+  width: 100%;
+}
+.uk-modal-close-default {
+
+}
+.uk-link {
+  color: #1D3557;
+}
+.help-link {
+  color: #1D3557;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+.sso-text {
+  margin-bottom: 20px;
+  text-align: center;
+  // color: #1D3557;
+}
+.sso-buttons .uk-grid {
+  gap: 10px;
+}
+
+.sso-button {
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.sign-in-btn {
+  background-color: #1D3557;
+  color: #F1FAEE;
+}

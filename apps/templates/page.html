@@ -37,12 +37,12 @@
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
     <ul uk-tab class="uk-text-bold uk-text-large">
-        <li class="uk-active"><a href="#">Metadata</a></li>
-        <li><a href="#">Attribution</a></li>
+        <li class="uk-active"><a href="#">Info</a></li>
+        <li><a href="#">URLs</a></li>
     </ul>
     <ul class="uk-switcher uk-margin-top">
         <li>{% include '_page/_information.html' %}</li>
-        <li>{% include '_page/_attribution.html' %}</li>
+        <li>{% include '_page/_urls.html' %}</li>
     </ul>
   </div>
 </div>
@@ -52,27 +52,29 @@
 <div id="modal-urls" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    <ul uk-tab class="uk-text-bold uk-text-large">
-      <li class="uk-active"><a href="#">URLs</a></li>
-      <li><a href="#">Share and Export</a></li>
-    </ul>
-    <ul class="uk-switcher uk-margin-top">
-        <li>{% include '_page/_urls.html' %}</li>
-        <li>{% include '_page/_exports.html' %}</li>
-    </ul>
+    {% include '_page/_exports.html' %}
   </div>
 </div>
 <!-- uiAction urls and exports -->
 
-<!-- uiAction visibility -->
-<div id="modal-visibility" class="reader-modal" uk-modal>
+<!-- uiAction layers -->
+<div id="modal-layers" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
-    <div class="uk-text-bold uk-text-large uk-margin-small-bottom">Layer Visibility</div>
+    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
+    {% include '_page/_layers.html' %}
+  </div>
+</div>
+<!-- uiAction layers -->
+
+<!-- uiAction layers -->
+<div id="modal-layers2" class="reader-modal" uk-modal>
+  <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
     {% include '_page/_visibility.html' %}
   </div>
 </div>
-<!-- uiAction visibility -->
+<!-- uiAction layers -->
+
 {% endblock inner %}
 {% endblock content %}
 
@@ -101,25 +103,37 @@
   crossorigin="anonymous"></script>
 
 <script type="text/javascript">
+
+  function toggleOCR() {
+    // this requires testing
+    const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
+    debugger;
+    for (let i = 0; i < nodeList.length; i++) {
+      nodeList[i].style.backgroundColor = nodeList[i].style.backgroundColor != "white" ? "white" : "transparent";
+      nodeList[i].style.fontWeight = nodeList[i].style.fontWeight != "bold" ? "bold":"";
+      nodeList[i].style.color = nodeList[i].style.color != "rgb(149, 9, 83)" ? "rgb(149, 9, 83)" : "transparent";
+    }
+  }
+
   function showOCR() {
     const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
+    debugger;
     for (let i = 0; i < nodeList.length; i++) {
       nodeList[i].style.backgroundColor = "white";
       nodeList[i].style.fontWeight = "bold";
       nodeList[i].style.color = "rgb(149, 9, 83)";
     }
-}
-</script>
+  }
 
-<script type="text/javascript">
   function hideOCR() {
     const nodeList2 = document.querySelectorAll("div.openseadragon-canvas div span");
+    debugger;
     for (let i = 0; i < nodeList2.length; i++) {
       nodeList2[i].style.backgroundColor = "transparent";
       nodeList2[i].style.fontWeight = "";
       nodeList2[i].style.color = "transparent";
     }
-}
+  }
 </script>
 
 <script type="text/javascript">
@@ -141,14 +155,14 @@ window.onload = function() {
         icon: "<span uk-icon='icon: search'></span>"
       }, {
         id: 'action-links',
-        tooltipContent: 'Get URLs',
+        tooltipContent: 'Export',
         onClick: () => UIkit.modal('#modal-urls').show(),
-        icon: "<span uk-icon='icon: link'></span>"
+        icon: "<span uk-icon='icon: download'></span>"
       }, {
-        id: 'action-visibility',
-        tooltipContent: 'Layer Visibility',
-        onClick: () => UIkit.modal('#modal-visibility').show(),
-        icon: "<span uk-icon='icon: eye-slash'></span>"
+        id: 'action-layers',
+        tooltipContent: 'Layers',
+        onClick: () => UIkit.modal('#modal-layers').show(),
+        icon: "<span uk-icon='icon: album'></span>"
       }
     ]
   };

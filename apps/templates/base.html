@@ -81,7 +81,9 @@
     {% block css %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
     <link href="{% static 'css/selectize.css' %}" rel="stylesheet">
-    <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
+    <!-- <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet"> -->
+    <link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet">
+    <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
     <!-- <link type="text/css" href="css/project.scss" rel="stylesheet"> -->
 
     <style>
@@ -93,118 +95,24 @@
   </head>
 
   <body>
-    <a class="sr-only" href="#main">Jump to main content</a>
-    {% if request.get_host == "readux2.ecdsdev.org" %}
-    {% elif request.get_host == "readux.ecdsdev.org" %}
-    <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
-    DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning
-    <a href="https://readux.ecds.emory.edu/" style="color:darkblue;text-decoration:underline;">Readux</a>.
-    </div>
-    {% endif %}
-    <div class="uk-container" id="v-readux">
-      <nav uk-navbar id="rx-nav">
-        <div class="uk-navbar-left">
-          <h1><a class="uk-navbar-item uk-logo uk-padding-remove-left uk-visible@s" href="/">
-            <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
-          </a></h1>
 
-          <div class="uk-visible@s">
-            {% main_menu %}
-          </div>
+  {% block content %}
+  
+  {% endblock content %}
 
-          <a class="uk-navbar-toggle uk-hidden@s" uk-toggle="target: #sidenav" uk-navbar-toggle-icon></a>
-
-          <div id="sidenav" uk-offcanvas="" class="uk-offcanvas">
-            <div class="uk-offcanvas-bar rx-offcanvas-base">
-              <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
-                <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
-              </a>
-              {% main_menu %}
-            </div>
-          </div>
-
-        </div>
-        <div class="uk-navbar-right">
-          <ul class="uk-navbar-nav">
-              <li>
-                 <a href="/search/" aria-label="full site search" title="Site Search" uk-tooltip="title: Site Search; pos: right">
-                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search"></span>
-                </a>
-              </li>
-              {% if request.user.is_authenticated %}
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                 <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right" aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
-                  <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog"></span>
-                </a>
-              </li>
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                 <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right" aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
-                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user"></span>
-                </a>
-              </li>
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                 <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" uk-tooltip="title: Logout; pos: right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
-                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out"></span>
-                </a>
-              </li>
-              {% else %}
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                <!-- <a href="{% url 'account_login' %}"> -->
-                 <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-tooltip="title: Sign in; pos: right" uk-toggle>
-                  <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in"></span>
-                </a>
-              </li>
-              {% endif %}
-          </ul>
-        </div>
-      </nav>
-
-      <main id='main'>
-        {% if messages %}
-            {% for message in messages %}
-              <div class="uk-alert-{{ message.tags }}" uk-alert>
-                <a class="uk-alert-close" uk-close></a>
-                <p>{{ message }}</p>
-              </div>
-            {% endfor %}
-        {% endif %}
-
-        {% block modal %}
-        {% endblock modal %}
-
-        {% block content %}
-        <p>Use this document as a way to quick start any new project.</p>
-        {% endblock content %}
-
-        {# Modal for signin #}
-        <div id="signin-modal" class="uk-flex-top" uk-modal>
-          <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-            <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
-            <section class="uk-modal-header">
-              <h2 class="uk-modal-title uk-text-center">
-              {% if user.is_authenticated %}
-                  Connect Accounts
-              {% else %}
-                Sign in
-              {% endif %}
-              </h2>
-            </section>
-            {% include "snippets/socialaccount_buttons.html" %}
-          </div>
-        </div>
-
-        {% block viewer %}{% endblock viewer %}
-
-      </main>
-
-    </div>
-
+  <div id="v-readux"></div>
+  
+  <!-- <a class="sr-only" href="#main">Jump to main content</a> -->
+  {% if request.get_host == "readux2.ecdsdev.org" %}
+  {% elif request.get_host == "readux.ecdsdev.org" %}
+  <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
+  DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning
+  <a href="https://readux.ecds.emory.edu/" style="color:darkblue;text-decoration:underline;">Readux</a>.
+  </div>
+  {% endif %}
+  
     <!-- Matomo Image Tracker-->
-    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" style="border:0" alt="" />
+    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" hidden alt="" />
     <!-- End Matomo -->
 
     {% block javascript %}

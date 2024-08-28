@@ -1,0 +1,51 @@
+
+{% if page.pid is None %}
+<form class="uk-search uk-search-default rx-page-search-container" id="manifest-search-form">
+  <input type="hidden" value={{ volume.pid }} name="volume-pid" id="search-volume-pid" />
+  <!-- <span uk-search-icon></span> -->
+  <input class="uk-search-input" type="text" placeholder="Hit Enter to search" aria-label="Search" name="query"
+  value="{{request.GET.q}}" id="search-query-text"/>
+  <fieldset style="display: flex">
+    <label title="Click to include partial matches" class="rx-page-search-option-label uk-margin-right">
+      <input class="uk-radio" type="radio" {%if 'exact' not in request.GET.type %}checked{% endif %} aria-label="include partial" value="partial" name="search-type">
+      Partial
+    </label>
+    <label title="Click for exact matches only" class="rx-page-search-option-label">
+      <input class="uk-radio" type="radio" {%if 'exact' in request.GET.type %}checked{% endif %} aria-label="exact only" value="exact" name="search-type" id="search-exact">
+      Exact
+    </label>
+  </fieldset>
+</form>
+{% else %}
+<form class="uk-search uk-search-default rx-page-search-container"
+  action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
+  {% csrf_token %}
+  <span uk-search-icon></span>
+  <input class="uk-search-input" type="text" placeholder="Hit Enter to search" aria-label="Search" name="q"
+    value="{{request.GET.q}}">
+</form>
+{% endif %}
+
+{% if user_annotation_count > 0 %}
+<ul class="uk-subnav uk-subnav-pill" uk-switcher>
+    <li><a href="#" id="rx-annotation-manifest">{{ user_annotation_count }} annotations in manifest</a></li>
+    <li><a href="#" id="rx-annotation-page"> annotations on page</a></li>
+</ul>
+{% endif %}
+
+<v-volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></v-volume-annotations>
+
+<ul uk-accordion="multiple: true" class="uk-width-1-1 ">
+  <li class="uk-open">
+      <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#"><span id="annotation-count"></span> Match(es) in Text</a>
+      <div class="uk-accordion-content uk-margin-small-top" id="ocr-annotation-results">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </div>
+  </li>
+  <li class="uk-open">
+      <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#"><span id="user-annotation-count"></span> Match(es) in Annotations</a>
+      <div class="uk-accordion-content uk-margin-small-top" id="user-annotation-results">
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor reprehenderit.
+      </div>
+  </li>
+</ul>

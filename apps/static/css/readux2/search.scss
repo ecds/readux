@@ -1,0 +1,252 @@
+.info-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #1D3557; // This could be replaced by a variable if one exists in your SCSS file
+  flex-wrap: wrap; // Ensure wrapping on smaller screens
+}
+
+.info-line .info-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap; // Enable wrapping for better responsiveness
+}
+
+.info-line .pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.info-line a, .info-line select {
+  color: #1D3557; // Again, this could use a variable if defined in your file
+  text-decoration: underline;
+}
+
+.pagination-controls .uk-icon-button {
+  color: #1D3557;
+}
+
+.pagination-controls .uk-icon-button[disabled] {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .info-line {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  .info-line .info-group, 
+  .info-line .pagination-controls {
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 10px;
+  }
+
+  .info-line .info-group {
+      gap: 10px;
+  }
+}
+
+
+/* normalize form fieldset */
+fieldset {
+  margin: inherit;
+  border: 0;
+  padding: inherit;
+}
+
+/* copied from original scss file */
+#search-form .uk-button-danger {
+  background-color: #f0506e;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+#search-form .uk-button-secondary {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+/* search form */
+form#search-form input[type="search"][name="q"] {
+  width: 100%;
+}
+
+#search-filters input[type="text"]#authors-filter {
+  width: 100%;
+}
+
+/* Multiselect filter */
+#search-filters select[multiple] {
+  height: 150px;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#search-filters .noUi-target {
+  margin: 45px 21px 10px; 
+}
+
+.sui-item-heading {
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: "Helvetica Neue";
+  font-size: 13px;
+  margin-top: 0.65rem;
+}
+
+#search-filters select[multiple] {
+  height: 150px;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.uk-button-primary {
+  background-color: #1D3557;
+
+  &:hover {
+    background-color: darken(#1D3557, 10%); /* Darken the color when hovered */
+  }
+}
+
+.uk-container ul {
+  list-style: none;
+}
+
+form#search-form input[type="search"][name="q"] {
+  width: 100%;
+}
+
+.uk-button-default {
+  font-size: 1.25rem;
+}
+
+#search-grid {
+  gap: 1.5rem;
+}
+
+
+
+#search-filters input[type="text"]#authors-filter {
+  width: 100%;
+}
+
+/* Multiselect filter */
+#search-filters select[multiple] {
+  height: 150px;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+/* Selectize */
+
+.selectize-control.multi .selectize-input>div {
+  background: #1D3557 !important;
+  border: none !important;
+}
+.selectize-dropdown .active:not(.selected) {
+  background-color: #F1FAEE !important;
+}
+.noUi-connect {
+  background: #1D3557 !important;
+}
+[disabled] .noUi-connect {
+  background: #1D3557 !important;
+  opacity: 0.2;
+}
+
+/* Date slider */
+.noUi-tooltip {
+  font-size: .875rem;
+  font-family: monospace;
+  font-weight: normal;
+  padding: 0.125rem 0.25rem !important;
+  background-color: none;
+  border: none !important;
+}
+#search-filters .noUi-target {
+  margin: 45px 21px 10px; 
+}
+
+/* Individual search results */
+ol#search-results {
+  list-style: none;
+}
+ol#search-results dl {
+  margin-left: 2rem;
+}
+/* Clamp summary to 3 lines */
+#search-results .result-volume-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* search result highlighting */
+#search-results em {
+  color: #1D3557 !important;
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* results within full text */
+#search-results .result-page a {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 0.8rem;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+#search-results .result-page .page-number {
+  min-width: 4rem;
+  max-width: 4rem;
+}
+
+#search-results .result-page ul li {
+  list-style: disc;
+}
+
+
+.result-title {
+  color: #1D3557;
+  &:hover {
+    color: darken(#1D3557, 10%); /* Darken the color when hovered */
+  }
+}
+
+.uk-checkbox:checked, .uk-checkbox:indeterminate, .uk-radio:checked {
+  background-color: #1D3557 !important;
+}
+
+#reset-filters {
+  &:hover {
+    background-color: darken(#EFEFEF, 10%);
+  } 
+}
+
+.uk-search-default .uk-search-input:focus, .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+  border-color: #1D3557;
+}
+
+.uk-search-default .uk-search-input:focus {
+  border-right: 0;
+}
+
+.selectize-control.plugin-clear_button .clear {
+  height: 85%;
+}

@@ -2,7 +2,7 @@
 {# uses selectize javascript plug-in for interactivity #}
 {# expects current sort as *sort*, sort options as *sort_options*, and any additional url arguments as *sort_url_params* #}
 {% load static i18n %}
-<div class="uk-margin-bottom uk-flex-between uk-flex" id="rx-sort">
+<div class="uk-margin uk-flex-between uk-flex" id="rx-sort">
 	<div>
 		<span ref="v-attr-sort" data-sort="{{ sort }}"></span>
 		<span class="rx-action-title">Sort by: </span> <a class="rx-action-btn">[[currentSelection]]</a>

@@ -7,7 +7,7 @@
         <!-- <span>{{ forloop.counter0|add:page_obj.start_index }}.</span> -->
         {% if volume.pid %}
             <a
-                class="nav-link uk-text-large sui-item-heading"
+                class="nav-link uk-text-large sui-item-heading title result-title"
                 style="font-size: 1.05rem; letter-spacing: 0.1rem;"
                 href="{% url 'volumeall' volume.pid %}"
             >
@@ -29,8 +29,8 @@
             {% endif %}
         {% endif %}
     </h4>
-    <dl class="uk-description-list">
-        <div uk-grid class="uk-margin-small-bottom">
+    <dl class="uk-margin-remove">
+        <div uk-grid class="">
             <div class="uk-width-3-4@m">
                 {% if volume.summary %}
                 <div class="sui-item-heading" 
@@ -51,7 +51,7 @@
                 {% if volume.authors and "[no author]" not in volume.authors %}
                     <div class="sui-item-heading" >Author{{volume.authors|pluralize}}</div>
                     <dd>
-                        <ul class="uk-margin-remove"
+                        <ul class="uk-margin-remove uk-padding-remove"
                         style="font-weight: 400; font-size: 14px;">
                             {% if 'highlight' in volume.meta and volume.meta.highlight.author %}
                                 {% for fragment in volume.meta.highlight.author %}
@@ -68,13 +68,13 @@
             </div>
         </div>
         {% if volume|has_inner_hits %}
-                <div class="sui-item-heading" >Full Text</div> 
+                <div class="sui-item-heading">Full Text</div> 
                 {% for canvas in volume.meta.inner_hits|group_by_canvas %}
                     <div class="result-page">
                         <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
                             <span class="page-number">p. {{ canvas.position }}</span>
                             {% if canvas.highlights|length %}
-                                <ul class="highlights">
+                                <ul class="highlights uk-padding-remove">
                                 {% for fragment in canvas.highlights %}
                                     <li>{{ fragment|safe }}</li>
                                 {% endfor %}
@@ -96,7 +96,7 @@
         {% if volume.languages and "[no language]" not in volume.languages %}
             <div class="sui-item-heading" >Language{{volume.languages|pluralize}}</div>
             <div>
-                <ul class="uk-margin-remove" style="font-weight: 400; font-size: 14px;">
+                <ul class="uk-margin-remove uk-padding-remove" style="font-weight: 400; font-size: 14px;">
                     {% for lang in volume.languages %}
                         <li>{{ lang }}</li>
                     {% endfor %}

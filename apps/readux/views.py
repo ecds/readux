@@ -218,6 +218,27 @@ class PageDetail(TemplateView):
     """Django Template View for :class:`apps.iiif.canvases.models.Canvas`"""
     template_name = "page.html"
 
+    def get_metadatum(self, volume, key):
+        """Attempt to retrieve a value from a volume's metadata by key. If it cannot
+        be found, return an empty string."""
+        if hasattr(volume, key):
+            # first try volume's model attributes
+            return getattr(volume, key)
+        elif isinstance(volume.metadata, dict):
+            # if not a model attr, attempt to get value from volume metadata;
+            # if metadata is a dict (rare), just lookup by key
+            return volume.metadata.get(key, "")
+        else:
+            # if metadata is a list (more common / correct IIIF spec), find the matching
+            # "label" attribute by key
+            meta_list = list(volume.metadata)
+            metadatum = filter(lambda m: m["label"] == key, meta_list)
+            try:
+                # filter() returns an iterator; try to retrieve the first matching entry's value
+                return next(metadatum).get("value", "") if metadatum else ""
+            except StopIteration:
+                return ""
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         manifest = Manifest.objects.get(pid=kwargs['volume'])
@@ -260,6 +281,16 @@ class PageDetail(TemplateView):
 
         context['user_annotation_index'] = user_annotation_index
         context['json_data'] = {'json_data': list(user_annotation_index)}
+
+        # add custom metadata from django settings to context
+        if hasattr(settings, 'CUSTOM_METADATA'):
+            custom_metadata = {}
+            for key in settings.CUSTOM_METADATA.keys():
+                # attempt to get this manifest's value for each key
+                value = self.get_metadatum(manifest, key)
+                if value:
+                    custom_metadata[key] = value
+            context["custom_metadata"] = custom_metadata
 
         return context
 

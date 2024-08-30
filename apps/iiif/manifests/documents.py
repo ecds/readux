@@ -55,13 +55,13 @@ class ManifestDocument(Document):
     class Index:
         """Settings for Elasticsearch"""
 
-        name = "manifests"
+        name = f"readux_{environ['DJANGO_ENV']}_manifests"
 
     class Django:
         """Settings for automatically pulling data from Django"""
 
         model = Manifest
-        ignore_signals = environ['DJANGO_ENV'] != 'test'
+        ignore_signals = environ["DJANGO_ENV"] != "test"
 
         # fields to map dynamically in Elasticsearch
         fields = [

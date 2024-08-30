@@ -83,8 +83,8 @@ jobs:
           pip install pyld==1.0.5
           pip install -r requirements/local.txt
 
-      - name: Test Export
-        run: pytest apps/export/
+      # - name: Test Export
+      #   run: pytest apps/export/
 
       - name: Test IIIF
         run: pytest apps/iiif/

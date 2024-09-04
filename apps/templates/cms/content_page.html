@@ -1,14 +1,85 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags %}
+{% load sass_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
-<h1>{{ page.title }}</h1>
+<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet">
+
+{% include '_home/_nav.html' %}
+
+
+<div class="uk-container">
+
+  <!-- Breadcrumb -->
+  <ul class="breadcrumb uk-margin-small-top">
+    <li><a href="/">Home</a></li>
+    <li>
+      <a href="#">About<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+        <ul class="uk-nav uk-navbar-dropdown-nav">
+            <li><a href="#">[What Is Readux?]</a></li>
+            <li><a href="#">[What Is Sounding Spirit?]</a></li>
+            <li><a href="#">[Team]</a></li>
+            <li><a href="#">[Terms of Service]</a></li>
+            <li><a href="#">[Contact Us]</a></li>
+        </ul>
+      </div>
+    </li>
+    <li>{{ page.page_title|default:page.title }}</li>
+  </ul>
+  <!-- End -->
+
+  <!-- Page title & text lead -->
+  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">{{ page.page_title|default:page.title }}</h1>
+  <p class="page-text-lead">{{ page.tagline }}</p>
+  <p class="page-text-lead uk-margin-small-top">{{ page.paragraph }}</p>
+  <!-- End -->
+ 
+  <div class="uk-grid-collapse uk-child-width-expand" uk-grid>
+    <!-- Left Column: Navigation -->
+    <div class="uk-width-1-4@m navigation-wrapper">
+        <nav class="navigation">
+            <ul class="uk-nav uk-nav-default">
+                <li><a href="#features" class="active">Features</a></li>
+                <li><a href="#collections">Collections</a></li>
+                <li><a href="#users-guidelines">Users Guidelines</a></li>
+                <li><a href="#partners">Partners</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Right Column: Content -->
+    <div class="uk-width-expand@m content">
+        <div id="features" class="section">
+            <h2>Features</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
+        </div>
+        <div id="collections" class="section">
+            <h2>Collections</h2>
+            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
+        </div>
+        <div id="users-guidelines" class="section">
+            <h2>Users Guidelines</h2>
+            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
+        </div>
+        <div id="partners" class="section">
+            <h2>Partners</h2>
+            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
+        </div>
+    </div>
+</div>
+
 
 {% if page.tagline %}
 <p class="lead">{{page.tagline}}</p>
 {% endif %}
 
-  {% include_block page.body %}
+{% include_block page.body %}
+<script>
+
+</script>
 {% endblock %}
+

@@ -9,7 +9,7 @@ from apps.iiif.manifests.models import Manifest
 from apps import readux
 from ..models import UserAnnotation
 from ..context_processors import current_version
-from apps.readux.views import VolumesList, CollectionDetail, ExportOptions, AnnotationsCount
+from apps.readux.views import CollectionDetail, ExportOptions, AnnotationsCount
 from urllib.parse import urlencode
 from cssutils import parseString
 import json
@@ -416,44 +416,6 @@ class AnnotationTests(TestCase):
         assert serialized_canvas['@id'] == self.canvas.identifier
         assert serialized_canvas['label'] == str(self.canvas.position)
         assert len(serialized_canvas['otherContent']) == 1
-
-    def test_volume_list_view_no_kwargs(self):
-        response = self.client.get(reverse('volumes list'))
-        context = response.context_data
-        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
-        assert context['object_list'].count() == Manifest.objects.all().count()
-
-    def test_volume_list_invalid_kwargs(self):
-        kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
-        response = self.client.get(reverse('volumes list'), data=kwargs)
-        context = response.context_data
-        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
-        assert context['object_list'].count() == Manifest.objects.all().count()
-
-    def test_volumes_list_view_sort_and_order(self):
-        view = VolumesList()
-        for sort in view.SORT_OPTIONS:
-            for order in view.ORDER_OPTIONS:
-                kwargs = {'sort': sort, 'order': order}
-                url = reverse('volumes list')
-                response = self.client.get(url, data=kwargs)
-                context = response.context_data
-                assert context['order_url_params'] == urlencode({'sort': sort, 'order': order})
-                assert context['object_list'].count() == Manifest.objects.all().count()
-                assert view.get_queryset().ordered
-
-    def test_collection_detail_view_no_kwargs(self):
-        response = self.client.get(reverse('volumes list'))
-        context = response.context_data
-        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
-        assert context['object_list'].count() == Manifest.objects.all().count()
-
-    def test_collection_detail_invalid_kwargs(self):
-        kwargs = {'blueberry': 'pizza', 'jay': 'awesome'}
-        response = self.client.get(reverse('volumes list'), data=kwargs)
-        context = response.context_data
-        assert context['order_url_params'] == urlencode({'sort': 'title', 'order': 'asc'})
-        assert context['object_list'].count() == Manifest.objects.all().count()
 
     # TODO are the volumes actually sorted?
     def test_collection_detail_view_sort_and_order(self):

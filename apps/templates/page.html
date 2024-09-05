@@ -2,6 +2,7 @@
 {% load static i18n %}
 {% load account socialaccount %}
 {% load crispy_forms_tags %}
+{% load sass_tags %}
 
 {% block extra_css %}
 <style>
@@ -9,6 +10,7 @@
     display: none;
   }
 </style>
+<link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
 {% endblock extra_css %}
 
 {% block content %}

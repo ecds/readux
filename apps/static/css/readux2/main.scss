@@ -293,10 +293,10 @@
     background-color: transparent;
     cursor: pointer;
     text-decoration: none;
-    color: #1D3557; /* Title text color */
     opacity: 0.75; /* Normal state opacity */
     transition: opacity 0.1s ease;
     display: block;
+    color: black;
 }
 
 .grid-item img {
@@ -310,6 +310,7 @@
 .grid-item:hover {
     opacity: 1.0; /* Change opacity on hover */
     text-decoration: none;
+    color: black;
 }
 
 .grid-item h2 {
@@ -318,6 +319,40 @@
     font-weight: 600;
     font-size: medium;
     margin: 0;
+}
+
+.grid-item p {
+    margin: 0;
+}
+
+/* list view table */
+.list-view-table {
+    margin-left: -0.5rem;
+}
+
+.list-view-table thead th {
+    color: #1D3557;
+    font-weight: bold;
+}
+
+.list-view-table tbody tr:hover {
+    background-color: #F1FAEE !important;
+}
+.list-view-table tbody tr {
+    color: rgba(0, 0, 0, 0.75);
+    transition: color 0.3s ease;
+}
+.list-view-table tbody tr:hover {
+    color: rgba(0, 0, 0, 1);
+}
+.list-item:hover {
+    cursor: pointer;
+}
+.clickable-row {
+    cursor: pointer;
+}
+.list-view-table th, .list-view-table td {
+    padding: 0.5rem;
 }
 
 /* search bar */

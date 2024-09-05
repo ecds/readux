@@ -50,7 +50,7 @@
   <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
     {% for volume in volumes %}
         <!-- Volume Item -->
-        <a class="volume-item" href="{% url 'volumeall' volume.pid %}">
+        <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
             <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
             <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }}</h2>
             {% if volume.published_date %}<div class="color-black">{{ volume.published_date }}</div>{% endif %}

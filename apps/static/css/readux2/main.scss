@@ -288,17 +288,18 @@
     gap: 2.5rem; /* Space between items */
 }
 
-.volume-item {
+.grid-item {
     text-align: left;
     background-color: transparent;
     cursor: pointer;
     text-decoration: none;
     color: #1D3557; /* Title text color */
-    opacity: 0.9; /* Normal state opacity */
+    opacity: 0.75; /* Normal state opacity */
     transition: opacity 0.1s ease;
+    display: block;
 }
 
-.volume-item img {
+.grid-item img {
     width: 100%;
     height: auto; /* Maintain aspect ratio of images */
     display: block;
@@ -306,11 +307,12 @@
     border-radius: 4px;
 }
 
-.volume-item:hover {
+.grid-item:hover {
     opacity: 1.0; /* Change opacity on hover */
+    text-decoration: none;
 }
 
-.volume-item h2 {
+.grid-item h2 {
     text-decoration: underline; /* Underline for title */
     color: #1D3557;
     font-weight: 600;

@@ -57,7 +57,7 @@
     </thead>
     <tbody>
       {% for collection in page.collections %}
-          <tr class="clickable-row" data-ref="{% url 'collection' collection.pid %}">
+          <tr class="clickable-row" data-href="{% url 'collection' collection.pid %}">
               <td>{{ collection.label|default:"[no title]"|truncatechars:200 }}</td>
               <td>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</td>
               <td class="uk-table-expand">{{collection.summary|truncatewords_html:50|safe}}</td>
@@ -73,4 +73,18 @@
 
 {% include '_home/_footer.html' %}
 
-{% endblock content %}
+{% include_block page.body %}
+<script>
+  // JavaScript to make list view table rows clickable
+  document.addEventListener('DOMContentLoaded', function() {
+      var rows = document.querySelectorAll('.clickable-row');
+      rows.forEach(function(row) {
+          row.addEventListener('click', function() {
+              window.location.href = row.getAttribute('data-href');
+          });
+      });
+  });
+</script>
+
+{% endblock %}
+

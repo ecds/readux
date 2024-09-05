@@ -8,13 +8,12 @@
   top: 20px;
   border-radius: 10px 10px; /* Rounded corners on the right-hand side */
   width: auto; /* Fit to content width */
-  margin-right: 1.5rem;
 }
 .navigation a {
   color: #1D3557;
   text-decoration: none;
   display: block;
-  padding: 10px 0;
+  padding: 5px 15px !important;
   position: relative;
   font-weight: normal;
   font-size: medium;
@@ -29,7 +28,7 @@
 .navigation a.active::before {
   content: '';
   position: absolute;
-  left: -12px;
+  left: 3px;
   top: 50%;
   transform: translateY(-50%);
   height: 75%;
@@ -37,8 +36,16 @@
   background-color: #1D3557;
 }
 .content {
-  padding: 20px;
+  padding: 40px;
 }
 .section {
   padding-bottom: 40px;
+}
+.static-content-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.section p {
+  margin: 0.5rem 0;
+  color: black;
 }

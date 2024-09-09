@@ -68,7 +68,7 @@ stream-unzip>=0.0.58
 -e git+https://github.com/ecds/digitaledition-jekylltheme.git@readux_2#egg=digitaledition-jekylltheme
 
 # List of BCP 47 language codes
-bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
+bcp47==0.1.0 # https://github.com/highfestiva/bcp47.py
 
 # Elasticsearch
 django-elasticsearch-dsl>7.0,<8.0

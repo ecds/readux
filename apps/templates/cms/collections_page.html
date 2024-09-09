@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
-{% load sass_tags %}
+{% load wagtailcore_tags sass_tags static %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -34,7 +33,7 @@
     {% for collection in collections %}
         <!-- Collection Item -->
         <a class="grid-item" href="{% url 'collection' collection.pid %}">
-            <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}"> <!-- TODO: Not sure how to correctly insert the onerror handler -->
+            <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
             <h2>{{ collection.label|default:"[no title]"|truncatechars:200 }}</h2>
             {% if collection.manifests.all %}<div class="color-black">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>{% endif %}
             {{collection.summary|truncatewords_html:50|safe}}

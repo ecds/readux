@@ -25,13 +25,6 @@ from ..iiif.manifests.models import Manifest
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']
 
-class CollectionsList(ListView):
-    """Django List View for :class:`apps.iiif.kollections.models.Collection`s"""
-    template_name = "collections.html"
-
-    context_object_name = 'collections'
-    queryset = Collection.objects.all()
-
 class CollectionDetail(ListView):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""
     template_name = "collection.html"

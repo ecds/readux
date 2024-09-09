@@ -105,7 +105,7 @@ coverage==7.4.0  # https://github.com/nedbat/coveragepy
 
 # Django
 # ------------------------------------------------------------------------------
-django-debug-toolbar~=4.2.0  # https://github.com/jazzband/django-debug-toolbar
+django-debug-toolbar~=4.4.6  # https://github.com/jazzband/django-debug-toolbar
 django-extensions~=3.2.3  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin~=3.1.0  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https

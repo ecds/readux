@@ -15,7 +15,7 @@ git+https://github.com/ecds/python-edtf@214972b
 # Django
 # ------------------------------------------------------------------------------
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django>=3.2.0,<4.0  # https://www.djangoproject.com/
+Django>=3.2.0,<6.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
 # git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils

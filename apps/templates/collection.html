@@ -3,6 +3,8 @@
 {% load sass_tags %}
 {% load has_user_annotations %}
 {% load user_annotation_count %}
+
+
 {% block content %}
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/collection.scss' %}" rel="stylesheet">
@@ -10,48 +12,46 @@
 {% include '_home/_nav.html' %}
 
 <div class="uk-container">
-<!-- Breadcrumb -->
-<ul class="breadcrumb uk-margin-small-top">
-  <li><a href="/">Home</a></li>
-  <li>
-    <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-    <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-      <ul class="uk-nav uk-navbar-dropdown-nav">
-          <li><a href="#">[All Collections]</a></li>
-          <li><a href="#">[Featured Collections]</a></li>
-      </ul>
-    </div>
-  </li>
-  <li>Collection</li>
-</ul>
-<!-- End -->
-</div>
-
-<div class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-top">
-  <div class="overlay">
-      <h1 class="uk-text-large" style="color: white; font-weight: bold;">African American</h1>
-      <p class="uk-text-medium">In the late nineteenth and early twentieth centuries, African American sacred music was published for black congregational use and staged performance...</p>
-      <button class="uk-button description-button" uk-toggle="target: #modal-full">Full Description</button>
-      <br><br>
-      <!-- <a href="#collection" class="uk-button uk-button-default">Jump to Collection</a> -->
-  </div>
-</div>
-
-<div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
-  <div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg" uk-height-viewport>
-      <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
-      <div class="modal-overlay">
-          <div class="uk-width-1-1 uk-padding-large">
-              <h2 style="color: white; font-weight: bold;">African American</h2>
-              <p style="font-size: large;">In the late nineteenth and early twentieth centuries, African American sacred music was published for black congregational use and staged performance...</p>
-              <p style="font-size: large;">Additional details can go here...</p>
-              <!-- Add the rest of the content here -->
-          </div>
+  <!-- Breadcrumb -->
+  <ul class="breadcrumb uk-margin-small-top">
+    <li><a href="/">Home</a></li>
+    <li>
+      <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+        <ul class="uk-nav uk-navbar-dropdown-nav">
+            <li><a href="#">[All Collections]</a></li>
+            <li><a href="#">[Featured Collections]</a></li>
+        </ul>
       </div>
+    </li>
+    <li>Collection</li>
+  </ul>
+  <!-- End -->
   </div>
-</div>
 
-<div>
+  <div class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-top">
+    <div class="overlay">
+        <h1 class="uk-text-large" style="color: white; font-weight: bold;">African American</h1>
+        <p class="uk-text-medium">In the late nineteenth and early twentieth centuries, African American sacred music was published for black congregational use and staged performance...</p>
+        <button class="uk-button description-button" uk-toggle="target: #modal-full">Full Description</button>
+        <br><br>
+        <!-- <a href="#collection" class="uk-button uk-button-default">Jump to Collection</a> -->
+    </div>
+  </div>
+
+  <div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
+    <div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg" uk-height-viewport>
+        <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+        <div class="modal-overlay">
+            <div class="uk-width-1-1 uk-padding-large">
+                <h2 style="color: white; font-weight: bold;">African American</h2>
+                <p style="font-size: large;">In the late nineteenth and early twentieth centuries, African American sacred music was published for black congregational use and staged performance...</p>
+                <p style="font-size: large;">Additional details can go here...</p>
+                <!-- Add the rest of the content here -->
+            </div>
+        </div>
+    </div>
+  </div>
 
   <header class="page-header" id="page-bg">
     <div class="container">
@@ -74,103 +74,17 @@
       <li class="rx-breadcrumb-item">{{ collection.label }}</li>
     </ul>
     <h2 class="rx-title" id="main">{{ collection.label }}</h2>
-    <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
+    <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
   </div>
 
   <div class="rx-head-container">
     <p>{{ collection.summary|safe }}</p>
   </div>
 
-  {% include "snippets/sort_dropdown.html" %}
-  <!--TODO: include ascending/descending sort feature-->
+  {% include "snippets/_volumes_page_information.html" %}
+  {% include "snippets/_volumes_grid.html" %}
 
-  {% include "snippets/pagination.html" %}
-
-
-   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
-   {% for volume in page_obj %}
-  {% if volume.canvas_set.first.pid is null %}
-      <div class="uk-width-1-2@m uk-grid-medium">
-        <div class=" uk-width-1-4@m">
-          <a class="nav-link" href="#">
-            <v-volume-image></v-volume-image>
-          </a>
-        </div>
-        <div class="uk-width-3-4@m" tabindex="0">
-          <a class="nav-link" href="#">
-            <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-          </a>
-          <ul class="uk-padding-remove rx-card-text">
-            <li>Author: {{volume.author|truncatechars:150}}</li>
-            <li>Published: {{volume.published_date}}</li>
-            <li>Publisher: {{volume.published_city}}: {{volume.publisher}}</li>
-            <li>Added: {{volume.created_at}}</li>
-            <li>
-                {% if user.is_authenticated %}
-                  {% has_user_annotations volume user as result %}
-                  {% if result %}
-                    <span class="count-icon">
-                      <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                        uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                      <span class="count">{% user_annotation_count volume user %}</span>
-                    </span>
-                  {% endif %}
-                {% endif %}
-            </li>
-          </ul>
-        </div>
-      </div>
-
-    {% else %}
-    <div class="uk-width-1-2@m uk-grid-medium">
-      <div class=" uk-width-1-4@m">
-        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% if volume.start_canvas.pid %}
-           <v-volume-image
-            img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label|truncatechars:50}}">
-          </v-volume-image>
-        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
-        {% if forloop.last %}
-          <v-volume-image
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label|truncatechars:50}}">
-          </v-volume-image>
-        {% endif %}
-        {% endif %}
-        </a>
-      </div>
-      <div class="uk-width-3-4@m" tabindex="0" aria-label="Volume Information">
-        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-          <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-        </a>
-        <ul class="uk-padding-remove rx-card-text">
-          <li>Author: {{volume.author|truncatechars:150}}</li>
-          <li>Published: {{volume.published_date}}</li>
-          <li>Publisher: {{volume.published_city}}: {{volume.publisher}}</li>
-          <li>Added: {{volume.created_at}}</li>
-          <li>
-              {% if user.is_authenticated %}
-                {% has_user_annotations volume user as result %}
-                {% if result %}
-                  <span class="count-icon">
-                    <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                      uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                    <span class="count">{% user_annotation_count volume user %}</span>
-                  </span>
-                {% endif %}
-              {% endif %}
-          </li>
-        </ul>
-      </div>
-    </div>
-    {% endif %}
-    {% endfor %}
-  </div>
 </div>
-
-{% include "snippets/pagination.html" %}
-
-{% include "footer.html" %}
+{% include '_home/_footer.html' %}
 
 {% endblock content %}

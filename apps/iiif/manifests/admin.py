@@ -47,7 +47,18 @@ class RelatedLinksInline(admin.TabularInline):
     extra = 1
     min_num = 0
 
-class ManifestAdmin(ImportExportModelAdmin, SummernoteModelAdmin, admin.ModelAdmin):
+class SummernoteMixin(SummernoteModelAdmin):
+    class Media:
+        # NOTE: have to include these js and css dependencies for summernote when not using iframe
+        js = (
+            "//code.jquery.com/jquery-3.7.1.min.js",
+            "//cdn.jsdelivr.net/npm/jquery.ui.widget@1.10.3/jquery.ui.widget.min.js",
+        )
+        css = {
+            "all": ["//cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css"],
+        }
+
+class ManifestAdmin(ImportExportModelAdmin, SummernoteMixin, admin.ModelAdmin):
     """Django admin configuration for manifests"""
     resource_class = ManifestResource
     exclude = ('id',)

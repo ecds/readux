@@ -29,56 +29,37 @@
   <!-- End -->
   </div>
 
-  <div class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-top">
+  <div
+    class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-top"
+    style="background-image: url('/media/{{collection.header}}');"
+  >
     <div class="overlay">
-        <h1 class="uk-text-large" style="color: white; font-weight: bold;">African American</h1>
-        <p class="uk-text-medium">In the late nineteenth and early twentieth centuries, African American sacred music was published for black congregational use and staged performance...</p>
+        <h1 class="uk-text-large" style="color: white; font-weight: bold;">{{ collection.label }}</h1>
+        <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
+        <p class="uk-text-medium">{{ collection.summary|striptags|truncatechars:200 }}</p>
         <button class="uk-button description-button" uk-toggle="target: #modal-full">Full Description</button>
-        <br><br>
-        <!-- <a href="#collection" class="uk-button uk-button-default">Jump to Collection</a> -->
+
+        {# TODO: image metadata, style or remove #}
+        {% if collection.collection_image_title %}<p>{{ collection.collection_image_title }}</p>{% endif %}
+        {% if collection.collection_image_summary %}<p>{{ collection.collection_image_summary }}</p>{% endif %}
+        {% if collection.collection_image_summary %}<p>{{ collection.collection_image_creator }}</p>{% endif %}
     </div>
   </div>
 
   <div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
-    <div class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg" uk-height-viewport>
+    <div
+      class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
+      uk-height-viewport
+      style="background-image: url('/media/{{collection.header}}');"
+    >
         <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
         <div class="modal-overlay">
             <div class="uk-width-1-1 uk-padding-large">
-                <h2 style="color: white; font-weight: bold;">African American</h2>
-                <p style="font-size: large;">In the late nineteenth and early twentieth centuries, African American sacred music was published for black congregational use and staged performance...</p>
-                <p style="font-size: large;">Additional details can go here...</p>
-                <!-- Add the rest of the content here -->
+                <h2 style="color: white; font-weight: bold;">{{ collection.label }}</h2>
+                {{ collection.summary|safe }}
             </div>
         </div>
     </div>
-  </div>
-
-  <header class="page-header" id="page-bg">
-    <div class="container">
-      <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}"
-        style="width:100%;" />
-    </div>
-    <div class="collection-image-info collapsed"  tabindex="0" aria-label="about this collection" uk-tooltip="title: About this collection; pos: right">
-      <div class="info">
-        <p style="font-size:130%">{{ collection.collection_image_title }}</p>{% if collection.collection_image_summary %}
-        <p>{{ collection.collection_image_summary }}</p> {% endif %}
-        <p>{{ collection.collection_image_creator }}</p>
-      </div>
-    </div>
-  </header>
-
-  <div class="rx-title-container">
-    <ul class="rx-breadcrumb uk-text-truncate">
-      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-      <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
-      <li class="rx-breadcrumb-item">{{ collection.label }}</li>
-    </ul>
-    <h2 class="rx-title" id="main">{{ collection.label }}</h2>
-    <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
-  </div>
-
-  <div class="rx-head-container">
-    <p>{{ collection.summary|safe }}</p>
   </div>
 
   {% include "snippets/_volumes_page_information.html" %}

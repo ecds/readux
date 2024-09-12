@@ -10,7 +10,6 @@
 
 {% block content %}
 
-<link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
 
 {% include '_home/_nav.html' %}
@@ -46,22 +45,7 @@
 
   {% if page.layout == 'Grid' %}
     <!-- Volume Grid -->
-    <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
-      {% for volume in volumes %}
-          <!-- Volume Item -->
-          <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
-              <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
-              <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }}</h2>
-              {% if volume.published_date or volume.published_date_edtf %}
-                <div class="color-black">{{ volume.published_date|default:volume.published_date_edtf }}</div>
-              {% endif %}
-              {% if volume.author %}<div class="color-black">{{ volume.author|truncatechars:150 }}</div>{% endif %}
-              <div class="color-black">Added {{ volume.created_at }}</div>
-          </a>
-        {% empty %}
-          There are no volumes available to browse.
-        {% endfor %}
-    </div>
+     {% include "snippets/_volumes_grid.html" %}
   {% elif page.layout == 'List' %}
     <!-- Volume List -->
     <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">

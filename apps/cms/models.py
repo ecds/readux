@@ -146,7 +146,7 @@ class VolumesPage(Page):
     sort_fields = {
         "title": "label",
         "author": "author",
-        "date": "published_date_edtf",
+        "date": "date_sort_ascending",
         "added": "created_at",
     }
 
@@ -181,7 +181,12 @@ class VolumesPage(Page):
         sign = "-" if order == "desc" else ""
 
         # build order_by query to sort results
-        queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
+        if sort == "date" and order == "desc":
+            # special case for date, descending: need to use date_sort_descending field
+            # and sort nulls last
+            queryset = queryset.order_by(models.F("date_sort_descending").desc(nulls_last=True))
+        else:
+            queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
 
         return queryset
 

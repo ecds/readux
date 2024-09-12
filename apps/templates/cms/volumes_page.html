@@ -1,11 +1,9 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
-{% load sass_tags %}
+{% load wagtailcore_tags sass_tags %}
 
 {% load static %}
 {% load has_user_annotations %}
 {% load user_annotation_count %}
-{% load url_replace %}
 
 
 {% block body_class %}template-homepage{% endblock %}
@@ -46,199 +44,65 @@
 
   {% include "snippets/_volumes_page_information.html" %}
 
-  <!-- Volume Grid -->
-  <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
-    {% for volume in volumes %}
-        <!-- Volume Item -->
-        <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
-            <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
-            <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }}</h2>
-            {% if volume.published_date %}<div class="color-black">{{ volume.published_date }}</div>{% endif %}
-            {% if volume.author %}<div class="color-black">{{ volume.author|truncatechars:150 }}</div>{% endif %}
-            <div class="color-black">Added {{ volume.created_at }}</div>
-        </a>
-      {% empty %}
-        There are no volumes available to browse.
-      {% endfor %}
-  </div>
-</div>
-
-<!-- TODO: Integrate GRID content into design -->
-{% if page.layout == 'Grid_COMMENTED_OUT' %}
-<div class="pagination" style="margin-bottom:20px">
-    <span class="step-links">
-        {% if volumes.has_previous %}
-            <a href="?{% url_replace page=volumes %}" style="margin-right:5px;">&laquo; first</a>
-            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
-        {% endif %}
-
-        <span class="current" style="margin:0px,5px;">
-            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
-        </span>
-
-        {% if volumes.has_next %}
-            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
-            <a href="?{% url_replace page=volumes.num_pages %}" style="margin-left:5px;">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-<div class="wrap">
-  {% for volume in volumes %}
-  {% if volume.start_canvas.pid is null %}
-  <div class="box">
-    <div class="boxInner">
-      <v-volume-image style="padding:80px !important"></v-volume-image>
-      <div class="innerContent">
-        <p>
-          <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
-        </p>
-        <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
-          <em>Date Published:</em> {{volume.published_date}}<br />
-          Added {{volume.created_at}}</p>
-      </div>
+  {% if page.layout == 'Grid' %}
+    <!-- Volume Grid -->
+    <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
+      {% for volume in volumes %}
+          <!-- Volume Item -->
+          <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
+              <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
+              <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }}</h2>
+              {% if volume.published_date or volume.published_date_edtf %}
+                <div class="color-black">{{ volume.published_date|default:volume.published_date_edtf }}</div>
+              {% endif %}
+              {% if volume.author %}<div class="color-black">{{ volume.author|truncatechars:150 }}</div>{% endif %}
+              <div class="color-black">Added {{ volume.created_at }}</div>
+          </a>
+        {% empty %}
+          There are no volumes available to browse.
+        {% endfor %}
     </div>
-  </div>
-  {% else %}
-  <div class="box">
-    <div class="boxInner">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-          <v-volume-image
-            img-src="{{ volume.start_canvas.thumbnail_crop_volume }}"
-            volume-label="{{volume.label}}" style="height:300px !important">
-          </v-volume-image>
-      </a>
-      <div class="innerContent">
-        <p>
-          <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-            <p title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}</p>
-          </a></p>
-        <p><em>Author:</em> {{volume.author|truncatechars:150}}<br />
-          <em>Date Published:</em> {{volume.published_date}}<br />
-          Added {{volume.created_at}}</p>
-      </div>
-    </div>
-  </div>
+  {% elif page.layout == 'List' %}
+    <!-- Volume List -->
+    <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
+      <thead>
+          <tr>
+              <th>Volume</th>
+              <th>Author</th>
+              <th>Publication Date</th>
+              <th>Date Added</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for volume in volumes %}
+            <tr class="clickable-row" data-href="{% url 'volumeall' volume.pid %}">
+                <td>{{ volume.label|default:"-"|truncatechars:200 }}</td>
+                <td>{{ volume.author|default:"-"|truncatechars:150 }}</td>
+                <td>{{ volume.published_date|default:volume.published_date_edtf|default_if_none:"-" }}</td>
+                <td>{{ volume.created_at }}</td>
+            </tr>
+        {% empty %}
+          There are no volumes available to browse.
+        {% endfor %}
+      </tbody>
+    </table>
   {% endif %}
-  {% endfor %}
 </div>
-<div class="pagination" style="margin-bottom:20px">
-    <span class="step-links">
-        {% if volumes.has_previous %}
-            <a href="?{% url_replace page=volumes %}" style="margin-right:5px;">&laquo; first</a>
-            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
-        {% endif %}
-
-        <span class="current" style="margin:0px,5px;">
-            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
-        </span>
-
-        {% if volumes.has_next %}
-            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
-            <a href="?{% url_replace page=volumes.num_pages %}" style="margin-left:5px;">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-{% endif %}
-<!-- END -->
-
-<!-- TODO: Integrate LIST content into design -->
-{% if page.layout == 'List_COMMENTED_OUT' %}
-<div class="pagination" style="margin-bottom:20px">
-    <span class="step-links">
-        {% if volumes.has_previous %}
-            <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
-            <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
-        {% endif %}
-
-        <span class="current" style="margin:0px,5px;">
-            Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
-        </span>
-
-        {% if volumes.has_next %}
-            <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
-            <a href="?{% url_replace page=volumes.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-
-<div class="uk-grid-match uk-child-width-expand@s uk-grid-large uk-margin-bottom" uk-grid>
-  {% for volume in volumes %}
-  {% if volume.start_canvas.pid is null %}
-  <div class="uk-width-1-2@m uk-grid-medium">
-    <div class="uk-width-1-4@m">
-      <a class="nav-link" href="#">
-        <v-volume-image></v-volume-image>
-      </a>
-    </div>
-    <div class="uk-width-3-4@m">
-      <a class="nav-link" href="#">
-        <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-      </a>
-      <ul class="uk-padding-remove uk-margin-remove">
-        <li>Author: {{volume.author|truncatechars:150}}</li>
-        <li>Published: {{volume.published_date}}</li>
-        <li>Added: {{volume.created_at}}</li>
-      </ul>
-    </div>
-  </div>
-  {% else %}
-  <div class="uk-width-1-2@m uk-grid-medium">
-
-    <div class="uk-width-1-4@m rx-volume-image">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-          <v-volume-image
-            img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label|truncatechars:50}}">
-          </v-volume-image>
-      </a>
-    </div>
-    <div class="uk-width-3-4@m">
-      <a class="nav-link" href="{% url 'page' volume.pid volume.start_canvas.pid %}">
-        <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-      </a>
-      <ul class="uk-padding-remove uk-margin-remove rx-card-text">
-        <li>Author: {{volume.author|truncatechars:150}}</li>
-        <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-        <li>
-        {% if user.is_authenticated %}
-          {% has_user_annotations volume user as result %}
-          {% if result %}
-          <span class="count-icon">
-            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5;"
-              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-            <span class="count">{% user_annotation_count volume user %}</span>
-          </span>
-          {% endif %}
-        {% endif %}
-        </li>
-      </ul>
-    </div>
-  </div>
-  {% endif %}
-  {% endfor %}
-</div>
-<div class="pagination" style="margin-bottom:20px">
-  <span class="step-links">
-      {% if volumes.has_previous %}
-          <a href="?{% url_replace page=1 %}" style="margin-right:5px;">&laquo; first</a>
-          <a href="?{% url_replace page=volumes.previous_page_number %}" style="margin-right:5px;">previous</a>
-      {% endif %}
-
-      <span class="current" style="margin:0px,5px;">
-          Page {{ volumes.number }} of {{ volumes.paginator.num_pages }}
-      </span>
-
-      {% if volumes.has_next %}
-          <a href="?{% url_replace page=volumes.next_page_number %}" style="margin-left:5px;">next</a>
-          <a href="?{% url_replace page=volumes.paginator.num_pages %}" style="margin-left:5px;">last &raquo;</a>
-      {% endif %}
-  </span>
-</div>
-{% endif %}
-
-<!-- END -->
-
 
 {% include '_home/_footer.html' %}
 
 {% endblock content %}
+
+{% block extra_javascript %}
+<script>
+  // JavaScript to make list view table rows clickable
+  document.addEventListener('DOMContentLoaded', function() {
+      var rows = document.querySelectorAll('.clickable-row');
+      rows.forEach(function(row) {
+          row.addEventListener('click', function() {
+              window.location.href = row.getAttribute('data-href');
+          });
+      });
+  });
+</script>
+{% endblock %}

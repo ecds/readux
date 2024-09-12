@@ -34,7 +34,7 @@
     style="background-image: url('/media/{{collection.header}}');"
   >
     <div class="overlay">
-        <h1 class="uk-text-large" style="color: white; font-weight: bold;">{{ collection.label }}</h1>
+        <h1 class="uk-text-large uk-margin-remove" style="color: white; font-weight: bold;">{{ collection.label }}</h1>
         <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
         <p class="uk-text-medium">{{ collection.summary|striptags|truncatechars:200 }}</p>
         <button class="uk-button description-button" uk-toggle="target: #modal-full">Full Description</button>

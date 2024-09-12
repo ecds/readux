@@ -26,9 +26,17 @@
 }
 .description-button {
     margin-top: 20px;
-    background-color: #f0506e; /* Removed gradient background */
+    background-color: #E60000; /* Removed gradient background */
     border: none;
     color: white;
+    font-weight: bold;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
 }
 .uk-button-default {
     background-color: #222; /* Removed gradient background */

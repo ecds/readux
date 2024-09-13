@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.models import Page
 from wagtail.fields import RichTextField, StreamField
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 from django.db import models
 from apps.cms.blocks import BaseStreamBlock
@@ -195,6 +195,24 @@ class HomePage(Page):
     collections = Collection.objects.all()[:8]
     volumes = Manifest.objects.all()[:8]
 
+    featured_story_title = models.CharField(
+        help_text="Title of the featured story", blank=True, max_length=255
+    )
+    featured_story_summary = models.TextField(
+        help_text="A summary or excerpt of the featured story", blank=True
+    )
+    featured_story_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Thumbnail image for the featured story",
+    )
+    featured_story_url = models.URLField(
+        help_text="Link to the featured story", blank=True
+    )
+
     content_panels = Page.content_panels + [
         FieldPanel('tagline', classname="full"),
         FieldPanel('content_display', classname="full"),
@@ -202,6 +220,12 @@ class HomePage(Page):
         FieldPanel('featured_collections_sort_order', classname="full"),
         AutocompletePanel('featured_volumes', target_model="manifests.Manifest"),
         FieldPanel('featured_volumes_sort_order', classname="full"),
+        MultiFieldPanel(children=[
+            FieldPanel('featured_story_title'),
+            FieldPanel('featured_story_summary'),
+            FieldPanel('featured_story_image'),
+            FieldPanel('featured_story_url'),
+        ], heading='Featured story (optional)'),
     ]
 
     def featured_volume_count(self):

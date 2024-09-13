@@ -14,24 +14,26 @@
   <!-- Breadcrumb -->
   <ul class="breadcrumb uk-margin-small-top">
     <li><a href="/">Home</a></li>
-    {% for p in page.get_ancestors %}
-        {% if not p.is_root and p.show_in_menus %}
-        <li>
-            {% if p.get_children|length %}
-                <a href="#">{{ p.title }}<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-                <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-                    <ul class="uk-nav uk-navbar-dropdown-nav">
-                        {% for subpage in p.get_children %}
-                            <li><a href="{{ subpage.url }}">{{ subpage.title }}</a></li>
-                        {% endfor %}
-                    </ul>
-                  </div>
-            {% else %}
-                <a href="{{ p.url }}">{{ p.title }}</a>
-            {% endif %}
-        </li>
+    {# For breadcrumbs, display the parent, if it is not a home page #}
+    {% with page.get_parent as p %}
+        {% if not p.page_type_display_name == "Home page" %}
+            <li>
+                {# Display siblings of this page #}
+                {% if p.get_children|length %}
+                    <a href="#">{{ p.title }}<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+                    <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            {% for subpage in p.get_children %}
+                                <li><a href="{{ subpage.url }}">{{ subpage.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{{ p.url }}">{{ p.title }}</a>
+                {% endif %}
+            </li>
         {% endif %}
-    {% endfor %}
+    {% endwith %}
     <li>{{ page.page_title|default:page.title }}</li>
   </ul>
   <!-- End -->

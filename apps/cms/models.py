@@ -1,5 +1,4 @@
 """CMS Models."""
-from urllib.parse import urlencode
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.models import Page
 from wagtail.fields import RichTextField, StreamField
@@ -7,11 +6,10 @@ from wagtail.admin.panels import FieldPanel
 from wagtailautocomplete.edit_handlers import AutocompletePanel
 from django.db import models
 from apps.cms.blocks import BaseStreamBlock
-from apps.readux.forms import AllVolumesForm
+from apps.readux.forms import AllCollectionsForm, AllVolumesForm
 from apps.readux.models import UserAnnotation
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest
-from apps.iiif.canvases.models import Canvas
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 
@@ -40,14 +38,87 @@ class CollectionsPage(Page):
         default="List",
         help_text="Select to show all volumes as a list or a grid of icons."
     )
-    collections = Collection.objects.all
-    volumes = Manifest.objects.all
+    collections = Collection.objects.all()
+    volumes = Manifest.objects.all()
     content_panels = Page.content_panels + [
         FieldPanel('page_title', classname="full"),
         FieldPanel('tagline', classname="full"),
         FieldPanel('paragraph', classname="full"),
         FieldPanel('layout', classname="full"),
     ]
+    initial = {"sort": "title", "order": "asc", "display": "grid"}
+    sort_fields = {
+        "title": "label",
+        "added": "created_at",
+        "volumes": "volumes_count",
+    }
+
+    def get_form(self, request):
+        """Get the form for setting sort and order"""
+        # use GET instead of default POST/PUT for form data
+        form_data = request.GET.copy()
+
+        # sort by chosen sort
+        if "sort" in form_data and bool(form_data.get("sort")):
+            form_data["sort"] = form_data.get("sort")
+
+        # Otherwise set all form values to default
+        for key, val in self.initial.items():
+            form_data.setdefault(key, val)
+
+        return AllCollectionsForm(data=form_data)
+
+    def get_queryset(self, form, queryset):
+        """Get the sorted set of objects to display"""
+
+        # return empty queryset if not valid
+        if not form.is_valid():
+            return queryset.none()
+
+        # get sort and order selections from form
+        search_opts = form.cleaned_data
+        sort = search_opts.get("sort", "title")
+        if sort not in self.sort_fields:
+            sort = "title"
+        order = search_opts.get("order", "asc")
+        sign = "-" if order == "desc" else ""
+
+        # include volume count in queryset if sort 
+        if "volumes" in sort:
+            queryset = queryset.annotate(volumes_count=models.Count("manifests"))
+
+        # build order_by query to sort results
+        queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
+
+        return queryset
+
+    def get_context(self, request):
+        """Context function."""
+        context = super().get_context(request)
+
+        form = self.get_form(request)
+        query_set = self.get_queryset(form, self.collections)
+
+        paginator = Paginator(query_set, 8) # Show 8 collections per page
+
+        page = request.GET.get("page", 1)
+        try:
+            collections = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            collections = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            page = paginator.num_pages
+            collections = paginator.page(page)
+
+        context.update({
+            "form": form,
+            "collections": collections,
+            "paginator_range": paginator.get_elided_page_range(page, on_each_side=2),
+        })
+
+        return context
 
 class VolumesPage(Page):
     """Content page"""
@@ -75,7 +146,7 @@ class VolumesPage(Page):
     sort_fields = {
         "title": "label",
         "author": "author",
-        "date": "published_date_edtf",
+        "date": "date_sort_ascending",
         "added": "created_at",
     }
 
@@ -110,7 +181,12 @@ class VolumesPage(Page):
         sign = "-" if order == "desc" else ""
 
         # build order_by query to sort results
-        queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
+        if sort == "date" and order == "desc":
+            # special case for date, descending: need to use date_sort_descending field
+            # and sort nulls last
+            queryset = queryset.order_by(models.F("date_sort_descending").desc(nulls_last=True))
+        else:
+            queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
 
         return queryset
 

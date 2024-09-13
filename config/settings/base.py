@@ -336,3 +336,10 @@ ELASTICSEARCH_DSL = {
 }
 
 SOCIALACCOUNT_STORE_TOKENS = True
+
+# django-summernote rich text editor settings. see https://github.com/hackerwins/django-summernote
+# NOTE: consider replacing after django 4 upgrade
+SUMMERNOTE_CONFIG = {
+    'iframe': False,
+}
+SUMMERNOTE_THEME = "lite"

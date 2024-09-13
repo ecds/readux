@@ -223,3 +223,28 @@ class AllVolumesForm(forms.Form):
         required=False,
         widget=CustomDropdownSelect,
     )
+
+class AllCollectionsForm(forms.Form):
+    """Simple form for sorting Collections"""
+
+    SORT_CHOICES = [
+        ("title", "Title"),
+        ("added", "Date Added"),
+        ("volumes", "Number of Volumes"),
+    ]
+    ORDER_CHOICES = [
+        ("asc", "Ascending"),
+        ("desc", "Descending"),
+    ]
+    sort = forms.ChoiceField(
+        label="Sort by",
+        choices=SORT_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )
+    order = forms.ChoiceField(
+        label="Order",
+        choices=ORDER_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )

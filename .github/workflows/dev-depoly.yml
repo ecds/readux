@@ -21,7 +21,7 @@ jobs:
         run: |
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
-          git clone -b "$github.head_ref" "${{ secrets.DEPLOY_CONFIG_REPO}}"
+          git clone -b "${{ github.head_ref || github.ref_name }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"
           mv readux-configs/* .
           chmod +x config.sh
           chmod +x deploy.sh
@@ -44,4 +44,11 @@ jobs:
           role-session-name: GitHub-OIDC-frontend
 
       - name: Run Deploy
+        env:
+          AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: ./deploy.sh

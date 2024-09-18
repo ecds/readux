@@ -48,7 +48,7 @@ jobs:
           AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}
-          DATABASE_URL: ${{ github.head_ref == 'develop' && secrets.DATABASE_URL_DEV || secrets.DATABASE_URL}}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DEV}}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: ./deploy.sh

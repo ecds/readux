@@ -22,7 +22,7 @@ jobs:
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
           git clone -b "${{ github.head_ref || github.ref_name }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"
-          mv readux-configs/* .
+          mv "${{ secrets.CONFIG_REPO_NAME }}"/* .
           chmod +x config.sh
           chmod +x deploy.sh
 

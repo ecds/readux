@@ -171,6 +171,7 @@ LOGGING = {
 
 # Must be configured to the host and port running Elasticsearch
 ELASTICSEARCH_DSL['default']['hosts'] = 'user:pass@localhost:9200'
+INDEX_PREFIX = "readux_test"
 
 # Custom faceted metadata fields configuration. Must be a dict with key names
 # matching exactly the ingest metadata spradsheet column names to be indexed.
@@ -179,7 +180,7 @@ ELASTICSEARCH_DSL['default']['hosts'] = 'user:pass@localhost:9200'
 # used ("separator": ";", semicolon by default).
 # Note that these key names will also correspond to "label" names in the Manifest
 # metadata list.
-# 
+#
 # Example:
 # CUSTOM_METADATA = {
 #     "Column Name": {

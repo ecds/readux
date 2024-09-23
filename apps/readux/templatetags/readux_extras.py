@@ -1,4 +1,4 @@
-from collections import OrderedDict
+import re
 from django.template import Library
 
 register = Library()
@@ -77,3 +77,10 @@ def group_by_canvas(inner_hits, limit=3):
 def get_headers(block_list):
     # filter to get just the headers in a wagtail page, in order to render a table of contents
     return list(filter(lambda b: b.value and b.block_type == "heading_block", block_list))
+
+
+@register.filter
+def vimeo_embed_url(vimeo_url):
+    # get the embed url from a vimeo link
+    # i.e. https://vimeo.com/76979871 --> https://player.vimeo.com/video/76979871
+    return re.sub(r"vimeo\.com\/(\d+)", r"player.vimeo.com/video/\1", vimeo_url)

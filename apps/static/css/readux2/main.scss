@@ -211,7 +211,9 @@
     min-width: 0 !important;
 }
 
-.uk-navbar-dropdown-nav a {
+.uk-navbar-dropdown-nav a,
+.uk-navbar-dropdown-nav.sort-dropdown label {
+    cursor: pointer;
     color: #1D3557 !important; /* Dark blue text color */
     font-weight: 600; /* Bold text */
     padding: 5px 15px !important; /* Add padding to the items */
@@ -219,8 +221,17 @@
     transition: background-color 0.1s ease;
 }
 
-.uk-navbar-dropdown-nav a:hover {
+.uk-navbar-dropdown-nav a:hover,
+.uk-navbar-dropdown-nav.sort-dropdown label:hover {
     background-color: rgba(29, 53, 87, 0.1); /* Light blue hover effect */
+}
+
+.uk-navbar-dropdown-nav.sort-dropdown label input {
+    display: none;
+}
+.pagination-nav span {
+    padding: 5px 15px !important;
+    display: block;
 }
 
 /* page */
@@ -277,17 +288,18 @@
     gap: 2.5rem; /* Space between items */
 }
 
-.volume-item {
+.grid-item {
     text-align: left;
     background-color: transparent;
     cursor: pointer;
     text-decoration: none;
-    color: #1D3557; /* Title text color */
-    opacity: 0.9; /* Normal state opacity */
+    opacity: 0.75; /* Normal state opacity */
     transition: opacity 0.1s ease;
+    display: block;
+    color: black;
 }
 
-.volume-item img {
+.grid-item img {
     width: 100%;
     height: auto; /* Maintain aspect ratio of images */
     display: block;
@@ -295,11 +307,13 @@
     border-radius: 4px;
 }
 
-.volume-item:hover {
+.grid-item:hover {
     opacity: 1.0; /* Change opacity on hover */
+    text-decoration: none;
+    color: black;
 }
 
-.volume-item h2 {
+.grid-item h2 {
     text-decoration: underline; /* Underline for title */
     color: #1D3557;
     font-weight: 600;
@@ -307,8 +321,42 @@
     margin: 0;
 }
 
+.grid-item p {
+    margin: 0;
+}
+
+/* list view table */
+.list-view-table {
+    margin-left: -0.5rem;
+}
+
+.list-view-table thead th {
+    color: #1D3557;
+    font-weight: bold;
+}
+
+.list-view-table tbody tr:hover {
+    background-color: #F1FAEE !important;
+}
+.list-view-table tbody tr {
+    color: rgba(0, 0, 0, 0.75);
+    transition: color 0.3s ease;
+}
+.list-view-table tbody tr:hover {
+    color: rgba(0, 0, 0, 1);
+}
+.list-item:hover {
+    cursor: pointer;
+}
+.clickable-row:hover {
+    cursor: pointer;
+}
+.list-view-table th, .list-view-table td {
+    padding: 0.5rem;
+}
+
 /* search bar */
-.search-bar {
+.search-bar form {
     display: flex;
     align-items: center;
     width: 100%;

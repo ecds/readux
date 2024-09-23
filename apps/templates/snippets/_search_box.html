@@ -1,6 +1,8 @@
 <div class="search-bar">
-  <input class="uk-input" type="text" placeholder="Search...">
-  <button class="uk-button">
-      Search
-  </button>
+  <form action="{% url 'search' %}" method="get">
+    <input class="uk-input" type="text" name="q" id="q" placeholder="Search for a volume in the library">
+    <button type="submit" class="uk-button">
+        Search
+    </button>
+  </form>
 </div>

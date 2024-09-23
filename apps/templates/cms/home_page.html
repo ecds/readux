@@ -4,6 +4,10 @@
 {% load wagtailcore_tags %}
 {% load has_user_annotations %}
 {% load user_annotation_count %}
+{% load sass_tags %}
+
+{% block extra_css %}
+{% endblock %}
 
 {% block content %}
 
@@ -14,8 +18,12 @@
       {% include '_home/_nav.html' %}
       {% include '_home/_hero.html' %}
       {% include '_home/_featured_story.html' %}
-      {% include '_home/_featured_volumes.html' %}
-      {% include '_home/_featured_collections.html' %}
+      {% if page.featured_volumes.all.count != 0 %}
+        {% include '_home/_featured_volumes.html' %}
+      {% endif %}
+      {% if page.featured_collections.all.count != 0 %}
+        {% include '_home/_featured_collections.html' %}
+      {% endif %}
       {% include '_home/_video.html' %}
       {% include '_home/_highlights.html' %}
       {% include '_home/_footer.html' %}

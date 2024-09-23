@@ -1,11 +1,14 @@
 {% load url_replace %}
 <!-- Information Line -->
+<!-- TODO: This page was duplicated from the _volumes_page_information.html.
+           Need to be adjusted for the Collection page(s)
+-->
 <div class="info-line">
   <div class="info-group">
     {# numeric pagination #}
-    <span>Showing {{ volumes.start_index }}-{{ volumes.end_index }} of {{ volumes.paginator.count }} volumes</span>
+    <span>Showing {{ collections.start_index }}-{{ collections.end_index }} of {{ collections.paginator.count }} collections</span>
     <span class="slash-gap">/</span> Page
-    <a href="#">{{ volumes.number }}</a>
+    <a href="#">{{ collections.number }}</a>
     <div class="uk-navbar-dropdown" uk-dropdown="mode: click">
       <ul class="uk-nav uk-navbar-dropdown-nav pagination-nav"> 
         {% for pg in paginator_range %}
@@ -19,7 +22,7 @@
           </li>
         {% endfor %}
       </ul>
-    </div> of {{ volumes.paginator.num_pages }} 
+    </div> of {{ collections.paginator.num_pages }} 
     <span class="slash-gap">/</span>
 
     {# form for setting sort, order, and page display (list/grid) #}
@@ -41,9 +44,9 @@
     <a
       class="uk-icon-button"
       uk-icon="chevron-left"
-      {% if volumes.has_previous %}
+      {% if collections.has_previous %}
         uk-tooltip="Go to previous page"
-        href="?{% url_replace page=volumes.previous_page_number %}"
+        href="?{% url_replace page=collections.previous_page_number %}"
       {% else %}
         uk-tooltip="This is the first page"
         disabled
@@ -53,9 +56,9 @@
     <a
       class="uk-icon-button"
       uk-icon="chevron-right"
-      {% if volumes.has_next %}
+      {% if collections.has_next %}
         uk-tooltip="Go to next page"
-        href="?{% url_replace page=volumes.next_page_number %}"
+        href="?{% url_replace page=collections.next_page_number %}"
       {% else %}
         uk-tooltip="This is the last page"
         disabled

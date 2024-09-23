@@ -71,3 +71,9 @@ def group_by_canvas(inner_hits, limit=3):
         ):
             grouped.append(canvas)
     return grouped
+
+
+@register.filter
+def get_headers(block_list):
+    # filter to get just the headers in a wagtail page, in order to render a table of contents
+    return list(filter(lambda b: b.value and b.block_type == "heading_block", block_list))

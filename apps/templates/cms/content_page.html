@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
-{% load sass_tags %}
+{% load wagtailcore_tags sass_tags readux_extras menu_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -15,18 +14,26 @@
   <!-- Breadcrumb -->
   <ul class="breadcrumb uk-margin-small-top">
     <li><a href="/">Home</a></li>
-    <li>
-      <a href="#">About<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-        <ul class="uk-nav uk-navbar-dropdown-nav">
-            <li><a href="#">[What Is Readux?]</a></li>
-            <li><a href="#">[What Is Sounding Spirit?]</a></li>
-            <li><a href="#">[Team]</a></li>
-            <li><a href="#">[Terms of Service]</a></li>
-            <li><a href="#">[Contact Us]</a></li>
-        </ul>
-      </div>
-    </li>
+    {# For breadcrumbs, display the parent, if it is not a home page #}
+    {% with page.get_parent as p %}
+        {% if not p.page_type_display_name == "Home page" %}
+            <li>
+                {# Display siblings of this page #}
+                {% if p.get_children|length %}
+                    <a href="#">{{ p.title }}<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+                    <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            {% for subpage in p.get_children %}
+                                <li><a href="{{ subpage.url }}">{{ subpage.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{{ p.url }}">{{ p.title }}</a>
+                {% endif %}
+            </li>
+        {% endif %}
+    {% endwith %}
     <li>{{ page.page_title|default:page.title }}</li>
   </ul>
   <!-- End -->
@@ -39,60 +46,28 @@
  
   <div class="uk-grid-collapse uk-child-width-expand" uk-grid>
     <!-- Left Column: Navigation -->
-    <div class="uk-width-1-4@m navigation-wrapper">
-        <nav class="navigation">
-            <ul class="uk-nav uk-nav-default">
-                <li><a href="#features" data-section="features" class="active">Features</a></li>
-                <li><a href="#collections" data-section="collections">Collections</a></li>
-                <li><a href="#users-guidelines" data-section="users-guidelines">Users Guidelines</a></li>
-                <li><a href="#partners" data-section="partners">Partners</a></li>
-            </ul>
-        </nav>
-    </div>
+    {% if page.body|get_headers|length %}
+        {# NOTE: requires the use of header blocks for entries to appear #}
+        <div class="uk-width-1-4@m navigation-wrapper">
+            <nav class="navigation">
+                <ul class="uk-nav uk-nav-default">
+                    {% for block in page.body|get_headers %}
+                        <li><a href="#{{ block.id }}" data-section="{{ block.id }}">{{ block|striptags }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
 
     <!-- Right Column: Content -->
     <div class="uk-width-expand@m content uk-padding-remove-top">
-        <div id="features" class="section">
-            <h2 class="text-black static-content-title">Features</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et felis nec ipsum dictum faucibus. Cras ultricies arcu sed massa facilisis, eget vulputate nulla viverra.</p>
-        
-        
-        </div>
-        <div id="collections" class="section">
-            <h2 class="text-black static-content-title">Collections</h2>
-            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
-            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
-            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
-            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
-            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
-            <p>Nullam hendrerit, sapien nec ullamcorper viverra, urna erat cursus lectus, a scelerisque mi turpis sit amet arcu. Sed ac justo urna.</p>
-        
-        </div>
-        <div id="users-guidelines" class="section">
-            <h2 class="text-black static-content-title">Users Guidelines</h2>
-            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
-            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
-            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
-            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
-            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
-            <p>Quisque auctor vel nisi at pulvinar. Donec vel dapibus ligula. Vivamus vel malesuada nisl, eget tincidunt lacus. Phasellus tincidunt sit amet nisi id gravida.</p>
-        </div>
-        <div id="partners" class="section">
-            <h2 class="text-black static-content-title">Partners</h2>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-            <p>Praesent vitae quam ac libero cursus dignissim. Fusce nec ligula at nulla ultricies tempor. Cras a urna et tortor bibendum auctor.</p>
-        </div>
+        {% for block in page.body %}
+            {% if block.block_type == 'heading_block' %}
+                {% include_block block with block_id=block.id %}
+            {% else %}
+                {% include_block block %}
+            {% endif %}
+        {% endfor %}
     </div>
   </div>
 </div>
@@ -104,7 +79,6 @@
 
 {% include '_home/_footer.html' %}
 
-{% include_block page.body %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const navLinks = document.querySelectorAll('.navigation a');

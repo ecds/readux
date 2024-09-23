@@ -111,5 +111,5 @@ django-coverage-plugin~=3.1.0  # https://github.com/nedbat/django_coverage_plugi
 pyopenssl # for running dev server under https
 
 celery~=5.3.4
-django-celery-results~=2.4.0
+django-celery-results~=2.5.1
 more-itertools~=10.2.0 # https://github.com/more-itertools/more-itertools

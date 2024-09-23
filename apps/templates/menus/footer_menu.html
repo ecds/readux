@@ -1,0 +1,7 @@
+{% load menu_tags %}
+
+<div class="footer-links uk-flex uk-flex-column uk-flex-center">
+    {% for item in menu_items %}
+        <a href="{{ item.href }}">{{ item.text }}</a>
+    {% endfor %}
+</div>

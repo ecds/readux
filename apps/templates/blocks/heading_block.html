@@ -3,13 +3,10 @@
     class within `blocks.py`
 {% endcomment %}
 
-{% if self.size == 'h2' %}
-        <h2>{{ self.heading_text }}</h2>
-
-    {% elif self.size == 'h3' %}
-        <h3>{{ self.heading_text }}</h3>
-
-    {% elif self.size == 'h4' %}
-        <h4>{{ self.heading_text }}</h4>
-
+{% if self.size == 'h2' or not self.size %}
+    <h2 class="text-black static-content-title" id="{{ block_id }}">{{ self.heading_text }}</h2>
+{% elif self.size == 'h3' %}
+    <h3 class="text-black static-content-title" id="{{ block_id }}">{{ self.heading_text }}</h3>
+{% elif self.size == 'h4' %}
+    <h4 class="text-black static-content-title" id="{{ block_id }}">{{ self.heading_text }}</h4>
 {% endif %}

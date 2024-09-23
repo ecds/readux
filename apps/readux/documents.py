@@ -5,6 +5,7 @@ from html import unescape
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from django.utils.html import strip_tags
+from django.conf import settings
 
 from apps.readux.models import UserAnnotation
 from apps.iiif.manifests.documents import stemmer
@@ -25,7 +26,7 @@ class UserAnnotationDocument(Document):
     class Index:
         """Settings for Elasticsearch"""
 
-        name = f"readux_{environ['DJANGO_ENV']}_annotations"
+        name = f"{settings.INDEX_PREFIX}_annotations"
 
     class Django:
         """Settings for automatically pulling data from Django"""

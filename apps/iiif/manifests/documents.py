@@ -2,17 +2,19 @@
 
 from os import environ
 from html import unescape
+
 from django.conf import settings
-from django_elasticsearch_dsl import Document, fields
-from django_elasticsearch_dsl.registries import registry
-from elasticsearch_dsl import MetaField, Keyword, analyzer
 from django.db.models.query import Prefetch
 from django.utils.html import strip_tags
+
+from django_elasticsearch_dsl import Document, fields
+from django_elasticsearch_dsl.registries import registry
+
+from elasticsearch_dsl import MetaField, Keyword, analyzer
 from unidecode import unidecode
 
 from apps.iiif.annotations.models import Annotation
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.models import Manifest
 
 # TODO: Better English stemming (e.g. Rome to match Roman), multilingual stemming.
@@ -55,7 +57,7 @@ class ManifestDocument(Document):
     class Index:
         """Settings for Elasticsearch"""
 
-        name = f"readux_{environ['DJANGO_ENV']}_manifests"
+        name = f"{settings.INDEX_PREFIX}_manifests"
 
     class Django:
         """Settings for automatically pulling data from Django"""

@@ -6,6 +6,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("cms", "0004_auto_20200224_2038"),
+        ("wagtailimages", "0025_alter_image_file_alter_rendition_file"),
     ]
 
     operations = [

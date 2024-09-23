@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("cms", "0005_homepage_featured_story"),
+        ("wagtailmenus", "0023_remove_use_specific"),
     ]
 
     operations = [migrations.RunPython(create_footer_menu, migrations.RunPython.noop)]

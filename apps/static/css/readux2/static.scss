@@ -1,0 +1,51 @@
+.navigation-wrapper {
+  margin-left: -2rem;
+}
+.navigation {
+  background-color: #F1FAEE;
+  padding: 30px;
+  position: sticky;
+  top: 20px;
+  border-radius: 10px 10px; /* Rounded corners on the right-hand side */
+  width: auto; /* Fit to content width */
+}
+.navigation a {
+  color: #1D3557;
+  text-decoration: none;
+  display: block;
+  padding: 5px 15px !important;
+  position: relative;
+  font-weight: normal;
+  font-size: medium;
+}
+.navigation a.active {
+  font-weight: bold; /* Bold text for active item */
+  color: #1D3557;
+  &:hover {
+    color: darken(#1D3557, 10%) !important;
+  }
+}
+.navigation a.active::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 75%;
+  width: 4px;
+  background-color: #1D3557;
+}
+.content {
+  padding: 40px;
+}
+.section {
+  padding-bottom: 40px;
+}
+.static-content-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.section p {
+  margin: 0.5rem 0;
+  color: black;
+}

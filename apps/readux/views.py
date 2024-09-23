@@ -5,15 +5,16 @@ from urllib.parse import urlencode
 from django.http import HttpResponse
 from django.views.generic import ListView
 from django.views.generic.base import TemplateView, View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
 from django.contrib.sitemaps import Sitemap
-from django.db.models import Max, Count
+from django.db.models import Max, Count, F
 from django.urls import reverse
 from elasticsearch_dsl import Q, NestedFacet, TermsFacet
 from elasticsearch_dsl.query import MultiMatch
 import config.settings.local as settings
 from apps.iiif.manifests.documents import ManifestDocument
-from apps.readux.forms import ManifestSearchForm
+from apps.readux.forms import AllVolumesForm, ManifestSearchForm
 from apps.export.export import JekyllSiteExport
 from apps.export.forms import JekyllExportForm
 from .models import UserAnnotation
@@ -21,165 +22,95 @@ from ..cms.models import Page, CollectionsPage, VolumesPage
 from ..iiif.kollections.models import Collection
 from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
 ORDER_OPTIONS = ['asc', 'desc']
 
-class CollectionsList(ListView):
-    """Django List View for :class:`apps.iiif.kollections.models.Collection`s"""
-    template_name = "collections.html"
-
-    context_object_name = 'collections'
-    queryset = Collection.objects.all()
-
-class VolumesList(ListView):
-    """Django List View for :class:`apps.iiif.manifests.models.Manifest`s"""
-    template_name = "volumes.html"
-    SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
-    ORDER_OPTIONS = ['asc', 'desc']
-    context_object_name = 'volumes'
-
-    def get_queryset(self):
-        return Manifest.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        sort = self.request.GET.get('sort', None)
-        order = self.request.GET.get('order', None)
-
-        q = self.get_queryset()
-
-        if sort not in SORT_OPTIONS:
-            sort = 'title'
-        if order not in ORDER_OPTIONS:
-            order = 'asc'
-
-        if sort == 'title':
-            if order == 'asc':
-                q = q.order_by('label')
-            elif order == 'desc':
-                q = q.order_by('-label')
-        elif sort == 'author':
-            if order == 'asc':
-                q = q.order_by('author')
-            elif order == 'desc':
-                q = q.order_by('-author')
-        elif sort == 'date published':
-            if order == 'asc':
-                q = q.order_by('published_date_edtf')
-            elif order == 'desc':
-                q = q.order_by('-published_date_edtf')
-        elif sort == 'date added':
-            if order == 'asc':
-                q = q.order_by('created_at')
-            elif order == 'desc':
-                q = q.order_by('-created_at')
-
-        sort_url_params = {'sort': sort, 'order': order}
-        order_url_params = {'sort': sort, 'order': order}
-        if 'sort' in sort_url_params:
-            del sort_url_params['sort']
-
-        context['volumes'] = q.all
-        context.update({
-            'sort_url_params': urlencode(sort_url_params),
-            'order_url_params': urlencode(order_url_params),
-            'sort': sort, 'SORT_OPTIONS': SORT_OPTIONS,
-            'order': order, 'ORDER_OPTIONS': ORDER_OPTIONS,
-        })
-        return context
-
-class CollectionDetail(ListView):
+class CollectionDetail(DetailView, FormMixin):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""
     template_name = "collection.html"
-    SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
-    ORDER_OPTIONS = ['asc', 'desc']
-    paginate_by = 10
+    slug_field = "pid"
+    slug_url_kwarg = "collection"
+    form_class = AllVolumesForm
+    model = Collection
+    initial = {"sort": "title", "order": "asc", "display": "grid"}
+    sort_fields = {
+        "title": "label",
+        "author": "author",
+        "date": "date_sort_ascending",
+        "added": "created_at",
+    }
 
-    def get_queryset(self):
-        sort = self.request.GET.get('sort', None)
-        order = self.request.GET.get('order', None)
-        q = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests.all()
+    def get_form_kwargs(self):
+        """get form arguments from request and configured defaults"""
+        kwargs = super().get_form_kwargs()
 
-        if sort is None:
-            sort = 'title'
-        if order is None:
-            order = 'asc'
+        # use GET instead of default POST/PUT for form data
+        form_data = self.request.GET.copy()
 
-        if sort == 'title':
-            if order == 'asc':
-                q = q.order_by('label')
-            elif order == 'desc':
-                q = q.order_by('-label')
-        elif sort == 'author':
-            if order == 'asc':
-                q = q.order_by('author')
-            elif order == 'desc':
-                q = q.order_by('-author')
-        elif sort == 'date published':
-            if order == 'asc':
-                q = q.order_by('published_date_edtf')
-            elif order == 'desc':
-                q = q.order_by('-published_date_edtf')
-        elif sort == 'date added':
-            if order == 'asc':
-                q = q.order_by('created_at')
-            elif order == 'desc':
-                q = q.order_by('-created_at')
+        # set all form values to default
+        for key, val in self.initial.items():
+            form_data.setdefault(key, val)
 
-        return 	q
+        kwargs["data"] = form_data
+
+        return kwargs
+
+    def get_volumes(self):
+        """Get the sorted set of volumes to display"""
+        form = self.get_form()
+        collection = self.get_object()
+        queryset = collection.manifests.all()
+
+        # return empty queryset if not valid
+        if not form.is_valid():
+            return queryset.none()
+
+        # get sort and order selections from form
+        search_opts = form.cleaned_data
+        sort = search_opts.get("sort", "title")
+        if sort not in self.sort_fields:
+            sort = "title"
+        order = search_opts.get("order", "asc")
+        sign = "-" if order == "desc" else ""
+
+        # build order_by query to sort results
+        if sort == "date" and order == "desc":
+            # special case for date, descending: need to use date_sort_descending field
+            # and sort nulls last
+            queryset = queryset.order_by(F("date_sort_descending").desc(nulls_last=True))
+        else:
+            queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
+
+        return queryset
 
     def get_context_data(self, **kwargs):
+        """Context function."""
         context = super().get_context_data(**kwargs)
-        sort = self.request.GET.get('sort', None)
-        order = self.request.GET.get('order', None)
 
-        q = Collection.objects.filter(pid=self.kwargs['collection']).first().manifests
+        volumes = self.get_volumes()
 
-        if sort is None:
-            sort = 'title'
-        if order is None:
-            order = 'asc'
+        # add paginator manually since this isn't a ListView
+        paginator = Paginator(volumes, 8) # Show 8 volumes per page
 
-        if sort == 'title':
-            if order == 'asc':
-                q = q.order_by('label')
-            elif order == 'desc':
-                q = q.order_by('-label')
-        elif sort == 'author':
-            if order == 'asc':
-                q = q.order_by('author')
-            elif order == 'desc':
-                q = q.order_by('-author')
-        elif sort == 'date published':
-            if order == 'asc':
-                q = q.order_by('published_date_edtf')
-            elif order == 'desc':
-                q = q.order_by('-published_date_edtf')
-        elif sort == 'date added':
-            if order == 'asc':
-                q = q.order_by('created_at')
-            elif order == 'desc':
-                q = q.order_by('-created_at')
+        page = self.request.GET.get("page", 1)
+        try:
+            volumes = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            volumes = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            page = paginator.num_pages
+            volumes = paginator.page(page)
 
-        sort_url_params = self.request.GET.copy()
-        order_url_params = self.request.GET.copy()
-#         if 'sort' in sort_url_params:
-#             del sort_url_params['sort']
-
-        context['collectionlink'] = Page.objects.type(CollectionsPage).first()
-        context['collection'] = Collection.objects.filter(pid=self.kwargs['collection']).first()
-        context['volumes'] = q.all
-        context['manifest_query_set'] = q
-        context['user_annotation'] = UserAnnotation.objects.filter(owner_id=self.request.user.id)
-        value = 0
-        context['value'] = value
         context.update({
-            'sort_url_params': urlencode(sort_url_params),
-            'order_url_params': urlencode(order_url_params),
-            'sort': sort, 'SORT_OPTIONS': SORT_OPTIONS,
-            'order': order, 'ORDER_OPTIONS': ORDER_OPTIONS,
+            "volumes": volumes,
+            "user_annotation": UserAnnotation.objects.filter(owner_id=self.request.user.id),
+            "paginator_range": paginator.get_elided_page_range(page, on_each_side=2),
         })
+
         return context
 
 class VolumeDetail(TemplateView):

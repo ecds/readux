@@ -2,6 +2,7 @@
 
 from dateutil import parser
 from django import forms
+from django.forms import widgets
 from django.conf import settings
 from django.template.defaultfilters import truncatechars
 
@@ -181,3 +182,69 @@ class ManifestSearchForm(forms.Form):
         self.fields["start_date"].set_initial(min_date_object.strftime("%Y-%m-%d"))
         max_date_object = parser.isoparse(max_date)
         self.fields["end_date"].set_initial(max_date_object.strftime("%Y-%m-%d"))
+
+
+class CustomDropdownSelect(widgets.ChoiceWidget):
+    """A custom select widget that uses uk-navbar-dropdown to present its options,
+    and submits the form on any change"""
+    input_type = "radio"
+    template_name = "widgets/custom_dropdown_select.html"
+    option_template_name = "django/forms/widgets/radio_option.html"
+
+    def get_context(self, name, value, attrs):
+        """Add the label for the selected option to template context"""
+        context = super().get_context(name, value, attrs)
+        context["selected_value_label"] = dict(self.choices).get(value, None)
+        return context
+
+
+class AllVolumesForm(forms.Form):
+    """Simple form for sorting Manifests"""
+
+    SORT_CHOICES = [
+        ("title", "Title"),
+        ("author", "Author"),
+        ("date", "Publication Year"),
+        ("added", "Date Added"),
+    ]
+    ORDER_CHOICES = [
+        ("asc", "Ascending"),
+        ("desc", "Descending"),
+    ]
+    sort = forms.ChoiceField(
+        label="Sort by",
+        choices=SORT_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )
+    order = forms.ChoiceField(
+        label="Order",
+        choices=ORDER_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )
+
+class AllCollectionsForm(forms.Form):
+    """Simple form for sorting Collections"""
+
+    SORT_CHOICES = [
+        ("title", "Title"),
+        ("added", "Date Added"),
+        ("volumes", "Number of Volumes"),
+    ]
+    ORDER_CHOICES = [
+        ("asc", "Ascending"),
+        ("desc", "Descending"),
+    ]
+    sort = forms.ChoiceField(
+        label="Sort by",
+        choices=SORT_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )
+    order = forms.ChoiceField(
+        label="Order",
+        choices=ORDER_CHOICES,
+        required=False,
+        widget=CustomDropdownSelect,
+    )

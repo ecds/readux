@@ -5,8 +5,6 @@ from . import views, annotations
 from .search import SearchManifestCanvas
 
 urlpatterns = [
-    path('collection/', views.CollectionsList.as_view(), name='collections list'),
-    path('volume/', views.VolumesList.as_view(), name='volumes list'),
     path('collection/<collection>/', views.CollectionDetail.as_view(), name="collection"),
     path('volume/<volume>', views.VolumeDetail.as_view(), name='volume'),
     path('volume/<volume>/page/all', views.PageDetail.as_view(), name='volumeall'),

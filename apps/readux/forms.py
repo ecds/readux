@@ -111,8 +111,8 @@ class ManifestSearchForm(forms.Form):
             ("created_at", "Date added (oldest first)"),
             ("-date_sort_descending", "Date published (newest first)"),
             ("date_sort_ascending", "Date published (oldest first)"),
-            ("label_alphabetical", "Label (A-Z)"),
-            ("-label_alphabetical", "Label (Z-A)"),
+            ("label_alphabetical", "Title (A-Z)"),
+            ("-label_alphabetical", "Title (Z-A)"),
             ("_score", "Relevance"),
         ),
         widget=forms.Select(

@@ -48,8 +48,6 @@
 <link type="text/css" href="{% sass_src 'css/readux2/search.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
 
-<!-- <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet"> -->
-
 {% include '_home/_nav.html' %}
 
 <div class="uk-container">
@@ -76,10 +74,8 @@
         </div>
         <fieldset class="uk-width-expand">
             <div class="uk-search uk-search-default uk-width-1-1">                
-                <!-- <span uk-search-icon></span> -->
                 <input class="uk-search-input" type="search" value="{{form.q.value|default_if_none:''}}" id="{{form.q.id}}" placeholder="Search volumes by keyword" aria-label="Search volumes by keyword" name="q">
             </div>
-            <!-- <div class="uk-text-small">{{ form.q.label }}</div> -->
         </fieldset>
         <fieldset class="uk-width-auto uk-padding-remove-left">
             <button class="uk-button uk-button-default" style="background-color: #E60000; color: white; padding: 0 9px; border:none; height: 40px;" type="submit">
@@ -88,7 +84,6 @@
         </fieldset>
         <fieldset>
             {{ form.sort }}
-            <!-- <div class="uk-text-small">{{ form.sort.label }}</div> -->
         </fieldset>
     </div>
 
@@ -101,28 +96,28 @@
 
             <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                 <div class="uk-flex uk-flex-between sui-item-heading">
-                    <label >{{ form.collection.label }}</label>
+                    <label>{{ form.collection.label }}</label>
                 </div>
                 {{ form.collection }}
             </fieldset>
 
             <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                 <div class="uk-flex uk-flex-between sui-item-heading">
-                    <label >{{ form.author.label }}</label>
+                    <label>{{ form.author.label }}</label>
                 </div>
                 {{ form.author }}
             </fieldset>
 
             <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                 <div class="uk-flex uk-flex-between sui-item-heading">
-                    <label >{{ form.language.label }}</label>
+                    <label>{{ form.language.label }}</label>
                 </div>
                 {{ form.language }}
             </fieldset>
 
             <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                 <div class="uk-flex uk-flex-between sui-item-heading">
-                    <label >Filter by Date published</label>
+                    <label>Filter by Date published</label>
                     <input type="checkbox" name="date-filter" id="toggle-date" class="uk-checkbox uk-margin-remove"/>
                 </div>
                 <div id="date-range-slider"></div>

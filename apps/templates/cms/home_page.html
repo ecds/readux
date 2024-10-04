@@ -26,10 +26,60 @@
       {% if page.featured_collections.all.count != 0 %}
         {% include '_home/_featured_collections.html' %}
       {% endif %}
-      {% include '_home/_video.html' %}
+      {% if page.featured_video_url %}
+        {% include '_home/_video.html' %}
+      {% endif %}
       {% include '_home/_footer.html' %}
   </div>
 </div>
 {% endif %}
 
+{% endblock %}
+
+
+{% block extra_javascript %}
+  {% if page.featured_video_url %}
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        var iframe = document.getElementById('vimeoPlayer');
+        var player = new Vimeo.Player(iframe);
+        var thumbnail = document.getElementById('videoThumbnail');
+        var overlay = document.getElementById('videoOverlay');
+
+        document.getElementById('videoOverlay').addEventListener('click', function() {
+            // Hide the overlay and thumbnail
+            overlay.style.display = 'none';
+            thumbnail.style.display = 'none';
+
+            // Show the iframe and play the video in full screen
+            iframe.style.display = 'block';
+
+            player.play().then(function() {
+                return player.requestFullscreen();
+            }).catch(function(error) {
+                console.error('Error playing the video:', error);
+            });
+        });
+
+        player.on('ended', function() {
+            // Hide the iframe and show the overlay and thumbnail again
+            iframe.style.display = 'none';
+            overlay.style.display = 'block';
+            thumbnail.style.display = 'block';
+        });
+
+        player.on('fullscreenchange', function(data) {
+            if (!data.fullscreen) {
+                player.pause().then(function() {
+                    // Hide the iframe and show the overlay and thumbnail again
+                    iframe.style.display = 'none';
+                    overlay.style.display = 'block';
+                    thumbnail.style.display = 'block';
+                }).catch(function(error) {
+                    console.error('Error pausing the video:', error);
+                });
+            }
+        });
+    </script>
+  {% endif %}
 {% endblock %}

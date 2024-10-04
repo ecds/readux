@@ -274,6 +274,15 @@ class HomePage(Page):
     featured_story_url = models.URLField(
         help_text="Link to the featured story", blank=True
     )
+    featured_video_url = models.URLField(
+        help_text="Vimeo link to the featured video (e.g. https://vimeo.com/76979871, only Vimeo supported)", blank=True
+    )
+    featured_video_title = models.CharField(
+        help_text="Title of the featured video", blank=True, max_length=255
+    )
+    featured_video_tagline = models.CharField(
+        help_text="A short description or tagline for the featured video", blank=True, max_length=255
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('tagline', classname="full"),
@@ -288,6 +297,11 @@ class HomePage(Page):
             FieldPanel('featured_story_image'),
             FieldPanel('featured_story_url'),
         ], heading='Featured story (optional)'),
+        MultiFieldPanel(children=[
+            FieldPanel('featured_video_url'),
+            FieldPanel('featured_video_title'),
+            FieldPanel('featured_video_tagline'),
+        ], heading='Featured video (optional)'),
     ]
 
     def featured_volume_count(self):
@@ -299,26 +313,6 @@ class HomePage(Page):
     def get_context(self, request):
         """Function that returns context"""
         context = super().get_context(request)
-        query_set = self.volumes
-
-        # context['volumespage'] = query_set.all
-        # context['user_annotation'] = UserAnnotation.objects.filter(owner_id=request.user.id)
         context['volumesurl'] = Page.objects.type(VolumesPage).first()
         context['collectionsurl'] = Page.objects.type(CollectionsPage).first()
-        # annocount_list = []
-        # canvaslist = []
-        # for volume in query_set:
-        #     user_annotation_count = UserAnnotation.objects.filter(
-        #         owner_id=request.user.id
-        #     ).filter(
-        #         canvas__manifest__id=volume.id
-        #     ).count()
-        #     annocount_list.append({volume.pid: user_annotation_count})
-        #     context['user_annotation_count'] = annocount_list
-        #     canvasquery = Canvas.objects.filter(is_starting_page=1).filter(manifest__id=volume.id)
-        #     canvasquery2 = list(canvasquery)
-        #     canvaslist.append({volume.pid: canvasquery2})
-        #     context['firstthumbnail'] = canvaslist
-        # value = 0
-        # context['value'] = value
         return context

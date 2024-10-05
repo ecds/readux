@@ -614,3 +614,14 @@ iframe {
     font-size: small; 
     color: white; 
 }
+
+
+.description-button {
+    transition: ease 0.1s;
+    &:hover {
+        background-color: darken(#E60000, 10%);
+    }
+    &:active {
+        background-color: darken(#E60000, 25%);
+    }
+}

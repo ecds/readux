@@ -1,10 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
-{% load readux_templatetags %}
-{% load wagtailcore_tags %}
-{% load has_user_annotations %}
-{% load user_annotation_count %}
-{% load sass_tags %}
+{% load has_user_annotations readux_templatetags sass_tags static user_annotation_count wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_css %}
 {% endblock %}
@@ -12,7 +7,10 @@
 {% block content %}
 
 {% if request.path == '/' %}
-<div class="landing">
+<div class="landing"{% if page.background_image %}
+  {% image page.background_image scale-100 as bgimg %}
+  style="background: url({{ bgimg.url }}) no-repeat center center fixed;"
+  {% endif %} >
   <div class="overlay"></div>
   <div class="content">
       {% include '_home/_nav.html' %}

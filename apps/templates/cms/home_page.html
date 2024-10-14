@@ -19,6 +19,8 @@
       {% include '_home/_hero.html' %}
       {% if page.featured_story_title and page.featured_story_url %}
         {% include '_home/_featured_story.html' %}
+      {% else %}
+        <div class="uk-section uk-section-default uk-padding-remove-top"></div> <!-- Filler Div -->
       {% endif %}
       {% if page.featured_volumes.all.count != 0 %}
         {% include '_home/_featured_volumes.html' %}

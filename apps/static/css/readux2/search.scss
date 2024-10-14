@@ -127,10 +127,6 @@ form#search-form input[type="search"][name="q"] {
   width: 100%;
 }
 
-.uk-button-default {
-  font-size: 1.25rem;
-}
-
 #search-grid {
   gap: 1.5rem;
 }
@@ -249,4 +245,20 @@ ol#search-results dl {
 
 .selectize-control.plugin-clear_button .clear {
   height: 85%;
+}
+
+.search-button {
+  background-color: #E60000; 
+  color: white; 
+  padding: 0 9px; 
+  border:none; 
+  height: 40px;
+  font-size: 1.25rem;
+  transition: ease 0.1s;
+  &:hover {
+      background-color: darken(#E60000, 10%);
+  }
+  &:active {
+      background-color: darken(#E60000, 25%);
+  }
 }

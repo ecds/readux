@@ -95,7 +95,7 @@
     <a class="sr-only" href="#main">Jump to main content</a>
 
     {# Primary container; host for Vue application #}
-    <div class="uk-container" id="v-readux">
+    <div id="v-readux">
       {% comment %}
         TODO: Remove existing nav and replace with the following partial.
         It seems it may be added elsewhere; vue? needs investigation.
@@ -124,6 +124,7 @@
         {% block viewer %}{% endblock viewer %}
       </main>
 
+      {% include '_home/_footer.html' %}
     </div>
   
     <!-- Matomo Image Tracker-->

@@ -9,7 +9,7 @@
 {% if request.path == '/' %}
 <div class="landing"{% if page.background_image %}
   {% image page.background_image scale-100 as bgimg %}
-  style="background: url({{ bgimg.url }}) no-repeat center center fixed;"
+  style="background: url({{ bgimg.url }}) no-repeat center center fixed; background-size: cover;"
   {% endif %} >
   <div class="overlay"></div>
   <div class="content">

@@ -38,6 +38,15 @@ main {
 .content {
     position: relative;
     z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-flow: column;
+    .space {
+        flex-grow: 1;
+    }
+    .uk-section-default:empty {
+        background-color: transparent;
+    }
 }
 
 .paragraph {

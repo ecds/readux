@@ -124,7 +124,10 @@
         {% block viewer %}{% endblock viewer %}
       </main>
 
-      {% include '_home/_footer.html' %}
+      {# prevent duplicate footer on homepage bug #}
+      {% if request.path != '/'%}
+        {% include '_home/_footer.html' %}
+      {% endif %}
     </div>
   
     <!-- Matomo Image Tracker-->

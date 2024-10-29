@@ -1,11 +1,11 @@
 <div class="rx-info-content rx-scrollable-area">
+  <!--
   <div class="rx-info-content-label uk-flex-between rx-flex uk-margin-small-bottom">
     <span>Showing [#TODO] metadata fields</span> 
   </div> 
-
   <div class="rx-info-content-value uk-margin-small-bottom uk-flex" >
     <div class="uk-flex-between">
-      <!-- <a class="rx-action-btn">
+      <a class="rx-action-btn">
         <div class="uk-label rx-label-copy uk-expand-btn">
           <span uk-icon="icon: plus; ratio: 0.5"></span> Expand all
         </div>
@@ -14,7 +14,7 @@
         <div class="uk-label rx-label-copy uk-collapse-btn">
           <span uk-icon="icon: minus; ratio: 0.5"></span> Collapse all
         </div>
-      </a> -->
+      </a>
       <a class="rx-action-btn">
         <div class="uk-label rx-label-copy">
           <span uk-icon="icon: download; ratio: 0.5"></span> CSV (TODO)
@@ -22,7 +22,8 @@
       </a>
     </div>
   </div>
-  
+  -->
+
   <div class="rx-info-content-value padding-right-1rem">
     <ul uk-accordion="multiple: true">
       <li class="uk-open">
@@ -107,7 +108,7 @@
       {# Advanced fields: custom metadata configured via django settings #}
       {% if custom_metadata %}
         <li>
-          <a class="uk-accordion-title uk-label rx-label-copy" href>Advanced</a>
+          <a class="uk-accordion-title rx-btn" href>Advanced</a>
           <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2">
             {% for key, value in custom_metadata.items %}
               <div class="rx-info-content">
@@ -120,7 +121,7 @@
       {% endif %}
 
       <li>
-        <a class="uk-accordion-title uk-label rx-label-copy" href>Attribution</a>
+        <a class="uk-accordion-title uk-label rx-accordion-head" href>Attribution</a>
         <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2"> 
         <div class="rx-info-content">
           <div class="rx-info-content-label">Institution</div>

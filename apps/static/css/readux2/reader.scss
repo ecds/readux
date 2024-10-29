@@ -1,0 +1,40 @@
+.reader-navbar {
+  padding: 0 1rem; height: 36px;
+}
+
+.rx-accordion-head {
+  background-color: #F1FAEE;
+  color: #1D3557;
+  border: none;
+  &:hover {
+    color: #1D3557 !important;
+    background-color: darken(#F1FAEE, 5%) !important;
+    border: none;
+    .rx-accordion-head::before {
+      color: #1D3557 !important;
+    }
+  }
+  &:active {
+    border: none;
+  }
+}
+
+.rx-accordion-head::before {
+  color: #1D3557 !important;
+}
+
+.rx-anchor {
+  color: #1D3557 !important;
+}
+
+.rx-btn {
+  &:hover {
+    background-color: #1D3557 !important;
+    border-color: #1D3557 !important;
+  }
+}
+
+.uk-tab > .uk-active > a {
+  border-color: #1D3557 !important;
+  color: #1D3557 !important;
+}

@@ -597,3 +597,7 @@ iframe {
     font-size: small; 
     color: white; 
 }
+
+.unset-min-height {
+    min-height: unset !important;
+}

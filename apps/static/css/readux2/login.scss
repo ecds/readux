@@ -64,4 +64,7 @@
 .sign-in-btn {
   background-color: #1D3557;
   color: #F1FAEE;
+  &:hover {
+    background-color: darken(#1D3557, 10%);
+  }
 }

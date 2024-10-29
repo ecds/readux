@@ -104,18 +104,23 @@
 
   function toggleOCR() {
     // this requires testing
+    const ocrCheckbox = document.querySelector("#ocr-overlay");
     const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-    debugger;
     for (let i = 0; i < nodeList.length; i++) {
-      nodeList[i].style.backgroundColor = nodeList[i].style.backgroundColor != "white" ? "white" : "transparent";
-      nodeList[i].style.fontWeight = nodeList[i].style.fontWeight != "bold" ? "bold":"";
-      nodeList[i].style.color = nodeList[i].style.color != "rgb(149, 9, 83)" ? "rgb(149, 9, 83)" : "transparent";
+      if (ocrCheckbox.checked) {
+        nodeList[i].style.backgroundColor = "white";
+        nodeList[i].style.fontWeight = "bold";
+        nodeList[i].style.color = "rgb(149, 9, 83)";
+      } else {
+        nodeList[i].style.backgroundColor = "transparent";
+        nodeList[i].style.fontWeight = "";
+        nodeList[i].style.color = "transparent";
+      }
     }
   }
 
   function showOCR() {
     const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-    debugger;
     for (let i = 0; i < nodeList.length; i++) {
       nodeList[i].style.backgroundColor = "white";
       nodeList[i].style.fontWeight = "bold";
@@ -125,7 +130,6 @@
 
   function hideOCR() {
     const nodeList2 = document.querySelectorAll("div.openseadragon-canvas div span");
-    debugger;
     for (let i = 0; i < nodeList2.length; i++) {
       nodeList2[i].style.backgroundColor = "transparent";
       nodeList2[i].style.fontWeight = "";

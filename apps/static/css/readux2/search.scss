@@ -229,12 +229,6 @@ ol#search-results dl {
   background-color: #1D3557 !important;
 }
 
-#reset-filters {
-  &:hover {
-    background-color: darken(#EFEFEF, 10%);
-  } 
-}
-
 .uk-search-default .uk-search-input:focus, .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
   border-color: #1D3557;
 }

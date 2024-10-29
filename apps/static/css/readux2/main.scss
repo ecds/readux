@@ -624,7 +624,6 @@ iframe {
     color: white; 
 }
 
-
 .description-button {
     transition: ease 0.1s;
     &:hover {
@@ -637,4 +636,8 @@ iframe {
 
 .justify-content-normal {
     justify-content: normal !important;
+}
+
+.unset-min-height {
+    min-height: unset !important;
 }

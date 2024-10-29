@@ -38,9 +38,9 @@ em {
   filter: contrast(var(--contrast));
 }
 
-.uk-button-default {
-  font-size: 1.25rem;
-}
+// .uk-button-default {
+//   font-size: 1.25rem;
+// }
 
 #search-form .uk-button-danger {
   background-color: #f0506e;
@@ -835,13 +835,14 @@ p {
   font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
 
   &:active {
-    background-color: $rx-color-accent-2 !important;
-    border: 1px solid $rx-color-accent-2 !important;
+    background-color: #1D3557 !important;
+    border: 1px solid #1D3557 !important;
     opacity: 1;
   }
 
   &:hover {
-    background: var(--link-color);
+    background: #1D3557;
+    border-color: #1D3557;
     color: white !important;
     font-size: 0.75rem;
     letter-spacing: 0.1rem;
@@ -851,7 +852,8 @@ p {
 }
 
 .rx-action-btn:hover .rx-label-copy {
-  background: var(--link-color);
+  background: #1D3557;
+  border-color: #1D3557;
   color: white !important;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
@@ -860,9 +862,9 @@ p {
 }
 
 .rx-label-solid {
-  background: var(--link-color);
+  background: #1D3557;
   color: white;
-  border: var(--link-color) 1px solid;
+  border: #1D3557 1px solid;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
   opacity: 0.75;
@@ -871,13 +873,14 @@ p {
   font-weight: 600;
 
   &:active {
-    background-color: $rx-color-accent-2 !important;
-    border: 1px solid $rx-color-accent-2 !important;
+    background-color: darken(#1D3557, 5%) !important;
+    border: 1px solid darken(#1D3557, 5%) !important;
     opacity: 1;
   }
 
   &:hover {
-    background: var(--link-color);
+    background: #1D3557;
+    border-color: #1D3557;
     color: white !important;
     font-size: 0.75rem;
     letter-spacing: 0.1rem;
@@ -1361,26 +1364,6 @@ fieldset {
   }
 }
 
-// properly indent bullet items in the breadcrumb
-.uk-navbar li {
-  text-indent: -1em !important; /* Negative indent to pull first line back */
-  padding-left: 1em !important; /* Padding to offset the negative indent */
-
-  // &::marker {
-  //   content: "↳  "; /* Custom bullet symbol */
-  //   position: absolute;
-  //   left: 0;
-  // }
-}
-
-.uk-navbar li:first-child {
-  // &::marker {
-  //   content: ""; /* Custom bullet symbol */
-  //   position: absolute;
-  //   left: 0;
-  // }
-}
-
 .long-and-truncated.rx-volume-title {
   display: flex;
   align-items: center;
@@ -1671,20 +1654,20 @@ fieldset {
     color: white;
   }
   
-  &:active {
-    background-color: $rx-color-accent-2 !important;
-    border: 1px solid $rx-color-accent-2 !important;
-    opacity: 1;
-  }
+  // &:active {
+  //   background-color: $rx-color-accent-2 !important;
+  //   border: 1px solid $rx-color-accent-2 !important;
+  //   opacity: 1;
+  // }
 
-  &:hover {
-    background: var(--link-color);
-    color: white !important;
-    font-size: 0.85rem;
-    letter-spacing: 0.1rem;
-    cursor: pointer;
-    opacity: 1;
-  }
+  // &:hover {
+  //   background: var(--link-color);
+  //   color: white !important;
+  //   font-size: 0.85rem;
+  //   letter-spacing: 0.1rem;
+  //   cursor: pointer;
+  //   opacity: 1;
+  // }
 }
 
 .rx-accordion-handle {
@@ -1742,9 +1725,9 @@ a.nav-link {
           filter: contrast(var(--contrast));
 }
 
-.uk-button-default {
-  font-size: 1.25rem;
-}
+// .uk-button-default {
+//   font-size: 1.25rem;
+// }
 
 .uk-tab > .uk-active > a {
   border-color: var(--link-color) !important;
@@ -1792,9 +1775,9 @@ a.nav-link {
   bottom: 0px;
   /* background: none !important; */
 
-  height: -webkit-calc(100% - 40px);
-  height:    -moz-calc(100% - 40px);
-  height:         calc(100% - 40px);
+  height: -webkit-calc(100% - 36px);
+  height:    -moz-calc(100% - 36px);
+  height:         calc(100% - 36px);
   width: 100%;
   /* Remove any browser-default margins. */
   margin: 0;
@@ -3614,26 +3597,26 @@ ol#search-results dl {
 
 /* Override the minus sign in UI Kit accordion */
 .uk-open > .uk-accordion-title::before {
-  /* "-" Change the stroke color of the accordion icons to white */
-  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23950953%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E);
+  /* "-" Change the stroke color of the accordion icons to #1D3557 */
+  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E);
 }
 
 .uk-open > .uk-accordion-title:hover {
-  /* "-" Change the stroke color of the accordion icons to white */
+  /* "-" Change the stroke color of the accordion icons to #1D3557 */
   &::before {
-    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E)
+    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E)
   }
 }
 
 .uk-accordion-title::before {
   /* "+" Change the stroke color of the accordion icons to white */
-  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23950953%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23950953%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
 }
 
 .uk-accordion-title:hover {
   /* "+" Change the stroke color of the accordion icons to white */
   &::before {
-    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23fff%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
   }
 }
 

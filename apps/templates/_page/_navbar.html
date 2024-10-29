@@ -1,71 +1,67 @@
 {% load static i18n %}
+{% load sass_tags %}
+<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/readux2/reader.scss' %}" rel="stylesheet">
 
-<nav uk-navbar>
-    <div class="uk-navbar-left">
-      <a href="/" alt="Readux Logo/Home"><img src="{% static 'images/readux-graphics.svg'%}" style="height: 40px;"></img></a>
-      
-      <div class="uk-inline">
-          <button class="long-and-truncated rx-volume-title" type="button"> {{volume.label}} <span uk-icon="icon: triangle-down"></span></button>
-          <div uk-dropdown="mode: click" class="uk-width-large">
-            {% if volume.collections.first.pid %}
-            <li class=""><a class="rx-breadcrumb-item" href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-            <li class="uk-margin-left"><a class="rx-breadcrumb-item" href="{% url 'collection' volume.collections.first.pid %}"
-                alt="Collections">{{ volume.collections.first.label }}</a>
-            </li>
-            {% else %}
-            <li class=""><a class="nav-link rx-breadcrumb-item" href="/{{ volumelink.slug }}">All Volumes</a></li>
-            {% endif %}
-            <li class="uk-margin-medium-left uk-text-bold"> {{volume.label}}</li>
+<nav uk-navbar class="reader-navbar">
+
+    <div class="uk-navbar-left ">
+      <!-- Logo -->
+      <div class="uk-logo uk-flex uk-flex-middle">
+        <a class="brand-logo" href="/">{{ request.site.name }}</a>
+      </div>
+      <!-- End -->
+
+      <!-- Breadcrumb -->
+      <ul class="breadcrumb">
+        <li>
+          <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+          <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+            <ul class="uk-nav uk-navbar-dropdown-nav">
+              {% if volume.collections.first.pid %}
+                <li><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
+                <li><a href="{% url 'collection' volume.collections.first.pid %}"
+                    alt="Collections">{{ volume.collections.first.label }}</a>
+                </li>
+              {% else %}
+                <li><a href="/{{ volumelink.slug }}">All Volumes</a></li>
+              {% endif %}
+            </ul>
           </div>
-      </div>
+        </li>
+        <li>{{volume.label}}</li>
+      </ul>
+      <!-- End -->
     </div>
-    <div class="uk-navbar-right uk-width-auto">
-      <div class="rx-page-breadcrumb">
-        <a href="/search/" aria-label="fudiv site search" title="Full Site Search"
-          uk-tooltip="title: Full Site Search; pos: right">
-          <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: search"></span>
-        </a>
-        {% if request.user.is_authenticated %}
-        {# URL provided by django-allauth/account/urls.py #}
-        <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right"
-          aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
-          <span class="uk-user uk-margin-small-right" aria-hidden="true" uk-icon="icon: cog"></span>
-        </a>
-        {# URL provided by django-allauth/account/urls.py #}
-        <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right"
-          aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update' %}">
-          <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: user"></span>
-        </a>
-        {# URL provided by django-allauth/account/urls.py #}
-        <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right"
-            uk-tooltip="title: Logout; pos: right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
-            <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-out"></span>
-        </a>
-        {% else %}
-        {# URL provided by django-allauth/account/urls.py #}
-        <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-tooltip="title: Sign in; pos: right" uk-toggle>
-            <span class="uk-icon uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in"></span>
-        </a>
-        {% endif %}
 
-      </div>
+    <div class="uk-navbar-right">
+      <ul class="uk-navbar-nav">
+        {% if request.user.is_authenticated %}
+          <!-- User Account with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+            <a href="{% url 'users:update' %}" class="menu-item" uk-icon="icon: user;" uk-tooltip="My Account"></a>
+          </li>
+          <!-- Admin with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+            <a href="/admin/" class="menu-item" uk-icon="icon: settings;" uk-tooltip="Django Admin"></a>
+          </li>
+          <!-- Sign out with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+            <a href="{% url 'account_logout' %}" class="menu-item" uk-icon="icon: sign-out;" uk-tooltip="Sign out"></a>
+          </li>
+        {% else %}
+          <!-- Login/Sign up with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+              <a href="#" class="menu-item" uk-icon="icon: sign-in;" uk-toggle="target: #login-modal" uk-tooltip="Login/Sign up"></a>
+          </li>
+        {% endif %}
+        <!-- Search with Icon -->
+        <li>
+          <a href="{% url 'search' %}" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+        </li>
+      </ul>
     </div>
 </nav>
 
-<!--modal for login-->
-<div id="rx-page-modal" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-      <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
-      <section class="uk-modal-header">
-        <h2 class="uk-modal-title uk-text-center">
-          {% if user.is_authenticated %}
-          Connect Accounts
-          {% else %}
-          Sign in
-          {% endif %}
-        </h2>
-      </section>
-      {% include "snippets/socialaccount_buttons.html" %}
-    </div>
-</div>
-<!--modal for login-->
+{% include '_home/_login_modal.html' %}

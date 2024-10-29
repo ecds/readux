@@ -38,3 +38,7 @@
   border-color: #1D3557 !important;
   color: #1D3557 !important;
 }
+
+.uk-search-default .uk-search-input:focus, .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+  border-color: #1D3557;
+}

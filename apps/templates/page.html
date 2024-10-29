@@ -104,11 +104,18 @@
 
   function toggleOCR() {
     // this requires testing
+    const ocrCheckbox = document.querySelector("#ocr-overlay");
     const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
     for (let i = 0; i < nodeList.length; i++) {
-      nodeList[i].style.backgroundColor = nodeList[i].style.backgroundColor != "white" ? "white" : "transparent";
-      nodeList[i].style.fontWeight = nodeList[i].style.fontWeight != "bold" ? "bold":"";
-      nodeList[i].style.color = nodeList[i].style.color != "rgb(149, 9, 83)" ? "rgb(149, 9, 83)" : "transparent";
+      if (ocrCheckbox.checked) {
+        nodeList[i].style.backgroundColor = "white";
+        nodeList[i].style.fontWeight = "bold";
+        nodeList[i].style.color = "rgb(149, 9, 83)";
+      } else {
+        nodeList[i].style.backgroundColor = "transparent";
+        nodeList[i].style.fontWeight = "";
+        nodeList[i].style.color = "transparent";
+      }
     }
   }
 

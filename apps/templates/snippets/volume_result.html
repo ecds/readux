@@ -1,10 +1,7 @@
 {% load readux_extras %}
 
 <li class="uk-width-1-1@m uk-margin-small">
-    <h4 class=""
-        style="margin-top: 10px; margin-bottom: 5px;" 
-    >
-        <!-- <span>{{ forloop.counter0|add:page_obj.start_index }}.</span> -->
+    <h4 style="margin-top: 10px; margin-bottom: 5px;">
         {% if volume.pid %}
             <a
                 class="nav-link uk-text-large sui-item-heading title result-title"
@@ -16,7 +13,7 @@
                         {{ fragment|safe }}
                     {% endfor %}
                 {% else %}
-                    {{ volume.label }}
+                    {{ volume.label|default:"[no title]" }}
                 {% endif %}
             </a>
         {% else %}
@@ -25,31 +22,15 @@
                     {{ fragment|safe }}
                 {% endfor %}
             {% else %}
-                {{ volume.label }}
+                {{ volume.label|default:"[no title]" }}
             {% endif %}
         {% endif %}
     </h4>
     <dl class="uk-margin-remove">
-        <div uk-grid class="">
-            <div class="uk-width-3-4@m">
-                {% if volume.summary %}
-                <div class="sui-item-heading" 
-                    style="">Summary</div> 
-                <div class="result-volume-summary"
-                style="font-weight: 400; font-size: 14px;">
-                    {% if 'highlight' in volume.meta and volume.meta.highlight.summary %}
-                        {% for fragment in volume.meta.highlight.summary %}
-                            {{ fragment|safe }}
-                        {% endfor %}
-                    {% else %}
-                        {{ volume.summary|safe }}
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
+        <div uk-grid>
             <div class="uk-width-expand@m">
                 {% if volume.authors and "[no author]" not in volume.authors %}
-                    <div class="sui-item-heading" >Author{{volume.authors|pluralize}}</div>
+                    <div class="sui-item-heading">Author{{volume.authors|pluralize}}</div>
                     <dd>
                         <ul class="uk-margin-remove uk-padding-remove"
                         style="font-weight: 400; font-size: 14px;">
@@ -88,13 +69,8 @@
             <div class="sui-item-heading">Published</div>
             <div style="font-weight: 400; font-size: 14px;">{{volume.published_date}}</div>
         {% endif %}
-        
-        {% if volume.created_at %}
-            <div class="sui-item-heading" >Added</div>
-            <div style="font-weight: 400; font-size: 14px;">{{volume.created_at}}</div>
-        {% endif %}
         {% if volume.languages and "[no language]" not in volume.languages %}
-            <div class="sui-item-heading" >Language{{volume.languages|pluralize}}</div>
+            <div class="sui-item-heading">Language{{volume.languages|pluralize}}</div>
             <div>
                 <ul class="uk-margin-remove uk-padding-remove" style="font-weight: 400; font-size: 14px;">
                     {% for lang in volume.languages %}
@@ -103,6 +79,20 @@
                 </ul>
             </div>
         {% endif %}
-        
+        {% if volume.collections %}
+            <div class="sui-item-heading">Collection{{volume.collections|pluralize}}</div>
+            <div>
+                <ul class="uk-margin-remove uk-padding-remove" style="font-weight: 400; font-size: 14px;">
+                    {% for collection in volume.collections %}
+                        <li>{{ collection.label }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {# only show date added if it is the sort field #}
+        {% if "created_at" in request.GET.sort and volume.created_at %}
+            <div class="sui-item-heading">Added</div>
+            <div style="font-weight: 400; font-size: 14px;">{{volume.created_at}}</div>
+        {% endif %}
     </dl>
 </li>

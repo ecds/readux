@@ -257,6 +257,15 @@ class HomePage(Page):
     collections = Collection.objects.all()[:8]
     volumes = Manifest.objects.all()[:8]
 
+    background_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Optional background image for the site header",
+    )
+
     featured_story_title = models.CharField(
         help_text="Title of the featured story", blank=True, max_length=255
     )
@@ -286,6 +295,7 @@ class HomePage(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel('tagline', classname="full"),
+        FieldPanel('background_image', classname="full"),
         FieldPanel('content_display', classname="full"),
         AutocompletePanel('featured_collections', target_model="kollections.Collection"),
         FieldPanel('featured_collections_sort_order', classname="full"),

@@ -1,4 +1,21 @@
 /* base.html */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#v-readux {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+  
+main {
+    flex-grow: 1;
+}
+
 .landing {
     margin: 0;
     padding: 0;
@@ -21,6 +38,15 @@
 .content {
     position: relative;
     z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-flow: column;
+    .space {
+        flex-grow: 1;
+    }
+    .uk-section-default:empty {
+        background-color: transparent;
+    }
 }
 
 .paragraph {
@@ -596,6 +622,20 @@ iframe {
 .brand-tagline {
     font-size: small; 
     color: white; 
+}
+
+.description-button {
+    transition: ease 0.1s;
+    &:hover {
+        background-color: darken(#E60000, 10%);
+    }
+    &:active {
+        background-color: darken(#E60000, 25%);
+    }
+}
+
+.justify-content-normal {
+    justify-content: normal !important;
 }
 
 .unset-min-height {

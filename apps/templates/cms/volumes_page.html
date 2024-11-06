@@ -19,15 +19,6 @@
   <!-- Breadcrumb -->
   <ul class="breadcrumb uk-margin-small-top">
     <li><a href="/">Home</a></li>
-    <li>
-      <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-        <ul class="uk-nav uk-navbar-dropdown-nav">
-            <li><a href="#">[All Collections]</a></li>
-            <li><a href="#">[Featured Collections]</a></li>
-        </ul>
-      </div>
-    </li>
     <li>{{ page.page_title|default:page.title }}</li>
   </ul>
   <!-- End -->
@@ -59,12 +50,14 @@
       </thead>
       <tbody>
         {% for volume in volumes %}
+          {% if volume.pid %}
             <tr class="clickable-row" data-href="{% url 'volumeall' volume.pid %}">
                 <td>{{ volume.label|default:"-"|truncatechars:200 }}</td>
                 <td>{{ volume.author|default:"-"|truncatechars:150 }}</td>
                 <td>{{ volume.published_date|default:volume.published_date_edtf|default_if_none:"-" }}</td>
                 <td>{{ volume.created_at }}</td>
             </tr>
+          {% endif %}
         {% empty %}
           There are no volumes available to browse.
         {% endfor %}

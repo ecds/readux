@@ -109,6 +109,7 @@ class CollectionDetail(DetailView, FormMixin):
             "volumes": volumes,
             "user_annotation": UserAnnotation.objects.filter(owner_id=self.request.user.id),
             "paginator_range": paginator.get_elided_page_range(page, on_each_side=2),
+            "collectionlink": Page.objects.type(CollectionsPage).first(),
         })
 
         return context

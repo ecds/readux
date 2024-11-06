@@ -1,9 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
-{% load sass_tags %}
-{% load has_user_annotations %}
-{% load user_annotation_count %}
-
+{% load has_user_annotations sass_tags static user_annotation_count wagtailcore_tags %}
 
 {% block content %}
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
@@ -16,15 +12,13 @@
   <ul class="breadcrumb uk-margin-small-top">
     <li><a href="/">Home</a></li>
     <li>
-      <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-      <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-        <ul class="uk-nav uk-navbar-dropdown-nav">
-            <li><a href="#">[All Collections]</a></li>
-            <li><a href="#">[Featured Collections]</a></li>
-        </ul>
-      </div>
+      {% if collectionlink %}
+        <a href="{% pageurl collectionlink %}">Collections</a>
+      {% else %}
+        Collections
+      {% endif %}
     </li>
-    <li>Collection</li>
+    <li>{{ collection.label }}</li>
   </ul>
   <!-- End -->
   </div>

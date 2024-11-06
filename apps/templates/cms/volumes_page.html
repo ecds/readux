@@ -59,12 +59,14 @@
       </thead>
       <tbody>
         {% for volume in volumes %}
+          {% if volume.pid %}
             <tr class="clickable-row" data-href="{% url 'volumeall' volume.pid %}">
                 <td>{{ volume.label|default:"-"|truncatechars:200 }}</td>
                 <td>{{ volume.author|default:"-"|truncatechars:150 }}</td>
                 <td>{{ volume.published_date|default:volume.published_date_edtf|default_if_none:"-" }}</td>
                 <td>{{ volume.created_at }}</td>
             </tr>
+          {% endif %}
         {% empty %}
           There are no volumes available to browse.
         {% endfor %}

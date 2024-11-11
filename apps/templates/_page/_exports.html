@@ -3,7 +3,7 @@
 
 <div class="rx-info-content">
   <div class="rx-info-content-label uk-flex-between">
-    <a class="rx-action-btn" href="{{pagelink}}" target="_blank">
+    <a class="rx-action-btn" href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg" target="_blank">
       <div class="uk-label rx-label-copy">
         IMG
       </div>
@@ -14,23 +14,20 @@
   </div>
 </div>
 
-<!-- Copied over from the Export section -->
-<!-- <p><a href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg" target="_blank">{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg</a></p> -->
-<!-- <v-info-content-url-image-link label="Image Link" pagelink="{{ pagelink }}" url="{{ localUrls }}">
-</v-info-content-url-image-link> -->
-
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex">
-    <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">
-      <div class="uk-label rx-label-copy">
-        PDF
-      </div>
-      <span class="uk-margin-small-left">View Volume PDF</span> 
-    </a>
-  </div> 
-  <div class="rx-info-content-value">
+{% if volume.pdf %}
+  <div class="rx-info-content">
+    <div class="rx-info-content-label uk-flex-between rx-flex">
+      <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank">
+        <div class="uk-label rx-label-copy">
+          PDF
+        </div>
+        <span class="uk-margin-small-left">View Volume PDF</span> 
+      </a>
+    </div> 
+    <div class="rx-info-content-value">
+    </div>
   </div>
-</div>
+{% endif %}
 
 <div class="rx-info-content">
   <div class="rx-info-content-label uk-flex-between rx-flex">

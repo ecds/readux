@@ -311,7 +311,11 @@ class VolumeSearchView(ListView, FormMixin):
             and hasattr(settings, "CUSTOM_METADATA")
             and isinstance(settings.CUSTOM_METADATA, dict)
         ):
-            for key in settings.CUSTOM_METADATA.keys():
+            for key in [
+                k
+                for k in settings.CUSTOM_METADATA.keys()
+                if settings.CUSTOM_METADATA[k].get("faceted", False)
+            ]:
                 self.facets.append((key, NestedFacet(
                     "metadata",
                     TermsFacet(field=f"metadata.{key}", size=2000, min_doc_count=1),
@@ -351,6 +355,7 @@ class VolumeSearchView(ListView, FormMixin):
                 # use django-friendly form field names
                 key.casefold().replace(" ", "_")
                 for key in settings.CUSTOM_METADATA.keys()
+                if settings.CUSTOM_METADATA[key].get("faceted", False) == True
             ]
             if hasattr(settings, "CUSTOM_METADATA")
             and isinstance(settings.CUSTOM_METADATA, dict)
@@ -512,7 +517,11 @@ class VolumeSearchView(ListView, FormMixin):
         if hasattr(settings, "CUSTOM_METADATA") and isinstance(
             settings.CUSTOM_METADATA, dict
         ):
-            for key in settings.CUSTOM_METADATA.keys():
+            for key in [
+                k
+                for k in settings.CUSTOM_METADATA.keys()
+                if settings.CUSTOM_METADATA[k].get("faceted", False)
+            ]:
                 field_name = key.casefold().replace(" ", "_")
                 meta_filter = form_data.get(field_name) or ""
                 if meta_filter:

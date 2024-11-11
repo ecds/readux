@@ -121,7 +121,10 @@ class ManifestDocument(Document):
             and isinstance(settings.CUSTOM_METADATA, dict)
         ):
             # should be a dict like {meta_key: {"multi": bool, "separator": str}}
-            for key, opts in settings.CUSTOM_METADATA.items():
+            for key, opts in filter(
+                lambda item: item[1].get("faceted", False), # filter to only faceted fields
+                settings.CUSTOM_METADATA.items(),
+            ):
                 val = None
                 # each key in CUSTOM_METADATA dict should be a metadata key.
                 # however, instance.metadata will generally be a list rather than a dict: it's a

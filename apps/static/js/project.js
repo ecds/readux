@@ -100,7 +100,7 @@ function fetchResults() {
             history.pushState({}, '', `${window.location.origin}${parts.join('/')}`);
             dispatchEvent(popStateEvent);
           })
-          resultA.innerText = `Canvas ${anno.canvas__position} - number of results ${anno.canvas__position__count}`;
+          resultA.innerText = `Page ${anno.canvas__position} - number of results ${anno.canvas__position__count}`;
           resultLi.appendChild(resultA);
           ocrAnnotationUL.appendChild(resultLi);
         });
@@ -124,7 +124,7 @@ function fetchResults() {
             history.pushState({}, '', `${window.location.origin}${parts.join('/')}`);
             dispatchEvent(popStateEvent);
           })
-          resultA.innerText = `Canvas ${anno.canvas__position}`;
+          resultA.innerText = `Page ${anno.canvas__position}`;
           resultLi.appendChild(resultA);
           userAnnotationUL.appendChild(resultLi);
         });

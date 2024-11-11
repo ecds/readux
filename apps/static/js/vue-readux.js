@@ -57,7 +57,7 @@ Vue.component("v-volume-search", {
               <div v-if="inText==0" class="rx-padding-extra-small uk-text-small"> No matches in text. </div>
               <div v-else v-for="(match, index) in textData" :key="index" class="rx-padding-extra-small">
                   <div class="uk-text-small">
-                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Canvas {{match.canvas_index }}</div></a>
+                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Page {{match.canvas_index }}</div></a>
                     <div class="uk-inline-block" style="vertical-align: middle"> · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></div>
                   </div>
                   <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
@@ -69,7 +69,7 @@ Vue.component("v-volume-search", {
               <div v-if="inAnnotations==0" class="rx-padding-extra-small uk-text-small"> No matches in annotations. </div>
               <div v-else v-for="(match, index) in annotationData" :key="index" class="rx-padding-extra-small">
                   <div class="uk-text-small">
-                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Canvas {{match.canvas_index }}</div></a>
+                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Page {{match.canvas_index }}</div></a>
                     <div class="uk-inline-block" style="vertical-align: middle"> · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></div>
                   </div>
                   <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
@@ -182,7 +182,7 @@ Vue.component("v-volume-annotations", {
         <div class="uk-accordion-content rx-accordion-content">
           <li v-for="annotation in annotationData" :key="annotation.canvas__pid" >
             <div v-if="annotation.canvas__position__count">
-              <a :href="annotation.canvas__pid"><span class="rx-btn rx-fixed-width-100">Canvas {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
+              <a :href="annotation.canvas__pid"><span class="rx-btn rx-fixed-width-100">Page {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
             </div>
           </li>
         </div>

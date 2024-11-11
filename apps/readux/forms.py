@@ -149,8 +149,12 @@ class ManifestSearchForm(forms.Form):
             and hasattr(settings, "CUSTOM_METADATA")
             and isinstance(settings.CUSTOM_METADATA, dict)
         ):
-            # should be a dict like {meta_key: {"multi": bool, "separator": str}}
-            for key in settings.CUSTOM_METADATA.keys():
+            # should be a dict like {meta_key: {"multi": bool, "separator": str, "faceted": bool}}
+            for key in [
+                k
+                for k in settings.CUSTOM_METADATA.keys()
+                if settings.CUSTOM_METADATA[k].get("faceted", False)
+            ]:
                 self.fields[
                     # use django-friendly form field names
                     key.casefold().replace(" ", "_")

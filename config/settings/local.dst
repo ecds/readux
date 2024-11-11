@@ -173,22 +173,31 @@ LOGGING = {
 ELASTICSEARCH_DSL['default']['hosts'] = 'user:pass@localhost:9200'
 INDEX_PREFIX = "readux_test"
 
-# Custom faceted metadata fields configuration. Must be a dict with key names
-# matching exactly the ingest metadata spradsheet column names to be indexed.
+# Custom metadata fields configuration. Metadata in this list will appear under
+# "Advanced" in each volume's metadata. Must be a dict with key names
+# matching exactly the spradsheet column names in volume ingest metadata.
 # For each column, configure options for whether it should accept multiple
 # values in a single record ("multi": True), and if so, what separator will be
 # used ("separator": ";", semicolon by default).
-# Note that these key names will also correspond to "label" names in the Manifest
-# metadata list.
+# 
+# If you would like a field to appear as a faceted search filter on the volumes
+# search page, include "faceted": True for that field. If not included, or set
+# False, the field will not be indexed for search. Changing this setting will
+# require a search reindex (python manage.py search_index --rebuild).
+#
+# Note that these key names will also correspond to "label" names in each IIIF
+# manifest's metadata list.
 #
 # Example:
 # CUSTOM_METADATA = {
 #     "Column Name": {
 #         "multi": True,
 #         "separator": ";",
+#         "faceted": True,
 #     },
 #     "Other Column": {
 #         "multi": False,
+#         "faceted": False,
 #     },
 # }
 

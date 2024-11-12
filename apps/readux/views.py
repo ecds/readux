@@ -1,4 +1,5 @@
 """Django Views for the Readux app"""
+
 import re
 from os import path
 from urllib.parse import urlencode
@@ -24,11 +25,13 @@ from ..iiif.canvases.models import Canvas
 from ..iiif.manifests.models import Manifest
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
-SORT_OPTIONS = ['title', 'author', 'date published', 'date added']
-ORDER_OPTIONS = ['asc', 'desc']
+SORT_OPTIONS = ["title", "author", "date published", "date added"]
+ORDER_OPTIONS = ["asc", "desc"]
+
 
 class CollectionDetail(DetailView, FormMixin):
     """Django Template View for a :class:`apps.iiif.kollections.models.Collection`"""
+
     template_name = "collection.html"
     slug_field = "pid"
     slug_url_kwarg = "collection"
@@ -79,7 +82,9 @@ class CollectionDetail(DetailView, FormMixin):
         if sort == "date" and order == "desc":
             # special case for date, descending: need to use date_sort_descending field
             # and sort nulls last
-            queryset = queryset.order_by(F("date_sort_descending").desc(nulls_last=True))
+            queryset = queryset.order_by(
+                F("date_sort_descending").desc(nulls_last=True)
+            )
         else:
             queryset = queryset.order_by(f"{sign}{self.sort_fields[sort]}")
 
@@ -92,7 +97,7 @@ class CollectionDetail(DetailView, FormMixin):
         volumes = self.get_volumes()
 
         # add paginator manually since this isn't a ListView
-        paginator = Paginator(volumes, 8) # Show 8 volumes per page
+        paginator = Paginator(volumes, 8)  # Show 8 volumes per page
 
         page = self.request.GET.get("page", 1)
         try:
@@ -105,49 +110,72 @@ class CollectionDetail(DetailView, FormMixin):
             page = paginator.num_pages
             volumes = paginator.page(page)
 
-        context.update({
-            "volumes": volumes,
-            "user_annotation": UserAnnotation.objects.filter(owner_id=self.request.user.id),
-            "paginator_range": paginator.get_elided_page_range(page, on_each_side=2),
-            "collectionlink": Page.objects.type(CollectionsPage).first(),
-        })
+        context.update(
+            {
+                "volumes": volumes,
+                "user_annotation": UserAnnotation.objects.filter(
+                    owner_id=self.request.user.id
+                ),
+                "paginator_range": paginator.get_elided_page_range(
+                    page, on_each_side=2
+                ),
+            }
+        )
+        context.update(
+            {
+                "volumes": volumes,
+                "user_annotation": UserAnnotation.objects.filter(
+                    owner_id=self.request.user.id
+                ),
+                "paginator_range": paginator.get_elided_page_range(
+                    page, on_each_side=2
+                ),
+                "collectionlink": Page.objects.type(CollectionsPage).first(),
+            }
+        )
 
         return context
 
+
 class VolumeDetail(TemplateView):
     """Django Template View for :class:`apps.iiif.manifest.models.Manifest`"""
+
     template_name = "volume.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
+        context["volume"] = Manifest.objects.filter(pid=kwargs["volume"]).first()
         return context
 
+
 # FIXME: What is this used for? The template does not exist.
-class AnnotationsCount(TemplateView):
+class AnnotationCount(TemplateView):
     """Django Template View for :class:`apps.readux.models.UserAnnotation`"""
+
     template_name = "count.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        canvas = Canvas.objects.filter(pid=kwargs['page']).first()
-        context['page'] = canvas
-        manifest = Manifest.objects.filter(pid=kwargs['volume']).first()
-        context['volume'] = manifest
-        context['user_annotation_page_count'] = UserAnnotation.objects.filter(
-            owner_id=self.request.user.id
-        ).filter(
-            canvas__id=canvas.id
-        ).count()
-        context['user_annotation_count'] = UserAnnotation.objects.filter(
-            owner_id=self.request.user.id
-        ).filter(
-            canvas__manifest__id=manifest.id
-        ).count()
+        canvas = Canvas.objects.filter(pid=kwargs["page"]).first()
+        context["page"] = canvas
+        manifest = Manifest.objects.filter(pid=kwargs["volume"]).first()
+        context["volume"] = manifest
+        context["user_annotation_page_count"] = (
+            UserAnnotation.objects.filter(owner_id=self.request.user.id)
+            .filter(canvas__id=canvas.id)
+            .count()
+        )
+        context["user_annotation_count"] = (
+            UserAnnotation.objects.filter(owner_id=self.request.user.id)
+            .filter(canvas__manifest__id=manifest.id)
+            .count()
+        )
         return context
+
 
 class PageDetail(TemplateView):
     """Django Template View for :class:`apps.iiif.canvases.models.Canvas`"""
+
     template_name = "page.html"
 
     def get_metadatum(self, volume, key):
@@ -173,49 +201,52 @@ class PageDetail(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        manifest = Manifest.objects.get(pid=kwargs['volume'])
-        if 'page' in kwargs:
-            canvas = Canvas.objects.filter(pid=kwargs['page']).first()
+        manifest = Manifest.objects.get(pid=kwargs["volume"])
+        if "page" in kwargs:
+            canvas = Canvas.objects.filter(pid=kwargs["page"]).first()
         else:
             canvas = manifest.canvas_set.all().first()
         # if 'page' in kwargs and kwargs['page'] == 'all':
         #     context['all'] = True
-        context['page'] = canvas
-        context['volume'] = manifest
-        context['pagelink'] = manifest.image_server
-        context['collectionlink'] = Page.objects.type(CollectionsPage).first()
-        context['volumelink'] = Page.objects.type(VolumesPage).first()
-        context['user_annotation_page_count'] = UserAnnotation.objects.filter(
-            owner_id=self.request.user.id
-        ).filter(
-            canvas__id=canvas.id
-        ).count()
-        context['user_annotation_count'] = UserAnnotation.objects.filter(
-            owner_id=self.request.user.id
-        ).filter(
-            canvas__manifest__id=manifest.id
-        ).count()
+        context["page"] = canvas
+        context["volume"] = manifest
+        context["pagelink"] = manifest.image_server
+        context["collectionlink"] = Page.objects.type(CollectionsPage).first()
+        context["volumelink"] = Page.objects.type(VolumesPage).first()
+        context["user_annotation_page_count"] = (
+            UserAnnotation.objects.filter(owner_id=self.request.user.id)
+            .filter(canvas__id=canvas.id)
+            .count()
+        )
+        context["user_annotation_count"] = (
+            UserAnnotation.objects.filter(owner_id=self.request.user.id)
+            .filter(canvas__manifest__id=manifest.id)
+            .count()
+        )
 
         user_annotation_index = UserAnnotation.objects.all()
 
-        user_annotation_index = user_annotation_index.filter(canvas__manifest__label=manifest.label)
+        user_annotation_index = user_annotation_index.filter(
+            canvas__manifest__label=manifest.label
+        )
 
-        user_annotation_index = user_annotation_index.filter(owner_id=self.request.user.id).distinct()
+        user_annotation_index = user_annotation_index.filter(
+            owner_id=self.request.user.id
+        ).distinct()
 
-        user_annotation_index = user_annotation_index.values(
-                 'canvas__position',
-                 'canvas__manifest__label',
-                 'canvas__pid'
-             ).annotate(
-                 Count(
-                     'canvas__position')
-                 ).order_by('canvas__position')
+        user_annotation_index = (
+            user_annotation_index.values(
+                "canvas__position", "canvas__manifest__label", "canvas__pid"
+            )
+            .annotate(Count("canvas__position"))
+            .order_by("canvas__position")
+        )
 
-        context['user_annotation_index'] = user_annotation_index
-        context['json_data'] = {'json_data': list(user_annotation_index)}
+        context["user_annotation_index"] = user_annotation_index
+        context["json_data"] = {"json_data": list(user_annotation_index)}
 
         # add custom metadata from django settings to context
-        if hasattr(settings, 'CUSTOM_METADATA'):
+        if hasattr(settings, "CUSTOM_METADATA"):
             custom_metadata = {}
             for key in settings.CUSTOM_METADATA.keys():
                 # attempt to get this manifest's value for each key
@@ -226,8 +257,10 @@ class PageDetail(TemplateView):
 
         return context
 
+
 class ExportOptions(TemplateView, FormMixin):
     """Django Template View for Export"""
+
     template_name = "export.html"
     form_class = JekyllExportForm
 
@@ -235,34 +268,38 @@ class ExportOptions(TemplateView, FormMixin):
         # keyword arguments needed to initialize the form
         kwargs = super(ExportOptions, self).get_form_kwargs()
         # add user, which is used to determine available groups
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
-        context['export_form'] = self.get_form()
+        context["volume"] = Manifest.objects.filter(pid=kwargs["volume"]).first()
+        context["export_form"] = self.get_form()
         return context
+
 
 class ExportDownload(TemplateView):
     """Django Template View for downloading an export."""
+
     template_name = "export_download.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['volume'] = Manifest.objects.filter(pid=kwargs['volume']).first()
-        filename = kwargs['filename']
-        context['filename'] = filename
+        context["volume"] = Manifest.objects.filter(pid=kwargs["volume"]).first()
+        filename = kwargs["filename"]
+        context["filename"] = filename
         # check to see if the file exists
         if path.exists(JekyllSiteExport.get_zip_path(filename)):
-            context['file_exists'] = True
+            context["file_exists"] = True
         else:
-            context['file_exists'] = False
+            context["file_exists"] = False
 
         return context
 
+
 class ExportDownloadZip(View):
     """Django View for downloading the zipped up export."""
+
     def get(self, request, *args, **kwargs):
         """[summary]
 
@@ -273,14 +310,23 @@ class ExportDownloadZip(View):
         :return: [description]
         :rtype: [type]
         """
-        jekyll_export = JekyllSiteExport(None, "v2", github_repo=None, deep_zoom=False, owners=[self.request.user.id], user=self.request.user);
-        zip = jekyll_export.get_zip_file(kwargs['filename'])
-        resp = HttpResponse(zip, content_type = "application/x-zip-compressed")
-        resp['Content-Disposition'] = 'attachment; filename=jekyll_site_export.zip'
+        jekyll_export = JekyllSiteExport(
+            None,
+            "v2",
+            github_repo=None,
+            deep_zoom=False,
+            owners=[self.request.user.id],
+            user=self.request.user,
+        )
+        zip = jekyll_export.get_zip_file(kwargs["filename"])
+        resp = HttpResponse(zip, content_type="application/x-zip-compressed")
+        resp["Content-Disposition"] = "attachment; filename=jekyll_site_export.zip"
         return resp
+
 
 class VolumeSearchView(ListView, FormMixin):
     """View to search across all volumes with Elasticsearch"""
+
     model = Manifest
     form_class = ManifestSearchForm
     template_name = "search_results.html"
@@ -297,11 +343,15 @@ class VolumeSearchView(ListView, FormMixin):
         ("language", TermsFacet(field="languages", size=1000, min_doc_count=1)),
         # TODO: Determine a good size for authors or consider alternate approach (i.e. not faceted)
         ("author", TermsFacet(field="authors", size=2000, min_doc_count=1)),
-        ("collection", NestedFacet("collections", TermsFacet(field="collections.label", size=2000, min_doc_count=1)))
+        (
+            "collection",
+            NestedFacet(
+                "collections",
+                TermsFacet(field="collections.label", size=2000, min_doc_count=1),
+            ),
+        ),
     ]
-    defaults = {
-        "sort": "label_alphabetical"
-    }
+    defaults = {"sort": "label_alphabetical"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -311,15 +361,18 @@ class VolumeSearchView(ListView, FormMixin):
             and hasattr(settings, "CUSTOM_METADATA")
             and isinstance(settings.CUSTOM_METADATA, dict)
         ):
-            for key in [
-                k
-                for k in settings.CUSTOM_METADATA.keys()
-                if settings.CUSTOM_METADATA[k].get("faceted", False)
-            ]:
-                self.facets.append((key, NestedFacet(
-                    "metadata",
-                    TermsFacet(field=f"metadata.{key}", size=2000, min_doc_count=1),
-                )))
+            for key in settings.CUSTOM_METADATA.keys():
+                self.facets.append(
+                    (
+                        key,
+                        NestedFacet(
+                            "metadata",
+                            TermsFacet(
+                                field=f"metadata.{key}", size=2000, min_doc_count=1
+                            ),
+                        ),
+                    )
+                )
 
     # regex to match terms in doublequotes
     re_exact_match = re.compile(r'\B(".+?")\B')
@@ -365,16 +418,18 @@ class VolumeSearchView(ListView, FormMixin):
         volumes_response = self.get_queryset().execute()
         # populate a dict with "buckets" of extant categories for each facet
         facets = {}
-        for (facet, _) in self.facets:
+        for facet, _ in self.facets:
             if hasattr(volumes_response.aggregations, facet):
                 aggs = getattr(volumes_response.aggregations, facet)
                 # use "inner" to handle NestedFacet
                 if hasattr(aggs, "inner"):
                     aggs = getattr(aggs, "inner")
-                facets.update({
-                    # get buckets array from each facet in the aggregations dict
-                    facet: getattr(aggs, "buckets"),
-                })
+                facets.update(
+                    {
+                        # get buckets array from each facet in the aggregations dict
+                        facet: getattr(aggs, "buckets"),
+                    }
+                )
         context_data["form"].set_facets(facets)
 
         # get min and max date aggregations and set on form
@@ -382,9 +437,7 @@ class VolumeSearchView(ListView, FormMixin):
             min_date = getattr(volumes_response.aggregations, "min_date")
             if hasattr(volumes_response.aggregations, "max_date"):
                 max_date = getattr(volumes_response.aggregations, "max_date")
-                if hasattr(
-                    min_date, "value_as_string"
-                ) and hasattr(
+                if hasattr(min_date, "value_as_string") and hasattr(
                     max_date, "value_as_string"
                 ):
                     context_data["form"].set_date(
@@ -410,7 +463,7 @@ class VolumeSearchView(ListView, FormMixin):
             # find exact match queries (words or phrases in double quotes)
             exact_queries = self.re_exact_match.findall(search_query)
             # remove exact queries from the original search query to search separately
-            search_query = re.sub(self.re_exact_match , "", search_query).strip()
+            search_query = re.sub(self.re_exact_match, "", search_query).strip()
 
             es_queries = []
             es_queries_exact = []
@@ -418,7 +471,9 @@ class VolumeSearchView(ListView, FormMixin):
                 # query for root level fields
                 if search_query:
                     multimatch_query = Q(
-                        "multi_match", query=search_query, fields=self.query_search_fields
+                        "multi_match",
+                        query=search_query,
+                        fields=self.query_search_fields,
                     )
                     es_queries.append(multimatch_query)
                 for exq in exact_queries:
@@ -451,7 +506,7 @@ class VolumeSearchView(ListView, FormMixin):
                             query=search_query,
                             fields=["canvas_set.result"],
                         ),
-                        inner_hits={ **inner_hits_dict, "name": "canvases" },
+                        inner_hits={**inner_hits_dict, "name": "canvases"},
                         **nested_kwargs,
                     )
                     es_queries.append(nested_query)
@@ -466,7 +521,7 @@ class VolumeSearchView(ListView, FormMixin):
                             type="phrase",
                         ),
                         # each inner_hits set needs to have a different name in elasticsearch
-                        inner_hits={ **inner_hits_dict, "name": f"canvases_{i}" },
+                        inner_hits={**inner_hits_dict, "name": f"canvases_{i}"},
                         **nested_kwargs,
                     )
                     if scope == "all":
@@ -484,9 +539,7 @@ class VolumeSearchView(ListView, FormMixin):
             fragment_size=200,
             number_of_fragments=10,
             max_analyzed_offset=999999,
-        ).highlight(
-            "label", "author", "summary"
-        )
+        ).highlight("label", "author", "summary")
 
         # filter on authors
         author_filter = form_data.get("author") or ""
@@ -501,9 +554,11 @@ class VolumeSearchView(ListView, FormMixin):
         # filter on collections
         collection_filter = form_data.get("collection") or ""
         if collection_filter:
-            volumes = volumes.filter("nested", path="collections", query=Q(
-                "terms", **{"collections.label": collection_filter}
-            ))
+            volumes = volumes.filter(
+                "nested",
+                path="collections",
+                query=Q("terms", **{"collections.label": collection_filter}),
+            )
 
         # filter on date published
         min_date_filter = form_data.get("start_date") or ""
@@ -525,12 +580,14 @@ class VolumeSearchView(ListView, FormMixin):
                 field_name = key.casefold().replace(" ", "_")
                 meta_filter = form_data.get(field_name) or ""
                 if meta_filter:
-                    volumes = volumes.filter("nested", path="metadata", query=Q(
-                        "terms", **{f"metadata.{key}": meta_filter}
-                    ))
+                    volumes = volumes.filter(
+                        "nested",
+                        path="metadata",
+                        query=Q("terms", **{f"metadata.{key}": meta_filter}),
+                    )
 
         # create aggregation buckets for facet fields
-        for (facet_name, facet) in self.facets:
+        for facet_name, facet in self.facets:
             volumes.aggs.bucket(facet_name, facet.get_aggregation())
 
         # get min and max date published values
@@ -546,25 +603,29 @@ class VolumeSearchView(ListView, FormMixin):
 
 class ManifestsSitemap(Sitemap):
     """Django Sitemap for Manafests"""
+
     limit = 5
+
     # priority unknown
     def items(self):
         return Manifest.objects.all()
 
     def location(self, item):
-        return reverse('volumeall', kwargs={'volume': item.pid})
+        return reverse("volumeall", kwargs={"volume": item.pid})
 
     def lastmod(self, item):
         return item.updated_at
 
+
 class CollectionsSitemap(Sitemap):
     """Django Sitemap for Collections"""
+
     # priority unknown
     def items(self):
         return Collection.objects.all()
 
     def location(self, item):
-        return reverse('collection', kwargs={'collection': item.pid})
+        return reverse("collection", kwargs={"collection": item.pid})
 
     def lastmod(self, item):
         return item.updated_at

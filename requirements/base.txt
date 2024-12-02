@@ -97,7 +97,7 @@ httpretty~=1.1.4 # https://pypi.org/project/httpretty/
 cssutils~=2.9.0 # https://pypi.org/project/cssutils/
 moto==5.0.12 # https://github.com/spulec/moto
 factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
-faker~=20.1.0
+faker~=33.1.0
 
 # Code quality
 # ------------------------------------------------------------------------------

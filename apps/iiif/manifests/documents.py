@@ -63,7 +63,7 @@ class ManifestDocument(Document):
         """Settings for automatically pulling data from Django"""
 
         model = Manifest
-        ignore_signals = environ["DJANGO_ENV"] != "test"
+        ignore_signals = True
 
         # fields to map dynamically in Elasticsearch
         fields = [
@@ -122,7 +122,9 @@ class ManifestDocument(Document):
         ):
             # should be a dict like {meta_key: {"multi": bool, "separator": str}}
             for key, opts in filter(
-                lambda item: item[1].get("faceted", False), # filter to only faceted fields
+                lambda item: item[1].get(
+                    "faceted", False
+                ),  # filter to only faceted fields
                 settings.CUSTOM_METADATA.items(),
             ):
                 val = None

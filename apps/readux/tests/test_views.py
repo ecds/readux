@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from apps.readux import views
 from apps.iiif.manifests.models import Language, Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory
+from apps.iiif.manifests.documents import ManifestDocument
 from apps.iiif.kollections.tests.factories import CollectionFactory
 from apps.iiif.kollections.models import Collection
 from apps.iiif.canvases.models import Canvas
@@ -140,6 +141,12 @@ class TestVolumeSearchView(ESTestCase, TestCase):
 
     def test_get_queryset_filters(self):
         """Should filter according to chosen filters"""
+
+        # Reindex each volume
+        index = ManifestDocument()
+        for manifest in Manifest.objects.all():
+            index.update(manifest, True, "index")
+
         volume_search_view = views.VolumeSearchView()
         volume_search_view.request = Mock()
 

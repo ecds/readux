@@ -26,7 +26,7 @@
   {% if socialaccount_providers %}
     <p class="uk-margin-remove-top">{% blocktrans with site.name as site_name %}Please sign in with one
     of your existing third party accounts.{% endblocktrans %}</p>
-    
+
     <div class="socialaccount_ballot">
       <ul class="socialaccount_providers">
         {% include "socialaccount/snippets/provider_list.html" with process="login" %}

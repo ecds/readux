@@ -50,12 +50,12 @@
           </li>
           <!-- Sign out with Icon -->
           <li>{# URL provided by django-allauth/account/urls.py #}
-            <a href="{% url 'account_logout' %}" class="menu-item" uk-icon="icon: sign-out;" uk-tooltip="Sign out"></a>
+            <a href="/accounts/login" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Login/Sign up"><span class="sr-only">Login/Sign Up</span></a>
           </li>
         {% else %}
           <!-- Login/Sign up with Icon -->
           <li>{# URL provided by django-allauth/account/urls.py #}
-              <a href="#" class="menu-item" uk-icon="icon: sign-in;" uk-toggle="target: #login-modal" uk-tooltip="Login/Sign up"></a>
+            <a href="/accounts/logout" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Login/Sign up"><span class="sr-only">Login/Sign Up</span></a>
           </li>
         {% endif %}
         <!-- Search with Icon -->
@@ -65,5 +65,3 @@
       </ul>
     </div>
 </nav>
-
-{% include '_home/_login_modal.html' %}

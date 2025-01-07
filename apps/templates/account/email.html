@@ -12,29 +12,10 @@
 
 {% block head_title %}{% trans "Account" %}{% endblock %}
 
+{% block breadcrumb %}<li>Update Email</li>{% endblock %}
+
 {% block inner %}
 
-
-<div class="rx-head-container uk-margin-remove-bottom">
-  <div class="rx-title-container">
-    <ul class="rx-breadcrumb uk-text-truncate">
-      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-      <li class="rx-breadcrumb-item"><a href="{% url 'users:detail' request.user.username  %}" alt="Home">My Account</a>
-      </li>
-      <li class="rx-breadcrumb-item">E-mail Update</li>
-    </ul>
-    <div class="rx-title">
-      {% if user.name %}
-      Hello, {{ user.name }}!
-      {% else %}
-      Hello!
-      {% endif %}
-    </div>
-    <!-- <div class="rx-title-tagline">
-      {{ user.username }}
-    </div> -->
-  </div>
-</div>
 
 <div class="uk-margin-bottom">
   <p class="uk-margin-remove-top">You may update your E-mail preferences below.</p>

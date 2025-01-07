@@ -101,6 +101,7 @@
         It seems it may be added elsewhere; vue? needs investigation.
       {% endcomment %}
       {% comment %} {% include "_home/_nav.html" %} {% endcomment %}
+      {% block nav %}{% endblock %}
 
       {# Content container #}
       <main id='main'>
@@ -129,7 +130,7 @@
         {% include '_home/_footer.html' %}
       {% endif %}
     </div>
-  
+
     <!-- Matomo Image Tracker-->
     <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" hidden alt="" />
     <!-- End Matomo -->

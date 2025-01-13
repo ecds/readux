@@ -8,11 +8,13 @@ from django.test import TestCase
 from django_elasticsearch_dsl.test import ESTestCase
 from apps.iiif.kollections.models import Collection
 from apps.iiif.manifests.documents import ManifestDocument
-from apps.iiif.manifests.models import Language
+from apps.iiif.manifests.models import Language, Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory
+
 
 class ManifestDocumentTest(ESTestCase, TestCase):
     """Tests for IIIF manifest indexing"""
+
     def setUp(self):
         super().setUp()
         self.doc = ManifestDocument()
@@ -33,12 +35,16 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         # test semicolon separation
         manifest.author = "test author;example author;ben"
         assert self.doc.prepare_authors(instance=manifest) == [
-            "test author", "example author", "ben"
+            "test author",
+            "example author",
+            "ben",
         ]
         # test whitespace stripping
         manifest.author = "test author; example author; ben"
         assert self.doc.prepare_authors(instance=manifest) == [
-            "test author", "example author", "ben"
+            "test author",
+            "example author",
+            "ben",
         ]
 
     def test_prepare_has_pdf(self):
@@ -58,7 +64,7 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         manifest = ManifestFactory.create(label="éclair")
         assert self.doc.prepare_label_alphabetical(instance=manifest) == "eclair"
         # should only return the first 64 characters
-        random_100_chars = ''.join(random.choices(string.ascii_letters, k=100))
+        random_100_chars = "".join(random.choices(string.ascii_letters, k=100))
         manifest.label = random_100_chars
         label_alphabetical = self.doc.prepare_label_alphabetical(instance=manifest)
         assert label_alphabetical == random_100_chars[0:64]
@@ -97,14 +103,43 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         manifest.collections.add(collection)
         # get prefetched objects cache for elastic queryset
         qs_manifest = self.doc.get_queryset().first()
-        prefetched = qs_manifest._prefetched_objects_cache # pylint: disable=protected-access
+        prefetched = (
+            qs_manifest._prefetched_objects_cache
+        )  # pylint: disable=protected-access
         # should be a dict of prefetched relations
         assert isinstance(prefetched, dict)
         # should have one collection, which is the above collection
-        assert prefetched['collections'].count() == 1
-        assert prefetched['collections'].first().pk == collection.pk
+        assert prefetched["collections"].count() == 1
+        assert prefetched["collections"].first().pk == collection.pk
 
-    # Removed test because we don't want to trigger a re-index when a collection is saved.
+    def test_exclude_searchable_false(self):
+        """Do not index objects when searchable is False."""
+        searchable_manifest = ManifestFactory.create()
+        excluded_manifest = ManifestFactory.create(searchable=False)
+        self.doc.update(searchable_manifest)
+        self.doc.update(excluded_manifest)
+        response = self.doc.search()
+        results = response.to_queryset()
+        assert searchable_manifest.pid in [m.pid for m in results]
+        assert excluded_manifest.pid not in [m.pid for m in results]
+
+    def test_remove_manifest_from_index_searchable_false(self):
+        """A manifest should be removed when searchable changes to false"""
+        searchable_manifest = ManifestFactory.create()
+        manifest = ManifestFactory.create()
+        self.doc.update(manifest)
+        self.doc.update(searchable_manifest)
+        response = self.doc.search()
+        results = response.to_queryset()
+        assert manifest.pid in [m.pid for m in results]
+        manifest.searchable = False
+        manifest.save()
+        manifest.refresh_from_db()
+        response = self.doc.search()
+        results = response.to_queryset()
+        assert manifest.pid not in [m.pid for m in results]
+
+    # Removed test because we don't want to trigger a reindex when a collection is saved.
     # def test_get_instances_from_related(self):
     #     """Should get manifests from related collections"""
     #     manifest = ManifestFactory.create()

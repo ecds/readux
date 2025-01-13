@@ -1,6 +1,5 @@
 """Elasticsearch indexing rules for IIIF manifests"""
 
-from os import environ
 from html import unescape
 
 from django.conf import settings
@@ -87,6 +86,19 @@ class ManifestDocument(Document):
                 }
             ]
         )
+
+    def should_index_object(self, obj):
+        """
+        Overwriting parent method.
+        Only index volumes marked 'searchable'
+        """
+        return obj.searchable
+
+    # def get_queryset(self):
+    #     """
+    #     Overwrite parent method to only include searchable volumes.
+    #     """
+    #     return self.django.model._default_manager.filter(searchable=True)
 
     def prepare_authors(self, instance):
         """convert authors string into list"""

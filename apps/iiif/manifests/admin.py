@@ -2,15 +2,12 @@
 
 from django.contrib import admin
 from django.http import HttpResponseRedirect
-from django.http.request import HttpRequest
-from django.urls import reverse
 from django.urls.conf import path
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget, ForeignKeyWidget
 from django_summernote.admin import SummernoteModelAdmin
-from .models import Manifest, Note, ImageServer, RelatedLink
-from .documents import ManifestDocument
+from .models import Manifest, Note, ImageServer, RelatedLink, Language
 from .forms import ManifestAdminForm
 from .views import AddToCollectionsView, MetadataImportView
 from ..kollections.models import Collection
@@ -159,6 +156,22 @@ class ImageServerAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ("server_base",)
 
 
+class LanguageResource(resources.ModelResource):
+    """Django admin Language resource."""
+
+    class Meta:
+        model = Language
+        fields = ("code", "name")
+
+
+class LanguageAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    """Django admin settings for Language."""
+
+    resource_class = LanguageResource
+    list_display = ("name", "code")
+
+
 admin.site.register(Manifest, ManifestAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(ImageServer, ImageServerAdmin)
+admin.site.register(Language, LanguageAdmin)

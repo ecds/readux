@@ -245,6 +245,7 @@ TEMPLATES = [
                 "apps.templates.context_processors.has_ga_tracking_id",
                 "apps.templates.context_processors.ga_tracking_id",
                 "apps.readux.context_processors.current_version",
+                "apps.readux.context_processors.footer_template",
             ],
         },
     },
@@ -340,6 +341,6 @@ SOCIALACCOUNT_STORE_TOKENS = True
 # django-summernote rich text editor settings. see https://github.com/hackerwins/django-summernote
 # NOTE: consider replacing after django 4 upgrade
 SUMMERNOTE_CONFIG = {
-    'iframe': False,
+    "iframe": False,
 }
 SUMMERNOTE_THEME = "lite"

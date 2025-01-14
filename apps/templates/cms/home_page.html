@@ -4,6 +4,13 @@
 {% block extra_css %}
 {% endblock %}
 
+{% block nav %}
+<div class="home-nav">
+
+  {% include '_home/_nav.html' %}
+</div>
+{% endblock nav %}
+
 {% block content %}
 
 {% if request.path == '/' %}
@@ -13,7 +20,6 @@
   {% endif %} >
   <div class="overlay"></div>
   <div class="content">
-      {% include '_home/_nav.html' %}
       {% include '_home/_hero.html' %}
       {% if page.featured_story_title and page.featured_story_url %}
         {% include '_home/_featured_story.html' %}

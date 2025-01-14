@@ -1,0 +1,13 @@
+{% load static menu_tags %}
+<div class="footer-content uk-flex uk-flex-middle uk-flex-between">
+  {% flat_menu 'footer-menu' template="menus/footer_menu.html" %}
+  <div class="footer-logo">
+      <a href="https://ecds.emory.edu">
+          <img src="{% static 'images/ecds-inverse.svg' %}" alt="Logo" style="height: 10vh;">
+
+      </a>
+  </div>
+</div>
+<div class="footer-bottom uk-margin-top">
+  Engage with digitized print materials on an open source software platform and share new thinking.
+</div>

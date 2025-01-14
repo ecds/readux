@@ -5,6 +5,7 @@
     height: 50vh;
     color: white;
 }
+
 .overlay {
     background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
     height: 50vh;
@@ -16,17 +17,24 @@
     box-sizing: border-box;
     min-height: 0;
 }
+
 .overlay h1 {
-    font-size: 2rem; /* Reduced title size */
+    font-size: 2rem;
+    /* Reduced title size */
     margin-bottom: 15px;
 }
+
 .overlay p {
-    font-size: 1rem; /* Adjusted font size */
-    line-height: 1.5; /* Reduced line-height */
+    font-size: 1rem;
+    /* Adjusted font size */
+    line-height: 1.5;
+    /* Reduced line-height */
 }
+
 .description-button {
     margin-top: 20px;
-    background-color: #E60000; /* Removed gradient background */
+    background-color: #E60000;
+    /* Removed gradient background */
     border: none;
     color: white;
     font-weight: bold;
@@ -53,8 +61,10 @@
     width: 100%;
     color: white;
 }
+
 .modal-overlay {
-    background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+    background: rgba(0, 0, 0, 0.6);
+    /* Dark overlay */
     height: 100%;
     width: 100%;
     position: absolute;
@@ -66,13 +76,18 @@
     align-items: center;
     justify-content: center;
 }
+
 .modal-overlay h2,
 .modal-overlay p {
     position: relative;
     z-index: 1;
 }
+
 .uk-modal-close-full {
-    color: white; /* Set the close button color to white */
-    background: none; /* Remove the background */
-    border: none; /* Remove any borders */
+    color: white;
+    /* Set the close button color to white */
+    background: none;
+    /* Remove the background */
+    border: none;
+    /* Remove any borders */
 }

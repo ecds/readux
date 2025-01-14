@@ -5,16 +5,21 @@
 {% load has_user_annotations %}
 {% load user_annotation_count %}
 
+{% block extra_css %}
+<link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet">
+{% endblock extra_css %}
 
 {% block body_class %}template-homepage{% endblock %}
+{% block nav %}
+{% include '_home/_nav.html' %}
+{% endblock nav %}
+
 
 {% block content %}
 
-<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
-
-{% include '_home/_nav.html' %}
-
-<div class="uk-container">
+<div class="uk-container content-page">
 
   <!-- Breadcrumb -->
   <ul class="breadcrumb uk-margin-small-top">

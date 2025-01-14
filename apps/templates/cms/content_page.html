@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags sass_tags readux_extras menu_tags %}
 
-{% block body_class %}template-homepage{% endblock %}
-
-{% block content %}
+{% block extra_css %}
 <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet">
+{% endblock extra_css %}
 
+{% block nav %}
 {% include '_home/_nav.html' %}
+{% endblock nav %}
 
-<div class="uk-container">
+{% block content %}
+
+<div class="uk-container content-page">
   <!-- Breadcrumb -->
   <ul class="breadcrumb uk-margin-small-top">
     <li><a href="/">Home</a></li>
@@ -43,7 +46,7 @@
   <p class="page-text-lead">{{ page.tagline }}</p>
   <p class="page-text-lead uk-margin-small-top">{{ page.paragraph }}</p>
   <!-- End -->
- 
+
   <div class="uk-grid-collapse uk-child-width-expand" uk-grid>
     <!-- Left Column: Navigation -->
     {% if page.body|get_headers|length %}
@@ -81,12 +84,12 @@
     document.addEventListener('DOMContentLoaded', function () {
         const navLinks = document.querySelectorAll('.navigation a');
         const sections = document.querySelectorAll('.section');
-    
+
         // Function to remove the 'active' class from all navigation links
         function removeActiveClass() {
             navLinks.forEach(link => link.classList.remove('active'));
         }
-    
+
         // Function to add 'active' class to the corresponding navigation link
         function setActiveLink(sectionId) {
             removeActiveClass();
@@ -95,22 +98,22 @@
                 activeLink.classList.add('active');
             }
         }
-    
+
         // Smooth scroll to the corresponding section when a navigation link is clicked
         navLinks.forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href').substring(1);
                 const targetSection = document.getElementById(targetId);
-    
+
                 // Scroll to the target section
                 targetSection.scrollIntoView({ behavior: 'smooth' });
-    
+
                 // Set the active link manually since we're not scrolling naturally
                 setActiveLink(targetId);
             });
         });
-    
+
         // Add scroll event listener to highlight the current section in view
         window.addEventListener('scroll', function () {
             let currentSection = '';
@@ -121,13 +124,13 @@
                     currentSection = section.getAttribute('id');
                 }
             });
-    
+
             if (currentSection) {
                 setActiveLink(currentSection);
             }
         });
     });
     </script>
-    
+
 {% endblock %}
 

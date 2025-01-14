@@ -10,16 +10,17 @@
     display: none;
   }
 </style>
+<link type="text/css" href="{% sass_src 'css/readux2/reader.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
 {% endblock extra_css %}
+
+{% block nav %}
+{% include '_page/_navbar.html' %}
+{% endblock nav %}
 
 {% block content %}
 {{ json_data|json_script:"context" }}
 {% block inner %}
-
-<!-- reader's navbar -->
-{% include '_page/_navbar.html' %}
-<!-- reader's navbar -->
 
 <!-- uiAction search -->
 <div id="modal-search" class="reader-modal" uk-modal>

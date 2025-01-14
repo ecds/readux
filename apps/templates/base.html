@@ -96,11 +96,6 @@
 
     {# Primary container; host for Vue application #}
     <div id="v-readux">
-      {% comment %}
-        TODO: Remove existing nav and replace with the following partial.
-        It seems it may be added elsewhere; vue? needs investigation.
-      {% endcomment %}
-      {% comment %} {% include "_home/_nav.html" %} {% endcomment %}
       {% block nav %}{% endblock %}
 
       {# Content container #}

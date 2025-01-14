@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags sass_tags static %}
 
-{% block body_class %}template-homepage{% endblock %}
-
-{% block content %}
+{% block extra_css %}
 <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
 <link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet">
+{% endblock extra_css %}
 
+{% block body_class %}template-homepage{% endblock %}
+
+{% block nav %}
 {% include '_home/_nav.html' %}
+{% endblock nav %}
 
-<div class="uk-container">
+{% block content %}
+
+<div class="uk-container content-page">
   <!-- Breadcrumb -->
   <ul class="breadcrumb uk-margin-small-top">
     <li><a href="/">Home</a></li>

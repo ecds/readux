@@ -1,41 +1,26 @@
 {% extends "account/base.html" %}
+{% load allauth %}
 
 {% load i18n %}
 
-{% block head_title %}{% trans "Sign Out" %}{% endblock %}
-
 {% block inner %}
-<div class="rx-head-container uk-margin-remove-bottom">
-  <div class="rx-title-container">
-    <ul class="rx-breadcrumb uk-text-truncate">
-      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-      <li class="rx-breadcrumb-item">My Account</li>
-    </ul>
-    <div class="rx-title">
-      {% trans "Sign Out" %}
-    </div>
-    <div class="rx-title-tagline">
-      {{ object.username }}
-    </div>
-  </div>
-</div>
-
-<div class="">
-  <p class="uk-margin-remove-top">{% trans 'Are you sure you want to sign out?' %}</p>
-  <form method="post" action="{% url 'account_logout' %}" id="rx-sign-out-form">
-    {% csrf_token %}
-    {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-    {% endif %}
-    <a class="btn btn-primary" href="#" role="button" onclick="rxFormSubmit('rx-sign-out-form');">
-      <div class="rx-btn rx-btn-extension">
-        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
-        {% trans 'Sign Out' %}
-      </div>
-    </a>
-  </form>
-
-  
-</div>
-{% endblock %}
+    {% element h1 %}
+        Sign Out
+    {% endelement %}
+    {% element p %}
+        {% trans 'Are you sure you want to sign out?' %}
+    {% endelement %}
+    {% url 'account_logout' as action_url %}
+    {% element form method="post" action=action_url no_visible_fields=True %}
+        {% slot body %}
+            {% csrf_token %}
+            {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+            {% element button type="submit" %}
+                {% trans 'Sign Out' %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+{% endblock inner %}
 

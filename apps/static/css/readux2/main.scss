@@ -43,6 +43,10 @@ main {
     /* Adjust the opacity as needed */
 }
 
+.uk-alert {
+    z-index: 99;
+}
+
 .content {
     position: relative;
     z-index: 2;

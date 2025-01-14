@@ -44,18 +44,14 @@
           <li>{# URL provided by django-allauth/account/urls.py #}
             <a href="{% url 'users:update' %}" class="menu-item" uk-icon="icon: user;" uk-tooltip="My Account"></a>
           </li>
-          <!-- Admin with Icon -->
-          <li>{# URL provided by django-allauth/account/urls.py #}
-            <a href="/admin/" class="menu-item" uk-icon="icon: settings;" uk-tooltip="Django Admin"></a>
-          </li>
           <!-- Sign out with Icon -->
           <li>{# URL provided by django-allauth/account/urls.py #}
-            <a href="/accounts/logout" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Sign Out"><span class="sr-only">Login/Sign Up</span></a>
+            {% include "snippets/_signout_button.html"%}
           </li>
         {% else %}
           <!-- Login/Sign up with Icon -->
           <li>{# URL provided by django-allauth/account/urls.py #}
-            <a href="/accounts/login" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Login/Sign up"><span class="sr-only">Sign Out</span></a>
+                      {% include "snippets/_show_sign_modal.html" %}
           </li>
         {% endif %}
         <!-- Search with Icon -->
@@ -65,3 +61,4 @@
       </ul>
     </div>
 </nav>
+{% include '_home/_login_modal.html' %}

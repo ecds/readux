@@ -284,7 +284,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "none"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -297,7 +297,6 @@ SOCIALACCOUNT_AUTO_SIGNUP = False
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 
 SOCIALACCOUNT_PROVIDERS = {"facebook": {"SCOPE": ["email", "public_profile"]}}
-
 # Translations
 # ------------------------------------------------------------------------------
 gettext = lambda s: s

@@ -1,38 +1,28 @@
-{% extends "account/base.html" %}
+{% extends "allauth/layouts/base.html" %}
 {% load static %}
 {% load socialaccount %}
 
-{% block title %}User: {{ object.username }}{% endblock %}
+{% block title %}
+  User: {{ object.username }}
+{% endblock title %}
 
-{% block inner %}
-<div class="">
+{% block content %}
   {% if request.user is not None %}
-  {% if "github" not in request.user.socialaccount_list %}
-    {% include "../snippets/github_authorize.html" %}
+    {% if "github" not in request.user.socialaccount_list %}
+      {% include "../snippets/github_authorize.html" %}
+    {% endif %}
+
+    <p class="uk-margin-remove-top">You may update your personal information or E-mail below.</p>
+    <ul class="uk-list uk-list-collapse">
+      <li>
+        <a class="uk-block" href="{% url 'users:update' %}" role="button">My Profile</a>
+      </li>
+      <li>
+        <a href="{% url 'account_email' %}">My Email</a>
+      </li>
+      <li>
+        <a href="{% url 'socialaccount_connections' %}">Mange Account Connections</a>
+      </li>
+    </ul>
   {% endif %}
-
-  <p class="uk-margin-remove-top">You may update your personal information or E-mail below.</p>
-  <ul class="uk-list uk-list-collapse">
-    <li>
-      <a class="uk-block" href="{% url 'users:update' %}" role="button">
-        My Profile
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'account_email' %}" role="button">
-        My Email
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'socialaccount_connections' %}" role="button">
-        Mange Account Connections
-      </a>
-    </li>
-  </ul>
-  <!-- Your Stuff: Custom user template urls -->
-   {% endif %}
-</div>
-<!-- End Action buttons -->
-
-
-{% endblock inner %}
+{% endblock content %}

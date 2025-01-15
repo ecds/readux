@@ -1,2 +1,0 @@
-{% load i18n %}
-{% blocktrans %}You have signed out of Readux.  You may wish to log out of your social media account separately now.{% endblocktrans %}

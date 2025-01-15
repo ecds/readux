@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags sass_tags %}
+
+{% load static %}
+{% load has_user_annotations %}
+{% load user_annotation_count %}
+
+{% block extra_css %}
+  <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet" />
+  <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet" />
+  <link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet" />
+{% endblock extra_css %}
+
+{% block nav %}
+  {% include "_home/_nav.html" %}
+{% endblock nav %}
+{% block wrapper %}
+  <div class="uk-container content-page">
+
+    <!-- Breadcrumb -->
+    {% block breadcrumb %}
+      <nav aria-label="Breadcrumb">
+        <ul class="breadcrumb uk-margin-small-top">
+          <li>
+            <a href={% url "wagtail_serve" "" %}>Home</a>
+          </li>
+          <li>{{ page.page_title|default:page.title }}</li>
+        </ul>
+      </nav>
+    {% endblock breadcrumb %}
+    <!-- End -->
+
+    <!-- Page title & text lead -->
+    <h1 class="page-title uk-margin-top uk-margin-remove-bottom">
+      {{ page.page_title|default:page.title }}
+    </h1>
+    <p class="page-text-lead">{{ page.tagline }}</p>
+    <p class="page-text-lead uk-margin-small-top">{{ page.paragraph }}</p>
+    {% block content %}
+    {% endblock content %}
+  </div>
+{% endblock wrapper %}
+
+{% block extra_javascript %}
+  <script>
+      // JavaScript to make list view table rows clickable
+      document.addEventListener('DOMContentLoaded', function() {
+          var rows = document.querySelectorAll('.clickable-row');
+          rows.forEach(function(row) {
+              row.addEventListener('click', function() {
+                  window.location.href = row.getAttribute('data-href');
+              });
+          });
+      });
+  </script>
+{% endblock extra_javascript %}

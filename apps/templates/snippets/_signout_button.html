@@ -1,4 +1,11 @@
 <form class="uk-navbar-toggle" action="/accounts/logout/" method="POST">
   {% csrf_token %}
-  <button type="submit" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Sign Out"><span class="sr-only">Login/Sign Up</span></>
+  <button
+    type="submit"
+    class="menu-item"
+    uk-icon="icon: sign-in;"
+    uk-tooltip="Sign Out"
+  >
+    <span class="sr-only">Login/Sign Up</span>
+  </button>
 </form>

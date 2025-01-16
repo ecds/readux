@@ -50,7 +50,23 @@ def footer_template(_):
     Returns:
         dict: Dict with key 'FOOTER_CONTENT_TEMPLATE'. Value is str.
     """
-    try:
-        return {"FOOTER_CONTENT_TEMPLATE": settings.FOOTER_CONTENT_TEMPLATE}
-    except AttributeError:
-        return {"FOOTER_CONTENT_TEMPLATE": "_home/_footer_content.html"}
+    return {
+        "FOOTER_CONTENT_TEMPLATE": getattr(
+            settings, "FOOTER_CONTENT_TEMPLATE", "_home/_footer_content.html"
+        )
+    }
+
+
+def site_meta(_):
+    """Use configured values for site meta tags.
+
+    Args:
+        _ (WSGIRequest): Current request. Not used.
+
+    Returns:
+        dict: Dict with keys 'META_KEYWORDS' and 'META_DESCRIPTION' for use in meta tags.
+    """
+    return {
+        "META_KEYWORDS": getattr(settings, "META_KEYWORDS", ""),
+        "META_DESCRIPTION": getattr(settings, "META_DESCRIPTION", ""),
+    }

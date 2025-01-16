@@ -246,6 +246,7 @@ TEMPLATES = [
                 "apps.templates.context_processors.ga_tracking_id",
                 "apps.readux.context_processors.current_version",
                 "apps.readux.context_processors.footer_template",
+                "apps.readux.context_processors.site_meta",
             ],
         },
     },

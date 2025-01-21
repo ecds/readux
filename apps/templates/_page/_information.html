@@ -1,3 +1,5 @@
+{% load split_to_bullets %}
+
 <div class="rx-info-content rx-scrollable-area">
   <!--
   <div class="rx-info-content-label uk-flex-between rx-flex uk-margin-small-bottom">
@@ -108,12 +110,18 @@
       {# Advanced fields: custom metadata configured via django settings #}
       {% if custom_metadata %}
         <li>
-          <a class="uk-accordion-title rx-btn" href>Advanced</a>
+          <a class="uk-accordion-title uk-label rx-accordion-head" href>Advanced</a>
           <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2">
             {% for key, value in custom_metadata.items %}
               <div class="rx-info-content">
                 <div class="rx-info-content-label">{{ key }}</div>
-                <div class="rx-info-content-value">{{ value }}</div>
+                <div class="rx-info-content-value">
+                  <ul class="uk-list uk-list-circle">
+                  {% for item in value|split_to_bullets %}
+                    <li class="uk-margin-remove-top">{{ item }}</li>
+                  {% endfor %}
+                  </ul>
+                </div>
               </div>
             {% endfor %}
           </div>

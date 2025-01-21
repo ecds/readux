@@ -42,10 +42,24 @@
   padding-bottom: 40px;
 }
 .static-content-title {
-  font-size: 1.5rem;
   font-weight: bold;
+  margin: unset;
 }
-.section p {
-  margin: 0.5rem 0;
+.content p, .content ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
   color: black;
+}
+.content ol, .content li {
+  margin-bottom: 0.25rem;
+}
+.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+}
+.content ul:first-of-type, .content li:first-of-type, .content p:first-of-type {
+  margin-top: 0;
+}
+.content li:last-of-type {
+  margin-bottom: 0;
 }

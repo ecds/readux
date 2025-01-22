@@ -6,7 +6,7 @@ from django.conf import settings
 from . import __version__
 
 
-def current_version(_):
+def current_version(_=None):
     """Display current version. On non-production instances, display Git information.
 
     Example of return:

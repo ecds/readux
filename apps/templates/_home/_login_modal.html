@@ -1,58 +1,41 @@
+{% load socialaccount %}
+{% get_providers as socialaccount_providers %}
 <!-- Login Modal -->
 <div id="login-modal" uk-modal>
   <div class="uk-modal-dialog custom-modal">
-      <button class="uk-modal-close-default uk-close-large uk-padding-small" type="button" uk-close></button>
-      <!-- Modal Header -->
-      <div class="modal-header">
-          <h2 class="uk-text-x-large uk-text-bold">Log in to Readux</h2>
+    <button class="uk-modal-close-default uk-close-large uk-padding-small" type="button" uk-close>
+    </button>
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2 class="uk-text-x-large uk-text-bold">Log in to Readux</h2>
+    </div>
+    <!-- Modal Content -->
+    <div class="sso-text color-black uk-text-medium">Login via one of the following services:</div>
+    <!-- SSO Buttons -->
+    <div class="sso-buttons">
+      <div class="uk-grid uk-child-width-expand@s " uk-grid>
+        {% for provider in socialaccount_providers %}
+          {% if provider.id not in user.socialaccount_list or user.is_anonymous %}
+            <form action="{% provider_login_url provider.id next=request.path process="login" %}" method="post">
+              {% csrf_token %}
+              <button class="uk-button uk-button-default sso-button {{ provider.id }}" type="submit">
+                <span uk-icon="{{ provider.id }}" class="uk-margin-small-right"></span>{{ provider.name }}
+              </button>
+            </form>
+          {% elif provider.id not in user.socialaccount_list and user.is_authenticated %}
+            <form action="{% provider_login_url provider.id next=request.path process="connect" %}" method="post">
+              {% csrf_token %}
+              <button class="uk-button uk-button-default sso-button {{ provider.id }}" type="submit">
+                <span uk-icon="{{ provider.id }}" class="uk-margin-small-right"></span>{{ provider.name }}
+              </button>
+            </form>
+          {% endif %}
+        {% endfor %}
       </div>
-
-      <!-- Modal Content -->
-      <div class="modal-content uk-padding">
-          <!-- Username and Password -->
-          <form>
-              <div class="uk-margin uk-input-icon">
-                  <span uk-icon="icon: user"></span>
-                  <input class="uk-input" type="text" placeholder="Username">
-              </div>
-              <div class="uk-margin uk-input-icon">
-                  <span uk-icon="icon: lock"></span>
-                  <input class="uk-input" type="password" placeholder="Password">
-              </div>
-              <!-- Action Buttons -->
-              <div class="action-buttons uk-margin-bottom">
-                  <button type="button" class="uk-button uk-button-default" id="reset-btn">Reset Form</button>
-                  <button type="submit" class="uk-button sign-in-btn">Sign In</button>
-              </div>
-              <div class="uk-flex uk-flex-between">
-                  <a href="{% url 'account_reset_password' %}" class="uk-link text-anchor-blue">Forgot Password?</a>
-                  <a href="{% url 'account_signup' %}" class="uk-link text-anchor-blue">New User?</a>
-              </div>
-          </form>
-
-          <!-- Divider -->
-          <hr class="uk-divider-icon">
-
-          <!-- SSO Text -->
-          <div class="sso-text color-black uk-text-medium">Login via one of the following services:</div>
-
-          <!-- SSO Buttons -->
-          <div class="sso-buttons">
-              <div class="uk-grid uk-child-width-expand@s uk-margin-remove" uk-grid>
-                  <button class="uk-button uk-button-default sso-button uk-margin-remove-top">
-                      <span uk-icon="google" class="uk-margin-small-right"></span>Google
-                  </button>
-                  <button class="uk-button uk-button-default sso-button uk-margin-remove-top">
-                      <span uk-icon="github" class="uk-margin-small-right"></span>GitHub
-                  </button>
-                  <button class="uk-button uk-button-default sso-button uk-margin-remove-top">
-                      <span uk-icon="user" class="uk-margin-small-right"></span>X
-                  </button>
-              </div>
-          </div>
-
-          <!-- Help Link -->
-          <div class="uk-text-center uk-margin-top">Need help? <a href="#" class="uk-link text-anchor-blue"> Contact us</a></div>
-      </div>
+    </div>
+    <!-- Help Link -->
+    <div class="uk-text-center uk-margin-top">
+      Need help? <a href="#" class="uk-link text-anchor-blue">Contact us</a>
+    </div>
   </div>
 </div>

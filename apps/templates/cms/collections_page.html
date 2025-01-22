@@ -1,84 +1,53 @@
-{% extends "base.html" %}
-{% load wagtailcore_tags sass_tags static %}
-
-{% block body_class %}template-homepage{% endblock %}
+{% extends "cms/base.html" %}
+{% load static %}
 
 {% block content %}
-<link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
-<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
-<link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet">
-
-{% include '_home/_nav.html' %}
-
-<div class="uk-container">
-  <!-- Breadcrumb -->
-  <ul class="breadcrumb uk-margin-small-top">
-    <li><a href="/">Home</a></li>
-    <li>{{ page.page_title|default:page.title }}</li>
-  </ul>
-  <!-- End -->
-
-  <!-- Page title & text lead -->
-  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">{{ page.page_title|default:page.title }}</h1>
-  <p class="page-text-lead">{{ page.tagline }}</p>
-  <p class="page-text-lead uk-margin-small-top">{{ page.paragraph }}</p>
-  <!-- End -->
-
   {% include "snippets/_collections_page_information.html" %}
 
   {% if page.layout == 'Grid' %}
-  <!-- Collection Grid -->
-  <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
-    {% for collection in collections %}
+    <!-- Collection Grid -->
+    <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
+      {% for collection in collections %}
         <!-- Collection Item -->
         <a class="grid-item" href="{% url 'collection' collection.pid %}">
-            <img src="/media/{{collection.thumbnail}}" alt="Thumbnail image for collection {{collection.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
-            <h2>{{ collection.label|default:"[no title]"|truncatechars:200 }}</h2>
-            {% if collection.manifests.all %}<div class="color-black">{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</div>{% endif %}
-            {{collection.summary|truncatewords_html:50|safe}}
+          <img src="/media/{{ collection.thumbnail }}"
+               alt="Thumbnail image for collection {{ collection.label }}"
+               onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';" />
+          <h2>{{ collection.label|default:"[no title]"|truncatechars:200 }}</h2>
+          {% if collection.manifests.all %}
+            <div class="color-black">
+              {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
+            </div>
+          {% endif %}
+          {{ collection.summary|truncatewords_html:50|safe }}
         </a>
       {% empty %}
         There are no collections available to browse.
       {% endfor %}
-  </div>
+    </div>
   {% elif page.layout == 'List' %}
-  <!-- Collection List -->
-  <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
-    <thead>
+    <!-- Collection List -->
+    <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
+      <thead>
         <tr>
-            <th>Collection</th>
-            <th>Number of Volumes</th>
-            <th>Summary</th>
+          <th>Collection</th>
+          <th>Number of Volumes</th>
+          <th>Summary</th>
         </tr>
-    </thead>
-    <tbody>
-      {% for collection in collections %}
+      </thead>
+      <tbody>
+        {% for collection in collections %}
           <tr class="clickable-row" data-href="{% url 'collection' collection.pid %}">
-              <td>{{ collection.label|default:"[no title]"|truncatechars:200 }}</td>
-              <td>{{collection.manifests.all|length}} volume{{collection.manifests.all|length|pluralize}}</td>
-              <td class="uk-table-expand">{{collection.summary|truncatewords_html:50|safe}}</td>
+            <td>{{ collection.label|default:"[no title]"|truncatechars:200 }}</td>
+            <td>
+              {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
+            </td>
+            <td class="uk-table-expand">{{ collection.summary|truncatewords_html:50|safe }}</td>
           </tr>
-      {% empty %}
-        There are no collections available to browse.
-      {% endfor %}
-    </tbody>
-  </table>
+        {% empty %}
+          There are no collections available to browse.
+        {% endfor %}
+      </tbody>
+    </table>
   {% endif %}
-
-</div>
-
-{% include_block page.body %}
-<script>
-  // JavaScript to make list view table rows clickable
-  document.addEventListener('DOMContentLoaded', function() {
-      var rows = document.querySelectorAll('.clickable-row');
-      rows.forEach(function(row) {
-          row.addEventListener('click', function() {
-              window.location.href = row.getAttribute('data-href');
-          });
-      });
-  });
-</script>
-
-{% endblock %}
-
+{% endblock content %}

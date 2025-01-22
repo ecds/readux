@@ -1,133 +1,127 @@
-{% extends "base.html" %}
-{% load wagtailcore_tags sass_tags readux_extras menu_tags %}
+{% extends "cms/base.html" %}
+{% load wagtailcore_tags readux_extras %}
 
-{% block body_class %}template-homepage{% endblock %}
-
-{% block content %}
-<link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
-<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
-<link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet">
-
-{% include '_home/_nav.html' %}
-
-<div class="uk-container">
-  <!-- Breadcrumb -->
+<!-- Breadcrumb -->
+{% block breadcrumb %}
   <ul class="breadcrumb uk-margin-small-top">
-    <li><a href="/">Home</a></li>
+    <li>
+      <a href={% url "wagtail_serve" "" %}>Home</a>
+    </li>
     {# For breadcrumbs, display the parent, if it is not a home page #}
     {% with page.get_parent as p %}
-        {% if not p.page_type_display_name == "Home page" %}
-            <li>
-                {# Display siblings of this page #}
-                {% if p.get_children|length %}
-                    <a href="#">{{ p.title }}<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-                    <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-                        <ul class="uk-nav uk-navbar-dropdown-nav">
-                            {% for subpage in p.get_children %}
-                                <li><a href="{{ subpage.url }}">{{ subpage.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% else %}
-                    <a href="{{ p.url }}">{{ p.title }}</a>
-                {% endif %}
-            </li>
-        {% endif %}
+      {% if not p.page_type_display_name == "Home page" %}
+        <li>
+          {# Display siblings of this page #}
+          {% if p.get_children|length %}
+            <a href="#">{{ p.title }}<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+            <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+              <ul class="uk-nav uk-navbar-dropdown-nav">
+                {% for subpage in p.get_children %}
+                  <li>
+                    <a href="{{ subpage.url }}">{{ subpage.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% else %}
+            <a href="{{ p.url }}">{{ p.title }}</a>
+          {% endif %}
+        </li>
+      {% endif %}
     {% endwith %}
     <li>{{ page.page_title|default:page.title }}</li>
   </ul>
-  <!-- End -->
+{% endblock breadcrumb %}
+<!-- End -->
 
-  <!-- Page title & text lead -->
-  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">{{ page.page_title|default:page.title }}</h1>
-  <p class="page-text-lead">{{ page.tagline }}</p>
-  <p class="page-text-lead uk-margin-small-top">{{ page.paragraph }}</p>
-  <!-- End -->
- 
+{% block content %}
+
   <div class="uk-grid-collapse uk-child-width-expand" uk-grid>
     <!-- Left Column: Navigation -->
     {% if page.body|get_headers|length %}
-        {# NOTE: requires the use of header blocks for entries to appear #}
-        <div class="uk-width-1-4@m navigation-wrapper">
-            <nav class="navigation">
-                <ul class="uk-nav uk-nav-default">
-                    {% for block in page.body|get_headers %}
-                        <li><a href="#{{ block.id }}" data-section="{{ block.id }}">{{ block|striptags }}</a></li>
-                    {% endfor %}
-                </ul>
-            </nav>
-        </div>
+      {# NOTE: requires the use of header blocks for entries to appear #}
+      <div class="uk-width-1-4@m navigation-wrapper">
+        <nav class="navigation">
+          <ul class="uk-nav uk-nav-default">
+            {% for block in page.body|get_headers %}
+              <li>
+                <a href="#{{ block.id }}" data-section="{{ block.id }}">{{ block|striptags }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </div>
     {% endif %}
 
     <!-- Right Column: Content -->
     <div class="uk-width-expand@m content uk-padding-remove-top">
-        {% for block in page.body %}
-            {% if block.block_type == 'heading_block' %}
-                {% include_block block with block_id=block.id %}
-            {% else %}
-                {% include_block block %}
-            {% endif %}
-        {% endfor %}
+      {% for block in page.body %}
+        {% if block.block_type == 'heading_block' %}
+          {% include_block block with block_id=block.id %}
+        {% else %}
+          {% include_block block %}
+        {% endif %}
+      {% endfor %}
     </div>
   </div>
-</div>
+  {% if page.tagline %}<p class="lead">{{ page.tagline }}</p>{% endif %}
 
+{% endblock content %}
 
-{% if page.tagline %}
-<p class="lead">{{page.tagline}}</p>
-{% endif %}
+{% block extra_javascript %}
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const navLinks = document.querySelectorAll('.navigation a');
-        const sections = document.querySelectorAll('.section');
-    
-        // Function to remove the 'active' class from all navigation links
-        function removeActiveClass() {
-            navLinks.forEach(link => link.classList.remove('active'));
-        }
-    
-        // Function to add 'active' class to the corresponding navigation link
-        function setActiveLink(sectionId) {
-            removeActiveClass();
-            const activeLink = document.querySelector(`.navigation a[data-section="${sectionId}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
-        }
-    
-        // Smooth scroll to the corresponding section when a navigation link is clicked
-        navLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetSection = document.getElementById(targetId);
-    
-                // Scroll to the target section
-                targetSection.scrollIntoView({ behavior: 'smooth' });
-    
-                // Set the active link manually since we're not scrolling naturally
-                setActiveLink(targetId);
-            });
-        });
-    
-        // Add scroll event listener to highlight the current section in view
-        window.addEventListener('scroll', function () {
-            let currentSection = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 50; // Offset for sticky navigation
-                const sectionHeight = section.clientHeight;
-                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-                    currentSection = section.getAttribute('id');
-                }
-            });
-    
-            if (currentSection) {
-                setActiveLink(currentSection);
-            }
-        });
-    });
-    </script>
-    
-{% endblock %}
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const navLinks = document.querySelectorAll('.navigation a');
+          const sections = document.querySelectorAll('.section');
 
+          // Function to remove the 'active' class from all navigation links
+          function removeActiveClass() {
+              navLinks.forEach(link => link.classList.remove('active'));
+          }
+
+          // Function to add 'active' class to the corresponding navigation link
+          function setActiveLink(sectionId) {
+              removeActiveClass();
+              const activeLink = document.querySelector(`.navigation a[data-section="${sectionId}"]`);
+              if (activeLink) {
+                  activeLink.classList.add('active');
+              }
+          }
+
+          // Smooth scroll to the corresponding section when a navigation link is clicked
+          navLinks.forEach(link => {
+              link.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  const targetId = this.getAttribute('href').substring(1);
+                  const targetSection = document.getElementById(targetId);
+
+                  // Scroll to the target section
+                  targetSection.scrollIntoView({
+                      behavior: 'smooth'
+                  });
+
+                  // Set the active link manually since we're not scrolling naturally
+                  setActiveLink(targetId);
+              });
+          });
+
+          // Add scroll event listener to highlight the current section in view
+          window.addEventListener('scroll', function() {
+              let currentSection = '';
+              sections.forEach(section => {
+                  const sectionTop = section.offsetTop - 50; // Offset for sticky navigation
+                  const sectionHeight = section.clientHeight;
+                  if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                      currentSection = section.getAttribute('id');
+                  }
+              });
+
+              if (currentSection) {
+                  setActiveLink(currentSection);
+              }
+          });
+      });
+  </script>
+
+{% endblock extra_javascript %}

@@ -245,6 +245,8 @@ TEMPLATES = [
                 "apps.templates.context_processors.has_ga_tracking_id",
                 "apps.templates.context_processors.ga_tracking_id",
                 "apps.readux.context_processors.current_version",
+                "apps.readux.context_processors.footer_template",
+                "apps.readux.context_processors.site_meta",
             ],
         },
     },
@@ -283,7 +285,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "none"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -296,7 +298,6 @@ SOCIALACCOUNT_AUTO_SIGNUP = False
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 
 SOCIALACCOUNT_PROVIDERS = {"facebook": {"SCOPE": ["email", "public_profile"]}}
-
 # Translations
 # ------------------------------------------------------------------------------
 gettext = lambda s: s
@@ -340,6 +341,6 @@ SOCIALACCOUNT_STORE_TOKENS = True
 # django-summernote rich text editor settings. see https://github.com/hackerwins/django-summernote
 # NOTE: consider replacing after django 4 upgrade
 SUMMERNOTE_CONFIG = {
-    'iframe': False,
+    "iframe": False,
 }
 SUMMERNOTE_THEME = "lite"

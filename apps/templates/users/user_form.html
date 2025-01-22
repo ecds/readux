@@ -1,60 +1,44 @@
-{% extends "account/base.html" %}
-{% load sass_tags %}
-
-{% block extra_head %}
-<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
-<meta property="og:title" content="Readux - User Page" />
-<meta name="twitter:title" content="Readux - User Page" />
-<meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
-<meta property="og:description" content="Readux - manage your User account." />
-<meta name="twitter:description" content="Readux - manage your User account." />
-{% endblock %}
+{% extends "allauth/layouts/base.html" %}
 
 {% load crispy_forms_tags %}
 
-{% block title %}{{ user.username }}{% endblock %}
+{% block title %}
+  {{ user.username }}
+{% endblock title %}
 
-{% block breadcrumb %}<li>Update Profile</li>{% endblock %}
+{% block breadcrumb %}
+  Update Profile
+{% endblock breadcrumb %}
 
-{% block inner %}
+{% block content %}
   <form class="uk-form-stacked" method="post" action="{% url 'users:update' %}">
     {% csrf_token %}
     {{ form.non_field_errors }}
     {% for hidden_field in form.hidden_fields %}
-    {{ hidden_field.errors }}
-    {{ hidden_field }}
+      {{ hidden_field.errors }}
+      {{ hidden_field }}
     {% endfor %}
     <div>
       {% for field in form.visible_fields %}
-        <p>
-          {{ field.help_text}}
-        </p>
-          {{ field.errors }}
-          {{field}}
+        <p>{{ field.help_text }}</p>
+        {{ field.errors }}
+        {{ field }}
       {% endfor %}
       <button type="submit" class="uk-button uk-button-default uk-button-primary uk-margin-top">
         Update Name
       </button>
     </div>
   </form>
-  <hr>
+  <hr />
   <div class="uk-flex uk-flex-column">
     {% if "github" not in request.user.socialaccount_list %}
       {% include "../snippets/github_authorize.html" %}
     {% endif %}
-      <p>
-        <a class="uk-margin uk-button uk-button-default uk-button-primary uk-width-auto" href="{% url 'account_email' %}" role="button">
-          <i class="fas fa-envelope" aria-hidden="true"></i>
-          Manage Email
-        </a>
-      </p>
-      <p>
-        <a class="uk-margin uk-button uk-button-default uk-button-primary uk-width-auto" href="{% url 'socialaccount_connections' %}"
-          role="button">
-          <i class="fas fa-share-alt" aria-hidden="true"></i>
-          Mange Account Connections
-        </a>
-      </p>
-    </div>
+    <p>
+      <a href="{% url 'account_email' %}">Manage Email</a>
+    </p>
+    <p>
+      <a href="{% url 'socialaccount_connections' %}">Mange Account Connections</a>
+    </p>
   </div>
-{% endblock %}
+{% endblock content %}

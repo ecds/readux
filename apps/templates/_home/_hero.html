@@ -1,7 +1,10 @@
 {% load wagtailcore_tags %}
-<div class="uk-container uk-text-center hero">
-    <h1 class="uk-heading-primary" style="color: white; font-size: 3rem; font-weight: bold; margin-bottom: 1rem;">
-        {{ request.site.name }}</h1>
-    <div class="uk-text-large">{{ page.tagline|richtext }}</div>
-    {% include "snippets/_search_box.html" %}
+<div class="uk-text-center hero">
+  <h1 class="uk-heading-primary"
+      style="color: white;
+             font-size: 3rem;
+             font-weight: bold;
+             margin-bottom: 1rem">{{ request.site.name }}</h1>
+  <div class="uk-text-large">{{ page.tagline|richtext }}</div>
+  {% include "snippets/_search_box.html" %}
 </div>

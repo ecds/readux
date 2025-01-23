@@ -52,4 +52,5 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DEV}}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY}}
         run: ./deploy.sh

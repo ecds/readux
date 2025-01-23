@@ -55,10 +55,10 @@
         {% if volume.collections is not None %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Collections</div>
-          <div class="rx-info-content-value uk-margin-small-top">
+          <div class="rx-info-content-value">
             {% for col in volume.collections.all %}
             <a class="nav-link" href="{% url 'collection' col.pid %}">
-              <div class="rx-btn rx-btn-collection">{{ col.label }}</div>
+              <div class="uk-label rx-label-copy">{{ col.label }}</div>
             </a>
             {% endfor %}
           </div>

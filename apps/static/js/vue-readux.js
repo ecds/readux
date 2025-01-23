@@ -244,7 +244,7 @@ Vue.component("v-info-content-url-single", {
       <div class="rx-info-content-label uk-flex-between rx-flex">
         <span>{{label}}</span>
         <div>
-          <span class="rx-btn"
+          <span class="uk-label rx-label-copy"
             v-clipboard:copy="url"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError">Copy</span>
@@ -273,7 +273,7 @@ Vue.component("v-info-content-url-unit", {
       <a v-bind:href="url" class="rx-anchor"
         target="_blank">{{url}}</a>
       <div>
-        <span class="rx-btn"
+        <span class="uk-label rx-label-copy"
           v-clipboard:copy="url"
           v-clipboard:success="onCopy"
           v-clipboard:error="onError">Copy</span>
@@ -317,7 +317,7 @@ Vue.component("v-info-content-url-external", {
       <div class="rx-info-content-label uk-flex-between rx-flex ">
         <span>{{label}}</span>
         <div>
-          <span class="rx-btn"
+          <span class="uk-label rx-label-copy"
             v-clipboard:copy="localUrl"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError">Copy</span>
@@ -368,7 +368,7 @@ Vue.component("v-info-content-url-image-link", {
       <div class="rx-info-content-label uk-flex-between rx-flex ">
         <span v-if="localUrls !== undefined">{{label}}</span>
         <div>
-          <span class="rx-btn"
+          <span class="uk-label rx-label-copy"
             v-clipboard:copy="localUrls"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError" v-if="localUrls !== undefined">Copy</span>

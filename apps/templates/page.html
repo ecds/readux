@@ -101,41 +101,64 @@
   crossorigin="anonymous"></script>
 
 <script type="text/javascript">
-
   function toggleOCR() {
-    // this requires testing
-    const ocrCheckbox = document.querySelector("#ocr-overlay");
-    const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-    for (let i = 0; i < nodeList.length; i++) {
-      if (ocrCheckbox.checked) {
-        nodeList[i].style.backgroundColor = "white";
-        nodeList[i].style.fontWeight = "bold";
-        nodeList[i].style.color = "rgb(149, 9, 83)";
-      } else {
-        nodeList[i].style.backgroundColor = "transparent";
-        nodeList[i].style.fontWeight = "";
-        nodeList[i].style.color = "transparent";
-      }
-    }
-  }
-
-  function showOCR() {
-    const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-    for (let i = 0; i < nodeList.length; i++) {
+  const ocrCheckbox = document.querySelector("#ocr-overlay");
+  const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
+  for (let i = 0; i < nodeList.length; i++) {
+    if (ocrCheckbox.checked) {
       nodeList[i].style.backgroundColor = "white";
       nodeList[i].style.fontWeight = "bold";
       nodeList[i].style.color = "rgb(149, 9, 83)";
+    } else {
+      nodeList[i].style.backgroundColor = "transparent";
+      nodeList[i].style.fontWeight = "";
+      nodeList[i].style.color = "transparent";
     }
   }
+}
 
-  function hideOCR() {
-    const nodeList2 = document.querySelectorAll("div.openseadragon-canvas div span");
-    for (let i = 0; i < nodeList2.length; i++) {
-      nodeList2[i].style.backgroundColor = "transparent";
-      nodeList2[i].style.fontWeight = "";
-      nodeList2[i].style.color = "transparent";
-    }
+function showOCR() {
+  const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
+  for (let i = 0; i < nodeList.length; i++) {
+    nodeList[i].style.backgroundColor = "white";
+    nodeList[i].style.fontWeight = "bold";
+    nodeList[i].style.color = "rgb(149, 9, 83)";
   }
+}
+
+function hideOCR() {
+  const nodeList2 = document.querySelectorAll("div.openseadragon-canvas div span");
+  for (let i = 0; i < nodeList2.length; i++) {
+    nodeList2[i].style.backgroundColor = "transparent";
+    nodeList2[i].style.fontWeight = "";
+    nodeList2[i].style.color = "transparent";
+  }
+}
+
+// Set up a MutationObserver to watch for changes in the webpage
+function observeWebpageUpdates() {
+  const targetElement = document.body; // Observe the entire body for changes
+
+  const observer = new MutationObserver(() => {
+    const ocrCheckbox = document.querySelector("#ocr-overlay");
+    if (ocrCheckbox && ocrCheckbox.checked) {
+      console.log("Webpage updated! Showing OCR...");
+      showOCR(); // Automatically show OCR when the toggle is ON
+    }
+  });
+
+  // Configure the observer to watch for changes
+  observer.observe(targetElement, {
+    attributes: true, // Watch for attribute changes
+    childList: true, // Watch for changes in children
+    subtree: true, // Watch for changes in descendant elements
+  });
+
+  console.log("MutationObserver is set up for the entire webpage!");
+}
+
+// Initialize the observer
+observeWebpageUpdates();
 </script>
 
 <script type="text/javascript">

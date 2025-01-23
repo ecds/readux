@@ -36,7 +36,7 @@
 
 {% block content %}
 
-  <div class="uk-grid-collapse uk-child-width-expand" uk-grid>
+  <div class="uk-grid-collapse uk-child-width-expand content-wrapper" uk-grid>
     <!-- Left Column: Navigation -->
     {% if page.body|get_headers|length %}
         {# NOTE: requires the use of header blocks for entries to appear #}
@@ -119,6 +119,16 @@
                   setActiveLink(currentSection);
               }
           });
+
+          // Conditional padding-left for the content area
+          const contentWrapper = document.querySelector('.content-wrapper');
+          const sidebar = contentWrapper.querySelector('.uk-width-1-4\\@m');
+          const content = contentWrapper.querySelector('.uk-width-expand\\@m');
+
+          // Check if the sidebar exists; if it doesn't, remove the padding-left on content
+          if (!sidebar) {
+              content.style.paddingLeft = '0';
+          }
       });
   </script>
 

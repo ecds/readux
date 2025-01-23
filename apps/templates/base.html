@@ -83,6 +83,8 @@
     <meta name="twitter:creator" content="@emorycds" />
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
     {% block css %}
+      <!-- Selectize.js CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.default.min.css" />
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
       <link href="{% static 'css/selectize.css' %}" rel="stylesheet" />
       <link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet" />
@@ -146,6 +148,10 @@
       <script src="https://code.jquery.com/jquery-3.3.1.js"
               integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
               crossorigin="anonymous"></script>
+
+      <!-- Selectize.js JavaScript -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+
       <script src="{% static 'js/main.js' %}"></script>
       {% if has_ga_tracking_id %}
         <!-- Google Analytics -->

@@ -741,3 +741,8 @@ button.github {
     background-color: #24292e;
     color: white;
 }
+
+/* Make every .uk-section element inside .content have padding-bottom: 0 */
+.content > .uk-section {
+    padding-bottom: 0;
+}

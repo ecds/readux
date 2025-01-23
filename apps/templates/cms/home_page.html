@@ -6,7 +6,6 @@
 
 {% block nav %}
 <div class="home-nav">
-
   {% include '_home/_nav.html' %}
 </div>
 {% endblock nav %}
@@ -89,4 +88,23 @@
         });
     </script>
   {% endif %}
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Select all .uk-section elements inside .content
+      const sections = document.querySelectorAll('.content > .uk-section');
+
+      // Apply padding-bottom: 0 to all sections
+      sections.forEach(section => {
+          section.style.paddingBottom = '0';
+      });
+
+      // Add specific padding to the last .uk-section
+      if (sections.length > 0) {
+          const lastSection = sections[sections.length - 1];
+          lastSection.style.paddingBottom = '70px';
+      }
+    });
+  </script>
+
 {% endblock %}

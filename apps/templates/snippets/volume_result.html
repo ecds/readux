@@ -49,21 +49,60 @@
             </div>
         </div>
         {% if volume|has_inner_hits %}
-                <div class="sui-item-heading">Full Text</div> 
-                {% for canvas in volume.meta.inner_hits|group_by_canvas %}
+                <div class="sui-item-heading uk-margin-small-bottom">Full Text ({{volume.meta.inner_hits|group_by_canvas|length}} Page Matches)</div>
+                <!-- By default only show the first three or less page matches -->
+                {% for canvas in volume.meta.inner_hits|group_by_canvas|slice:":2" %}
                     <div class="result-page">
-                        <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
-                            <span class="page-number">p. {{ canvas.position }}</span>
-                            {% if canvas.highlights|length %}
-                                <ul class="highlights uk-padding-remove">
-                                {% for fragment in canvas.highlights %}
-                                    <li>{{ fragment|safe }}</li>
-                                {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </a>
+                        <div class="uk-flex uk-padding-small uk-margin-bottom" uk-grid>
+                            <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
+                            <div class="uk-flex-first page-number">
+                                p. {{ canvas.position }}
+                            </div>
+                            <div class="uk-flex-wrap-stretch">
+                                {% if canvas.highlights|length %}
+                                    <ul class="highlights uk-padding-remove uk-margin-remove">
+                                    {% for fragment in canvas.highlights %}
+                                        <li>{{ fragment|safe }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                            </a>
+                        </div>
                     </div>
                 {% endfor %}
+
+                {% if volume.meta.inner_hits|group_by_canvas|length > 2 %}
+                    <!-- Use an accordion to display additional page matches beyond the first three -->
+                    <ul uk-accordion class="uk-margin-remove-top">
+                        <li>
+                            <a class="uk-accordion-title nav-link uk-text-large sui-item-heading title result-title" href>Show/Hide all {{volume.meta.inner_hits|group_by_canvas|length}} page matches</a>
+                            <div class="uk-accordion-content">
+                                {% for canvas in volume.meta.inner_hits|group_by_canvas|slice:"2:" %}
+                                    <div class="result-page">
+                                        <div class="uk-flex uk-padding-small uk-margin-bottom" uk-grid>
+                                            <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
+                                            <div class="uk-flex-first page-number">
+                                                p. {{ canvas.position }}
+                                            </div>
+                                            <div class="uk-flex-wrap-stretch">
+                                                {% if canvas.highlights|length %}
+                                                    <ul class="highlights uk-padding-remove uk-margin-remove">
+                                                    {% for fragment in canvas.highlights %}
+                                                        <li>{{ fragment|safe }}</li>
+                                                    {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    </ul>
+                {% endif %}
+
         {% endif %}
         {% if volume.published_date %}
             <div class="sui-item-heading">Published</div>

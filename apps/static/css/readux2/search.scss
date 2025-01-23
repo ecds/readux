@@ -192,12 +192,17 @@ ol#search-results dl {
 
 /* search result highlighting */
 #search-results em {
-  color: #1D3557 !important;
+  color: #E60000 !important;
   font-weight: bold;
   font-style: normal;
 }
 
 /* results within full text */
+#search-results .result-page {
+  background-color: #F1FAEE;
+  color: #1D3557;
+}
+
 #search-results .result-page a {
   display: flex;
   flex-flow: row nowrap;
@@ -206,17 +211,20 @@ ol#search-results dl {
   font-size: 0.8rem;
   gap: 1rem;
   margin: 0.5rem 0;
+  color: #1D3557;
 }
 
 #search-results .result-page .page-number {
-  min-width: 4rem;
-  max-width: 4rem;
+  min-width: 50px;
+  font-size: large;
+  font-weight: 600;
+  letter-spacing: -1px;
+  text-transform: uppercase;
 }
 
 #search-results .result-page ul li {
   list-style: disc;
 }
-
 
 .result-title {
   color: #1D3557;

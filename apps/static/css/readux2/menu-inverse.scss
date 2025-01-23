@@ -1,6 +1,5 @@
 /* Inverse the color for content pages */
 .menu-item {
-
     color: rgba(29, 53, 87, 1.0) !important;
     text-decoration: none !important;
     transition: color 0.1s ease !important;
@@ -43,4 +42,8 @@
     &:active {
         color: rgba(29, 53, 87, 0.6) !important; // A bit darker
     }
+}
+
+.uk-navbar-container {
+    position: relative;
 }

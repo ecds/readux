@@ -12,7 +12,7 @@
         <a class="grid-item" href="{% url 'collection' collection.pid %}">
           <img src="/media/{{ collection.thumbnail }}"
                alt="Thumbnail image for collection {{ collection.label }}"
-               onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';" />
+               onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
           <h2>{{ collection.label|default:"[no title]"|truncatechars:200 }}</h2>
           {% if collection.manifests.all %}
             <div class="color-black">

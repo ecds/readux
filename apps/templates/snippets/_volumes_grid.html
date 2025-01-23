@@ -5,7 +5,7 @@
         <!-- Volume Item -->
         {% if volume.pid %}
           <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
-              <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static '/images/image_not_found.jpg' %}';">
+              <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
               <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }}</h2>
               {% if volume.published_date or volume.published_date_edtf %}
                 <div class="color-black">{{ volume.published_date|default:volume.published_date_edtf }}</div>

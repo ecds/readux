@@ -1,26 +1,13 @@
-{% load static menu_tags %}
-
 <div class="footer">
-    <div class="uk-container">
-        <div class="footer-content uk-flex uk-flex-middle uk-flex-between">
-            {% flat_menu 'footer-menu' template="menus/footer_menu.html" %}
-            <div class="footer-logo">
-                <a href="https://ecds.emory.edu">
-                    <img src="{% static 'images/ecds-inverse.svg' %}" alt="Logo" style="height: 10vh;">
-
-                </a>
-            </div>
-        </div>
-        <div class="footer-bottom uk-margin-top">
-            Engage with digitized print materials on an open source software platform and share new thinking.
-        </div>
-        <ul class="uk-list uk-list-collapse uk-text-light uk-text-small uk-margin-small">
-            <li>Readux {{APP_VERSION}}</li>
-            {% if DJANGO_ENV != 'production' %}
-            <li>Branch: {{BRANCH}}</li>
-            <li>Commit: {{COMMIT}}</li>
-            <li>Commit Date: {{COMMIT_DATE}}</li>
-          {% endif %}
-        </ul>
-    </div>
+  <div class="uk-container">
+    {% include FOOTER_CONTENT_TEMPLATE %}
+    <ul class="uk-list uk-list-collapse uk-text-light uk-text-small uk-margin-small">
+      <li>Readux {{ APP_VERSION }}</li>
+      {% if DJANGO_ENV != 'production' %}
+        <li>Branch: {{ BRANCH }}</li>
+        <li>Commit: {{ COMMIT }}</li>
+        <li>Commit Date: {{ COMMIT_DATE }}</li>
+      {% endif %}
+    </ul>
+  </div>
 </div>

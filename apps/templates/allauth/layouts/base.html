@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load sass_tags %}
+
+{% load static %}
+
+{% block extra_css %}
+  <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet" />
+  <link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet" />
+  <link type="text/css" href="{% sass_src 'css/readux2/static.scss' %}" rel="stylesheet" />
+{% endblock extra_css %}
+
+{% block nav %}
+  {% include "_home/_nav.html" %}
+{% endblock nav %}
+{% block wrapper %}
+  <div class="uk-container content-page">
+
+    {% with request.resolver_match.url_name as url_name %}
+      <nav aria-label="Breadcrumb">
+        <ul class="uk-breadcrumb uk-text-truncate uk-margin-small-top">
+          <li>
+            <a href={% url "wagtail_serve" "" %}>Home</a>
+          </li>
+          <li>
+            {% if url_name != "detail" and not request.user.is_anonymous %}
+              <a href="{% url 'users:detail' request.user.username %}" alt="Home">My Account</a>
+            {% else %}
+              My Account
+            {% endif %}
+          </li>
+          <li>
+            {% block breadcrumb %}
+            {% endblock breadcrumb %}
+          </li>
+        </ul>
+      </nav>
+    {% endwith %}
+    {% if request.user %}
+      <div class="rx-head-container">
+        <div class="rx-title-container">
+          <div class="rx-title">Hello, {{ request.user.name }}</div>
+        </div>
+      </div>
+    {% endif %}
+    {% block content %}
+    {% endblock content %}
+  </div>
+{% endblock wrapper %}

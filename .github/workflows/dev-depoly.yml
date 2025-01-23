@@ -45,6 +45,7 @@ jobs:
 
       - name: Run Deploy
         env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
           AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}

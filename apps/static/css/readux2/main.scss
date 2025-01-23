@@ -1,5 +1,6 @@
 /* base.html */
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     display: flex;
@@ -11,9 +12,15 @@ html, body {
     display: flex;
     flex-direction: column;
 }
-  
+
 main {
     flex-grow: 1;
+}
+
+.home-nav {
+    nav {
+        background-color: transparent !important;
+    }
 }
 
 .landing {
@@ -32,7 +39,12 @@ main {
     width: 100%;
     height: 80vh;
     min-height: 500px;
-    background-color: rgba(29, 53, 87, 0.8); /* Adjust the opacity as needed */
+    background-color: rgba(29, 53, 87, 0.8);
+    /* Adjust the opacity as needed */
+}
+
+.uk-alert {
+    z-index: 99;
 }
 
 .content {
@@ -41,12 +53,18 @@ main {
     min-height: 100vh;
     display: flex;
     flex-flow: column;
+
     .space {
         flex-grow: 1;
     }
+
     .uk-section-default:empty {
         background-color: transparent;
     }
+}
+
+.content-page {
+    margin-top: 80px
 }
 
 .paragraph {
@@ -60,11 +78,13 @@ main {
     transition: ease 0.1s;
 
     &:hover {
-        color: darken(#E60000, 10%); /* Darken the color when hovered */
+        color: darken(#E60000, 10%);
+        /* Darken the color when hovered */
     }
-    
+
     &:active {
-        color: #990000; /* Darken even further when clicked */
+        color: #990000;
+        /* Darken even further when clicked */
     }
 }
 
@@ -74,12 +94,14 @@ main {
     transition: ease 0.1s;
 
     &:hover {
-        color: darken(#1D3557, 10%); /* Darken the color when hovered */
+        color: darken(#1D3557, 10%);
+        /* Darken the color when hovered */
         text-decoration: underline;
     }
-    
+
     &:active {
-        color: darken(#1D3557, 25%); /* Darken the color when hovered */
+        color: darken(#1D3557, 25%);
+        /* Darken the color when hovered */
         text-decoration: underline;
     }
 }
@@ -107,9 +129,11 @@ main {
 
 .brand-logo {
     transition: color 0.1s ease !important;
+
     &:hover {
         color: rgba(255, 255, 255, 0.8) !important; // Slightly dim
     }
+
     &:active {
         color: rgba(255, 255, 255, 0.6) !important; // A bit darker
     }
@@ -118,6 +142,7 @@ main {
 .brand-readux {
     color: white;
     text-decoration: underline;
+
     &:hover {
         color: rgba(255, 255, 255, 0.8) !important; // Slightly dim
     }
@@ -150,22 +175,28 @@ main {
 
 /* Overrides */
 .uk-slidenav {
-    color: rgba(29, 53, 87, 0.6); /* Override the default colors with the blue */
-    
+    color: rgba(29, 53, 87, 0.6);
+    /* Override the default colors with the blue */
+
     &:hover {
-        color: rgba(29, 53, 87, 1); /* Override the default colors with the blue */
+        color: rgba(29, 53, 87, 1);
+        /* Override the default colors with the blue */
     }
 }
 
-.uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
     border-color: #1D3557;
 }
 
 .uk-button-default {
     transition: ease 0.1s;
+
     &:hover {
         border-color: darken(#1D3557, 10%);
     }
+
     &:active {
         border-color: darken(#1D3557, 25%);
     }
@@ -173,25 +204,30 @@ main {
 
 .uk-close {
     color: #1D3557;
+
     &:hover {
         border-color: darken(#1D3557, 10%);
-    } 
+    }
+
     &:active {
         border-color: darken(#1D3557, 25%);
     }
 }
+
 /* ui kit slider */
 
 /* Add gap between items */
 .uk-slider-items {
-    gap: 4rem; /* Adjust the gap size as needed */
+    gap: 4rem;
+    /* Adjust the gap size as needed */
 }
 
 /* Make images square */
 .square-image {
     width: 100%;
     aspect-ratio: 1 / 1;
-    object-fit: cover; /* Ensure the image covers the entire square without distorting */
+    object-fit: cover;
+    /* Ensure the image covers the entire square without distorting */
 }
 
 /* breadcrumb */
@@ -208,18 +244,22 @@ main {
     margin-right: 5px;
 }
 
-.breadcrumb>li + li::before {
+.breadcrumb>li+li::before {
     content: "/";
     margin-right: 5px;
-    color: #1D3557; /* Color of the separator */
+    color: #1D3557;
+    /* Color of the separator */
 }
 
 .breadcrumb a {
     text-decoration: underline;
-    color: rgba(29, 53, 87, 1.0); /* Link color */
+    color: rgba(29, 53, 87, 1.0);
+    /* Link color */
     transition: color 0.1s ease;
+
     &:hover {
-        color: rgba(29, 53, 87, 0.8); /* Hover state */
+        color: rgba(29, 53, 87, 0.8);
+        /* Hover state */
     }
 }
 
@@ -229,9 +269,12 @@ main {
 
 /* breadcrumb dropdown */
 .uk-navbar-dropdown {
-    background-color: #f8fdf4; /* Light greenish background color */
-    border-radius: 4px; /* Rounded corners */
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    background-color: #f8fdf4;
+    /* Light greenish background color */
+    border-radius: 4px;
+    /* Rounded corners */
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    /* Soft shadow for depth */
     padding: 10px 0 !important;
     // margin-top: 10px !important; /* Force a gap between the trigger and dropdown */
     min-width: 0 !important;
@@ -240,21 +283,26 @@ main {
 .uk-navbar-dropdown-nav a,
 .uk-navbar-dropdown-nav.sort-dropdown label {
     cursor: pointer;
-    color: #1D3557 !important; /* Dark blue text color */
-    font-weight: 600; /* Bold text */
-    padding: 5px 15px !important; /* Add padding to the items */
+    color: #1D3557 !important;
+    /* Dark blue text color */
+    font-weight: 600;
+    /* Bold text */
+    padding: 5px 15px !important;
+    /* Add padding to the items */
     display: block;
     transition: background-color 0.1s ease;
 }
 
 .uk-navbar-dropdown-nav a:hover,
 .uk-navbar-dropdown-nav.sort-dropdown label:hover {
-    background-color: rgba(29, 53, 87, 0.1); /* Light blue hover effect */
+    background-color: rgba(29, 53, 87, 0.1);
+    /* Light blue hover effect */
 }
 
 .uk-navbar-dropdown-nav.sort-dropdown label input {
     display: none;
 }
+
 .pagination-nav span {
     padding: 5px 15px !important;
     display: block;
@@ -278,8 +326,10 @@ main {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    font-weight: 600; /* Font weight for the information line */
-    color: #1D3557; /* Color for the information line */
+    font-weight: 600;
+    /* Font weight for the information line */
+    color: #1D3557;
+    /* Color for the information line */
 }
 
 .info-line .info-group {
@@ -294,24 +344,31 @@ main {
     gap: 5px;
 }
 
-.info-line a, .info-line select {
-    color: #E60000; /* Clickable item color */
-    text-decoration: underline; /* Underline for clickable items */
+.info-line a,
+.info-line select {
+    color: #E60000;
+    /* Clickable item color */
+    text-decoration: underline;
+    /* Underline for clickable items */
 }
 
 .pagination-controls .uk-icon-button {
-    color: #1D3557; /* Arrow button color */
+    color: #1D3557;
+    /* Arrow button color */
 }
 
 .pagination-controls .uk-icon-button[disabled] {
-    color: #ccc; /* Greyed out for disabled state */
+    color: #ccc;
+    /* Greyed out for disabled state */
     cursor: not-allowed;
 }
 
 .volume-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Four items per row */
-    gap: 2.5rem; /* Space between items */
+    grid-template-columns: repeat(4, 1fr);
+    /* Four items per row */
+    gap: 2.5rem;
+    /* Space between items */
 }
 
 .grid-item {
@@ -319,7 +376,8 @@ main {
     background-color: transparent;
     cursor: pointer;
     text-decoration: none;
-    opacity: 0.75; /* Normal state opacity */
+    opacity: 0.75;
+    /* Normal state opacity */
     transition: opacity 0.1s ease;
     display: block;
     color: black;
@@ -327,20 +385,24 @@ main {
 
 .grid-item img {
     width: 100%;
-    height: auto; /* Maintain aspect ratio of images */
+    height: auto;
+    /* Maintain aspect ratio of images */
     display: block;
-    margin-bottom: 10px; /* Space between image and title */
+    margin-bottom: 10px;
+    /* Space between image and title */
     border-radius: 4px;
 }
 
 .grid-item:hover {
-    opacity: 1.0; /* Change opacity on hover */
+    opacity: 1.0;
+    /* Change opacity on hover */
     text-decoration: none;
     color: black;
 }
 
 .grid-item h2 {
-    text-decoration: underline; /* Underline for title */
+    text-decoration: underline;
+    /* Underline for title */
     color: #1D3557;
     font-weight: 600;
     font-size: medium;
@@ -364,20 +426,26 @@ main {
 .list-view-table tbody tr:hover {
     background-color: #F1FAEE !important;
 }
+
 .list-view-table tbody tr {
     color: rgba(0, 0, 0, 0.75);
     transition: color 0.3s ease;
 }
+
 .list-view-table tbody tr:hover {
     color: rgba(0, 0, 0, 1);
 }
+
 .list-item:hover {
     cursor: pointer;
 }
+
 .clickable-row:hover {
     cursor: pointer;
 }
-.list-view-table th, .list-view-table td {
+
+.list-view-table th,
+.list-view-table td {
     padding: 0.5rem;
 }
 
@@ -392,17 +460,21 @@ main {
 
 .search-bar input {
     flex: 1;
-    height: 50px; /* Adjust this value for desired height */
+    height: 50px;
+    /* Adjust this value for desired height */
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-    font-size: 1.2em; /* Adjust the font size if needed */
+    font-size: 1.2em;
+    /* Adjust the font size if needed */
 }
 
 .search-bar button {
-    height: 50px; /* Match the input height */
+    height: 50px;
+    /* Match the input height */
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    font-size: 1.2em; /* Adjust the font size if needed */
+    font-size: 1.2em;
+    /* Adjust the font size if needed */
     background-color: #E60000;
     color: white;
     border: none;
@@ -413,18 +485,22 @@ main {
 }
 
 .search-bar button:hover {
-    background-color: darken(#E60000, 10%); /* Darken the color when hovered */
+    background-color: darken(#E60000, 10%);
+    /* Darken the color when hovered */
 }
 
 .search-bar button:active {
-    background-color: #990000; /* Darken even further when clicked */
+    background-color: #990000;
+    /* Darken even further when clicked */
 }
 
 /* featured text area */
 .truncate-text {
     display: -webkit-box;
-    -webkit-line-clamp: 5; /* Number of lines to show */
-    line-clamp: 5; /* Number of lines to show */
+    -webkit-line-clamp: 5;
+    /* Number of lines to show */
+    line-clamp: 5;
+    /* Number of lines to show */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -434,7 +510,8 @@ main {
 .section-offset {
     // position: relative;
     // top: 20vh;
-    background-color: white; /* Ensures the background is visible */
+    background-color: white;
+    /* Ensures the background is visible */
     // padding: 20px 0;
 
     margin-top: 200px;
@@ -491,7 +568,8 @@ main {
 .video-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
     background: black;
 }
 
@@ -510,7 +588,8 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 50% transparent black */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 50% transparent black */
     z-index: 1;
 }
 
@@ -523,11 +602,18 @@ iframe {
     display: none;
 }
 
+.uk-navbar-container {
+    z-index: 10;
+    position: fixed;
+    width: 100%;
+}
+
 /* footer */
 .footer {
     background-color: #457B9D;
     color: white;
     padding: 20px;
+    min-height: 20vh;
 }
 
 .footer-content {
@@ -566,6 +652,7 @@ iframe {
 .footer-bottom {
     text-align: left;
     margin-top: 10px;
+    color: white;
 }
 
 /* highlight section */
@@ -614,21 +701,23 @@ iframe {
 }
 
 .brand-logo {
-    font-size: large; 
-    color: white; 
+    font-size: large;
+    color: white;
     font-weight: bold;
 }
 
 .brand-tagline {
-    font-size: small; 
-    color: white; 
+    font-size: small;
+    color: white;
 }
 
 .description-button {
     transition: ease 0.1s;
+
     &:hover {
         background-color: darken(#E60000, 10%);
     }
+
     &:active {
         background-color: darken(#E60000, 25%);
     }
@@ -640,4 +729,15 @@ iframe {
 
 .unset-min-height {
     min-height: unset !important;
+}
+
+button.google {
+    background-color: #ea4335;
+    color: white;
+}
+
+
+button.github {
+    background-color: #24292e;
+    color: white;
 }

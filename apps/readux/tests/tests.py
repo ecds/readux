@@ -714,4 +714,5 @@ class AnnotationTests(TestCase):
         assert response.context_data["user_annotation_count"] == 3
 
     def test_current_version_context(self):
+        """It should return the current version."""
         assert readux.__version__ == current_version()["APP_VERSION"]

@@ -1,34 +1,5 @@
-{% extends "base.html" %}
-{% load wagtailcore_tags sass_tags %}
-
-{% load static %}
-{% load has_user_annotations %}
-{% load user_annotation_count %}
-
-
-{% block body_class %}template-homepage{% endblock %}
-
+{% extends "cms/base.html" %}
 {% block content %}
-
-<link type="text/css" href="{% sass_src 'css/readux2/menu-inverse.scss' %}" rel="stylesheet">
-
-{% include '_home/_nav.html' %}
-
-<div class="uk-container">
-
-  <!-- Breadcrumb -->
-  <ul class="breadcrumb uk-margin-small-top">
-    <li><a href="/">Home</a></li>
-    <li>{{ page.page_title|default:page.title }}</li>
-  </ul>
-  <!-- End -->
-
-  <!-- Page title & text lead -->
-  <h1 class="page-title uk-margin-top uk-margin-remove-bottom">{{ page.page_title|default:page.title }}</h1>
-  <p class="page-text-lead">{{ page.tagline }}</p>
-  <p class="page-text-lead uk-margin-small-top">{{ page.paragraph }}</p>
-  <!-- End -->
-
 
   {% include "snippets/_search_box.html" %}
 
@@ -36,26 +7,26 @@
 
   {% if page.layout == 'Grid' %}
     <!-- Volume Grid -->
-     {% include "snippets/_volumes_grid.html" %}
+    {% include "snippets/_volumes_grid.html" %}
   {% elif page.layout == 'List' %}
     <!-- Volume List -->
     <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
       <thead>
-          <tr>
-              <th>Volume</th>
-              <th>Author</th>
-              <th>Publication Date</th>
-              <th>Date Added</th>
-          </tr>
+        <tr>
+          <th>Volume</th>
+          <th>Author</th>
+          <th>Publication Date</th>
+          <th>Date Added</th>
+        </tr>
       </thead>
       <tbody>
         {% for volume in volumes %}
           {% if volume.pid %}
             <tr class="clickable-row" data-href="{% url 'volumeall' volume.pid %}">
-                <td>{{ volume.label|default:"-"|truncatechars:200 }}</td>
-                <td>{{ volume.author|default:"-"|truncatechars:150 }}</td>
-                <td>{{ volume.published_date|default:volume.published_date_edtf|default_if_none:"-" }}</td>
-                <td>{{ volume.created_at }}</td>
+              <td>{{ volume.label|default:"-"|truncatechars:200 }}</td>
+              <td>{{ volume.author|default:"-"|truncatechars:150 }}</td>
+              <td>{{ volume.published_date|default:volume.published_date_edtf|default_if_none:"-" }}</td>
+              <td>{{ volume.created_at }}</td>
             </tr>
           {% endif %}
         {% empty %}
@@ -64,20 +35,5 @@
       </tbody>
     </table>
   {% endif %}
-</div>
 
 {% endblock content %}
-
-{% block extra_javascript %}
-<script>
-  // JavaScript to make list view table rows clickable
-  document.addEventListener('DOMContentLoaded', function() {
-      var rows = document.querySelectorAll('.clickable-row');
-      rows.forEach(function(row) {
-          row.addEventListener('click', function() {
-              window.location.href = row.getAttribute('data-href');
-          });
-      });
-  });
-</script>
-{% endblock %}

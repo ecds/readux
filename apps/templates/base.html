@@ -1,92 +1,96 @@
-{% load static i18n %}<!DOCTYPE html>
+{% load static i18n %}
+<!DOCTYPE html>
 {% load menu_tags %}
 {% load sass_tags %}
 {% load wagtailcore_tags %}
 {% wagtail_site as current_site %}
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}{{ request.site.name }}{% endblock title %}</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>
+      {% block title %}
+        {{ request.site.name }}
+      {% endblock title %}
+    </title>
     <meta property="og:site" content="Readux 2 - Read, Annotate, Publish" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block extra_head %}
+      <meta name="description" content="" />
+      <meta name="keywords" content="" />
+    {% endblock extra_head %}
+    <meta name="author" content="" />
     {% if collection.label %}
-    <meta property="og:title" content="Readux collection: {{ collection.label }}" />
-    <meta name="twitter:title" content="Readux collection: {{ collection.label }}" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
-    <meta property="og:description" content="{{ collection.summary|escape }}" />
-    <meta name="twitter:description" content="{{ collection.summary|escape }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
+      <meta property="og:title" content="Readux collection: {{ collection.label }}" />
+      <meta name="twitter:title" content="Readux collection: {{ collection.label }}" />
+      <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
+      <meta property="og:description" content="{{ collection.summary|escape }}" />
+      <meta name="twitter:description" content="{{ collection.summary|escape }}" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
     {% elif volume.label %}
-    <meta property="og:title" content="{{ volume.label|escape }}" />
-    <meta name="twitter:title" content="{{ volume.label|escape }}" />
-    <meta property="og:description" content="{{ volume.summary|escape }}" />
-    <meta name="twitter:description" content="{{ volume.summary|escape }}" />
-    <meta property="og:type" content="book" />
-    <!-- Zotero metadata -->
-    <meta name="citation_title" content="{{ volume.label|escape }}">
-    <meta name="citation_authors" content="{{ volume.author|safe }}">
-    <meta name="citation_date" content="{{ volume.published_date|safe }}">
-    <meta name="citation_publisher" content="{{ volume.publisher|safe }}">
-    <meta name="citation_public_url" content="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
-    {% for lang in volume.languages.all %}
-    <meta name="citation_language" content="{{ lang.name }}">
-    {% endfor %}
-    <!-- End Zotero metadata -->
+      <meta property="og:title" content="{{ volume.label|escape }}" />
+      <meta name="twitter:title" content="{{ volume.label|escape }}" />
+      <meta property="og:description" content="{{ volume.summary|escape }}" />
+      <meta name="twitter:description" content="{{ volume.summary|escape }}" />
+      <meta property="og:type" content="book" />
+      <!-- Zotero metadata -->
+      <meta name="citation_title" content="{{ volume.label|escape }}" />
+      <meta name="citation_authors" content="{{ volume.author|safe }}" />
+      <meta name="citation_date" content="{{ volume.published_date|safe }}" />
+      <meta name="citation_publisher" content="{{ volume.publisher|safe }}" />
+      <meta name="citation_public_url"
+            content="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all" />
+      {% for lang in volume.languages.all %}
+        <meta name="citation_language" content="{{ lang.name }}" />
+      {% endfor %}
+      <!-- End Zotero metadata -->
 
-    {% for page in volume.canvas_set.all %}{% if forloop.first %}
-    <meta property="og:image" content="{{ page.social_media }}" />
-    <meta property="og:image:secure_url" content="{{ page.social_media }}" />
-    <meta property="og:image:type" content="image/jpeg" />
-    {% if "/cantaloupe/iiif/2" in page.social_media %}
-    <meta name="twitter:image" content="{{ page.twitter_media1 }}" />
-    <!--<meta name="twitter:image:src" content="{{ page.twitter_media2 }}"/>-->
-    {% else %}
-    <meta name="twitter:image" content="{{ page.twitter_media2 }}" />
-    {% endif %}
-    <meta property="og:image:width" content="600" />
-    {% endif %}{% endfor %}
+      {% for page in volume.canvas_set.all %}
+        {% if forloop.first %}
+          <meta property="og:image" content="{{ page.social_media }}" />
+          <meta property="og:image:secure_url" content="{{ page.social_media }}" />
+          <meta property="og:image:type" content="image/jpeg" />
+          {% if "/cantaloupe/iiif/2" in page.social_media %}
+            <meta name="twitter:image" content="{{ page.twitter_media1 }}" />
+          {% else %}
+            <meta name="twitter:image" content="{{ page.twitter_media2 }}" />
+          {% endif %}
+          <meta property="og:image:width" content="600" />
+        {% endif %}
+      {% endfor %}
     {% elif page.title %}
-    <meta property="og:title" content="{{ page.title }}" />
-    <meta name="twitter:title" content="{{ page.title }}" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
-    <meta property="og:description" content="{{ page.tagline|striptags }}" />
-    <meta name="twitter:description" content="{{ page.tagline|striptags }}" />
+      <meta property="og:title" content="{{ page.title }}" />
+      <meta name="twitter:title" content="{{ page.title }}" />
+      <meta property="og:image"
+            content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+      <meta property="og:description" content="{{ page.tagline|striptags }}" />
+      <meta name="twitter:description" content="{{ page.tagline|striptags }}" />
     {% else %}
-    {% block extra_head %}{% endblock %}
-    <meta property="og:title" content="Readux 2" />
-    <meta name="twitter:title" content="Readux 2" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
-    <meta property="og:description" content="Read, Annotate, Publish" />
-    <meta name="twitter:description" content="Read, Annotate, Publish" />
-    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}" />
+      <meta property="og:title" content="Readux 2" />
+      <meta name="twitter:title" content="Readux 2" />
+      <meta property="og:image"
+            content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+      <meta property="og:description" content="Read, Annotate, Publish" />
+      <meta name="twitter:description" content="Read, Annotate, Publish" />
+      <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}" />
     {% endif %}
-    <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
+    <meta name="twitter:image:alt"
+          content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
     <meta property="og:site_name" content="{{ current_site.site_name }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@emorycds" />
     <meta name="twitter:creator" content="@emorycds" />
-
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
-
-    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
-
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
     {% block css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
-    <link href="{% static 'css/selectize.css' %}" rel="stylesheet">
-    <!-- <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet"> -->
-    <link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet">
-    <link type="text/css" href="{% sass_src 'css/readux2/migration.scss' %}" rel="stylesheet">
-    <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet">
-    {% endblock %}
-    {% block extra_css %}{% endblock extra_css %}
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
+      <link href="{% static 'css/selectize.css' %}" rel="stylesheet" />
+      <link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet" />
+      <link type="text/css" href="{% sass_src 'css/readux2/migration.scss' %}" rel="stylesheet" />
+      <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet" />
+    {% endblock css %}
+    {% block extra_css %}
+    {% endblock extra_css %}
 
   </head>
 
@@ -95,64 +99,70 @@
     <a class="sr-only" href="#main">Jump to main content</a>
 
     {# Primary container; host for Vue application #}
+    {% block nav %}
+    {% endblock nav %}
     <div id="v-readux">
-      {% comment %}
-        TODO: Remove existing nav and replace with the following partial.
-        It seems it may be added elsewhere; vue? needs investigation.
-      {% endcomment %}
-      {% comment %} {% include "_home/_nav.html" %} {% endcomment %}
-      {% block nav %}{% endblock %}
 
       {# Content container #}
-      <main id='main'>
+      <main id="main">
         {# Django errors and alerts #}
         {% if messages %}
-            {% for message in messages %}
-              <div class="uk-alert-{{ message.tags }}" uk-alert>
-                <a class="uk-alert-close" uk-close></a>
-                <p>{{ message }}</p>
-              </div>
-            {% endfor %}
+          {% for message in messages %}
+            <div class="uk-alert-{{ message.tags }}" uk-alert>
+              <a class="uk-alert-close" uk-close></a>
+              <p>{{ message }}</p>
+            </div>
+          {% endfor %}
         {% endif %}
 
         {% block modal %}
         {% endblock modal %}
 
-        {% block content %}
-        {% endblock content %}
-
+        {% block wrapper %}
+          {% block content %}
+          {% endblock content %}
+        {% endblock wrapper %}
         {# IIIF viewer #}
-        {% block viewer %}{% endblock viewer %}
+        {% block viewer %}
+        {% endblock viewer %}
       </main>
 
       {# prevent duplicate footer on homepage bug #}
-      {% if request.path != '/'%}
-        {% include '_home/_footer.html' %}
+      {% if request.path != '/' %}
+        {% include "_home/_footer.html" %}
       {% endif %}
     </div>
 
     <!-- Matomo Image Tracker-->
-    <img referrerpolicy="no-referrer-when-downgrade" src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1" hidden alt="" />
+    <img referrerpolicy="no-referrer-when-downgrade"
+         src="https://matomo.ecdsdev.org/matomo.php?idsite=3&amp;rec=1"
+         hidden
+         alt=""
+         height="0"
+         width="0" />
     <!-- End Matomo -->
 
     {% block javascript %}
-      <script
-      src="https://code.jquery.com/jquery-3.3.1.js"
-      integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-      crossorigin="anonymous"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.js"
+              integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+              crossorigin="anonymous"></script>
       <script src="{% static 'js/main.js' %}"></script>
       {% if has_ga_tracking_id %}
         <!-- Google Analytics -->
         <script>
-          window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-          ga("create", "{{ ga_tracking_id }}", "auto");
-          ga("send", "pageview");
+            window.ga = window.ga || function() {
+                (ga.q = ga.q || []).push(arguments)
+            };
+            ga.l = +new Date;
+            ga("create", "{{ ga_tracking_id }}", "auto");
+            ga("send", "pageview");
         </script>
         <script async src='https://www.google-analytics.com/analytics.js'></script>
         <!-- End Google Analytics -->
       {% endif %}
     {% endblock javascript %}
-    {% block extra_javascript %}{% endblock extra_javascript %}
-    {% csrf_token%}
+    {% block extra_javascript %}
+    {% endblock extra_javascript %}
+    {% csrf_token %}
   </body>
 </html>

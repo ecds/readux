@@ -40,8 +40,8 @@
     <!-- Left Column: Navigation -->
     {% if page.body|get_headers|length %}
         {# NOTE: requires the use of header blocks for entries to appear #}
-        <div class="uk-width-1-4@m navigation-wrapper">
-            <nav class="navigation">
+        <div class="uk-width-1-4@m navigation-wrapper" >
+            <nav class="navigation" uk-sticky="offset: 100;">
                 <ul class="uk-nav uk-nav-default">
                     {% for block in page.body|get_headers %}
                         <li class="indent-{{block.value.size}}"><a href="#{{ block.id }}" data-section="{{ block.id }}">{{ block|striptags }}</a></li>

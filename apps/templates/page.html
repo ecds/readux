@@ -27,6 +27,7 @@
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
     <v-volume-search pid="{{ volume.pid }}"></v-volume-search>
+    <v-volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></v-volume-annotations>
   </div>
 </div>
 <!-- uiAction search -->
@@ -102,23 +103,60 @@
   crossorigin="anonymous"></script>
 
 <script type="text/javascript">
-  function toggleOCR() {
-  const ocrCheckbox = document.querySelector("#ocr-overlay");
-  const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-  for (let i = 0; i < nodeList.length; i++) {
-    if (ocrCheckbox.checked) {
-      nodeList[i].style.backgroundColor = "white";
-      nodeList[i].style.fontWeight = "bold";
-      nodeList[i].style.color = "rgb(149, 9, 83)";
-    } else {
-      nodeList[i].style.backgroundColor = "transparent";
-      nodeList[i].style.fontWeight = "";
-      nodeList[i].style.color = "transparent";
+  function preventSeadragonEvents() {
+    const ocrLayers = document.querySelectorAll("div.openseadragon-canvas");
+    for (let i = 0; i < ocrLayers.length; i++) {
+      ocrLayers[i].addEventListener("mousedown", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      });
+
+      ocrLayers[i].addEventListener("mousemove", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      });
+
+      ocrLayers[i].addEventListener("mouseup", (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      });
     }
   }
-}
+
+  function toggleOCR() {
+    const ocrCheckbox = document.querySelector("#ocr-overlay");
+    const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
+    for (let i = 0; i < nodeList.length; i++) {
+      if (ocrCheckbox.checked) {
+        nodeList[i].style.backgroundColor = "white";
+        nodeList[i].style.fontWeight = "bold";
+        nodeList[i].style.color = "rgb(149, 9, 83)";
+
+        nodeList[i].addEventListener("mouseup", (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+        });
+
+        nodeList[i].addEventListener("mousemove", (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+        });
+
+        nodeList[i].addEventListener("mousedown", (event) => {
+          event.stopPropagation();
+          event.preventDefault();
+        });
+        
+      } else {
+        nodeList[i].style.backgroundColor = "transparent";
+        nodeList[i].style.fontWeight = "";
+        nodeList[i].style.color = "transparent";
+      }
+    }
+  }
 
 function showOCR() {
+  preventSeadragonEvents();
   const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
   for (let i = 0; i < nodeList.length; i++) {
     nodeList[i].style.backgroundColor = "white";

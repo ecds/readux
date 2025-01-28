@@ -1,10 +1,3 @@
-console.log("HEY");
-
-$( document ).ready(function() {
-  console.log( "ready!" );
-});
-
-
 Vue.component("v-volume-image", {
   props: ["imgSrc", "volumeLabel"],
   template: `
@@ -57,7 +50,7 @@ Vue.component("v-volume-search", {
               <div v-if="inText==0" class="rx-padding-extra-small uk-text-small"> No matches in text. </div>
               <div v-else v-for="(match, index) in textData" :key="index" class="rx-padding-extra-small">
                   <div class="uk-text-small">
-                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Page {{match.canvas_index }}</div></a>
+                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-copy">Page {{match.canvas_index }}</div></a>
                     <div class="uk-inline-block" style="vertical-align: middle"> · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></div>
                   </div>
                   <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
@@ -69,7 +62,7 @@ Vue.component("v-volume-search", {
               <div v-if="inAnnotations==0" class="rx-padding-extra-small uk-text-small"> No matches in annotations. </div>
               <div v-else v-for="(match, index) in annotationData" :key="index" class="rx-padding-extra-small">
                   <div class="uk-text-small">
-                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-solid">Page {{match.canvas_index }}</div></a>
+                    <a :href="'/volume/' + pid + '/page/' + match.canvas_pid"><div class="uk-label rx-label-copy">Page {{match.canvas_index }}</div></a>
                     <div class="uk-inline-block" style="vertical-align: middle"> · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></div>
                   </div>
                   <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
@@ -172,17 +165,23 @@ Vue.component("v-volume-annotations", {
   props: ["manifestCount", "pageCount"],
   template: `
   <div class="rx-info-content">
-    <div class="rx-info-content-label rx-padding-bottom-10">Annotation Counts</div>
-    <div class="rx-info-content-value rx-annotation-badge">{{localManifestCount}} in manifest</div>
-    <div class="rx-info-content-value rx-annotation-badge">{{localPageCount}} on page</div>
-
     <ul uk-accordion class="rx-accordion-container">
       <li class="uk-open">
-        <a class="rx-accordion-handle rx-info-content-label uk-accordion-title" href="#">Annotation Index</a>
-        <div class="uk-accordion-content rx-accordion-content">
+        <a class="uk-accordion-title uk-label rx-accordion-head" href>Annotation Counts</a>
+        <div class="uk-accordion-content rx-accordion-content uk-margin-small-left uk-margin-small-top">
+          <div class="rx-info-content-value rx-annotation-badge">{{localManifestCount}} in manifest</div>
+          <div class="rx-info-content-value rx-annotation-badge">{{localPageCount}} on page</div>
+        </div>
+      </li>
+    </ul>
+
+    <ul uk-accordion class="rx-accordion-container uk-margin-small-top">
+      <li class="uk-open">
+        <a class="uk-accordion-title uk-label rx-accordion-head" href>Annotation Index</a>
+        <div class="uk-accordion-content rx-accordion-content uk-margin-small-left uk-margin-small-top">
           <li v-for="annotation in annotationData" :key="annotation.canvas__pid" >
             <div v-if="annotation.canvas__position__count">
-              <a :href="annotation.canvas__pid"><span class="rx-btn rx-fixed-width-100">Page {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
+              <a :href="annotation.canvas__pid"><span class="uk-label rx-label-copy">Page {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
             </div>
           </li>
         </div>

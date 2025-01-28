@@ -14,25 +14,39 @@
       <!-- End -->
 
       <!-- Breadcrumb -->
-      {% if volume.collections.first.pid or volumelink %}
-        <ul class="breadcrumb">
-          <li>
-            <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
-            <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
-              <ul class="uk-nav uk-navbar-dropdown-nav">
-                {% if volume.collections.first.pid %}
-                  <li><a href="/{{ collectionlink.slug }}" alt="Collections">Collections</a></li>
-                  <li><a href="{% url 'collection' volume.collections.first.pid %}"
-                      alt="Collections">{{ volume.collections.first.label }}</a>
+      {% if volume %}
+        {% if volume.collections.first and volume.collections.first.pid %}
+          <ul class="breadcrumb">
+            <li>
+              <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+              <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+                <ul class="uk-nav uk-navbar-dropdown-nav">
+                  <li><a href="/{{ collectionlink.slug|default:'' }}" alt="Collections">Collections</a></li>
+                  <li><a href="{% url 'collection' volume.collections.first.pid %}" alt="Collections">
+                    {{ volume.collections.first.label|default:"Default Label" }}</a>
                   </li>
-                {% else %}
-                  <li><a href="/{{ volumelink.slug }}">All Volumes</a></li>
-                {% endif %}
-              </ul>
-            </div>
-          </li>
-          <li>{{volume.label}}</li>
-        </ul>
+                </ul>
+              </div>
+            </li>
+            <li>{{ volume.label|default:"Unknown Volume" }}</li>
+          </ul>
+        {% elif volumelink %}
+          <ul class="breadcrumb">
+            <li>
+              <a href="#">Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span></a>
+              <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: click; pos: bottom-left;">
+                <ul class="uk-nav uk-navbar-dropdown-nav">
+                  <li><a href="/{{ volumelink.slug|default:'' }}">All Volumes</a></li>
+                </ul>
+              </div>
+            </li>
+            <li>{{ volume.label|default:"Unknown Volume" }}</li>
+          </ul>
+        {% else %}
+          <ul class="breadcrumb">
+            <li>{{ volume.label|default:"Unknown Volume" }}</li>
+          </ul>
+        {% endif %}
       {% endif %}
       <!-- End -->
     </div>

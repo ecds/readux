@@ -247,6 +247,7 @@ TEMPLATES = [
                 "apps.readux.context_processors.current_version",
                 "apps.readux.context_processors.footer_template",
                 "apps.readux.context_processors.site_meta",
+                "apps.custom_styles.context_processors.background_image_url",
             ],
         },
     },
@@ -344,3 +345,6 @@ SUMMERNOTE_CONFIG = {
     "iframe": False,
 }
 SUMMERNOTE_THEME = "lite"
+
+# Background image URL configuration
+BACKGROUND_IMAGE_URL = '/static/images/bg.jpg'  # Background image for the homepage; when it doesn't exist, it will fall back to a default solid color

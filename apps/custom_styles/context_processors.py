@@ -1,5 +1,6 @@
 """Exposes the custom style to the base template."""
 from .models import Style
+from django.conf import settings
 
 def add_custom_style(request):
     """Return user defined CSS.
@@ -16,3 +17,12 @@ def add_custom_style(request):
     except Style.DoesNotExist:
         pass
     return {'css': ''}
+
+def background_image_url(request):
+    """
+    Add BACKGROUND_IMAGE_URL and a fallback gradient to the template context.
+    """
+    return {
+        'background_image_url': getattr(settings, 'BACKGROUND_IMAGE_URL', ''),
+        'background_fallback': 'linear-gradient(135deg, #1D3557, #457B9D)',  # Fallback gradient
+    }

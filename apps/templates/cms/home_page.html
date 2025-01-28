@@ -2,6 +2,21 @@
 {% load has_user_annotations readux_templatetags sass_tags static user_annotation_count wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_css %}
+<style>
+  .landing {
+    margin: 0;
+    padding: 0;
+    height: 80vh;
+    min-height: 500px;
+    {% if background_image_url %}
+      background: url('{{ background_image_url }}') no-repeat center center fixed;
+      background-size: cover;
+    {% else %}
+      background: linear-gradient(135deg, #1D3557, #457B9D);
+    {% endif %}
+    background-size: cover;
+  }
+</style>
 {% endblock %}
 
 {% block nav %}

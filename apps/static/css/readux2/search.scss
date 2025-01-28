@@ -102,6 +102,10 @@ form#search-form input[type="search"][name="q"] {
   font-family: "Helvetica Neue";
   font-size: 13px;
   margin-top: 0.65rem;
+
+  a {
+    color: #1D3557;
+  }
 }
 
 #search-filters select[multiple] {
@@ -264,3 +268,4 @@ ol#search-results dl {
       background-color: darken(#E60000, 25%);
   }
 }
+

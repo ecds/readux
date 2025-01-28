@@ -179,11 +179,16 @@ Vue.component("v-volume-annotations", {
       <li class="uk-open">
         <a class="uk-accordion-title uk-label rx-accordion-head" href>Annotation Index</a>
         <div class="uk-accordion-content rx-accordion-content uk-margin-small-left uk-margin-small-top">
-          <li v-for="annotation in annotationData" :key="annotation.canvas__pid" >
-            <div v-if="annotation.canvas__position__count">
-              <a :href="annotation.canvas__pid"><span class="uk-label rx-label-copy">Page {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
-            </div>
-          </li>
+          <div v-if="annotationData.length === 0">
+            <span>No annotations to show</span>
+          </div>
+          <ul v-else>
+            <li v-for="annotation in annotationData" :key="annotation.canvas__pid" >
+              <div v-if="annotation.canvas__position__count">
+                <a :href="annotation.canvas__pid"><span class="uk-label rx-label-copy">Page {{ annotation.canvas__position }}</span></a> ‧ {{annotation.canvas__position__count}} annotations
+              </div>
+            </li>
+          </ul>
         </div>
       </li>
     </ul>
@@ -242,12 +247,12 @@ Vue.component("v-info-content-url-single", {
     <div class="rx-info-content">
       <div class="rx-info-content-label uk-flex-between rx-flex">
         <span>{{label}}</span>
-        <div>
+        <!--div>
           <span class="uk-label rx-label-copy"
             v-clipboard:copy="url"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError">Copy</span>
-        </div>
+        </div-->
       </div>
       <div class="rx-info-content-value">
         <a v-bind:href="url" class="rx-anchor"
@@ -271,12 +276,12 @@ Vue.component("v-info-content-url-unit", {
     <div class="rx-info-content-value uk-flex-between rx-flex">
       <a v-bind:href="url" class="rx-anchor"
         target="_blank">{{url}}</a>
-      <div>
+      <!--div>
         <span class="uk-label rx-label-copy"
           v-clipboard:copy="url"
           v-clipboard:success="onCopy"
           v-clipboard:error="onError">Copy</span>
-      </div>
+      </div-->
     </div>
   `,
   methods: {
@@ -315,12 +320,12 @@ Vue.component("v-info-content-url-external", {
     <div class="rx-info-content">
       <div class="rx-info-content-label uk-flex-between rx-flex ">
         <span>{{label}}</span>
-        <div>
+        <!--div>
           <span class="uk-label rx-label-copy"
             v-clipboard:copy="localUrl"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError">Copy</span>
-        </div>
+        </div-->
       </div>
       <div class="rx-info-content-value">
         <a v-bind:href="localUrl" class="rx-anchor"

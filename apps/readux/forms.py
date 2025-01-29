@@ -6,8 +6,10 @@ from django.forms import widgets
 from django.conf import settings
 from django.template.defaultfilters import truncatechars
 
+
 class MinMaxDateInput(forms.DateInput):
     """Widget extending DateInput to include an initial date in its attrs"""
+
     date_initial = ""
 
     def get_context(self, name, value, attrs):
@@ -27,6 +29,7 @@ class MinMaxDateField(forms.DateField):
 
 class FacetedMultipleChoiceField(forms.MultipleChoiceField):
     """MultipleChoiceField populated by Elasticsearch facets"""
+
     # adapted from Princeton-CDH/geniza project https://github.com/Princeton-CDH/geniza/
 
     def populate_from_buckets(self, buckets):
@@ -34,9 +37,11 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
         self.choices = (
             (
                 bucket["key"],
-                f'{truncatechars(bucket["key"], 42)} ({bucket["doc_count"]})',
+                f'{truncatechars(bucket["key"], 42) if len(bucket["key"]) > 0 else "None"} ({bucket["doc_count"]})',
             )
-            for bucket in sorted(buckets, key=lambda b: -b["doc_count"])  # sort choices by count
+            for bucket in sorted(
+                buckets, key=lambda b: -b["doc_count"]
+            )  # sort choices by count
         )
 
     def valid_value(self, value):
@@ -46,6 +51,7 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
 
 class ManifestSearchForm(forms.Form):
     """Django form for searching Manifests via Elasticsearch"""
+
     q = forms.CharField(
         label="Search for individual whole keywords. Multiple words will be searched as 'or' (e.g. Rome London = Rome or London).",
         required=False,
@@ -129,7 +135,7 @@ class ManifestSearchForm(forms.Form):
                 "type": "date",
             },
             format="%Y-%m-%d",
-        )
+        ),
     )
     end_date = MinMaxDateField(
         label="End date",
@@ -137,7 +143,7 @@ class ManifestSearchForm(forms.Form):
         widget=MinMaxDateInput(
             attrs={"type": "date"},
             format="%Y-%m-%d",
-        )
+        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -191,6 +197,7 @@ class ManifestSearchForm(forms.Form):
 class CustomDropdownSelect(widgets.ChoiceWidget):
     """A custom select widget that uses uk-navbar-dropdown to present its options,
     and submits the form on any change"""
+
     input_type = "radio"
     template_name = "widgets/custom_dropdown_select.html"
     option_template_name = "django/forms/widgets/radio_option.html"
@@ -227,6 +234,7 @@ class AllVolumesForm(forms.Form):
         required=False,
         widget=CustomDropdownSelect,
     )
+
 
 class AllCollectionsForm(forms.Form):
     """Simple form for sorting Collections"""

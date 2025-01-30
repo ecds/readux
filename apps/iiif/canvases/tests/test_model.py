@@ -75,7 +75,7 @@ class TestCanvasModels(TestCase):
         )
         assert (
             self.canvas.thumbnail_crop_volume
-            == "%s/%s/pct:15,15,70,70/,600/0/default.jpg"
+            == "%s/%s/square/,600/0/default.jpg"
             % (self.assumed_iiif_base, self.assumed_canvas_resource)
         )
 

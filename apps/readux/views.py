@@ -248,11 +248,15 @@ class PageDetail(TemplateView):
         # add custom metadata from django settings to context
         if hasattr(settings, "CUSTOM_METADATA"):
             custom_metadata = {}
-            for key in settings.CUSTOM_METADATA.keys():
-                # attempt to get this manifest's value for each key
+            for key, metadata in settings.CUSTOM_METADATA.items():
+                # Extract multi flag
+                multi = metadata.get("multi", False)  # Default to False if not specified
+
+                # Attempt to get this manifest's value for each key
                 value = self.get_metadatum(manifest, key)
                 if value:
-                    custom_metadata[key] = value
+                    custom_metadata[key] = {"value": value, "multi": multi}
+
             context["custom_metadata"] = custom_metadata
 
         return context

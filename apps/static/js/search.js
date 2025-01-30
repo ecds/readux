@@ -61,12 +61,12 @@ window.addEventListener("DOMContentLoaded", () => {
     // Initialize date toggle switch and add event listener
     setDateFieldToggleState(dateToggleState);
     dateToggleSwitch.addEventListener("change", toggleDate);
-
+ 
     // Add reset filters event listener
     allFilters = document.querySelectorAll("#search-filters select");
-    resetFiltersButton = document.querySelector("button#reset-filters");
-    resetFiltersButton.addEventListener("click", resetFilters);
-
+    document.querySelectorAll("button.reset-filters").forEach(button => {
+        button.addEventListener("click", resetFilters);
+    });
     // Attach event listeners to form to handle slider input
     form.addEventListener("submit", handleSubmit);
     form.addEventListener("formdata", handleFormData);

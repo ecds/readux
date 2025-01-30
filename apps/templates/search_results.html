@@ -90,10 +90,14 @@
     <div uk-grid id="search-grid" class="uk-margin-remove">
         <div
             class="uk-width-1-4@m uk-padding-remove-left"
-            style="margin-top: 45px" 
             id="search-filters"
         >
 
+            <fieldset class="uk-align-center uk-text-center uk-margin-remove">
+                <button type="button" class="reset-filters uk-button uk-button-default uk-button-small">Reset</button>
+                <button class="uk-button uk-button-primary uk-button-small" type="submit">Apply</button>
+            </fieldset>
+            
             <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                 <div class="uk-flex uk-flex-between sui-item-heading">
                     <label>{{ form.collection.label }}</label>
@@ -141,7 +145,7 @@
             {% endfor %}
 
             <fieldset uk-margin class="uk-align-center uk-text-center">
-                <button id="reset-filters" type="button" class="uk-button uk-button-default uk-button-small">Reset</button>
+                <button type="button" class="reset-filters uk-button uk-button-default uk-button-small">Reset</button>
                 <button class="uk-button uk-button-primary uk-button-small" type="submit">Apply</button>
             </fieldset>
         </div>

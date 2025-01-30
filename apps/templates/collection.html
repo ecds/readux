@@ -31,7 +31,7 @@
         <h1 class="uk-text-large uk-margin-remove" style="color: white; font-weight: bold;">{{ collection.label }}</h1>
         <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
         <p class="uk-text-medium">{{ collection.summary|striptags|truncatechars:200 }}</p>
-        <button class="uk-button description-button" uk-toggle="target: #modal-full">Full Description</button>
+        <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-full">Full Description</button>
 
         {# TODO: image metadata, style or remove #}
         {% if collection.collection_image_title %}<p>{{ collection.collection_image_title }}</p>{% endif %}

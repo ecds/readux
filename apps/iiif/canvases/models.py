@@ -132,7 +132,11 @@ class Canvas(IiifBase):
     @property
     def thumbnail_crop_volume(self):
         """Concatenated property for cropped volume URI"""
-        return f"{self.resource_id}/square/,600/0/default.jpg"
+        if self.height > self.width:
+            # portrait
+            return f"{self.resource_id}/pct:15,15,70,70/,600/0/default.jpg"
+        # landscape
+        return f"{self.resource_id}/pct:25,15,50,85/,600/0/default.jpg"
 
     @cached_property
     def result(self):

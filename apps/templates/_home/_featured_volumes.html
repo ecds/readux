@@ -16,7 +16,7 @@
                             {% if volume.pid %}
                                 <div class="uk-panel">
                                     <a href="{% url 'volumeall' volume.pid %}" class="grid-item">
-                                        <img src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" alt="{{ volume.label }}">
+                                        <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="{{ volume.label }}">
                                         <h2>{{ volume.label }}</h2>
                                     </a>
                                     <div class="color-black">{{ volume.published_date }}</div>

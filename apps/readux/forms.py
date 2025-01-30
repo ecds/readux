@@ -170,7 +170,7 @@ class ManifestSearchForm(forms.Form):
                     widget=forms.SelectMultiple(
                         attrs={
                             "aria-label": f"Filter volumes by {key}",
-                            "class": "uk-input",
+                            "class": "custom-search-selectize",
                         },
                     ),
                 )

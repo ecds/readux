@@ -535,6 +535,19 @@ var readux = new Vue({
   }
 });
 
+// Initialize the custom selectize
+function initializeSelectize() {
+  // Select all dynamically created select fields and apply selectize
+  jQuery(".custom-search-selectize").each(function () {
+    if (!jQuery(this).hasClass("selectized")) {  // Prevent double initialization
+        jQuery(this).selectize({
+            plugins: ["clear_button"],
+            placeholder: "Select one or more..."
+        });
+    }
+  });
+}
+
 // Initialize selectize for search filters
 jQuery(function () {
   jQuery("#id_collection").selectize({
@@ -549,4 +562,9 @@ jQuery(function () {
     plugins: ["clear_button"],
     placeholder: 'Select one or more...'
   });
+
+  initializeSelectize();
 });
+
+// In case dynamically added fields appear, re-initialize
+jQuery(document).on("change", ".custom-search-selectize", initializeSelectize);

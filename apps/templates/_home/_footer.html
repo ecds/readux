@@ -3,7 +3,7 @@
     {% include FOOTER_CONTENT_TEMPLATE %}
     <ul class="uk-list uk-list-collapse uk-text-light uk-text-small uk-margin-small">
       <li>Readux {{ APP_VERSION }}</li>
-      {% if BRANCH != 'main' %}
+      {% if BRANCH != 'main' and BRANCH is not None %}
         <li>Branch: {{ BRANCH }}</li>
         <li>Commit: {{ COMMIT }}</li>
         <li>Commit Date: {{ COMMIT_DATE }}</li>

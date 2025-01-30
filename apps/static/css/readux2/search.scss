@@ -21,7 +21,8 @@
   gap: 5px;
 }
 
-.info-line a, .info-line select {
+.info-line a,
+.info-line select {
   color: #1D3557; // Again, this could use a variable if defined in your file
   text-decoration: underline;
 }
@@ -37,19 +38,19 @@
 
 @media (max-width: 768px) {
   .info-line {
-      flex-direction: column;
-      align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .info-line .info-group, 
+  .info-line .info-group,
   .info-line .pagination-controls {
-      width: 100%;
-      justify-content: space-between;
-      margin-bottom: 10px;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 10px;
   }
 
   .info-line .info-group {
-      gap: 10px;
+    gap: 10px;
   }
 }
 
@@ -88,11 +89,11 @@ form#search-form input[type="search"][name="q"] {
   height: 150px;
   width: 100%;
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 #search-filters .noUi-target {
-  margin: 45px 21px 10px; 
+  margin: 45px 21px 10px;
 }
 
 .sui-item-heading {
@@ -112,14 +113,15 @@ form#search-form input[type="search"][name="q"] {
   height: 150px;
   width: 100%;
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 .uk-button-primary {
   background-color: #1D3557;
 
   &:hover {
-    background-color: darken(#1D3557, 10%); /* Darken the color when hovered */
+    background-color: darken(#1D3557, 10%);
+    /* Darken the color when hovered */
   }
 }
 
@@ -146,7 +148,7 @@ form#search-form input[type="search"][name="q"] {
   height: 150px;
   width: 100%;
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 /* Selectize */
@@ -155,12 +157,15 @@ form#search-form input[type="search"][name="q"] {
   background: #1D3557 !important;
   border: none !important;
 }
+
 .selectize-dropdown .active:not(.selected) {
   background-color: #F1FAEE !important;
 }
+
 .noUi-connect {
   background: #1D3557 !important;
 }
+
 [disabled] .noUi-connect {
   background: #1D3557 !important;
   opacity: 0.2;
@@ -175,17 +180,20 @@ form#search-form input[type="search"][name="q"] {
   background-color: none;
   border: none !important;
 }
+
 #search-filters .noUi-target {
-  margin: 45px 21px 10px; 
+  margin: 45px 21px 10px;
 }
 
 /* Individual search results */
 ol#search-results {
   list-style: none;
 }
+
 ol#search-results dl {
   margin-left: 2rem;
 }
+
 /* Clamp summary to 3 lines */
 #search-results .result-volume-summary {
   display: -webkit-box;
@@ -232,16 +240,23 @@ ol#search-results dl {
 
 .result-title {
   color: #1D3557;
+
   &:hover {
-    color: darken(#1D3557, 10%); /* Darken the color when hovered */
+    color: darken(#1D3557, 10%);
+    /* Darken the color when hovered */
   }
 }
 
-.uk-checkbox:checked, .uk-checkbox:indeterminate, .uk-radio:checked {
+.uk-checkbox:checked,
+.uk-checkbox:indeterminate,
+.uk-radio:checked {
   background-color: #1D3557 !important;
 }
 
-.uk-search-default .uk-search-input:focus, .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
+.uk-search-default .uk-search-input:focus,
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
   border-color: #1D3557;
 }
 
@@ -254,18 +269,19 @@ ol#search-results dl {
 }
 
 .search-button {
-  background-color: #E60000; 
-  color: white; 
-  padding: 0 9px; 
-  border:none; 
+  background-color: #E60000;
+  color: white;
+  padding: 0 9px;
+  border: none;
   height: 40px;
   font-size: 1.25rem;
   transition: ease 0.1s;
+
   &:hover {
-      background-color: darken(#E60000, 10%);
+    background-color: darken(#E60000, 10%);
   }
+
   &:active {
-      background-color: darken(#E60000, 25%);
+    background-color: darken(#E60000, 25%);
   }
 }
-

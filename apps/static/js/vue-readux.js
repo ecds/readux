@@ -45,7 +45,7 @@ Vue.component("v-volume-search", {
           <li><a href="">Text ({{inText}})</a></li>
           <li><a href="">Annotation ({{inAnnotations}})</a></li>
         </ul>
-        <ul id="rx-search-panel" class="uk-switcher uk-overflow-auto uk-width-expand" uk-height-viewport="offset-bottom: 100">
+        <ul id="rx-search-panel" class="uk-switcher uk-panel-scrollable uk-resize-vertical" uk-height-viewport="offset-bottom: 100">
           <li>
               <div v-if="inText==0" class="rx-padding-extra-small uk-text-small"> No matches in text. </div>
               <div v-else v-for="(match, index) in textData" :key="index" class="rx-padding-extra-small">

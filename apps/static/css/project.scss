@@ -313,7 +313,7 @@ header#page-bg .collection-image-info:before {
   left: 0;
   margin: 10px 10px;
   height: 20px;
-  font-family: serif;
+  font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI', 'Roboto', 'Ubuntu', sans-serif;
 }
 
 header#page-bg .collection-image-info h3 {
@@ -690,9 +690,7 @@ p {
   filter: contrast(var(--contrast));
   color: var(--link-color);
   filter: contrast(var(--contrast));
-  font-family: HelveticaNeue, Helvetica, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI', 'Roboto', 'Ubuntu', sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.28;
@@ -716,9 +714,7 @@ p {
   border: solid 1px var(--link-color);
   filter: contrast(var(--contrast));
   color: white;
-  font-family: HelveticaNeue, Helvetica, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
+  font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI', 'Roboto', 'Ubuntu', sans-serif;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.28;
@@ -3528,7 +3524,7 @@ ol#search-results dl {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   font-weight: 600;
-  font-family: "Helvetica Neue";
+  font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI', 'Roboto', 'Ubuntu', sans-serif;
   font-size: 13px;
 }
 

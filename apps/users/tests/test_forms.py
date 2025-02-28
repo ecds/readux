@@ -40,22 +40,22 @@ class TestUserForm:
         assert len(form.errors) == 1
         assert "username" in form.errors
 
-# class TestUserCreationForm:
+    # class TestUserCreationForm:
 
     def test_signup(self):
         factory = RequestFactory()
-        request = factory.get('/')
+        request = factory.post("/")
         proto_user = UserFactory.build()
-        proto_sa = SocialAccountFactory.build(user = proto_user)
+        proto_sa = SocialAccountFactory.build(user=proto_user)
         form = ReaduxSocialSignupForm(
             {
                 "name": proto_user.name,
                 "agree": True,
                 "sociallogin": proto_sa,
                 "email": proto_user.email,
-                "username": proto_user.username
+                "username": proto_user.username,
             },
-            sociallogin=proto_sa
+            sociallogin=proto_sa,
         )
         assert form.is_valid()
         proto_user.save()

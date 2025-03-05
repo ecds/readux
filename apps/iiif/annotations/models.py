@@ -35,6 +35,7 @@ class AbstractAnnotation(IiifBase):
     h = models.IntegerField(default=0)
     order = models.IntegerField(default=0)
     content = models.TextField(blank=True, null=True, default=" ")
+    raw_content = models.TextField(blank=True, null=True, default=" ")
     resource_type = models.CharField(max_length=50, choices=TYPE_CHOICES, default=TEXT)
     # TODO: replace
     motivation = models.CharField(

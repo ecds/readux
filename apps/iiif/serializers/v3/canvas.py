@@ -68,6 +68,7 @@ def Deserializer(data):
     """
     return {
         "pid": data["id"].split("/")[-2],
+        "resource": data["id"].split("/")[-2],
         "width": data["width"],
         "height": data["height"],
     }

@@ -186,6 +186,8 @@ def Deserializer(data):
             annotation["content"] = body["value"]
             soup = BeautifulSoup(body["value"], "html.parser")
             annotation["raw_content"] = soup.get_text(separator=" ", strip=True)
+        if data["body"][0]["creator"]["id"] == "OCR":
+            annotation["resource_type"] = Annotation.OCR
 
     annotation["primary_selector"] = AnnotationSelector[
         data["target"]["selector"]["type"]

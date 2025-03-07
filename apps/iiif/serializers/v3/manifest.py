@@ -75,7 +75,11 @@ def Deserializer(data):
                             field = field.lower()
                             if field in fields:
                                 if field == "published_date":
-                                    manifest[field] = __parse_date(attr["value"])
+                                    date = __parse_date(attr["value"])
+                                    if date is not None:
+                                        manifest[field] = date
+                                    else:
+                                        manifest["published_date_edtf"] = attr["value"]
                                 else:
                                     manifest[field] = attr["value"]
                             else:
@@ -95,9 +99,12 @@ def Deserializer(data):
 
 def __parse_date(date):
     parts = [date, 1, 1]
-    if ("/") in date:
-        parts = parts.split("/")
-    elif ("-") in date:
-        parts = parts.split("-")
+    if "/" in date:
+        parts = parts[0].split("/")
+    elif "-" in date:
+        parts = parts[0].split("-")
 
-    return datetime(*[int(part) for part in parts])
+    try:
+        return datetime(*[int(part) for part in parts])
+    except ValueError:
+        return None

@@ -352,7 +352,9 @@ Vue.component("v-info-content-url-external", {
   },
   mounted() {
     var vm = this;
+    debugger;
     window.addEventListener("canvasswitch", function (event) {
+      debugger;
       if (event.detail) {
         var protocol = window.location.protocol;
         var host = window.location.host;
@@ -477,9 +479,6 @@ Vue.component("v-info-content-url-page-text", {
 var readux = new Vue({
   el: "#v-readux",
   delimiters: ["[[", "]]"],
-  component: {
-    VueClipboard
-  },
   data: {
     options: ["title", "author", "date published", "date added"],
     searchPrefix: "?sort=",

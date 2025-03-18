@@ -246,26 +246,29 @@ Vue.component("v-info-content-url-single", {
   template: `
     <div class="rx-info-content">
       <div class="rx-info-content-label uk-flex-between rx-flex">
-        <span>{{label}}</span>
-        <!--div>
-          <span class="uk-label rx-label-copy"
-            v-clipboard:copy="url"
-            v-clipboard:success="onCopy"
-            v-clipboard:error="onError">Copy</span>
-        </div-->
+        <span>{{ label }}</span>
+        <div>
+          <span class="uk-label rx-label-copy" @click="copyToClipboard">Copy</span>
+        </div>
       </div>
       <div class="rx-info-content-value">
-        <a v-bind:href="url" class="rx-anchor"
-          target="_blank">{{url}}</a>
+        <a :href="url" class="rx-anchor" target="_blank">{{ url }}</a>
       </div>
     </div>
   `,
   methods: {
-    onCopy() {
-      alert(`You have copied: ${this.url}`);
-    },
-    onError() {
-      alert(`Something went wrong with copy.`);
+    copyToClipboard() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(this.url)
+          .then(() => {
+            alert(`You have copied: ${this.url}`);
+          })
+          .catch(() => {
+            alert("Something went wrong with copy.");
+          });
+      } else {
+        alert("Clipboard API not supported in this browser.");
+      }
     }
   }
 });
@@ -274,22 +277,25 @@ Vue.component("v-info-content-url-unit", {
   props: ["url"],
   template: `
     <div class="rx-info-content-value uk-flex-between rx-flex">
-      <a v-bind:href="url" class="rx-anchor"
-        target="_blank">{{url}}</a>
-      <!--div>
-        <span class="uk-label rx-label-copy"
-          v-clipboard:copy="url"
-          v-clipboard:success="onCopy"
-          v-clipboard:error="onError">Copy</span>
-      </div-->
+      <a :href="url" class="rx-anchor" target="_blank">{{ url }}</a>
+      <div>
+        <span class="uk-label rx-label-copy" @click="copyToClipboard">Copy</span>
+      </div>
     </div>
   `,
   methods: {
-    onCopy() {
-      alert(`You have copied: ${this.url}`);
-    },
-    onError() {
-      alert(`Something went wrong with copy.`);
+    copyToClipboard() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(this.url)
+          .then(() => {
+            alert(`You have copied: ${this.url}`);
+          })
+          .catch(() => {
+            alert("Something went wrong with copy.");
+          });
+      } else {
+        alert("Clipboard API not supported in this browser.");
+      }
     }
   }
 });
@@ -319,27 +325,30 @@ Vue.component("v-info-content-url-external", {
   template: `
     <div class="rx-info-content">
       <div class="rx-info-content-label uk-flex-between rx-flex ">
-        <span>{{label}}</span>
-        <!--div>
-          <span class="uk-label rx-label-copy"
-            v-clipboard:copy="localUrl"
-            v-clipboard:success="onCopy"
-            v-clipboard:error="onError">Copy</span>
-        </div-->
+        <span>{{ label }}</span>
+        <div>
+          <span class="uk-label rx-label-copy" @click="copyToClipboard">Copy</span>
+        </div>
       </div>
       <div class="rx-info-content-value">
-        <a v-bind:href="localUrl" class="rx-anchor"
-          target="_blank">{{localUrl}}</a>
+        <a :href="localUrl" class="rx-anchor" target="_blank">{{ localUrl }}</a>
       </div>
     </div>
   `,
   methods: {
-    onCopy() {
-      alert(`You have copied: ${this.localUrl}`);
-    },
-    onError() {
-      alert(`Something went wrong with copy.`);
-    },
+    copyToClipboard() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(this.localUrl)
+          .then(() => {
+            alert(`You have copied: ${this.localUrl}`);
+          })
+          .catch(() => {
+            alert("Something went wrong with copy.");
+          });
+      } else {
+        alert("Clipboard API not supported in this browser.");
+      }
+    }
   },
   mounted() {
     var vm = this;
@@ -349,8 +358,7 @@ Vue.component("v-info-content-url-external", {
         var host = window.location.host;
         var canvas = event.detail.canvas;
         var volume = vm.volume;
-        var url =
-          protocol + "//" + host + volume + "/page/" + canvas;
+        var url = protocol + "//" + host + volume + "/page/" + canvas;
         vm.localUrl = url;
         vm.vol = volume;
       }
@@ -370,27 +378,30 @@ Vue.component("v-info-content-url-image-link", {
   template: `
     <div class="rx-info-content">
       <div class="rx-info-content-label uk-flex-between rx-flex ">
-        <span v-if="localUrls !== undefined">{{label}}</span>
+        <span v-if="localUrls !== undefined">{{ label }}</span>
         <div>
-          <span class="uk-label rx-label-copy"
-            v-clipboard:copy="localUrls"
-            v-clipboard:success="onCopy"
-            v-clipboard:error="onError" v-if="localUrls !== undefined">Copy</span>
+          <span class="uk-label rx-label-copy" @click="copyToClipboard" v-if="localUrls !== undefined">Copy</span>
         </div>
       </div>
       <div class="rx-info-content-value">
-        <a v-bind:href="pageresource" class="rx-anchor"
-          target="_blank">{{pageresource}}</a>
+        <a :href="pageresource" class="rx-anchor" target="_blank">{{ pageresource }}</a>
       </div>
     </div>
   `,
   methods: {
-    onCopy() {
-      alert(`You have copied: ${this.localUrls}`);
-    },
-    onError() {
-      alert(`Something went wrong with copy.`);
-    },
+    copyToClipboard() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(this.localUrls)
+          .then(() => {
+            alert(`You have copied: ${this.localUrls}`);
+          })
+          .catch(() => {
+            alert("Something went wrong with copy.");
+          });
+      } else {
+        alert("Clipboard API not supported in this browser.");
+      }
+    }
   },
   mounted() {
     var vm = this;
@@ -410,8 +421,7 @@ Vue.component("v-info-content-url-image-link", {
             }).catch(error => {
               console.error(error);
             });
-          var url =
-            localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
+          var url = localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
           vm.localUrls = url;
           vm.can = vm.canvas;
         }

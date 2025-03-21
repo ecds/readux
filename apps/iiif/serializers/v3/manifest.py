@@ -34,6 +34,9 @@ class Serializer(JSONSerializer):
         if obj.author is not None:
             metadata.append({"label": "Author", "value": obj.author})
 
+        if obj.publisher is not None:
+            metadata.append({"label": "Publisher", "value": obj.publisher})
+
         if obj.published_city is not None:
             metadata.append({"label": "Published City", "value": obj.published_city})
 
@@ -134,14 +137,10 @@ def Deserializer(data):
                             field = field.replace(" ", "_")
                             field = field.lower()
                             if field in fields:
-                                if field == "published_date":
-                                    date = __parse_date(attr["value"])
-                                    if date is not None:
-                                        manifest[field] = date
-                                    else:
-                                        manifest["published_date_edtf"] = attr["value"]
-                                elif field == "collections" or field == "languages":
+                                if field == "collections" or field == "languages":
                                     relations[field] = attr["value"]
+                                elif field == "authors":
+                                    manifest["author"] = attr["value"]
                                 else:
                                     manifest[field] = attr["value"]
                             else:

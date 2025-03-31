@@ -156,16 +156,3 @@ def Deserializer(data):
                     manifest[key] = value[value.keys()[0]]
 
     return (manifest, relations)
-
-
-def __parse_date(date):
-    parts = [date, 1, 1]
-    if "/" in date:
-        parts = parts[0].split("/")
-    elif "-" in date:
-        parts = parts[0].split("-")
-
-    try:
-        return datetime(*[int(part) for part in parts])
-    except ValueError:
-        return None

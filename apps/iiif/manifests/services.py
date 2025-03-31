@@ -1,14 +1,17 @@
-""" Module of service classes and methods for ingest. """
+"""Module of service classes and methods for ingest."""
 
 import itertools
 import re
+import logging
 from mimetypes import guess_type
 from urllib.parse import unquote, urlparse
 
 from django.apps import apps
 from tablib.core import Dataset
 
-from .models import Manifest, RelatedLink
+from .models import Manifest, RelatedLink, Language
+
+LOGGER = logging.getLogger(__name__)
 
 
 def clean_metadata(metadata):
@@ -77,6 +80,12 @@ def set_metadata(manifest, metadata):
         if casefolded_key == "related":
             # add RelatedLinks from metadata spreadsheet key "related"
             create_related_links(manifest, value)
+        elif casefolded_key.startswith("language"):
+            for language in value.split(";"):
+                try:
+                    manifest.languages.add(Language.objects.get(code=language))
+                except Language.DoesNotExist:
+                    LOGGER.warning(f"Language code {language} not found.")
         elif casefolded_key in fields:
             setattr(manifest, casefolded_key, value)
         else:

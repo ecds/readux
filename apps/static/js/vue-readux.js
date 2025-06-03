@@ -541,35 +541,3 @@ var readux = new Vue({
     }
   }
 });
-
-// Core fix: prevent focus loss
-jQuery(document).on('mousedown', '.selectize-dropdown', function(e) {
-  e.preventDefault();
-});
-
-// Updated initializeSelectize
-function initializeSelectize() {
-  jQuery(".custom-search-selectize").each(function () {
-    if (!jQuery(this).hasClass("selectized")) {
-      jQuery(this).selectize({
-        plugins: ["clear_button"],
-        placeholder: "Select one or more..."
-      });
-    }
-  });
-}
-
-// Initial setup
-jQuery(function () {
-  jQuery("#id_collection, #id_author, #id_language").selectize({
-    plugins: ["clear_button"],
-    placeholder: "Select one or more..."
-  });
-
-  initializeSelectize();
-});
-
-// Safer re-init if new elements inserted dynamically
-jQuery(document).on("DOMNodeInserted", ".custom-search-selectize", function () {
-  initializeSelectize();
-}); 

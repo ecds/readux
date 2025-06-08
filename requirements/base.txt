@@ -90,7 +90,7 @@ pytest-sugar==0.9.7  # https://github.com/Frozenball/pytest-sugar
 pytest-cov==4.1.0
 pytest-django==4.7.0  # https://github.com/pytest-dev/pytest-django
 py==1.11.0 # https://github.com/pytest-dev/pytest/issues/10420
-requests~=2.31.0
+requests~=2.32.3
 iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi
 httpretty~=1.1.4 # https://pypi.org/project/httpretty/
 #mock~=4.0.2

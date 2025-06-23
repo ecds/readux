@@ -182,7 +182,7 @@ def Deserializer(data):
             annotation["purpose"] = AnnotationPurpose("CM")
         if body["purpose"] == "tagging":
             tags.append(body["value"])
-        if body["type"] == "TextualBody" and body["format"] == "text/html":
+        elif body["type"] == "TextualBody":
             annotation["content"] = body["value"]
             soup = BeautifulSoup(body["value"], "html.parser")
             annotation["raw_content"] = soup.get_text(separator=" ", strip=True)

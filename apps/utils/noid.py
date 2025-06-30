@@ -1,4 +1,4 @@
-'''
+"""
 The `NOID <https://confluence.ucop.edu/display/Curation/NOID>`_
 (Nice Opaque Identifier) minting logic here uses an unbounded NOID minter
 with "extended digits" (:attr:`ALPHABET`) with a check character at the end.
@@ -15,7 +15,7 @@ using::
 
     noid validate- pzc8v
 
-'''
+"""
 
 # Historical note:
 # This noid minting logic was originally implemented for Emory Library's PID
@@ -33,18 +33,19 @@ from random import randint
 from time import time
 
 #: NOID alphabet; specifies the characters to be used for minting noids
-ALPHABET = '0123456789bcdfghjkmnpqrstvwxz'
+ALPHABET = "0123456789bcdfghjkmnpqrstvwxz"
 ALPHASIZE = len(ALPHABET)
 
 
 def random_num():
-    '''Generate a random number based on current time and a random number.'''
-    a, b = str(time()).split('.')
+    """Generate a random number based on current time and a random number."""
+    a, b = str(time()).split(".")
     return int(a) - int(b) - randint(0, 1000)
 
+
 def _digits(num):
-    '''Represent num in base ALPHASIZE. Return an array of digits, most
-    significant first.'''
+    """Represent num in base ALPHASIZE. Return an array of digits, most
+    significant first."""
     if not num:
         return []
     arr = []
@@ -57,8 +58,8 @@ def _digits(num):
 
 
 def _checksum(digits):
-    '''Custom per-digit checksum algorithm originally implemented in Noid.pm
-    and duplicated here for compatibility'''
+    """Custom per-digit checksum algorithm originally implemented in Noid.pm
+    and duplicated here for compatibility"""
     sum = 0
     pos = 1
     for digit in digits:
@@ -68,22 +69,22 @@ def _checksum(digits):
 
 
 def encode_noid(num=None):
+    """Encode an integer as a NOID string, including final checksum
+    character."""
     if num is None:
         num = random_num()
-    '''Encode an integer as a NOID string, including final checksum
-    character.'''
     digits = _digits(num)
     digits.append(_checksum(digits))
-    return ''.join([ALPHABET[digit] for digit in digits])
+    return "".join([ALPHABET[digit] for digit in digits])
 
 
 def decode_noid(noid):
-    '''Decode the integer represented by a NOID string, ignoring the final
-    checksum character.'''
+    """Decode the integer represented by a NOID string, ignoring the final
+    checksum character."""
     noid = noid[:-1]  # strip checksum character
     power = len(noid) - 1
     num = 0
     for char in noid:
-        num += ALPHABET.index(char) * (ALPHASIZE ** power)
+        num += ALPHABET.index(char) * (ALPHASIZE**power)
         power -= 1
     return num

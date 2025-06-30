@@ -323,6 +323,8 @@ SERIALIZATION_MODULES = {
     "annotation_v3": "apps.iiif.serializers.v3.annotation",
     "canvas_v3": "apps.iiif.serializers.v3.canvas",
     "manifest_v3": "apps.iiif.serializers.v3.manifest",
+    "manifest_v2": "apps.iiif.serializers.v2.manifest",
+    "annotation_v2": "apps.iiif.serializers.v2.annotation",
 }
 
 WAGTAIL_SITE_NAME = "Readux"
@@ -347,4 +349,4 @@ SUMMERNOTE_CONFIG = {
 SUMMERNOTE_THEME = "lite"
 
 # Background image URL configuration
-BACKGROUND_IMAGE_URL = '/static/images/bg.jpg'  # Background image for the homepage; when it doesn't exist, it will fall back to a default solid color
+BACKGROUND_IMAGE_URL = "/static/images/bg.jpg"  # Background image for the homepage; when it doesn't exist, it will fall back to a default solid color

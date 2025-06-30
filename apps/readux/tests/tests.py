@@ -32,7 +32,7 @@ class AnnotationTests(TestCase):
                 "full": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
                 "@type": "oa:SpecificResource",
                 "selector": {
-                        "@type": "oa:Choice",
+                        "@type": "oa:SvgSelector",
                         "item": {
                             "@type": "oa:SvgSelector",
                             "value": "<svg></svg>"

@@ -155,7 +155,8 @@ class AddToCollectionsView(FormView):
         if form.is_valid():
             collections = form.cleaned_data["collections"]
         for manifest in manifests:
-            manifest.collections.add(*collections)
+            if collections:
+                manifest.collections.add(*collections)
             manifest.save()
 
     def get_success_url(self):

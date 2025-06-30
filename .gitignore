@@ -127,7 +127,7 @@ static/plugins/annotator/scss/node_modules
 # Local Junk
 .DS_Store
 local.py
-venv
+*venv
 cert*
 *.bk
 .ruby-version

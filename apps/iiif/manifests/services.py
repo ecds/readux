@@ -55,11 +55,11 @@ def create_related_links(manifest, related_str):
     :rtype: None
     """
     for link in related_str.split(";"):
-        (format, _) = guess_type(link)
+        (link_format, _) = guess_type(link)
         RelatedLink.objects.create(
             manifest=manifest,
             link=link,
-            format=format
+            format=link_format
             or "text/html",  # assume web page if MIME type cannot be determined
             is_structured_data=False,  # assume this is not meant for seeAlso
         )
@@ -120,53 +120,53 @@ def set_metadata(manifest, metadata):
     manifest.save()
 
 
-def create_manifest(ingest):
-    """
-    Create or update a Manifest from supplied metadata and images.
-    :return: New or updated Manifest with supplied `pid`
-    :rtype: iiif.manifest.models.Manifest
-    """
-    manifest = None
-    # Make a copy of the metadata so we don't extract it over and over.
-    try:
-        if not bool(ingest.manifest) or ingest.manifest is None:
-            ingest.open_metadata()
+# def create_manifest(ingest):
+#     """
+#     Create or update a Manifest from supplied metadata and images.
+#     :return: New or updated Manifest with supplied `pid`
+#     :rtype: iiif.manifest.models.Manifest
+#     """
+#     manifest = None
+#     # Make a copy of the metadata so we don't extract it over and over.
+#     try:
+#         if not bool(ingest.manifest) or ingest.manifest is None:
+#             ingest.open_metadata()
 
-        metadata = dict(ingest.metadata)
-    except TypeError:
-        metadata = None
-    if metadata:
-        if "pid" in metadata:
-            manifest, created = Manifest.objects.get_or_create(
-                pid=metadata["pid"].replace("_", "-")
-            )
-        else:
-            manifest = Manifest.objects.create()
-        set_metadata(manifest, metadata)
-    else:
-        manifest = Manifest()
+#         metadata = dict(ingest.metadata)
+#     except TypeError:
+#         metadata = None
+#     if metadata:
+#         if "pid" in metadata:
+#             manifest, _ = Manifest.objects.get_or_create(
+#                 pid=metadata["pid"].replace("_", "-")
+#             )
+#         else:
+#             manifest = Manifest.objects.create()
+#         set_metadata(manifest, metadata)
+#     else:
+#         manifest = Manifest()
 
-    manifest.image_server = ingest.image_server
+#     manifest.image_server = ingest.image_server
 
-    # This was giving me a 'django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet' error.
-    Remote = apps.get_model("ingest.remote")
+#     # This was giving me a 'django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet' error.
+#     Remote = apps.get_model("ingest.remote")
 
-    # Ensure that manifest has an ID before updating the M2M relationship
-    manifest.save()
-    if not isinstance(ingest, Remote):
-        manifest.refresh_from_db()
-        manifest.collections.set(ingest.collections.all())
-        # Save again once relationship is set
-        manifest.save()
-    else:
-        RelatedLink(
-            manifest=manifest,
-            link=ingest.remote_url,
-            format="application/ld+json",
-            is_structured_data=True,
-        ).save()
+#     # Ensure that manifest has an ID before updating the M2M relationship
+#     manifest.save()
+#     if not isinstance(ingest, Remote):
+#         manifest.refresh_from_db()
+#         manifest.collections.set(ingest.collections.all())
+#         # Save again once relationship is set
+#         manifest.save()
+#     else:
+#         RelatedLink(
+#             manifest=manifest,
+#             link=ingest.remote_url,
+#             format="application/ld+json",
+#             is_structured_data=True,
+#         ).save()
 
-    return manifest
+#     return manifest
 
 
 def extract_image_server(canvas):

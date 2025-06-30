@@ -121,6 +121,9 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         self.volume1.collections.add(collection)
         self.volume3.collections.add(collection)
 
+        for manifest in Manifest.objects.all():
+            ManifestDocument().update(manifest, True, "index")
+
     def test_get_queryset(self):
         """Should be able to query by search term"""
         volume_search_view = views.VolumeSearchView()

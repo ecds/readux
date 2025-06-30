@@ -2,7 +2,6 @@
 
 import re
 import json
-from datetime import datetime
 from django.core.serializers import serialize
 from apps.iiif.manifests.models import Manifest
 from apps.iiif.canvases.models import Canvas
@@ -48,7 +47,7 @@ class Serializer(JSONSerializer):
                 {"label": "Published Date EDTF", "value": str(obj.published_date_edtf)}
             )
 
-        if obj.languages.count() > 0 is not None:
+        if obj.languages.count() > 0:
             metadata.append(
                 {
                     "label": "Languages",
@@ -56,7 +55,7 @@ class Serializer(JSONSerializer):
                 }
             )
 
-        if obj.collections.count() > 0 is not None:
+        if obj.collections.count() > 0:
             metadata.append(
                 {
                     "label": "Collections",

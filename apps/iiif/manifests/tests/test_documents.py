@@ -24,7 +24,7 @@ class ManifestDocumentTest(ESTestCase, TestCase):
     def test_prepare_authors(self):
         """Test authors returned as array instead of string"""
         # test no author
-        manifest = ManifestFactory.create()
+        manifest = ManifestFactory.create(author=None)
         assert self.doc.prepare_authors(instance=manifest) == ["[no author]"]
         # test empty string
         manifest.author = ""

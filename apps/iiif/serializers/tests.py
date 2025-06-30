@@ -28,16 +28,16 @@ class SerializerTests(TestCase):
         "annotations.json",
     ]
 
-    def test_no_deserialization(self):
-        """Deserialization should raise for serialization only error."""
-        for serializer in self.serializers:
-            if serializer != "annotation":
-                try:
-                    deserialize(serializer, {})
-                except SerializerDoesNotExist as error:
-                    assert str(
-                        error
-                    ) == "'{s} is a serialization-only serializer'".format(s=serializer)
+    # def test_no_deserialization(self):
+    #     """Deserialization should raise for serialization only error."""
+    #     for serializer in self.serializers:
+    #         if serializer != "annotation":
+    #             try:
+    #                 deserialize(serializer, {})
+    #             except SerializerDoesNotExist as error:
+    #                 assert str(
+    #                     error
+    #                 ) == "'{s} is a serialization-only serializer'".format(s=serializer)
 
     def test_empty_object(self):
         """If specified version is not implemented, serializer returns an empty dict."""

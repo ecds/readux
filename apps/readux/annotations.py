@@ -156,7 +156,7 @@ class AnnotationCrud(View):
         else:
             deserialized_annotation, tags = deserialize("annotation_v3", self.payload)
             annotation = UserAnnotation(**deserialized_annotation)
-            annotation.save()
+            UserAnnotation.objects.bulk_create([annotation])
             annotation.refresh_from_db()
             for tag in tags:
                 annotation.tags.add(tag)

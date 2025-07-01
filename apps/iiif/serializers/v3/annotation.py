@@ -214,13 +214,13 @@ def Deserializer(data):
         ]
 
     if data["target"]["selector"]["type"] == "RangeSelector":
-        annotation["start_selector"] = Annotation.objects.get(
+        annotation["start_selector"], _ = Annotation.objects.get_or_create(
             id=findall(
                 r"([A-Za-z0-9\-]+)",
                 data["target"]["selector"]["startSelector"]["value"],
             )[-1]
         )
-        annotation["end_selector"] = Annotation.objects.get(
+        annotation["end_selector"], _ = Annotation.objects.get_or_create(
             id=findall(
                 r"([A-Za-z0-9\-]+)", data["target"]["selector"]["endSelector"]["value"]
             )[-1]

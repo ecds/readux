@@ -173,6 +173,91 @@ class AnnotationTests(TestCase):
         },
     }
 
+    valid_v3_annotation = {
+        "svg": {
+            "type": "Annotation",
+            "body": [
+                {
+                    "purpose": "commenting",
+                    "type": "TextualBody",
+                    "value": "<p>box</p>",
+                    "creator": {"id": "zaphod", "displayName": "Zaphod Beeblebrox"},
+                }
+            ],
+            "target": {
+                "source": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
+                "selector": {
+                    "type": "FragmentSelector",
+                    "conformsTo": "http://www.w3.org/TR/media-frags/",
+                    "value": "xywh=pixel:928.5149536132812,2576.39990234375,583.6755981445312,510.496826171875",
+                },
+            },
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "id": "3eaacc97-02c7-4e6f-a20f-afe706bdc6e1",
+        },
+        "text": {
+            "type": "Annotation",
+            "body": [
+                {
+                    "type": "TextualBody",
+                    "value": "<p>text</p>",
+                    "purpose": "commenting",
+                    "creator": {"id": "zaphod", "displayName": "Zaphod Beeblebrox"},
+                }
+            ],
+            "bodies": [
+                {
+                    "type": "TextualBody",
+                    "value": "<p>text</p>",
+                    "purpose": "commenting",
+                    "creator": {"id": "zaphod", "displayName": "Zaphod Beeblebrox"},
+                }
+            ],
+            "target": {
+                "source": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
+                "selector": {
+                    "type": "RangeSelector",
+                    "startSelector": {
+                        "type": "XPathSelector",
+                        "value": "//*[@id='1eee408f-b3c2-47c1-913e-913e491a92ea']",
+                        "refinedBy": {"type": "TextPositionSelector", "start": 0},
+                    },
+                    "endSelector": {
+                        "type": "XPathSelector",
+                        "value": "//*[@id='1eee408f-b3c2-47c1-913e-913e491a92ea']",
+                        "refinedBy": {"type": "TextPositionSelector", "end": 4},
+                    },
+                },
+            },
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "id": "3ed8195a-bd4d-4cda-9f5b-e35f245db1e8",
+        },
+        "tag": {
+            "type": "Annotation",
+            "body": [
+                {
+                    "purpose": "commenting",
+                    "type": "TextualBody",
+                    "value": "<p>circle with tag</p>",
+                    "creator": {"id": "zaphod", "displayName": "Zaphod Beeblebrox"},
+                }
+            ],
+            "target": {
+                "source": "https://readux-dev.org:3000/iiif/readux:st7r6/canvas/fedora:emory:5622",
+                "selector": {
+                    "type": "SvgSelector",
+                    "value": '<svg><circle cx="2652.90869140625" cy="2752.0352783203125" r="304.1899090361771"></circle></svg>',
+                    "refinedBy": {
+                        "type": "FragmentSelector",
+                        "value": "xywh=2348.71875,2447.84521484375,608.3798828125,608.3798828125",
+                    },
+                },
+            },
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "id": "5f642af1-b76e-49ff-aead-c4ca72673943",
+        },
+    }
+
     def setUp(self):
         # fixtures = ['kollections.json', 'manifests.json', 'canvases.json', 'annotations.json']
         self.user_a = get_user_model().objects.get(pk=111)
@@ -262,10 +347,30 @@ class AnnotationTests(TestCase):
         assert annotation_object.w == 681
         assert annotation_object.h == 425
 
+    def test_v3_svg_annotation_creation(self):
+        request = self.factory.post(
+            "/annotations-crud/",
+            data=json.dumps(self.valid_v3_annotation["svg"]),
+            content_type="application/json",
+        )
+        request.user = self.user_a
+        response = self.crud_view(request)
+        annotation = self.load_anno(response)
+        assert annotation["body"][0]["creator"]["name"] == "Zaphod Beeblebrox"
+        # assert annotation['on']['selector']['value'] == 'xywh=535,454,681,425'
+        assert response.status_code == 201
+        annotation_object = UserAnnotation.objects.get(
+            pk=annotation["id"].replace("#", "")
+        )
+        assert annotation_object.x == 928
+        assert annotation_object.y == 2576
+        assert annotation_object.w == 583
+        assert annotation_object.h == 510
+
     def test_mirador_text_annotation_creation(self):
         request = self.factory.post(
             "/annotations-crud/",
-            data=json.dumps(self.valid_mirador_annotations["text"]),
+            data=json.dumps(self.valid_v3_annotation["text"]),
             content_type="application/json",
         )
         request.user = self.user_a
@@ -275,6 +380,37 @@ class AnnotationTests(TestCase):
         # assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
         # assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
         assert response.status_code == 201
+
+    def test_v3_text_annotation_creation(self):
+        request = self.factory.post(
+            "/annotations-crud/",
+            data=json.dumps(self.valid_v3_annotation["text"]),
+            content_type="application/json",
+        )
+        request.user = self.user_a
+        response = self.crud_view(request)
+        annotation = self.load_anno(response)
+        assert annotation["body"][0]["creator"]["name"] == "Zaphod Beeblebrox"
+        # assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
+        # assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
+        assert response.status_code == 201
+
+    def test_v3_annotation_creation_with_tags(self):
+        request = self.factory.post(
+            "/annotations-crud/",
+            data=json.dumps(self.valid_mirador_annotations["tag"]),
+            content_type="application/json",
+        )
+        request.user = self.user_a
+        response = self.crud_view(request)
+        annotation = self.load_anno(response)
+        assert annotation["body"][0]["creator"]["name"] == "Zaphod Beeblebrox"
+        # assert annotation['on']['selector']['value'] == 'xywh=535,454,681,425'
+        assert response.status_code == 201
+        annotation_object = UserAnnotation.objects.get(
+            pk=annotation["id"].replace("#", "")
+        )
+        assert annotation_object.tags.count() == 2
 
     def test_creating_annotation_from_string(self):
         request = self.factory.post(

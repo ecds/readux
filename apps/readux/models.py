@@ -5,8 +5,6 @@ import re
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 from django.db import models
-from django.db.models import signals
-from django.dispatch import receiver
 from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.manifests.documents import ManifestDocument

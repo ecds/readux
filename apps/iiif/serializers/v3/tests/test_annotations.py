@@ -90,8 +90,8 @@ class SerializerTests(TestCase):
         text_anno = UserAnnotationFactory.create(
             canvas=canvas,
             primary_selector=AnnotationSelector("RG"),
-            start_selector=AnnotationFactory.create(canvas=canvas),
-            end_selector=AnnotationFactory.create(canvas=canvas),
+            start_selector=AnnotationFactory.create(canvas=canvas, order=2),
+            end_selector=AnnotationFactory.create(canvas=canvas, order=12),
             start_offset=1,
             end_offset=2,
             content="<p>HTML comment</p>",
@@ -135,6 +135,7 @@ class DeserializerTests(TestCase):
         canvas = CanvasFactory.create(manifest=ManifestFactory.create())
         web_annotation = {
             "type": "Annotation",
+            "motivation": "commenting",
             "body": [
                 {
                     "purpose": "commenting",
@@ -173,6 +174,7 @@ class DeserializerTests(TestCase):
         canvas = CanvasFactory.create(manifest=ManifestFactory.create())
         web_annotation = {
             "type": "Annotation",
+            "motivation": "commenting",
             "body": [
                 {
                     "purpose": "commenting",
@@ -231,6 +233,7 @@ class DeserializerTests(TestCase):
         end = AnnotationFactory.create(canvas=canvas, order=15)
         web_annotation = {
             "type": "Annotation",
+            "motivation": "commenting",
             "body": [
                 {
                     "type": "TextualBody",
@@ -253,6 +256,11 @@ class DeserializerTests(TestCase):
                         "type": "XPathSelector",
                         "value": f"//*[@id='{end.pk}']",
                         "refinedBy": {"@type": "TextPositionSelector", "end": 5},
+                    },
+                    "refinedBy": {
+                        "type": "FragmentSelector",
+                        "value": "xywh=pixel:1069,984,776,87",
+                        "conformsTo": "https://www.w3.org/TR/media-frags/",
                     },
                 },
             },

@@ -585,5 +585,6 @@ def add_ocr_annotations(canvas, ocr):
 def add_oa_annotations(annotation_list_url):
     data = fetch_url(annotation_list_url)
     for oa_annotation in data["resources"]:
-        anno = deserialize("annotation", oa_annotation)
-        anno.save()
+        anno, _ = deserialize("annotation", oa_annotation)
+        annotation = Annotation(**anno)
+        Annotation.objects.bulk_create([annotation])

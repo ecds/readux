@@ -2,8 +2,7 @@
 """Module for serializing IIIF Annotation Lists"""
 import json
 from datetime import datetime
-from django.core.serializers.base import SerializerDoesNotExist
-from django.core.serializers import serialize
+from django.core.serializers import serialize, deserialize
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.serializers.base import Serializer as JSONSerializer
 
@@ -118,11 +117,13 @@ class Serializer(JSONSerializer):
         return None
 
 
-class Deserializer:
-    """Deserialize IIIF Annotation List
+def Deserializer(data):
+    """Deserialize IIIF Manifest"""
 
-    :raises SerializerDoesNotExist: Not yet implemented.
-    """
+    if isinstance(data, str):
+        data = json.loads(data)
 
-    def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("manifest is a serialization-only serializer")
+    if "@context" in data and "2/context.json" in data["@context"]:
+        return deserialize("manifest_v2", data)
+
+    return deserialize("manifest_v3", data)

@@ -36,7 +36,7 @@ django-summernote>=0.8.11.6 # https://github.com/summernote/django-summernote
 
 # SCSS Support
 #--------------------------------------------------------------------------------
-libsass
+# libsass
 django-compressor
 django-sass-processor
 

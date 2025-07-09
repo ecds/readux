@@ -66,15 +66,5 @@ class SerializerTests(TestCase):
     #         md["label"] for md in updated_serialized_manifest["metadata"]
     #     ]
 
-    # def test_deserializing_complex_metadata(self):
-    #     """It should serialize extra metadata"""
-    #     self.manifest.metadata = complex_metadata()
-    #     self.manifest.save()
-    #     self.manifest.refresh_from_db()
-    #     updated_serialized_manifest = json.loads(
-    #         serialize("manifest_v3", [self.manifest], current_user=self.user)
-    #     )
-    #     manifest, relations = deserialize("manifest_v3", updated_serialized_manifest)
-    #     assert manifest["published_city"] == "Atlanta"
-    #     assert "collections" in relations
-    #     assert "languages" in relations
+    def test_deserializing_v2_manifest(self):
+        """It should serialize extra metadata"""

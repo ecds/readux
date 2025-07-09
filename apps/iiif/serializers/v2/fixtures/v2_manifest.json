@@ -1,0 +1,120 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://readux.io/iiif/v2/spb1b/manifest",
+  "@type": "sc:Manifest",
+  "label": "CSM Entry Checklist (S/N 1001)",
+  "metadata": [
+    {
+      "label": "Author",
+      "value": "NASA"
+    },
+    {
+      "label": "Publisher",
+      "value": "NASA"
+    },
+    {
+      "label": "Place of Publication",
+      "value": "Place of publication"
+    },
+    {
+      "label": "Publication Date",
+      "value": "1971"
+    },
+    {
+      "label": "Notes",
+      "value": null
+    },
+    {
+      "label": "Record Created",
+      "value": "2020-05-26T18:15:14.606Z"
+    },
+    {
+      "label": "Edition Type",
+      "value": "Readux IIIF Exported Edition"
+    },
+    {
+      "label": "About Readux",
+      "value": "https://readux.ecdsdev.org/about/"
+    },
+    {
+      "label": "Annotators",
+      "value": "Jay Varner"
+    },
+    {
+      "label": "Export Date",
+      "value": "2025-07-03T13:32:36.782"
+    }
+  ],
+  "description": "CSM Entry Checklist (S/N 1001) from the Apollo 15 Flight Data File (FDF). \"There are two CSM Launch Checklists, two LM Activation Checklists, and two CSM Entry Checklists - one each for the CDR [commander] and for either the CMP [command module pilot] or LMP [lunar module pilot]. We each had one to expedite the timeline and not need to pass a checklist back and forth.\" - Col. Scott",
+  "related": ["https://readux.io/volume/spb1b/page/all"],
+  "within": ["https://readux.io/collection/apollo-15"],
+  "thumbnail": {
+    "@id": "https://iip.readux.io/iiif/2/spb1b_000.tif/full/600,/0/default.jpg",
+    "service": {
+      "@context": "http://iiif.io/api/image/2/context.json",
+      "@id": "https://iip.readux.io/iiif/2/spb1b_000.tif",
+      "profile": "http://iiif.io/api/image/2/level1.json"
+    }
+  },
+  "attribution": "Emory University Libraries",
+  "logo": "https://readux.io/media/logos/lits-logo-web.png",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "viewingDirection": "left-to-right",
+  "viewingHint": "paged",
+  "sequences": [
+    {
+      "@id": "https://readux.io/iiif/v2/spb1b/sequence/normal",
+      "@type": "sc:Sequence",
+      "label": "Current Page Order",
+      "startCanvas": "https://readux.io/iiif/spb1b/canvas/spb1b_000.tif",
+      "canvases": [
+        {
+          "@context": "http://iiif.io/api/presentation/2/context.json",
+          "@id": "https://readux.io/iiif/spb1b/canvas/spb1b_000.tif",
+          "@type": "sc:Canvas",
+          "label": "1",
+          "height": 3600,
+          "width": 2814,
+          "images": [
+            {
+              "@context": "http://iiif.io/api/presentation/2/context.json",
+              "@id": "https://readux.io/iiif/spb1b/annotation/spb1b_000.tif",
+              "@type": "oa:Annotation",
+              "motivation": "sc:painting",
+              "resource": {
+                "@id": "https://iip.readux.io/iiif/2/spb1b_000.tif/full/full/0/default.jpg",
+                "@type": "dctypes:Image",
+                "format": "image/jpeg",
+                "height": 3600,
+                "width": 2814,
+                "service": {
+                  "@context": "https://iiif.io/api/image/2/context.json",
+                  "@id": "https://iip.readux.io/iiif/2/spb1b_000.tif",
+                  "profile": "https://iiif.io/api/image/2/level2.json"
+                }
+              },
+              "on": "https://readux.io/iiif/spb1b/canvas/spb1b_000.tif"
+            }
+          ],
+          "thumbnail": {
+            "@id": "https://iip.readux.io/iiif/2/spb1b_000.tif/full/200,/0/default.jpg",
+            "height": 250,
+            "width": 200
+          },
+          "otherContent": [
+            {
+              "@id": "https://readux.io/iiif/v2/spb1b/list/spb1b_000.tif",
+              "@type": "sc:AnnotationList",
+              "label": "OCR Text"
+            },
+            {
+              "label": "Annotations by jay",
+              "@type": "sc:AnnotationList",
+              "@id": "https://readux.io/annotations/jay/spb1b/list/spb1b_000.tif"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

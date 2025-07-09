@@ -65,6 +65,8 @@ class UserAnnotation(AbstractAnnotation):
             return []
 
     def pre_save(self):
+        if self.primary_selector == "RG":
+            self.__set_xywh_text_anno()
         if (
             isinstance(self.oa_annotation, dict)
             and "on" not in self.oa_annotation.keys()

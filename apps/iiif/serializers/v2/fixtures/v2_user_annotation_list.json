@@ -1,0 +1,98 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://readux.io/annotations/jay/spb1b/list/spb1b_000.tif",
+  "@type": "sc:AnnotationList",
+  "resources": [
+    {
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "@id": "28e92e3c-0407-482e-98d9-39ecc1ee0070",
+      "@type": "oa:Annotation",
+      "motivation": "oa:commenting",
+      "annotatedBy": {
+        "name": "Dominique Wilkins"
+      },
+      "resource": {
+        "@type": "dctypes:Text",
+        "format": "text/html",
+        "chars": "<p>some annotation</p>",
+        "language": "en"
+      },
+      "on": {
+        "full": "https://readux.io/iiif/v2/spb1b/canvas/spb1b_000.tif",
+        "@type": "oa:SpecificResource",
+        "within": {
+          "@id": "https://readux.io/iiif/v2/spb1b/manifest",
+          "@type": "sc:Manifest"
+        },
+        "selector": {
+          "@type": "oa:FragmentSelector",
+          "value": "xywh=1069,984,776,87",
+          "item": {
+            "@type": "RangeSelector",
+            "startSelector": {
+              "@type": "XPathSelector",
+              "value": "//*[@id='5a1b56bb-b32d-419a-969a-0465982c8a0f']",
+              "refinedBy": {
+                "@type": "TextPositionSelector",
+                "start": 0
+              }
+            },
+            "endSelector": {
+              "@type": "XPathSelector",
+              "value": "//*[@id='ece5a9ff-ee53-4106-8177-5b18fe3e1da8']",
+              "refinedBy": {
+                "@type": "TextPositionSelector",
+                "end": 2
+              }
+            }
+          }
+        }
+      },
+      "stylesheet": {
+        "type": "CssStylesheet",
+        "value": ".anno-28e92e3c-0407-482e-98d9-39ecc1ee0070 { background: rgba(0, 191, 255, 0.5); }"
+      }
+    },
+    {
+      "@context": "http://iiif.io/api/presentation/2/context.json",
+      "@id": "6c1c7843-832b-46b3-aca9-da957b07be6d",
+      "@type": "oa:Annotation",
+      "motivation": ["oa:commenting", "oa:tagging"],
+      "annotatedBy": {
+        "name": "Dominique Wilkins"
+      },
+      "resource": [
+        {
+          "@type": "dctypes:Text",
+          "format": "text/html",
+          "chars": "<p>box</p>",
+          "language": "en"
+        },
+        {
+          "@type": "oa:Tag",
+          "chars": "example"
+        }
+      ],
+      "on": {
+        "full": "https://readux.io/iiif/v2/spb1b/canvas/spb1b_000.tif",
+        "@type": "oa:SpecificResource",
+        "within": {
+          "@id": "https://readux.io/iiif/v2/spb1b/manifest",
+          "@type": "sc:Manifest"
+        },
+        "selector": {
+          "@type": "oa:FragmentSelector",
+          "value": "xywh=813,1920,527,553",
+          "item": {
+            "@type": "oa:Choice",
+            "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M813.44371,1920.18543h263.25166v0h263.25166v276.66225v276.66225h-263.25166h-263.25166v-276.66225z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;annotation&quot;:null,&quot;nonHoverStrokeColor&quot;:[&quot;Color&quot;,0,0.74902,1],&quot;editable&quot;:true}\" id=\"rectangle_ca05e106-4c5f-4d40-a7b2-353287d0a9e2\" fill-opacity=\"0.00001\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"2.57483\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
+            "default": {
+              "@type": "oa:FragmentSelector",
+              "value": "xywh=813,1920,527,553"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

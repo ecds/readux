@@ -31,15 +31,17 @@ class SerializerTests(TestCase):
             primary_selector=AnnotationSelector("SV"),
             owner=self.owner,
         )
+        start_selector = AnnotationFactory.create(canvas=canvas, order=2)
+        end_selector = AnnotationFactory.create(canvas=canvas, order=12)
         UserAnnotationFactory.create(
             canvas=canvas,
             primary_selector=AnnotationSelector("RG"),
-            start_selector=AnnotationFactory.create(canvas=canvas),
-            end_selector=AnnotationFactory.create(canvas=canvas),
             start_offset=1,
             end_offset=2,
             content="<p>HTML comment</p>",
             owner=self.owner,
+            start_selector=start_selector,
+            end_selector=end_selector,
         )
 
         user_annotations = UserAnnotation.objects.filter(
@@ -79,6 +81,7 @@ class DeserializerTests(TestCase):
             "items": [
                 {
                     "type": "Annotation",
+                    "motivation": "commenting",
                     "body": [
                         {
                             "purpose": "commenting",

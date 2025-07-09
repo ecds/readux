@@ -1,10 +1,11 @@
 """Test Module for IIIF Serializers"""
 
+import os
 import json
-from random import randint
 from django.test import TestCase
 from django.core.serializers import serialize, deserialize
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from apps.iiif.annotations.tests.factories import AnnotationFactory
 from apps.iiif.canvases.tests.factories import CanvasFactory
 from apps.iiif.manifests.tests.factories import ManifestFactory
@@ -95,7 +96,7 @@ class AnnotationSerializerTests(TestCase):
             },
         }
 
-        deserialized_annotation, tags = deserialize("annotation_v2", user_annotation)
+        deserialized_annotation, _ = deserialize("annotation_v2", user_annotation)
         assert deserialized_annotation["id"] == user_annotation["@id"]
         assert deserialized_annotation["owner"] == user
         assert deserialized_annotation["canvas"] == manifest.canvas_set.all()[0]
@@ -114,4 +115,108 @@ class AnnotationSerializerTests(TestCase):
         )
         assert deserialized_annotation["start_offset"] == 3
         assert deserialized_annotation["end_offset"] == 9
-        # assert False
+
+    def test_v2_user_annotation_deserialization(self):
+        """It should deserialize v2 user annotations."""
+        user = UserFactory.create(name="Dominique Wilkins", username="wilkins")
+        CanvasFactory.create(pid="spb1b_000.tif", manifest=ManifestFactory.create())
+        with open(
+            os.path.join(
+                settings.APPS_DIR,
+                "iiif",
+                "serializers",
+                "v2",
+                "fixtures",
+                "v2_user_annotation_list.json",
+            )
+        ) as file:
+            data = file.read()
+            deserialized_annotation, tags = deserialize("annotation_list", data)
+            print(deserialized_annotation)
+            print(tags)
+            assert True
+
+    def test_v2_and_v3_create_identical_user_annotations(self):
+        """Both deserializer versions should return identical objects."""
+        manifest = ManifestFactory.create()
+        canvas = manifest.canvas_set.all()[0]
+        annotation = UserAnnotationFactory.create(canvas=canvas)
+        v2_serialized_annotation = serialize("annotation_v2", [annotation])
+        v3_serialized_annotation = serialize("annotation_v3", [annotation])
+        v2_deserialized_annotation, _ = deserialize(
+            "annotation", v2_serialized_annotation
+        )
+        v3_deserialized_annotation, _ = deserialize(
+            "annotation", v3_serialized_annotation
+        )
+        print(v2_deserialized_annotation)
+        print(v3_deserialized_annotation)
+        for key in v3_deserialized_annotation.keys():
+            assert v3_deserialized_annotation[key] == v2_deserialized_annotation[key]
+        for key in v2_deserialized_annotation.keys():
+            assert v2_deserialized_annotation[key] == v3_deserialized_annotation[key]
+
+    def test_v2_and_v3_create_identical_user_text_annotations(self):
+        """Both deserializer versions should return identical objects."""
+        UserFactory.create(username="wilkins", name="Dominique Wilkins")
+        manifest = ManifestFactory.create()
+        canvas = CanvasFactory.create(pid="spb1b_000.tif", manifest=manifest)
+        AnnotationFactory.create(
+            id="5a1b56bb-b32d-419a-969a-0465982c8a0f", order=1, canvas=canvas
+        )
+        AnnotationFactory.create(
+            id="ece5a9ff-ee53-4106-8177-5b18fe3e1da8", order=4, canvas=canvas
+        )
+        for n in range(2, 4):
+            AnnotationFactory.create(order=n, canvas=canvas)
+        v2_anno = None
+        v3_anno = None
+        with open(
+            os.path.join(
+                settings.APPS_DIR,
+                "iiif",
+                "serializers",
+                "v2",
+                "fixtures",
+                "v2_user_annotation_list.json",
+            ),
+            "r",
+            encoding="utf8",
+        ) as file:
+            v2_anno = json.load(file)["resources"][0]
+        with open(
+            os.path.join(
+                settings.APPS_DIR,
+                "iiif",
+                "serializers",
+                "v3",
+                "fixtures",
+                "v3_user_annotation_list.json",
+            ),
+            "r",
+            encoding="utf8",
+        ) as file:
+            v3_anno = json.load(file)["items"][0]
+
+        v2_deserialized_annotation, _ = deserialize("annotation", v2_anno)
+        v3_deserialized_annotation, _ = deserialize("annotation", v3_anno)
+        print(v2_deserialized_annotation)
+        print(v3_deserialized_annotation)
+        for key in v3_deserialized_annotation.keys():
+            if key == "start_selector" or key == "end_selector":
+                assert str(v3_deserialized_annotation[key].id) == str(
+                    v2_deserialized_annotation[key].id
+                )
+            else:
+                assert (
+                    v3_deserialized_annotation[key] == v2_deserialized_annotation[key]
+                )
+        for key in v2_deserialized_annotation.keys():
+            if key == "start_selector" or key == "end_selector":
+                assert str(v2_deserialized_annotation[key].id) == str(
+                    v3_deserialized_annotation[key].id
+                )
+            else:
+                assert (
+                    v2_deserialized_annotation[key] == v3_deserialized_annotation[key]
+                )

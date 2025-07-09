@@ -1,11 +1,9 @@
 # pylint: disable = attribute-defined-outside-init, too-few-public-methods
 """Module for serializing IIIF Annotation"""
-from re import findall
+import json
+from django.core.serializers import deserialize
 from django.contrib.auth import get_user_model
 from apps.iiif.serializers.base import Serializer as JSONSerializer
-from apps.iiif.annotations.models import Annotation
-from apps.iiif.canvases.models import Canvas
-from apps.readux.models import UserAnnotation
 import config.settings.local as settings
 
 USER = get_user_model()
@@ -30,7 +28,7 @@ class Serializer(JSONSerializer):
 
         :param obj: Annotation to be serialized.
         :type obj: :class:`apps.iiif.annotation.models.Annotation`
-        :return: Serialzed annotation.
+        :return: Serialized annotation.
         :rtype: dict
         """
         # TODO: Add more validation checks before trying to serialize.
@@ -68,9 +66,7 @@ class Serializer(JSONSerializer):
                     },
                     "selector": {
                         "@type": "oa:FragmentSelector",
-                        "value": "xywh={x},{y},{w},{h}".format(
-                            x=str(obj.x), y=str(obj.y), w=str(obj.w), h=str(obj.h)
-                        ),
+                        "value": f"xywh={obj.x},{obj.y},{obj.w},{obj.h}",
                     },
                 },
             }
@@ -115,97 +111,111 @@ class Serializer(JSONSerializer):
 
 
 def Deserializer(data):
-    # data = json.loads(stream_or_string)
-    annotation = Annotation()
-    if "@type" in data and data["@type"] == "oa:Annotation":
-        if data["annotatedBy"]["name"] == "OCR":
-            data["annotatedBy"]["name"] = "ocr"
-            annotation.owner = USER.objects.get(username="ocr", name="OCR")
-        annotation.oa_annotation = data
-        annotation.resource_type = annotation.OCR
-        annotation.motivation = data["motivation"]
-        annotation.content = data["resource"]["chars"]
-        annotation.language = data["resource"]["language"]
-        annotation.canvas = Canvas.objects.get(pid=data["on"]["full"].split("/")[-1])
-        dimensions = data["on"]["selector"]["value"].split("=")[-1].split(",")
-        annotation.x, annotation.y, annotation.w, annotation.h = [
-            int(d) for d in dimensions
-        ]
+    """Deserialize IIIF Annotation"""
 
-    elif "type" in data and data["type"] == "Annotation":
-        annotation.owner = USER.objects.get(username=data["body"][0]["creator"]["id"])
-        if annotation.owner.username == "ocr":
-            pass
-        else:
-            annotation = UserAnnotation(owner=annotation.owner)
-            annotation.canvas = Canvas.objects.get(
-                pid=data["target"]["source"].split("/")[-1]
-            )
+    if isinstance(data, str):
+        data = json.loads(data)
 
-            for body in data["body"]:
-                if body["purpose"] == "commenting":
-                    annotation.content = body["value"]
-                if body["purpose"] == "tagging":
-                    annotation.save()
-                    annotation.tags.add(body["value"])
+    if "@context" in data and "2/context.json" in data["@context"]:
+        return deserialize("annotation_v2", data)
 
-            if data["target"]["selector"]["type"] == "SvgSelector":
-                annotation.svg = data["target"]["selector"]["value"]
+    return deserialize("annotation_v3", data)
 
-                if (
-                    "refinedBy" in data["target"]["selector"]
-                    and data["target"]["selector"]["refinedBy"]["type"]
-                    == "FragmentSelector"
-                ):
-                    annotation.x, annotation.y, annotation.w, annotation.h = [
-                        float(n)
-                        for n in data["target"]["selector"]["refinedBy"]["value"]
-                        .split("=")[-1]
-                        .split(",")
-                    ]
 
-            if data["target"]["selector"]["type"] == "FragmentSelector":
-                annotation.x, annotation.y, annotation.w, annotation.h = [
-                    float(n)
-                    for n in data["target"]["selector"]["value"]
-                    .split(":")[-1]
-                    .split(",")
-                ]
+# def Deserializer(data):
+#     if isinstance(data, str):
+#         data = json.loads(data)
 
-            if data["target"]["selector"]["type"] == "RangeSelector":
-                annotation.start_selector = Annotation.objects.get(
-                    id=findall(
-                        r"([A-Za-z0-9\-]+)",
-                        data["target"]["selector"]["startSelector"]["value"],
-                    )[-1]
-                )
-                annotation.end_selector = Annotation.objects.get(
-                    id=findall(
-                        r"([A-Za-z0-9\-]+)",
-                        data["target"]["selector"]["endSelector"]["value"],
-                    )[-1]
-                )
-                annotation.start_offset = data["target"]["selector"]["startSelector"][
-                    "refinedBy"
-                ]["start"]
-                annotation.end_offset = data["target"]["selector"]["endSelector"][
-                    "refinedBy"
-                ]["end"]
+#     annotation = Annotation()
+#     if "@type" in data and data["@type"] == "oa:Annotation":
+#         if data["annotatedBy"]["name"] == "OCR":
+#             data["annotatedBy"]["name"] = "ocr"
+#             annotation.owner = USER.objects.get(username="ocr", name="OCR")
+#         annotation.oa_annotation = data
+#         annotation.resource_type = annotation.OCR
+#         annotation.motivation = data["motivation"]
+#         annotation.content = data["resource"]["chars"]
+#         annotation.language = data["resource"]["language"]
+#         annotation.canvas = Canvas.objects.get(pid=data["on"]["full"].split("/")[-1])
+#         dimensions = data["on"]["selector"]["value"].split("=")[-1].split(",")
+#         annotation.x, annotation.y, annotation.w, annotation.h = [
+#             int(d) for d in dimensions
+#         ]
 
-                start_position = annotation.start_selector.order
-                end_position = annotation.end_selector.order
-                text = Annotation.objects.filter(
-                    canvas=annotation.canvas,
-                    order__lt=end_position,
-                    order__gte=start_position,
-                ).order_by("order")
+#     elif "type" in data and data["type"] == "Annotation":
+#         annotation.owner = USER.objects.get(username=data["body"][0]["creator"]["id"])
+#         if annotation.owner.username == "ocr":
+#             pass
+#         else:
+#             annotation = UserAnnotation(owner=annotation.owner)
+#             annotation.canvas = Canvas.objects.get(
+#                 pid=data["target"]["source"].split("/")[-1]
+#             )
 
-                try:
-                    annotation["x"] = min(text.values_list("x", flat=True))
-                    annotation["y"] = max(text.values_list("y", flat=True))
-                    annotation["h"] = max(text.values_list("h", flat=True))
-                    annotation["w"] = text.last().x + text.last().w - annotation["x"]
-                except ValueError:
-                    pass
+#             for body in data["body"]:
+#                 if body["purpose"] == "commenting":
+#                     annotation.content = body["value"]
+#                 if body["purpose"] == "tagging":
+#                     annotation.save()
+#                     annotation.tags.add(body["value"])
 
-    return annotation
+#             if data["target"]["selector"]["type"] == "SvgSelector":
+#                 annotation.svg = data["target"]["selector"]["value"]
+
+#                 if (
+#                     "refinedBy" in data["target"]["selector"]
+#                     and data["target"]["selector"]["refinedBy"]["type"]
+#                     == "FragmentSelector"
+#                 ):
+#                     annotation.x, annotation.y, annotation.w, annotation.h = [
+#                         float(n)
+#                         for n in data["target"]["selector"]["refinedBy"]["value"]
+#                         .split("=")[-1]
+#                         .split(",")
+#                     ]
+
+#             if data["target"]["selector"]["type"] == "FragmentSelector":
+#                 annotation.x, annotation.y, annotation.w, annotation.h = [
+#                     float(n)
+#                     for n in data["target"]["selector"]["value"]
+#                     .split(":")[-1]
+#                     .split(",")
+#                 ]
+
+#             if data["target"]["selector"]["type"] == "RangeSelector":
+#                 annotation.start_selector = Annotation.objects.get(
+#                     id=findall(
+#                         r"([A-Za-z0-9\-]+)",
+#                         data["target"]["selector"]["startSelector"]["value"],
+#                     )[-1]
+#                 )
+#                 annotation.end_selector = Annotation.objects.get(
+#                     id=findall(
+#                         r"([A-Za-z0-9\-]+)",
+#                         data["target"]["selector"]["endSelector"]["value"],
+#                     )[-1]
+#                 )
+#                 annotation.start_offset = data["target"]["selector"]["startSelector"][
+#                     "refinedBy"
+#                 ]["start"]
+#                 annotation.end_offset = data["target"]["selector"]["endSelector"][
+#                     "refinedBy"
+#                 ]["end"]
+
+#                 start_position = annotation.start_selector.order
+#                 end_position = annotation.end_selector.order
+#                 text = Annotation.objects.filter(
+#                     canvas=annotation.canvas,
+#                     order__lt=end_position,
+#                     order__gte=start_position,
+#                 ).order_by("order")
+
+#                 try:
+#                     annotation["x"] = min(text.values_list("x", flat=True))
+#                     annotation["y"] = max(text.values_list("y", flat=True))
+#                     annotation["h"] = max(text.values_list("h", flat=True))
+#                     annotation["w"] = text.last().x + text.last().w - annotation["x"]
+#                 except ValueError:
+#                     pass
+
+#     return annotation

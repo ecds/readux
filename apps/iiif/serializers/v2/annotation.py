@@ -37,11 +37,14 @@ def Deserializer(data):  # pylint: disable=invalid-name
     tags = []
 
     if data["motivation"] == "oa:commenting":
-        annotation["motivation"] = AnnotationPurpose("CM")
+        annotation["motivation"] = Annotation.OA_COMMENTING
+        annotation["purpose"] = AnnotationPurpose("CM")
 
     if data["motivation"] == "oa:painting":
-        annotation["motivation"] = AnnotationPurpose("PT")
+        annotation["motivation"] = Annotation.SC_PAINTING
+        annotation["purpose"] = AnnotationPurpose("SP")
 
+    annotation["primary_selector"] = AnnotationSelector("FR")
     source_parts = data["on"]["full"].split("/")
     canvas_pid = source_parts[-1] if source_parts[-1] != "canvas" else source_parts[-2]
     annotation["canvas"] = Canvas.objects.get(pid=canvas_pid)
@@ -71,14 +74,15 @@ def Deserializer(data):  # pylint: disable=invalid-name
         annotation["svg"] = data["on"]["selector"]["item"]["value"]
 
     if data["on"]["selector"]["item"]["@type"] == "RangeSelector":
+        annotation["primary_selector"] = AnnotationSelector("RG")
         annotation["start_selector"], _ = Annotation.objects.get_or_create(
-            id=findall(
+            pk=findall(
                 r"([A-Za-z0-9\-]+)",
                 data["on"]["selector"]["item"]["startSelector"]["value"],
             )[-1]
         )
         annotation["end_selector"], _ = Annotation.objects.get_or_create(
-            id=findall(
+            pk=findall(
                 r"([A-Za-z0-9\-]+)",
                 data["on"]["selector"]["item"]["endSelector"]["value"],
             )[-1]

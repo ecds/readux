@@ -1,11 +1,12 @@
 """Test Module for IIIF Serializers"""
 
 from django.test import TestCase
-from django.core.serializers import serialize, deserialize, SerializerDoesNotExist
-from apps.iiif.annotations.models import Annotation
+from django.core.serializers import serialize, deserialize
+from apps.iiif.annotations.tests.factories import AnnotationFactory
 from apps.iiif.canvases.models import Canvas
 from apps.iiif.canvases.tests.factories import CanvasFactory
 from apps.iiif.manifests.tests.factories import ManifestFactory
+from apps.readux.models import UserAnnotation
 from apps.users.tests.factories import UserFactory
 
 
@@ -52,6 +53,7 @@ class SerializerTests(TestCase):
         canvas = CanvasFactory.create(manifest=ManifestFactory.create())
         web_annotation = {
             "type": "Annotation",
+            "motivation": "commenting",
             "body": [
                 {
                     "purpose": "commenting",
@@ -75,7 +77,8 @@ class SerializerTests(TestCase):
             "id": "#51602663-36ee-4692-a327-2f438daf48a9",
         }
 
-        annotation = deserialize("annotation", web_annotation)
+        deserialized_annotation, _ = deserialize("annotation", web_annotation)
+        annotation = UserAnnotation(**deserialized_annotation)
         assert annotation.owner == user
         assert annotation.canvas == canvas
         assert annotation.content == web_annotation["body"][0]["value"]
@@ -89,6 +92,7 @@ class SerializerTests(TestCase):
         canvas = CanvasFactory.create(manifest=ManifestFactory.create())
         web_annotation = {
             "type": "Annotation",
+            "motivation": "commenting",
             "body": [
                 {
                     "purpose": "commenting",
@@ -122,7 +126,11 @@ class SerializerTests(TestCase):
             "id": "#db7cd136-cdb7-4b1e-b33c-f0afd66c1aee",
         }
 
-        annotation = deserialize("annotation", web_annotation)
+        deserialized_annotation, tags = deserialize("annotation", web_annotation)
+        annotation = UserAnnotation(**deserialized_annotation)
+        annotation.save()
+        for tag in tags:
+            annotation.tags.add(tag)
         assert annotation.owner == user
         assert annotation.canvas == canvas
         assert annotation.content == web_annotation["body"][0]["value"]
@@ -136,10 +144,11 @@ class SerializerTests(TestCase):
     def test_web_annotation_comment_range_deserialization(self):
         user = UserFactory.create()
         canvas = CanvasFactory.create(manifest=ManifestFactory.create())
-        start = Annotation.objects.all().first()
-        end = Annotation.objects.all().last()
+        start = AnnotationFactory.create(canvas=canvas, order=3)
+        end = AnnotationFactory.create(canvas=canvas, order=13)
         web_annotation = {
             "type": "Annotation",
+            "motivation": "commenting",
             "body": [
                 {
                     "type": "TextualBody",
@@ -167,7 +176,11 @@ class SerializerTests(TestCase):
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "id": "#da324841-beaa-4710-858e-f128580c6f2d",
         }
-        annotation = deserialize("annotation", web_annotation)
+        deserialized_annotation, tags = deserialize("annotation", web_annotation)
+        annotation = UserAnnotation(**deserialized_annotation)
+        annotation.save()
+        for tag in tags:
+            annotation.tags.add(tag)
         assert annotation.owner == user
         assert annotation.canvas == canvas
         assert annotation.content == web_annotation["body"][0]["value"]

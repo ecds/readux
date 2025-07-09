@@ -1,8 +1,7 @@
 # pylint: disable = attribute-defined-outside-init, too-few-public-methods
 """Module for serializing IIIF Annotation Lists"""
 import json
-from django.core.serializers import serialize
-from django.core.serializers.base import SerializerDoesNotExist
+from django.core.serializers import serialize, deserialize
 from .base import Serializer as JSONSerializer
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -44,5 +43,14 @@ class Serializer(JSONSerializer):
         return None
 
 
-def Deserializer():
+def Deserializer(data):
     """Deserialize IIIF V2 Annotation List"""
+    if isinstance(data, str):
+        data = json.loads(data)
+
+    if "@context" in data.keys() and "2/context.json" in data["@context"]:
+        return [
+            deserialize("annotation", annotation) for annotation in data["resources"]
+        ]
+
+    return [deserialize("annotation", annotation) for annotation in data["items"]]

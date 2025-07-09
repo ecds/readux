@@ -30,6 +30,7 @@ class Serializer(JSONSerializer):
 
         {
             "type": "Annotation",
+            "motivation": "commenting"
             "body": [
                 {
                     "purpose": "commenting",
@@ -81,10 +82,24 @@ class Serializer(JSONSerializer):
             "modified": obj.modified_at_iso,
         }
 
+        if obj.motivation == Annotation.SC_PAINTING or obj.owner.username == "OCR":
+            obj.motivation = Annotation.SUP
+
+        if obj.motivation is None:
+            obj.motivation = Annotation.OA_COMMENTING
+
+        if obj.purpose is None:
+            obj.purpose = (
+                AnnotationPurpose("CM")
+                if obj.motivation == Annotation.OA_COMMENTING
+                else Annotation.SUP
+            )
+
         data = {
             "@context": "http://www.w3.org/ns/anno.jsonld",
             "id": f"#{obj.pk}",
             "type": "Annotation",
+            "motivation": obj.motivation.replace("oa:", ""),
             "body": [],
             "target": {
                 "source": obj.canvas.resource_id,
@@ -124,6 +139,11 @@ class Serializer(JSONSerializer):
                         "end": obj.end_offset,
                     },
                 },
+                "refinedBy": {
+                    "type": "FragmentSelector",
+                    "value": f"xywh=pixel:{obj.x},{obj.y},{obj.w},{obj.h}",
+                    "conformsTo": "https://www.w3.org/TR/media-frags/",
+                },
             }
 
             data["target"]["selector"] = {
@@ -147,17 +167,17 @@ class Serializer(JSONSerializer):
             data["target"]["selector"][
                 "conformsTo"
             ] = "http://www.w3.org/TR/media-frags/"
-        else:
-            fragment_selector = {
-                "source": obj.canvas.resource_id,
-                "selector": {
-                    "type": AnnotationSelector("FR").name,
-                    "value": obj.fragment,
-                    "conformsTo": "http://www.w3.org/TR/media-frags/",
-                },
-            }
+        # else:
+        #     fragment_selector = {
+        #         "source": obj.canvas.resource_id,
+        #         "selector": {
+        #             "type": AnnotationSelector("FR").name,
+        #             "value": obj.fragment,
+        #             "conformsTo": "http://www.w3.org/TR/media-frags/",
+        #         },
+        #     }
 
-            # data['targets'].append(fragment_selector)
+        # data['targets'].append(fragment_selector)
 
         return data
         # return None
@@ -168,13 +188,24 @@ class Serializer(JSONSerializer):
         return obj.item
 
 
+def motivation(value):
+    if "commenting" in value:
+        return Annotation.OA_COMMENTING
+    return Annotation.sup
+
+
 def Deserializer(data):
-    annotation = {}
+    annotation = {"id": data["id"].replace("#", "")}
     annotation["owner"] = USER.objects.get(username=data["body"][0]["creator"]["id"])
     source_parts = data["target"]["source"].split("/")
     canvas_pid = source_parts[-1] if source_parts[-1] != "canvas" else source_parts[-2]
     annotation["canvas"] = Canvas.objects.get(pid=canvas_pid)
     tags = []
+
+    if "motivation" in data.keys():
+        annotation["motivation"] = motivation(data["motivation"])
+    else:
+        annotation["motivation"] = motivation(data["body"][0]["purpose"])
 
     for body in data["body"]:
         if body["purpose"] == "commenting":
@@ -188,6 +219,10 @@ def Deserializer(data):
             annotation["raw_content"] = soup.get_text(separator=" ", strip=True)
         if data["body"][0]["creator"]["id"] == "OCR":
             annotation["resource_type"] = Annotation.OCR
+            annotation["motivation"] = Annotation.SUP
+            annotation["purpose"] = AnnotationPurpose("SP")
+        else:
+            annotation["resource_type"] = Annotation.TEXT
 
     annotation["primary_selector"] = AnnotationSelector[
         data["target"]["selector"]["type"]
@@ -215,13 +250,13 @@ def Deserializer(data):
 
     if data["target"]["selector"]["type"] == "RangeSelector":
         annotation["start_selector"], _ = Annotation.objects.get_or_create(
-            id=findall(
+            pk=findall(
                 r"([A-Za-z0-9\-]+)",
                 data["target"]["selector"]["startSelector"]["value"],
             )[-1]
         )
         annotation["end_selector"], _ = Annotation.objects.get_or_create(
-            id=findall(
+            pk=findall(
                 r"([A-Za-z0-9\-]+)", data["target"]["selector"]["endSelector"]["value"]
             )[-1]
         )
@@ -232,20 +267,15 @@ def Deserializer(data):
             "refinedBy"
         ]["end"]
 
-        start_position = annotation["start_selector"].order
-        end_position = annotation["end_selector"].order
-        text = Annotation.objects.filter(
-            canvas=annotation["canvas"],
-            order__lt=end_position,
-            order__gte=start_position,
-        ).order_by("order")
-
         try:
-            annotation["x"] = min(text.values_list("x", flat=True))
-            annotation["y"] = max(text.values_list("y", flat=True))
-            annotation["h"] = max(text.values_list("h", flat=True))
-            annotation["w"] = text.last().x + text.last().w - annotation["x"]
-        except ValueError:
+            annotation["x"], annotation["y"], annotation["w"], annotation["h"] = [
+                float(n)
+                for n in data["target"]["selector"]["refinedBy"]["value"]
+                .split(":")[-1]
+                .split(",")
+            ]
+        except KeyError:
+            # If this is not present, it will be calculated on save.
             pass
 
     return (

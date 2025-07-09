@@ -1,8 +1,9 @@
 # pylint: disable = attribute-defined-outside-init, too-few-public-methods
 """Module for serializing IIIF Canvas"""
-from django.core.serializers.base import SerializerDoesNotExist
+import json
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.core.serializers import deserialize
 import config.settings.local as settings
 from apps.iiif.serializers.base import Serializer as JSONSerializer
 
@@ -96,11 +97,13 @@ class Serializer(JSONSerializer):
         return None
 
 
-class Deserializer:
-    """Deserialize IIIF Annotation List
+def Deserializer(data):
+    """Deserialize IIIF Canvas"""
 
-    :raises SerializerDoesNotExist: Not yet implemented.
-    """
+    if isinstance(data, str):
+        data = json.loads(data)
 
-    def __init__(self, *args, **kwargs):
-        raise SerializerDoesNotExist("canvas is a serialization-only serializer")
+    if "@context" in data and "2/context.json" in data["@context"]:
+        return deserialize("canvas_v2", data)
+
+    return deserialize("canvas_v3", data)

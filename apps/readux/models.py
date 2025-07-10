@@ -21,7 +21,7 @@ class UserAnnotation(AbstractAnnotation):
 
     COMMENTING = "oa:commenting"
     PAINTING = "sc:painting"
-    TAGGING = "%s,oa:tagging" % COMMENTING
+    TAGGING = f"{COMMENTING},oa:tagging"
     MOTIVATION_CHOICES = (
         (COMMENTING, "commenting"),
         (PAINTING, "painting"),
@@ -50,29 +50,36 @@ class UserAnnotation(AbstractAnnotation):
 
     @property
     def item(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         if self.__is_text_annotation():
             return self.__text_anno_item()
-        elif self.__is_svg_annotation():
+        if self.__is_svg_annotation():
             return self.__svg_anno_item()
-        else:
-            return None
+        return None
 
     @property
     def tag_list(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         if self.tags.exists():
             return [tag.name for tag in self.tags.all()]
-        else:
-            return []
+        return []
 
     def pre_save(self):
+        """Prepare annotation to be saved."""
         if self.primary_selector == "RG":
-            self.__set_xywh_text_anno()
-        if (
-            isinstance(self.oa_annotation, dict)
-            and "on" not in self.oa_annotation.keys()
-        ):
-            return None
-        self.parse_mirador_annotation()
+            self.__xywh_text_anno()
+        if isinstance(self.oa_annotation, str):
+            self.oa_annotation = json.loads(self.oa_annotation)
+        if "on" in self.oa_annotation.keys():
+            self.parse_mirador_annotation()
 
     def post_save(self):
         """
@@ -133,17 +140,19 @@ class UserAnnotation(AbstractAnnotation):
         self.save()
 
     def parse_mirador_annotation(self):
+        """DEPRECATED
+        Parses annotation from mirador
+        """
         self.motivation = AbstractAnnotation.OA_COMMENTING
 
-        if type(self.oa_annotation) == str:
-            self.oa_annotation = json.loads(self.oa_annotation)
+        anno_on = None
 
         if isinstance(self.oa_annotation["on"], list):
             anno_on = self.oa_annotation["on"][0]
         elif isinstance(self.oa_annotation["on"], dict):
             anno_on = self.oa_annotation["on"]
 
-        if self.canvas == None:
+        if self.canvas is None and anno_on is not None:
             self.canvas = Canvas.objects.get(pid=anno_on["full"].split("/")[-1])
 
         mirador_item = anno_on["selector"]["item"]
@@ -161,7 +170,7 @@ class UserAnnotation(AbstractAnnotation):
             )
             self.start_offset = mirador_item["startSelector"]["refinedBy"]["start"]
             self.end_offset = mirador_item["endSelector"]["refinedBy"]["end"]
-            self.__set_xywh_text_anno()
+            self.__xywh_text_anno()
 
         if isinstance(self.oa_annotation["resource"], dict):
             self.content = self.oa_annotation["resource"]["chars"]
@@ -222,19 +231,24 @@ class UserAnnotation(AbstractAnnotation):
         """
         return self.svg is not None
 
-    # pylint: disable = invalid-name
-    def __set_xywh_text_anno(self):
+    def __xywh_text_anno(self):
         start_position = self.start_selector.order
         end_position = self.end_selector.order
-        text = Annotation.objects.filter(
-            canvas=self.canvas, order__lt=end_position, order__gte=start_position
-        ).order_by("order")
+        text = None
+        if self.start_selector == self.end_selector:
+            text = Annotation.objects.filter(id=str(self.start_selector.id))
+        else:
+            text = Annotation.objects.filter(
+                canvas=self.canvas, order__lte=end_position, order__gte=start_position
+            ).order_by("order")
         self.x = min(text.values_list("x", flat=True))
-        self.y = max(text.values_list("y", flat=True))
-        self.h = max(text.values_list("h", flat=True))
-        self.w = text.last().x + text.last().w - self.x
-
-    # pylint: enable = invalid-name
+        self.y = min(text.values_list("y", flat=True))
+        far_y_anno = text.order_by("y").last()
+        self.h = far_y_anno.y + far_y_anno.h - self.y
+        far_x_anno = text.order_by("x").last()
+        self.w = far_x_anno.x + far_x_anno.w - self.x
+        # self.w = max([anno.x + anno.w for anno in text]) - self.x
+        # self.h = max([anno.y + anno.h for anno in text]) - self.y
 
     def __text_anno_item(self):
         return dict(
@@ -242,7 +256,7 @@ class UserAnnotation(AbstractAnnotation):
                 "@type": "RangeSelector",
                 "startSelector": {
                     "@type": "XPathSelector",
-                    "value": "//*[@id='%s']" % str(self.start_selector.pk),
+                    "value": f"//*[@id='{str(self.start_selector.pk)}']",
                     "refinedBy": {
                         "@type": "TextPositionSelector",
                         "start": self.start_offset,
@@ -250,7 +264,7 @@ class UserAnnotation(AbstractAnnotation):
                 },
                 "endSelector": {
                     "@type": "XPathSelector",
-                    "value": "//*[@id='%s']" % str(self.end_selector.pk),
+                    "value": f"//*[@id='{str(self.end_selector.pk)}']",
                     "refinedBy": {
                         "@type": "TextPositionSelector",
                         "end": self.end_offset,
@@ -260,6 +274,7 @@ class UserAnnotation(AbstractAnnotation):
         )
 
     def __svg_anno_item(self):
+        # pylint: disable=duplicate-key
         return dict(
             {
                 "@type": "oa:SvgSelector",
@@ -267,11 +282,11 @@ class UserAnnotation(AbstractAnnotation):
                 "@type": "oa:SvgSelector",
                 "default": {
                     "@type": "oa:FragmentSelector",
-                    "value": "xywh=%s,%s,%s,%s"
-                    % (str(self.x), str(self.y), str(self.w), str(self.h)),
+                    "value": f"xywh={str(self.x)},{str(self.y)},{str(self.w)},{str(self.h)}",
                 },
             }
         )
+        # pylint: enable=duplicate-key
 
     def __set_xywh_svg_anno(self):
         dimensions = None
@@ -280,48 +295,9 @@ class UserAnnotation(AbstractAnnotation):
                 self.oa_annotation["on"][0]["selector"]["default"]["value"]
                 .split("=")[-1]
                 .split(",")
-            )  # pylint: disable = line-too-long
+            )
         if dimensions is not None:
             self.x = dimensions[0]
             self.y = dimensions[1]
             self.w = dimensions[2]
             self.h = dimensions[3]
-
-
-# TODO: Override the save method and move this there.
-# @receiver(signals.pre_save, sender=UserAnnotation)
-# def parse_payload(sender, instance, **kwargs):  # pylint: disable=unused-argument
-#     # if service.validate_oa_annotation(instance.oa_annotation):
-#     if (
-#         isinstance(instance.oa_annotation, dict)
-#         and "on" not in instance.oa_annotation.keys()
-#     ):
-#         return None
-#     instance.parse_mirador_annotation()
-
-
-# @receiver(signals.post_save, sender=UserAnnotation)
-# def set_tags(sender, instance, **kwargs):
-# """
-# Finds tags in the oa_annotation and applies them to
-# the annotation.
-# """
-# if instance.motivation == sender.TAGGING:
-#     incoming_tags = []
-#     # Get the tags from the incoming annotation.
-#     tags = [
-#         res
-#         for res in instance.oa_annotation["resource"]
-#         if res["@type"] == "oa:Tag"
-#     ]
-#     for tag in tags:
-#         # Add the tag to the annotation
-#         instance.tags.add(tag["chars"])
-#         # Make a list of incoming tags to compare with list of saved tags.
-#         incoming_tags.append(tag["chars"])
-
-#     # Check if any tags have been removed
-#     if len(instance.tag_list) > 0:
-#         for existing_tag in instance.tag_list:
-#             if existing_tag not in incoming_tags:
-#                 instance.tags.remove(existing_tag)

@@ -8,12 +8,16 @@ from django.test import TestCase, Client
 from django.test import RequestFactory
 from apps import readux
 from apps.iiif.manifests.models import Manifest
+from apps.iiif.manifests.tests.factories import ManifestFactory
+from apps.iiif.canvases.models import Canvas
+from apps.iiif.canvases.tests.factories import CanvasFactory
+from apps.iiif.annotations.tests.factories import AnnotationFactory
 from apps.readux.views import ExportOptions, AnnotationCount
+from apps.users.tests.factories import UserFactory
 from ..annotations import Annotations, AnnotationCrud, AnnotationCountByCanvas
 from ..models import UserAnnotation
 from ..context_processors import current_version
-
-User = get_user_model()
+from .factories import UserAnnotationFactory
 
 
 class AnnotationTests(TestCase):
@@ -279,6 +283,7 @@ class AnnotationTests(TestCase):
                 ),
                 owner=user,
             )
+            print(text_anno.canvas)
             text_anno.save()
 
     def load_anno(self, response):
@@ -292,6 +297,7 @@ class AnnotationTests(TestCase):
         return UserAnnotation.objects.order_by("?").first()
 
     def test_get_user_annotations_unauthenticated(self):
+        """Test"""
         self.create_user_annotations(5, self.user_a)
         kwargs = {
             "username": "readux",
@@ -313,6 +319,7 @@ class AnnotationTests(TestCase):
         # assert len(annotation) == 0
 
     def test_user_annotation_count_by_canvas(self):
+        """Test"""
         self.create_user_annotations(5, self.user_a)
         kwargs = {"username": self.user_a.username, "manifest": self.manifest.pid}
         url = reverse("annotation_count_by_canvas", kwargs=kwargs)
@@ -328,6 +335,7 @@ class AnnotationTests(TestCase):
         assert response_data[0]["count"] == 5
 
     def test_mirador_svg_annotation_creation(self):
+        """Test"""
         request = self.factory.post(
             "/annotations-crud/",
             data=json.dumps(self.valid_mirador_annotations["svg"]),
@@ -348,6 +356,7 @@ class AnnotationTests(TestCase):
         assert annotation_object.h == 425
 
     def test_v3_svg_annotation_creation(self):
+        """Test"""
         request = self.factory.post(
             "/annotations-crud/",
             data=json.dumps(self.valid_v3_annotation["svg"]),
@@ -368,20 +377,31 @@ class AnnotationTests(TestCase):
         assert annotation_object.h == 510
 
     def test_mirador_text_annotation_creation(self):
+        """Test"""
         request = self.factory.post(
             "/annotations-crud/",
-            data=json.dumps(self.valid_v3_annotation["text"]),
+            data=json.dumps(self.valid_mirador_annotations["text"]),
             content_type="application/json",
         )
         request.user = self.user_a
         response = self.crud_view(request)
         annotation = self.load_anno(response)
         assert annotation["body"][0]["creator"]["name"] == "Zaphod Beeblebrox"
-        # assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
-        # assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
         assert response.status_code == 201
 
     def test_v3_text_annotation_creation(self):
+        """Test"""
+        manifest = Manifest.objects.get(pid="readux:st7r6")
+        canvas = Canvas.objects.get(pid="fedora:emory:5622", manifest=manifest)
+        AnnotationFactory.create(
+            id="1eee408f-b3c2-47c1-913e-913e491a92ea",
+            order=4,
+            canvas=canvas,
+            x=587,
+            y=2687,
+            h=104,
+            w=252,
+        )
         request = self.factory.post(
             "/annotations-crud/",
             data=json.dumps(self.valid_v3_annotation["text"]),
@@ -391,11 +411,14 @@ class AnnotationTests(TestCase):
         response = self.crud_view(request)
         annotation = self.load_anno(response)
         assert annotation["body"][0]["creator"]["name"] == "Zaphod Beeblebrox"
-        # assert annotation['on']['selector']['value'] == 'xywh=468,2844,479,83'
-        # assert re.match(r"http.*iiif/v2/readux:st7r6/canvas/fedora:emory:5622", annotation['on']['full'])
+        assert (
+            annotation["target"]["selector"]["refinedBy"]["value"]
+            == "xywh=pixel:587,2687,252,104"
+        )
         assert response.status_code == 201
 
     def test_v3_annotation_creation_with_tags(self):
+        """Test"""
         request = self.factory.post(
             "/annotations-crud/",
             data=json.dumps(self.valid_mirador_annotations["tag"]),
@@ -413,6 +436,7 @@ class AnnotationTests(TestCase):
         assert annotation_object.tags.count() == 2
 
     def test_creating_annotation_from_string(self):
+        """Test"""
         request = self.factory.post(
             "/annotations-crud/",
             data=self.valid_mirador_annotations["text"],
@@ -427,6 +451,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 201
 
     def test_get_user_annotations(self):
+        """Test"""
         self.create_user_annotations(4, self.user_a)
         kwargs = {
             "username": self.user_a.username,
@@ -447,6 +472,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 200
 
     def test_get_only_users_user_annotations(self):
+        """Test"""
         self.create_user_annotations(5, self.user_b)
         self.create_user_annotations(4, self.user_a)
         kwargs = {
@@ -480,6 +506,7 @@ class AnnotationTests(TestCase):
     #        assert len(annotation) == 0
 
     def test_update_user_annotation(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = json.loads(self.valid_mirador_annotations["svg"]["oa_annotation"])
@@ -499,6 +526,7 @@ class AnnotationTests(TestCase):
         assert annotation["body"][0]["value"] == "updated annotation"
 
     def test_update_non_existing_user_annotation(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         data = json.loads(self.valid_mirador_annotations["svg"]["oa_annotation"])
         new_id = str(uuid.uuid4())
@@ -512,6 +540,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 404
 
     def test_update_someone_elses_annotation(self):
+        """Test"""
         self.create_user_annotations(4, self.user_a)
         rando_anno = self.rando_anno()
         data = {"id": str(rando_anno.pk)}
@@ -523,6 +552,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 401
 
     def test_updating_annotation_unauthenticated(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = json.loads(self.valid_mirador_annotations["svg"]["oa_annotation"])
@@ -540,6 +570,7 @@ class AnnotationTests(TestCase):
         assert message["message"] == "You are not the owner of this annotation."
 
     def test_delete_user_annotation_as_owner(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         data = {"id": str(uuid.uuid4())}
         request = self.factory.delete(
@@ -550,6 +581,7 @@ class AnnotationTests(TestCase):
         assert response.status_code == 404
 
     def test_delete_non_existant_user_annotation(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         existing_anno = UserAnnotation.objects.all()[0]
         data = {"id": str(existing_anno.pk)}
@@ -558,11 +590,11 @@ class AnnotationTests(TestCase):
         )
         request.user = self.user_a
         response = self.crud_view(request)
-        message = self.load_anno(response)
         assert response.status_code == 204
         assert len(UserAnnotation.objects.all()) == 0
 
     def test_delete_someone_elses_annotation(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         rando_anno = self.rando_anno()
         data = {"id": str(rando_anno.pk)}
@@ -576,6 +608,7 @@ class AnnotationTests(TestCase):
         assert message["message"] == "You are not the owner of this annotation."
 
     def test_delete_annotation_unauthenticated(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         rando_anno = self.rando_anno()
         data = {"id": str(rando_anno.pk)}
@@ -588,6 +621,7 @@ class AnnotationTests(TestCase):
         assert message["message"] == "You are not the owner of this annotation."
 
     def test_user_annotations_on_canvas(self):
+        """Test"""
         # fetch a manifest with no user annotations
         kwargs = {"manifest": self.manifest.pid, "pid": self.canvas.pid}
         url = reverse("RenderCanvasDetail", kwargs=kwargs)
@@ -612,6 +646,7 @@ class AnnotationTests(TestCase):
         assert len(serialized_canvas["otherContent"]) == 1
 
     def test_collection_detail_view_sort_and_order(self):
+        """Test"""
         descrizione = self.collection.manifests.first()
         vol2 = Manifest.objects.create(
             pid="test1", author="xyz", label="zyx", published_date_edtf="1000"
@@ -662,6 +697,7 @@ class AnnotationTests(TestCase):
         assert context["volumes"][0].pid == vol2.pid
 
     def test_collection_detail_view_with_no_sort_or_order_specified(self):
+        """Test"""
         descrizione = self.collection.manifests.first()
         vol2 = Manifest.objects.create(
             pid="test1", author="xyz", label="zyx", published_date_edtf="1000"
@@ -675,11 +711,13 @@ class AnnotationTests(TestCase):
         assert context["volumes"][1].pid == vol2.pid
 
     def test_volume_detail_view(self):
+        """Test"""
         url = reverse("volume", kwargs={"volume": self.manifest.pid})
         response = self.client.get(url)
         assert response.context_data["volume"] == self.manifest
 
     def test_export_options_view(self):
+        """Test"""
         kwargs = {"volume": self.manifest.pid}
         url = reverse("export", kwargs=kwargs)
         request = self.factory.get(url)
@@ -690,22 +728,26 @@ class AnnotationTests(TestCase):
         assert response.status_code == 200
 
     def test_motivation_is_commeting_by_default(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         assert anno.motivation == "oa:commenting"
 
     def test_style_attribute_adds_id_to_class_selector(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         assert str(anno.id) in anno.style
 
     def test_style_attribute_is_valid_css(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         style = parseString(anno.style)
         assert style.cssRules[0].valid
 
     def test_stylesheet_is_serialized(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         kwargs = {
             "username": self.user_a.username,
@@ -729,6 +771,7 @@ class AnnotationTests(TestCase):
         assert annotation["stylesheet"]["type"] == "CssStylesheet"
 
     def test_annotation_creation_with_tags(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         anno.oa_annotation = json.loads(
@@ -743,6 +786,7 @@ class AnnotationTests(TestCase):
         assert "other tag" in anno.tag_list
 
     def test_updating_annotation_with_tags(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         anno.oa_annotation = json.loads(
@@ -755,6 +799,7 @@ class AnnotationTests(TestCase):
         assert anno.tags.count() == 2
 
     def test_deleting_tags(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         anno.oa_annotation = json.loads(
@@ -788,6 +833,7 @@ class AnnotationTests(TestCase):
         assert anno.motivation == UserAnnotation.COMMENTING
 
     def test_annotation_serialization_with_tags(self):
+        """Test"""
         self.create_user_annotations(1, self.user_a)
         anno = UserAnnotation.objects.all().first()
         anno.oa_annotation = json.loads(
@@ -815,10 +861,12 @@ class AnnotationTests(TestCase):
         assert "oa:commenting" in annotation["motivation"]
 
     def test_item_none(self):
+        """Test"""
         anno = UserAnnotation()
         assert anno.item is None
 
     def test_parse_mirador_anno_from_string(self):
+        """Test"""
         anno = UserAnnotation(
             oa_annotation=self.valid_mirador_annotations["text"]["oa_annotation"]
         )
@@ -826,6 +874,7 @@ class AnnotationTests(TestCase):
         assert anno.content == "<p>mcoewmewom</p>"
 
     def test_parse_mirador_anno_when_on_is_dict(self):
+        """Test"""
         oa_annotation = json.loads(
             self.valid_mirador_annotations["tag"]["oa_annotation"]
         )
@@ -836,6 +885,7 @@ class AnnotationTests(TestCase):
         assert anno.content == "<p>mcoewmewom</p>"
 
     def test_user_annotation_count(self):
+        """Test"""
         self.create_user_annotations(3, self.user_a)
         kwargs = {"volume": self.manifest.pid, "page": self.canvas.pid}
         url = reverse("_anno_count", kwargs=kwargs)
@@ -852,3 +902,43 @@ class AnnotationTests(TestCase):
     def test_current_version_context(self):
         """It should return the current version."""
         assert readux.__version__ == current_version()["APP_VERSION"]
+
+    def test_text_anno_dimensions(self):
+        """It should set dimensions for text annotation."""
+        ocr_user = UserFactory.create(username="ocr", name="OCR")
+        manifest = ManifestFactory.create()
+        manifest.canvas_set.all().delete()
+        canvas = CanvasFactory.create(manifest=manifest)
+        canvas.annotation_set.all().delete()
+        start = AnnotationFactory(
+            canvas=canvas,
+            x=4,
+            y=8,
+            h=10,
+            w=20,
+            order=4,
+            content="Comrade",
+            owner=ocr_user,
+        )
+        end = AnnotationFactory(
+            canvas=canvas,
+            x=4,
+            y=28,
+            h=10,
+            w=40,
+            order=6,
+            content="Goldman",
+            owner=ocr_user,
+        )
+        AnnotationFactory(canvas=canvas, x=24, y=5, h=14, w=12, order=5, content="Emma")
+        assert canvas.annotation_set.count() == 3
+        ua = UserAnnotationFactory.create(
+            canvas=canvas,
+            primary_selector="RG",
+            start_selector=start,
+            end_selector=end,
+        )
+        assert ua.x == 4
+        assert ua.y == 5
+        assert ua.h == 33
+        assert ua.w == 32

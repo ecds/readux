@@ -156,11 +156,11 @@ class AnnotationCrud(View):
         else:
             deserialized_annotation, tags = deserialize("annotation_v3", self.payload)
             annotation = UserAnnotation(**deserialized_annotation)
+            annotation.pre_save()
             UserAnnotation.objects.bulk_create([annotation])
             annotation.refresh_from_db()
             for tag in tags:
                 annotation.tags.add(tag)
-        # TODO: should we respond with the saved annotation?
         return JsonResponse(
             json.loads(serialize("annotation_v3", [annotation])), safe=False, status=201
         )
@@ -180,7 +180,7 @@ class AnnotationCrud(View):
         if annotation is None:
             return self.__not_found()
 
-        elif hasattr(request, "user") and annotation.owner == request.user:
+        if hasattr(request, "user") and annotation.owner == request.user:
             if "oa_annotation" in self.payload:
                 annotation.oa_annotation = self.payload["oa_annotation"]
             else:
@@ -195,8 +195,7 @@ class AnnotationCrud(View):
                 safe=False,
                 status=200,
             )
-        else:
-            return self.__unauthorized()
+        return self.__unauthorized()
 
     def delete(self, request):
 

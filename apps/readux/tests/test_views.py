@@ -1,11 +1,13 @@
+"""Test for readux views"""
+
 import os
 from unittest.mock import Mock, patch
 from tempfile import gettempdir
 from pathlib import Path
 import pytest
+from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 from django_elasticsearch_dsl.test import ESTestCase
-from django.http import HttpResponse
 from apps.readux import views
 from apps.iiif.manifests.models import Language, Manifest
 from apps.iiif.manifests.tests.factories import ManifestFactory
@@ -19,7 +21,12 @@ pytestmark = pytest.mark.django_db
 
 
 class TestReaduxViews:
+    """
+    Test views for readux app
+    """
+
     def test_page_detail_context(self):
+        """Test"""
         factory = RequestFactory()
         user = UserFactory.create()
         assert not user._state.adding
@@ -37,6 +44,7 @@ class TestReaduxViews:
         assert isinstance(data["user_annotation_count"], int)
 
     def test_page_detail_context_with_no_page_in_kwargs(self):
+        """Test"""
         factory = RequestFactory()
         request = factory.get("/")
         user = UserFactory.create()
@@ -48,7 +56,8 @@ class TestReaduxViews:
         assert data["page"].pid == volume.canvas_set.all().first().pid
 
     def test_manifests_sitemap(self):
-        for n in range(5):
+        """Test"""
+        for _ in range(5):
             ManifestFactory.create()
         view = views.ManifestsSitemap()
         manifest = Manifest.objects.all().first()
@@ -57,6 +66,7 @@ class TestReaduxViews:
         assert view.lastmod(manifest) == manifest.updated_at
 
     def test_collections_sitemap(self):
+        """Test"""
         for n in range(3):
             CollectionFactory.create()
         view = views.CollectionsSitemap()
@@ -66,6 +76,7 @@ class TestReaduxViews:
         assert view.lastmod(collection) == collection.updated_at
 
     def test_export_download_zip(self):
+        """Test"""
         factory = RequestFactory()
         request = factory.get("/")
         user = UserFactory.create()

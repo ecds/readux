@@ -16,11 +16,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Checkout Docker configs
         run: |
+          git checkout --progress --force -B "${{ github.event.workflow_run.head_branch}}" "refs/remotes/origin/${{ github.event.workflow_run.head_branch }}""
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
           git clone -b "${{ github.head_ref || github.ref_name }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"

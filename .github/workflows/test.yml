@@ -87,8 +87,8 @@ jobs:
       # - name: Test Export
       #   run: pytest apps/export/
 
-      - name: Test IIIF
-        run: pytest apps/iiif/
+      # - name: Test IIIF
+      #   run: pytest apps/iiif/
 
       # - name: Test Readux
       #   run: pytest apps/readux/

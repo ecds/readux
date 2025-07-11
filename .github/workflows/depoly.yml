@@ -21,7 +21,6 @@ jobs:
 
       - name: Checkout Docker configs
         run: |
-          git checkout --progress --force -B "${{ github.event.workflow_run.head_branch}}" "refs/remotes/origin/${{ github.event.workflow_run.head_branch }}""
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
           git clone -b "${{ github.event.workflow_run.head_branch }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"

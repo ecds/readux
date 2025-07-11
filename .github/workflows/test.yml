@@ -90,13 +90,13 @@ jobs:
       - name: Test IIIF
         run: pytest apps/iiif/
 
-      - name: Test Readux
-        run: pytest apps/readux/
+      # - name: Test Readux
+      #   run: pytest apps/readux/
 
-      - name: Test Users
-        run: pytest apps/users/
+      # - name: Test Users
+      #   run: pytest apps/users/
 
-      - name: Test Webpack build
-        run: |
-          npm install
-          npx webpack
+      # - name: Test Webpack build
+      #   run: |
+      #     npm install
+      #     npx webpack

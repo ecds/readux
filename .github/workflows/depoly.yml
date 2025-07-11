@@ -1,8 +1,8 @@
-name: Dev-Deploy
+name: Deploy
 
 on:
   workflow_run:
-    workflows: [Dev-Test]
+    workflows: [Test]
     types: [completed]
 
 permissions:
@@ -35,6 +35,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
 
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v4
@@ -49,7 +50,8 @@ jobs:
           AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DEV}}
+          DATABASE_URL_DEV: ${{ secrets.DATABASE_URL_DEV}}
+          DATABASE_URL_PROD: ${{ secrets.DATABASE_URL_PROD}}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY}}

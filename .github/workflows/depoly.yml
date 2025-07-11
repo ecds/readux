@@ -22,7 +22,7 @@ jobs:
           git checkout --progress --force -B "${{ github.event.workflow_run.head_branch}}" "refs/remotes/origin/${{ github.event.workflow_run.head_branch }}""
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
-          git clone -b "${{ github.head_ref || github.ref_name }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"
+          git clone -b "${{ github.event.workflow_run.head_branch }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"
           mv "${{ secrets.CONFIG_REPO_NAME }}"/* .
           chmod +x config.sh
           chmod +x deploy.sh
@@ -36,7 +36,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          BRANCH: ${{ github.head_ref || github.ref_name }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
 
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v4
@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Deploy
         env:
-          BRANCH: ${{ github.head_ref || github.ref_name }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
           AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}

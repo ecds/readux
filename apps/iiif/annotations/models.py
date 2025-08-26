@@ -22,7 +22,12 @@ class AbstractAnnotation(IiifBase):
 
     OA_COMMENTING = "oa:commenting"
     SC_PAINTING = "sc:painting"
-    MOTIVATION_CHOICES = ((OA_COMMENTING, "commenting"), (SC_PAINTING, "painting"))
+    SUP = "supplementing"
+    MOTIVATION_CHOICES = (
+        (OA_COMMENTING, "commenting"),
+        (SC_PAINTING, "painting"),
+        (SUP, "supplementing"),
+    )
 
     PLAIN = "text/plain"
     HTML = "text/html"

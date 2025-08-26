@@ -1,4 +1,5 @@
 """Github export module"""
+
 import httpretty
 import io
 import json
@@ -13,10 +14,11 @@ from datetime import datetime
 from time import sleep
 from urllib.parse import urlparse
 from requests import get
+
 # pylint: disable = unused-import, ungrouped-imports
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     from yaml import Loader, Dumper
 # pylint: enable = unused-import, ungrouped-imports
 # TODO: Can we be more efficient in how we import git?
@@ -40,12 +42,21 @@ LOGGER = logging.getLogger(__name__)
 JEKYLL_THEME_ZIP = digitaledition_jekylltheme.ZIPFILE_PATH
 
 # FIXME: The GitHub action env does not seem to find the zip file.
-if os.environ['DJANGO_ENV'] == 'test' and not os.path.exists(JEKYLL_THEME_ZIP):
-    JEKYLL_THEME_ZIP = os.path.join(settings.APPS_DIR, 'export', 'tests', 'fixtures', 'digitaledition-jekylltheme.zip')
+if os.environ["DJANGO_ENV"] == "test" and not os.path.exists(JEKYLL_THEME_ZIP):
+    JEKYLL_THEME_ZIP = os.path.join(
+        settings.APPS_DIR,
+        "export",
+        "tests",
+        "fixtures",
+        "digitaledition-jekylltheme.zip",
+    )
+
 
 class ExportException(Exception):
     """Custom exception"""
+
     pass
+
 
 class IiifManifestExport:
     """Manifest Export
@@ -53,6 +64,7 @@ class IiifManifestExport:
     :return: Return bytes containing the entire contents of the buffer.
     :rtype: bytes
     """
+
     @classmethod
     def get_zip(self, manifest, version, owners=[]):
         """Generate zipfile of manifest.
@@ -96,7 +108,7 @@ class IiifManifestExport:
         annotators = User.objects.filter(
             userannotation__canvas__manifest__id=manifest.id
         ).distinct()
-        annotators_string = ', '.join([i.name for i in annotators])
+        annotators_string = ", ".join([i.name for i in annotators])
         # pylint: enable = possibly-unused-variable
 
         # pylint: disable = line-too-long
@@ -105,33 +117,45 @@ class IiifManifestExport:
         # dedup the list of owners (although -- how to order?  alphabetical or
         # sby contribution count or ignore order)  .distinct()
         # turn the list of owners into a comma separated string of formal names instead of user ids
-        readme = "Annotation export from Readux %(version)s at %(readux_url)s\nedition type: Readux IIIF Exported Edition\nexport date: %(now)s UTC\n\n" % locals()
-        volume_data = "volume title: %(title)s\nvolume author: %(author)s\nvolume date: %(date)s\nvolume publisher: %(publisher)s\npages: %(page_count)s \n" % locals()
-        annotators_attribution_string = "Annotated by: " + annotators_string +"\n\n"
+        readme = (
+            "Annotation export from Readux %(version)s at %(readux_url)s\nedition type: Readux IIIF Exported Edition\nexport date: %(now)s UTC\n\n"
+            % locals()
+        )
+        volume_data = (
+            "volume title: %(title)s\nvolume author: %(author)s\nvolume date: %(date)s\nvolume publisher: %(publisher)s\npages: %(page_count)s \n"
+            % locals()
+        )
+        annotators_attribution_string = "Annotated by: " + annotators_string + "\n\n"
         boilerplate = "Readux is a platform developed by Emory University’s Center for Digital Scholarship for browsing, annotating, and publishing with digitized books. This zip file includes an International Image Interoperability Framework (IIIF) manifest for the digitized book and an annotation list for each page that includes both the encoded text of the book and annotations created by the user who created this export. This bundle can be used to archive the recognized text and annotations for preservation and future access.\n\n"
-        explanation = "Each canvas (\"sc:Canvas\") in the manifest represents a page of the work. Each canvas includes an \"otherContent\" field-set with information identifying that page's annotation lists. This field-set includes an \"@id\" field and the label field (\"@type\") \"sc:AnnotationList\" for each annotation list. The \"@id\" field contains the URL link at which the annotation list was created and originally hosted from the Readux site. In order to host this IIIF manifest and its annotation lists again to browse the book and annotations outside of Readux, these @id fields would need to be updated to the appropriate URLs for the annotation lists on the new host. Exported annotation lists replace nonword characters (where words are made up of alphanumerics and underscores) with underscores in the filename."
-        readme = readme + volume_data + annotators_attribution_string + boilerplate + explanation
-        zip_file.writestr('README.txt', readme)
+        explanation = 'Each canvas ("sc:Canvas") in the manifest represents a page of the work. Each canvas includes an "otherContent" field-set with information identifying that page\'s annotation lists. This field-set includes an "@id" field and the label field ("@type") "sc:AnnotationList" for each annotation list. The "@id" field contains the URL link at which the annotation list was created and originally hosted from the Readux site. In order to host this IIIF manifest and its annotation lists again to browse the book and annotations outside of Readux, these @id fields would need to be updated to the appropriate URLs for the annotation lists on the new host. Exported annotation lists replace nonword characters (where words are made up of alphanumerics and underscores) with underscores in the filename.'
+        readme = (
+            readme
+            + volume_data
+            + annotators_attribution_string
+            + boilerplate
+            + explanation
+        )
+        zip_file.writestr("README.txt", readme)
         current_user = User.objects.get(id__in=owners)
 
         # pylint: enable = line-too-long
 
         # Next write the manifest
         zip_file.writestr(
-            'manifest.json',
+            "manifest.json",
             json.dumps(
                 json.loads(
                     serialize(
-                        'manifest',
+                        "manifest",
                         [manifest],
                         version=version,
                         annotators=current_user.name,
                         exportdate=now,
-                        current_user=current_user
+                        current_user=current_user,
                     )
                 ),
-                indent=4
-            )
+                indent=4,
+            ),
         )
 
         # Then write the OCR annotations
@@ -139,23 +163,14 @@ class IiifManifestExport:
             if canvas.annotation_set.count() > 0:
                 json_hash = json.loads(
                     serialize(
-                        'annotation_list',
-                        [canvas],
-                        version=version,
-                        owners=owners
+                        "annotation_list", [canvas], version=version, owners=owners
                     )
                 )
-                anno_uri = json_hash['@id']
+                anno_uri = json_hash["@id"]
 
-                annotation_file = re.sub(r'\W','_', anno_uri) + ".json"
+                annotation_file = re.sub(r"\W", "_", anno_uri) + ".json"
 
-                zip_file.writestr(
-                    annotation_file,
-                    json.dumps(
-                        json_hash,
-                        indent=4
-                    )
-                )
+                zip_file.writestr(annotation_file, json.dumps(json_hash, indent=4))
         # Then write the user annotations
         for canvas in manifest.canvas_set.all():
             user_annotations = current_user.userannotation_set.filter(canvas=canvas)
@@ -164,32 +179,29 @@ class IiifManifestExport:
                 # annotations = canvas.userannotation_set.filter(owner__in=owners).all()
                 json_hash = json.loads(
                     serialize(
-                        'user_annotation_list',
+                        "user_annotation_list",
                         [canvas],
                         version=version,
                         is_list=False,
-                        owners=[current_user]
+                        owners=[current_user],
                     )
                 )
-                anno_uri = json_hash['@id']
-                annotation_file = re.sub(r'\W', '_', anno_uri) + ".json"
+                print(json_hash)
+                anno_uri = json_hash["@id"]
+                annotation_file = re.sub(r"\W", "_", anno_uri) + ".json"
 
-                zip_file.writestr(
-                    annotation_file,
-                    json.dumps(
-                        json_hash,
-                        indent=4
-                    )
-                )
+                zip_file.writestr(annotation_file, json.dumps(json_hash, indent=4))
 
-        zip_file.close() # flush zipfile to byte stream
+        zip_file.close()  # flush zipfile to byte stream
 
         return byte_stream.getvalue()
 
 
 class GithubExportException(Exception):
     """Custom exception."""
+
     pass
+
 
 class JekyllSiteExport(object):
     """Export Jekyllsite
@@ -201,9 +213,18 @@ class JekyllSiteExport(object):
     :return: [description]
     :rtype: [type]
     """
-    def __init__(self, manifest, version, page_one=None,
-                 include_images=False, deep_zoom='hosted',
-                 github_repo=None, owners=None, user=None):
+
+    def __init__(
+        self,
+        manifest,
+        version,
+        page_one=None,
+        include_images=False,
+        deep_zoom="hosted",
+        github_repo=None,
+        owners=None,
+        user=None,
+    ):
         """Init JekyllSiteExport
 
         :param manifest: Manifest to be exported
@@ -228,9 +249,9 @@ class JekyllSiteExport(object):
         self.version = version
         # self.page_one = page_one
         # self.include_images = include_images
-        #self.deep_zoom = deep_zoom
-        self.include_deep_zoom = (deep_zoom == 'include')
-        self.no_deep_zoom = (deep_zoom == 'exclude')
+        # self.deep_zoom = deep_zoom
+        self.include_deep_zoom = deep_zoom == "include"
+        self.no_deep_zoom = deep_zoom == "exclude"
         # self.github_repo = github_repo
 
         # # initialize github connection values to None
@@ -243,7 +264,6 @@ class JekyllSiteExport(object):
         self.github_repo = github_repo
         # TODO: Why?
         self.is_testing = False
-
 
     def log_status(self, msg):
         """Shortcut function to log status of export.
@@ -279,7 +299,7 @@ class JekyllSiteExport(object):
 
     def get_zip_file(self, filename):
         """Generate zip file"""
-        file = open(JekyllSiteExport.get_zip_path(filename),"rb")
+        file = open(JekyllSiteExport.get_zip_path(filename), "rb")
         data = file.read()
         file.close()
         return data
@@ -290,7 +310,7 @@ class JekyllSiteExport(object):
         :return: System path for export file.
         :rtype: str
         """
-        return os.path.join(self.jekyll_site_dir, 'iiif_export')
+        return os.path.join(self.jekyll_site_dir, "iiif_export")
 
     def import_iiif_jekyll(self, manifest, tmpdir):
         """Get a fresh import of IIIF as jekyll site content
@@ -302,14 +322,14 @@ class JekyllSiteExport(object):
         :raises ExportException: [description]
         """
         # run the script to get a fresh import of IIIF as jekyll site content
-        self.log_status('Running jekyll import IIIF manifest script')
+        self.log_status("Running jekyll import IIIF manifest script")
         jekyllimport_manifest_script = settings.JEKYLLIMPORT_MANIFEST_SCRIPT
         import_command = [
             jekyllimport_manifest_script,
-            '--local-directory',
-            '-q',
+            "--local-directory",
+            "-q",
             self.iiif_dir(),
-            tmpdir
+            tmpdir,
         ]
         # TODO
         # # if a page number is specified, pass it as a parameter to the script
@@ -318,23 +338,22 @@ class JekyllSiteExport(object):
         # # if no deep zoom is requested, pass through so the jekyll
         # #  config can be updated appropriately
         if self.no_deep_zoom:
-            import_command.append('--no-deep-zoom')
+            import_command.append("--no-deep-zoom")
 
         try:
-            LOGGER.debug('Jekyll import command: %s', ' '.join(import_command))
+            LOGGER.debug("Jekyll import command: %s", " ".join(import_command))
             output = subprocess.check_output(
-                ' '.join(import_command),
-                shell=True,
-                stderr=subprocess.STDOUT
+                " ".join(import_command), shell=True, stderr=subprocess.STDOUT
             )
-            LOGGER.debug('Jekyll import output:')
-            LOGGER.debug(output.decode('utf-8'))
+            LOGGER.debug("Jekyll import output:")
+            LOGGER.debug(output.decode("utf-8"))
         except subprocess.CalledProcessError as error:
-            LOGGER.debug('Jekyll import error:')
+            LOGGER.debug("Jekyll import error:")
             LOGGER.debug(error.output)
-            err_msg = "Error running jekyll import on IIIF manifest!\n{cmd}\n{err}".format(
-                cmd=' '.join(import_command),
-                err=error.output.decode('utf-8')
+            err_msg = (
+                "Error running jekyll import on IIIF manifest!\n{cmd}\n{err}".format(
+                    cmd=" ".join(import_command), err=error.output.decode("utf-8")
+                )
             )
             LOGGER.error(err_msg)
             raise ExportException(err_msg)
@@ -348,20 +367,22 @@ class JekyllSiteExport(object):
         :return: System path for export directory.
         :rtype: str
         """
-        LOGGER.debug('Generating jekyll website for %s', self.manifest.id)
-        tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export')
-        LOGGER.debug('Building export for %s in %s', self.manifest.id, tmpdir)
+        LOGGER.debug("Generating jekyll website for %s", self.manifest.id)
+        tmpdir = tempfile.mkdtemp(prefix="tmp-rdx-export")
+        LOGGER.debug("Building export for %s in %s", self.manifest.id, tmpdir)
 
         # unzip jekyll template site
-        self.log_status('Extracting jekyll template site')
-        with zipfile.ZipFile(JEKYLL_THEME_ZIP, 'r') as jekyllzip:
+        self.log_status("Extracting jekyll template site")
+        with zipfile.ZipFile(JEKYLL_THEME_ZIP, "r") as jekyllzip:
             jekyllzip.extractall(tmpdir)
-        self.jekyll_site_dir = os.path.join(tmpdir, 'digitaledition-jekylltheme')
-        LOGGER.debug('Jekyll site dir:')
+        self.jekyll_site_dir = os.path.join(tmpdir, "digitaledition-jekylltheme")
+        LOGGER.debug("Jekyll site dir:")
         LOGGER.debug(self.jekyll_site_dir)
 
-        LOGGER.debug('Exporting IIIF bundle')
-        iiif_zip_stream = IiifManifestExport.get_zip(self.manifest, 'v2', owners=self.owners)
+        LOGGER.debug("Exporting IIIF bundle")
+        iiif_zip_stream = IiifManifestExport.get_zip(
+            self.manifest, "v2", owners=self.owners
+        )
         iiif_zip = zipfile.ZipFile(io.BytesIO(iiif_zip_stream), "r")
 
         iiif_zip.extractall(self.iiif_dir())
@@ -374,21 +395,18 @@ class JekyllSiteExport(object):
         # if self.include_deep_zoom:
         #     self.generate_deep_zoom(jekyll_site_dir)
 
-
         # run the script to import IIIF as jekyll site content
         self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir)
 
         # NOTE: putting export content in a separate dir to make it easy to create
         # the zip file with the right contents and structure
-        export_dir = os.path.join(tmpdir, 'export')
+        export_dir = os.path.join(tmpdir, "export")
         os.mkdir(export_dir)
 
         # rename the jekyll dir and move it into the export dir
-        shutil.move(self.jekyll_site_dir,
-                    self.edition_dir(export_dir))
+        shutil.move(self.jekyll_site_dir, self.edition_dir(export_dir))
 
         return export_dir
-
 
     def edition_dir(self, export_dir):
         """Convenience function for system path to the edition directory
@@ -399,8 +417,7 @@ class JekyllSiteExport(object):
         :rtype: str
         """
         return os.path.join(
-            export_dir,
-            '{m}_annotated_jekyll_site'.format(m=self.manifest.id)
+            export_dir, "{m}_annotated_jekyll_site".format(m=self.manifest.id)
         )
 
     def website_zip(self):
@@ -415,17 +432,19 @@ class JekyllSiteExport(object):
         # create a tempfile to hold a zip file of the site
         # (using tempfile for automatic cleanup after use)
         webzipfile = tempfile.NamedTemporaryFile(
-            suffix='.zip',
-            prefix='%s_annotated_site_' % self.manifest.id,
-            delete=False)
+            suffix=".zip", prefix="%s_annotated_site_" % self.manifest.id, delete=False
+        )
         shutil.make_archive(
             # name of the zipfile to create without .zip
             os.path.splitext(webzipfile.name)[0],
-            'zip',  # archive format; could also do tar
-            export_dir
+            "zip",  # archive format; could also do tar
+            export_dir,
         )
-        LOGGER.debug('Jekyll site web export zipfile for %s is %s',
-                     self.manifest.id, webzipfile.name)
+        LOGGER.debug(
+            "Jekyll site web export zipfile for %s is %s",
+            self.manifest.id,
+            webzipfile.name,
+        )
         # clean up temporary files
         shutil.rmtree(export_dir)
         # NOTE: method has to return the tempfile itself, or else it will
@@ -442,7 +461,7 @@ class JekyllSiteExport(object):
         self.github = GithubApi.connect_as_user(user)
         self.github_username = GithubApi.github_username(user)
         self.github_token = GithubApi.github_token(user)
-        self.github.session.headers['Authorization'] = f'token {self.github_token}'
+        self.github.session.headers["Authorization"] = f"token {self.github_token}"
 
     def github_auth_repo(self, repo_name=None, repo_url=None):
         """Generate a GitHub repo url with an oauth token in order to
@@ -457,9 +476,9 @@ class JekyllSiteExport(object):
         """
         if repo_url:
             parsed_repo_url = urlparse(repo_url)
-            return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{parsed_repo_url.path[1:]}.git'
+            return f"https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{parsed_repo_url.path[1:]}.git"
 
-        return f'https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{self.github_username}/{repo_name}.git'
+        return f"https://{self.github_username}:{GithubApi.github_token(self.user)}@github.com/{self.github_username}/{repo_name}.git"
 
     def gitrepo_exists(self):
         """Check to see if GitHub repo already exists.
@@ -468,16 +487,13 @@ class JekyllSiteExport(object):
         :rtype: bool
         """
         current_repos = self.github.list_repos(self.github_username)
-        current_repo_names = [repo['name'] for repo in current_repos]
+        current_repo_names = [repo["name"] for repo in current_repos]
         LOGGER.debug(
-            'Checking to see if {gr} in {rns}'.format(
-                gr=self.github_repo,
-                rns=" ".join(current_repo_names)
+            "Checking to see if {gr} in {rns}".format(
+                gr=self.github_repo, rns=" ".join(current_repo_names)
             )
         )
         return self.github_repo in current_repo_names
-
-
 
     def website_gitrepo(self):
         """Create a new GitHub repository and populate it with content from
@@ -489,25 +505,21 @@ class JekyllSiteExport(object):
         """
 
         # NOTE: github pages sites now default to https
-        github_pages_url = 'https://{un}.github.io/{gr}/'.format(
-            un=self.github_username,
-            gr=self.github_repo
+        github_pages_url = "https://{un}.github.io/{gr}/".format(
+            un=self.github_username, gr=self.github_repo
         )
 
         # before even starting to generate the jekyll site,
         # check if requested repo name already exists; if so, bail out with an error
         LOGGER.debug(
-            'Checking github repo {gr} for {un}'.format(
-                gr=self.github_repo,
-                un=self.github_username
+            "Checking github repo {gr} for {un}".format(
+                gr=self.github_repo, un=self.github_username
             )
         )
 
         if self.gitrepo_exists():
             raise GithubExportException(
-                'GitHub repo {gr} already exists.'.format(
-                    gr=self.github_repo
-                )
+                "GitHub repo {gr} already exists.".format(gr=self.github_repo)
             )
 
         export_dir = self.generate_website()
@@ -518,34 +530,33 @@ class JekyllSiteExport(object):
         jekyll_dir = self.edition_dir(export_dir)
 
         # modify the jekyll config for relative url on github.io
-        config_file_path = os.path.join(jekyll_dir, '_config.yml')
-        with open(config_file_path, 'r') as configfile:
+        config_file_path = os.path.join(jekyll_dir, "_config.yml")
+        with open(config_file_path, "r") as configfile:
             config_data = load(configfile, Loader=Loader)
 
         # split out github pages url into the site url and path
         parsed_gh_url = urlparse(github_pages_url)
-        config_data['url'] = '{s}://{n}'.format(
-            s=parsed_gh_url.scheme,
-            n=parsed_gh_url.netloc
+        config_data["url"] = "{s}://{n}".format(
+            s=parsed_gh_url.scheme, n=parsed_gh_url.netloc
         )
-        config_data['baseurl'] = parsed_gh_url.path.rstrip('/')
-        with open(config_file_path, 'w') as configfile:
-            safe_dump(config_data, configfile,
-                           default_flow_style=False)
+        config_data["baseurl"] = parsed_gh_url.path.rstrip("/")
+        with open(config_file_path, "w") as configfile:
+            safe_dump(config_data, configfile, default_flow_style=False)
             # using safe_dump to generate only standard yaml output
             # NOTE: pyyaml requires default_flow_style=false to output
             # nested collections in block format
 
         LOGGER.debug(
-            'Creating github repo {gr} for {un}'.format(
-                gr=self.github_repo,
-                un=self.github_username
+            "Creating github repo {gr} for {un}".format(
+                gr=self.github_repo, un=self.github_username
             )
         )
 
         self.github.create_repo(
-            self.github_repo, homepage=github_pages_url, user=self.user,
-            description='An annotated digital edition created with Readux'
+            self.github_repo,
+            homepage=github_pages_url,
+            user=self.user,
+            description="An annotated digital edition created with Readux",
         )
 
         # get auth repo url to use to push data
@@ -575,78 +586,64 @@ class JekyllSiteExport(object):
         # https://developer.github.com/changes/2020-02-14-deprecating-oauth-app-endpoint/
         gitcmd.config("user.password", GithubApi.github_token(self.user))
 
-        gitcmd.add(['.'])
-        gitcmd.commit([
-            '-m',
-            'Import Jekyll site generated by Readux {v}'.format(
-                v=__version__
-            ),
-            '--author="{fn} <{ue}>"'.format(
-                fn=git_author,
-                ue=self.user.email
-            )
-        ])
+        gitcmd.add(["."])
+        gitcmd.commit(
+            [
+                "-m",
+                "Import Jekyll site generated by Readux {v}".format(v=__version__),
+                '--author="{fn} <{ue}>"'.format(fn=git_author, ue=self.user.email),
+            ]
+        )
         # push local master to the gh-pages branch of the newly created repo,
         # using the user's oauth token credentials
-        self.log_status('Pushing new content to GitHub')
-        if os.environ['DJANGO_ENV'] != 'test': # pragma: no cover
-            gitcmd.push([repo_url, 'master:gh-pages']) # pragma: no cover
+        self.log_status("Pushing new content to GitHub")
+        if os.environ["DJANGO_ENV"] != "test":  # pragma: no cover
+            gitcmd.push([repo_url, "master:gh-pages"])  # pragma: no cover
 
         # clean up temporary files after push to github
         shutil.rmtree(export_dir)
 
         # generate public repo url for display to user
-        public_repo_url = 'https://github.com/{un}/{gr}'.format(
-            un=self.github_username,
-            gr=self.github_repo
+        public_repo_url = "https://github.com/{un}/{gr}".format(
+            un=self.github_username, gr=self.github_repo
         )
         return (public_repo_url, github_pages_url)
 
     def update_gitrepo(self):
-        '''Update an existing GitHub repository previously created by
+        """Update an existing GitHub repository previously created by
         Readux export.  Checks out the repository, creates a new branch,
         runs the iiif_to_jekyll import on that branch, pushes it to github,
         and creates a pull request.  Returns the HTML url for the new
-        pull request on success.'''
+        pull request on success."""
 
-        repo_url = 'github.com/{un}/{gr}.git'.format(
-            un=self.github_username,
-            gr=self.github_repo
+        repo_url = "github.com/{un}/{gr}.git".format(
+            un=self.github_username, gr=self.github_repo
         )
 
         # get auth repo url to use to create branch
         auth_repo_url = self.github_auth_repo(repo_name=self.github_repo)
 
         # create a tmpdir to clone the git repo into
-        tmpdir = tempfile.mkdtemp(prefix='tmp-rdx-export-update')
-        LOGGER.debug(
-            'Cloning {r} to {t}'.format(
-                r=repo_url,
-                t=tmpdir
-            )
-        )
+        tmpdir = tempfile.mkdtemp(prefix="tmp-rdx-export-update")
+        LOGGER.debug("Cloning {r} to {t}".format(r=repo_url, t=tmpdir))
         repo = None
-        if os.environ['DJANGO_ENV'] == 'test':
+        if os.environ["DJANGO_ENV"] == "test":
             repo = git.Repo.init(tmpdir)
-            yml_config_path = os.path.join(tmpdir, '_config.yml')
-            open(yml_config_path, 'a').close()
-            repo.index.commit('initial commit')
-            repo.git.checkout('HEAD', b='gh-pages')
+            yml_config_path = os.path.join(tmpdir, "_config.yml")
+            open(yml_config_path, "a").close()
+            repo.index.commit("initial commit")
+            repo.git.checkout("HEAD", b="gh-pages")
         else:
-            repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch='gh-pages')
+            repo = git.Repo.clone_from(auth_repo_url, tmpdir, branch="gh-pages")
             repo.remote().pull()  # pragma: no cover
         # create and switch to a new branch and switch to it; using datetime
         # for uniqueness
-        git_branch_name = 'readux-update-%s' % \
-            datetime.now().strftime('%Y%m%d-%H%M%S')
+        git_branch_name = "readux-update-%s" % datetime.now().strftime("%Y%m%d-%H%M%S")
         update_branch = repo.create_head(git_branch_name)
         update_branch.checkout()
 
         LOGGER.debug(
-            'Updating export for {m} in {t}'.format(
-                m=self.manifest.pid,
-                t=tmpdir
-            )
+            "Updating export for {m} in {t}".format(m=self.manifest.pid, t=tmpdir)
         )
 
         # remove all annotations and tag pages so that if an annotation is removed
@@ -654,7 +651,7 @@ class JekyllSiteExport(object):
         # (annotations and tags that are unchanged will be restored by the IIIF
         # jekyll import, and look unchanged to git if no different)
         try:
-            repo.index.remove(['_annotations/*', 'tags/*', 'iiif_export/*'])
+            repo.index.remove(["_annotations/*", "tags/*", "iiif_export/*"])
         except git.GitCommandError:
             # it's possible that an export has no annotations or tags
             # (although unlikely to occur anywhere but development & testing)
@@ -669,13 +666,13 @@ class JekyllSiteExport(object):
 
         self.jekyll_site_dir = tmpdir
 
-        LOGGER.debug('Exporting IIIF bundle')
-        iiif_zip_stream = IiifManifestExport.get_zip(self.manifest, 'v2', owners=self.owners)
+        LOGGER.debug("Exporting IIIF bundle")
+        iiif_zip_stream = IiifManifestExport.get_zip(
+            self.manifest, "v2", owners=self.owners
+        )
         iiif_zip = zipfile.ZipFile(io.BytesIO(iiif_zip_stream), "r")
 
         iiif_zip.extractall(self.iiif_dir())
-
-
 
         # TODO
         # # save image files if requested, and update image paths
@@ -685,44 +682,47 @@ class JekyllSiteExport(object):
         # if self.include_deep_zoom:
         #     self.generate_deep_zoom(jekyll_site_dir)
 
-        if os.environ['DJANGO_ENV'] != 'test':
+        if os.environ["DJANGO_ENV"] != "test":
             # run the script to import IIIF as jekyll site content
-            self.import_iiif_jekyll(self.manifest, self.jekyll_site_dir) # pragma: no cover
+            self.import_iiif_jekyll(
+                self.manifest, self.jekyll_site_dir
+            )  # pragma: no cover
 
             # add any files that could be updated to the git index
-            repo.index.add([ # pragma: no cover
-                '_config.yml', '_volume_pages/*', '_annotations/*',
-                '_data/tags.yml', 'tags/*', 'iiif_export/*'
-            ])
+            repo.index.add(
+                [  # pragma: no cover
+                    "_config.yml",
+                    "_volume_pages/*",
+                    "_annotations/*",
+                    "_data/tags.yml",
+                    "tags/*",
+                    "iiif_export/*",
+                ]
+            )
             # TODO: if deep zoom is added, we must add that directory as well
 
-        git_author = git.Actor(
-            self.user.name,
-            self.user.email
-        )
+        git_author = git.Actor(self.user.name, self.user.email)
         # commit all changes
         repo.index.commit(
-            'Updated Jekyll site by Readux {v}'.format(
-                v=__version__
-            ),
-            author=git_author
+            "Updated Jekyll site by Readux {v}".format(v=__version__), author=git_author
         )
 
-        if os.environ['DJANGO_ENV'] != 'test':
+        if os.environ["DJANGO_ENV"] != "test":
             # push the update to a new branch on github
-            repo.remotes.origin.push( # pragma: no cover
-                '{b}s:{b}s'.format(b=git_branch_name)
+            repo.remotes.origin.push(  # pragma: no cover
+                "{b}s:{b}s".format(b=git_branch_name)
             )
         # convert repo url to form needed to generate pull request
-        repo = repo_url.replace('github.com/', '').replace('.git', '')
+        repo = repo_url.replace("github.com/", "").replace(".git", "")
         pullrequest = self.github.create_pull_request(
-            repo, 'Updated export', git_branch_name, 'gh-pages')
+            repo, "Updated export", git_branch_name, "gh-pages"
+        )
 
         # clean up local checkout after successful push
         shutil.rmtree(tmpdir)
 
         # return the html url for the new pull request
-        return pullrequest['html_url']
+        return pullrequest["html_url"]
 
     # from readux/books/consumers.py in Readux 1.
 
@@ -735,14 +735,14 @@ class JekyllSiteExport(object):
         :return: List of export URLs
         :rtype: list
         """
-        LOGGER.debug('Background export started.')
+        LOGGER.debug("Background export started.")
         # user_has_github = False
         if self.user:
             # check if user has a github account linked
             try:
                 GithubApi.github_account(self.user)
             except GithubAccountNotFound:
-                LOGGER.info('User attempted github export with no github account.')
+                LOGGER.info("User attempted github export with no github account.")
 
         # connect to github as the user in order to create the repository
         self.use_github(self.user)
@@ -751,9 +751,12 @@ class JekyllSiteExport(object):
         # to do needed export steps
         # TODO: httpretty seems to include the HEAD method, but it errors when
         # making the request because the Head method is not implemented.
-        if os.environ['DJANGO_ENV'] != 'test' and 'repo' not in self.github.oauth_scopes():
-            LOGGER.error('TODO: bad scope message')
-            return None # pragma: no cover
+        if (
+            os.environ["DJANGO_ENV"] != "test"
+            and "repo" not in self.github.oauth_scopes()
+        ):
+            LOGGER.error("TODO: bad scope message")
+            return None  # pragma: no cover
 
         repo_url = None
         ghpages_url = None
@@ -763,55 +766,68 @@ class JekyllSiteExport(object):
             try:
                 repo_url, ghpages_url = self.website_gitrepo()
 
-                LOGGER.info('Exported %s to GitHub repo %s for user %s',
-                            self.manifest.pid, repo_url, self.user.username)
+                LOGGER.info(
+                    "Exported %s to GitHub repo %s for user %s",
+                    self.manifest.pid,
+                    repo_url,
+                    self.user.username,
+                )
 
             except GithubExportException as err:
-                LOGGER.info('Export failed: {e}'.format(e=err))
+                LOGGER.info("Export failed: {e}".format(e=err))
         else:
             # update an existing github repository with new branch and
             # a pull request
             try:
                 # TODO: How to highjack the request to
                 # https://58816:x-oauth-basic@github.com/zaphod/marx.git/ when testing.
-                if os.environ['DJANGO_ENV'] != 'test':
-                    pr_url = self.update_gitrepo() # pragma: no cover
+                if os.environ["DJANGO_ENV"] != "test":
+                    pr_url = self.update_gitrepo()  # pragma: no cover
                 else:
-                    pr_url = 'https://github.com/{u}/{r}/pull/2'.format(
-                        u=self.github_username,
-                        r=self.github_repo
+                    pr_url = "https://github.com/{u}/{r}/pull/2".format(
+                        u=self.github_username, r=self.github_repo
                     )
 
-                LOGGER.info('GitHub jekyll site update completed')
-                repo_url = 'https://github.com/%s/%s' % (self.github_username, self.github_repo)
-                ghpages_url = 'https://%s.github.io/%s/' % (self.github_username, self.github_repo)
+                LOGGER.info("GitHub jekyll site update completed")
+                repo_url = "https://github.com/%s/%s" % (
+                    self.github_username,
+                    self.github_repo,
+                )
+                ghpages_url = "https://%s.github.io/%s/" % (
+                    self.github_username,
+                    self.github_repo,
+                )
             except GithubExportException as err:
-                self.notify_msg('Export failed: {e}'.format(e=err))
+                self.notify_msg("Export failed: {e}".format(e=err))
 
         context = {}
-        context['repo_url'] = repo_url
-        context['ghpages_url'] = ghpages_url
-        context['pr_url'] = pr_url
+        context["repo_url"] = repo_url
+        context["ghpages_url"] = ghpages_url
+        context["pr_url"] = pr_url
 
         # It takes GitHub a few to build the site. This holds the email till the site
         # is available. If it takes longer than 10 minutes, and email is sent saying
         # that is is taking longer than expected.
         tries = 0
-        sleep_for = 15 if os.environ['DJANGO_ENV'] != 'test' else 0.1
+        sleep_for = 15 if os.environ["DJANGO_ENV"] != "test" else 0.1
         while not self.__check_site(ghpages_url, tries):
-            for _ in range(0,10):
+            for _ in range(0, 10):
                 print(tries)
             tries += 1
             sleep(sleep_for)
 
         if tries < 45:
-            email_subject = 'Your Readux site export is ready!'
-            email_contents = get_template('jekyll_export_email.html').render(context)
-            text_contents = get_template('jekyll_export_email.txt').render(context)
+            email_subject = "Your Readux site export is ready!"
+            email_contents = get_template("jekyll_export_email.html").render(context)
+            text_contents = get_template("jekyll_export_email.txt").render(context)
         else:
-            email_subject = 'Your Readux site export is taking longer than expected'
-            email_contents = get_template('jekyll_export_email_error.html').render(context)
-            text_contents = get_template('jekyll_export_email_error.txt').render(context)
+            email_subject = "Your Readux site export is taking longer than expected"
+            email_contents = get_template("jekyll_export_email_error.html").render(
+                context
+            )
+            text_contents = get_template("jekyll_export_email_error.txt").render(
+                context
+            )
 
         send_mail(
             email_subject,
@@ -819,7 +835,7 @@ class JekyllSiteExport(object):
             settings.READUX_EMAIL_SENDER,
             [user_email],
             fail_silently=False,
-            html_message=email_contents
+            html_message=email_contents,
         )
 
         return [repo_url, ghpages_url, pr_url]
@@ -836,7 +852,7 @@ class JekyllSiteExport(object):
         """
 
         LOGGER.debug(
-            'Background download export started.  Sending email to {ue}'.format(
+            "Background download export started.  Sending email to {ue}".format(
                 ue=user_email
             )
         )
@@ -847,17 +863,17 @@ class JekyllSiteExport(object):
         context["volume"] = volume
         context["hostname"] = settings.HOSTNAME
 
-        email_contents = get_template('download_export_email.html').render(context)
-        text_contents = get_template('download_export_email.txt').render(context)
+        email_contents = get_template("download_export_email.html").render(context)
+        text_contents = get_template("download_export_email.txt").render(context)
 
         # TODO: Maybe break this out so we can test it?
         send_mail(
-            'Your Readux site export is ready!',
+            "Your Readux site export is ready!",
             text_contents,
             settings.READUX_EMAIL_SENDER,
             [user_email],
             fail_silently=False,
-            html_message=email_contents
+            html_message=email_contents,
         )
 
         return zip_file.name

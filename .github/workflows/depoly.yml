@@ -1,8 +1,8 @@
-name: Dev-Deploy
+name: Deploy
 
 on:
   workflow_run:
-    workflows: [Dev-Test]
+    workflows: [Test]
     types: [completed]
 
 permissions:
@@ -16,12 +16,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Checkout Docker configs
         run: |
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.DEPLOY_KEY_FOR_CONFIG_REPO }}'
-          git clone -b "${{ github.head_ref || github.ref_name }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"
+          git clone -b "${{ github.event.workflow_run.head_branch }}" "${{ secrets.DEPLOY_CONFIG_REPO}}"
           mv "${{ secrets.CONFIG_REPO_NAME }}"/* .
           chmod +x config.sh
           chmod +x deploy.sh
@@ -35,6 +37,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
 
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v4
@@ -45,11 +48,12 @@ jobs:
 
       - name: Run Deploy
         env:
-          BRANCH: ${{ github.head_ref || github.ref_name }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
           AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_FSX_VOLUME: ${{ secrets.AWS_FSX_VOLUME }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL_DEV}}
+          DATABASE_URL_DEV: ${{ secrets.DATABASE_URL_DEV}}
+          DATABASE_URL_PROD: ${{ secrets.DATABASE_URL_PROD}}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           DEPLOY_KEY: ${{ secrets.DEPLOY_KEY}}

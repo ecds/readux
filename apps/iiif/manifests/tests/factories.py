@@ -1,9 +1,8 @@
 """Factory to create Manifests for Tests"""
 
-from random import randrange
+from datetime import datetime
 from factory.django import DjangoModelFactory, ImageField
 from factory import Faker, RelatedFactory, SubFactory
-from time import time
 from apps.utils.noid import encode_noid
 from ..models import Manifest, ImageServer, Language
 from ...canvases.tests.factories import CanvasFactory
@@ -30,6 +29,10 @@ class ManifestFactory(DjangoModelFactory):
 
     pid = encode_noid()
     label = Faker("name")
+    author = Faker("name")
+    publisher = Faker("company")
+    published_city = Faker("city")
+    published_date = Faker("date")
     canvases = RelatedFactory(CanvasFactory, "manifest")
     logo = ImageField(from_path="apps/iiif/canvases/tests/ecds.png")
     image_server = SubFactory(ImageServerFactory)

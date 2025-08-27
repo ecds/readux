@@ -3,7 +3,11 @@
 
 <div class="rx-info-content">
   <div class="rx-info-content-label uk-flex-between">
-    <a class="rx-action-btn" href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg" target="_blank">
+    <a id="rx-download-img"
+       class="rx-action-btn"
+       data-href-template="{{ pagelink }}/__PID__/full/full/0/default.jpg"
+       href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg"
+       target="_blank">
       <div class="uk-label rx-label-copy">
         IMG
       </div>

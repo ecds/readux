@@ -14,22 +14,4 @@
   </div>
 </div>
 
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Text Overlay</span> 
-    <div class="uk-label rx-label-copy" uk-toggle="target: #text-overlay-modal">
-      <span uk-icon="icon: expand; ratio: 0.5"></span>
-      Open in Popup
-    </div>
-  </div>
-  <div class="rx-info-content-value">
-    Display the plain text in the OCR in a popup. All formats are stripped away in the text.
-  </div>
-</div>
-
-<div id="text-overlay-modal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body">
-      <button class="uk-modal-close-default" type="button" uk-close></button>
-      <h2 class="uk-modal-title">Text</h2>
-      <p>{{page.result}}</p>
-  </div>
-</div>
+<v-ocr-text></v-ocr-text>

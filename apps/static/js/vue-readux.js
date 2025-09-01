@@ -431,47 +431,80 @@ Vue.component("v-info-content-url-image-link", {
 });
 
 // adapted from (url copy component made for when the url is modified externally (outside Vue.js)) - now page text modal
-Vue.component("v-info-content-url-page-text", {
-  props: [],
+Vue.component("v-ocr-text", {
+  props: {
+    pagelink: { type: String, default: "" }
+  },
   data: function () {
     return {
-      pagetext: this.pagetext,
+      pagetext: "",         // start empty; Vue will track it
+      canvas: null,         // track current canvas id
+      pageresource: null,
+      localUrls: "",
+      can: null
     };
   },
   template: `
-  <div id="text-overlay-modal" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body">
+  <div>
+    <div class="rx-info-content">
+      <div class="rx-info-content-label uk-flex-between rx-flex">
+        <span>Text Overlay</span>
+        <div class="uk-label rx-label-copy" uk-toggle="target: #text-overlay-modal">
+          <span uk-icon="icon: expand; ratio: 0.5"></span>
+          Open in Popup
+        </div>
+      </div>
+      <div class="rx-info-content-value">
+        Display the plain text in the OCR in a popup. All formats are stripped away in the text.
+      </div>
+    </div>
+
+    <div id="text-overlay-modal" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
         <button class="uk-modal-close-default" type="button" uk-close></button>
         <h2 class="uk-modal-title">Text</h2>
-        <p>{{pagetext}}</p>
+        <p>{{ pagetext }}</p>
+      </div>
     </div>
   </div>
   `,
-  methods: {
-  },
   mounted() {
-    var vm = this;
-    window.addEventListener("canvasswitch", function (event) {
-      if (event.detail && vm.canvas !== event.detail.canvas) {
-        var protocol = window.location.protocol;
-        var host = window.location.host;
-        vm.canvas = event.detail.canvas;
-        var volume = event.detail.volume;
-        var localpagelink = vm.pagelink;
-        if (event.detail.canvas && event.detail.canvas !== 'all') {
-          axios.get(`iiif/resource/${event.detail.canvas}`)
-            .then(response => {
-              vm.pageresource = response.data.resource;
-              vm.pagetext = response.data.text;
-            }).catch(error => { console.log(error); })
+    this._onCanvasSwitch = async (event) => {
+      const detail = event && event.detail ? event.detail : {};
+      const nextCanvas = detail.canvas;
+
+      // If we only want to refetch when canvas changes, keep the guard,
+      // but many events fire with same canvas; we likely want to always update:
+      // if (this.canvas === nextCanvas) return;
+
+      this.canvas = nextCanvas;
+
+      try {
+        if (nextCanvas && nextCanvas !== "all") {
+          const { data } = await axios.get(`iiif/resource/${nextCanvas}`);
+          this.pageresource = data.resource || null;
+          this.pagetext = data.text || ""; // <-- reactive update
+        } else {
+          this.pageresource = null;
+          this.pagetext = "";
         }
-        var url =
-          localpagelink + "/" + vm.canvas + "/full/full/0/default.jpg";
-        vm.localUrls = url;
-        vm.can = vm.canvas;
+
+        // Only build URLs if we actually have a base link
+        if (this.pagelink && nextCanvas) {
+          const url = `${this.pagelink}/${nextCanvas}/full/full/0/default.jpg`;
+          this.localUrls = url;
+          this.can = nextCanvas;
+        }
+      } catch (err) {
+        console.error("Failed to fetch page text:", err);
       }
-    });
+    };
+
+    window.addEventListener("canvasswitch", this._onCanvasSwitch);
   },
+  beforeDestroy() {
+    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
+  }
 });
 
 var readux = new Vue({

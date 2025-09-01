@@ -430,66 +430,86 @@ Vue.component("v-info-content-url-image-link", {
   },
 });
 
-// adapted from (url copy component made for when the url is modified externally (outside Vue.js)) - now page text modal
-Vue.component("v-ocr-text", {
-  props: {
-    pagelink: { type: String, default: "" }
-  },
-  data: function () {
+Vue.component("v-ocr-inspector", {
+  props: { pagelink: { type: String, default: "" } },
+  data() {
     return {
       pagetext: "",
+      isLoading: false,
       canvas: null,
       pageresource: null,
       localUrls: "",
       can: null,
-      isLoading: false
+      overlayChecked: false,
+      hasOcrAvailable: false,
+      nodeHandlers: null
     };
   },
+  created() { this.nodeHandlers = new WeakMap(); },
   computed: {
     hasText() {
       return !!(this.pagetext && this.pagetext.trim().length);
     },
     copyDisabled() {
       return this.isLoading || !this.hasText;
+    },
+    // ✅ Disable the toggle if loading OR no OCR available OR no text
+    overlayDisabled() {
+      return this.isLoading || !this.hasOcrAvailable || !this.hasText;
     }
   },
   template: `
-  <div>
-    <div class="rx-info-content">
-      <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
-        <span>Plain OCR Text</span>
+  <div class="rx-info-content">
 
-        <div class="relative">
-          <div
-            class="uk-label rx-label-copy"
-            :class="{ 'uk-disabled': copyDisabled }"
-            :aria-disabled="copyDisabled"
-            role="button"
-            tabindex="0"
-            @click="!copyDisabled && copyText()"
-            @keydown.enter.prevent="!copyDisabled && copyText()"
-            @keydown.space.prevent="!copyDisabled && copyText()"
-            style="user-select:none; cursor:pointer;"
+    <div class="ocr-notification uk-margin-small-bottom" v-if="!isLoading && !hasText">
+      This page does not have any usable OCR, or the OCR data failed to load.
+    </div>
+
+    <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
+      <span>Overlay OCR on Page</span>
+      <div>
+        <label class="uk-switch" for="ocr-overlay">
+          <input
+            type="checkbox"
+            id="ocr-overlay"
+            v-model="overlayChecked"
+            :disabled="overlayDisabled"
+            @change="onOverlayToggle"
           >
-            <span uk-icon="icon: copy; ratio: 0.5"></span>
-            Copy
-          </div>
-        </div>
+          <div class="uk-switch-slider"></div>
+        </label>
       </div>
+    </div>
 
-      <div class="scrollable-container">
-        <!-- loading -->
-        <div v-if="isLoading" class="uk-flex uk-flex-middle" style="gap:.5rem;">
-          <span uk-spinner="ratio: 0.6"></span>
-          <span>Loading OCR…</span>
-        </div>
+    <div class="rx-info-content-value uk-margin-small-bottom">
+      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
+    </div>
 
-        <!-- text available -->
-        <div v-else-if="hasText">{{ pagetext }}</div>
-
-        <!-- unavailable -->
-        <em v-else>OCR text unavailable</em>
+    <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
+      <span>Plain OCR Text</span>
+      <div
+        class="uk-label rx-label-copy"
+        :class="{ 'uk-disabled': copyDisabled }"
+        :aria-disabled="copyDisabled"
+        role="button"
+        tabindex="0"
+        @click="!copyDisabled && copyText()"
+        @keydown.enter.prevent="!copyDisabled && copyText()"
+        @keydown.space.prevent="!copyDisabled && copyText()"
+        style="user-select:none; cursor:pointer;"
+      >
+        <span uk-icon="icon: copy; ratio: 0.5"></span>
+        Copy
       </div>
+    </div>
+
+    <div class="rx-info-content-value">
+      <div v-if="isLoading" class="uk-flex uk-flex-middle" style="gap:.5rem;">
+        <span uk-spinner="ratio: 0.6"></span>
+        <span>Loading OCR…</span>
+      </div>
+      <div v-else-if="hasText" class="scrollable-container">{{ pagetext }}</div>
+      <em v-else>OCR text unavailable</em>
     </div>
   </div>
   `,
@@ -498,100 +518,21 @@ Vue.component("v-ocr-text", {
       try {
         await navigator.clipboard.writeText(this.pagetext);
         if (window.UIkit?.notification) {
-          UIkit.notification({
-            message: "Copied!",
-            status: "success",
-            timeout: 1200
-          });
+          UIkit.notification({ message: "Copied!", status: "success", timeout: 1200 });
         }
-      } catch (err) {
-        console.error("Copy failed:", err);
-      }
-    }
-  },
-  mounted() {
-    this._onCanvasSwitch = async (event) => {
-      const detail = event?.detail || {};
-      const nextCanvas = detail.canvas;
+      } catch (err) { console.error("Copy failed:", err); }
+    },
 
-      this.isLoading = true;
-      this.canvas = nextCanvas;
-
-      try {
-        if (nextCanvas && nextCanvas !== "all") {
-          const { data } = await axios.get(`iiif/resource/${nextCanvas}`);
-          this.pageresource = data.resource || null;
-          this.pagetext = data.text || "";
-        } else {
-          this.pageresource = null;
-          this.pagetext = "";
-        }
-
-        if (this.pagelink && nextCanvas) {
-          this.localUrls = `${this.pagelink}/${nextCanvas}/full/full/0/default.jpg`;
-          this.can = nextCanvas;
-        }
-      } catch (err) {
-        console.error("Failed to fetch page text:", err);
-        this.pagetext = "";
-      } finally {
-        this.isLoading = false;
-      }
-    };
-
-    window.addEventListener("canvasswitch", this._onCanvasSwitch);
-  },
-  beforeDestroy() {
-    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
-  }
-});
-
-Vue.component("v-ocr-overlay-toggle", {
-  data() {
-    return {
-      isChecked: false,
-      isDisabled: true,
-      nodeHandlers: null, // <-- no leading underscore
-    };
-  },
-  created() {
-    this.nodeHandlers = new WeakMap(); // <-- init here
-  },
-  template: `
-  <div class="rx-info-content">
-    <div class="rx-info-content-label uk-flex-between rx-flex">
-      <span>Overlay OCR on Page</span>
-      <div>
-        <label class="uk-switch" for="ocr-overlay">
-          <input
-            type="checkbox"
-            id="ocr-overlay"
-            v-model="isChecked"
-            :disabled="isDisabled"
-            @change="onToggle"
-          >
-          <div class="uk-switch-slider"></div>
-        </label>
-      </div>
-    </div>
-    <div class="rx-info-content-value">
-      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
-    </div>
-  </div>
-  `,
-  methods: {
-    onToggle() {
-      this.applyOverlay(this.isChecked);
+    onOverlayToggle() {
+      this.applyOverlay(this.overlayChecked);
     },
     getOcrNodes() {
       return document.querySelectorAll("div.openseadragon-canvas div span");
     },
     addBlockHandlers(node) {
-      if (!this.nodeHandlers) return;
       if (this.nodeHandlers.has(node)) return;
-
       const handlers = {
-        mouseup: (e) => { e.stopPropagation(); e.preventDefault(); },
+        mouseup:   (e) => { e.stopPropagation(); e.preventDefault(); },
         mousemove: (e) => { e.stopPropagation(); e.preventDefault(); },
         mousedown: (e) => { e.stopPropagation(); e.preventDefault(); }
       };
@@ -601,12 +542,11 @@ Vue.component("v-ocr-overlay-toggle", {
       this.nodeHandlers.set(node, handlers);
     },
     removeBlockHandlers(node) {
-      if (!this.nodeHandlers) return;
-      const handlers = this.nodeHandlers.get(node);
-      if (!handlers) return;
-      node.removeEventListener("mouseup", handlers.mouseup);
-      node.removeEventListener("mousemove", handlers.mousemove);
-      node.removeEventListener("mousedown", handlers.mousedown);
+      const h = this.nodeHandlers.get(node);
+      if (!h) return;
+      node.removeEventListener("mouseup", h.mouseup);
+      node.removeEventListener("mousemove", h.mousemove);
+      node.removeEventListener("mousedown", h.mousedown);
       this.nodeHandlers.delete(node);
     },
     applyOverlay(enabled) {
@@ -626,16 +566,56 @@ Vue.component("v-ocr-overlay-toggle", {
         }
       }
     },
-    handleCanvasSwitch(detail) {
-      const available = !!detail?.ocr;
-      this.isDisabled = !available;
 
-      if (this.isDisabled && this.isChecked) {
-        this.isChecked = false;
+    // ===== CANVAS SWITCH HANDLER =====
+    async handleCanvasSwitch(detail) {
+      const nextCanvas = detail?.canvas;
+
+      this.isLoading = true;
+      this.canvas = nextCanvas;
+
+      // Prefer event-provided availability
+      let availableFromEvent = typeof detail?.ocr !== "undefined" ? !!detail.ocr : null;
+
+      try {
+        if (nextCanvas && nextCanvas !== "all") {
+          const { data } = await axios.get(`iiif/resource/${nextCanvas}`);
+          this.pageresource = data.resource || null;
+          this.pagetext = data.text || "";
+        } else {
+          this.pageresource = null;
+          this.pagetext = "";
+        }
+
+        if (this.pagelink && nextCanvas) {
+          this.localUrls = `${this.pagelink}/${nextCanvas}/full/full/0/default.jpg`;
+          this.can = nextCanvas;
+        }
+
+        // Determine availability
+        this.hasOcrAvailable = (availableFromEvent !== null) ? availableFromEvent : this.hasText;
+
+        // ✅ If toggle cannot be used (no text or not available), force it off and clear styles
+        const overlayPossible = this.hasOcrAvailable && this.hasText && !this.isLoading;
+        if (!overlayPossible && this.overlayChecked) {
+          this.overlayChecked = false;
+          this.applyOverlay(false);
+        }
+        // If possible and already on, re-apply after DOM updates
+        if (overlayPossible && this.overlayChecked) {
+          this.$nextTick(() => this.applyOverlay(true));
+        } else if (!overlayPossible) {
+          this.applyOverlay(false);
+        }
+
+      } catch (err) {
+        console.error("Failed to fetch page text:", err);
+        this.pagetext = "";
+        this.hasOcrAvailable = availableFromEvent !== null ? availableFromEvent : false;
+        this.overlayChecked = false;
         this.applyOverlay(false);
-      }
-      if (!this.isDisabled && this.isChecked) {
-        this.$nextTick(() => this.applyOverlay(true));
+      } finally {
+        this.isLoading = false;
       }
     }
   },
@@ -647,7 +627,6 @@ Vue.component("v-ocr-overlay-toggle", {
   },
   beforeDestroy() {
     window.removeEventListener("canvasswitch", this._onCanvasSwitch);
-    // Clean up any residual handlers
     const nodes = this.getOcrNodes();
     for (let i = 0; i < nodes.length; i++) this.removeBlockHandlers(nodes[i]);
   }

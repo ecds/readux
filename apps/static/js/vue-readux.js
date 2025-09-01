@@ -462,7 +462,7 @@ Vue.component("v-ocr-text", {
     <div id="text-overlay-modal" uk-modal>
       <div class="uk-modal-dialog uk-modal-body">
         <button class="uk-modal-close-default" type="button" uk-close></button>
-        <h2 class="uk-modal-title">Text</h2>
+        <h2 class="uk-modal-title">Plain OCR Text</h2>
         <p>{{ pagetext }}</p>
       </div>
     </div>

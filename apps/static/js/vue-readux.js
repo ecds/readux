@@ -448,7 +448,7 @@ Vue.component("v-ocr-text", {
   <div>
     <div class="rx-info-content">
       <div class="rx-info-content-label uk-flex-between rx-flex">
-        <span>Text Overlay</span>
+        <span>Show OCR Text</span>
         <div class="uk-label rx-label-copy" uk-toggle="target: #text-overlay-modal">
           <span uk-icon="icon: expand; ratio: 0.5"></span>
           Open in Popup

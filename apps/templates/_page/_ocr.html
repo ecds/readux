@@ -1,17 +1,5 @@
 <h1 class="uk-text-large uk-text-bold uk-margin-small-bottom">OCR Options</h1>
 
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex"><span>Overlay OCR on Page</span> 
-    <div>
-      <label class="uk-switch" for="ocr-overlay" >
-        <input type="checkbox" id="ocr-overlay" onclick="toggleOCR()">
-        <div class="uk-switch-slider"></div>
-      </label>
-    </div>
-  </div> 
-  <div class="rx-info-content-value">
-    Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
-  </div>
-</div>
+<v-ocr-overlay-toggle></v-ocr-overlay-toggle>
 
 <v-ocr-text></v-ocr-text>

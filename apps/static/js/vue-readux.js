@@ -546,6 +546,113 @@ Vue.component("v-ocr-text", {
   }
 });
 
+Vue.component("v-ocr-overlay-toggle", {
+  data() {
+    return {
+      isChecked: false,
+      isDisabled: true,
+      nodeHandlers: null, // <-- no leading underscore
+    };
+  },
+  created() {
+    this.nodeHandlers = new WeakMap(); // <-- init here
+  },
+  template: `
+  <div class="rx-info-content">
+    <div class="rx-info-content-label uk-flex-between rx-flex">
+      <span>Overlay OCR on Page</span>
+      <div>
+        <label class="uk-switch" for="ocr-overlay">
+          <input
+            type="checkbox"
+            id="ocr-overlay"
+            v-model="isChecked"
+            :disabled="isDisabled"
+            @change="onToggle"
+          >
+          <div class="uk-switch-slider"></div>
+        </label>
+      </div>
+    </div>
+    <div class="rx-info-content-value">
+      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
+    </div>
+  </div>
+  `,
+  methods: {
+    onToggle() {
+      this.applyOverlay(this.isChecked);
+    },
+    getOcrNodes() {
+      return document.querySelectorAll("div.openseadragon-canvas div span");
+    },
+    addBlockHandlers(node) {
+      if (!this.nodeHandlers) return;
+      if (this.nodeHandlers.has(node)) return;
+
+      const handlers = {
+        mouseup: (e) => { e.stopPropagation(); e.preventDefault(); },
+        mousemove: (e) => { e.stopPropagation(); e.preventDefault(); },
+        mousedown: (e) => { e.stopPropagation(); e.preventDefault(); }
+      };
+      node.addEventListener("mouseup", handlers.mouseup);
+      node.addEventListener("mousemove", handlers.mousemove);
+      node.addEventListener("mousedown", handlers.mousedown);
+      this.nodeHandlers.set(node, handlers);
+    },
+    removeBlockHandlers(node) {
+      if (!this.nodeHandlers) return;
+      const handlers = this.nodeHandlers.get(node);
+      if (!handlers) return;
+      node.removeEventListener("mouseup", handlers.mouseup);
+      node.removeEventListener("mousemove", handlers.mousemove);
+      node.removeEventListener("mousedown", handlers.mousedown);
+      this.nodeHandlers.delete(node);
+    },
+    applyOverlay(enabled) {
+      const nodes = this.getOcrNodes();
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        if (enabled) {
+          n.style.backgroundColor = "white";
+          n.style.fontWeight = "bold";
+          n.style.color = "rgb(149, 9, 83)";
+          this.addBlockHandlers(n);
+        } else {
+          n.style.backgroundColor = "transparent";
+          n.style.fontWeight = "";
+          n.style.color = "transparent";
+          this.removeBlockHandlers(n);
+        }
+      }
+    },
+    handleCanvasSwitch(detail) {
+      const available = !!detail?.ocr;
+      this.isDisabled = !available;
+
+      if (this.isDisabled && this.isChecked) {
+        this.isChecked = false;
+        this.applyOverlay(false);
+      }
+      if (!this.isDisabled && this.isChecked) {
+        this.$nextTick(() => this.applyOverlay(true));
+      }
+    }
+  },
+  mounted() {
+    this._onCanvasSwitch = (event) => {
+      this.handleCanvasSwitch(event?.detail || {});
+    };
+    window.addEventListener("canvasswitch", this._onCanvasSwitch);
+  },
+  beforeDestroy() {
+    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
+    // Clean up any residual handlers
+    const nodes = this.getOcrNodes();
+    for (let i = 0; i < nodes.length; i++) this.removeBlockHandlers(nodes[i]);
+  }
+});
+
 var readux = new Vue({
   el: "#v-readux",
   delimiters: ["[[", "]]"],

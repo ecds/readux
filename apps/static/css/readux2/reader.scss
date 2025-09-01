@@ -42,3 +42,22 @@
 .uk-search-default .uk-search-input:focus, .uk-input:focus, .uk-select:focus, .uk-textarea:focus {
   border-color: #1D3557;
 }
+
+.scrollable-container {
+  max-height: 350px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* target success notifications */
+.uk-notification-message-success {
+  background-color: #F1FAEE;
+  font-weight: 700;
+  color: #333;
+  border-radius: 4px;
+}
+
+.uk-disabled {
+  opacity: 0.5;
+}

@@ -437,66 +437,105 @@ Vue.component("v-ocr-text", {
   },
   data: function () {
     return {
-      pagetext: "",         // start empty; Vue will track it
-      canvas: null,         // track current canvas id
+      pagetext: "",
+      canvas: null,
       pageresource: null,
       localUrls: "",
-      can: null
+      can: null,
+      isLoading: false
     };
+  },
+  computed: {
+    hasText() {
+      return !!(this.pagetext && this.pagetext.trim().length);
+    },
+    copyDisabled() {
+      return this.isLoading || !this.hasText;
+    }
   },
   template: `
   <div>
     <div class="rx-info-content">
-      <div class="rx-info-content-label uk-flex-between rx-flex">
-        <span>Show OCR Text</span>
-        <div class="uk-label rx-label-copy" uk-toggle="target: #text-overlay-modal">
-          <span uk-icon="icon: expand; ratio: 0.5"></span>
-          Open in Popup
+      <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
+        <span>Plain OCR Text</span>
+
+        <div class="relative">
+          <div
+            class="uk-label rx-label-copy"
+            :class="{ 'uk-disabled': copyDisabled }"
+            :aria-disabled="copyDisabled"
+            role="button"
+            tabindex="0"
+            @click="!copyDisabled && copyText()"
+            @keydown.enter.prevent="!copyDisabled && copyText()"
+            @keydown.space.prevent="!copyDisabled && copyText()"
+            style="user-select:none; cursor:pointer;"
+          >
+            <span uk-icon="icon: copy; ratio: 0.5"></span>
+            Copy
+          </div>
         </div>
       </div>
-      <div class="rx-info-content-value">
-        Display the plain text in the OCR in a popup. All formats are stripped away in the text.
-      </div>
-    </div>
 
-    <div id="text-overlay-modal" uk-modal>
-      <div class="uk-modal-dialog uk-modal-body">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <h2 class="uk-modal-title">Plain OCR Text</h2>
-        <p>{{ pagetext }}</p>
+      <div class="scrollable-container">
+        <!-- loading -->
+        <div v-if="isLoading" class="uk-flex uk-flex-middle" style="gap:.5rem;">
+          <span uk-spinner="ratio: 0.6"></span>
+          <span>Loading OCR…</span>
+        </div>
+
+        <!-- text available -->
+        <div v-else-if="hasText">{{ pagetext }}</div>
+
+        <!-- unavailable -->
+        <em v-else>OCR text unavailable</em>
       </div>
     </div>
   </div>
   `,
+  methods: {
+    async copyText() {
+      try {
+        await navigator.clipboard.writeText(this.pagetext);
+        if (window.UIkit?.notification) {
+          UIkit.notification({
+            message: "Copied!",
+            status: "success",
+            timeout: 1200
+          });
+        }
+      } catch (err) {
+        console.error("Copy failed:", err);
+      }
+    }
+  },
   mounted() {
     this._onCanvasSwitch = async (event) => {
-      const detail = event && event.detail ? event.detail : {};
+      const detail = event?.detail || {};
       const nextCanvas = detail.canvas;
 
-      // If we only want to refetch when canvas changes, keep the guard,
-      // but many events fire with same canvas; we likely want to always update:
-      // if (this.canvas === nextCanvas) return;
-
+      this.isLoading = true;
       this.canvas = nextCanvas;
 
       try {
         if (nextCanvas && nextCanvas !== "all") {
           const { data } = await axios.get(`iiif/resource/${nextCanvas}`);
           this.pageresource = data.resource || null;
-          this.pagetext = data.text || ""; // <-- reactive update
+          this.pagetext = data.text || "";
         } else {
           this.pageresource = null;
           this.pagetext = "";
         }
 
-        // Only build URLs if we actually have a base link
         if (this.pagelink && nextCanvas) {
-          const url = `${this.pagelink}/${nextCanvas}/full/full/0/default.jpg`;
-          this.localUrls = url;
+          this.localUrls = `${this.pagelink}/${nextCanvas}/full/full/0/default.jpg`;
           this.can = nextCanvas;
         }
       } catch (err) {
         console.error("Failed to fetch page text:", err);
+        this.pagetext = "";
+      } finally {
+        this.isLoading = false;
       }
     };
 

@@ -57,14 +57,14 @@
 </div>
 <!-- uiAction urls and exports -->
 
-<!-- uiAction layers -->
-<div id="modal-layers" class="reader-modal" uk-modal>
+<!-- uiAction ocr -->
+<div id="modal-ocr" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    {% include '_page/_layers.html' %}
+    {% include '_page/_ocr.html' %}
   </div>
 </div>
-<!-- uiAction layers -->
+<!-- uiAction ocr -->
 
 {% endblock inner %}
 {% endblock content %}
@@ -210,10 +210,10 @@ window.onload = function() {
         onClick: () => UIkit.modal('#modal-urls').show(),
         icon: "<span uk-icon='icon: download'></span>"
       }, {
-        id: 'action-layers',
-        tooltipContent: 'Layers',
-        onClick: () => UIkit.modal('#modal-layers').show(),
-        icon: "<span uk-icon='icon: album'></span>",
+        id: 'action-ocr',
+        tooltipContent: 'OCR Options',
+        onClick: () => UIkit.modal('#modal-ocr').show(),
+        icon: "<span uk-icon='icon: file-text'></span>",
         hideOnAll: true
       }
     ]

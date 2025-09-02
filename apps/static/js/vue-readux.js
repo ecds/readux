@@ -462,7 +462,7 @@ Vue.component("v-ocr-inspector", {
   <div class="rx-info-content">
 
     <div class="ocr-notification uk-margin-small-bottom" v-if="!isLoading && !hasText">
-      This page does not have any usable OCR, or the OCR data failed to load.
+      This page does not have any usable OCR.
     </div>
 
     <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">

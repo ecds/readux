@@ -481,7 +481,7 @@ Vue.component("v-ocr-inspector", {
       </div>
     </div>
 
-    <div class="rx-info-content-value uk-margin-small-bottom">
+    <div class="rx-info-content-value uk-margin-small-bottom uk-text-italic">
       Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
     </div>
 

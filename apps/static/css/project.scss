@@ -64,16 +64,6 @@ em {
   margin: 0;
 }
 
-header.page-header {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-}
-
-header.page-header .container img {
-  width: 100%;
-}
-
 ol {
   columns: 2;
   -webkit-columns: 2;
@@ -112,12 +102,6 @@ ol>li {
 
 a:hover {
   text-decoration: initial !important;
-}
-
-.rx-offcanvas-bar,
-.rx-offcanvas-base {
-  background: white;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 p {
@@ -589,15 +573,6 @@ fieldset {
 // End of breadcrumb
 
 @media (max-width: 639px) {
-  .rx-offcanvas-bar {
-    width: 100%;
-  }
-
-  #offcanvas-usage {
-    width: 100%;
-    left: 0;
-  }
-
   .rx-navbar-nav {
     display: block;
   }
@@ -617,15 +592,6 @@ fieldset {
     top: 0;
     justify-content: space-between;
     height: calc(100vh - 200px);
-  }
-
-  .rx-offcanvas-bar {
-    width: 100%;
-  }
-
-  #offcanvas-usage {
-    width: 50%;
-    left: 50%;
   }
 }
 

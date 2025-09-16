@@ -6,9 +6,6 @@
 @import './_components/uk-switch.scss';
 @import './_components/search-form.scss';
 
-.selectize-control.plugin-clear_button .clear {
-  top: -3px !important;
-}
 
 :root {
   --link-color: $rx-color-accent-1;
@@ -149,17 +146,11 @@ p {
   transition: all ease-in-out 100ms;
 }
 
-.rx-head-container {
+.rx-head-container { /* ✅ */ 
   margin: 0em 0 3em;
 }
 
-.rx-info-content-container {
-  border: 0.5px solid #e2e2e2;
-  padding: 1em 1em;
-  word-break: break-word;
-}
-
-.rx-info-content {
+.rx-info-content { /* ✅ */
   padding: 0 0 1.25em;
   font-size: 0.9rem;
 

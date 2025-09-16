@@ -49,16 +49,6 @@ em {
   font-weight: bold;
 }
 
-.manifest-info>a,
-.manifest-info>h3 {
-  display: none !important;
-}
-
-#ocr-layer {
-  position: absolute !important;
-  z-index: 999;
-}
-
 .openseadragon-container span {
   color: transparent;
   display: inline-flex !important;
@@ -1595,16 +1585,6 @@ fieldset {
 
 #rdx-viewer>div>div>div.py-8.grid.grid-cols-2.gap-2 {
   padding-bottom: 0;
-}
-
-.manifest-info>a,
-.manifest-info>h3 {
-  display: none !important;
-}
-
-#ocr-layer {
-  position: absolute !important;
-  z-index: 999;
 }
 
 .openseadragon-container span {

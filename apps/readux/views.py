@@ -449,6 +449,39 @@ class VolumeSearchView(ListView, FormMixin):
                         getattr(max_date, "value_as_string"),
                     )
 
+        # Attach start_canvas to each volume in the current page.
+        # Handle both: paginator page and raw list-like.
+        vol_page = context_data.get("volumes")
+
+        if vol_page is not None:
+            # Get the underlying sequence (Paginator Page vs list)
+            items = getattr(vol_page, "object_list", vol_page)
+
+            # ES hits should have a "pid"; collect them
+            pids = [getattr(v, "pid", None) for v in items if getattr(v, "pid", None)]
+
+            if pids:
+                # Use the default reverse name: canvas_set
+                manifests = {
+                    m.pid: m
+                    for m in Manifest.objects
+                            .filter(pid__in=pids)
+                            .prefetch_related("canvas_set")
+                }
+
+                for v in items:
+                    pid = getattr(v, "pid", None)
+                    m = manifests.get(pid)
+                    if not m:
+                        v.start_canvas = None
+                        continue
+
+                    # Prefer an explicitly marked starting page, else first by position
+                    start = m.canvas_set.filter(is_starting_page=True).order_by("position").first()
+                    if start is None:
+                        start = m.canvas_set.order_by("position").first()
+                    v.start_canvas = start
+                    
         return context_data
 
     def get_queryset(self):

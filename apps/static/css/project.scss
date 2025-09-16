@@ -1,4 +1,5 @@
 @import './ecds-annotator.min.css';
+@import './_components/mixin.scss';
 @import './_components/colors.scss';
 @import './_components/uk-switch.scss';
 @import './_components/search-form.scss';
@@ -41,7 +42,7 @@ em {
 }
 
 .uk-container ul {
-  list-style: none;
+  @include no-list-style;
 }
 
 .block-paragraph_block li {

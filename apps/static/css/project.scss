@@ -16,10 +16,6 @@
   color: var(--link-color);
 }
 
-a.nav-link {
-  text-decoration: none;
-}
-
 em {
   color: inherit !important;
 }
@@ -33,8 +29,6 @@ em {
   background-color: var(--link-color);
   filter: contrast(var(--contrast));
 }
-
-
 
 .uk-tab>.uk-active>a {
   border-color: var(--link-color) !important;
@@ -56,18 +50,6 @@ em {
 
 .uk-navbar-nav {
   font-weight: bold;
-}
-
-.alert-debug {
-  color: black;
-  background-color: white;
-  border-color: #d6e9c6;
-}
-
-.alert-error {
-  color: #b94a48;
-  background-color: #f2dede;
-  border-color: #eed3d7;
 }
 
 .manifest-info>a,
@@ -1612,18 +1594,6 @@ fieldset {
 
 .uk-navbar-nav {
   font-weight: bold;
-}
-
-.alert-debug {
-  color: black;
-  background-color: white;
-  border-color: #d6e9c6;
-}
-
-.alert-error {
-  color: #b94a48;
-  background-color: #f2dede;
-  border-color: #eed3d7;
 }
 
 .rdx-viewer-container {

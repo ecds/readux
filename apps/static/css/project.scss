@@ -8,6 +8,7 @@
 
 :root { 
   --link-color: $rx-color-accent-1;
+  --link-color: #666;
   --contrast: 200%;
 }
 
@@ -396,25 +397,6 @@ fieldset {
 }
 // end of page search
 
-// page.html flexbox with clipping text
-.flex-parent {
-  display: -webkit-box;
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  padding: 10px;
-  margin: 30px 0;
-}
-
-.long-and-truncated {
-  -webkit-box-flex: 1;
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-// end of page.html flexbox with clipping text
-
 // rx-title
 .rx-title-container { /* ✅ */ 
   background: white;
@@ -504,7 +486,6 @@ fieldset {
 }
 
 @media only screen and (max-width: 480px) {
-
   /* Smartphone view: 1 tile */
   #box {
     width: 100%;
@@ -513,7 +494,6 @@ fieldset {
 }
 
 @media only screen and (max-width: 650px) and (min-width: 481px) {
-
   /* Tablet view: 2 tiles */
   #box {
     width: 50%;
@@ -522,7 +502,6 @@ fieldset {
 }
 
 @media only screen and (max-width: 1050px) and (min-width: 651px) {
-
   /* Small desktop / ipad view: 3 tiles */
   #box {
     width: 33.3%;
@@ -531,7 +510,6 @@ fieldset {
 }
 
 @media only screen and (max-width: 1290px) and (min-width: 1051px) {
-
   /* Medium desktop: 4 tiles */
   #box {
     width: 25%;
@@ -547,7 +525,7 @@ fieldset {
   }
 }
 
-.rx-accordion-head {
+.rx-accordion-head { /* ✅ */ 
   background: white;
   color: var(--link-color);
   border: var(--link-color) 1px solid;
@@ -561,52 +539,28 @@ fieldset {
   &::before {
     color: white;
   }
-
-  // &:active {
-  //   background-color: $rx-color-accent-2 !important;
-  //   border: 1px solid $rx-color-accent-2 !important;
-  //   opacity: 1;
-  // }
-
-  // &:hover {
-  //   background: var(--link-color);
-  //   color: white !important;
-  //   font-size: 0.85rem;
-  //   letter-spacing: 0.1rem;
-  //   cursor: pointer;
-  //   opacity: 1;
-  // }
 }
 
-.rx-accordion-handle {
+.rx-accordion-handle { /* ✅ */ 
   color: var(--link-color) !important;
 }
 
-.uk-accordion-content {
+.uk-accordion-content { /* ✅ */ 
   color: #595959 !important;
 }
 
-.rx-accordion-content {
+.rx-accordion-content { /* ✅ */ 
   margin: 0;
   padding: 0 0 10px 0;
 }
 
-.rx-accordion-container {
+.rx-accordion-container { /* ✅ */ 
   margin: 20px 0 0 0;
 }
 
 .uk-offcanvas-bar .uk-open>.uk-accordion-title::before {
   background-image: url("data:image/svg+xml;charset=UTF-8,%8Csvg+width%3D%2213%22+height%3D%2213%22+viewBox%3D%220+0+13+13%22+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0D%0A++++%3Crect+fill%3D%22rgba%28149%2C+9%2C+83%2C+1%29%22+width%3D%2213%22+height%3D%221%22+x%3D%220%22+y%3D%226%22+%2F%3E%0D%0A%3C%2Fsvg%3E") !important;
 }
-
-:root {
-  --link-color: #666;
-  --contrast: 200%;
-}
-
-// .uk-button-default {
-//   font-size: 1.25rem;
-// }
 
 .uk-tab>.uk-active>a {
   border-color: var(--link-color) !important;

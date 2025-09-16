@@ -6,28 +6,26 @@
 @import './_components/uk-switch.scss';
 @import './_components/search-form.scss';
 
-
-:root {
+:root { 
   --link-color: $rx-color-accent-1;
   --contrast: 200%;
 }
 
-.uk-link, a {
+.uk-link, a { /* ✅ */ 
   color: var(--link-color);
 }
 
-em {
+em { /* ✅ */ 
   color: inherit !important;
 }
 
-.uk-button-primary {
+.uk-button-primary { /* ✅ */ 
   background-color: var(--link-color);
-}
-
-.uk-button-primary:hover,
-.uk-button-primary:active {
-  background-color: var(--link-color);
-  filter: contrast(var(--contrast));
+  &:hover, &:active {
+    background-color: var(--link-color);
+    -webkit-filter: contrast(var(--contrast));
+    filter: contrast(var(--contrast));
+  }
 }
 
 .uk-tab>.uk-active>a {
@@ -745,17 +743,6 @@ fieldset {
 :root {
   --link-color: #666;
   --contrast: 200%;
-}
-
-.uk-button-primary {
-  background-color: var(--link-color);
-}
-
-.uk-button-primary:hover,
-.uk-button-primary:active {
-  background-color: var(--link-color);
-  -webkit-filter: contrast(var(--contrast));
-  filter: contrast(var(--contrast));
 }
 
 // .uk-button-default {

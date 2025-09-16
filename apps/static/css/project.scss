@@ -1,6 +1,7 @@
 @import './ecds-annotator.min.css';
 @import './_components/mixin.scss';
 @import './_components/colors.scss';
+@import './_components/social-auth.scss';
 @import './_components/uk-switch.scss';
 @import './_components/search-form.scss';
 
@@ -56,22 +57,6 @@ em {
   line-height: initial;
   white-space: nowrap;
 }
-
-/* Social Auth Buttons */
-a.rdx-provider-button {
-  color: #fff;
-  padding: 1rem;
-}
-
-a.rdx-provider-button:hover {
-  color: lightgrey;
-}
-
-.rdx-indented-help-block {
-  text-indent: 1.25rem;
-}
-
-/* End of Social Auth Buttons */
 
 /* Wagtail embedded objects */
 .rich-text img {
@@ -1585,16 +1570,6 @@ fieldset {
 
 #rdx-viewer>div>div>div.py-8.grid.grid-cols-2.gap-2 {
   padding-bottom: 0;
-}
-
-.openseadragon-container span {
-  color: transparent;
-  display: -webkit-inline-box !important;
-  display: -ms-inline-flexbox !important;
-  display: inline-flex !important;
-  font-size: 100%;
-  line-height: initial;
-  white-space: nowrap;
 }
 
 /* Social Auth Buttons */

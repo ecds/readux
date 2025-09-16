@@ -2,6 +2,7 @@
 @import './_components/mixin.scss';
 @import './_components/colors.scss';
 @import './_components/social-auth.scss';
+@import './_components/wagtail.scss';
 @import './_components/uk-switch.scss';
 @import './_components/search-form.scss';
 
@@ -57,28 +58,6 @@ em {
   line-height: initial;
   white-space: nowrap;
 }
-
-/* Wagtail embedded objects */
-.rich-text img {
-  max-width: 100%;
-  height: auto;
-}
-
-.responsive-object {
-  position: relative;
-}
-
-.responsive-object iframe,
-.responsive-object object,
-.responsive-object embed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* end of Wagtail embedded objects */
 
 #id_featured_collections {
   height: 200px;
@@ -1572,42 +1551,6 @@ fieldset {
   padding-bottom: 0;
 }
 
-/* Social Auth Buttons */
-a.rdx-provider-button {
-  color: #fff;
-  padding: 1rem;
-}
-
-a.rdx-provider-button:hover {
-  color: lightgrey;
-}
-
-.rdx-indented-help-block {
-  text-indent: 1.25rem;
-}
-
-/* End of Social Auth Buttons */
-/* Wagtail embedded objects */
-.rich-text img {
-  max-width: 100%;
-  height: auto;
-}
-
-.responsive-object {
-  position: relative;
-}
-
-.responsive-object iframe,
-.responsive-object object,
-.responsive-object embed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* end of Wagtail embedded objects */
 #id_featured_collections {
   height: 200px;
   overflow: hidden;

@@ -59,12 +59,6 @@ em {
   white-space: nowrap;
 }
 
-#id_featured_collections {
-  height: 200px;
-  overflow: hidden;
-  overflow-y: scroll;
-}
-
 .breadcrumbs {
   font-size: 80%;
   margin: 0;
@@ -78,17 +72,6 @@ header.page-header {
 
 header.page-header .container img {
   width: 100%;
-}
-
-h1,
-h2,
-h3,
-p.text-lead {
-  color: $rx-color-grey-1;
-}
-
-h3 {
-  font-size: 2.2rem;
 }
 
 header#page-bg .collection-image-info {
@@ -136,50 +119,6 @@ ol>li {
   break-inside: avoid-column;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
-}
-
-ul>li>.collectionbox {
-  width: 100%;
-  padding-bottom: 15%;
-  position: relative;
-  border: 1px;
-  border-style: solid;
-}
-
-ul>li>.collectionbox>.collectioncontainer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-ul>li>.collectionbox>.collectioncontainer img {
-  width: 100%;
-  overflow: hidden;
-}
-
-ul>li>.collectionbox>.collectioncontainer>.collection-label {
-  height: 0;
-}
-
-ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link {
-  font-size: 3em;
-  color: #dedede;
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 30%;
-  bottom: 10px;
-  text-align: center;
-  color: black;
-}
-
-ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link span {
-  background-color: rgba(255, 255, 255, 0.62);
-  padding: 0.3em;
-  border-radius: 20px;
 }
 
 .count {
@@ -1396,38 +1335,6 @@ fieldset {
   }
 }
 
-@media only screen and (max-width: 1290px) and (min-width: 1051px) {
-
-  /* Medium desktop: 4 tiles */
-  ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link {
-    font-size: 3em;
-  }
-}
-
-@media only screen and (max-width: 1050px) and (min-width: 651px) {
-
-  /* Small desktop / ipad view: 3 tiles */
-  ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link {
-    font-size: 2.5em;
-  }
-}
-
-@media only screen and (max-width: 650px) and (min-width: 481px) {
-
-  /* Tablet view: 2 tiles */
-  ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link {
-    font-size: 2em;
-  }
-}
-
-@media only screen and (max-width: 480px) {
-
-  /* Smartphone view: 1 tile */
-  ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link {
-    font-size: 1em;
-  }
-}
-
 @media only screen and (max-width: 1250px) {
   ol {
     columns: 1;
@@ -1551,27 +1458,6 @@ fieldset {
   padding-bottom: 0;
 }
 
-#id_featured_collections {
-  height: 200px;
-  overflow: hidden;
-  overflow-y: scroll;
-}
-
-.breadcrumbs {
-  font-size: 80%;
-  margin: 0;
-}
-
-header.page-header {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-}
-
-header.page-header .container img {
-  width: 100%;
-}
-
 h1,
 h2,
 h3,
@@ -1637,50 +1523,6 @@ ol>li {
 
 ul.listing-thumbs>li>img.thumbnail-image {
   height: 150px;
-}
-
-ul>li>.collectionbox {
-  width: 100%;
-  padding-bottom: 15%;
-  position: relative;
-  border: 1px;
-  border-style: solid;
-}
-
-ul>li>.collectionbox>.collectioncontainer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-ul>li>.collectionbox>.collectioncontainer img {
-  width: 100%;
-  overflow: hidden;
-}
-
-ul>li>.collectionbox>.collectioncontainer>.collection-label {
-  height: 0;
-}
-
-ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link {
-  font-size: 3em;
-  color: #dedede;
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: 30%;
-  bottom: 10px;
-  text-align: center;
-  color: black;
-}
-
-ul>li>.collectionbox>.collectioncontainer>.collection-label a.nav-link span {
-  background-color: rgba(255, 255, 255, 0.62);
-  padding: 0.3em;
-  border-radius: 20px;
 }
 
 .count {

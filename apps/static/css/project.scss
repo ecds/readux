@@ -45,10 +45,6 @@ em {
   @include no-list-style;
 }
 
-.block-paragraph_block li {
-  list-style: circle;
-}
-
 .uk-navbar-nav {
   font-weight: bold;
 }
@@ -1579,10 +1575,6 @@ fieldset {
 
 .uk-container ul {
   list-style: none;
-}
-
-.block-paragraph_block li {
-  list-style: circle;
 }
 
 .uk-navbar-nav {

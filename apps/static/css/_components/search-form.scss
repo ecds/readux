@@ -1,0 +1,16 @@
+/* search form */
+form#search-form input[type="search"][name="q"] {
+  width: 100%;
+}
+
+#search-form .uk-button-danger {
+  background-color: #f0506e;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+#search-form .uk-button-secondary {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid transparent;
+}

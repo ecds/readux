@@ -4,7 +4,7 @@
     <h4 style="margin-top: 10px; margin-bottom: 5px;">
         {% if volume.pid %}
             <a
-                class="nav-link uk-text-large sui-item-heading title result-title"
+                class="uk-text-decoration-none uk-text-large sui-item-heading title result-title"
                 style="font-size: 1.05rem; letter-spacing: 0.1rem;"
                 href="{% url 'volumeall' volume.pid %}"
             >
@@ -76,7 +76,7 @@
                     <!-- Use an accordion to display additional page matches beyond the first three -->
                     <ul uk-accordion class="uk-margin-remove-top">
                         <li>
-                            <a class="uk-accordion-title nav-link uk-text-large sui-item-heading title result-title" href>Show/Hide all {{volume.meta.inner_hits|group_by_canvas|length}} page matches</a>
+                            <a class="uk-accordion-title uk-text-decoration-none uk-text-large sui-item-heading title result-title" href>Show/Hide all {{volume.meta.inner_hits|group_by_canvas|length}} page matches</a>
                             <div class="uk-accordion-content">
                                 {% for canvas in volume.meta.inner_hits|group_by_canvas|slice:"2:" %}
                                     <div class="result-page">

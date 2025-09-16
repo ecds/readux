@@ -16,7 +16,7 @@
         <br />
         <b>Publication Date:</b> {{ volume.published_date }}
         <br />{% for col in volume.collections.all %}
-        <b>Collection:</b> <a class="nav-link" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
+        <b>Collection:</b> <a class="uk-text-decoration-none" href="{% url 'collection' col.pid %}">{{ col.label }}</a>{% endfor %}
         <br />
         <b>Publisher:</b> {{ volume.published_city }} : {{ volume.publisher }}
       </div>

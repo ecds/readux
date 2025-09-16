@@ -32,7 +32,7 @@
           <div class="rx-info-content-label">Collections</div>
           <div class="rx-info-content-value">
             {% for col in volume.collections.all %}
-            <a class="nav-link" href="{% url 'collection' col.pid %}">
+            <a class="uk-text-decoration-none" href="{% url 'collection' col.pid %}">
               <div class="uk-label rx-label-copy">{{ col.label }}</div>
             </a>
             {% endfor %}

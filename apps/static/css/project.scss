@@ -4,6 +4,9 @@
 @import './_components/social-auth.scss';
 @import './_components/wagtail.scss';
 @import './_components/uk-switch.scss';
+/* ========================================================================== */
+/* 1) ROOT VARIABLES                                                          */
+/* ========================================================================== */
 
 :root { 
   --link-color: $rx-color-accent-1;
@@ -11,87 +14,16 @@
   --contrast: 200%;
 }
 
-.uk-link, a { /* ✅ */ 
+/* ========================================================================== */
+/* 2) GLOBAL ELEMENTS & BASICS                                                */
+/* ========================================================================== */
+
+.uk-link, a {  
   color: var(--link-color);
 }
 
-em { /* ✅ */ 
+em {  
   color: inherit !important;
-}
-
-.uk-button-primary { /* ✅ */ 
-  background-color: var(--link-color);
-  &:hover, &:active {
-    background-color: var(--link-color);
-    -webkit-filter: contrast(var(--contrast));
-    filter: contrast(var(--contrast));
-  }
-}
-
-.uk-tab>.uk-active>a { /* ✅ */ 
-  border-color: var(--link-color) !important;
-  color: var(--link-color) !important;
-}
-
-.uk-checkbox, .uk-radio { /* ✅ */ 
-  border: 1px solid #ccc !important;
-}
-
-.uk-container ul { /* ✅ */ 
-  @include no-list-style;
-}
-
-.uk-navbar-nav { /* ✅ */ 
-  font-weight: bold;
-}
-
-.openseadragon-container span { /* ✅ */ 
-  color: transparent;
-  display: inline-flex !important;
-  font-size: 100%;
-  line-height: initial;
-  white-space: nowrap;
-}
-
-.breadcrumbs { /* ✅ */ 
-  font-size: 80%;
-  margin: 0;
-}
-
-ol { /* ✅ */ 
-  columns: 2;
-  -webkit-columns: 2;
-  -moz-columns: 2;
-}
-
-ol>li { /* ✅ */ 
-  break-inside: avoid-column;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
-}
-
-.count { /* ✅ */ 
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding-top: 20%;
-  padding-right: 20%;
-  height: 10px;
-  width: 10px;
-  font-size: 10px;
-  text-align: center;
-}
-
-.box {
-  width: 25%;
-  padding-bottom: 25%;
-  position: relative;
-  float: left;
-}
-
-.box a img {
-  width: 100%;
-  overflow: hidden;
 }
 
 a:hover {
@@ -102,8 +34,65 @@ p {
   color: $rx-color-grey-1;
 }
 
+/* Lists & list items */
+.uk-container ul {  
+  @include no-list-style;
+}
+
+ol {  
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+
+ol>li {  
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Selections, fieldsets */
+::selection {
+  background-color: $rx-color-grey-1;
+}
+
+fieldset {
+  margin: inherit;
+  border: 0;
+  padding: inherit;
+}
+
+/* Headings and text color overrides (later override) */
+h1,
+h2,
+h3,
+p.text-lead {
+  color: #595959;
+}
+
+h3 {
+  font-size: 2.2rem;
+}
+
+p {
+  color: #595959;
+}
+
+/* ========================================================================== */
+/* 3) LINKS, BUTTONS & INTERACTIVE                                            */
+/* ========================================================================== */
+
+.uk-button-primary {  
+  background-color: var(--link-color);
+  &:hover, &:active {
+    background-color: var(--link-color);
+    -webkit-filter: contrast(var(--contrast));
+    filter: contrast(var(--contrast));
+  }
+}
+
 .rx-breadcrumb,
-.rx-action-btn { /* ✅ */ 
+.rx-action-btn {  
   color: var(--link-color);
   filter: brightness(0.4%);
   text-transform: uppercase;
@@ -115,7 +104,7 @@ p {
   user-select: auto;
 }
 
-.rx-action-btn { /* ✅ */ 
+.rx-action-btn {  
   letter-spacing: 0.1em;
   font-size: small;
 }
@@ -139,54 +128,7 @@ p {
   transition: all ease-in-out 100ms;
 }
 
-.rx-head-container { /* ✅ */ 
-  margin: 0em 0 3em;
-}
-
-.rx-info-content { /* ✅ */
-  padding: 0 0 1.25em;
-  font-size: 0.9rem;
-
-  &:last-child {
-    padding: 0;
-  }
-}
-
-.rx-info-content-label {
-  color: $rx-color-grey-1 !important;
-  font-weight: 600 !important;
-  font-size: 0.9rem !important;
-}
-
-.rx-info-content-value {
-  color: $rx-color-grey-1;
-  line-height: 1.5;
-}
-
-#rx-nav { /* ✅ */ 
-  background: white;
-}
-
-.rx-annotation-badge { /* ✅ */ 
-  border-radius: 3px;
-  background: white;
-  color: $rx-color-grey-1 !important;
-  border: $rx-color-grey-1 1px solid;
-  font-size: 0.75rem;
-  letter-spacing: 0.1rem;
-  font-weight: 600;
-  display: inline-block;
-  cursor: default;
-  text-transform: uppercase;
-  padding: 0.1rem 0.5rem;
-}
-
-.uk-offcanvas-container {
-  top: -80px;
-  position: inherit;
-}
-
-.rx-anchor { /* ✅ */
+.rx-anchor { 
   color: var(--link-color) !important;
   opacity: 0.75;
   word-break: break-all;
@@ -198,11 +140,7 @@ p {
   }
 }
 
-::selection {
-  background-color: $rx-color-grey-1;
-}
-
-.rx-label-copy { /* ✅ */ 
+.rx-label-copy {  
   background: white;
   color: var(--link-color) !important;
   border: var(--link-color) 1px solid;
@@ -240,29 +178,168 @@ p {
   opacity: 1;
 }
 
+/* ========================================================================== */
+/* 4) UIKIT COMPONENTS & OVERRIDES                                            */
+/* ========================================================================== */
+
+.uk-tab>.uk-active>a {  
+  border-color: var(--link-color) !important;
+  color: var(--link-color) !important;
+}
+
+.uk-checkbox, .uk-radio {  
+  border: 1px solid #ccc !important;
+}
+
+.uk-container ul {  
+  list-style: none;
+}
+
+.uk-navbar-nav {  
+  font-weight: bold;
+}
+
+.uk-offcanvas-container {
+  top: -80px;
+  position: inherit;
+}
+
+.uk-accordion-content {  
+  color: #595959 !important;
+}
+
+.uk-accordion>:nth-child(n+2) {
+  margin-top: 10px;
+}
+
+/* Override the minus sign in UI Kit accordion */
+.uk-open>.uk-accordion-title::before {
+  /* "-" Change the stroke color of the accordion icons to #1D3557 */
+  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E);
+}
+
+.uk-open>.uk-accordion-title:hover {
+
+  /* "-" Change the stroke color of the accordion icons to #1D3557 */
+  &::before {
+    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E)
+  }
+}
+
+.uk-accordion-title::before {
+  /* "+" Change the stroke color of the accordion icons to white */
+  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+}
+
+.uk-accordion-title:hover {
+
+  /* "+" Change the stroke color of the accordion icons to white */
+  &::before {
+    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+  }
+}
+
+.uk-tab>.uk-active>a {
+  border-color: var(--link-color) !important;
+  color: var(--link-color) !important;
+}
+
+.uk-checkbox,
+.uk-radio {
+  border: 1px solid #ccc !important;
+}
+
+.uk-padding-1-2 {
+  padding: 0.5rem;
+}
+
+.uk-navbar-right {
+  flex-wrap: initial;
+}
+
+/* ========================================================================== */
+/* 5) NAVIGATION, BREADCRUMBS & BARS                                          */
+/* ========================================================================== */
+
+.breadcrumbs {  
+  font-size: 80%;
+  margin: 0;
+}
+
+#rx-nav {  
+  background: white;
+}
+
 .rx-page-navbar-right>a {
   margin-left: 1em;
 }
 
-.rx-flex {
+#sidenav {
+  background: white;
+  position: absolute;
+  top: 0;
+}
+
+.window-manifest-navigation {
   display: flex;
+  justify-content: space-between;
+  width: 55px;
 }
 
-.rx-tooltip-hidden {
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s 2s, opacity 2s linear;
+/* ========================================================================== */
+/* 6) MEDIA/IMAGERY, THUMBS & BOX GRID                                        */
+/* ========================================================================== */
+
+.openseadragon-container span {  
+  color: transparent;
+  display: inline-flex !important;
+  font-size: 100%;
+  line-height: initial;
+  white-space: nowrap;
 }
 
-.rx-volume-na {
-  background: #fbecf9;
-  padding: 15px;
-  font-size: 14px;
-  color: var(--link-color);
+.box {
+  width: 25%;
+  padding-bottom: 25%;
+  position: relative;
+  float: left;
 }
 
-.rx-fieldset {
-  border: none;
+.box a img {
+  width: 100%;
+  overflow: hidden;
+}
+
+ul.listing-thumbs>li>img.thumbnail-image {
+  height: 150px;
+}
+
+/* ========================================================================== */
+/* 7) INFO PANELS, LABELS & COLLECTION TEXT                                   */
+/* ========================================================================== */
+
+.rx-head-container {  
+  margin: 0em 0 3em;
+}
+
+.rx-info-content { 
+  padding: 0 0 1.25em;
+  font-size: 0.9rem;
+
+  &:last-child {
+    padding: 0;
+  }
+}
+
+.rx-info-content-label {
+  color: $rx-color-grey-1 !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+}
+
+.rx-info-content-value {
+  color: $rx-color-grey-1;
+  line-height: 1.5;
 }
 
 .rx-info-content .uk-tab a {
@@ -277,6 +354,38 @@ p {
   font-weight: bold;
   color: $rx-color-grey-1;
 }
+
+/* Badges */
+.rx-annotation-badge {  
+  border-radius: 3px;
+  background: white;
+  color: $rx-color-grey-1 !important;
+  border: $rx-color-grey-1 1px solid;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  font-weight: 600;
+  display: inline-block;
+  cursor: default;
+  text-transform: uppercase;
+  padding: 0.1rem 0.5rem;
+}
+
+/* Status / NA blocks */
+.rx-volume-na {
+  background: #fbecf9;
+  padding: 15px;
+  font-size: 14px;
+  color: var(--link-color);
+}
+
+/* Fieldsets */
+.rx-fieldset {
+  border: none;
+}
+
+/* ========================================================================== */
+/* 8) TITLES, BANNERS & STICKY ELEMENTS                                       */
+/* ========================================================================== */
 
 /* Banner Layout */
 .rx-banner-layout {
@@ -327,11 +436,55 @@ p {
   z-index: 1;
 }
 
-.window-manifest-navigation {
-  display: flex;
-  justify-content: space-between;
-  width: 55px;
+/* Titles */
+.rx-title-container {  
+  background: white;
+  padding: 1em 0;
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }
+
+.rx-title {  
+  font-size: 2em;
+  font-weight: bold;
+  color: var(--link-color);
+}
+
+.rx-title-2 {  
+  font-size: 1.5em;
+  font-weight: bold;
+  color: $rx-color-grey-1;
+}
+
+.rx-title-tagline {  
+  font-size: 14px;
+  color: $rx-color-grey-2;
+}
+
+.rx-title-image {  
+  object-fit: cover;
+  height: 150px;
+  width: 100%;
+}
+
+/* ========================================================================== */
+/* 9) BREADCRUMB ITEMS                                                        */
+/* ========================================================================== */
+
+.rx-breadcrumb-item {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--link-color);
+
+  &:hover {
+    color: $rx-color-accent-2;
+  }
+}
+
+/* ========================================================================== */
+/* 10) TOOLTIP                                                                */
+/* ========================================================================== */
 
 .tooltip {
   position: relative;
@@ -370,17 +523,9 @@ p {
   visibility: visible;
 }
 
-fieldset {
-  margin: inherit;
-  border: 0;
-  padding: inherit;
-}
-
-#sidenav {
-  background: white;
-  position: absolute;
-  top: 0;
-}
+/* ========================================================================== */
+/* 11) PAGE SEARCH                                                            */
+/* ========================================================================== */
 
 // page search
 .rx-page-search-container {
@@ -396,184 +541,9 @@ fieldset {
 }
 // end of page search
 
-// rx-title
-.rx-title-container { /* ✅ */ 
-  background: white;
-  padding: 1em 0;
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-
-.rx-title { /* ✅ */ 
-  font-size: 2em;
-  font-weight: bold;
-  color: var(--link-color);
-}
-
-.rx-title-2 { /* ✅ */ 
-  font-size: 1.5em;
-  font-weight: bold;
-  color: $rx-color-grey-1;
-}
-
-.rx-title-tagline { /* ✅ */ 
-  font-size: 14px;
-  color: $rx-color-grey-2;
-}
-
-.rx-title-image { /* ✅ */ 
-  object-fit: cover;
-  height: 150px;
-  width: 100%;
-}
-
-// end of rx-title
-
-.rx-breadcrumb-item {
-  font-size: 1rem;
-  font-weight: bold;
-  color: var(--link-color);
-
-  &:hover {
-    color: $rx-color-accent-2;
-  }
-}
-// End of breadcrumb
-
-@media (max-width: 639px) {
-  .uk-logo {
-    padding: 0;
-  }
-}
-
-@media (min-width: 640px) {
-  .rx-splash {
-    /* position: fixed; */
-    display: flex;
-    flex-direction: column;
-    align-self: flex-start;
-    position: sticky;
-    top: 0;
-    justify-content: space-between;
-    height: calc(100vh - 200px);
-  }
-}
-
-@media (min-width: 768px) {
-  .modal-dialog>.modal-content {
-    top: 200px;
-  }
-}
-
-@media (min-width: 960px) {
-  .uk-navbar-right {
-    flex-wrap: initial;
-  }
-}
-
-@media (min-width: 320px) and (max-width: 959px) {
-  .rx-title-image { /* ✅ */ 
-    object-fit: cover;
-    height: 150px;
-    width: 100%;
-  }
-
-  footer {
-    padding: 2rem 0 0 0 !important;
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  /* Smartphone view: 1 tile */
-  #box {
-    width: 100%;
-    padding-bottom: 100%;
-  }
-}
-
-@media only screen and (max-width: 650px) and (min-width: 481px) {
-  /* Tablet view: 2 tiles */
-  #box {
-    width: 50%;
-    padding-bottom: 50%;
-  }
-}
-
-@media only screen and (max-width: 1050px) and (min-width: 651px) {
-  /* Small desktop / ipad view: 3 tiles */
-  #box {
-    width: 33.3%;
-    padding-bottom: 33.3%;
-  }
-}
-
-@media only screen and (max-width: 1290px) and (min-width: 1051px) {
-  /* Medium desktop: 4 tiles */
-  #box {
-    width: 25%;
-    padding-bottom: 25%;
-  }
-}
-
-@media only screen and (max-width: 1250px) {
-  ol {
-    columns: 1;
-    -webkit-columns: 1;
-    -moz-columns: 1;
-  }
-}
-
-.rx-accordion-head { /* ✅ */ 
-  background: white;
-  color: var(--link-color);
-  border: var(--link-color) 1px solid;
-  font-size: 0.85rem;
-  letter-spacing: 0.1rem;
-  cursor: pointer;
-  transition: all ease-in-out 100ms;
-  font-weight: 600;
-  font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
-
-  &::before {
-    color: white;
-  }
-}
-
-.rx-accordion-handle { /* ✅ */ 
-  color: var(--link-color) !important;
-}
-
-.uk-accordion-content { /* ✅ */ 
-  color: #595959 !important;
-}
-
-.rx-accordion-content { /* ✅ */ 
-  margin: 0;
-  padding: 0 0 10px 0;
-}
-
-.rx-accordion-container { /* ✅ */ 
-  margin: 20px 0 0 0;
-}
-
-.uk-offcanvas-bar .uk-open>.uk-accordion-title::before {
-  background-image: url("data:image/svg+xml;charset=UTF-8,%8Csvg+width%3D%2213%22+height%3D%2213%22+viewBox%3D%220+0+13+13%22+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0D%0A++++%3Crect+fill%3D%22rgba%28149%2C+9%2C+83%2C+1%29%22+width%3D%2213%22+height%3D%221%22+x%3D%220%22+y%3D%226%22+%2F%3E%0D%0A%3C%2Fsvg%3E") !important;
-}
-
-.uk-tab>.uk-active>a {
-  border-color: var(--link-color) !important;
-  color: var(--link-color) !important;
-}
-
-.uk-checkbox,
-.uk-radio {
-  border: 1px solid #ccc !important;
-}
-
-.uk-container ul {
-  list-style: none;
-}
+/* ========================================================================== */
+/* 12) READER / VIEWER & LAYOUT UTILITIES                                     */
+/* ========================================================================== */
 
 .rdx-viewer-container {
   /* width: 100%;
@@ -595,24 +565,111 @@ fieldset {
   padding-bottom: 0;
 }
 
-h1,
-h2,
-h3,
-p.text-lead {
-  color: #595959;
+.reader-modal {
+  /* display: block !important; */
+  width: 400px !important;
+  height: fit-content !important;
+  padding: 0 !important;
+  left: 75px !important;
+  top: 60px !important;
+  background: white;
 }
 
-h3 {
-  font-size: 2.2rem;
+/* Small utility classes */
+.rx-line-height-sm {
+  line-height: 1.25em;
 }
 
-ul.listing-thumbs>li>img.thumbnail-image {
-  height: 150px;
+.rx-volume-search em {
+  color: #E60000 !important;
 }
 
-p {
-  color: #595959;
+.rx-volume-search {
+  max-height: 75vh;
 }
+
+.rx-padding-extra-small {
+  padding: 10px;
+}
+
+.rx-scrollable-area {
+  max-height: 75vh;
+  /* Maximum height set to 100% of the viewport height */
+  overflow-y: auto;
+  /* Enables vertical scrolling */
+  margin-right: -5px;
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+  }
+}
+
+.padding-right-1rem {
+  padding-right: 1rem;
+}
+
+/* Counters */
+.count {  
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-top: 20%;
+  padding-right: 20%;
+  height: 10px;
+  width: 10px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.rx-flex {
+  display: flex;
+}
+
+/* ========================================================================== */
+/* 13) ACCORDION                                                              */
+/* ========================================================================== */
+
+.rx-accordion-head {  
+  background: white;
+  color: var(--link-color);
+  border: var(--link-color) 1px solid;
+  font-size: 0.85rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  transition: all ease-in-out 100ms;
+  font-weight: 600;
+  font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
+
+  &::before {
+    color: white;
+  }
+}
+
+.rx-accordion-handle {  
+  color: var(--link-color) !important;
+}
+
+.rx-accordion-content {  
+  margin: 0;
+  padding: 0 0 10px 0;
+}
+
+.rx-accordion-container {  
+  margin: 20px 0 0 0;
+}
+
+.uk-offcanvas-bar .uk-open>.uk-accordion-title::before {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%8Csvg+width%3D%2213%22+height%3D%2213%22+viewBox%3D%220+0+13+13%22+xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0D%0A++++%3Crect+fill%3D%22rgba%28149%2C+9%2C+83%2C+1%29%22+width%3D%2213%22+height%3D%221%22+x%3D%220%22+y%3D%226%22+%2F%3E%0D%0A%3C%2Fsvg%3E") !important;
+}
+
+/* ========================================================================== */
+/* 14) SEARCH RESULTS PAGE                                                    */
+/* ========================================================================== */
 
 /* Search results page styles */
 
@@ -634,7 +691,6 @@ div#search-grid {
 }
 
 /* Selectize */
-
 .selectize-control.multi .selectize-input>div {
   background: #950953 !important;
   border: none !important;
@@ -644,6 +700,7 @@ div#search-grid {
   background-color: #fff7fb !important;
 }
 
+/* Range slider */
 .noUi-connect {
   background: #950953 !important;
 }
@@ -719,90 +776,96 @@ ol#search-results dl {
   font-size: 13px;
 }
 
-.reader-modal {
-  /* display: block !important; */
-  width: 400px !important;
-  height: fit-content !important;
-  padding: 0 !important;
-  left: 75px !important;
-  top: 60px !important;
-  background: white;
-}
+/* ========================================================================== */
+/* 15) RESPONSIVE MEDIA QUERIES                                               */
+/* ========================================================================== */
 
-.rx-line-height-sm {
-  line-height: 1.25em;
-}
-
-.rx-volume-search em {
-  color: #E60000 !important;
-}
-
-.rx-volume-search {
-  max-height: 75vh;
-}
-
-.rx-padding-extra-small {
-  padding: 10px;
-}
-
-.uk-accordion>:nth-child(n+2) {
-  margin-top: 10px;
-}
-
-.rx-scrollable-area {
-  max-height: 75vh;
-  /* Maximum height set to 100% of the viewport height */
-  overflow-y: auto;
-  /* Enables vertical scrolling */
-  margin-right: -5px;
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-
-  &::-webkit-scrollbar {
-    display: none;
-    /* Safari and Chrome */
+@media (max-width: 639px) {
+  .uk-logo {
+    padding: 0;
   }
 }
 
-
-.padding-right-1rem {
-  padding-right: 1rem;
-}
-
-/* Override the minus sign in UI Kit accordion */
-.uk-open>.uk-accordion-title::before {
-  /* "-" Change the stroke color of the accordion icons to #1D3557 */
-  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E);
-}
-
-.uk-open>.uk-accordion-title:hover {
-
-  /* "-" Change the stroke color of the accordion icons to #1D3557 */
-  &::before {
-    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E)
+@media (min-width: 640px) {
+  .rx-splash {
+    /* position: fixed; */
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    position: sticky;
+    top: 0;
+    justify-content: space-between;
+    height: calc(100vh - 200px);
   }
 }
 
-.uk-accordion-title::before {
-  /* "+" Change the stroke color of the accordion icons to white */
-  background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
-}
-
-.uk-accordion-title:hover {
-
-  /* "+" Change the stroke color of the accordion icons to white */
-  &::before {
-    background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%221%22%20height%3D%2213%22%20x%3D%226%22%20y%3D%220%22%20%2F%3E%0A%3C%2Fsvg%3E);
+@media (min-width: 768px) {
+  .modal-dialog>.modal-content {
+    top: 200px;
   }
 }
 
-/* End */
-
-.uk-padding-1-2 {
-  padding: 0.5rem;
+@media (min-width: 960px) {
+  .uk-navbar-right {
+    flex-wrap: initial;
+  }
 }
+
+@media (min-width: 320px) and (max-width: 959px) {
+  .rx-title-image {  
+    object-fit: cover;
+    height: 150px;
+    width: 100%;
+  }
+
+  footer {
+    padding: 2rem 0 0 0 !important;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  /* Smartphone view: 1 tile */
+  #box {
+    width: 100%;
+    padding-bottom: 100%;
+  }
+}
+
+@media only screen and (max-width: 650px) and (min-width: 481px) {
+  /* Tablet view: 2 tiles */
+  #box {
+    width: 50%;
+    padding-bottom: 50%;
+  }
+}
+
+@media only screen and (max-width: 1050px) and (min-width: 651px) {
+  /* Small desktop / ipad view: 3 tiles */
+  #box {
+    width: 33.3%;
+    padding-bottom: 33.3%;
+  }
+}
+
+@media only screen and (max-width: 1290px) and (min-width: 1051px) {
+  /* Medium desktop: 4 tiles */
+  #box {
+    width: 25%;
+    padding-bottom: 25%;
+  }
+}
+
+@media only screen and (max-width: 1250px) {
+  ol {
+    columns: 1;
+    -webkit-columns: 1;
+    -moz-columns: 1;
+  }
+}
+
+/* ========================================================================== */
+/* 16) MISC / OVERRIDES                                                       */
+/* ========================================================================== */
 
 // NOTE: Migrated from templates/page.html
 #v-readux.uk-container {

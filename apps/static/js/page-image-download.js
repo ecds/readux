@@ -1,4 +1,4 @@
-console.log('[readux] custom.js loaded');
+console.log('[readux] page-image-download.js loaded');
 
 (function () {
   var DEBUG = true; // set to false to silence logs

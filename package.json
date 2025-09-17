@@ -7,9 +7,11 @@
     "doc": "docs"
   },
   "dependencies": {
+    "@selectize/selectize": "^0.15.2",
     "axios": "^0.23.0",
     "ecds-annotator": "github:ecds/ecds-annotator#develop",
-    "jquery": "^3.6.0"
+    "jquery": "^3.6.0",
+    "nouislider": "^15.8.1"
   },
   "devDependencies": {
     "fontawesome": "^5.6.3",

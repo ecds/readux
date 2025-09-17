@@ -1,6 +1,8 @@
 window.$ = require('jquery');
 window.Vue = require('./dist/vue.js');
 window.axios = require('axios');
+window.noUiSlider = require('nouislider');
+require('@selectize/selectize');
 require('/apps/static/js/vue-readux.js');
 
 // UIkit

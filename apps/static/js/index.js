@@ -1,5 +1,5 @@
 window.$ = require('jquery');
-window.Vue = require('/apps/static/js/vue.js');
+window.Vue = require('./dist/vue.js');
 window.axios = require('axios');
 require('/apps/static/js/vue-readux.js');
 

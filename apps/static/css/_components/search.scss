@@ -4,15 +4,15 @@
   align-items: center;
   margin-bottom: 20px;
   font-weight: 600;
-  color: #1D3557; // This could be replaced by a variable if one exists in your SCSS file
-  flex-wrap: wrap; // Ensure wrapping on smaller screens
+  color: #1D3557; /* This could be replaced by a variable if one exists in your SCSS file */
+  flex-wrap: wrap; /* Ensure wrapping on smaller screens */
 }
 
 .info-line .info-group {
   display: flex;
   align-items: center;
   gap: 5px;
-  flex-wrap: wrap; // Enable wrapping for better responsiveness
+  flex-wrap: wrap; /* Enable wrapping for better responsiveness */
 }
 
 .info-line .pagination-controls {
@@ -23,7 +23,7 @@
 
 .info-line a,
 .info-line select {
-  color: #1D3557; // Again, this could use a variable if defined in your file
+  color: #1D3557; /* Again, this could use a variable if defined in your file */
   text-decoration: underline;
 }
 
@@ -53,7 +53,6 @@
     gap: 10px;
   }
 }
-
 
 /* normalize form fieldset */
 fieldset {
@@ -103,17 +102,10 @@ form#search-form input[type="search"][name="q"] {
   font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI', 'Roboto', 'Ubuntu', sans-serif;
   font-size: 13px;
   margin-top: 0.65rem;
-
-  a {
-    color: #1D3557;
-  }
 }
 
-#search-filters select[multiple] {
-  height: 150px;
-  width: 100%;
-  overflow-y: scroll;
-  overflow-x: auto;
+.sui-item-heading a {
+  color: #1D3557;
 }
 
 .uk-button-primary {
@@ -133,23 +125,8 @@ form#search-form input[type="search"][name="q"] {
   gap: 1.5rem;
 }
 
-
-
-#search-filters input[type="text"]#authors-filter {
-  width: 100%;
-}
-
-/* Multiselect filter */
-#search-filters select[multiple] {
-  height: 150px;
-  width: 100%;
-  overflow-y: scroll;
-  overflow-x: auto;
-}
-
 /* Selectize */
-
-.selectize-control.multi .selectize-input>div {
+.selectize-control.multi .selectize-input > div {
   background: #1D3557 !important;
   border: none !important;
 }
@@ -175,10 +152,6 @@ form#search-form input[type="search"][name="q"] {
   padding: 0.125rem 0.25rem !important;
   background-color: none;
   border: none !important;
-}
-
-#search-filters .noUi-target {
-  margin: 45px 21px 10px;
 }
 
 /* Individual search results */

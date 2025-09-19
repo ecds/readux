@@ -1,46 +1,48 @@
+@import './colors.scss';
+
 /* Inverse the color for content pages */
 .menu-item {
-    color: rgba(29, 53, 87, 1.0) !important;
+    color: rgba($rx-color-midnight-blue, 1.0) !important;
     text-decoration: none !important;
     transition: color 0.1s ease !important;
 
     &:hover {
-        color: rgba(29, 53, 87, 0.8) !important; // Slightly dim
+        color: rgba($rx-color-midnight-blue, 0.8) !important; // Slightly dim
     }
 
     &:active {
-        color: rgba(29, 53, 87, 0.6) !important; // A bit darker
+        color: rgba($rx-color-midnight-blue, 0.6) !important; // A bit darker
     }
 }
 
 .brand-logo {
     font-size: large;
-    color: #1D3557;
+    color: $rx-color-midnight-blue;
     font-weight: bold;
 
     &:hover {
-        color: rgba(29, 53, 87, 0.8) !important; // Slightly dim
+        color: rgba($rx-color-midnight-blue, 0.8) !important; // Slightly dim
     }
 
     &:active {
-        color: rgba(29, 53, 87, 0.6) !important; // A bit darker
+        color: rgba($rx-color-midnight-blue, 0.6) !important; // A bit darker
     }
 }
 
 .brand-tagline {
     font-size: small;
-    color: #1D3557;
+    color: $rx-color-midnight-blue;
 }
 
 .brand-readux {
-    color: #1D3557;
+    color: $rx-color-midnight-blue;
 
     &:hover {
-        color: rgba(29, 53, 87, 0.8) !important; // Slightly dim
+        color: rgba($rx-color-midnight-blue, 0.8) !important; // Slightly dim
     }
 
     &:active {
-        color: rgba(29, 53, 87, 0.6) !important; // A bit darker
+        color: rgba($rx-color-midnight-blue, 0.6) !important; // A bit darker
     }
 }
 

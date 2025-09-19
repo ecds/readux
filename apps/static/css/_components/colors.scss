@@ -1,24 +1,23 @@
-// Colors
-$rx-color-grey-1: #595959;
-$rx-color-grey-2: #737373;
-$rx-color-grey-3: #eeeeee;
-$rx-color-accent-1: #950953;
-$rx-color-accent-2: #510029;
-
-// == UK Switch
-// Neutral
-$color-black-22: rgba(0, 0, 0, 0.22);
-$color-black-07: rgba(0, 0, 0, 0.07);
-$color-black-22-strong: rgba(0, 0, 0, 0.22); // used in box-shadows
-
-$color-white: #ffffff;
-$color-white-22: rgba(255, 255, 255, 0.22);
-
 // Theme
-$color-primary: #1D3557;
+$rx-color-midnight-blue: #1D3557;
+$rx-color-linen-blue: #457B9D;
+$rx-color-mario-red: #E60000;
+$rx-color-faded-mint: #F1FAEE;
 
-// Modifiers
-$color-danger: #f0506e;
-$color-success: #32d296;
+// ==============================
+// Auxilary
+// ==============================
+$rx-color-rose-red: #f0506e;
 
-// == UK Switch End
+// ==============================
+// Base
+// ==============================
+$color-black: #000000;
+$color-white: #ffffff;
+
+// ==============================
+// Black to White Scale
+// ==============================
+$rx-color-dark-charcoal: #333333;
+$rx-color-cement-gray: #595959;
+$rx-color-light-pearl: #cccccc;

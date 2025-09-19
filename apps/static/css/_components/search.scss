@@ -1,10 +1,12 @@
+@import './colors.scss';
+
 .info-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
   font-weight: 600;
-  color: #1D3557; /* This could be replaced by a variable if one exists in your SCSS file */
+  color: $rx-color-midnight-blue; /* This could be replaced by a variable if one exists in your SCSS file */
   flex-wrap: wrap; /* Ensure wrapping on smaller screens */
 }
 
@@ -23,16 +25,16 @@
 
 .info-line a,
 .info-line select {
-  color: #1D3557; /* Again, this could use a variable if defined in your file */
+  color: $rx-color-midnight-blue; /* Again, this could use a variable if defined in your file */
   text-decoration: underline;
 }
 
 .pagination-controls .uk-icon-button {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 .pagination-controls .uk-icon-button[disabled] {
-  color: #ccc;
+  color: $rx-color-light-pearl;
   cursor: not-allowed;
 }
 
@@ -63,14 +65,14 @@ fieldset {
 
 /* copied from original scss file */
 #search-form .uk-button-danger {
-  background-color: #f0506e;
-  color: #fff;
+  background-color: $rx-color-rose-red;
+  color: $color-white;
   border: 1px solid transparent;
 }
 
 #search-form .uk-button-secondary {
-  background-color: #222;
-  color: #fff;
+  background-color: $rx-color-dark-charcoal;
+  color: $color-white;
   border: 1px solid transparent;
 }
 
@@ -105,14 +107,14 @@ form#search-form input[type="search"][name="q"] {
 }
 
 .sui-item-heading a {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 .uk-button-primary {
-  background-color: #1D3557;
+  background-color: $rx-color-midnight-blue;
 
   &:hover {
-    background-color: darken(#1D3557, 10%);
+    background-color: darken($rx-color-midnight-blue, 10%);
     /* Darken the color when hovered */
   }
 }
@@ -127,20 +129,20 @@ form#search-form input[type="search"][name="q"] {
 
 /* Selectize */
 .selectize-control.multi .selectize-input > div {
-  background: #1D3557 !important;
+  background: $rx-color-midnight-blue !important;
   border: none !important;
 }
 
 .selectize-dropdown .active:not(.selected) {
-  background-color: #F1FAEE !important;
+  background-color: $rx-color-faded-mint !important;
 }
 
 .noUi-connect {
-  background: #1D3557 !important;
+  background: $rx-color-midnight-blue !important;
 }
 
 [disabled] .noUi-connect {
-  background: #1D3557 !important;
+  background: $rx-color-midnight-blue !important;
   opacity: 0.2;
 }
 
@@ -173,15 +175,15 @@ ol#search-results dl {
 
 /* search result highlighting */
 #search-results em {
-  color: #E60000 !important;
+  color: $rx-color-mario-red !important;
   font-weight: bold;
   font-style: normal;
 }
 
 /* results within full text */
 #search-results .result-page {
-  background-color: #F1FAEE;
-  color: #1D3557;
+  background-color: $rx-color-faded-mint;
+  color: $rx-color-midnight-blue;
 }
 
 #search-results .result-page a {
@@ -192,7 +194,7 @@ ol#search-results dl {
   font-size: 0.8rem;
   gap: 1rem;
   margin: 0.5rem 0;
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 #search-results .result-page .page-number {
@@ -208,10 +210,10 @@ ol#search-results dl {
 }
 
 .result-title {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 
   &:hover {
-    color: darken(#1D3557, 10%);
+    color: darken($rx-color-midnight-blue, 10%);
     /* Darken the color when hovered */
   }
 }
@@ -219,14 +221,14 @@ ol#search-results dl {
 .uk-checkbox:checked,
 .uk-checkbox:indeterminate,
 .uk-radio:checked {
-  background-color: #1D3557 !important;
+  background-color: $rx-color-midnight-blue !important;
 }
 
 .uk-search-default .uk-search-input:focus,
 .uk-input:focus,
 .uk-select:focus,
 .uk-textarea:focus {
-  border-color: #1D3557;
+  border-color: $rx-color-midnight-blue;
 }
 
 .uk-search-default .uk-search-input:focus {
@@ -239,8 +241,8 @@ ol#search-results dl {
 }
 
 .search-button {
-  background-color: #E60000;
-  color: white;
+  background-color: $rx-color-mario-red;
+  color: $color-white;
   padding: 0 9px;
   border: none;
   height: 40px;
@@ -248,10 +250,10 @@ ol#search-results dl {
   transition: ease 0.1s;
 
   &:hover {
-    background-color: darken(#E60000, 10%);
+    background-color: darken($rx-color-mario-red, 10%);
   }
 
   &:active {
-    background-color: darken(#E60000, 25%);
+    background-color: darken($rx-color-mario-red, 25%);
   }
 }

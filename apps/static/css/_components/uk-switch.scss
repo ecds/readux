@@ -14,7 +14,7 @@
 
 /* Slider */
 .uk-switch-slider {
-    background-color: $color-black-22;
+    background-color: $rx-color-light-pearl;
     position: absolute;
     top: 0;
     left: 0;
@@ -24,7 +24,6 @@
     cursor: pointer;
     transition-property: background-color;
     transition-duration: .2s;
-    box-shadow: inset 0 0 2px $color-black-07;
 }
 
 /* Switch pointer */
@@ -43,7 +42,7 @@
 
 /* Slider active color */
 input:checked+.uk-switch-slider {
-    background-color: $color-primary !important;
+    background-color: $rx-color-midnight-blue !important;
 }
 
 /* Pointer active animation */
@@ -51,30 +50,6 @@ input:checked+.uk-switch-slider:before {
     transform: translateX(13px);
 }
 
-/* Modifiers */
-.uk-switch-slider.uk-switch-on-off {
-    background-color: $color-danger;
-}
-
-input:checked+.uk-switch-slider.uk-switch-on-off {
-    background-color: $color-success !important;
-}
-
-/* Style Modifier */
-.uk-switch-slider.uk-switch-big:before {
-    transform: scale(1.2);
-    box-shadow: 0 0 6px $color-black-22-strong;
-}
-
-.uk-switch-slider.uk-switch-small:before {
-    box-shadow: 0 0 6px $color-black-22-strong;
-}
-
 input:checked+.uk-switch-slider.uk-switch-big:before {
     transform: translateX(13px) scale(1.2);
-}
-
-/* Inverse Modifier - affects only default */
-.uk-light .uk-switch-slider:not(.uk-switch-on-off) {
-    background-color: $color-white-22;
 }

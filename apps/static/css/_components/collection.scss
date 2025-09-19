@@ -1,13 +1,15 @@
+@import './colors.scss';
+
 .full-width-bg {
     background-size: cover;
     background-position: center;
     position: relative;
     height: 50vh;
-    color: white;
+    color: $color-white;
 }
 
 .overlay {
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
+    background: linear-gradient(to right, rgba($color-black, 0.8) 0%, rgba($color-black, 0.6) 100%);
     height: 50vh;
     width: 33%;
     position: absolute;
@@ -33,10 +35,10 @@
 
 .description-button {
     margin-top: 20px;
-    background-color: #E60000;
+    background-color: $rx-color-mario-red;
     /* Removed gradient background */
     border: none;
-    color: white;
+    color: $color-white;
     font-weight: bold;
     height: 40px;
     border-radius: 5px;
@@ -47,23 +49,17 @@
     transition: background-color 0.3s ease;
 }
 
-// .uk-button-default {
-//     background-color: #222; /* Removed gradient background */
-//     border: none;
-//     color: white;
-// }
-
 .modal-bg {
     background-size: cover;
     background-position: center;
     position: relative;
     height: 100%;
     width: 100%;
-    color: white;
+    color: $color-white;
 }
 
 .modal-overlay {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba($color-black, 0.6);
     /* Dark overlay */
     height: 100%;
     width: 100%;
@@ -84,7 +80,7 @@
 }
 
 .uk-modal-close-full {
-    color: white;
+    color: $color-white;
     /* Set the close button color to white */
     background: none;
     /* Remove the background */

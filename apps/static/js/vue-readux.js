@@ -1,7 +1,7 @@
 Vue.component("v-volume-image", {
   props: ["imgSrc", "volumeLabel"],
   template: `
-    <div class="uk-text-center rx-volume-na" v-cloak v-if="!hasImage">
+    <div class="uk-text-center" v-cloak v-if="!hasImage">
       <span class="rx-item-na" uk-icon="icon: image; ratio: 2"></span>
       <p>Volume is being added or cover is not available.</p>
     </div>

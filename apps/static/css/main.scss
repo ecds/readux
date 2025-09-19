@@ -1,3 +1,5 @@
+@import './_components/colors.scss';
+
 /* base.html */
 .sr-only {
   position: absolute;
@@ -6,7 +8,7 @@
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip: rect($color-black, 0);
   border: 0;
 }
 
@@ -41,7 +43,7 @@ main {
   width: 100%;
   height: 80vh;
   min-height: 500px;
-  background-color: rgba(29, 53, 87, 0.8);
+  background-color: rgba($rx-color-midnight-blue, 0.8);
 }
 
 .uk-alert {
@@ -65,92 +67,88 @@ main {
 }
 
 .paragraph {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   line-height: normal;
 }
 
 .text-anchor {
-  color: #E60000;
+  color: $rx-color-mario-red;
   text-decoration: underline;
   transition: ease 0.1s;
 
-  &:hover {
-    color: darken(#E60000, 10%);
-  }
-
-  &:active {
-    color: #990000;
+  &:hover, &:active {
+    color: darken($rx-color-mario-red, 10%);
   }
 }
 
 .text-anchor-blue {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-weight: bold;
   transition: ease 0.1s;
 
   &:hover {
-    color: darken(#1D3557, 10%);
+    color: darken($rx-color-midnight-blue, 10%);
     text-decoration: underline;
   }
 
   &:active {
-    color: darken(#1D3557, 25%);
+    color: darken($rx-color-midnight-blue, 25%);
     text-decoration: underline;
   }
 }
 
 .hero {
   padding-top: 15vh;
-  color: white;
+  color: $color-white;
 }
 
 /* CONSOLIDATED brand-logo */
 .brand-logo {
   font-size: large;
-  color: white;
+  color: $color-white;
   font-weight: bold;
   transition: color 0.1s ease !important;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba($color-white, 0.8) !important;
   }
 
   &:active {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba($color-white, 0.6) !important;
   }
 }
 
 .menu-item {
-  color: white !important;
+  color: $color-white !important;
   text-decoration: none !important;
   transition: color 0.1s ease !important;
   text-transform: unset !important;
   font-weight: 500;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba($color-white, 0.8) !important;
   }
 
   &:active {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba($color-white, 0.6) !important;
   }
 }
 
 .brand-readux {
-  color: white;
+  color: $color-white;
   text-decoration: underline;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba($color-white, 0.8) !important;
   }
 
   &:active {
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba($color-white, 0.6) !important;
   }
 }
 
 .title {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-size: x-large;
   font-weight: bold;
 }
@@ -161,49 +159,49 @@ main {
 }
 
 .color-black {
-  color: black;
+  color: $color-black;
 }
 
 .color-blue {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 /* Overrides */
 .uk-slidenav {
-  color: rgba(29, 53, 87, 0.6);
+  color: rgba($rx-color-midnight-blue, 0.6);
 
   &:hover {
-    color: rgba(29, 53, 87, 1);
+    color: rgba($rx-color-midnight-blue, 1);
   }
 }
 
 .uk-input:focus,
 .uk-select:focus,
 .uk-textarea:focus {
-  border-color: #1D3557;
+  border-color: $rx-color-midnight-blue;
 }
 
 .uk-button-default {
   transition: ease 0.1s;
 
   &:hover {
-    border-color: darken(#1D3557, 10%);
+    border-color: darken($rx-color-midnight-blue, 10%);
   }
 
   &:active {
-    border-color: darken(#1D3557, 25%);
+    border-color: darken($rx-color-midnight-blue, 25%);
   }
 }
 
 .uk-close {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 
   &:hover {
-    border-color: darken(#1D3557, 10%);
+    border-color: darken($rx-color-midnight-blue, 10%);
   }
 
   &:active {
-    border-color: darken(#1D3557, 25%);
+    border-color: darken($rx-color-midnight-blue, 25%);
   }
 }
 
@@ -235,16 +233,16 @@ main {
 .breadcrumb > li + li::before {
   content: "/";
   margin-right: 5px;
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 .breadcrumb a {
   text-decoration: underline;
-  color: rgba(29, 53, 87, 1);
+  color: rgba($rx-color-midnight-blue, 1);
   transition: color 0.1s ease;
 
   &:hover {
-    color: rgba(29, 53, 87, 0.8);
+    color: rgba($rx-color-midnight-blue, 0.8);
   }
 }
 
@@ -254,9 +252,9 @@ main {
 
 /* breadcrumb dropdown */
 .uk-navbar-dropdown {
-  background-color: #f8fdf4;
+  background-color: $rx-color-faded-mint;
   border-radius: 4px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 4px rgba($color-black, 0.1);
   padding: 10px 0 !important;
   min-width: 0 !important;
 }
@@ -264,7 +262,7 @@ main {
 .uk-navbar-dropdown-nav a,
 .uk-navbar-dropdown-nav.sort-dropdown label {
   cursor: pointer;
-  color: #1D3557 !important;
+  color: $rx-color-midnight-blue !important;
   font-weight: 600;
   padding: 5px 15px !important;
   display: block;
@@ -273,7 +271,7 @@ main {
 
 .uk-navbar-dropdown-nav a:hover,
 .uk-navbar-dropdown-nav.sort-dropdown label:hover {
-  background-color: rgba(29, 53, 87, 0.1);
+  background-color: rgba($rx-color-midnight-blue, 0.1);
 }
 
 .uk-navbar-dropdown-nav.sort-dropdown label input {
@@ -289,12 +287,12 @@ main {
 .page-title {
   font-size: xx-large;
   font-weight: bold;
-  color: #000000;
+  color: $color-black;
 }
 
 .page-text-lead {
   font-size: medium;
-  color: #000000;
+  color: $color-black;
 }
 
 /* volume grid */
@@ -304,7 +302,7 @@ main {
   align-items: center;
   margin-bottom: 20px;
   font-weight: 600;
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 .info-line .info-group {
@@ -321,16 +319,16 @@ main {
 
 .info-line a,
 .info-line select {
-  color: #E60000;
+  color: $rx-color-mario-red;
   text-decoration: underline;
 }
 
 .pagination-controls .uk-icon-button {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 
 .pagination-controls .uk-icon-button[disabled] {
-  color: #ccc;
+  color: $rx-color-light-pearl;
   cursor: not-allowed;
 }
 
@@ -348,7 +346,7 @@ main {
   opacity: 0.75;
   transition: opacity 0.1s ease;
   display: block;
-  color: black;
+  color: $color-black;
 }
 
 .grid-item img {
@@ -362,12 +360,12 @@ main {
 .grid-item:hover {
   opacity: 1;
   text-decoration: none;
-  color: black;
+  color: $color-black;
 }
 
 .grid-item h2 {
   text-decoration: underline;
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-weight: 600;
   font-size: medium;
   margin: 0;
@@ -383,19 +381,19 @@ main {
 }
 
 .list-view-table thead th {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-weight: bold;
 }
 
 .list-view-table tbody tr {
-  color: rgba(0, 0, 0, 0.75);
+  color: rgba($color-black, 0.75);
   transition: color 0.3s ease;
 }
 
 /* CONSOLIDATED hover styles for tbody rows */
 .list-view-table tbody tr:hover {
-  background-color: #F1FAEE !important;
-  color: rgba(0, 0, 0, 1);
+  background-color: $rx-color-faded-mint !important;
+  color: rgba($color-black, 1);
 }
 
 .list-item:hover,
@@ -430,20 +428,16 @@ main {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
   font-size: 1.2em;
-  background-color: #E60000;
-  color: white;
+  background-color: $rx-color-mario-red;
+  color: $color-white;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease;
 
-  &:hover {
-    background-color: darken(#E60000, 10%);
-  }
-
-  &:active {
-    background-color: #990000;
+  &:hover, &:active {
+    background-color: darken($rx-color-mario-red, 10%);
   }
 }
 
@@ -459,10 +453,7 @@ main {
 }
 
 .section-offset {
-  /* position: relative; */
-  /* top: 20vh; */
-  background-color: white;
-  /* padding: 20px 0; */
+  background-color: $color-white;
   margin-top: 200px;
 }
 
@@ -472,7 +463,7 @@ main {
 }
 
 .book-title a {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-size: 1em;
   text-decoration: underline;
 }
@@ -486,7 +477,7 @@ main {
 .video-section {
   position: relative;
   text-align: center;
-  color: white;
+  color: $color-white;
 }
 
 .video-overlay {
@@ -536,7 +527,7 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba($color-black, 0.5);
   z-index: 1;
 }
 
@@ -557,10 +548,9 @@ iframe {
 
 /* footer */
 .footer {
-  background-color: #457B9D;
-  color: white;
+  background-color: $rx-color-linen-blue;
+  color: $color-white;
   padding: 20px;
-  /* min-height: 20vh; */
 }
 
 .footer-content {
@@ -578,7 +568,7 @@ iframe {
 }
 
 .footer-links a {
-  color: white;
+  color: $color-white;
   text-decoration: none;
 
   &:hover {
@@ -599,7 +589,7 @@ iframe {
 .footer-bottom {
   text-align: left;
   margin-top: 10px;
-  color: white;
+  color: $color-white;
 }
 
 /* highlight section */
@@ -609,7 +599,7 @@ iframe {
 }
 
 .column {
-  background-color: #F1FAEE;
+  background-color: $rx-color-faded-mint;
   padding: 2rem;
   border-radius: 8px;
   text-align: center;
@@ -617,7 +607,7 @@ iframe {
 }
 
 .blob {
-  background-color: #FFFFFF;
+  background-color: $color-white;
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -630,18 +620,18 @@ iframe {
 .icon-placeholder {
   width: 40px;
   height: 40px;
-  fill: #457B9D;
+  fill: $rx-color-linen-blue;
 }
 
 .column-text {
   margin-top: 4rem;
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-size: 1.75rem;
   line-height: 2.5rem;
 }
 
 .section-title {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   font-size: 2em;
   font-weight: bold;
   margin-bottom: 4rem;
@@ -649,18 +639,18 @@ iframe {
 
 .brand-tagline {
   font-size: small;
-  color: white;
+  color: $color-white;
 }
 
 .description-button {
   transition: ease 0.1s;
 
   &:hover {
-    background-color: darken(#E60000, 10%);
+    background-color: darken($rx-color-mario-red, 10%);
   }
 
   &:active {
-    background-color: darken(#E60000, 25%);
+    background-color: darken($rx-color-mario-red, 25%);
   }
 }
 
@@ -672,14 +662,8 @@ iframe {
   min-height: unset !important;
 }
 
-button.google {
-  background-color: #ea4335;
-  color: white;
-}
-
-button.github {
-  background-color: #24292e;
-  color: white;
+button.google, button.github {
+  color: $color-white;
 }
 
 /* Make every .uk-section element inside .content have padding-bottom: 0 */

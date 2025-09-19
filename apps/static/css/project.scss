@@ -9,9 +9,8 @@
 /* ========================================================================== */
 
 :root { 
-  --link-color: $rx-color-accent-1;
-  --link-color: #666;
   --contrast: 200%;
+  --link-color: $rx-color-midnight-blue;
 }
 
 /* ========================================================================== */
@@ -31,7 +30,7 @@ a:hover {
 }
 
 p {
-  color: $rx-color-grey-1;
+  color: $rx-color-cement-gray;
 }
 
 /* Lists & list items */
@@ -53,7 +52,7 @@ ol>li {
 
 /* Selections, fieldsets */
 ::selection {
-  background-color: $rx-color-grey-1;
+  background-color: $rx-color-cement-gray;
 }
 
 fieldset {
@@ -141,7 +140,7 @@ p {
 }
 
 .rx-label-copy {  
-  background: white;
+  background: $color-white;
   color: var(--link-color) !important;
   border: var(--link-color) 1px solid;
   font-size: 0.75rem;
@@ -152,15 +151,15 @@ p {
   font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
 
   &:active {
-    background-color: #1D3557 !important;
-    border: 1px solid #1D3557 !important;
+    background-color: $rx-color-midnight-blue !important;
+    border: 1px solid $rx-color-midnight-blue !important;
     opacity: 1;
   }
 
   &:hover {
-    background: #1D3557;
-    border-color: #1D3557;
-    color: white !important;
+    background: $rx-color-midnight-blue;
+    border-color: $rx-color-midnight-blue;
+    color: $color-white !important;
     font-size: 0.75rem;
     letter-spacing: 0.1rem;
     cursor: pointer;
@@ -169,9 +168,9 @@ p {
 }
 
 .rx-action-btn:hover .rx-label-copy {
-  background: #1D3557;
-  border-color: #1D3557;
-  color: white !important;
+  background: $rx-color-midnight-blue;
+  border-color: $rx-color-midnight-blue;
+  color: $color-white !important;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
   cursor: pointer;
@@ -188,7 +187,7 @@ p {
 }
 
 .uk-checkbox, .uk-radio {  
-  border: 1px solid #ccc !important;
+  border: 1px solid $rx-color-light-pearl !important;
 }
 
 .uk-container ul {  
@@ -214,13 +213,13 @@ p {
 
 /* Override the minus sign in UI Kit accordion */
 .uk-open>.uk-accordion-title::before {
-  /* "-" Change the stroke color of the accordion icons to #1D3557 */
+  /* "-" Change the stroke color of the accordion icons to $rx-color-midnight-blue */
   background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E);
 }
 
 .uk-open>.uk-accordion-title:hover {
 
-  /* "-" Change the stroke color of the accordion icons to #1D3557 */
+  /* "-" Change the stroke color of the accordion icons to $rx-color-midnight-blue */
   &::before {
     background-image: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2213%22%20height%3D%2213%22%20viewBox%3D%220%200%2013%2013%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%231D3557%22%20width%3D%2213%22%20height%3D%221%22%20x%3D%220%22%20y%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E)
   }
@@ -246,7 +245,7 @@ p {
 
 .uk-checkbox,
 .uk-radio {
-  border: 1px solid #ccc !important;
+  border: 1px solid $rx-color-light-pearl !important;
 }
 
 .uk-padding-1-2 {
@@ -267,7 +266,7 @@ p {
 }
 
 #rx-nav {  
-  background: white;
+  background: $color-white;
 }
 
 .rx-page-navbar-right>a {
@@ -275,7 +274,7 @@ p {
 }
 
 #sidenav {
-  background: white;
+  background: $color-white;
   position: absolute;
   top: 0;
 }
@@ -332,18 +331,18 @@ ul.listing-thumbs>li>img.thumbnail-image {
 }
 
 .rx-info-content-label {
-  color: $rx-color-grey-1 !important;
+  color: $rx-color-cement-gray !important;
   font-weight: 600 !important;
   font-size: 0.9rem !important;
 }
 
 .rx-info-content-value {
-  color: $rx-color-grey-1;
+  color: $rx-color-cement-gray;
   line-height: 1.5;
 }
 
 .rx-info-content .uk-tab a {
-  color: $rx-color-grey-2;
+  color: $rx-color-cement-gray;
 }
 
 .rx-info-content .uk-tab a:hover {
@@ -352,15 +351,15 @@ ul.listing-thumbs>li>img.thumbnail-image {
 
 .rx-collection-title {
   font-weight: bold;
-  color: $rx-color-grey-1;
+  color: $rx-color-cement-gray;
 }
 
 /* Badges */
 .rx-annotation-badge {  
   border-radius: 3px;
-  background: white;
-  color: $rx-color-grey-1 !important;
-  border: $rx-color-grey-1 1px solid;
+  background: $color-white;
+  color: $rx-color-cement-gray !important;
+  border: $rx-color-cement-gray 1px solid;
   font-size: 0.75rem;
   letter-spacing: 0.1rem;
   font-weight: 600;
@@ -368,14 +367,6 @@ ul.listing-thumbs>li>img.thumbnail-image {
   cursor: default;
   text-transform: uppercase;
   padding: 0.1rem 0.5rem;
-}
-
-/* Status / NA blocks */
-.rx-volume-na {
-  background: #fbecf9;
-  padding: 15px;
-  font-size: 14px;
-  color: var(--link-color);
 }
 
 /* Fieldsets */
@@ -392,16 +383,10 @@ ul.listing-thumbs>li>img.thumbnail-image {
   display: grid;
   margin: 20px auto;
   max-width: 100%;
-  /* grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); */
   grid-template-columns: 1fr;
-  /* grid-column-gap: 15px; */
-  /* justify-content: space-between; */
 }
 
 .rx-volume-in-banner {
-  /* border: 1px solid black; */
-  /* text-align: center; */
-  /* height: 150px; */
   width: 100%;
   margin: 15px 0;
   position: relative;
@@ -420,13 +405,13 @@ ul.listing-thumbs>li>img.thumbnail-image {
   left: 0;
   bottom: 0;
   padding: 1rem;
-  color: $rx-color-grey-3;
+  color: $rx-color-light-pearl;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .rx-collection-title-banner {
-  color: white;
+  color: $color-white;
   font-size: 1.5rem;
 }
 
@@ -438,7 +423,7 @@ ul.listing-thumbs>li>img.thumbnail-image {
 
 /* Titles */
 .rx-title-container {  
-  background: white;
+  background: $color-white;
   padding: 1em 0;
   position: sticky;
   top: 0;
@@ -454,12 +439,12 @@ ul.listing-thumbs>li>img.thumbnail-image {
 .rx-title-2 {  
   font-size: 1.5em;
   font-weight: bold;
-  color: $rx-color-grey-1;
+  color: $rx-color-cement-gray;
 }
 
 .rx-title-tagline {  
   font-size: 14px;
-  color: $rx-color-grey-2;
+  color: $rx-color-cement-gray;
 }
 
 .rx-title-image {  
@@ -476,10 +461,6 @@ ul.listing-thumbs>li>img.thumbnail-image {
   font-size: 1rem;
   font-weight: bold;
   color: var(--link-color);
-
-  &:hover {
-    color: $rx-color-accent-2;
-  }
 }
 
 /* ========================================================================== */
@@ -495,8 +476,8 @@ ul.listing-thumbs>li>img.thumbnail-image {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 120px;
-  background-color: black;
-  color: #fff;
+  background-color: $color-black;
+  color: $color-white;
   text-align: center;
   border-radius: 6px;
   padding: 5px 0;
@@ -533,7 +514,7 @@ ul.listing-thumbs>li>img.thumbnail-image {
   /* display: flex; */
   /* align-items: center; */
   /* justify-content: space-between; */
-  color: $rx-color-grey-1 !important;
+  color: $rx-color-cement-gray !important;
 }
 
 .rx-page-search-option-label {
@@ -572,7 +553,7 @@ ul.listing-thumbs>li>img.thumbnail-image {
   padding: 0 !important;
   left: 75px !important;
   top: 60px !important;
-  background: white;
+  background: $color-white;
 }
 
 /* Small utility classes */
@@ -581,7 +562,7 @@ ul.listing-thumbs>li>img.thumbnail-image {
 }
 
 .rx-volume-search em {
-  color: #E60000 !important;
+  color: $rx-color-mario-red !important;
 }
 
 .rx-volume-search {
@@ -635,7 +616,7 @@ ul.listing-thumbs>li>img.thumbnail-image {
 /* ========================================================================== */
 
 .rx-accordion-head {  
-  background: white;
+  background: $color-white;
   color: var(--link-color);
   border: var(--link-color) 1px solid;
   font-size: 0.85rem;
@@ -646,7 +627,7 @@ ul.listing-thumbs>li>img.thumbnail-image {
   font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', 'monospace' !important;
 
   &::before {
-    color: white;
+    color: $color-white;
   }
 }
 
@@ -690,26 +671,6 @@ div#search-grid {
   overflow-x: auto;
 }
 
-/* Selectize */
-.selectize-control.multi .selectize-input>div {
-  background: #950953 !important;
-  border: none !important;
-}
-
-.selectize-dropdown .active:not(.selected) {
-  background-color: #fff7fb !important;
-}
-
-/* Range slider */
-.noUi-connect {
-  background: #950953 !important;
-}
-
-[disabled] .noUi-connect {
-  background: #950953 !important;
-  opacity: 0.2;
-}
-
 /* Date slider */
 .noUi-tooltip {
   font-size: .875rem;
@@ -739,13 +700,6 @@ ol#search-results dl {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
-}
-
-/* search result highlighting */
-#search-results em {
-  color: #510029 !important;
-  font-weight: bold;
-  font-style: normal;
 }
 
 /* results within full text */

@@ -1,3 +1,55 @@
+// =====================================
+// Helpers & Mixins
+// =====================================
+
+// a11y: visually hidden but focusable
+@mixin sr-only() {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+// Generate hover/active shades for a given base color
+@mixin interactive-color($base, $prop: color) {
+  #{$prop}: $base !important;
+  transition: #{$prop} 0.1s ease;
+
+  &:hover { #{$prop}: if(type-of($base) == 'color', darken($base, 10%), $base) !important; }
+  &:active { #{$prop}: if(type-of($base) == 'color', darken($base, 25%), $base) !important; }
+}
+
+// Border-only interactive (for outlines, etc.)
+@mixin interactive-border($base) {
+  transition: border-color 0.1s ease;
+  &:hover { border-color: darken($base, 10%); }
+  &:active { border-color: darken($base, 25%); }
+}
+
+// Link variant that underlines on hover and darkens progressively
+@mixin link-variant($base, $weight: 600, $underline-on-hover: true) {
+  color: $base;
+  font-weight: $weight;
+  transition: color 0.1s ease;
+
+  &:hover {
+    color: darken($base, 10%);
+    @if $underline-on-hover { text-decoration: underline; }
+  }
+
+  &:active {
+    color: darken($base, 25%);
+    @if $underline-on-hover { text-decoration: underline; }
+  }
+}
+
+// List reset
 @mixin no-list-style {
   list-style: none;
   padding-left: 0;

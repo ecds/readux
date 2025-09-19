@@ -24,6 +24,7 @@ main {
   flex-grow: 1;
 }
 
+/* home page navigation transparent */
 .home-nav {
   nav {
     background-color: transparent !important;
@@ -38,10 +39,6 @@ main {
   height: 80vh;
   min-height: 500px;
   background-color: rgba($rx-color-midnight-blue, 0.8);
-}
-
-.uk-alert {
-  z-index: 99;
 }
 
 .content {

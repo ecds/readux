@@ -1,14 +1,13 @@
 /* -------------------------------------------------------------------------- */
 /* 0) IMPORTS                                                                 */
 /* -------------------------------------------------------------------------- */
-@import './ecds-annotator.min.css';
-@import './partials/_mixin.scss';
-@import './partials/_colors.scss';
-@import './partials/_media.scss';
-@import './components/social-auth.scss';
-@import './components/wagtail.scss';
-@import './components/uk-switch.scss';
-@import './components/footer.scss';
+@import 'partials/_mixin.scss';
+@import 'partials/_colors.scss';
+@import 'partials/_media.scss';
+@import 'components/social-auth.scss';
+@import 'components/wagtail.scss';
+@import 'components/uk-switch.scss';
+@import 'components/footer.scss';
 
 /* -------------------------------------------------------------------------- */
 /* 1) ROOT VARIABLES                                                          */

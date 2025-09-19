@@ -1,5 +1,13 @@
 @import './colors.scss';
 
+#modal-full p {
+    color: $color-white;;
+}
+
+#modal-full h2 {
+    font-size: xx-large;
+}
+
 .full-width-bg {
     background-size: cover;
     background-position: center;
@@ -18,12 +26,15 @@
     padding: 50px;
     box-sizing: border-box;
     min-height: 0;
+    color: $color-white;
 }
 
 .overlay h1 {
     font-size: 2rem;
     /* Reduced title size */
     margin-bottom: 15px;
+    color: $color-white;
+
 }
 
 .overlay p {
@@ -31,6 +42,7 @@
     /* Adjusted font size */
     line-height: 1.5;
     /* Reduced line-height */
+    color: $color-white;
 }
 
 .description-button {

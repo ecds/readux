@@ -59,6 +59,7 @@ main { flex-grow: 1; }
 .paragraph { color: $rx-color-midnight-blue; line-height: normal; }
 .title { color: $rx-color-midnight-blue; font-size: x-large; font-weight: bold; }
 .hero { padding-top: 15vh; color: $color-white; }
+.uk-container h2 { margin-bottom: 1rem;}
 
 /* Utilities */
 .slash-gap { margin: 0 0.5rem; }
@@ -321,13 +322,15 @@ button.google, button.github { color: $color-white; }
 /* -------------------------------------------------------------------------- */
 .rx-breadcrumb, .rx-action-btn {
   color: var(--link-color);
-  filter: brightness(0.4%);
   text-transform: uppercase;
   font-weight: bold;
   display: inline-flex;
   padding: 0; margin: 0; user-select: auto;
 }
 .rx-action-btn { letter-spacing: 0.1em; font-size: small; }
+.rx-action-btn:hover { 
+  .rx-label-copy { background-color: $rx-color-midnight-blue !important; color: $color-white !important; }
+}
 
 .rx-breadcrumb-item > a, .rx-action-btn, .rx-icon-btn, .uk-dropdown-nav > li > a:hover {
   color: var(--link-color) !important; opacity: 0.75; transition: all 100ms ease-in-out;
@@ -346,7 +349,6 @@ button.google, button.github { color: $color-white; }
   &:active { background-color: $rx-color-midnight-blue !important; border: 1px solid $rx-color-midnight-blue !important; opacity: 1; }
   &:hover { background: $rx-color-midnight-blue; border-color: $rx-color-midnight-blue; color: $color-white !important; }
 }
-.rx-action-btn:hover .rx-label-copy { background: $rx-color-midnight-blue; border-color: $rx-color-midnight-blue; color: $color-white !important; }
 
 /* Navigation & bars */
 .breadcrumbs { font-size: 80%; margin: 0; }
@@ -385,7 +387,7 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
 .rx-title-container { background: $color-white; padding: 1em 0; position: sticky; top: 0; z-index: 3; }
 .rx-title { font-size: 2em; font-weight: bold; color: var(--link-color); }
 .rx-title-2 { font-size: 1.5em; font-weight: bold; color: $rx-color-cement-gray; }
-.rx-title-tagline { font-size: 14px; color: $rx-color-cement-gray; }
+.rx-title-tagline { font-size: 14px; color: $color-white; }
 .rx-title-image { object-fit: cover; height: 150px; width: 100%; }
 .rx-breadcrumb-item { font-size: 1rem; font-weight: bold; color: var(--link-color); }
 
@@ -411,26 +413,9 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
 .padding-right-1rem { padding-right: 1rem; }
 .count { position: absolute; top: 0; right: 0; padding-top: 20%; padding-right: 20%; height: 10px; width: 10px; font-size: 10px; text-align: center; }
 .rx-flex { display: flex; }
-
+.uk-accordion-content { padding: 0.5rem 10px;}
 /* Accordion (rx-) */
 .rx-accordion-head { background: $color-white; color: var(--link-color); border: var(--link-color) 1px solid; font-size: 0.85rem; letter-spacing: 0.1rem; cursor: pointer; transition: all 100ms ease-in-out; font-weight: 600; font-family: 'Consolas','Monaco','Andale Mono','Ubuntu Mono','monospace' !important; &::before { color: $color-white; } }
 .rx-accordion-handle { color: var(--link-color) !important; }
 .rx-accordion-content { margin: 0; padding: 0 0 10px 0; }
 .rx-accordion-container { margin: 20px 0 0 0; }
-
-/* -------------------------------------------------------------------------- */
-/* 14) SEARCH RESULTS PAGE                                                    */
-/* -------------------------------------------------------------------------- */
-#search-grid { margin-left: 0; }
-#search-filters input[type="text"]#authors-filter { width: 100%; }
-#search-filters select[multiple] { height: 150px; width: 100%; overflow-y: scroll; overflow-x: auto; }
-.noUi-tooltip { font-size: .875rem; font-family: monospace; font-weight: normal; padding: 0.125rem 0.25rem !important; background-color: none; border: none !important; }
-#search-filters .noUi-target { margin: 45px 21px 10px; }
-
-ol#search-results { list-style: none; }
-ol#search-results dl { margin-left: 2rem; }
-#search-results .result-volume-summary { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-#search-results .result-page a { display: flex; flex-flow: row nowrap; justify-content: flex-start; align-items: flex-start; font-size: 0.8rem; gap: 1rem; margin: 0.5rem 0; }
-#search-results .result-page .page-number { min-width: 4rem; max-width: 4rem; }
-#search-results .result-page ul li { list-style: disc; }
-.sui-item-heading { letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; font-family: -apple-system,'Helvetica Neue','Helvetica','Arial','Segoe UI','Roboto','Ubuntu',sans-serif; font-size: 13px; }

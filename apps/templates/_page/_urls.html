@@ -1,42 +1,42 @@
-<v-info-content-url-single label="Manifest"
+<info-url-single label="Manifest"
   url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
-</v-info-content-url-single>
+</info-url-single>
 
-<v-info-content-url-multiple label="Collection Manifest">
+<info-url-multiple label="Collection Manifest">
   {% for col in volume.collections.all %}
-  <v-info-content-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
-  </v-info-content-url-unit>
+  <info-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
+  </info-url-unit>
   {% endfor %}
-</v-info-content-url-multiple>
+</info-url-multiple>
 
-<v-info-content-url-single label="Stable Volume"
+<info-url-single label="Stable Volume"
   url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
-</v-info-content-url-single>
+</info-url-single>
 
 {% if "/page/all" in request.get_full_path in request.get_full_path %}
-  <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
-  </v-info-content-url-external>
+  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+  </info-url-external>
 {% else %}
-  <v-info-content-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ page.pid }}">
-  </v-info-content-url-external>
+  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ page.pid }}">
+  </info-url-external>
 {% endif %}
 
 {# External links from IIIF manifest #}
 
 {% if volume.external_links.see_also %}
-<v-info-content-url-multiple label="See Also">
+<info-url-multiple label="See Also">
   {% for link in volume.external_links.see_also %}
-    <v-info-content-url-unit url="{{ link }}">
-    </v-info-content-url-unit>
+    <info-url-unit url="{{ link }}">
+    </info-url-unit>
   {% endfor %}
-</v-info-content-url-multiple>
+</info-url-multiple>
 {% endif %}
 
 {% if volume.external_links.related %}
-<v-info-content-url-multiple label="External Links">
+<info-url-multiple label="External Links">
   {% for link in volume.external_links.related %}
-    <v-info-content-url-unit url="{{ link }}">
-    </v-info-content-url-unit>
+    <info-url-unit url="{{ link }}">
+    </info-url-unit>
   {% endfor %}
-</v-info-content-url-multiple>
+</info-url-multiple>
 {% endif %}

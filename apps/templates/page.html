@@ -20,8 +20,8 @@
 <div id="modal-search" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    <v-volume-search pid="{{ volume.pid }}"></v-volume-search>
-    <v-volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></v-volume-annotations>
+    <volume-search pid="{{ volume.pid }}"></volume-search>
+    <volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></volume-annotations>
   </div>
 </div>
 <!-- uiAction search -->

@@ -11,22 +11,16 @@
     "axios": "^0.23.0",
     "ecds-annotator": "github:ecds/ecds-annotator#develop",
     "jquery": "^3.6.0",
-    "nouislider": "^15.8.1",
-    "vue": "^2.6.14"
+    "nouislider": "^15.8.1"
   },
   "devDependencies": {
-    "@vue/component-compiler-utils": "^3.3.0",
-    "css-loader": "^7.1.2",
     "fontawesome": "^5.6.3",
     "jquery": "^3.6.0",
-    "source-map-loader": "^4.0.2",
-    "style-loader": "^4.0.0",
+    "source-map-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.3",
     "ts-loader": "^9.4.4",
     "uikit": "^3.17.0",
     "uikit-icons": "^0.5.0",
-    "vue-loader": "^15.11.1",
-    "vue-template-compiler": "^2.6.14",
     "webpack": "^5.88.2",
     "webpack-bundle-tracker": "^1.5.0",
     "webpack-cli": "^4.9.2"

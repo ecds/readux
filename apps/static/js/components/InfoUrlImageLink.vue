@@ -1,70 +1,81 @@
 <template>
   <div class="rx-info-content">
     <div class="rx-info-content-label uk-flex-between rx-flex">
-      <span v-if="localUrls !== undefined">{{ label }}</span>
-      <div>
+      <span v-if="!!localUrls">{{ label }}</span>
+      <a :href="localUrls"
+          target="_blank"
+          rel="noopener"> 
         <span
           class="uk-label rx-label-copy"
-          @click="copyText"
-          v-if="localUrls !== undefined"
+          v-if="!!localUrls"
+          role="button"
+          tabindex="0"
         >
-        <span uk-icon="icon: copy; ratio: 0.5"></span>
-        Copy</span>
-      </div>
+          <span uk-icon="icon: link-external; ratio: 0.6"></span>
+          Open
+        </span>
+      </a>
     </div>
+
     <div class="rx-info-content-value">
-      <a :href="pageresource" class="rx-anchor" target="_blank">{{ pageresource }}</a>
+      <a
+        v-if="!!localUrls"
+        :href="localUrls"
+        class="rx-anchor"
+        target="_blank"
+        rel="noopener"
+      >{{ localUrls }}</a>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
   name: "InfoUrlImageLink",
   props: {
-    label: { type: String, required: true },
-    pagelink: { type: String, required: true }
+    label:    { type: String, required: true },
+    pagelink: { type: String, required: true } // base IIIF image server
   },
   data() {
     return {
       localUrls: undefined,
-      pageresource: undefined,
       canvas: null,
       can: null
     };
   },
   methods: {
-    async copyText() {
-      try {
-        await navigator.clipboard.writeText(this.localUrls);
-        if (window.UIkit?.notification) {
-          UIkit.notification({ message: "Copied!", status: "success", timeout: 1200 });
-        }
-      } catch (err) {
-        console.error("Copy failed:", err);
-      }
+    // Normalize whatever canvasUpdate sends (string or {canvas})
+    _resolveCanvasFromEvent(event) {
+      const d = event?.detail;
+      if (!d) return null;
+      if (typeof d === "string") return d;
+      if (typeof d === "object" && d.canvas) return d.canvas;
+      return null;
     },
+
+    async _updateForCanvas(canvasId) {
+      if (!canvasId || canvasId === "all") {
+        this.canvas = this.can = null;
+        this.localUrls = undefined;
+        return;
+      }
+
+      this.localUrls = `${this.pagelink}/${canvasId}/full/full/0/default.jpg`;
+      this.canvas = this.can = canvasId;
+    }
   },
   mounted() {
-    window.addEventListener("canvasswitch", (event) => {
-      if (event.detail && this.canvas !== event.detail.canvas) {
-        this.canvas = event.detail.canvas;
-        const localpagelink = this.pagelink;
-        if (this.canvas !== 'all') {
-          axios.get(`iiif/resource/${event.detail.canvas}`)
-            .then(response => {
-              this.pageresource = response.data.resource;
-              this.pagetext = response.data.text;
-            }).catch(error => {
-              console.error(error);
-            });
-          this.localUrls = localpagelink + "/" + this.canvas + "/full/full/0/default.jpg";
-          this.can = this.canvas;
-        }
+    this._onCanvasUpdate = (event) => {
+      const next = this._resolveCanvasFromEvent(event);
+      if (next && next !== this.canvas) {
+        this._updateForCanvas(next);
       }
-    });
+    };
+    window.addEventListener("canvasUpdate", this._onCanvasUpdate);
+  },
+  beforeDestroy() {
+    window.removeEventListener("canvasUpdate", this._onCanvasUpdate);
   }
-}
+};
 </script>

@@ -20,7 +20,8 @@ module.exports = {
       '@': path.resolve(__dirname, 'apps/static/js'),
     },
   },
-  devtool: "source-map",
+  devtool: "eval-cheap-module-source-map", // Dev: fastest reasonable source maps
+  // devtool: "source-map", // Dev: switch to full source maps for debugging if needed
   plugins: [new BundleTracker({ filename: "./webpack-stats.json" }), new VueLoaderPlugin()],
   module: {
     rules: [
@@ -32,6 +33,13 @@ module.exports = {
         test: /\.js$/,
         enforce: "pre",
         use: ["source-map-loader"],
+        exclude: [
+          /node_modules\/ecds-annotator/,
+          /node_modules\/uikit/,
+          /node_modules\/jquery/,
+          /node_modules\/@selectize\/selectize/,
+          /node_modules\/nouislider/,
+        ],
       },
       {
         test: /\.css$/i,

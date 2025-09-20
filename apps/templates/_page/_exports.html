@@ -1,25 +1,6 @@
 <h1 class="uk-text-large uk-text-bold uk-margin-small-bottom">Download and Export</h1>
 
-
-<info-url-image-link label="Open Page Image" pagelink="{{ pagelink }}"></info-url-image-link>
-
-
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between">
-    <a id="rx-download-img"
-       class="rx-action-btn"
-       data-href-template="{{ pagelink }}/__PID__/full/full/0/default.jpg"
-       href="{{ pagelink }}/{{ page.pid }}/full/full/0/default.jpg"
-       target="_blank">
-      <div class="uk-label rx-label-copy">
-        IMG
-      </div>
-      <span class="uk-margin-small-left">Page Image in a New Window</span> 
-    </a>
-  </div> 
-  <div class="rx-info-content-value">
-  </div>
-</div>
+<info-export label="Open Page Image" pagelink="{{ pagelink }}" icon="link-external" btnlabel="Open"></info-export>
 
 {% if volume.pdf %}
   <div class="rx-info-content">
@@ -36,34 +17,8 @@
   </div>
 {% endif %}
 
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex">
-    <a class="rx-action-btn" href="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}"
-    target="_blank">
-      <div class="uk-label rx-label-copy">
-        RIS
-      </div>
-      <span class="uk-margin-small-left">Export Citation in RIS</span> 
-    </a>
-  </div> 
-  <div class="rx-info-content-value">
-  </div>
-</div>
-
-<div class="rx-info-content">
-  <div class="rx-info-content-label uk-flex-between rx-flex">
-    <a class="rx-action-btn"
-    href="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}"
-    target="_blank">
-      <div class="uk-label rx-label-copy">
-        VOY
-      </div>
-      <span class="uk-margin-small-left">Send to Voyant</span> 
-    </a>
-  </div> 
-  <div class="rx-info-content-value">
-  </div>
-</div>
+<info-export label="Export Citation in RIS" fullurl="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}" icon="download" btnlabel="Download"></info-export>
+<info-export label="Send to Voyant" fullurl="https://voyant-tools.org/?corpus={{volume.pid}}&archive=https://{{ request.META.HTTP_HOST }}{% url 'PlainExport' 'v2' volume.pid %}" icon="arrow-up-right" btnlabel="Send"></info-export>
 
 <!-- <info-url-page-text label="Page Text"></info-url-page-text> -->
 <!-- <volume-export-annotation-btn :manifest-count="{{ user_annotation_count }}">

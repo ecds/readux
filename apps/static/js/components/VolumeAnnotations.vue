@@ -62,7 +62,7 @@ export default {
     }
 
     // Listen for canvas switch / annotation changes
-    this._onCanvasSwitch = (event) => {
+    this._onUserAnnotationsUpdate = (event) => {
       const detail = event && event.detail ? event.detail : {};
 
       if (detail.annotationAdded) {
@@ -101,10 +101,10 @@ export default {
       }
     };
 
-    window.addEventListener("canvasswitch", this._onCanvasSwitch);
+    window.addEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
   },
   beforeDestroy() {
-    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
+    window.removeEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
   }
 };
 </script>

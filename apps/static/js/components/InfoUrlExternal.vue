@@ -20,7 +20,7 @@ export default {
   name: "InfoUrlExternal",
   props: {
     label: { type: String, required: true },
-    url: { type: String, required: true },
+    pagelink: { type: String, required: true },
     volume: { type: String, required: true }
   },
   data() {
@@ -39,11 +39,11 @@ export default {
     },
   },
   mounted() {
-    window.addEventListener("canvasswitch", (event) => {
+    window.addEventListener("canvasUpdate", (event) => {
       if (event.detail) {
         const protocol = window.location.protocol;
         const host = window.location.host;
-        const canvas = event.detail.canvas;
+        const canvas = event.detail;
         const url = protocol + "//" + host + this.volume + "/page/" + canvas;
         this.localUrl = url;
       }

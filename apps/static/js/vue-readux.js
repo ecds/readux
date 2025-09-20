@@ -5,7 +5,7 @@ import OcrInspector from './components/OcrInspector.vue'
 import InfoUrlUnit from './components/InfoUrlUnit.vue'
 import InfoUrlSingle from './components/InfoUrlSingle.vue'
 import InfoUrlMultiple from './components/InfoUrlMultiple.vue'
-import InfoUrlImageLink from './components/InfoUrlImageLink.vue'
+import InfoExport from './components/InfoExport.vue'
 import InfoUrlExternal from './components/InfoUrlExternal.vue'
 import VolumeExportAnnotationBtn from './components/VolumeExportAnnotationBtn.vue'
 
@@ -13,7 +13,7 @@ var readux = new Vue({
   el: "#v-readux",
   delimiters: ["[[", "]]"],
   components: { 
-    VolumeSearch, VolumeAnnotations, OcrInspector, InfoUrlUnit, InfoUrlSingle, InfoUrlMultiple, InfoUrlImageLink, InfoUrlExternal, VolumeExportAnnotationBtn
+    VolumeSearch, VolumeAnnotations, OcrInspector, InfoUrlUnit, InfoUrlSingle, InfoUrlMultiple, InfoExport, InfoUrlExternal, VolumeExportAnnotationBtn
   },
   data: {
     options: ["title", "author", "date published", "date added"],

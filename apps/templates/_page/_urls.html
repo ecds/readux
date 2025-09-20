@@ -14,10 +14,10 @@
 </info-url-single>
 
 {% if "/page/all" in request.get_full_path in request.get_full_path %}
-  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" pagelink="{{pagelink}}">
   </info-url-external>
 {% else %}
-  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/{{ page.pid }}">
+  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" pagelink="{{pagelink}}">
   </info-url-external>
 {% endif %}
 

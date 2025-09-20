@@ -19,7 +19,7 @@ export default {
   mounted() {
     this.isExportVisible = this.localManifestCount >= 1;
 
-    this._onCanvasSwitch = (event) => {
+    this._onUserAnnotationsUpdate = (event) => {
       if (!event) return;
       const detail = event.detail || {};
 
@@ -34,10 +34,10 @@ export default {
       }
     };
 
-    window.addEventListener("canvasswitch", this._onCanvasSwitch);
+    window.addEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
   },
   beforeDestroy() {
-    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
+    window.removeEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
   }
 };
 </script>

@@ -1,25 +1,47 @@
 <template>
   <div class="rx-info-content">
     <div class="rx-info-content-label uk-flex-between rx-flex">
-      <span v-if="!!localUrls">{{ label }}</span>
-      <a :href="localUrls"
+      <span>{{ label }}</span>
+
+      <a v-if="fullurl"
+          :href="fullurl"
           target="_blank"
           rel="noopener"> 
         <span
           class="uk-label rx-label-copy"
-          v-if="!!localUrls"
           role="button"
           tabindex="0"
         >
-          <span uk-icon="icon: link-external; ratio: 0.6"></span>
-          Open
+          <span :uk-icon="`icon: ${icon}; ratio: 0.6`"></span>
+          {{btnlabel}}
+        </span>
+      </a>
+
+      <a v-else-if="!!localUrls"
+          :href="localUrls"
+          target="_blank"
+          rel="noopener"> 
+        <span
+          class="uk-label rx-label-copy"
+          role="button"
+          tabindex="0"
+        >
+          <span :uk-icon="`icon: ${icon}; ratio: 0.6`"></span>
+          {{btnlabel}}
         </span>
       </a>
     </div>
 
     <div class="rx-info-content-value">
       <a
-        v-if="!!localUrls"
+        v-if="fullurl"
+        :href="fullurl"
+        class="rx-anchor"
+        target="_blank"
+        rel="noopener"
+      >{{ fullurl }}</a>
+      <a
+        v-else-if="!!localUrls"
         :href="localUrls"
         class="rx-anchor"
         target="_blank"
@@ -32,10 +54,13 @@
 <script>
 
 export default {
-  name: "InfoUrlImageLink",
+  name: "InfoExport",
   props: {
     label:    { type: String, required: true },
-    pagelink: { type: String, required: true } // base IIIF image server
+    btnlabel: { type: String, required: true },
+    icon:    { type: String, required: true },
+    pagelink: { type: String, required: true }, // base IIIF image server
+    fullurl: { type: String, required: false } // if a fullurl is provided, use that
   },
   data() {
     return {

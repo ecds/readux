@@ -7,7 +7,7 @@ import InfoUrlSingle from './components/InfoUrlSingle.vue'
 import InfoUrlMultiple from './components/InfoUrlMultiple.vue'
 import InfoUrlImageLink from './components/InfoUrlImageLink.vue'
 import InfoUrlExternal from './components/InfoUrlExternal.vue'
-import VolumeExportAnnotationBtn from './components/VolumeExportAnnotationBtn.vue.vue'
+import VolumeExportAnnotationBtn from './components/VolumeExportAnnotationBtn.vue'
 
 var readux = new Vue({
   el: "#v-readux",

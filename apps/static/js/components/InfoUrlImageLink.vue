@@ -5,9 +5,11 @@
       <div>
         <span
           class="uk-label rx-label-copy"
-          @click="copyToClipboard"
+          @click="copyText"
           v-if="localUrls !== undefined"
-        >Copy</span>
+        >
+        <span uk-icon="icon: copy; ratio: 0.5"></span>
+        Copy</span>
       </div>
     </div>
     <div class="rx-info-content-value">
@@ -34,15 +36,16 @@ export default {
     };
   },
   methods: {
-    copyToClipboard() {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(this.localUrls)
-          .then(() => alert(`You have copied: ${this.localUrls}`))
-          .catch(() => alert("Something went wrong with copy."));
-      } else {
-        alert("Clipboard API not supported in this browser.");
+    async copyText() {
+      try {
+        await navigator.clipboard.writeText(this.localUrls);
+        if (window.UIkit?.notification) {
+          UIkit.notification({ message: "Copied!", status: "success", timeout: 1200 });
+        }
+      } catch (err) {
+        console.error("Copy failed:", err);
       }
-    }
+    },
   },
   mounted() {
     window.addEventListener("canvasswitch", (event) => {

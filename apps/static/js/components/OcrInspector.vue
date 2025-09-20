@@ -57,6 +57,8 @@
 <script>
 import axios from "axios";
 
+const OVERLAY_PREF_KEY = "ocrOverlayChecked"; // persist only USER-initiated preference
+
 export default {
   name: "OcrInspector",
   props: {
@@ -65,7 +67,7 @@ export default {
   data() {
     return {
       pagetext: "",
-      isLoading: false,
+      isLoading: true, // show loader until first ocrLoaded completes
       canvas: null,
       pageresource: null,
       localUrls: "",
@@ -87,6 +89,7 @@ export default {
     }
   },
   methods: {
+    // --- UI actions ---
     async copyText() {
       try {
         await navigator.clipboard.writeText(this.pagetext);
@@ -99,8 +102,16 @@ export default {
     },
 
     onOverlayToggle() {
+      // Only persist when the user can actually turn it on/off (OCR available)
+      if (this.hasOcrAvailable) {
+        try {
+          localStorage.setItem(OVERLAY_PREF_KEY, JSON.stringify(!!this.overlayChecked));
+        } catch {}
+      }
       this.applyOverlay(this.overlayChecked);
     },
+
+    // --- Overlay helpers ---
     getOcrNodes() {
       return document.querySelectorAll("div.openseadragon-canvas div span");
     },
@@ -131,7 +142,7 @@ export default {
         if (enabled) {
           n.style.backgroundColor = "white";
           n.style.fontWeight = "bold";
-          n.style.color = "rgb(149, 9, 83)";
+          n.style.color = "#1D3557";
           this.addBlockHandlers(n);
         } else {
           n.style.backgroundColor = "transparent";
@@ -142,22 +153,45 @@ export default {
       }
     },
 
-    async handleCanvasSwitch(detail) {
-      const nextCanvas = detail?.canvas;
+    // --- OCR extraction ---
+    extractPlainTextFromOcr(ocr) {
+      if (!ocr || !Array.isArray(ocr.items)) return "";
+      const scratch = document.createElement("div");
+      const texts = [];
 
+      for (const ann of ocr.items) {
+        const value = ann?.body?.[0]?.value;
+        if (!value) continue;
+        scratch.innerHTML = value;            // parse HTML + decode entities
+        const t = (scratch.textContent || "").trim();
+        if (t) texts.push(t);
+      }
+
+      // Join with spaces and normalize whitespace to remove hard line breaks / single-word lines
+      return texts.join(" ").replace(/\s+/g, " ").trim();
+    },
+
+    // --- Event handler ---
+    async handleOcrLoaded(detail) {
       this.isLoading = true;
+
+      const nextCanvas = detail?.canvas;
+      const ocrFromEvent = detail?.ocr;
+
       this.canvas = nextCanvas;
 
-      const availableFromEvent = typeof detail?.ocr !== "undefined" ? !!detail.ocr : null;
-
       try {
-        if (nextCanvas && nextCanvas !== "all") {
+        // Prefer OCR text from the event
+        let textFromEvent = this.extractPlainTextFromOcr(ocrFromEvent);
+
+        if (!textFromEvent && nextCanvas && nextCanvas !== "all") {
+          // Fallback to existing endpoint (kept intact)
           const { data } = await axios.get(`iiif/resource/${nextCanvas}`);
           this.pageresource = data.resource || null;
-          this.pagetext = data.text || "";
+          this.pagetext = (data.text || "").replace(/\s+/g, " ").trim(); // normalize whitespace too
         } else {
           this.pageresource = null;
-          this.pagetext = "";
+          this.pagetext = textFromEvent;
         }
 
         if (this.pagelink && nextCanvas) {
@@ -165,23 +199,36 @@ export default {
           this.can = nextCanvas;
         }
 
-        this.hasOcrAvailable = (availableFromEvent !== null) ? availableFromEvent : this.hasText;
+        // Determine OCR availability:
+        // - If event explicitly provided `ocr`, use its presence & non-empty items
+        // - Else fall back to whether we have text
+        const explicit = typeof ocrFromEvent !== "undefined";
+        this.hasOcrAvailable = explicit ? !!(ocrFromEvent?.items?.length) : this.hasText;
 
-        const overlayPossible = this.hasOcrAvailable && this.hasText && !this.isLoading;
-        if (!overlayPossible && this.overlayChecked) {
+        // Overlay handling:
+        if (!this.hasOcrAvailable || !this.hasText) {
+          // Force off overlay, but DO NOT overwrite saved user preference
           this.overlayChecked = false;
           this.applyOverlay(false);
+        } else {
+          // Restore last user-set preference
+          try {
+            const stored = JSON.parse(localStorage.getItem(OVERLAY_PREF_KEY));
+            if (typeof stored === "boolean") this.overlayChecked = stored;
+          } catch {}
+          if (this.overlayChecked) {
+            this.$nextTick(() => this.applyOverlay(true));
+          } else {
+            this.applyOverlay(false);
+          }
         }
-        if (overlayPossible && this.overlayChecked) {
-          this.$nextTick(() => this.applyOverlay(true));
-        } else if (!overlayPossible) {
-          this.applyOverlay(false);
-        }
-
       } catch (err) {
-        console.error("Failed to fetch page text:", err);
+        console.error("Failed to fetch/parse OCR text:", err);
         this.pagetext = "";
-        this.hasOcrAvailable = availableFromEvent !== null ? availableFromEvent : false;
+        // Respect explicit event info; otherwise assume no OCR
+        const explicit = typeof ocrFromEvent !== "undefined";
+        this.hasOcrAvailable = explicit ? !!(ocrFromEvent?.items?.length) : false;
+        // Turn off overlay but don't persist this programmatic change
         this.overlayChecked = false;
         this.applyOverlay(false);
       } finally {
@@ -190,13 +237,20 @@ export default {
     }
   },
   mounted() {
-    this._onCanvasSwitch = (event) => {
-      this.handleCanvasSwitch(event?.detail || {});
+    // Load stored user preference at startup (does not enable overlay by itself)
+    try {
+      const stored = JSON.parse(localStorage.getItem(OVERLAY_PREF_KEY));
+      if (typeof stored === "boolean") this.overlayChecked = stored;
+    } catch {}
+
+    // Listen for OCR events
+    this._onOcrLoaded = (event) => {
+      this.handleOcrLoaded(event?.detail || {});
     };
-    window.addEventListener("canvasswitch", this._onCanvasSwitch);
+    window.addEventListener("ocrLoaded", this._onOcrLoaded);
   },
   beforeDestroy() {
-    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
+    window.removeEventListener("ocrLoaded", this._onOcrLoaded);
     const nodes = this.getOcrNodes();
     for (let i = 0; i < nodes.length; i++) this.removeBlockHandlers(nodes[i]);
   }

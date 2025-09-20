@@ -22,7 +22,7 @@
     "source-map-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.3",
     "ts-loader": "^9.4.4",
-    "uikit": "^3.17.0",
+    "uikit": "^3.23.13",
     "uikit-icons": "^0.5.0",
     "vue-loader": "^15.11.1",
     "vue-style-loader": "^4.1.3",

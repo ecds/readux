@@ -1,6 +1,6 @@
 <h1 class="uk-text-large uk-text-bold uk-margin-small-bottom">Download and Export</h1>
 
-<info-export label="Open Page Image" pagelink="{{ pagelink }}" icon="link-external" btnlabel="Open"></info-export>
+<info-export label="Open Page Image" :pageonly="true" pagelink="{{ pagelink }}" icon="link-external" btnlabel="Open"></info-export>
 
 {% if volume.pdf %}
   <div class="rx-info-content">

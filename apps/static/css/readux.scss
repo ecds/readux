@@ -398,3 +398,9 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
     height: auto;
     object-fit: cover;
 }
+
+.cursor-default {
+  &:hover {
+    cursor: default !important;
+  }
+}

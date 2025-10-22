@@ -263,3 +263,32 @@ form#search-form {
   &:hover { background-color: darken($rx-color-mario-red, 10%); }
   &:active { background-color: darken($rx-color-mario-red, 25%); }
 }
+
+/* Volume grid specific styles */
+  /* square container for covers */
+  .cover-square {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* makes a perfect square */
+    background: #000;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .cover-square img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* fit image within the square */
+    object-position: center;
+    display: block;
+  }
+  .grid-item h2 {
+    margin-top: .5rem;
+    margin-bottom: .25rem;
+    line-height: 1.25;
+  }
+  .author-line {
+    color: #555;
+  }
+/* End */

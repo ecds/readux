@@ -67,9 +67,26 @@
   color: $color-black;
 }
 
-.content h1, .content h2, .content h3, .content h4, .content h5, .content h6 {
-  margin-top: 1.25rem !important;
-  margin-bottom: 0.5rem !important;
+$content-heading-sizes: (
+  h1: 2.5rem,
+  h2: 2rem,
+  h3: 1.75rem,
+  h4: 1.5rem,
+  h5: 1.25rem,
+  h6: 1rem
+);
+
+.content {
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  @each $heading, $size in $content-heading-sizes {
+    #{$heading} {
+      font-size: $size;
+    }
+  }
 }
 
 .content ul:first-of-type, 
@@ -99,4 +116,12 @@
 .indent-h4 a {
   color: $rx-color-midnight-blue !important;
   margin-left: 2.5rem;
+}
+
+.content ul { 
+  list-style: disc !important; 
+  padding-left: 1.75rem !important;
+  li {
+    margin-bottom: 0.5rem;
+  }
 }

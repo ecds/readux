@@ -4,16 +4,20 @@
     {% for volume in volumes %}
         <!-- Volume Item -->
         {% if volume.pid %}
+        <div>
           <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
-              <img src="{{ volume.canvas_set.first.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
-              <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }}</h2>
-              {% if volume.published_date or volume.published_date_edtf %}
-                <div class="color-black">{{ volume.published_date|default:volume.published_date_edtf }}</div>
-              {% endif %}
-              {% if volume.author %}<div class="color-black">{{ volume.author|truncatechars:150 }}</div>{% endif %}
-              <div class="color-black">Added {{ volume.created_at }}</div>
+              <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
+              <h2>{{ volume.label|default:"[no title]"|truncatechars:200 }} 
+                {% if volume.published_date or volume.published_date_edtf %}
+                  ({{ volume.published_date|default:volume.published_date_edtf }})
+                {% endif %}
+              </h2>
           </a>
-        {% endif %}
+          
+          {% if volume.author %}<div>{{ volume.author|truncatechars:150 }}</div>{% endif %}
+          <!-- <div class="color-black">Added {{ volume.created_at }}</div> -->
+          {% endif %}
+        </div>
       {% empty %}
         <div class="uk-width-1-1">There are no volumes available to browse.</div>
       {% endfor %}

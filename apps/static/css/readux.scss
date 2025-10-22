@@ -119,7 +119,10 @@ em { color: inherit !important; }
     &:hover { color: rgba($rx-color-midnight-blue, 0.8); }
   }
 
-  .icon-chevron-down { margin-left: 3px; }
+  .icon-chevron-down { 
+    margin-left: 3px;     
+    top: 1px;
+    position: relative;}
 }
 
 /* Breadcrumb dropdown */

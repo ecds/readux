@@ -68,19 +68,8 @@
                     <span uk-icon="icon:search"></span>
                 </button>
             </fieldset>
-            <fieldset class="uk-width-auto uk-padding-remove-left">
-                <ul class="uk-subnav uk-subnav-pill uk-margin-remove" uk-switcher="connect: #search-view-switcher; animation: uk-animation-fade">
-                    <li class="uk-active">
-                        <a href="#" aria-label="List view">
-                            <span uk-icon="icon:list"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" aria-label="Thumbnail view">
-                            <span uk-icon="icon:thumbnails"></span>
-                        </a>
-                    </li>
-                </ul>
+            <fieldset class="uk-width-auto">
+                {{ form.display }}
             </fieldset>
             <fieldset>
                 {{ form.sort }}
@@ -155,20 +144,19 @@
                     <div class="sui-item-heading" >{{ volumes.count }} result{{ volumes.count|pluralize }}</div>
                     <div class="sui-item-heading">{% include "snippets/pagination.html" %}</div>
                 </div>
-                <ul class="uk-switcher uk-margin-remove" id="search-view-switcher">
-                    <li>
+                {% with view_mode=form.display.value|default:'list' %}
+                    {% if view_mode == 'grid' %}
+                        <section class="thumbnail-view uk-margin-remove">
+                            {% include "snippets/_volumes_grid.html" with volumes=volumes %}
+                        </section>
+                    {% else %}
                         <ul class="uk-flex uk-flex-column uk-list-divider uk-padding-remove-left uk-margin-remove" id="search-results">
                             {% for volume in volumes %}
                                 {% include "snippets/_volumes_list.html" %}
                             {% endfor %}
                         </ul>
-                    </li>
-                    <li>
-                        <section class="thumbnail-view uk-margin-remove">
-                            {% include "snippets/_volumes_grid.html" with volumes=volumes %}
-                        </section>
-                    </li>
-                </ul>
+                    {% endif %}
+                {% endwith %}
                 <div class="uk-margin-bottom uk-margin-top sui-item-heading">
                     {% include "snippets/pagination.html" %}
                 </div>

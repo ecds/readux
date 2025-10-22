@@ -355,7 +355,7 @@ class VolumeSearchView(ListView, FormMixin):
             ),
         ),
     ]
-    defaults = {"sort": "label_alphabetical"}
+    defaults = {"sort": "label_alphabetical", "display": "list"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -16,7 +16,7 @@
         </div>
 
         <!-- Title -->
-        {% with full_title=volume.label|default:"Title Unavailable" %}
+        {% with full_title=volume.label|default:"[no title]" %}
           {% if full_title|length > 50 %}
             <h2 uk-tooltip="mode: click" title="{{ full_title }}">
               {{ full_title|truncatechars:50 }}
@@ -36,15 +36,15 @@
       </a>
 
       <!-- Authors -->
-      {% if volume.author %}
-        {% with author_str=volume.author|cut:";" %}
-          {% if author_str|length > 50 %}
-            <div class="author-line cursor-default" uk-tooltip="mode: click" title="{{ author_str }}">
-              {{ author_str|truncatechars:50 }}
+      {% if volume.authors and "[no author]" not in volume.authors %}
+        {% with authors_display=volume.authors|join:" | " %}
+          {% if authors_display|length > 50 %}
+            <div class="author-line cursor-default" uk-tooltip="mode: click" title="{{ authors_display }}">
+              {{ authors_display|truncatechars:50 }}
             </div>
           {% else %}
             <div class="author-line">
-              {{ author_str }}
+              {{ authors_display }}
             </div>
           {% endif %}
         {% endwith %}

@@ -22,7 +22,7 @@
           {{ collection.summary|truncatewords_html:50|safe }}
         </a>
       {% empty %}
-        There are no collections available to browse.
+        <div class="uk-width-1-1">There are no collections available to browse.</div>
       {% endfor %}
     </div>
   {% elif page.layout == 'List' %}

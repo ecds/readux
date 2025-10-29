@@ -19,7 +19,7 @@
         {% with full_title=volume.label|default:"[no title]" %}
           {% if full_title|length > 50 %}
             <h2 uk-tooltip="mode: click" title="{{ full_title }}">
-              {{ full_title|truncatechars:50 }}
+              {{ full_title }}
               {% if volume.published_date or volume.published_date_edtf %}
                 ({{ volume.published_date|default:volume.published_date_edtf }})
               {% endif %}
@@ -40,7 +40,7 @@
         {% with authors_display=volume.authors|join:" | " %}
           {% if authors_display|length > 50 %}
             <div class="author-line cursor-default" uk-tooltip="mode: click" title="{{ authors_display }}">
-              {{ authors_display|truncatechars:50 }}
+              {{ authors_display }}
             </div>
           {% else %}
             <div class="author-line">

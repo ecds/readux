@@ -9,7 +9,7 @@
         <!-- Cover in a square -->
         <div class="cover-square">
           <img
-            src="{{ volume.start_canvas.resource_id }}/full/600,/0/default.jpg"
+            src="{{ volume.start_canvas.thumbnail_crop_volume }}"
             alt="First page of {{ volume.label }}"
             onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"
           >

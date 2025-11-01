@@ -1,39 +1,36 @@
-{% load static %}
+{% load static readux_extras %}
 
 <div class="uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
   {% for volume in volumes %}
     {% if volume.pid %}
     <div>
       <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
-
         <!-- Cover in a square -->
         <div class="cover-square">
           <img
-            src="{{ volume.start_canvas.thumbnail_crop_volume }}"
+            src="{{ volume.start_canvas.resource_id }}/full/600,/0/default.jpg"
             alt="First page of {{ volume.label }}"
             onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"
           >
         </div>
+      </a>
 
-        <!-- Title -->
-        {% with full_title=volume.label|default:"[no title]" %}
+      {% with full_title=volume.label|default:"[no title]" year=volume|manifest_year %}
+        <div class="title-block">
           {% if full_title|length > 50 %}
-            <h2 uk-tooltip="mode: click" title="{{ full_title }}">
-              {{ full_title }}
-              {% if volume.published_date or volume.published_date_edtf %}
-                ({{ volume.published_date|default:volume.published_date_edtf }})
-              {% endif %}
+            <h2 class="volume-title" uk-tooltip="mode: click" title="{{ full_title }}">
+              <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">{{ full_title }}</a>
             </h2>
           {% else %}
-            <h2>
-              {{ full_title }}
-              {% if volume.published_date or volume.published_date_edtf %}
-                ({{ volume.published_date|default:volume.published_date_edtf }})
-              {% endif %}
+            <h2 class="volume-title">
+              <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">{{ full_title }}</a>
             </h2>
           {% endif %}
-        {% endwith %}
-      </a>
+          {% if year %}
+            <span class="volume-year">({{ year }})</span>
+          {% endif %}
+        </div>
+      {% endwith %}
 
       <!-- Authors -->
       {% if volume.authors and "[no author]" not in volume.authors %}

@@ -68,6 +68,9 @@
                     <span uk-icon="icon:search"></span>
                 </button>
             </fieldset>
+            <fieldset class="uk-width-auto">
+                {{ form.display }}
+            </fieldset>
             <fieldset>
                 {{ form.sort }}
             </fieldset>
@@ -141,11 +144,19 @@
                     <div class="sui-item-heading" >{{ volumes.count }} result{{ volumes.count|pluralize }}</div>
                     <div class="sui-item-heading">{% include "snippets/pagination.html" %}</div>
                 </div>
-                <ul class="uk-flex uk-flex-column uk-list-divider uk-padding-remove-left uk-margin-remove" id="search-results">
-                    {% for volume in volumes %}
-                        {% include "snippets/volume_result.html" %}
-                    {% endfor %}
-                </ul>
+                {% with view_mode=form.display.value|default:'list' %}
+                    {% if view_mode == 'grid' %}
+                        <section class="thumbnail-view uk-margin-remove">
+                            {% include "snippets/_volumes_grid.html" with volumes=volumes %}
+                        </section>
+                    {% else %}
+                        <ul class="uk-flex uk-flex-column uk-list-divider uk-padding-remove-left uk-margin-remove" id="search-results">
+                            {% for volume in volumes %}
+                                {% include "snippets/_volumes_list.html" %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
                 <div class="uk-margin-bottom uk-margin-top sui-item-heading">
                     {% include "snippets/pagination.html" %}
                 </div>

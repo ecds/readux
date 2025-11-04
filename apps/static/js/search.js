@@ -3,6 +3,7 @@
 
 let textInput;
 let sortElement;
+let displayElement;
 let relevanceSortOption;
 let defaultSortOption;
 let form;
@@ -36,6 +37,7 @@ window.addEventListener("DOMContentLoaded", () => {
     dateToggleSwitch = document.querySelector("input[type='checkbox']#toggle-date");
     dateRange = document.querySelector(".noUi-tooltip");
     sortElement = document.querySelector("select#id_sort");
+    displayElement = document.querySelector("select#id_display");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
     textInput = document.querySelector("input[type='search']");
@@ -44,6 +46,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Attach event listener to sort dropdown to auto-submit
     sortElement.addEventListener("change", handleSort);
+    if (displayElement) {
+        displayElement.addEventListener("change", () => form.submit());
+    }
 
     // Attach event listeners to text input to update sort
     textInput.addEventListener("input", autoUpdateSort);

@@ -73,11 +73,7 @@ class ManifestSearchForm(forms.Form):
             ("metadata", "Metadata only"),
             ("text", "Textual contents only"),
         ),
-        widget=forms.Select(
-            attrs={
-                "class": "uk-select",
-            },
-        ),
+        widget=forms.Select(attrs={"class": "uk-select"}),
     )
     language = FacetedMultipleChoiceField(
         label="Language",
@@ -121,9 +117,20 @@ class ManifestSearchForm(forms.Form):
             ("-label_alphabetical", "Title (Z-A)"),
             ("_score", "Relevance"),
         ),
+        widget=forms.Select(attrs={"class": "uk-select"}),
+    )
+    display = forms.ChoiceField(
+        label="View mode",
+        required=False,
+        choices=(
+            ("list", "List view"),
+            ("grid", "Thumbnail view"),
+        ),
+        initial="list",
         widget=forms.Select(
             attrs={
                 "class": "uk-select",
+                "aria-label": "Select view mode",
             },
         ),
     )

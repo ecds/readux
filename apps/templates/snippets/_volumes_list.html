@@ -1,0 +1,166 @@
+{% load readux_extras static %}
+
+<li class="uk-width-1-1@m uk-margin-small">
+    <div class="uk-grid-small uk-flex-top" uk-grid>
+        <div class="uk-width-auto@m thumbnail-container">
+            {% if volume.pid and volume.start_canvas.thumbnail_crop_volume %}
+                <a href="{% url 'volumeall' volume.pid %}" class="uk-display-block">
+                    <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="{{ volume.label }}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
+                </a>
+            {% endif %}
+        </div>
+        <div class="uk-width-expand@m">
+                {% if volume.pid %}
+                    <a href="{% url 'volumeall' volume.pid %}" class="grid-item">
+                        {% if 'highlight' in volume.meta and volume.meta.highlight.label %}
+                            {% for fragment in volume.meta.highlight.label %}
+                            <h2 class="uk-margin-remove">{{ fragment|safe }}</h2>
+                            {% endfor %}
+                        {% else %}
+                            <h2 class="uk-margin-remove">{{ volume.label|default:"[no title]" }}</h2>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    {% if 'highlight' in volume.meta and volume.meta.highlight.label %}
+                        {% for fragment in volume.meta.highlight.label %}
+                            <h2 class="uk-margin-remove">{{ fragment|safe }}</h2>
+                        {% endfor %}
+                    {% else %}
+                        <h2>{{ volume.label|default:"[no title]" }}</h2>
+                    {% endif %}
+                {% endif %}
+            <dl class="uk-margin-remove">
+                <div uk-grid>
+                    <div class="uk-width-expand@m">
+                       {% if volume.authors and "[no author]" not in volume.authors %}
+                        <div class="sui-item-heading">Author{{ volume.authors|pluralize }}</div>
+                        <dd>
+                            {% if 'highlight' in volume.meta and volume.meta.highlight.author %}
+                            {# --- Highlighted Author Rendering --- #}
+                            {% with plain_join=volume.meta.highlight.author|join:" | "|striptags %}
+                                {% if plain_join|length > 100 %}
+                                <ul>
+                                    <li uk-tooltip="mode: click; pos: left; " title="{{ plain_join }}" class="cursor-default">
+                                    {{ plain_join|truncatechars:100 }}
+                                    </li>
+                                </ul>
+                                {% else %}
+                                <ul>
+                                    <li>
+                                    {% for frag in volume.meta.highlight.author %}
+                                        {% if not forloop.first %} | {% endif %}
+                                        {{ frag|safe }}
+                                    {% endfor %}
+                                    </li>
+                                </ul>
+                                {% endif %}
+                            {% endwith %}
+                            {% else %}
+                            {# --- Normal Author Rendering --- #}
+                            {% with authors_plain=volume.authors|join:" | " %}
+                                {% if authors_plain|length > 100 %}
+                                <ul>
+                                    <li uk-tooltip="mode: click; pos: left; " title="{{ authors_plain }}" class="cursor-default">
+                                    {{ authors_plain|truncatechars:100 }}
+                                    </li>
+                                </ul>
+                                {% else %}
+                                <ul>
+                                    <li>{{ authors_plain }}</li>
+                                </ul>
+                                {% endif %}
+                            {% endwith %}
+                            {% endif %}
+                        </dd>
+                        {% endif %}
+                    </div>
+                </div>
+        {% if volume|has_inner_hits %}
+                <div class="sui-item-heading uk-margin-small-bottom">Full Text ({{volume.meta.inner_hits|group_by_canvas|length}} Page Matches)</div>
+                <!-- By default only show the first three or less page matches -->
+                {% for canvas in volume.meta.inner_hits|group_by_canvas|slice:":2" %}
+                    <div class="result-page">
+                        <div class="uk-flex uk-padding-small uk-margin-bottom" uk-grid>
+                            <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
+                            <div class="uk-flex-first page-number">
+                                p. {{ canvas.position }}
+                            </div>
+                            <div class="uk-flex-wrap-stretch">
+                                {% if canvas.highlights|length %}
+                                    <ul class="highlights uk-padding-remove uk-margin-remove">
+                                    {% for fragment in canvas.highlights %}
+                                        <li>{{ fragment|safe }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if volume.meta.inner_hits|group_by_canvas|length > 2 %}
+                    <!-- Use an accordion to display additional page matches beyond the first three -->
+                    <ul uk-accordion class="uk-margin-remove-top">
+                        <li>
+                            <a class="uk-accordion-title uk-text-decoration-none uk-text-large sui-item-heading title result-title" href>Show/Hide all {{volume.meta.inner_hits|group_by_canvas|length}} page matches</a>
+                            <div class="uk-accordion-content">
+                                {% for canvas in volume.meta.inner_hits|group_by_canvas|slice:"2:" %}
+                                    <div class="result-page">
+                                        <div class="uk-flex uk-padding-small uk-margin-bottom" uk-grid>
+                                            <a href="{% url 'page' volume=volume.pid page=canvas.pid %}">
+                                            <div class="uk-flex-first page-number">
+                                                p. {{ canvas.position }}
+                                            </div>
+                                            <div class="uk-flex-wrap-stretch">
+                                                {% if canvas.highlights|length %}
+                                                    <ul class="highlights uk-padding-remove uk-margin-remove">
+                                                    {% for fragment in canvas.highlights %}
+                                                        <li>{{ fragment|safe }}</li>
+                                                    {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    </ul>
+                {% endif %}
+
+        {% endif %}
+                {% if volume.published_date %}
+                    <div class="sui-item-heading">Published</div>
+                    <div>{{volume.published_date}}</div>
+                {% endif %}
+                {% if volume.languages and "[no language]" not in volume.languages %}
+                    <div class="sui-item-heading">Language{{volume.languages|pluralize}}</div>
+                    <div>
+                        <ul class="uk-margin-remove uk-padding-remove">
+                            {% for lang in volume.languages %}
+                                <li>{{ lang }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if volume.collections %}
+                    <div class="sui-item-heading">Collection{{volume.collections|pluralize}}</div>
+                    <div>
+                        <ul class="uk-margin-remove uk-padding-remove">
+                            {% for collection in volume.collections %}
+                                <li>{{ collection.label }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {# only show date added if it is the sort field #}
+                {% if "created_at" in request.GET.sort and volume.created_at %}
+                    <div class="sui-item-heading">Added</div>
+                    <div>{{volume.created_at}}</div>
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+</li>

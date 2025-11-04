@@ -20,6 +20,42 @@ def dict_item(dictionary, key):
 
 
 @register.filter
+def attr(obj, attr_name):
+    """Safely access an attribute on an object without raising if missing."""
+    try:
+        return getattr(obj, attr_name)
+    except AttributeError:
+        return None
+
+
+@register.filter
+def manifest_year(volume):
+    """Return a 4-digit published year from a manifest or hit object."""
+    # try standard published_date first
+    published = getattr(volume, "published_date", None)
+    if published:
+        # handle datetime/date objects with a year attribute
+        year = getattr(published, "year", None)
+        if year:
+            return f"{int(year):04d}"
+        # fall back to parsing string content
+        match = re.search(r"\d{4}", str(published))
+        if match:
+            return match.group(0)
+        return str(published)[:4]
+
+    # fall back to elasticsearch stored string (may be missing on some hits)
+    edtf = getattr(volume, "published_date_edtf", None)
+    if edtf:
+        match = re.search(r"\d{4}", str(edtf))
+        if match:
+            return match.group(0)
+        return str(edtf)[:4]
+
+    return ""
+
+
+@register.filter
 def has_inner_hits(volume):
     """Template filter to determine if there are any inner hits across the volume"""
     try:

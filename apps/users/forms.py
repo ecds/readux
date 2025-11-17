@@ -65,8 +65,5 @@ class ReaduxSocialSignupForm(SignupForm):
     )
 
     def signup(self, request, user):
-        user = super(ReaduxSocialSignupForm, self).save(request)
-        # cleaned_data = self.clean()
-        # user.name = cleaned_data["name"]
-        # user.save()
+        user = super().save(request)
         return user

@@ -124,7 +124,7 @@ class ManifestSearchForm(forms.Form):
         required=False,
         choices=(
             ("list", "List view"),
-            ("grid", "Thumbnail view"),
+            ("grid", "Grid view"),
         ),
         initial="list",
         widget=forms.Select(

@@ -162,7 +162,7 @@ em { color: inherit !important; }
 }
 
 /* Close icon */
-.uk-close { color: $rx-color-midnight-blue; @include interactive-color(white, color); }
+.uk-close { color: $rx-color-midnight-blue; @include interactive-color($rx-color-midnight-blue, color); }
 
 /* Slider */
 .uk-slider-items { gap: 4rem; }

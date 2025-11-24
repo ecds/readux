@@ -30,8 +30,20 @@
     <div class="overlay">
         <h1 class="uk-text-large uk-margin-remove" style="color: white; font-weight: bold;">{{ collection.label }}</h1>
         <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
-        <p class="uk-text-medium">{{ collection.summary|striptags|truncatechars:200 }}</p>
-        <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-full">Full Description</button>
+        {% with summary_plain=collection.summary|striptags %}
+          {% if summary_plain %}
+            <p class="uk-text-medium">
+              {% if summary_plain|length > 200 %}
+                {{ summary_plain|truncatechars:200 }}
+              {% else %}
+                {{ summary_plain }}
+              {% endif %}
+            </p>
+            {% if summary_plain|length > 200 %}
+              <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-full">Full Description</button>
+            {% endif %}
+          {% endif %}
+        {% endwith %}
 
         {# TODO: image metadata, style or remove #}
         {% if collection.collection_image_title %}<p>{{ collection.collection_image_title }}</p>{% endif %}
@@ -40,21 +52,25 @@
     </div>
   </div>
 
-  <div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
-    <div
-      class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
-      uk-height-viewport
-      style="background-image: url('/media/{{collection.header}}');"
-    >
-        <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
-        <div class="modal-overlay">
-            <div class="uk-width-1-1 uk-padding-large">
-                <h2 style="color: white; font-weight: bold;">{{ collection.label }}</h2>
-                {{ collection.summary|safe }}
+  {% with summary_plain=collection.summary|striptags %}
+    {% if summary_plain and summary_plain|length > 200 %}
+      <div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
+        <div
+          class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
+          uk-height-viewport
+          style="background-image: url('/media/{{collection.header}}');"
+        >
+            <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+            <div class="modal-overlay">
+                <div class="uk-width-1-1 uk-padding-large">
+                    <h2 style="color: white; font-weight: bold;">{{ collection.label }}</h2>
+                    {{ collection.summary|safe }}
+                </div>
             </div>
         </div>
-    </div>
-  </div>
+      </div>
+    {% endif %}
+  {% endwith %}
 
   <div class="uk-container">
     {% include "snippets/_volumes_page_information.html" %}

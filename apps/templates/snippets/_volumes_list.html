@@ -2,9 +2,9 @@
 
 <li class="uk-width-1-1@m uk-margin-small">
     <div class="uk-grid-small uk-flex-top" uk-grid>
-        <div class="uk-width-auto@m thumbnail-container">
+        <div class="uk-width-auto@m thumbnail-container grid-item">
             {% if volume.pid and volume.start_canvas.thumbnail_crop_volume %}
-                <a href="{% url 'volumeall' volume.pid %}" class="uk-display-block">
+                <a href="{% url 'volumeall' volume.pid %}" class="cover-square">
                     <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="{{ volume.label }}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
                 </a>
             {% endif %}

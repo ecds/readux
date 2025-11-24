@@ -121,3 +121,6 @@ $content-heading-sizes: (
     margin-bottom: 0.5rem;
   }
 }
+
+/* prevent the sidebar from overlapping content */
+.sidebar-sticky { z-index: 0; }

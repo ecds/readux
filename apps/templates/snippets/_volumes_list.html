@@ -147,12 +147,11 @@
                 {% endif %}
                 {% if volume.collections %}
                     <div class="sui-item-heading">Collection{{volume.collections|pluralize}}</div>
-                    <div>
-                        <ul class="uk-margin-remove uk-padding-remove">
-                            {% for collection in volume.collections %}
-                                <li>{{ collection.label }}</li>
-                            {% endfor %}
-                        </ul>
+                    <div class="uk-margin-remove">
+                        {% for collection in volume.collections %}
+                            {% if not forloop.first %} | {% endif %}
+                            {{ collection.label }}
+                        {% endfor %}
                     </div>
                 {% endif %}
                 {# only show date added if it is the sort field #}

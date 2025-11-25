@@ -16,7 +16,10 @@
                         {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
                             <div class="uk-panel">
                                 <a href="{% url 'collection' collection.pid %}" class="grid-item">
-                                    <img src="/media/{{ collection.thumbnail }}" alt="{{ collection.label }}">
+                                    <div class="cover-square uk-margin-small-bottom">
+                                        <img src="/media/{{ collection.thumbnail }}" alt="{{ collection.label }}">
+                                    </div>
+
                                     <h2>{{ collection.label }}</h2>
                                 </a>
                                 <div class="color-black">

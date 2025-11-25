@@ -16,7 +16,9 @@
                             {% if volume.pid %}
                                 <div class="uk-panel">
                                     <a href="{% url 'volumeall' volume.pid %}" class="grid-item">
-                                        <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
+                                        <div class="cover-square uk-margin-small-bottom">
+                                            <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
+                                        </div>
                                         <h2>{{ volume.label }}</h2>
                                     </a>
                                     <div class="color-black">{{ volume.published_date }}</div>

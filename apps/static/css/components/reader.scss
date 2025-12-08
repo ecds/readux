@@ -63,3 +63,13 @@
   border-radius: 4px;
   padding: 0.5rem;
 }
+
+.rx-collection-link {
+  color: $rx-color-midnight-blue !important;
+  font-weight: 500;
+  &:hover {
+    color: darken($rx-color-midnight-blue, 10%) !important;
+  }
+}
+
+.rx-collection-separator { margin: 0 0.35rem; color: $rx-color-cement-gray; }

@@ -32,9 +32,14 @@
           <div class="rx-info-content-label">Collections</div>
           <div class="rx-info-content-value">
             {% for col in volume.collections.all %}
-            <a class="uk-text-decoration-none" href="{% url 'collection' col.pid %}">
-              <div class="uk-label rx-label-copy">{{ col.label }}</div>
-            </a>
+              {% with col_label=col.label %}
+                {% if col_label|length > 30 %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}" uk-tooltip="mode: click" title="{{ col_label }}">{{ col_label|slice:":30" }}...</a>
+                {% else %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}">{{ col_label }}</a>
+                {% endif %}
+              {% endwith %}
+              {% if not forloop.last %}<span class="rx-collection-separator">|</span>{% endif %}
             {% endfor %}
           </div>
         </div>

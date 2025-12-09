@@ -1,4 +1,4 @@
-{% load split_to_bullets %}
+{% load split_to_bullets readux_extras %}
 
 <div class="rx-info-content rx-scrollable-area">
   <div class="rx-info-content-value">
@@ -102,16 +102,16 @@
                       {% with metadata.value|split_to_bullets as items %}
                         {% for item in items %}
                           {% if items|length == 1 %}
-                            {{item}}
+                            {{ item|spaced_semicolons }}
                           {% else %}
-                            <li class="uk-margin-remove-top">{{ item }}</li>
+                            <li class="uk-margin-remove-top">{{ item|spaced_semicolons }}</li>
                           {% endif %}
                         {% endfor %}
                       {% endwith %}
                     </ul>
                   </div>
                 {% else %}
-                  <div class="rx-info-content-value">{{ metadata.value }}</div>
+                  <div class="rx-info-content-value">{{ metadata.value|spaced_semicolons }}</div>
                 {% endif %}
                 
               </div>

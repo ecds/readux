@@ -120,3 +120,12 @@ def vimeo_embed_url(vimeo_url):
     # get the embed url from a vimeo link
     # i.e. https://vimeo.com/76979871 --> https://player.vimeo.com/video/76979871
     return re.sub(r"vimeo\.com\/(\d+)", r"player.vimeo.com/video/\1", vimeo_url)
+
+
+@register.filter
+def spaced_semicolons(value):
+    """Ensure a single space follows each semicolon in a metadata string."""
+    try:
+        return re.sub(r";\s*", "; ", str(value))
+    except TypeError:
+        return value

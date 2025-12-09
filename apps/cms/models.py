@@ -46,7 +46,7 @@ class CollectionsPage(Page):
         FieldPanel('paragraph', classname="full"),
         FieldPanel('layout', classname="full"),
     ]
-    initial = {"sort": "title", "order": "asc", "display": "grid"}
+    initial = {"sort": "title", "order": "asc", "display": "grid", "per_page": "20"}
     sort_fields = {
         "title": "label",
         "added": "created_at",
@@ -99,7 +99,15 @@ class CollectionsPage(Page):
         form = self.get_form(request)
         query_set = self.get_queryset(form, self.collections)
 
-        paginator = Paginator(query_set, 8) # Show 8 collections per page
+        per_page_default = int(self.initial.get("per_page", 20))
+        per_page = per_page_default
+        if form.is_valid():
+            try:
+                per_page = int(form.cleaned_data.get("per_page") or per_page_default)
+            except (TypeError, ValueError):
+                per_page = per_page_default
+
+        paginator = Paginator(query_set, per_page)
 
         page = request.GET.get("page", 1)
         try:

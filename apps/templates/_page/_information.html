@@ -16,7 +16,7 @@
         {% if volume.author|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Authors</div>
-          <div class="rx-info-content-value">{{ volume.author }}</div>
+          <div class="rx-info-content-value">{{ volume.author|spaced_semicolons }}</div>
         </div>
         {% endif %}
     

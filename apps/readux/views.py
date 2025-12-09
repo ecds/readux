@@ -335,7 +335,7 @@ class VolumeSearchView(ListView, FormMixin):
     form_class = ManifestSearchForm
     template_name = "search_results.html"
     context_object_name = "volumes"
-    paginate_by = 25
+    paginate_by = 20
     # default fields to search when using query box; ^ with number indicates a boosted field
     query_search_fields = ["pid", "label^5", "summary^2", "author"]
 
@@ -355,7 +355,7 @@ class VolumeSearchView(ListView, FormMixin):
             ),
         ),
     ]
-    defaults = {"sort": "label_alphabetical", "display": "list"}
+    defaults = {"sort": "label_alphabetical", "display": "list", "per_page": "20"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -403,6 +403,17 @@ class VolumeSearchView(ListView, FormMixin):
 
         kwargs["data"] = form_data
         return kwargs
+
+    def get_paginate_by(self, queryset):
+        """Allow per-page size selection via form."""
+        form = self.get_form()
+        default_per_page = int(self.defaults.get("per_page", 20))
+        if form.is_valid():
+            try:
+                return int(form.cleaned_data.get("per_page") or default_per_page)
+            except (TypeError, ValueError):
+                return default_per_page
+        return default_per_page
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)

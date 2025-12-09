@@ -52,6 +52,12 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
 class ManifestSearchForm(forms.Form):
     """Django form for searching Manifests via Elasticsearch"""
 
+    PER_PAGE_CHOICES = [
+        ("20", "20"),
+        ("40", "40"),
+        ("60", "60"),
+        ("100", "100"),
+    ]
     q = forms.CharField(
         label="Search for individual whole keywords. Multiple words will be searched as 'or' (e.g. Rome London = Rome or London).",
         required=False,
@@ -131,6 +137,18 @@ class ManifestSearchForm(forms.Form):
             attrs={
                 "class": "uk-select",
                 "aria-label": "Select view mode",
+            },
+        ),
+    )
+    per_page = forms.ChoiceField(
+        label="Items per page",
+        required=False,
+        choices=PER_PAGE_CHOICES,
+        initial="20",
+        widget=forms.Select(
+            attrs={
+                "class": "uk-select",
+                "aria-label": "Items per page",
             },
         ),
     )
@@ -255,6 +273,12 @@ class AllCollectionsForm(forms.Form):
         ("asc", "Ascending"),
         ("desc", "Descending"),
     ]
+    PER_PAGE_CHOICES = [
+        ("20", "20"),
+        ("40", "40"),
+        ("60", "60"),
+        ("100", "100"),
+    ]
     sort = forms.ChoiceField(
         label="Sort by",
         choices=SORT_CHOICES,
@@ -265,5 +289,12 @@ class AllCollectionsForm(forms.Form):
         label="Order",
         choices=ORDER_CHOICES,
         required=False,
+        widget=CustomDropdownSelect,
+    )
+    per_page = forms.ChoiceField(
+        label="Items per page",
+        choices=PER_PAGE_CHOICES,
+        required=False,
+        initial="20",
         widget=CustomDropdownSelect,
     )

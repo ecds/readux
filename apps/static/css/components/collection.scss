@@ -14,20 +14,18 @@
     background-size: cover;
     background-position: center;
     position: relative;
-    height: 50vh;
+    height: auto;
     color: $color-white;
 }
 
 .overlay {
     background: linear-gradient(to right, rgba($color-black, 0.8) 0%, rgba($color-black, 0.6) 100%);
-    height: 50vh;
     width: 33%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
+    height: auto;
+    min-height: 0;
     padding: 50px;
     box-sizing: border-box;
-    min-height: 0;
     color: $color-white;
 }
 

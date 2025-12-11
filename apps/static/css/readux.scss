@@ -462,3 +462,31 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
     color: #555;
   }
 /* End */
+
+.rx-line-height-lg {
+  line-height: 1.15em;
+}
+
+.rx-line-height-md {
+  line-height: 1em;
+}
+
+.rx-line-height-sm {
+  line-height: 0.85em;
+}
+
+.rx-collection-modal {
+  h1, h2, h3, h4, h5, h6, p {
+    color: $color-white;
+  }
+  a {
+    color: $rx-color-faded-mint;
+    text-decoration: underline;
+    @include link-variant($rx-color-faded-mint, 600, true);
+    &:hover,
+    &:active {
+      color: $color-white;
+      text-decoration: underline;
+    }
+  }
+}

@@ -54,14 +54,14 @@
 
   {% with summary_plain=collection.summary|striptags %}
     {% if summary_plain and summary_plain|length > 200 %}
-      <div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
+      <div id="modal-full" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
         <div
           class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
           uk-height-viewport
           style="background-image: url('/media/{{collection.header}}');"
         >
             <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
-            <div class="modal-overlay rx-collection-modal">
+            <div class="modal-overlay">
                 <div class="uk-width-1-1 uk-padding-large">
                     <h2 class="uk-text-bold">{{ collection.label }}</h2>
                     {{ collection.summary|safe }}

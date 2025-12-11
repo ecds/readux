@@ -162,7 +162,7 @@ em { color: inherit !important; }
 }
 
 /* Close icon */
-.uk-close { color: $rx-color-midnight-blue; @include interactive-color($rx-color-midnight-blue, color); }
+.uk-close { color: $rx-color-midnight-blue; &:hover { color: darken($rx-color-midnight-blue, 10%); } }
 
 /* Slider */
 .uk-slider-items { gap: 4rem; }
@@ -473,20 +473,4 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
 
 .rx-line-height-sm {
   line-height: 0.85em;
-}
-
-.rx-collection-modal {
-  h1, h2, h3, h4, h5, h6, p {
-    color: $color-white;
-  }
-  a {
-    color: $rx-color-faded-mint;
-    text-decoration: underline;
-    @include link-variant($rx-color-faded-mint, 600, true);
-    &:hover,
-    &:active {
-      color: $color-white;
-      text-decoration: underline;
-    }
-  }
 }

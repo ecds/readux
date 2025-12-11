@@ -1,7 +1,9 @@
 @import '../partials/colors';
+@import '../partials/_mixin.scss';
 
 #modal-full p {
-    color: $color-white;;
+    color: $color-white;
+    ;
 }
 
 #modal-full h2 {
@@ -91,11 +93,38 @@
     z-index: 1;
 }
 
-.uk-modal-close-full {
-    color: $color-white;
-    /* Set the close button color to white */
-    background: none;
-    /* Remove the background */
-    border: none;
-    /* Remove any borders */
+.rx-collection-modal {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+        color: $color-white;
+    }
+
+    h2 {
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: $rx-color-faded-mint;
+        text-decoration: underline;
+        @include link-variant($rx-color-faded-mint, 600, true);
+        &:hover,
+        &:active {
+            color: $color-white;
+            text-decoration: underline;
+        }
+    }
+
+    .uk-close {
+        color: $color-white;
+        &:hover {
+            color: darken($color-white, 10%);
+        }
+        background: none;
+        border: none;
+    }
 }

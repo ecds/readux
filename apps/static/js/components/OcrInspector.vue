@@ -173,6 +173,8 @@ export default {
 
     // --- Event handler ---
     async handleOcrLoaded(detail) {
+      // Reset any existing overlays before processing the new page to avoid stacking
+      this.applyOverlay(false);
       this.isLoading = true;
 
       const nextCanvas = detail?.canvas;

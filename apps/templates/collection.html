@@ -28,8 +28,8 @@
     style="background-image: url('/media/{{collection.header}}');"
   >
     <div class="overlay">
-        <h1 class="uk-text-large uk-margin-remove" style="color: white; font-weight: bold;">{{ collection.label }}</h1>
-        <div class="rx-title-tagline">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
+        <h1 class="uk-text-large uk-margin-remove uk-text-bold rx-line-height-lg">{{ collection.label }}</h1>
+        <div class="rx-title-tagline uk-margin-small-top">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
         {% with summary_plain=collection.summary|striptags %}
           {% if summary_plain %}
             <p class="uk-text-medium uk-margin-top">
@@ -54,7 +54,7 @@
 
   {% with summary_plain=collection.summary|striptags %}
     {% if summary_plain and summary_plain|length > 200 %}
-      <div id="modal-full" class="uk-modal-full uk-modal" uk-modal>
+      <div id="modal-full" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
         <div
           class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
           uk-height-viewport
@@ -63,7 +63,7 @@
             <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
             <div class="modal-overlay">
                 <div class="uk-width-1-1 uk-padding-large">
-                    <h2 style="color: white; font-weight: bold;">{{ collection.label }}</h2>
+                    <h2 class="uk-text-bold">{{ collection.label }}</h2>
                     {{ collection.summary|safe }}
                 </div>
             </div>

@@ -13,7 +13,13 @@
           <img src="/media/{{ collection.thumbnail }}"
                alt="Thumbnail image for collection {{ collection.label }}"
                onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';" />
-          <h2>{{ collection.label|default:"[no title]"|truncatechars:200 }}</h2>
+          {% with full_label=collection.label|default:"[no title]" %}
+            {% if full_label|length > 50 %}
+              <h2 uk-tooltip="title: {{ full_label }}; pos: top">{{ full_label|truncatechars:50 }}</h2>
+            {% else %}
+              <h2>{{ full_label }}</h2>
+            {% endif %}
+          {% endwith %}
           {% if collection.manifests.all %}
             <div class="color-black">
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
@@ -38,7 +44,13 @@
       <tbody>
         {% for collection in collections %}
           <tr class="clickable-row" data-href="{% url 'collection' collection.pid %}">
-            <td>{{ collection.label|default:"[no title]"|truncatechars:200 }}</td>
+            {% with full_label=collection.label|default:"[no title]" %}
+              {% if full_label|length > 50 %}
+                <td uk-tooltip="title: {{ full_label }}; pos: top">{{ full_label|truncatechars:50 }}</td>
+              {% else %}
+                <td>{{ full_label }}</td>
+              {% endif %}
+            {% endwith %}
             <td>
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </td>

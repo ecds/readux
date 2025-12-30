@@ -19,7 +19,7 @@
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </div>
           {% endif %}
-          {{ collection.summary|truncatewords_html:50|safe }}
+          {{ collection.summary|striptags|truncatewords:50 }}
         </a>
       {% empty %}
         <div class="uk-width-1-1">There are no collections available to browse.</div>
@@ -42,7 +42,7 @@
             <td>
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </td>
-            <td class="uk-table-expand">{{ collection.summary|truncatewords_html:50|safe }}</td>
+            <td class="uk-table-expand">{{ collection.summary|striptags|truncatewords:50 }}</td>
           </tr>
         {% empty %}
           There are no collections available to browse.

@@ -355,7 +355,7 @@ class VolumeSearchView(ListView, FormMixin):
             ),
         ),
     ]
-    defaults = {"sort": "label_alphabetical", "display": "list", "per_page": "20"}
+    defaults = {"sort": "label_alphabetical", "display": "list", "per_page": "60"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

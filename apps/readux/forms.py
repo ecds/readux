@@ -144,7 +144,7 @@ class ManifestSearchForm(forms.Form):
         label="Items per page",
         required=False,
         choices=PER_PAGE_CHOICES,
-        initial="20",
+        initial="60",
         widget=forms.Select(
             attrs={
                 "class": "uk-select",

@@ -247,6 +247,12 @@ class AllVolumesForm(forms.Form):
         ("asc", "Ascending"),
         ("desc", "Descending"),
     ]
+    PER_PAGE_CHOICES = [
+        ("20", "20"),
+        ("40", "40"),
+        ("60", "60"),
+        ("100", "100"),
+    ]
     sort = forms.ChoiceField(
         label="Sort by",
         choices=SORT_CHOICES,
@@ -257,6 +263,13 @@ class AllVolumesForm(forms.Form):
         label="Order",
         choices=ORDER_CHOICES,
         required=False,
+        widget=CustomDropdownSelect,
+    )
+    per_page = forms.ChoiceField(
+        label="Items per page",
+        choices=PER_PAGE_CHOICES,
+        required=False,
+        initial="60",
         widget=CustomDropdownSelect,
     )
 
@@ -295,6 +308,6 @@ class AllCollectionsForm(forms.Form):
         label="Items per page",
         choices=PER_PAGE_CHOICES,
         required=False,
-        initial="20",
+        initial="60",
         widget=CustomDropdownSelect,
     )

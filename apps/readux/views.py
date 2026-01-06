@@ -37,7 +37,7 @@ class CollectionDetail(DetailView, FormMixin):
     slug_url_kwarg = "collection"
     form_class = AllVolumesForm
     model = Collection
-    initial = {"sort": "title", "order": "asc", "display": "grid"}
+    initial = {"sort": "title", "order": "asc", "display": "grid", "per_page": "60"}
     sort_fields = {
         "title": "label",
         "author": "author",
@@ -60,9 +60,9 @@ class CollectionDetail(DetailView, FormMixin):
 
         return kwargs
 
-    def get_volumes(self):
+    def get_volumes(self, form=None):
         """Get the sorted set of volumes to display"""
-        form = self.get_form()
+        form = form or self.get_form()
         collection = self.get_object()
         queryset = collection.manifests.all()
 
@@ -93,11 +93,19 @@ class CollectionDetail(DetailView, FormMixin):
     def get_context_data(self, **kwargs):
         """Context function."""
         context = super().get_context_data(**kwargs)
+        form = self.get_form()
+        volumes = self.get_volumes(form=form)
 
-        volumes = self.get_volumes()
+        per_page_default = int(self.initial.get("per_page", 60))
+        per_page = per_page_default
+        if form.is_valid():
+            try:
+                per_page = int(form.cleaned_data.get("per_page") or per_page_default)
+            except (TypeError, ValueError):
+                per_page = per_page_default
 
         # add paginator manually since this isn't a ListView
-        paginator = Paginator(volumes, 8)  # Show 8 volumes per page
+        paginator = Paginator(volumes, per_page)
 
         page = self.request.GET.get("page", 1)
         try:
@@ -113,17 +121,7 @@ class CollectionDetail(DetailView, FormMixin):
         context.update(
             {
                 "volumes": volumes,
-                "user_annotation": UserAnnotation.objects.filter(
-                    owner_id=self.request.user.id
-                ),
-                "paginator_range": paginator.get_elided_page_range(
-                    page, on_each_side=2
-                ),
-            }
-        )
-        context.update(
-            {
-                "volumes": volumes,
+                "form": form,
                 "user_annotation": UserAnnotation.objects.filter(
                     owner_id=self.request.user.id
                 ),
@@ -355,7 +353,7 @@ class VolumeSearchView(ListView, FormMixin):
             ),
         ),
     ]
-    defaults = {"sort": "label_alphabetical", "display": "list", "per_page": "20"}
+    defaults = {"sort": "label_alphabetical", "display": "list", "per_page": "60"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

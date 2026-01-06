@@ -31,10 +31,10 @@
         <div class="rx-info-content">
           <div class="rx-info-content-label">Collections</div>
           <div class="rx-info-content-value">
-            {% for col in volume.collections.all %}
+            {% for col in volume.collections.all|dictsort:"label" %}
               {% with col_label=col.label %}
-                {% if col_label|length > 30 %}
-                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}" uk-tooltip="mode: click" title="{{ col_label }}">{{ col_label|slice:":30" }}...</a>
+                {% if col_label|length > 25 %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}" uk-tooltip="mode: click" title="{{ col_label }}">{{ col_label|slice:":25" }}...</a>
                 {% else %}
                   <a class="rx-collection-link" href="{% url 'collection' col.pid %}">{{ col_label }}</a>
                 {% endif %}
@@ -51,7 +51,7 @@
           <div class="rx-info-content-value">
             <ul>
               {% for language in volume.languages.all %}
-              <li>{{ language.name }}</li>
+              <li>{{ language.name|spaced_semicolons }}</li>
               {% endfor %}
             </ul>
           </div>
@@ -61,7 +61,9 @@
         {% if volume.published_city|length or volume.publisher|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
-          <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
+          <div class="rx-info-content-value">
+            {{ volume.published_city|strip_trailing_commas|spaced_semicolons }} : {{ volume.publisher|strip_trailing_commas|spaced_semicolons }}
+          </div>
         </div>
         {% endif %}
     

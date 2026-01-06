@@ -129,3 +129,12 @@ def spaced_semicolons(value):
         return re.sub(r";\s*", "; ", str(value))
     except TypeError:
         return value
+
+
+@register.filter
+def strip_trailing_commas(value):
+    """Remove any trailing commas and surrounding whitespace."""
+    try:
+        return re.sub(r",\s*$", "", str(value))
+    except TypeError:
+        return value

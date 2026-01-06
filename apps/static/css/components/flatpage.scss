@@ -85,10 +85,13 @@ $content-heading-sizes: (
   }
 }
 
-.content ul:first-of-type, 
 .content li:first-of-type, 
 .content p:first-of-type {
   margin-top: 0;
+}
+
+.content ul:first-of-type {
+  margin-top: 0.5rem;
 }
 
 .content li:last-of-type {
@@ -115,11 +118,18 @@ $content-heading-sizes: (
 }
 
 .content ul, .content ol { 
-  list-style: disc !important; 
   padding-left: 1.75rem !important;
   li {
     margin-bottom: 0.5rem !important;
   }
+}
+
+.content ul {
+  list-style: disc !important; 
+}
+
+.content ol {
+  list-style: decimal !important; 
 }
 
 blockquote {

@@ -60,7 +60,7 @@ main { flex-grow: 1; }
 .paragraph { color: $rx-color-midnight-blue; line-height: normal; }
 .title { color: $rx-color-midnight-blue; font-size: x-large; font-weight: bold; }
 .hero { padding-top: 15vh; color: $color-white; }
-.uk-container h2 { margin-bottom: 1rem;}
+.uk-container h2 { margin-bottom: 0.35rem;}
 
 /* Utilities */
 .slash-gap { margin: 0 0.5rem; }
@@ -475,6 +475,7 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
   }
   .author-line {
     color: #555;
+    line-height: 1.25;
   }
 /* End */
 

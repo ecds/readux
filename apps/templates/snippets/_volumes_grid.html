@@ -16,20 +16,19 @@
       </a>
 
       {% with full_title=volume.label|default:"[no title]" year=volume|manifest_year %}
-        <div class="title-block">
-          {% if full_title|length > 50 %}
-            <h2 class="volume-title" uk-tooltip="mode: click" title="{{ full_title }}">
-              <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">{{ full_title }}</a>
-            </h2>
-          {% else %}
-            <h2 class="volume-title">
-              <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">{{ full_title }}</a>
-            </h2>
-          {% endif %}
-          {% if year %}
-            <span class="volume-year">({{ year }})</span>
-          {% endif %}
-        </div>
+        {% if full_title|length > 50 %}
+          <h2 class="volume-title-inline" uk-tooltip="mode: click" title="{{ full_title }}{% if year %} ({{ year }}){% endif %}">
+            <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
+              {{ full_title }}{% if year %} ({{ year }}){% endif %}
+            </a>
+          </h2>
+        {% else %}
+          <h2 class="volume-title-inline">
+            <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
+              {{ full_title }}{% if year %} ({{ year }}){% endif %}
+            </a>
+          </h2>
+        {% endif %}
       {% endwith %}
 
       <!-- Authors -->

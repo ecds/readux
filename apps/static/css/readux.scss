@@ -233,6 +233,16 @@ em { color: inherit !important; }
   p { margin: 0; }
 }
 
+.collection-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
 /* List view table */
 .list-view-table {
   margin-left: -0.5rem;

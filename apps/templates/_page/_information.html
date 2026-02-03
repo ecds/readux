@@ -33,7 +33,7 @@
           <div class="rx-info-content-value">
             {% for col in volume.collections.all|dictsort:"label" %}
               {% with col_label=col.label %}
-                {% if col_label|length > 25 %}
+                {% if col_label|length > 40 %}
                   <a class="rx-collection-link" href="{% url 'collection' col.pid %}" uk-tooltip="mode: click" title="{{ col_label }}">{{ col_label|slice:":25" }}...</a>
                 {% else %}
                   <a class="rx-collection-link" href="{% url 'collection' col.pid %}">{{ col_label }}</a>

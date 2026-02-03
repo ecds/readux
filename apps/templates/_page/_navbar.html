@@ -34,7 +34,6 @@
                   </ul>
                 </div>
               </li>
-              <li>Collections</li>
             {% elif collections|length == 1 %}
               {% with col=collections.0 %}
                 <li><a href="{% url 'collection' col.pid %}">{{ col.label|default:"Collection" }}</a></li>

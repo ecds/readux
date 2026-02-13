@@ -105,7 +105,9 @@ For the full text see https://creativecommons.org/licenses/by-sa/4.0/legalcode. 
 	2. Make FONTSIZE optional. 
 	3. Add "strikethrough" to list of allowed values for FONTSTYLE.
 -->
-<xsd:schema xmlns="http://www.loc.gov/standards/alto/ns-v4#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" targetNamespace="http://www.loc.gov/standards/alto/ns-v4#" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.2">
+<xsd:schema xmlns="http://www.loc.gov/standards/alto/ns-v4#"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xlink="http://www.w3.org/1999/xlink" targetNamespace="http://www.loc.gov/standards/alto/ns-v4#" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.2">
 	<xsd:import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://www.loc.gov/standards/xlink/xlink.xsd"/>
 	<xsd:element name="alto" type="altoType">
 		<xsd:annotation>
@@ -440,7 +442,6 @@ For the full text see https://creativecommons.org/licenses/by-sa/4.0/legalcode. 
 				<xsd:documentation>Correction Status. Indicates whether manual correction has been done or not. The correction status should be recorded at the highest level possible (Block, TextLine, String).</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attributeGroup ref="xlink:simpleLink"/>
 	</xsd:complexType>
 	<xsd:complexType name="SPType">
 		<xsd:annotation>
@@ -640,7 +641,7 @@ For the full text see https://creativecommons.org/licenses/by-sa/4.0/legalcode. 
 			<xsd:enumeration value="fixed"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:simpleType name="MeasurementUnitType">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -658,7 +659,7 @@ For the full text see https://creativecommons.org/licenses/by-sa/4.0/legalcode. 
 				on which the layout is described. Incase the original image is not known
 				the scaling factor can be calculated based on total width and height of 
 				the image and the according information of the PAGE element.
-		</xsd:documentation>
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="pixel"/>

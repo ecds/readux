@@ -19,13 +19,13 @@
         {% if full_title|length > 50 %}
           <h2 class="volume-title-inline" uk-tooltip="mode: click" title="{{ full_title }}{% if year %} ({{ year }}){% endif %}">
             <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
-              {{ full_title }}{% if year %} ({{ year }}){% endif %}
+              <span class="volume-title__text">{{ full_title|truncatechars:40 }}</span>{% if year %}<span class="volume-title__year"> ({{ year }})</span>{% endif %}
             </a>
           </h2>
         {% else %}
           <h2 class="volume-title-inline">
             <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
-              {{ full_title }}{% if year %} ({{ year }}){% endif %}
+              <span class="volume-title__text">{{ full_title|truncatechars:40 }}</span>{% if year %}<span class="volume-title__year"> ({{ year }})</span>{% endif %}
             </a>
           </h2>
         {% endif %}

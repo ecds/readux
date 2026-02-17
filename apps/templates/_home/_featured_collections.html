@@ -19,9 +19,22 @@
                                     <div class="cover-square uk-margin-small-bottom">
                                         <img src="/media/{{ collection.thumbnail }}" alt="{{ collection.label }}">
                                     </div>
-
-                                    <h2>{{ collection.label }}</h2>
                                 </a>
+                                {% with full_label=collection.label|default:"[no title]" %}
+                                    {% if full_label|length > 60 %}
+                                        <h2 class="volume-title-inline" uk-tooltip="mode: click" title="{{ full_label }}">
+                                            <a class="volume-title__link" href="{% url 'collection' collection.pid %}">
+                                                <span class="volume-title__text">{{ full_label|truncatechars:60 }}</span>
+                                            </a>
+                                        </h2>
+                                    {% else %}
+                                        <h2 class="volume-title-inline">
+                                            <a class="volume-title__link" href="{% url 'collection' collection.pid %}">
+                                                <span class="volume-title__text">{{ full_label|truncatechars:60 }}</span>
+                                            </a>
+                                        </h2>
+                                    {% endif %}
+                                {% endwith %}
                                 <div class="color-black">
                                     {% with collection.manifests.all.count as n_volumes %}
                                         {{ n_volumes }} Volume{{ n_volumes|pluralize }}

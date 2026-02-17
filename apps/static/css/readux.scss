@@ -445,18 +445,15 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
     margin-top: .5rem;
     margin-bottom: .25rem;
     line-height: 1.25;
-    display: -webkit-box;
-    -webkit-line-clamp: 3; /* clamp title to three lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
   }
   .volume-title__link {
     color: $rx-color-midnight-blue;
     font-weight: 600;
     font-size: medium;
     text-decoration: underline;
+  }
+  .volume-title__year {
+    white-space: nowrap;
   }
   .volume-title__link:hover {
     color: $rx-color-midnight-blue;

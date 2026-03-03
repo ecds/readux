@@ -74,12 +74,12 @@ main { flex-grow: 1; }
 /* -------------------------------------------------------------------------- */
 .uk-link, a {
   color: $rx-color-midnight-blue;
-  text-decoration: underline;
+  // text-decoration: underline;
   transition: color 0.1s ease;
   &:hover { color: rgba($rx-color-midnight-blue, 0.8); }
 }
 
-a:hover { text-decoration: initial !important; }
+// a:hover { text-decoration: initial !important; }
 
 .text-anchor { @include link-variant($rx-color-mario-red, 600, false); text-decoration: underline; }
 .text-anchor-blue { @include link-variant($rx-color-midnight-blue, 700, true); }
@@ -116,7 +116,7 @@ em { color: inherit !important; }
 
   a {
     color: $rx-color-midnight-blue;
-    text-decoration: underline;
+    // text-decoration: underline;
     transition: color 0.1s ease;
     &:hover { color: rgba($rx-color-midnight-blue, 0.8); }
   }

@@ -73,3 +73,19 @@
 }
 
 .rx-collection-separator { margin: 0 0.35rem; color: $rx-color-cement-gray; }
+
+.uk-modal-close-full {
+  margin: 25px 22px 0px 0px !important;
+  padding: 5px;
+  &:hover {
+    background-color: #e1f4da;
+  }
+}
+
+.uk-tab::before {
+  right: 240px;
+}
+
+.uk-search {
+  padding-right: 10px;
+}

@@ -1,9 +1,11 @@
+@import '../partials/colors';
+
 .custom-modal .uk-modal-dialog {
   width: 400px;
   padding: 20px;
 }
 .modal-header {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   padding: 20px;
   text-align: center;
 }
@@ -20,7 +22,7 @@
 .uk-input-icon span {
   position: absolute;
   padding-left: 10px;
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
 }
 .uk-divider {
   margin: 20px 0;
@@ -29,14 +31,8 @@
   margin-bottom: 10px;
   width: 100%;
 }
-.uk-modal-close-default {
-
-}
-.uk-link {
-  color: #1D3557;
-}
 .help-link {
-  color: #1D3557;
+  color: $rx-color-midnight-blue;
   display: block;
   text-align: center;
   margin-top: 20px;
@@ -44,7 +40,6 @@
 .sso-text {
   margin-bottom: 20px;
   text-align: center;
-  // color: #1D3557;
 }
 .sso-buttons .uk-grid {
   gap: 10px;
@@ -62,9 +57,9 @@
   gap: 10px;
 }
 .sign-in-btn {
-  background-color: #1D3557;
-  color: #F1FAEE;
+  background-color: $rx-color-midnight-blue;
+  color: $rx-color-faded-mint;
   &:hover {
-    background-color: darken(#1D3557, 10%);
+    background-color: darken($rx-color-midnight-blue, 10%);
   }
 }

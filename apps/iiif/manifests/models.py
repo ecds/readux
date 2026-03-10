@@ -273,6 +273,17 @@ class Manifest(IiifBase):
         # indexes = [GinIndex(fields=['search_vector'])]
 
     @property
+    def authors(self):
+        """Convert authors string into list
+
+        :return: List of authors or ["[no author]"] if author field is empty
+        :rtype: list
+        """
+        if self.author:
+            return [s.strip() for s in self.author.split(";")]
+        return ["[no author]"]
+
+    @property
     def publisher_bib(self):
         """Concatenated property for bib citation.
 

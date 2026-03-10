@@ -1,0 +1,128 @@
+@import '../partials/colors';
+@import '../partials/_mixin.scss';
+
+#modal-full p {
+    color: $color-white;
+    ;
+}
+
+#modal-full h2 {
+    font-size: xx-large;
+}
+
+.full-width-bg {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: auto;
+    color: $color-white;
+}
+
+.overlay {
+    background: linear-gradient(to right, rgba($color-black, 0.8) 0%, rgba($color-black, 0.6) 100%);
+    width: 33%;
+    position: relative;
+    height: auto;
+    min-height: 0;
+    padding: 50px;
+    box-sizing: border-box;
+    color: $color-white;
+}
+
+.overlay h1 {
+    font-size: 2rem;
+    /* Reduced title size */
+    margin-bottom: 15px;
+    color: $color-white;
+
+}
+
+.overlay p {
+    font-size: 1rem;
+    /* Adjusted font size */
+    line-height: 1.5;
+    /* Reduced line-height */
+    color: $color-white;
+}
+
+.description-button {
+    margin-top: 20px;
+    background-color: $rx-color-mario-red;
+    /* Removed gradient background */
+    border: none;
+    color: $color-white;
+    font-weight: bold;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.modal-bg {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    color: $color-white;
+}
+
+.modal-overlay {
+    background: rgba($color-black, 0.6);
+    /* Dark overlay */
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 50px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay h2,
+.modal-overlay p {
+    position: relative;
+    z-index: 1;
+}
+
+.rx-collection-modal {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p {
+        color: $color-white;
+    }
+
+    h2 {
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: $rx-color-faded-mint;
+        text-decoration: underline;
+        @include link-variant($rx-color-faded-mint, 600, true);
+        &:hover,
+        &:active {
+            color: $color-white;
+            text-decoration: underline;
+        }
+    }
+
+    .uk-close {
+        color: $color-white;
+        &:hover {
+            color: darken($color-white, 10%);
+        }
+        background: none;
+        border: none;
+    }
+}

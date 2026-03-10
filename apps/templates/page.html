@@ -5,13 +5,7 @@
 {% load sass_tags %}
 
 {% block extra_css %}
-<style>
-  #rx-nav {
-    display: none;
-  }
-</style>
-<link type="text/css" href="{% sass_src 'css/readux2/reader.scss' %}" rel="stylesheet">
-<link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/components/reader.scss' %}" rel="stylesheet">
 {% endblock extra_css %}
 
 {% block nav %}
@@ -26,8 +20,8 @@
 <div id="modal-search" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    <v-volume-search pid="{{ volume.pid }}"></v-volume-search>
-    <v-volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></v-volume-annotations>
+    <volume-search pid="{{ volume.pid }}"></volume-search>
+    <volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></volume-annotations>
   </div>
 </div>
 <!-- uiAction search -->
@@ -57,23 +51,14 @@
 </div>
 <!-- uiAction urls and exports -->
 
-<!-- uiAction layers -->
-<div id="modal-layers" class="reader-modal" uk-modal>
+<!-- uiAction ocr -->
+<div id="modal-ocr" class="reader-modal" uk-modal>
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    {% include '_page/_layers.html' %}
+    {% include '_page/_ocr.html' %}
   </div>
 </div>
-<!-- uiAction layers -->
-
-<!-- uiAction layers -->
-<div id="modal-layers2" class="reader-modal" uk-modal>
-  <div class="uk-modal-dialog uk-padding-small">
-    <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
-    {% include '_page/_visibility.html' %}
-  </div>
-</div>
-<!-- uiAction layers -->
+<!-- uiAction ocr -->
 
 {% endblock inner %}
 {% endblock content %}
@@ -92,110 +77,6 @@
 {% endblock viewer %}
 
 {% block extra_javascript %}
-<!-- <script src="{% static 'js/ecds-annotator.min.js' %}"></script> -->
-<script
-  src="https://code.jquery.com/jquery-3.3.1.js"
-  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-  crossorigin="anonymous"></script>
-
-<script type="text/javascript">
-  function preventSeadragonEvents() {
-    const ocrLayers = document.querySelectorAll("div.openseadragon-canvas");
-    for (let i = 0; i < ocrLayers.length; i++) {
-      ocrLayers[i].addEventListener("mousedown", (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-      });
-
-      ocrLayers[i].addEventListener("mousemove", (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-      });
-
-      ocrLayers[i].addEventListener("mouseup", (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-      });
-    }
-  }
-
-  function toggleOCR() {
-    const ocrCheckbox = document.querySelector("#ocr-overlay");
-    const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-    for (let i = 0; i < nodeList.length; i++) {
-      if (ocrCheckbox.checked) {
-        nodeList[i].style.backgroundColor = "white";
-        nodeList[i].style.fontWeight = "bold";
-        nodeList[i].style.color = "rgb(149, 9, 83)";
-
-        nodeList[i].addEventListener("mouseup", (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-        });
-
-        nodeList[i].addEventListener("mousemove", (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-        });
-
-        nodeList[i].addEventListener("mousedown", (event) => {
-          event.stopPropagation();
-          event.preventDefault();
-        });
-        
-      } else {
-        nodeList[i].style.backgroundColor = "transparent";
-        nodeList[i].style.fontWeight = "";
-        nodeList[i].style.color = "transparent";
-      }
-    }
-  }
-
-function showOCR() {
-  preventSeadragonEvents();
-  const nodeList = document.querySelectorAll("div.openseadragon-canvas div span");
-  for (let i = 0; i < nodeList.length; i++) {
-    nodeList[i].style.backgroundColor = "white";
-    nodeList[i].style.fontWeight = "bold";
-    nodeList[i].style.color = "rgb(149, 9, 83)";
-  }
-}
-
-function hideOCR() {
-  const nodeList2 = document.querySelectorAll("div.openseadragon-canvas div span");
-  for (let i = 0; i < nodeList2.length; i++) {
-    nodeList2[i].style.backgroundColor = "transparent";
-    nodeList2[i].style.fontWeight = "";
-    nodeList2[i].style.color = "transparent";
-  }
-}
-
-// Set up a MutationObserver to watch for changes in the webpage
-function observeWebpageUpdates() {
-  const targetElement = document.body; // Observe the entire body for changes
-
-  const observer = new MutationObserver(() => {
-    const ocrCheckbox = document.querySelector("#ocr-overlay");
-    if (ocrCheckbox && ocrCheckbox.checked) {
-      console.log("Webpage updated! Showing OCR...");
-      showOCR(); // Automatically show OCR when the toggle is ON
-    }
-  });
-
-  // Configure the observer to watch for changes
-  observer.observe(targetElement, {
-    attributes: true, // Watch for attribute changes
-    childList: true, // Watch for changes in children
-    subtree: true, // Watch for changes in descendant elements
-  });
-
-  console.log("MutationObserver is set up for the entire webpage!");
-}
-
-// Initialize the observer
-observeWebpageUpdates();
-</script>
-
 <script type="text/javascript">
 window.onload = function() {
   const options = {
@@ -217,12 +98,12 @@ window.onload = function() {
         id: 'action-links',
         tooltipContent: 'Export',
         onClick: () => UIkit.modal('#modal-urls').show(),
-        icon: "<span uk-icon='icon: download'></span>"
+        icon: "<span uk-icon='icon: cloud-download'></span>"
       }, {
-        id: 'action-layers',
-        tooltipContent: 'Layers',
-        onClick: () => UIkit.modal('#modal-layers').show(),
-        icon: "<span uk-icon='icon: album'></span>",
+        id: 'action-ocr',
+        tooltipContent: 'OCR Options',
+        onClick: () => UIkit.modal('#modal-ocr').show(),
+        icon: "<span uk-icon='icon: file-text'></span>",
         hideOnAll: true
       }
     ]
@@ -239,11 +120,4 @@ window.onload = function() {
 }
 </script>
 
-<script type="text/javascript">
-  {% if request.GET.q in request.get_full_path %}
-    UIkit.offcanvas($('#offcanvas-usage')).show();
-    fetchResults();
-    // document.getElementById('manifest-search-form').submit();
-  {% endif %}
-</script>
 {% endblock extra_javascript %}

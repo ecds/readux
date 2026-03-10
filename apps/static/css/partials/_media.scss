@@ -1,0 +1,25 @@
+/* ========================================================================== */
+/* RESPONSIVE MEDIA QUERIES                                               */
+/* ========================================================================== */
+
+@media (max-width: 639px) { .uk-logo { padding: 0; } }
+
+@media (min-width: 640px) {
+  .rx-splash { display: flex; flex-direction: column; align-self: flex-start; position: sticky; top: 0; justify-content: space-between; height: calc(100vh - 200px); }
+}
+
+@media (min-width: 768px) { .modal-dialog > .modal-content { top: 200px; } }
+
+@media (min-width: 960px) { .uk-navbar-right { flex-wrap: initial; } }
+
+@media (min-width: 320px) and (max-width: 959px) {
+  .rx-title-image { object-fit: cover; height: 150px; width: 100%; }
+  footer { padding: 2rem 0 0 0 !important; }
+  .content { padding: 0 !important; }
+}
+
+@media only screen and (max-width: 480px) { #box { width: 100%; padding-bottom: 100%; } }
+@media only screen and (max-width: 650px) and (min-width: 481px) { #box { width: 50%; padding-bottom: 50%; } }
+@media only screen and (max-width: 1050px) and (min-width: 651px) { #box { width: 33.3%; padding-bottom: 33.3%; } }
+@media only screen and (max-width: 1290px) and (min-width: 1051px) { #box { width: 25%; padding-bottom: 25%; } }
+@media only screen and (max-width: 1250px) { ol { columns: 1; -webkit-columns: 1; -moz-columns: 1; } }

@@ -1,0 +1,143 @@
+@import '../partials/colors';
+
+.navigation {
+  background-color: $rx-color-faded-mint;
+  padding: 30px;
+  position: sticky;
+  top: 20px;
+  border-radius: 10px 10px; /* Rounded corners on the right-hand side */
+  width: auto; /* Fit to content width */
+}
+
+.navigation a {
+  color: $rx-color-midnight-blue;
+  text-decoration: none;
+  display: block;
+  padding: 5px 15px !important;
+  position: relative;
+  font-weight: normal;
+  font-size: medium;
+}
+
+.navigation a.active {
+  font-weight: bold; /* Bold text for active item */
+  color: $rx-color-midnight-blue;
+
+  &:hover {
+    color: darken($rx-color-midnight-blue, 10%) !important;
+  }
+}
+
+.navigation a.active::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 75%;
+  width: 4px;
+  background-color: $rx-color-midnight-blue;
+}
+
+.content {
+  padding: 40px;
+}
+
+.section {
+  padding-bottom: 40px;
+}
+
+.static-content-title {
+  font-weight: bold;
+  margin: unset;
+}
+
+.content p, .content ul {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: $color-black;
+}
+
+.content ol, .content li {
+  margin-top: 0;
+  color: $color-black;
+}
+
+$content-heading-sizes: (
+  h1: 2.5rem,
+  h2: 2rem,
+  h3: 1.5rem,
+  h4: 1.25rem,
+  h5: 1rem,
+  h6: 0.75rem
+);
+
+.content {
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  @each $heading, $size in $content-heading-sizes {
+    #{$heading} {
+      font-size: $size;
+    }
+  }
+}
+
+.content li:first-of-type, 
+.content p:first-of-type {
+  margin-top: 0;
+}
+
+.content ul:first-of-type {
+  margin-top: 0.5rem;
+}
+
+.content li:last-of-type {
+  margin-bottom: 0;
+}
+
+/* a series of indentation for the side nav headers */
+.indent-h1 a {
+  color: $rx-color-midnight-blue !important;
+}
+
+.indent-h2 a {
+  color: $rx-color-midnight-blue !important;
+}
+
+.indent-h3 a {
+  color: $rx-color-midnight-blue !important;
+  margin-left: 1.5rem;
+}
+
+.indent-h4 a {
+  color: $rx-color-midnight-blue !important;
+  margin-left: 2.5rem;
+}
+
+.content ul, .content ol { 
+  padding-left: 1.75rem !important;
+  li {
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+.content ul {
+  list-style: disc !important; 
+}
+
+.content ol {
+  list-style: decimal !important; 
+}
+
+blockquote {
+  border-left: 4px solid $rx-color-linen-blue !important;
+  padding-left: 1rem !important;
+  color: darken($color-black, 10%) !important;
+  margin: 1rem 0 !important;
+}
+
+/* prevent the sidebar from overlapping content */
+.sidebar-sticky { z-index: 0; }

@@ -84,9 +84,8 @@
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
     {% block css %}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
-      <link type="text/css" href="{% sass_src 'css/readux2/main.scss' %}" rel="stylesheet" />
-      <link type="text/css" href="{% sass_src 'css/readux2/migration.scss' %}" rel="stylesheet" />
-      <link type="text/css" href="{% sass_src 'css/readux2/login.scss' %}" rel="stylesheet" />
+      <link type="text/css" href="{% sass_src 'css/readux.scss' %}" rel="stylesheet" />
+      <link type="text/css" href="{% sass_src 'css/components/login.scss' %}" rel="stylesheet" />
     {% endblock css %}
     {% block extra_css %}
     {% endblock extra_css %}
@@ -142,10 +141,6 @@
     <!-- End Matomo -->
 
     {% block javascript %}
-      <script src="https://code.jquery.com/jquery-3.3.1.js"
-              integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-              crossorigin="anonymous"></script>
-
       <script src="{% static 'js/main.js' %}"></script>
       {% if has_ga_tracking_id %}
         <!-- Google Analytics -->

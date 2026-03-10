@@ -52,6 +52,12 @@ class FacetedMultipleChoiceField(forms.MultipleChoiceField):
 class ManifestSearchForm(forms.Form):
     """Django form for searching Manifests via Elasticsearch"""
 
+    PER_PAGE_CHOICES = [
+        ("20", "20"),
+        ("40", "40"),
+        ("60", "60"),
+        ("100", "100"),
+    ]
     q = forms.CharField(
         label="Search for individual whole keywords. Multiple words will be searched as 'or' (e.g. Rome London = Rome or London).",
         required=False,
@@ -73,11 +79,7 @@ class ManifestSearchForm(forms.Form):
             ("metadata", "Metadata only"),
             ("text", "Textual contents only"),
         ),
-        widget=forms.Select(
-            attrs={
-                "class": "uk-select",
-            },
-        ),
+        widget=forms.Select(attrs={"class": "uk-select"}),
     )
     language = FacetedMultipleChoiceField(
         label="Language",
@@ -121,9 +123,32 @@ class ManifestSearchForm(forms.Form):
             ("-label_alphabetical", "Title (Z-A)"),
             ("_score", "Relevance"),
         ),
+        widget=forms.Select(attrs={"class": "uk-select"}),
+    )
+    display = forms.ChoiceField(
+        label="View mode",
+        required=False,
+        choices=(
+            ("list", "List view"),
+            ("grid", "Grid view"),
+        ),
+        initial="list",
         widget=forms.Select(
             attrs={
                 "class": "uk-select",
+                "aria-label": "Select view mode",
+            },
+        ),
+    )
+    per_page = forms.ChoiceField(
+        label="Items per page",
+        required=False,
+        choices=PER_PAGE_CHOICES,
+        initial="60",
+        widget=forms.Select(
+            attrs={
+                "class": "uk-select",
+                "aria-label": "Items per page",
             },
         ),
     )
@@ -222,6 +247,12 @@ class AllVolumesForm(forms.Form):
         ("asc", "Ascending"),
         ("desc", "Descending"),
     ]
+    PER_PAGE_CHOICES = [
+        ("20", "20"),
+        ("40", "40"),
+        ("60", "60"),
+        ("100", "100"),
+    ]
     sort = forms.ChoiceField(
         label="Sort by",
         choices=SORT_CHOICES,
@@ -232,6 +263,13 @@ class AllVolumesForm(forms.Form):
         label="Order",
         choices=ORDER_CHOICES,
         required=False,
+        widget=CustomDropdownSelect,
+    )
+    per_page = forms.ChoiceField(
+        label="Items per page",
+        choices=PER_PAGE_CHOICES,
+        required=False,
+        initial="60",
         widget=CustomDropdownSelect,
     )
 
@@ -248,6 +286,12 @@ class AllCollectionsForm(forms.Form):
         ("asc", "Ascending"),
         ("desc", "Descending"),
     ]
+    PER_PAGE_CHOICES = [
+        ("20", "20"),
+        ("40", "40"),
+        ("60", "60"),
+        ("100", "100"),
+    ]
     sort = forms.ChoiceField(
         label="Sort by",
         choices=SORT_CHOICES,
@@ -258,5 +302,12 @@ class AllCollectionsForm(forms.Form):
         label="Order",
         choices=ORDER_CHOICES,
         required=False,
+        widget=CustomDropdownSelect,
+    )
+    per_page = forms.ChoiceField(
+        label="Items per page",
+        choices=PER_PAGE_CHOICES,
+        required=False,
+        initial="60",
         widget=CustomDropdownSelect,
     )

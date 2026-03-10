@@ -1,32 +1,7 @@
-{% load split_to_bullets %}
+{% load split_to_bullets readux_extras %}
 
 <div class="rx-info-content rx-scrollable-area">
-  <!--
-  <div class="rx-info-content-label uk-flex-between rx-flex uk-margin-small-bottom">
-    <span>Showing [#TODO] metadata fields</span> 
-  </div> 
-  <div class="rx-info-content-value uk-margin-small-bottom uk-flex" >
-    <div class="uk-flex-between">
-      <a class="rx-action-btn">
-        <div class="uk-label rx-label-copy uk-expand-btn">
-          <span uk-icon="icon: plus; ratio: 0.5"></span> Expand all
-        </div>
-      </a>
-      <a class="rx-action-btn">
-        <div class="uk-label rx-label-copy uk-collapse-btn">
-          <span uk-icon="icon: minus; ratio: 0.5"></span> Collapse all
-        </div>
-      </a>
-      <a class="rx-action-btn">
-        <div class="uk-label rx-label-copy">
-          <span uk-icon="icon: download; ratio: 0.5"></span> CSV (TODO)
-        </div>
-      </a>
-    </div>
-  </div>
-  -->
-
-  <div class="rx-info-content-value padding-right-1rem">
+  <div class="rx-info-content-value">
     <ul uk-accordion="multiple: true">
       <li class="uk-open">
         <a class="uk-accordion-title uk-label rx-accordion-head" href>Basic</a>
@@ -41,7 +16,7 @@
         {% if volume.author|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Authors</div>
-          <div class="rx-info-content-value">{{ volume.author }}</div>
+          <div class="rx-info-content-value">{{ volume.author|spaced_semicolons }}</div>
         </div>
         {% endif %}
     
@@ -56,10 +31,15 @@
         <div class="rx-info-content">
           <div class="rx-info-content-label">Collections</div>
           <div class="rx-info-content-value">
-            {% for col in volume.collections.all %}
-            <a class="nav-link" href="{% url 'collection' col.pid %}">
-              <div class="uk-label rx-label-copy">{{ col.label }}</div>
-            </a>
+            {% for col in volume.collections.all|dictsort:"label" %}
+              {% with col_label=col.label %}
+                {% if col_label|length > 40 %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}" uk-tooltip="mode: click" title="{{ col_label }}">{{ col_label|truncatechars:40 }}</a>
+                {% else %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}">{{ col_label }}</a>
+                {% endif %}
+              {% endwith %}
+              {% if not forloop.last %}<span class="rx-collection-separator">|</span>{% endif %}
             {% endfor %}
           </div>
         </div>
@@ -71,7 +51,7 @@
           <div class="rx-info-content-value">
             <ul>
               {% for language in volume.languages.all %}
-              <li>{{ language.name }}</li>
+              <li>{{ language.name|spaced_semicolons }}</li>
               {% endfor %}
             </ul>
           </div>
@@ -81,7 +61,9 @@
         {% if volume.published_city|length or volume.publisher|length %}
         <div class="rx-info-content">
           <div class="rx-info-content-label">Publisher</div>
-          <div class="rx-info-content-value">{{ volume.published_city }} : {{ volume.publisher }}</div>
+          <div class="rx-info-content-value">
+            {{ volume.published_city|strip_trailing_commas|spaced_semicolons }} : {{ volume.publisher|strip_trailing_commas|spaced_semicolons }}
+          </div>
         </div>
         {% endif %}
     
@@ -122,16 +104,16 @@
                       {% with metadata.value|split_to_bullets as items %}
                         {% for item in items %}
                           {% if items|length == 1 %}
-                            {{item}}
+                            {{ item|spaced_semicolons }}
                           {% else %}
-                            <li class="uk-margin-remove-top">{{ item }}</li>
+                            <li class="uk-margin-remove-top">{{ item|spaced_semicolons }}</li>
                           {% endif %}
                         {% endfor %}
                       {% endwith %}
                     </ul>
                   </div>
                 {% else %}
-                  <div class="rx-info-content-value">{{ metadata.value }}</div>
+                  <div class="rx-info-content-value">{{ metadata.value|spaced_semicolons }}</div>
                 {% endif %}
                 
               </div>

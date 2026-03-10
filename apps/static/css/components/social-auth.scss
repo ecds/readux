@@ -1,0 +1,16 @@
+@import '../partials/colors';
+
+/* Social Auth Buttons */
+a.rdx-provider-button {
+  color: $color-white;
+  padding: 1rem;
+}
+
+a.rdx-provider-button:hover {
+  color: $rx-color-light-pearl;
+}
+
+.rdx-indented-help-block {
+  text-indent: 1.25rem;
+}
+/* End of Social Auth Buttons */

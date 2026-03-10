@@ -37,7 +37,7 @@ class CollectionDetail(DetailView, FormMixin):
     slug_url_kwarg = "collection"
     form_class = AllVolumesForm
     model = Collection
-    initial = {"sort": "title", "order": "asc", "display": "grid"}
+    initial = {"sort": "title", "order": "asc", "display": "grid", "per_page": "60"}
     sort_fields = {
         "title": "label",
         "author": "author",
@@ -60,9 +60,9 @@ class CollectionDetail(DetailView, FormMixin):
 
         return kwargs
 
-    def get_volumes(self):
+    def get_volumes(self, form=None):
         """Get the sorted set of volumes to display"""
-        form = self.get_form()
+        form = form or self.get_form()
         collection = self.get_object()
         queryset = collection.manifests.all()
 
@@ -93,11 +93,19 @@ class CollectionDetail(DetailView, FormMixin):
     def get_context_data(self, **kwargs):
         """Context function."""
         context = super().get_context_data(**kwargs)
+        form = self.get_form()
+        volumes = self.get_volumes(form=form)
 
-        volumes = self.get_volumes()
+        per_page_default = int(self.initial.get("per_page", 60))
+        per_page = per_page_default
+        if form.is_valid():
+            try:
+                per_page = int(form.cleaned_data.get("per_page") or per_page_default)
+            except (TypeError, ValueError):
+                per_page = per_page_default
 
         # add paginator manually since this isn't a ListView
-        paginator = Paginator(volumes, 8)  # Show 8 volumes per page
+        paginator = Paginator(volumes, per_page)
 
         page = self.request.GET.get("page", 1)
         try:
@@ -113,17 +121,7 @@ class CollectionDetail(DetailView, FormMixin):
         context.update(
             {
                 "volumes": volumes,
-                "user_annotation": UserAnnotation.objects.filter(
-                    owner_id=self.request.user.id
-                ),
-                "paginator_range": paginator.get_elided_page_range(
-                    page, on_each_side=2
-                ),
-            }
-        )
-        context.update(
-            {
-                "volumes": volumes,
+                "form": form,
                 "user_annotation": UserAnnotation.objects.filter(
                     owner_id=self.request.user.id
                 ),
@@ -335,7 +333,7 @@ class VolumeSearchView(ListView, FormMixin):
     form_class = ManifestSearchForm
     template_name = "search_results.html"
     context_object_name = "volumes"
-    paginate_by = 25
+    paginate_by = 20
     # default fields to search when using query box; ^ with number indicates a boosted field
     query_search_fields = ["pid", "label^5", "summary^2", "author"]
 
@@ -355,7 +353,7 @@ class VolumeSearchView(ListView, FormMixin):
             ),
         ),
     ]
-    defaults = {"sort": "label_alphabetical"}
+    defaults = {"sort": "label_alphabetical", "display": "list", "per_page": "60"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -404,6 +402,17 @@ class VolumeSearchView(ListView, FormMixin):
         kwargs["data"] = form_data
         return kwargs
 
+    def get_paginate_by(self, queryset):
+        """Allow per-page size selection via form."""
+        form = self.get_form()
+        default_per_page = int(self.defaults.get("per_page", 20))
+        if form.is_valid():
+            try:
+                return int(form.cleaned_data.get("per_page") or default_per_page)
+            except (TypeError, ValueError):
+                return default_per_page
+        return default_per_page
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         # add configured custom metadata keys to context data
@@ -449,6 +458,39 @@ class VolumeSearchView(ListView, FormMixin):
                         getattr(max_date, "value_as_string"),
                     )
 
+        # Attach start_canvas to each volume in the current page.
+        # Handle both: paginator page and raw list-like.
+        vol_page = context_data.get("volumes")
+
+        if vol_page is not None:
+            # Get the underlying sequence (Paginator Page vs list)
+            items = getattr(vol_page, "object_list", vol_page)
+
+            # ES hits should have a "pid"; collect them
+            pids = [getattr(v, "pid", None) for v in items if getattr(v, "pid", None)]
+
+            if pids:
+                # Use the default reverse name: canvas_set
+                manifests = {
+                    m.pid: m
+                    for m in Manifest.objects
+                            .filter(pid__in=pids)
+                            .prefetch_related("canvas_set")
+                }
+
+                for v in items:
+                    pid = getattr(v, "pid", None)
+                    m = manifests.get(pid)
+                    if not m:
+                        v.start_canvas = None
+                        continue
+
+                    # Prefer an explicitly marked starting page, else first by position
+                    start = m.canvas_set.filter(is_starting_page=True).order_by("position").first()
+                    if start is None:
+                        start = m.canvas_set.order_by("position").first()
+                    v.start_canvas = start
+                    
         return context_data
 
     def get_queryset(self):

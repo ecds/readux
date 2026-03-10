@@ -94,6 +94,28 @@ class ManifestTests(TestCase):
             "/iiif/%s/canvas/%s" % (self.volume.pid, self.start_canvas.pid)
         )
 
+    def test_authors_property(self):
+        """Test the authors property returns a list of authors from the author field."""
+        # Test with no author
+        manifest = Manifest(author=None)
+        assert manifest.authors == ["[no author]"]
+
+        # Test with empty string
+        manifest = Manifest(author="")
+        assert manifest.authors == ["[no author]"]
+
+        # Test with single author
+        manifest = Manifest(author="John Doe")
+        assert manifest.authors == ["John Doe"]
+
+        # Test with multiple authors separated by semicolon
+        manifest = Manifest(author="John Doe; Jane Smith")
+        assert manifest.authors == ["John Doe", "Jane Smith"]
+
+        # Test with multiple authors with extra whitespace
+        manifest = Manifest(author="John Doe  ;  Jane Smith  ;  Bob Jones")
+        assert manifest.authors == ["John Doe", "Jane Smith", "Bob Jones"]
+
     def test_default_start_canvas(self):
         image_server = ImageServerFactory.create(server_base="https://fake.info")
         manifest = Manifest(image_server=image_server)

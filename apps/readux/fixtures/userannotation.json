@@ -1,65 +1,63 @@
 [
-{
-  "model": "readux.userannotation",
-  "pk": "18f24705-398a-401d-a106-acfca6e72070",
-  "fields": {
-    "x": 1694,
-    "y": 1577,
-    "w": 785,
-    "h": 240,
-    "order": 0,
-    "content": "<p>Annotation number 4</p>",
-    "resource_type": "dctypes:Text",
-    "motivation": "sc:painting",
-    "format": "text/plain",
-    "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
-    "language": "en",
-    "owner": 111,
-    "oa_annotation": {
-      "on": [
-        {
-          "full": "https://0.0.0.0:3000/iiif/readux:t9vft/canvas/fedora:emory:5622$0",
-          "@type": "oa:SpecificResource",
-          "within": {
-            "@id": "https://0.0.0.0:3000/iiif/v2/readux:t9vft/manifest",
-            "@type": "sc:Manifest"
-          },
-          "selector": {
-            "item": {
-              "@type": "oa:SvgSelector",
-              "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M1694.0288,1577.05759h392.36126v0h392.36126v120.10995v120.10995h-392.36126h-392.36126v-120.10995z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_ebe3e65b-8454-43a5-8338-2aa9390cbd18\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>"
+  {
+    "model": "readux.userannotation",
+    "pk": "18f24705-398a-401d-a106-acfca6e72070",
+    "fields": {
+      "x": 1694,
+      "y": 1577,
+      "w": 785,
+      "h": 240,
+      "order": 0,
+      "content": "<p>Annotation number 4</p>",
+      "resource_type": "dctypes:Text",
+      "motivation": "sc:painting",
+      "format": "text/plain",
+      "canvas": "7261fae2-a24e-4a1c-9743-516f6c4ea0c9",
+      "language": "en",
+      "owner": 111,
+      "oa_annotation": {
+        "on": [
+          {
+            "full": "https://0.0.0.0:3000/iiif/readux:t9vft/canvas/fedora:emory:5622$0",
+            "@type": "oa:SpecificResource",
+            "within": {
+              "@id": "https://0.0.0.0:3000/iiif/v2/readux:t9vft/manifest",
+              "@type": "sc:Manifest"
             },
-            "@type": "oa:Choice",
-            "default": {
-              "@type": "oa:FragmentSelector",
-              "value": "xywh=1694,1577,785,240"
+            "selector": {
+              "item": {
+                "@type": "oa:SvgSelector",
+                "value": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M1694.0288,1577.05759h392.36126v0h392.36126v120.10995v120.10995h-392.36126h-392.36126v-120.10995z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_ebe3e65b-8454-43a5-8338-2aa9390cbd18\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>"
+              },
+              "@type": "oa:SvgSelector",
+              "default": {
+                "@type": "oa:FragmentSelector",
+                "value": "xywh=1694,1577,785,240"
+              }
             }
           }
-        }
-      ],
-      "@id": "0ace875c-033e-400a-a4a4-3cb857369239",
-      "@type": "oa:Annotation",
-      "@context": "http://iiif.io/api/presentation/2/context.json",
-      "resource": [
-        {
-          "@type": "dctypes:Text",
-          "chars": "<p>Annotation number 4</p>",
-          "format": "text/html"
-        }
-      ],
-      "stylesheet": {
-        "value": ".anno-0ace875c-033e-400a-a4a4-3cb857369239 { background: rgba(0, 128, 0, 0.5); }",
-        "type": "CssStylesheet"
+        ],
+        "@id": "0ace875c-033e-400a-a4a4-3cb857369239",
+        "@type": "oa:Annotation",
+        "@context": "http://iiif.io/api/presentation/2/context.json",
+        "resource": [
+          {
+            "@type": "dctypes:Text",
+            "chars": "<p>Annotation number 4</p>",
+            "format": "text/html"
+          }
+        ],
+        "stylesheet": {
+          "value": ".anno-0ace875c-033e-400a-a4a4-3cb857369239 { background: rgba(0, 128, 0, 0.5); }",
+          "type": "CssStylesheet"
+        },
+        "motivation": ["oa:commenting"]
       },
-      "motivation": [
-        "oa:commenting"
-      ]
-    },
-    "svg": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M1694.0288,1577.05759h392.36126v0h392.36126v120.10995v120.10995h-392.36126h-392.36126v-120.10995z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_ebe3e65b-8454-43a5-8338-2aa9390cbd18\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
-    "start_selector": null,
-    "end_selector": null,
-    "start_offset": null,
-    "end_offset": null
+      "svg": "<svg xmlns='http://www.w3.org/2000/svg'><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M1694.0288,1577.05759h392.36126v0h392.36126v120.10995v120.10995h-392.36126h-392.36126v-120.10995z\" data-paper-data=\"{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}\" id=\"rectangle_ebe3e65b-8454-43a5-8338-2aa9390cbd18\" fill-opacity=\"0\" fill=\"#00bfff\" fill-rule=\"nonzero\" stroke=\"#00bfff\" stroke-width=\"5\" stroke-linecap=\"butt\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-dasharray=\"\" stroke-dashoffset=\"0\" font-family=\"none\" font-weight=\"none\" font-size=\"none\" text-anchor=\"none\" style=\"mix-blend-mode: normal\"/></svg>",
+      "start_selector": null,
+      "end_selector": null,
+      "start_offset": null,
+      "end_offset": null
+    }
   }
-}
 ]

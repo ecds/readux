@@ -1,4 +1,6 @@
+""" Base serializer """
 from django.core.serializers.json import Serializer as JSONSerializer
+from django.core.serializers.base import SerializerDoesNotExist
 
 class Serializer(JSONSerializer):
     """Base Serializer Class"""
@@ -19,3 +21,10 @@ class Serializer(JSONSerializer):
             self.stream.write(']')
         else:
             self.stream.write('')
+
+def Deserializer(object):
+    """Deserialize IIIF Annotation List
+
+    :raises SerializerDoesNotExist: Not yet implemented.
+    """
+    raise SerializerDoesNotExist("manifest is a serialization-only serializer")

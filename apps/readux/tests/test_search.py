@@ -5,6 +5,7 @@ import json
 from django.test import TestCase, Client
 from django.test import RequestFactory
 from django.urls import reverse
+from django_elasticsearch_dsl.test import ESTestCase
 from apps.users.tests.factories import UserFactory
 from ...iiif.manifests.tests.factories import ManifestFactory
 from ...iiif.canvases.tests.factories import CanvasFactory
@@ -13,11 +14,12 @@ from ..search import SearchManifestCanvas
 from .factories import UserAnnotationFactory
 
 
-class TestReaduxPageDetailSearch(TestCase):
+class TestReaduxPageDetailSearch(ESTestCase, TestCase):
     """
     Test page search.
     """
     def setUp(self):
+        super().setUp()
         self.search_manifest_view = SearchManifestCanvas.as_view()
         self.request = RequestFactory()
         self.volume = ManifestFactory.create()
@@ -33,9 +35,13 @@ class TestReaduxPageDetailSearch(TestCase):
         # # Delete the canvas created by the ManifestFactory to ensure a clean set.
         original_canvas.delete()
         for _ in [1, 2]:
-            self.add_annotations(self.volume.canvas_set.get(position=1))
+            canvas = self.volume.canvas_set.get(position=1)
+            self.add_annotations(canvas)
+            canvas.save()
         for _ in [1, 2, 3]:
-            self.add_annotations(self.volume.canvas_set.get(position=2))
+            canvas = self.volume.canvas_set.get(position=2)
+            self.add_annotations(canvas)
+            canvas.save()
 
         # pylint: enable = unused-variable
 
@@ -46,12 +52,12 @@ class TestReaduxPageDetailSearch(TestCase):
         """Add OCR and User annotations to a canvas."""
         AnnotationFactory.create(
             canvas=canvas,
-            content='stankonia',
+            content='stinking',
             owner=self.ocr_user
         )
         UserAnnotationFactory.create(
             canvas=canvas,
-            content='Aquemini',
+            content='outcasts',
             owner=self.user
         )
 
@@ -65,80 +71,106 @@ class TestReaduxPageDetailSearch(TestCase):
         return json.loads(response.content.decode('UTF-8-sig'))
 
     def test_manifest_canvas_ocr_partial_search(self):
-        query_params = {'volume': self.volume.pid, 'type': 'partial', 'query': 'stank'}
+        query_params = {'volume_id': self.volume.pid, 'keyword': 'stink'}
         request = self.request.get(
             self.url, query_params
         )
         request.user = UserFactory.create()
         response = self.search_manifest_view(request)
         search_results = self.load_results(response)
-        assert len(search_results['ocr_annotations']) == 2
-        assert len(search_results['user_annotations']) == 0
-        assert search_results['search_terms'] == 'stank'.split()
-        assert json.loads(search_results['ocr_annotations'][0])['canvas__position'] == 1
-        assert json.loads(search_results['ocr_annotations'][1])['canvas__position'] == 2
-        assert json.loads(search_results['ocr_annotations'][0])['canvas__position__count'] == 2
-        assert json.loads(search_results['ocr_annotations'][1])['canvas__position__count'] == 3
+
+        # two hits in text, no hits in annotations
+        assert search_results['matches_in_text']['total_matches_in_volume'] == 2
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0
+        for match in search_results['matches_in_text']['volume_matches']:
+            # should be in canvas indices 1 and 2
+            assert match["canvas_index"] in [1, 2]
+            if match["canvas_index"] == 1:
+                # 2 matches in first canvas
+                # NOTE: OCR annotations are indexed as a single block of text per canvas. in this
+                # case, the terms appeared so close together they are grouped into one result, but
+                # still highlighted individually, thus two <em>s.
+                assert match["context"][0].count("<em>") == 2
+            elif match["canvas_index"] == 2:
+                # 3 matches in second canvas
+                assert match["context"][0].count("<em>") == 3
 
     def test_manifest_canvas_ocr_exact_search(self):
-        query_params = {'volume': self.volume.pid, 'type': 'exact', 'query': 'stankonia'}
+        query_params = {'volume_id': self.volume.pid, 'keyword': '"stinking"'}
         request = self.request.get(
             self.url, query_params
         )
         request.user = UserFactory.create()
         response = self.search_manifest_view(request)
         search_results = self.load_results(response)
-        assert len(search_results['ocr_annotations']) == 2
-        assert len(search_results['user_annotations']) == 0
-        assert json.loads(search_results['ocr_annotations'][0])['canvas__position'] == 1
-        assert json.loads(search_results['ocr_annotations'][1])['canvas__position'] == 2
-        assert json.loads(search_results['ocr_annotations'][0])['canvas__position__count'] == 2
-        assert json.loads(search_results['ocr_annotations'][1])['canvas__position__count'] == 3
+        # two hits in text, no hits in annotations
+        assert search_results['matches_in_text']['total_matches_in_volume'] == 2
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0
+        for match in search_results['matches_in_text']['volume_matches']:
+            # should be in canvas indices 1 and 2
+            assert match["canvas_index"] in [1, 2]
+            if match["canvas_index"] == 1:
+                # 2 matches in first canvas; so close together they are grouped into one result
+                assert match["context"][0].count("<em>") == 2
+            elif match["canvas_index"] == 2:
+                # 3 matches in second canvas; so close together they are grouped into one result
+                assert match["context"][0].count("<em>") == 3
 
     def test_manifest_canvas_ocr_exact_search_no_results(self):
-        query_params = {'volume': self.volume.pid, 'type': 'exact', 'query': 'Idlewild'}
+        query_params = {'volume_id': self.volume.pid, 'keyword': '"Idlewild"'}
         request = self.request.get(
             self.url, query_params
         )
         request.user = UserFactory.create()
         response = self.search_manifest_view(request)
         search_results = self.load_results(response)
-        assert len(search_results['ocr_annotations']) == 0
-        assert len(search_results['user_annotations']) == 0
+        assert search_results['matches_in_text']['total_matches_in_volume'] == 0
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0
 
     def test_manifest_canvas_user_annotation_partial_search(self):
-        query_params = {'volume': self.volume.pid, 'type': 'partial', 'query': 'Aqu'}
+        query_params = {'volume_id': self.volume.pid, 'keyword': 'outcast'}
         request = self.request.get(
             self.url, query_params
         )
         request.user = self.user
         response = self.search_manifest_view(request)
         search_results = self.load_results(response)
-        assert len(search_results['ocr_annotations']) == 0
-        assert len(search_results['user_annotations']) == 2
-        assert json.loads(search_results['user_annotations'][0])['canvas__position'] == 1
-        assert json.loads(search_results['user_annotations'][1])['canvas__position'] == 2
+        print(search_results)
+        assert search_results['matches_in_text']['total_matches_in_volume'] == 0
+        # NOTE: since user annotations are indexed individually (unlike OCR annotations which
+        # are grouped by canvas), each one gets a separate hit, so the total matches is 5.
+        # however, in the search results, they will be grouped by canvas. thus, len(matches) is 2,
+        # one per canvas, while total matches remains 5.
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 5
+        assert len(search_results['matches_in_annotations']['volume_matches']) == 2
+        for match in search_results['matches_in_annotations']['volume_matches']:
+            # should be in canvas indices 1 and 2
+            assert match["canvas_index"] in [1, 2]
 
     def test_manifest_canvas_user_annotation_exact_search(self):
-        query_params = {'volume': self.volume.pid, 'type': 'exact', 'query': 'Aquemini'}
+        query_params = {'volume_id': self.volume.pid, 'keyword': '"outcasts"'}
         request = self.request.get(
             self.url, query_params
         )
         request.user = self.user
         response = self.search_manifest_view(request)
         search_results = self.load_results(response)
-        assert len(search_results['ocr_annotations']) == 0
-        assert len(search_results['user_annotations']) == 2
-        assert json.loads(search_results['user_annotations'][0])['canvas__position'] == 1
-        assert json.loads(search_results['user_annotations'][1])['canvas__position'] == 2
+        print(search_results)
+        assert search_results['matches_in_text']['total_matches_in_volume'] == 0
+        # NOTE: see above note about user annotations vs OCR annotations.
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 5
+        assert len(search_results['matches_in_annotations']['volume_matches']) == 2
+        for match in search_results['matches_in_annotations']['volume_matches']:
+            # should be in canvas indices 1 and 2
+            assert match["canvas_index"] in [1, 2]
 
     def test_manifest_canvas_user_annotation_exact_search_no_results(self):
-        query_params = {'volume': self.volume.pid, 'type': 'exact', 'query': 'Idlewild'}
+        query_params = {'volume_id': self.volume.pid, 'keyword': '"Idlewild"'}
         request = self.request.get(
             self.url, query_params
         )
         request.user = self.user
         response = self.search_manifest_view(request)
         search_results = self.load_results(response)
-        assert len(search_results['ocr_annotations']) == 0
-        assert len(search_results['user_annotations']) == 0
+        assert search_results['matches_in_text']['total_matches_in_volume'] == 0
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0

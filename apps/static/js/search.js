@@ -3,6 +3,7 @@
 
 let textInput;
 let sortElement;
+let displayElement;
 let relevanceSortOption;
 let defaultSortOption;
 let form;
@@ -16,6 +17,7 @@ let queryMinYear;
 let queryMaxYear;
 let authorsFilter;
 let authorsMultiselect;
+let dateRange;
 
 window.addEventListener("DOMContentLoaded", () => {
     // Get URL params
@@ -33,15 +35,20 @@ window.addEventListener("DOMContentLoaded", () => {
     // initialize elements
     form = document.querySelector("form#search-form");
     dateToggleSwitch = document.querySelector("input[type='checkbox']#toggle-date");
+    dateRange = document.querySelector(".noUi-tooltip");
     sortElement = document.querySelector("select#id_sort");
+    displayElement = document.querySelector("select#id_display");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
     defaultSortOption = sortElement.querySelector("option[value='label_alphabetical']");
     textInput = document.querySelector("input[type='search']");
-    authorsFilter = document.querySelector("input[type='text']#authors-filter");
+    // authorsFilter = document.querySelector("input[type='text']#authors-filter");
     authorsMultiselect = document.querySelector("select[name='author']");
 
     // Attach event listener to sort dropdown to auto-submit
     sortElement.addEventListener("change", handleSort);
+    if (displayElement) {
+        displayElement.addEventListener("change", () => form.submit());
+    }
 
     // Attach event listeners to text input to update sort
     textInput.addEventListener("input", autoUpdateSort);
@@ -50,7 +57,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Attach event listener to filter author multiselect options
-    authorsFilter.addEventListener("input", handleAuthorsFilter);
+    // authorsFilter.addEventListener("input", handleAuthorsFilter);
 
     // Set up slider
     slider = document.getElementById("date-range-slider");
@@ -59,12 +66,12 @@ window.addEventListener("DOMContentLoaded", () => {
     // Initialize date toggle switch and add event listener
     setDateFieldToggleState(dateToggleState);
     dateToggleSwitch.addEventListener("change", toggleDate);
-
+ 
     // Add reset filters event listener
     allFilters = document.querySelectorAll("#search-filters select");
-    resetFiltersButton = document.querySelector("button#reset-filters");
-    resetFiltersButton.addEventListener("click", resetFilters);
-
+    document.querySelectorAll("button.reset-filters").forEach(button => {
+        button.addEventListener("click", resetFilters);
+    });
     // Attach event listeners to form to handle slider input
     form.addEventListener("submit", handleSubmit);
     form.addEventListener("formdata", handleFormData);
@@ -162,10 +169,10 @@ function toggleDate(e) {
 function setDateFieldToggleState(state) {
     // Change the date toggle switch and slider to match toggle state
     if (state === false) {
-        dateToggleSwitch.removeAttribute("checked");
+        // dateToggleSwitch.removeAttribute("checked");
         slider.setAttribute("disabled", true);
     } else {
-        dateToggleSwitch.setAttribute("checked", true);
+        // dateToggleSwitch.setAttribute("checked", true);
         slider.removeAttribute("disabled");
     }
 }
@@ -210,3 +217,59 @@ function handleFormData(e) {
         formData.set("end_date", `${String(dateRange[1]).padStart(4, "0")}-12-31`);
     }
 }
+
+// Core fix: prevent focus loss
+$(document).on('mousedown', '.selectize-dropdown', function(e) {
+    e.preventDefault();
+});
+
+// initializeSelectize stays the same
+function initializeSelectize() {
+    $(".custom-search-selectize").each(function () {
+        if (!$(this).hasClass("selectized")) {
+            $(this).selectize({
+                plugins: ["clear_button"],
+                placeholder: "Select one or more..."
+            });
+        }
+    });
+}
+
+$(function () {
+    // 1) Initial setup: your static selects...
+    $("#id_collection, #id_author, #id_language").selectize({
+        plugins: ["clear_button"],
+        placeholder: "Select one or more..."
+    });
+
+    // 2) …and any .custom-search-selectize already in the DOM
+    initializeSelectize();
+
+    // 3) Watch for dynamically inserted selects
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                // only care about element nodes
+                if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+                // if the added node *is* a custom-search-selectize, or *contains* one…
+                if (node.matches('.custom-search-selectize') ||
+                    node.querySelector('.custom-search-selectize')
+                ) {
+                    initializeSelectize();
+                }
+            });
+        });
+    });
+
+    // Scope this to a tighter container if you know where new selects appear;
+    // using document.body will catch everything, but you can replace
+    // document.body with document.querySelector('#your-results-container')
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Optional: if at some point you no longer need to observe:
+    // observer.disconnect();
+});

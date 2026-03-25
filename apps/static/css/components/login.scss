@@ -1,0 +1,65 @@
+@import '../partials/colors';
+
+.custom-modal .uk-modal-dialog {
+  width: 400px;
+  padding: 20px;
+}
+.modal-header {
+  color: $rx-color-midnight-blue;
+  padding: 20px;
+  text-align: center;
+}
+.modal-content {
+  padding: 20px;
+}
+.uk-input-icon {
+  display: flex;
+  align-items: center;
+}
+.uk-input-icon input {
+  padding-left: 40px;
+}
+.uk-input-icon span {
+  position: absolute;
+  padding-left: 10px;
+  color: $rx-color-midnight-blue;
+}
+.uk-divider {
+  margin: 20px 0;
+}
+.sso-buttons .uk-button {
+  margin-bottom: 10px;
+  width: 100%;
+}
+.help-link {
+  color: $rx-color-midnight-blue;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+.sso-text {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.sso-buttons .uk-grid {
+  gap: 10px;
+}
+
+.sso-button {
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.sign-in-btn {
+  background-color: $rx-color-midnight-blue;
+  color: $rx-color-faded-mint;
+  &:hover {
+    background-color: darken($rx-color-midnight-blue, 10%);
+  }
+}

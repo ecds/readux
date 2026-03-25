@@ -1,0 +1,163 @@
+{% load split_to_bullets readux_extras %}
+
+<div class="rx-info-content rx-scrollable-area">
+  <div class="rx-info-content-value">
+    <ul uk-accordion="multiple: true">
+      <li class="uk-open">
+        <a class="uk-accordion-title uk-label rx-accordion-head" href>Basic</a>
+        <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2">
+        {% if volume.label|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Title</div>
+          <div class="rx-info-content-value">{{ volume.label }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.author|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Authors</div>
+          <div class="rx-info-content-value">{{ volume.author|spaced_semicolons }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.published_date|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Publication Date</div>
+          <div class="rx-info-content-value">{{ volume.published_date }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.collections is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Collections</div>
+          <div class="rx-info-content-value">
+            {% for col in volume.collections.all|dictsort:"label" %}
+              {% with col_label=col.label %}
+                {% if col_label|length > 40 %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}" uk-tooltip="mode: click" title="{{ col_label }}">{{ col_label|truncatechars:40 }}</a>
+                {% else %}
+                  <a class="rx-collection-link" href="{% url 'collection' col.pid %}">{{ col_label }}</a>
+                {% endif %}
+              {% endwith %}
+              {% if not forloop.last %}<span class="rx-collection-separator">|</span>{% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+    
+        {% if volume.languages.all|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Language(s)</div>
+          <div class="rx-info-content-value">
+            <ul>
+              {% for language in volume.languages.all %}
+              <li>{{ language.name|spaced_semicolons }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+    
+        {% if volume.published_city|length or volume.publisher|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Publisher</div>
+          <div class="rx-info-content-value">
+            {{ volume.published_city|strip_trailing_commas|spaced_semicolons }} : {{ volume.publisher|strip_trailing_commas|spaced_semicolons }}
+          </div>
+        </div>
+        {% endif %}
+    
+        {% if volume.summary|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Summary</div>
+          <div class="rx-info-content-value">{{ volume.summary|safe }}</div>
+        </div>
+        {% endif %}
+    
+        {% if volume.note_set|length %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Notes</div>
+          <div class="rx-info-content-value">
+            <ul>
+              {% for note in volume.note_set.all %}
+              <li>{{ note.label }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      </li>
+
+      {# Advanced fields: custom metadata configured via django settings #}
+      {% if custom_metadata %}
+        <li>
+          <a class="uk-accordion-title uk-label rx-accordion-head" href>Advanced</a>
+          <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2">
+            {% for key, metadata in custom_metadata.items %}
+              <div class="rx-info-content">
+                <div class="rx-info-content-label">{{ key }}</div>
+
+                {% if metadata.multi %}
+                  <div class="rx-info-content-value">
+                    <ul class="uk-list uk-list-bullet">
+                      {% with metadata.value|split_to_bullets as items %}
+                        {% for item in items %}
+                          {% if items|length == 1 %}
+                            {{ item|spaced_semicolons }}
+                          {% else %}
+                            <li class="uk-margin-remove-top">{{ item|spaced_semicolons }}</li>
+                          {% endif %}
+                        {% endfor %}
+                      {% endwith %}
+                    </ul>
+                  </div>
+                {% else %}
+                  <div class="rx-info-content-value">{{ metadata.value|spaced_semicolons }}</div>
+                {% endif %}
+                
+              </div>
+            {% endfor %}
+          </div>
+        </li>
+      {% endif %}
+
+      <li>
+        <a class="uk-accordion-title uk-label rx-accordion-head" href>Attribution</a>
+        <div class="uk-accordion-content uk-margin-remove-top uk-padding-1-2"> 
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Institution</div>
+          <div class="rx-info-content-value">{{ volume.attribution }}</div>
+        </div>
+      
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">License</div>
+          <div class="rx-info-content-value">{{ volume.license }}</div>
+        </div>
+      
+        {% if volume.identifier is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Identifier</div>
+          <div class="rx-info-content-value">{{ volume.identifier }}</div>
+        </div>
+        {% endif %}
+      
+        {% if volume.identifier_uri is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Link to Resource</div>
+          <div class="rx-info-content-value">{{ volume.identifier_uri }}</div>
+        </div>
+        {% endif %}
+      
+        {% if volume.scanned_by is not None %}
+        <div class="rx-info-content">
+          <div class="rx-info-content-label">Scanned By</div>
+          <div class="rx-info-content-value">{{ volume.scanned_by }}</div>
+        </div>
+        {% endif %}
+      </div>
+      </li>
+    </ul>
+        
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<info-url-single label="Manifest"
+  url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
+</info-url-single>
+
+<info-url-multiple label="Collection Manifest">
+  {% for col in volume.collections.all %}
+  <info-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
+  </info-url-unit>
+  {% endfor %}
+</info-url-multiple>
+
+<info-url-single label="Stable Volume"
+  url="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all">
+</info-url-single>
+
+{% if "/page/all" in request.get_full_path in request.get_full_path %}
+  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" pagelink="{{pagelink}}">
+  </info-url-external>
+{% else %}
+  <info-url-external label="Stable Page" volume="{% url 'volume' volume.pid %}" pagelink="{{pagelink}}">
+  </info-url-external>
+{% endif %}
+
+{# External links from IIIF manifest #}
+
+{% if volume.external_links.see_also %}
+<info-url-multiple label="See Also">
+  {% for link in volume.external_links.see_also %}
+    <info-url-unit url="{{ link }}">
+    </info-url-unit>
+  {% endfor %}
+</info-url-multiple>
+{% endif %}
+
+{% if volume.external_links.related %}
+<info-url-multiple label="External Links">
+  {% for link in volume.external_links.related %}
+    <info-url-unit url="{{ link }}">
+    </info-url-unit>
+  {% endfor %}
+</info-url-multiple>
+{% endif %}

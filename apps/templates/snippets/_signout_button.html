@@ -1,0 +1,6 @@
+<form class="uk-navbar-toggle" action={% url "account_logout" %} method="post">
+  {% csrf_token %}
+  <button type="submit" class="menu-item" uk-icon="icon: sign-in;" uk-tooltip="Sign Out">
+    <span class="sr-only">Login/Sign Up</span>
+  </button>
+</form>

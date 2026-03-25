@@ -1,0 +1,67 @@
+{% load menu_tags %}
+
+<nav class="uk-navbar-container">
+    <div class="uk-container">
+        <div uk-navbar="mode: click">
+            <div class="uk-navbar-left">
+                <div class="uk-logo">
+                    <div><a class="brand-logo" href="/">{{ request.site.name }}</a></div>
+                    <div class="brand-tagline">built on <a class="brand-logo brand-inline" href="https://readux.io/">Readux</a></div>
+                </div>
+
+                {% main_menu add_sub_menus_inline=True %}
+            </div>
+
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav">
+                    <!-- Login/Sign up with Icon -->
+                    {% if request.user.is_authenticated %}
+                    <!-- User Account with Icon -->
+                    <li>{# URL provided by django-allauth/account/urls.py #}
+                      <a href="{% url 'users:update' %}" class="menu-item" uk-icon="icon: user;" uk-tooltip="My Account"></a>
+                    </li>
+                    <!-- Sign out with Icon -->
+                    <li>{# URL provided by django-allauth/account/urls.py #}
+                      {% include "snippets/_signout_button.html"%}
+                    </li>
+                  {% else %}
+                    <!-- Login/Sign up with Icon -->
+                    <li>{# URL provided by django-allauth/account/urls.py #}
+                      {% include "snippets/_show_sign_modal.html" %}
+                    </li>
+                  {% endif %}
+
+                    <!-- Partner with Us with Icon -->
+                    <!-- <li class="">
+                        <a href="#" class="menu-item" uk-icon="icon: users;" uk-tooltip="Partner with us"></a>
+                    </li> -->
+                    <!-- Search with Icon -->
+                    <li class="">
+                        <a href="{% url 'search' %}" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+{% include '_home/_login_modal.html' %}
+<!-- <script>
+    document.getElementById('reset-btn').addEventListener('click', function() {
+        document.getElementById('login-form').reset();
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        if(username && password) {
+            alert('Sign In successful!');
+            // Here you would normally handle the form submission, e.g., via AJAX
+        } else {
+            alert('Please enter both username and password.');
+        }
+    });
+</script> -->

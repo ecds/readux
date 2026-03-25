@@ -2,10 +2,10 @@
 
 -r ./base.txt
 
-gunicorn==20.1.0  # https://github.com/benoitc/gunicorn
+gunicorn==21.2.0  # https://github.com/benoitc/gunicorn
 Collectfast==2.2.0  # https://github.com/antonagestam/collectfast
 raven==6.10.0  # https://github.com/getsentry/raven-python
 
 # Django
 # ------------------------------------------------------------------------------
-django-anymail[mailgun]==8.5  # https://github.com/anymail/django-anymail
+django-anymail[mailgun]==10.2  # https://github.com/anymail/django-anymail

@@ -1,128 +1,82 @@
 {% extends "base.html" %}
-{% load static %}
-{% load has_user_annotations %}
-{% load user_annotation_count %}
+{% load has_user_annotations sass_tags static user_annotation_count wagtailcore_tags %}
+
 {% block content %}
-<div>
+<link type="text/css" href="{% sass_src 'css/components/menu-inverse.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/components/collection.scss' %}" rel="stylesheet">
 
-  <header class="page-header" id="page-bg">
-    <div class="container">
-      <img src="/media/{{collection.header}}" alt="Header image for collection {{collection.label}}"
-        style="width:100%;" />
-    </div>
-    <div class="collection-image-info collasped"  tabindex="0" aria-label="about this collection" uk-tooltip="title: About this collection; pos: right">
-      <div class="info">
-        <p style="font-size:130%">{{ collection.collection_image_title }}</p>{% if collection.collection_image_summary %}
-        <p>{{ collection.collection_image_summary }}</p> {% endif %}
-        <p>{{ collection.collection_image_creator }}</p>
-      </div>
-    </div>
-  </header>
+{% include '_home/_nav.html' %}
 
-  <div class="rx-title-container">
-    <ul class="rx-breadcrumb uk-text-truncate">
-      <li class="rx-breadcrumb-item"><a href="/" alt="Home">Home</a></li>
-      <li class="rx-breadcrumb-item"><a href="/{{ collectionlink.slug }}" alt="Home">Collections</a></li>
-      <li class="rx-breadcrumb-item">{{ collection.label }}</li>
-    </ul>
-    <h2 class="rx-title" id="main">{{ collection.label }}</h2>
-    <div class="rx-title-tagline">{{volumes|length}} volume{{volumes|length|pluralize}}</div>
+<div class="uk-container">
+  <!-- Breadcrumb -->
+  <ul class="breadcrumb uk-margin-small-top">
+    <li><a href="/">Home</a></li>
+    <li>
+      {% if collectionlink %}
+        <a href="{% pageurl collectionlink %}">Collections</a>
+      {% else %}
+        Collections
+      {% endif %}
+    </li>
+    <li>{{ collection.label }}</li>
+  </ul>
+  <!-- End -->
   </div>
 
-  <div class="rx-head-container">
-    <p>{{ collection.summary|safe }}</p>
-  </div>
-
-  {% include "snippets/sort_dropdown.html" %}
-  <!--TODO: include ascending/descending sort feature-->
-
-  {% include "snippets/pagination.html" %}
-
-
-   <div class="uk-grid-match uk-child-width-expand@s uk-grid-large" uk-grid>
-   {% for volume in page_obj %}
-  {% if volume.canvas_set.first.pid is null %}
-      <div class="uk-width-1-2@m uk-grid-medium">
-        <div class=" uk-width-1-4@m">
-          <a class="nav-link" href="#">
-            <v-volume-image></v-volume-image>
-          </a>
-        </div>
-        <div class="uk-width-3-4@m" tabindex="0">
-          <a class="nav-link" href="#">
-            <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-          </a>
-          <ul class="uk-padding-remove rx-card-text">
-            <li>Author: {{volume.author|truncatechars:150}}</li>
-            <li>Published: {{volume.published_date}}</li>
-            <li>Publisher: {{volume.published_city}}: {{volume.publisher}}</li>
-            <li>Added: {{volume.created_at}}</li>
-            <li>
-                {% if user.is_authenticated %}
-                  {% has_user_annotations volume user as result %}
-                  {% if result %}
-                    <span class="count-icon">
-                      <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                        uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                      <span class="count">{% user_annotation_count volume user %}</span>
-                    </span>
-                  {% endif %}
-                {% endif %}
-            </li>
-          </ul>
-        </div>
-      </div>
-
-    {% else %}
-    <div class="uk-width-1-2@m uk-grid-medium">
-      <div class=" uk-width-1-4@m">
-        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-        {% if volume.start_canvas.pid %}
-           <v-volume-image
-            img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label|truncatechars:50}}">
-          </v-volume-image>
-        {% elif volume.pid == fir|safe|slice:"2:-6" and "[]" in fir|safe %}
-        {% if forloop.last %}
-          <v-volume-image
-            img-src="{{ volume.canvas_set.first.thumbnail_crop_tallwide }}"
-            volume-label="{{volume.label|truncatechars:50}}">
-          </v-volume-image>
-        {% endif %}
-        {% endif %}
-        </a>
-      </div>
-      <div class="uk-width-3-4@m" tabindex="0" aria-label="Volume Information">
-        <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-          <h3 class="rx-card-title uk-margin-remove-bottom" title="{{ volume.label }}">{{ volume.label|truncatechars:100 }}</h3>
-        </a>
-        <ul class="uk-padding-remove rx-card-text">
-          <li>Author: {{volume.author|truncatechars:150}}</li>
-          <li>Published: {{volume.published_date}}</li>
-          <li>Publisher: {{volume.published_city}}: {{volume.publisher}}</li>
-          <li>Added: {{volume.created_at}}</li>
-          <li>
-              {% if user.is_authenticated %}
-                {% has_user_annotations volume user as result %}
-                {% if result %}
-                  <span class="count-icon">
-                    <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                      uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                    <span class="count">{% user_annotation_count volume user %}</span>
-                  </span>
-                {% endif %}
+  <div
+    class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-small-top"
+    style="background-image: url('/media/{{collection.header}}');"
+  >
+    <div class="overlay">
+        <h1 class="uk-text-large uk-margin-remove uk-text-bold rx-line-height-lg">{{ collection.label }}</h1>
+        <div class="rx-title-tagline uk-margin-small-top">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
+        {% with summary_plain=collection.summary|striptags %}
+          {% if summary_plain %}
+            <p class="uk-text-medium uk-margin-top">
+              {% if summary_plain|length > 200 %}
+                {{ summary_plain|truncatechars:200 }}
+              {% else %}
+                {{ summary_plain }}
               {% endif %}
-          </li>
-        </ul>
-      </div>
+            </p>
+            {% if summary_plain|length > 200 %}
+              <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-full">Full Description</button>
+            {% endif %}
+          {% endif %}
+        {% endwith %}
+
+        {# TODO: image metadata, style or remove #}
+        {% if collection.collection_image_title %}<p>{{ collection.collection_image_title }}</p>{% endif %}
+        {% if collection.collection_image_summary %}<p>{{ collection.collection_image_summary }}</p>{% endif %}
+        {% if collection.collection_image_summary %}<p>{{ collection.collection_image_creator }}</p>{% endif %}
     </div>
-    {% endif %}
-    {% endfor %}
   </div>
+
+  {% with summary_plain=collection.summary|striptags %}
+    {% if summary_plain and summary_plain|length > 200 %}
+      <div id="modal-full" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
+        <div
+          class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
+          uk-height-viewport
+          style="background-image: url('/media/{{collection.header}}');"
+        >
+            <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+            <div class="modal-overlay">
+                <div class="uk-width-1-1 uk-padding-large">
+                    <h2 class="uk-text-bold">{{ collection.label }}</h2>
+                    {{ collection.summary|safe }}
+                </div>
+            </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="uk-container">
+    {% include "snippets/_volumes_page_information.html" %}
+    {% include "snippets/_volumes_grid.html" %}
+  </div>
+
 </div>
-
-{% include "snippets/pagination.html" %}
-
-{% include "footer.html" %}
 
 {% endblock content %}

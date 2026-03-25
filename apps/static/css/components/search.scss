@@ -1,0 +1,265 @@
+@import '../partials/colors';
+
+/* -------------------------------------------------------------------------- */
+/* SEARCH RESULTS PAGE                                                        */
+/* -------------------------------------------------------------------------- */
+
+// —————————————————————————————————————————————
+// Layout: Info line
+// —————————————————————————————————————————————
+.info-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; // wrap on smaller screens
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: $rx-color-midnight-blue;
+
+  .info-group,
+  .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  a,
+  select {
+    color: $rx-color-midnight-blue;
+    text-decoration: underline;
+  }
+
+  .pagination-controls {
+    .uk-icon-button {
+      color: $rx-color-midnight-blue;
+
+      &[disabled] {
+        color: $rx-color-light-pearl;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .info-group,
+    .pagination-controls {
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .info-group { gap: 10px; }
+  }
+}
+
+// —————————————————————————————————————————————
+// Form normals & search form
+// —————————————————————————————————————————————
+fieldset {
+  margin: inherit;
+  border: 0;
+  padding: inherit;
+}
+
+form#search-form {
+  input[type="search"][name="q"] { width: 100%; }
+
+  .uk-button-danger {
+    background-color: $rx-color-rose-red;
+    color: $color-white;
+    border: 1px solid transparent;
+  }
+
+  .uk-button-secondary {
+    background-color: $rx-color-dark-charcoal;
+    color: $color-white;
+    border: 1px solid transparent;
+  }
+}
+
+// —————————————————————————————————————————————
+// Filters
+// —————————————————————————————————————————————
+#search-filters {
+  input[type="text"]#authors-filter { width: 100%; }
+
+  select[multiple] {
+    height: 150px;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: auto;
+  }
+
+  .noUi-target { margin: 45px 21px 10px; }
+}
+
+// —————————————————————————————————————————————
+// UI Kit tweaks
+// —————————————————————————————————————————————
+.uk-button-primary {
+  background-color: $rx-color-midnight-blue;
+
+  &:hover {
+    background-color: darken($rx-color-midnight-blue, 10%); // darker on hover
+  }
+}
+
+.uk-container ul { list-style: none; }
+
+.uk-checkbox:checked,
+.uk-checkbox:indeterminate,
+.uk-radio:checked {
+  background-color: $rx-color-midnight-blue !important;
+}
+
+.uk-search-default {
+  .uk-search-input:focus {
+    border-color: $rx-color-midnight-blue;
+    border-right: 0;
+  }
+}
+
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
+  border-color: $rx-color-midnight-blue;
+}
+
+// —————————————————————————————————————————————
+// Grid
+// —————————————————————————————————————————————
+#search-grid {
+  margin-left: 0;
+  gap: 1.5rem;
+}
+
+// —————————————————————————————————————————————
+// Selectize
+// —————————————————————————————————————————————
+.selectize-control.multi .selectize-input > div {
+  background: $rx-color-midnight-blue !important;
+  border: none !important;
+}
+
+.selectize-dropdown .active:not(.selected) {
+  background-color: $rx-color-faded-mint !important;
+}
+
+.selectize-control.plugin-clear_button .clear {
+  height: 85%;
+  top: -3px !important;
+}
+
+// —————————————————————————————————————————————
+// noUi Slider (date slider)
+// —————————————————————————————————————————————
+.noUi-connect {
+  background: $rx-color-midnight-blue !important;
+
+  [disabled] & {
+    background: $rx-color-midnight-blue !important;
+    opacity: 0.2;
+  }
+}
+
+.noUi-tooltip {
+  font-size: .875rem;
+  font-family: monospace;
+  font-weight: normal;
+  padding: 0.125rem 0.25rem !important;
+  background-color: none;
+  border: none !important;
+}
+
+// —————————————————————————————————————————————
+// Typography
+// —————————————————————————————————————————————
+.sui-item-heading {
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Segoe UI', 'Roboto', 'Ubuntu', sans-serif;
+  font-size: 13px;
+  margin-top: 0.65rem;
+
+  a { color: $rx-color-midnight-blue; }
+}
+
+// —————————————————————————————————————————————
+// Search results
+// —————————————————————————————————————————————
+#search-results {
+  list-style: none;
+
+  dl { margin-left: 2rem; }
+
+  .result-volume-summary {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden; // clamp to 3 lines
+  }
+
+  // highlighting
+  em {
+    color: $rx-color-mario-red !important;
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  // result snippet within full text
+  .result-page {
+    background-color: $rx-color-faded-mint;
+    color: $rx-color-midnight-blue;
+
+    a {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 1rem;
+      margin: 0.5rem 0;
+      font-size: 0.8rem;
+      color: $rx-color-midnight-blue;
+    }
+
+    .page-number {
+      min-width: 4rem; // keeps previous 50px/4rem intent consistent
+      max-width: 4rem;
+      font-size: large;
+      font-weight: 600;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+    }
+
+    ul li { list-style: disc; }
+  }
+}
+
+.result-title {
+  color: $rx-color-midnight-blue;
+
+  &:hover {
+    color: darken($rx-color-midnight-blue, 10%);
+  }
+}
+
+// —————————————————————————————————————————————
+// Search actions
+// —————————————————————————————————————————————
+.search-button {
+  background-color: $rx-color-mario-red;
+  color: $color-white;
+  padding: 4px 9px 0 9px;
+  border: none;
+  height: 40px;
+  font-size: 1.25rem;
+  transition: ease 0.1s;
+
+  &:hover { background-color: darken($rx-color-mario-red, 10%); }
+  &:active { background-color: darken($rx-color-mario-red, 25%); }
+}

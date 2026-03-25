@@ -1,0 +1,53 @@
+{% load static readux_extras %}
+
+<div class="uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
+  {% for volume in volumes %}
+    {% if volume.pid %}
+    <div>
+      <a class="grid-item" href="{% url 'volumeall' volume.pid %}">
+        <!-- Cover in a square -->
+        <div class="cover-square">
+          <img
+            src="{{ volume.start_canvas.resource_id }}/full/600,/0/default.jpg"
+            alt="First page of {{ volume.label }}"
+            onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';"
+          >
+        </div>
+      </a>
+
+      {% with full_title=volume.label|default:"[no title]" year=volume|manifest_year %}
+        {% if full_title|length > 50 %}
+          <h2 class="volume-title-inline" uk-tooltip="mode: click" title="{{ full_title }}{% if year %} ({{ year }}){% endif %}">
+            <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
+              <span class="volume-title__text">{{ full_title|truncatechars:50 }}</span>{% if year %}<span class="volume-title__year"> ({{ year }})</span>{% endif %}
+            </a>
+          </h2>
+        {% else %}
+          <h2 class="volume-title-inline">
+            <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
+              <span class="volume-title__text">{{ full_title|truncatechars:50 }}</span>{% if year %}<span class="volume-title__year"> ({{ year }})</span>{% endif %}
+            </a>
+          </h2>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Authors -->
+      {% if volume.authors and "[no author]" not in volume.authors %}
+        {% with authors_display=volume.authors|join:" | " %}
+          {% if authors_display|length > 50 %}
+            <div class="author-line cursor-default" uk-tooltip="mode: click" title="{{ authors_display }}">
+              {{ authors_display }}
+            </div>
+          {% else %}
+            <div class="author-line">
+              {{ authors_display }}
+            </div>
+          {% endif %}
+        {% endwith %}
+      {% endif %}
+    </div>
+    {% endif %}
+  {% empty %}
+    <div class="uk-width-1-1">There are no volumes available to browse.</div>
+  {% endfor %}
+</div>

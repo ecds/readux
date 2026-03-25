@@ -1,0 +1,74 @@
+{% load static i18n %}
+{% load sass_tags %}
+<link type="text/css" href="{% sass_src 'css/components/menu-inverse.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/components/login.scss' %}" rel="stylesheet">
+<link type="text/css" href="{% sass_src 'css/components/reader.scss' %}" rel="stylesheet">
+
+<nav uk-navbar class="reader-navbar">
+
+    <div class="uk-navbar-left ">
+      <!-- Logo -->
+      <div class="uk-logo uk-flex uk-flex-middle">
+        <a class="brand-logo" href="/">{{ request.site.name }}</a>
+      </div>
+      <!-- End -->
+
+      <!-- Breadcrumb -->
+      {% if volume %}
+        {% with collections=volume.collections.all|dictsort:"label" %}
+          <ul class="breadcrumb">
+            {% if collections|length > 1 %}
+              <li>
+                <a href="#">
+                  Collections<span class="icon-chevron-down" uk-icon="icon: chevron-down; ratio: 0.5"></span>
+                </a>
+                <div class="uk-navbar-dropdown uk-padding-remove" uk-dropdown="mode: hover; pos: bottom-left;">
+                  <ul class="uk-nav uk-navbar-dropdown-nav">
+                    {% for col in collections %}
+                      <li>
+                        <a href="{% url 'collection' col.pid %}" alt="{{ col.label|default:'Collection' }}">
+                          {{ col.label|default:"Collection" }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </li>
+            {% elif collections|length == 1 %}
+              {% with col=collections.0 %}
+                <li><a href="{% url 'collection' col.pid %}">{{ col.label|default:"Collection" }}</a></li>
+              {% endwith %}
+            {% endif %}
+
+            <li>{{ volume.label|default:"Unknown Volume" }}</li>
+          </ul>
+        {% endwith %}
+      {% endif %}
+      <!-- End -->
+    </div>
+
+    <div class="uk-navbar-right">
+      <ul class="uk-navbar-nav">
+        {% if request.user.is_authenticated %}
+          <!-- User Account with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+            <a href="{% url 'users:update' %}" class="menu-item" uk-icon="icon: user;" uk-tooltip="My Account"></a>
+          </li>
+          <!-- Sign out with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+            {% include "snippets/_signout_button.html"%}
+          </li>
+        {% else %}
+          <!-- Login/Sign up with Icon -->
+          <li>{# URL provided by django-allauth/account/urls.py #}
+                      {% include "snippets/_show_sign_modal.html" %}
+          </li>
+        {% endif %}
+        <!-- Search with Icon -->
+        <li>
+          <a href="{% url 'search' %}" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+        </li>
+      </ul>
+    </div>
+</nav>
+{% include '_home/_login_modal.html' %}

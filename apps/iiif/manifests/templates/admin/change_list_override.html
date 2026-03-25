@@ -1,0 +1,26 @@
+{% extends "admin/change_list.html" %}
+
+{% load i18n %}
+
+{# adapted from django-import-export #}
+{% block object-tools %}
+  <ul class="object-tools">
+    {% block object-tools-items %}
+      {% include "admin/import_export/change_list_import_item.html" %}
+      {% if has_import_permission %}
+        <li>
+          <a
+            href='{% url "admin:MultiManifestMetadataImport" %}'
+            class="import_link"
+          >
+            {% trans "Bulk update" %}
+          </a>
+        </li>
+      {% endif %}
+      {% include "admin/import_export/change_list_export_item.html" %}
+      {% if has_add_permission %}
+        {{ block.super }}
+      {% endif %}
+    {% endblock %}
+  </ul>
+{% endblock %}

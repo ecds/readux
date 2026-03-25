@@ -1,211 +1,173 @@
-{% load static i18n %}<!DOCTYPE html>
-{% load menu_tags %}
-{% load sass_tags %}
-{% load wagtailcore_tags %}
-{% wagtail_site as current_site %}
+{% load static i18n %}
+<!doctype html>
+{% load menu_tags %} {% load sass_tags %} {% load wagtailcore_tags %} {%
+wagtail_site as current_site %}
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{% block title %}Readux{% endblock title %}</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>
+      {% block title %} {{ request.site.name }} {% endblock title %}
+    </title>
     <meta property="og:site" content="Readux 2 - Read, Annotate, Publish" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block extra_head %}
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    {% endblock extra_head %}
+    <meta name="author" content="" />
     {% if collection.label %}
-    <meta property="og:title" content="Readux collection: {{ collection.label }}" />
-    <meta name="twitter:title" content="Readux collection: {{ collection.label }}" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}" />
+    <meta
+      property="og:title"
+      content="Readux collection: {{ collection.label }}"
+    />
+    <meta
+      name="twitter:title"
+      content="Readux collection: {{ collection.label }}"
+    />
+    <meta
+      property="og:image"
+      content="https://{{ request.META.HTTP_HOST }}/media/{{ collection.thumbnail }}"
+    />
     <meta property="og:description" content="{{ collection.summary|escape }}" />
-    <meta name="twitter:description" content="{{ collection.summary|escape }}" />
+    <meta
+      name="twitter:description"
+      content="{{ collection.summary|escape }}"
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}" />
+    <meta
+      property="og:url"
+      content="https://{{ request.META.HTTP_HOST }}/col/{{ collection.pid }}"
+    />
     {% elif volume.label %}
     <meta property="og:title" content="{{ volume.label|escape }}" />
     <meta name="twitter:title" content="{{ volume.label|escape }}" />
     <meta property="og:description" content="{{ volume.summary|escape }}" />
     <meta name="twitter:description" content="{{ volume.summary|escape }}" />
     <meta property="og:type" content="book" />
+    <!-- Zotero metadata -->
+    <meta name="citation_title" content="{{ volume.label|escape }}" />
+    <meta name="citation_authors" content="{{ volume.author|safe }}" />
+    <meta name="citation_date" content="{{ volume.published_date|safe }}" />
+    <meta name="citation_publisher" content="{{ volume.publisher|safe }}" />
+    <meta
+      name="citation_public_url"
+      content="https://{{ request.META.HTTP_HOST }}{% url 'volume' volume.pid %}/page/all"
+    />
+    {% for lang in volume.languages.all %}
+    <meta name="citation_language" content="{{ lang.name }}" />
+    {% endfor %}
+    <!-- End Zotero metadata -->
 
-    {% for page in volume.canvas_set.all %}{% if forloop.first %}
+    {% for page in volume.canvas_set.all %} {% if forloop.first %}
     <meta property="og:image" content="{{ page.social_media }}" />
     <meta property="og:image:secure_url" content="{{ page.social_media }}" />
     <meta property="og:image:type" content="image/jpeg" />
     {% if "/cantaloupe/iiif/2" in page.social_media %}
     <meta name="twitter:image" content="{{ page.twitter_media1 }}" />
-    <!--<meta name="twitter:image:src" content="{{ page.twitter_media2 }}"/>-->
     {% else %}
     <meta name="twitter:image" content="{{ page.twitter_media2 }}" />
     {% endif %}
     <meta property="og:image:width" content="600" />
-    {% endif %}{% endfor %}
-    {% elif page.title %}
+    {% endif %} {% endfor %} {% elif page.title %}
     <meta property="og:title" content="{{ page.title }}" />
     <meta name="twitter:title" content="{{ page.title }}" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta
+      property="og:image"
+      content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg"
+    />
     <meta property="og:description" content="{{ page.tagline|striptags }}" />
     <meta name="twitter:description" content="{{ page.tagline|striptags }}" />
     {% else %}
-    {% block extra_head %}{% endblock %}
     <meta property="og:title" content="Readux 2" />
     <meta name="twitter:title" content="Readux 2" />
-    <meta property="og:image" content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg" />
+    <meta
+      property="og:image"
+      content="https://{{ request.META.HTTP_HOST }}/apps/static/images/readux_logo.jpg"
+    />
     <meta property="og:description" content="Read, Annotate, Publish" />
     <meta name="twitter:description" content="Read, Annotate, Publish" />
-    <!--<meta property="og:url" content="https://readux.ecds.emory.edu" />-->
+    <meta property="og:url" content="https://{{ request.META.HTTP_HOST }}" />
     {% endif %}
-    <meta name="twitter:image:alt" content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish" />
+    <meta
+      name="twitter:image:alt"
+      content="Readux Logo - Emory Center for Digital scholarship - Read, Annotate, Publish"
+    />
     <meta property="og:site_name" content="{{ current_site.site_name }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@emorycds" />
     <meta name="twitter:creator" content="@emorycds" />
-
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
-
-    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}">
-
+    <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
     {% block css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.13.7/css/uikit.min.css" />
-    <link href="{% static 'css/selectize.css' %}" rel="stylesheet">
-    <link type="text/css" href="{% sass_src 'css/project.scss' %}" rel="stylesheet">
-    <style>
-      {{ css }}
-    </style>
-    {% endblock %}
-    {% block extra_css %}{% endblock extra_css %}
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css"
+    />
+    <link
+      type="text/css"
+      href="{% sass_src 'css/readux.scss' %}"
+      rel="stylesheet"
+    />
+    <link
+      type="text/css"
+      href="{% sass_src 'css/components/login.scss' %}"
+      rel="stylesheet"
+    />
+    {% endblock css %} {% block extra_css %} {% endblock extra_css %}
   </head>
 
   <body>
+    {# NOTE: Jump to main content required for accessibility #}
     <a class="sr-only" href="#main">Jump to main content</a>
-    {% if request.get_host == "readux2.ecdsdev.org" %}
-    {% elif request.get_host == "readux.ecdsdev.org" %}
-    <div style="background-color:sandybrown;width:100%;height:1.5em;color:darkslategrey;text-align:center;font-size:1.4em;">
-    DEVELOPMENT SITE: Go to <a href="https://readux2.ecdsdev.org" style="color:red;text-decoration:underline;">Beta</a> for beta-testing or go to fully functioning
-    <a href="https://readux.ecds.emory.edu/" style="color:darkblue;text-decoration:underline;">Readux</a>.
+
+    {# Primary container; host for Vue application #} {% block nav %} {%
+    endblock nav %}
+    <div id="v-readux">
+      {# Content container #}
+      <main id="main">
+        {# Django errors and alerts #} {% if messages %} {% for message in
+        messages %}
+        <div class="uk-alert-{{ message.tags }}" uk-alert>
+          <a class="uk-alert-close" uk-close></a>
+          <p>{{ message }}</p>
+        </div>
+        {% endfor %} {% endif %} {% block modal %} {% endblock modal %} {% block
+        wrapper %} {% block content %} {% endblock content %} {% endblock
+        wrapper %} {# IIIF viewer #} {% block viewer %} {% endblock viewer %}
+      </main>
+
+      {# prevent duplicate footer on homepage bug #} {% if request.path != '/'
+      %} {% include "_home/_footer.html" %} {% endif %}
     </div>
-    {% endif %}
-    <div class="uk-container" id="v-readux">
-      <nav uk-navbar id="rx-nav">
-        <div class="uk-navbar-left">
-          <h1><a class="uk-navbar-item uk-logo uk-padding-remove-left uk-visible@s" href="/">
-            <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
-          </a></h1>
 
-          <div class="uk-visible@s">
-            {% main_menu %}
-          </div>
-
-          <a class="uk-navbar-toggle uk-hidden@s" uk-toggle="target: #sidenav" uk-navbar-toggle-icon></a>
-
-          <div id="sidenav" uk-offcanvas="" class="uk-offcanvas">
-            <div class="uk-offcanvas-bar rx-offcanvas-base">
-              <a class="uk-navbar-item uk-logo uk-padding-remove-left" href="/">
-                <img src="{% static 'images/readux.svg' %}" style="width: 50px; padding: 20px 0 0 0" alt="Readux">
-              </a>
-              {% main_menu %}
-            </div>
-          </div>
-
-        </div>
-        <div class="uk-navbar-right">
-          <ul class="uk-navbar-nav">
-              <li>
-                 <a href="/search/" aria-label="full site search" title="Site Search" uk-tooltip="title: Site Search; pos: right">
-                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: search"></span>
-                </a>
-              </li>
-              {% if request.user.is_authenticated %}
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                 <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Django admin; pos: right" aria-label="link to the django admin" title="Access Django Admin Site" href="/admin/">
-                  <span class="uk-user uk-icon-button" aria-hidden="true" uk-icon="icon: cog"></span>
-                </a>
-              </li>
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                 <a class="{% if url_name == 'index' %}uk-active{% endif %}" uk-tooltip="title: Your account; pos: right" aria-label="link to your account page" title="Your Account Details" href="{% url 'users:update'  %}">
-                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: user"></span>
-                </a>
-              </li>
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                 <a class="{% if url_name == 'index' %}uk-active{% endif %} uk-padding-remove-right" uk-tooltip="title: Logout; pos: right" aria-label="signout" title="Signout" href="{% url 'account_logout' %}">
-                  <span class="uk-icon uk-icon-button" aria-hidden="true" uk-icon="icon: sign-out"></span>
-                </a>
-              </li>
-              {% else %}
-              <li>
-                {# URL provided by django-allauth/account/urls.py #}
-                <!-- <a href="{% url 'account_login' %}"> -->
-                 <a href="#signin-modal" aria-label="Sign in" title="Sign in" uk-tooltip="title: Sign in; pos: right" uk-toggle>
-                  <span class="uk-icon  uk-icon-button uk-margin-small-right" aria-hidden="true" uk-icon="icon: sign-in"></span>
-                </a>
-              </li>
-              {% endif %}
-          </ul>
-        </div>
-      </nav>
-
-      <main id='main'>
-
-      {% if messages %}
-          {% for message in messages %}
-            <div class="uk-alert-{{ message.tags }}" uk-alert>
-              <a class="uk-alert-close" uk-close></a>
-              <p>{{ message }}</p>
-            </div>
-          {% endfor %}
-      {% endif %}
-
-      {% block modal %}
-      {% endblock modal %}
-
-      {% block content %}
-      <p>Use this document as a way to quick start any new project.</p>
-      {% endblock content %}
-
-      {# Modal for signin #}
-      <div id="signin-modal" class="uk-flex-top" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-          <button class="uk-modal-close-default" aria-label="close sign in modal" type="button" uk-close></button>
-          <section class="uk-modal-header">
-            <h2 class="uk-modal-title uk-text-center">
-            {% if user.is_authenticated %}
-                Connect Accounts
-            {% else %}
-              Sign in
-            {% endif %}
-            </h2>
-          </section>
-          {% include "snippets/socialaccount_buttons.html" %}
-        </div>
-      </div>
-
-      {% block viewer %}{% endblock viewer %}
-
-    </main>
-
-    </div>
+    <!-- Matomo Image Tracker-->
+    <img
+      referrerpolicy="no-referrer-when-downgrade"
+      src="https://matomo.ecdsdev.org/matomo.php?idsite={{ MATOMO_ID }}&amp;rec=1"
+      hidden
+      alt=""
+      height="0"
+      width="0"
+    />
+    <!-- End Matomo -->
 
     {% block javascript %}
-      <script src="{% static 'js/main.js' %}"></script>
-      {% if has_ga_tracking_id %}
-        <!-- Google Analytics -->
-        <script>
-          window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-          ga("create", "{{ ga_tracking_id }}", "auto");
-          ga("send", "pageview");
-        </script>
-        <script async src='https://www.google-analytics.com/analytics.js'></script>
-        <!-- End Google Analytics -->
-      {% endif %}
-    {% endblock javascript %}
-    {% block extra_javascript %}{% endblock extra_javascript %}
-    {% csrf_token%}
+    <script src="{% static 'js/main.js' %}"></script>
+    {% if has_ga_tracking_id %}
+    <!-- Google Analytics -->
+    <script>
+      window.ga =
+        window.ga ||
+        function () {
+          (ga.q = ga.q || []).push(arguments);
+        };
+      ga.l = +new Date();
+      ga("create", "{{ ga_tracking_id }}", "auto");
+      ga("send", "pageview");
+    </script>
+    <script async src="https://www.google-analytics.com/analytics.js"></script>
+    <!-- End Google Analytics -->
+    {% endif %} {% endblock javascript %} {% block extra_javascript %} {%
+    endblock extra_javascript %} {% csrf_token %}
   </body>
 </html>

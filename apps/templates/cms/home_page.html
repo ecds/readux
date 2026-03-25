@@ -1,234 +1,125 @@
-  {% extends "base.html" %}
-  {% load static %}
-  {% load readux_templatetags %}
-  {% load wagtailcore_tags %}
-  {% load has_user_annotations %}
-  {% load user_annotation_count %}
+{% extends "base.html" %}
+{% load has_user_annotations readux_templatetags sass_tags static user_annotation_count wagtailcore_tags wagtailimages_tags %}
 
-  {% block content %}
-  <div class="uk-child-width-expand@s" uk-grid>
+{% block extra_css %}
+<style>
+  .landing {
+    margin: 0;
+    padding: 0;
+    height: 80vh;
+    min-height: 500px;
+    {% if background_image_url %}
+      background: url('{{ background_image_url }}') no-repeat center center fixed;
+      background-size: cover;
+    {% else %}
+      background: linear-gradient(135deg, #1D3557, #457B9D);
+    {% endif %}
+    background-size: cover;
+  }
+</style>
+{% endblock %}
 
-    <div class="rx-splash">
-      <ul class="readux-home-tagline uk-padding-remove-left rx-splash-item">
-        <li>{{ page.tagline|richtext }}</li>
-      </ul>
-      <div class="rx-splash-item">
-        {% if request.get_host == "readux2.ecdsdev.org" %}
-        <iframe width="320" height="180" src="https://player.vimeo.com/video/374786964?x" frameborder="0"
-          allow="fullscreen" allowfullscreen style="margin-top:0.5em;"></iframe>
-        {% endif %}
-        <p class="">Engage with digitized print materials on an open source software platform and share new thinking.
-        </p>
-        <img src="static/images/ecds.svg" alt="ECDS logo" class="readux-home-ecds">
-      </div>
-    </div>
+{% block nav %}
+<div class="home-nav">
+  {% include '_home/_nav.html' %}
+</div>
+{% endblock nav %}
 
-    <div class="rx-home-right-column">
-      {% if page.featured_collections.all|length != 0  %}
-      <h2 class="readux-group-title">Featured Collection{{page.featured_collections.all|length|pluralize}}</h2>
-      <ul class="uk-padding-remove-left">
-        {% for collection in page.featured_collections.all|order_by:page.featured_collections_sort_order %}
-        <li>
-          <article class="uk-grid rx-article">
-            <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
-              <a alt="Thumbnail image for collection {{collection.label}}" class="rx-card-image"
-                href="{% url 'collection' collection.pid %}">
-                <img class="rx-title-image" alt="Thumbnail image for collection {{collection.label}}" src="/media/{{collection.thumbnail}}">
-              </a>
-            </div>
-            <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
-              <a class="nav-link" href="{% url 'collection' collection.pid %}">
-                <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
-                <div class="rx-title-tagline">{{collection.manifests.all|length}}
-                  volume{{collection.manifests.all|length|pluralize}}
-                </div>
-                <p class="rx-card-text">{{ collection.summary|truncatewords_html:30|safe }}</p>
-              </a>
-            </div>
-          </article>
-        </li>
-        {% endfor %}
-        <!-- <a class="nav-link" href="#">
-          <div class="rx-btn rx-btn-extension">Show All Featured Collections <i class="fas fa-chevron-right"></i></div>
-        </a> -->
-      </ul>
-      {% endif %}
+{% block content %}
 
-      {# FIXME: NEED BETTER WAY #}
-      {% if page.featured_volumes.all|length != 0 %}
-      <h2 class="readux-group-title">Featured Volume{{page.featured_volumes.all|length|pluralize}}</h2>
-      {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
-        <li>
-          <article class="uk-grid rx-article">
-            <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
-              <a alt="First page of {{volume.label}}" class="rx-card-image"
-                href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-                  <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" alt="First page of {{volume.label}}" volume-label="{{volume.label}}">
-                  </v-volume-image>
-              </a>
-            </div>
-            <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
-              {% if volume.collections.exists %}
-                <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
-                  <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-                </a>
-              {% endif %}
-              <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-                <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top">{{ volume.label|truncatechars:200 }}
-                </h3>
-                {# Expose annotation count when available #}
-                <ul class="rx-card-text">
-                  <li>Author: {{volume.author|truncatechars:100}}</li>
-                  <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-                  <li>
-                      {% if user.is_authenticated %}
-                        {% has_user_annotations volume user as result %}
-                        {% if result %}
-                          <span class="count-icon">
-                            <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                              uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                            <span class="count">{% user_annotation_count volume user %}</span>
-                          </span>
-                        {% endif %}
-                      {% endif %}
-                  </li>
-                </ul>
-              </a>
-            </div>
-          </article>
-        </li>
-      {% endfor %}
-      <!-- <a class="nav-link" href="#">
-        <div class="rx-btn rx-btn-extension">Show All Featured Volumes <i class="fas fa-chevron-right"></i></div>
-      </a> -->
-      {% endif %}
-
-
-
-      {% if page.content_display == 'Collections' %}
-      <h2 class="readux-group-title">All Collections</h2>
-
-      <ul>
-        {% for collection in page.collections %}
-        <li class="uk-grid" style="margin-top:0;">
-          <article class="rx-article uk-width-1-1" style="padding-left:5px;margin-top:1.5em;margin-bottom:1.5em;">
-            <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
-              <a alt="Banner image for collection {{collection.label}}" class="rx-card-image"
-                style="background-image: url('https://127.0.0.1:3000/media/{{collection.header}}'); // background-position: 77% 52% !important;"></a>
-            </div>
-            <div class="rx-card-body uk-width-3-1" style="padding-left: 40px;">
-              <a class="nav-link" href="{% url 'collection' collection.pid %}">
-                <h3 class="rx-card-title uk-margin-remove-bottom">{{ collection.label }}</h3>
-                <div class="rx-title-tagline">{{collection.manifests.all|length}}
-                  volume{{collection.manifests.all|length|pluralize}}
-                </div>
-                <p class="rx-card-text">{{ collection.summary|truncatewords_html:40|safe }}</p>
-              </a>
-            </div>
-          </article>
-        </li>
-        {% endfor %}
-
-        <li class="uk-grid" style="margin-top:0;">
-        <a class="nav-link uk-padding-remove" href="/{{ collectionsurl.slug }}">
-          <div class="rx-btn rx-btn-extension">Show All Collections <i class="fas fa-chevron-right"></i></div>
-        </a>
-        </li>
-      </ul>
-              {% include "footer.html" %}
-      {% endif %}
-
-      {% if page.content_display == 'Volumes' %}
-      <h2 class="readux-group-title">All Volumes</h2>
-      {% for volume in page.volumes %}
-      {% if volume.canvas_set.first.pid is null %}
-      <li>
-        <article class="uk-grid rx-article">
-          <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
-            <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label}}"></v-volume-image>
-          </div>
-          <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
-            {% if volume.collections.exists %}
-            <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
-              <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-            </a>
-            {% endif %}
-            <a class="nav-link" href="#">
-              <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top" title="{{ volume.label }}">
-                {{ volume.label|truncatechars:200 }}
-              </h3>
-              <div class="rx-title-tagline"></div>
-              <ul class="rx-card-text">
-                <li>Author: {{volume.author|truncatechars:150}}</li>
-                <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-                <li>
-                    {% if user.is_authenticated %}
-                      {% has_user_annotations volume user as result %}
-                      {% if result %}
-                        <span class="count-icon">
-                          <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                            uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                          <span class="count">{% user_annotation_count volume user %}</span>
-                        </span>
-                      {% endif %}
-                    {% endif %}
-                </li>
-              </ul>
-            </a>
-          </div>
-        </article>
-      </li>
-
+{% if request.path == '/' %}
+<div class="landing"{% if page.background_image %}
+  {% image page.background_image scale-100 as bgimg %}
+  style="background: url({{ bgimg.url }}) no-repeat center center fixed; background-size: cover;"
+  {% endif %} >
+  <div class="overlay"></div>
+  <div class="content">
+      {% include '_home/_hero.html' %}
+      {% if page.featured_story_title and page.featured_story_url %}
+        {% include '_home/_featured_story.html' %}
       {% else %}
-      <li>
-        <article class="uk-grid rx-article">
-          <div class="rx-card-image-container uk-width-1-1 uk-width-1-4@m">
-            <a class="rx-card-image" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-              <v-volume-image img-src="{{ volume.start_canvas.thumbnail_crop_tallwide }}" volume-label="{{volume.label|truncatechars:50}}">
-              </v-volume-image>
-            </a>
-
-          </div>
-          <div class="rx-card-body uk-width-1-1 uk-width-3-4@m">
-            {% if volume.collections.count > 0 %}
-            <a class="nav-link" href="{% url 'collection' volume.collections.first.pid %}">
-              <div class="rx-btn rx-btn-collection">{{volume.collections.first.label}}</div>
-            </a>
-            {% endif %}
-            <a class="nav-link" href="{% url 'page' volume.pid volume.canvas_set.first.pid %}">
-              <h3 class="rx-card-title uk-margin-remove-bottom uk-margin-small-top" title="{{ volume.label }}">{{ volume.label|truncatechars:200 }}
-              </h3>
-              <ul class="rx-card-text">
-                <li>Author: {{volume.author|truncatechars:150}}</li>
-                <li>Published: {{volume.published_date}} | Added: {{volume.created_at}}</li>
-                <li>
-                    {% if user.is_authenticated %}
-                      {% has_user_annotations volume user as result %}
-                      {% if result %}
-                        <span class="count-icon">
-                          <span class="uk-icon" uk-icon="icon: comments; ratio: 1.5"
-                            uk-tooltip="title: Number of your annotations; pos: bottom"></span>
-                          <span class="count">{% user_annotation_count volume user %}</span>
-                        </span>
-                      {% endif %}
-                    {% endif %}
-                </li>
-              </ul>
-            </a>
-          </div>
-        </article>
-      </li>
-
+        <div class="uk-section uk-section-default uk-padding-remove-top"></div> <!-- Filler Div -->
       {% endif %}
-      {% endfor %}
-
-      <a class="nav-link" href="/{{ volumesurl.slug }}">
-        <div class="rx-btn rx-btn-extension">Show All Volumes <i class="fas fa-chevron-right"></i></div>
-      </a>
-    </ul>
-
-      {% include "footer.html" %}
+      {% if page.featured_volumes.all.count != 0 %}
+        {% include '_home/_featured_volumes.html' %}
       {% endif %}
-    </div>
+      {% if page.featured_collections.all.count != 0 %}
+        {% include '_home/_featured_collections.html' %}
+      {% endif %}
+      {% if page.featured_video_url %}
+        {% include '_home/_video.html' %}
+      {% endif %}
+      <div class="space"></div>
+      {% include '_home/_footer.html' %}
   </div>
-  {% endblock %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+{% block extra_javascript %}
+  {% if page.featured_video_url %}
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        var iframe = document.getElementById('vimeoPlayer');
+        var player = new Vimeo.Player(iframe);
+        var thumbnail = document.getElementById('videoThumbnail');
+        var overlay = document.getElementById('videoOverlay');
+
+        document.getElementById('videoOverlay').addEventListener('click', function() {
+            // Hide the overlay and thumbnail
+            overlay.style.display = 'none';
+            thumbnail.style.display = 'none';
+
+            // Show the iframe and play the video in full screen
+            iframe.style.display = 'block';
+
+            player.play().then(function() {
+                return player.requestFullscreen();
+            }).catch(function(error) {
+                console.error('Error playing the video:', error);
+            });
+        });
+
+        player.on('ended', function() {
+            // Hide the iframe and show the overlay and thumbnail again
+            iframe.style.display = 'none';
+            overlay.style.display = 'block';
+            thumbnail.style.display = 'block';
+        });
+
+        player.on('fullscreenchange', function(data) {
+            if (!data.fullscreen) {
+                player.pause().then(function() {
+                    // Hide the iframe and show the overlay and thumbnail again
+                    iframe.style.display = 'none';
+                    overlay.style.display = 'block';
+                    thumbnail.style.display = 'block';
+                }).catch(function(error) {
+                    console.error('Error pausing the video:', error);
+                });
+            }
+        });
+    </script>
+  {% endif %}
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Select all .uk-section elements inside .content
+      const sections = document.querySelectorAll('.content > .uk-section');
+
+      // Apply padding-bottom: 0 to all sections
+      sections.forEach(section => {
+          section.style.paddingBottom = '0';
+      });
+
+      // Add specific padding to the last .uk-section
+      if (sections.length > 0) {
+          const lastSection = sections[sections.length - 1];
+          lastSection.style.paddingBottom = '70px';
+      }
+    });
+  </script>
+
+{% endblock %}

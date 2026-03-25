@@ -16,6 +16,7 @@ def add_ocr_task(canvas_id, *args, **kwargs):
 
     if ocr is not None:
         add_ocr_annotations(canvas, ocr)
+        canvas.save()  # trigger reindex
 
 @app.task(name='adding_oa_ocr_to_canvas', retry_backoff=5)
 def add_oa_ocr_task(annotation_list_url):

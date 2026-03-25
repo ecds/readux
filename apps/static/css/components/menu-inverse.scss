@@ -1,0 +1,57 @@
+@import '../partials/colors';
+
+/* Inverse the color for content pages */
+.menu-item {
+    color: rgba($rx-color-midnight-blue, 1.0) !important;
+    text-decoration: none !important;
+    transition: color 0.1s ease !important;
+
+    &:hover {
+        color: rgba($rx-color-midnight-blue, 0.8) !important; // Slightly dim
+    }
+
+    &:active {
+        color: rgba($rx-color-midnight-blue, 0.6) !important; // A bit darker
+    }
+}
+
+.brand-logo {
+    font-size: large;
+    color: $rx-color-midnight-blue !important;
+    font-weight: bold;
+
+    &:hover {
+        color: rgba($rx-color-midnight-blue, 0.8) !important; // Slightly dim
+    }
+
+    &:active {
+        color: rgba($rx-color-midnight-blue, 0.6) !important; // A bit darker
+    }
+}
+
+.brand-tagline {
+    font-size: small;
+    color: $rx-color-midnight-blue;
+}
+
+.brand-readux {
+    color: $rx-color-midnight-blue;
+
+    &:hover {
+        color: rgba($rx-color-midnight-blue, 0.8) !important; // Slightly dim
+    }
+
+    &:active {
+        color: rgba($rx-color-midnight-blue, 0.6) !important; // A bit darker
+    }
+}
+
+.brand-inline {
+  font-size: small;
+  font-weight: normal;
+  text-decoration: underline !important;
+}
+
+.uk-navbar-container {
+    position: relative;
+}

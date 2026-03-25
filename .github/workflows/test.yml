@@ -1,0 +1,102 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+
+env:
+  DATABASE_URL: postgres://user:password@localhost:5432/readux
+  DJANGO_ENV: test
+
+jobs:
+  pytest:
+    runs-on: ubuntu-22.04
+
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+        env:
+          STACK_VERSION: 7.17.5
+          xpack.security.enabled: false
+          cluster.name: readux-elasticsearch
+          http.port: 9200
+          discovery.type: single-node
+        options: >-
+          --health-cmd "curl http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+        ports:
+          - 9200:9200
+
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: user
+          POSTGRES_DB: readux_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.7.2"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install system requirements
+        run: |
+          sudo apt update
+          sudo apt install -y libjpeg-dev libopenjp2-7-dev libopenjp2-tools libssl-dev postgresql-client ruby-full openssh-server
+
+      - name: Install Ruby dependencies
+        run: |
+          sudo gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
+          bundle install
+          sudo gem install sass
+
+      - name: Install Python dependencies
+        run: |
+          mkdir logs && touch logs/debug.log
+          cp config/settings/local.dst config/settings/local.py
+          pip install --upgrade pip
+          pip install pyld==1.0.5
+          pip install -r requirements/local.txt
+
+      # - name: Test Export
+      #   run: pytest apps/export/
+
+      # - name: Test IIIF
+      #   run: pytest apps/iiif/
+
+      # - name: Test Readux
+      #   run: pytest apps/readux/
+
+      # - name: Test Users
+      #   run: pytest apps/users/
+
+      # - name: Test Webpack build
+      #   run: |
+      #     npm install
+      #     npx webpack

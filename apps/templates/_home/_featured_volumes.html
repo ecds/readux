@@ -1,0 +1,72 @@
+{% load readux_templatetags wagtailcore_tags static readux_extras %}
+
+<div class="uk-section uk-section-default ">
+    <div class="uk-container">
+        <h2 class="uk-text-large uk-text-bold">
+            Featured Volume{{page.featured_volumes.all.count|pluralize}}
+            {% if volumesurl %}
+                <a class="text-anchor" href="{% pageurl volumesurl %}">(See All Volumes)</a>
+            {% endif %}
+        </h2>
+        <div uk-slider>
+            <div class="uk-position-relative">
+                <div class="uk-slider-container">
+                    <div class="uk-slider-items uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m">
+                        {% for volume in page.featured_volumes.all|order_by:page.featured_volumes_sort_order %}
+                            {% if volume.pid %}
+                                <div class="uk-panel">
+                                    <a href="{% url 'volumeall' volume.pid %}" class="grid-item">
+                                        <div class="cover-square uk-margin-small-bottom">
+                                            <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="First page of {{volume.label}}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
+                                        </div>
+                                    </a>
+                                    {% with full_title=volume.label|default:"[no title]" year=volume|manifest_year %}
+                                        {% if full_title|length > 60 %}
+                                            <h2 class="volume-title-inline" uk-tooltip="mode: click" title="{{ full_title }}{% if year %} ({{ year }}){% endif %}">
+                                                <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
+                                                    <span class="volume-title__text">{{ full_title|truncatechars:60 }}</span>{% if year %}<span class="volume-title__year"> ({{ year }})</span>{% endif %}
+                                                </a>
+                                            </h2>
+                                        {% else %}
+                                            <h2 class="volume-title-inline">
+                                                <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
+                                                    <span class="volume-title__text">{{ full_title|truncatechars:60 }}</span>{% if year %}<span class="volume-title__year"> ({{ year }})</span>{% endif %}
+                                                </a>
+                                            </h2>
+                                        {% endif %}
+                                    {% endwith %}
+
+                                    {% if volume.authors and "[no author]" not in volume.authors %}
+                                        {% with authors_display=volume.authors|join:" | " %}
+                                            {% if authors_display|length > 60 %}
+                                                <div class="author-line cursor-default" uk-tooltip="mode: click" title="{{ authors_display }}">
+                                                    {{ authors_display }}
+                                                </div>
+                                            {% else %}
+                                                <div class="author-line">
+                                                    {{ authors_display }}
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+        
+                <div class="uk-hidden@s uk-light">
+                    <a class="uk-position-center-left uk-position-small" href uk-slidenav-previous uk-slider-item="previous"></a>
+                    <a class="uk-position-center-right uk-position-small" href uk-slidenav-next uk-slider-item="next"></a>
+                </div>
+        
+                <div class="uk-visible@s">
+                    <a class="uk-position-center-left-out uk-position-small" href uk-slidenav-previous uk-slider-item="previous"></a>
+                    <a class="uk-position-center-right-out uk-position-small" href uk-slidenav-next uk-slider-item="next"></a>
+                </div>
+        
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,55 @@
+@import '../partials/colors';
+
+.uk-switch {
+    position: relative;
+    display: inline-block;
+    height: 17px;
+    width: 30px;
+}
+
+/* Hide default HTML checkbox */
+.uk-switch input {
+    display: none;
+}
+
+/* Slider */
+.uk-switch-slider {
+    background-color: $rx-color-light-pearl;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-radius: 500px;
+    bottom: 0;
+    cursor: pointer;
+    transition-property: background-color;
+    transition-duration: .2s;
+}
+
+/* Switch pointer */
+.uk-switch-slider:before {
+    content: '';
+    background-color: $color-white;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    left: 1px;
+    bottom: 1px;
+    border-radius: 50%;
+    transition-property: transform, box-shadow;
+    transition-duration: .2s;
+}
+
+/* Slider active color */
+input:checked+.uk-switch-slider {
+    background-color: $rx-color-midnight-blue !important;
+}
+
+/* Pointer active animation */
+input:checked+.uk-switch-slider:before {
+    transform: translateX(13px);
+}
+
+input:checked+.uk-switch-slider.uk-switch-big:before {
+    transform: translateX(13px) scale(1.2);
+}

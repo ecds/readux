@@ -1,0 +1,362 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "https://dev.readux.io/iiif/txzqg/annotationpage/txzqg_000.tif",
+  "type": "AnnotationPage",
+  "items": [
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "28e92e3c-0407-482e-98d9-39ecc1ee0070",
+      "type": "Annotation",
+      "motivation": "commenting",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>some annotation</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2022-09-16T18:41:31.534Z",
+          "modified": "2022-09-16T18:41:31.534Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/spb1b_000.tif",
+        "selector": {
+          "type": "RangeSelector",
+          "startSelector": {
+            "@type": "XPathSelector",
+            "value": "//*[@id='5a1b56bb-b32d-419a-969a-0465982c8a0f']",
+            "refinedBy": {
+              "@type": "TextPositionSelector",
+              "start": 0
+            }
+          },
+          "endSelector": {
+            "@type": "XPathSelector",
+            "value": "//*[@id='ece5a9ff-ee53-4106-8177-5b18fe3e1da8']",
+            "refinedBy": {
+              "@type": "TextPositionSelector",
+              "end": 2
+            }
+          },
+          "refinedBy": {
+            "type": "FragmentSelector",
+            "value": "xywh=pixel:1069,984,776,87",
+            "conformsTo": "https://www.w3.org/TR/media-frags/"
+          }
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#ebd29ec6-b428-44aa-bd90-b08a18cd5f11",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>fefefee</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2022-06-22T22:21:53.114Z",
+          "modified": "2022-06-22T22:21:53.114Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "RangeSelector",
+          "startSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='6f281727-b853-4f72-8b80-8a64910c9655']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "start": 1
+            }
+          },
+          "endSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='6f281727-b853-4f72-8b80-8a64910c9655']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "end": 12
+            }
+          }
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#c57b78ac-d337-49e0-bdf0-08936aad081e",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>blah</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2023-05-03T15:28:46.716Z",
+          "modified": "2023-05-03T15:28:46.716Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "FragmentSelector",
+          "value": "xywh=pixel:850,3851,908,481",
+          "conformsTo": "http://www.w3.org/TR/media-frags/"
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#064ecb82-ce9d-470b-a30e-19795b46d84d",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>veeveev!!!!!</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2022-06-22T22:18:21.172Z",
+          "modified": "2023-05-11T17:55:18.048Z"
+        },
+        {
+          "type": "TextualBody",
+          "value": "tag",
+          "purpose": "tagging",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2022-06-22T22:18:21.172Z",
+          "modified": "2023-05-11T17:55:18.048Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "RangeSelector",
+          "startSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='b3fab616-3462-42ec-8b95-3a0ef2c0af1c']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "start": 2
+            }
+          },
+          "endSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='29831ded-a408-4357-a859-46054190658e']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "end": 5
+            }
+          }
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#a2db93b5-0531-45ed-9402-88a5b8e42df1",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>point</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2023-05-16T18:15:03.207Z",
+          "modified": "2023-05-16T18:15:35.547Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "FragmentSelector",
+          "value": "xywh=pixel:1473,813,711,148",
+          "conformsTo": "http://www.w3.org/TR/media-frags/"
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#1dd5a6c6-08af-4af7-8355-0579837e865e",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>King!</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2022-06-22T22:22:55.316Z",
+          "modified": "2023-05-16T18:16:09.191Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "SvgSelector",
+          "value": "<svg><polygon points=\"1851.9000244140625,3849.800048828125 3256.60009765625,4565.2001953125 3526.800048828125,3679.39990234375 3053,4019 3030.199951171875,3436.800048828125 2755.300048828125,3895.699951171875 2654.89990234375,3326.699951171875 2477.300048828125,3724.5 2313.5,3143.300048828125 2200.699951171875,3704.800048828125 1986.199951171875,3219.5\" /></svg>"
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#a9f37f43-f19f-43d7-95ca-c7d7cdb3e7bc",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>text</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2025-07-01T17:41:37.178Z",
+          "modified": "2025-07-01T17:41:37.178Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "RangeSelector",
+          "startSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='1eee408f-b3c2-47c1-913e-913e491a92ea']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "start": 0
+            }
+          },
+          "endSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='1eee408f-b3c2-47c1-913e-913e491a92ea']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "end": 4
+            }
+          }
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#adae60c0-721a-4f3d-bae1-a631dc7ee313",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>box</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2025-07-01T17:42:21.944Z",
+          "modified": "2025-07-01T17:42:21.944Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "FragmentSelector",
+          "value": "xywh=pixel:1106,2608,409,421",
+          "conformsTo": "http://www.w3.org/TR/media-frags/"
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#3cc07ff7-4a33-47b8-b7e1-67023da7086a",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>circle with tag</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2025-07-01T17:43:19.310Z",
+          "modified": "2025-07-01T17:43:19.310Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "SvgSelector",
+          "value": "<svg><circle cx=\"2652.90869140625\" cy=\"2752.0352783203125\" r=\"304.1899090361771\"></circle></svg>"
+        }
+      }
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      "id": "#6c8a28dd-9e4e-4ec8-922a-c8839eea8d71",
+      "type": "Annotation",
+      "body": [
+        {
+          "type": "TextualBody",
+          "value": "<p>apollo</p>",
+          "purpose": "commenting",
+          "format": "text/html",
+          "creator": {
+            "id": "wilkins",
+            "name": "Dominique Wilkins"
+          },
+          "created": "2025-07-01T18:04:09.697Z",
+          "modified": "2025-07-01T18:04:09.697Z"
+        }
+      ],
+      "target": {
+        "source": "https://iip.readux.io/iiif/2/txzqg_000.tif",
+        "selector": {
+          "type": "RangeSelector",
+          "startSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='480a4652-93ae-4292-915a-f2eed66d645e']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "start": 0
+            }
+          },
+          "endSelector": {
+            "type": "XPathSelector",
+            "value": "//*[@id='480a4652-93ae-4292-915a-f2eed66d645e']",
+            "refinedBy": {
+              "type": "TextPositionSelector",
+              "end": 6
+            }
+          }
+        }
+      }
+    }
+  ]
+}

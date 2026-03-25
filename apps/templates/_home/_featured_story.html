@@ -1,0 +1,24 @@
+{% load wagtailimages_tags %}
+
+<div class="uk-section uk-section-default section-offset">
+    <div class="uk-container">
+        <div class="uk-child-width-expand@s" uk-grid>
+            {% if page.featured_story_image %}
+            <div class="uk-width-1-4@s">
+                {% image page.featured_story_image max-700x700 class="uk-width-1-1" %}
+            </div>
+            <div class="uk-width-3-4@s">
+            {% else %}
+            <div class="uk-width-4-4@s">
+            {% endif%}
+                <h2 class="title uk-margin-small-bottom">{{ page.featured_story_title }}</h2>
+                <p class="truncate-text paragraph uk-margin-small-bottom">
+                    {{ page.featured_story_summary }}
+                </p>
+                <a href="{{ page.featured_story_url }}" class="text-anchor uk-text-medium uk-text-bold">
+                    More Information
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

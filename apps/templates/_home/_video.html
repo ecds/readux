@@ -1,0 +1,24 @@
+{% load static readux_extras %}
+
+<div class="uk-section uk-section-default uk-padding-remove">
+    <div class="uk-container-expand">
+        <div class="video-section">
+            <div class="video-container" id="videoContainer">
+                <img src="{% static 'images/video_thumbnail.jpg' %}" alt="Vimeo Video Thumbnail" class="video-thumbnail" id="videoThumbnail">
+                <div class="transparent-overlay" id="transparentOverlay"></div>
+                <iframe src="{{ page.featured_video_url|vimeo_embed_url }}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen id="vimeoPlayer"></iframe>
+                <div class="video-overlay" id="videoOverlay">
+                    <h1 style="color:white; font-size: 3rem; font-weight: bold; margin-bottom: 2rem;">
+                        {{ page.featured_video_title|default:"Watch the Video" }}
+                    </h1>
+                    <div class="play-icon" uk-icon="icon: play-circle; ratio: 6" style="margin-bottom: 2rem;"></div>
+                    {% if page.featured_video_tagline %}
+                        <div style="color:white; font-size: 1.5rem;">
+                            {{ page.featured_video_tagline }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

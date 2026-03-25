@@ -1,4 +1,4 @@
-""" Global template contexts. """
+"""Global template contexts."""
 
 from os import environ
 from git import Repo
@@ -13,7 +13,7 @@ def current_version(_=None):
 
     {
         "DJANGO_ENV": "dev",
-        "APP_VERSION": "Readux 2.3.0",
+        "APP_VERSION": "Readux 3.0",
         "BRANCH": "develop",
         "COMMIT": "deeb939f41c001658d9f3ce82d6fa6add6158d5c",
         "COMMIT_DATE": "01/13/2025, 13:13:18"
@@ -70,3 +70,14 @@ def site_meta(_):
         "META_KEYWORDS": getattr(settings, "META_KEYWORDS", ""),
         "META_DESCRIPTION": getattr(settings, "META_DESCRIPTION", ""),
     }
+
+
+def matomo_id(_):
+    """Expose Matomo ID for analytics.
+    Args:
+        _ (WSGIRequest): Current request. Not used.
+
+    Returns:
+        dict: Dict with key 'MATOMO_ID' for use in analytics script tag.
+    """
+    return {"MATOMO_ID": getattr(settings, "MATOMO_ID", "")}

@@ -247,6 +247,7 @@ TEMPLATES = [
                 "apps.readux.context_processors.current_version",
                 "apps.readux.context_processors.footer_template",
                 "apps.readux.context_processors.site_meta",
+                "apps.readux.context_processors.matomo_id",
                 "apps.custom_styles.context_processors.background_image_url",
             ],
         },

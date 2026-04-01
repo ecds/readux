@@ -131,12 +131,10 @@ class Canvas(IiifBase):
 
     @property
     def thumbnail_crop_volume(self):
-        """Concatenated property for cropped volume URI"""
-        if self.height > self.width:
-            # portrait
-            return f"{self.resource_id}/pct:15,15,70,70/,600/0/default.jpg"
-        # landscape
-        return f"{self.resource_id}/pct:25,15,50,85/,600/0/default.jpg"
+        """Concatenated property for volume URI without cropping"""
+        # Return full image resized to fit within 600px, maintaining aspect ratio
+        # Let CSS handle fitting within the square container with object-fit: contain
+        return f"{self.resource_id}/full/600,/0/default.jpg"
 
     @cached_property
     def result(self):

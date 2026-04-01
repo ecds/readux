@@ -91,8 +91,9 @@ class Collection(IiifBase):
         :return: True if file is created successfully.
         :rtype: bool
         """
-        # If height is higher we resize vertically, if not we resize horizontally
-        size = (400, 500)
+        # Resize to fit within max bounds while preserving aspect ratio (no cropping)
+        max_width = 400
+        max_height = 500
         image = Image.open(self.thumbnail)
 
         # We need to test that this if else works correctly so that new files can be
@@ -100,25 +101,19 @@ class Collection(IiifBase):
         if 'thumbnails/' in self.thumbnail.name:
             return True
         else:
-            # Get current and desired ratio for the images
-            img_ratio = image.size[0] / float(image.size[1])
-            ratio = size[0] / float(size[1])
-            #The image is scaled/cropped vertically or horizontally depending on the ratio
-            if ratio > img_ratio:
-                image = image.resize(
-                    (int(size[0]), int(size[0] * image.size[1] / image.size[0])),
-                    Image.Resampling.LANCZOS)
-                # Crop in the top, middle or bottom
-                box = (0, (image.size[1] - size[1]) / 2, image.size[0], (image.size[1] + size[1]) / 2)
-                image = image.crop(box)
-            elif ratio < img_ratio:
-                imageratio = (int(size[1] * image.size[0] / image.size[1]), int(size[1]))
-                image = image.resize(imageratio, Image.Resampling.LANCZOS)
-                box = ((image.size[0] - size[0]) / 2, 0, (image.size[0] + size[0]) / 2, image.size[1])
-                image = image.crop(box)
-            else:
-                image = image.resize((size[0], size[1]), Image.Resampling.LANCZOS)
-            # If the scale is the same, we do not need to crop
+            # Calculate new size maintaining aspect ratio
+            img_width, img_height = image.size
+            width_ratio = max_width / img_width
+            height_ratio = max_height / img_height
+            # Use the smaller ratio to ensure image fits within both dimensions
+            scale_ratio = min(width_ratio, height_ratio)
+            
+            new_width = int(img_width * scale_ratio)
+            new_height = int(img_height * scale_ratio)
+            
+            # Resize without cropping, maintaining aspect ratio
+            image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            
             thumb_name, thumb_extension = os.path.splitext(self.thumbnail.name)
             thumb_extension = thumb_extension.lower()
 

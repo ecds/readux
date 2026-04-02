@@ -61,6 +61,25 @@
     transition: background-color 0.3s ease;
 }
 
+.metadata-button {
+    margin-top: 20px;
+    background-color: $rx-color-cement-gray;
+    border: none;
+    color: $color-white;
+    font-weight: bold;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.description-button + .metadata-button {
+    margin-left: 0.75rem;
+}
+
 .modal-bg {
     background-size: cover;
     background-position: center;

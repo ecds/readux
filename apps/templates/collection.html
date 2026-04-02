@@ -42,6 +42,9 @@
             {% if summary_plain|length > 200 %}
               <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-full">Full Description</button>
             {% endif %}
+            {% if collection.metadata %}
+              <button class="uk-button metadata-button uk-text-nowrap" uk-toggle="target: #modal-metadata">Metadata</button>
+            {% endif %}
           {% endif %}
         {% endwith %}
 
@@ -71,6 +74,28 @@
       </div>
     {% endif %}
   {% endwith %}
+
+  {% if collection.metadata %}
+    <div id="modal-metadata" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
+      <div
+        class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
+        uk-height-viewport
+        style="background-image: url('/media/{{collection.header}}');"
+      >
+          <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
+          <div class="modal-overlay">
+              <div class="uk-width-1-1 uk-padding-large">
+                  <h2 class="uk-text-bold">Metadata</h2>
+                  {% for label, value in collection.metadata|metadata_items %}
+                      <p><strong>{{ label }}:</strong> {{ value|unescape_html }}</p>
+                  {% empty %}
+                      <p>No metadata available.</p>
+                  {% endfor %}
+              </div>
+          </div>
+      </div>
+    </div>
+  {% endif %}
 
   <div class="uk-container">
     {% include "snippets/_volumes_page_information.html" %}

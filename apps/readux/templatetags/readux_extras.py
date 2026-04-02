@@ -142,6 +142,27 @@ def unescape_html(value):
 
 
 @register.filter
+def metadata_items(value):
+    """Normalize collection metadata for template display."""
+    if not value:
+        return []
+
+    if isinstance(value, list):
+        items = []
+        for entry in value:
+            if isinstance(entry, dict):
+                label = entry.get("label", "")
+                content = entry.get("value", "")
+                items.append((label, content))
+        return items
+
+    if isinstance(value, dict):
+        return list(value.items())
+
+    return []
+
+
+@register.filter
 def strip_trailing_commas(value):
     """Remove any trailing commas and surrounding whitespace."""
     try:

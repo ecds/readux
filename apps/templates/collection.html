@@ -30,7 +30,7 @@
     <div class="overlay">
         <h1 class="uk-text-large uk-margin-remove uk-text-bold rx-line-height-lg">{{ collection.label }}</h1>
         <div class="rx-title-tagline uk-margin-small-top">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
-        {% with summary_plain=collection.summary|striptags %}
+        {% with summary_plain=collection.summary|striptags|unescape_html %}
           {% if summary_plain %}
             <p class="uk-text-medium uk-margin-top">
               {% if summary_plain|length > 200 %}
@@ -64,7 +64,7 @@
             <div class="modal-overlay">
                 <div class="uk-width-1-1 uk-padding-large">
                     <h2 class="uk-text-bold">{{ collection.label }}</h2>
-                    {{ collection.summary|safe }}
+                    {{ collection.summary|unescape_html|safe }}
                 </div>
             </div>
         </div>

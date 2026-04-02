@@ -1,4 +1,5 @@
 import re
+from html import unescape
 from django.template import Library
 
 register = Library()
@@ -128,6 +129,15 @@ def spaced_semicolons(value):
     try:
         return re.sub(r";\s*", "; ", str(value))
     except TypeError:
+        return value
+
+
+@register.filter
+def unescape_html(value):
+    """Decode HTML entities to their corresponding characters."""
+    try:
+        return unescape(str(value))
+    except Exception:
         return value
 
 

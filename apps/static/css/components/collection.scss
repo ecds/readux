@@ -71,8 +71,8 @@
 }
 
 .modal-overlay {
-    background: rgba($color-black, 0.6);
-    /* Dark overlay */
+    background: rgba($color-black, 0.85);
+    /* Dark overlay adjusted for higher contrast */
     height: 100%;
     width: 100%;
     position: absolute;

@@ -132,6 +132,12 @@ $content-heading-sizes: (
   list-style: decimal !important; 
 }
 
+.content a {
+  color: $rx-color-rose-red;
+  text-decoration: underline;
+  &:hover { color: darken($rx-color-rose-red, 10%); }
+}
+
 blockquote {
   border-left: 4px solid $rx-color-linen-blue !important;
   padding-left: 1rem !important;

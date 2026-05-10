@@ -1,4 +1,5 @@
 {% load url_replace %}
+{% if volumes.paginator.count > 0 %}
 <!-- Information Line -->
 <div class="info-line">
   <div class="info-group">
@@ -69,3 +70,4 @@
     </a>
   </div>
 </div>
+{% endif %}

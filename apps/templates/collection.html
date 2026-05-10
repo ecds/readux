@@ -23,60 +23,45 @@
   <!-- End -->
   </div>
 
-  <div
-    class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-small-top"
-    style="background-image: url('/media/{{collection.header}}');"
-  >
-    <div class="overlay">
-        <h1 class="uk-text-large uk-margin-remove uk-text-bold rx-line-height-lg">{{ collection.label }}</h1>
+  <div class="uk-section uk-padding-remove full-width-bg uk-margin-bottom uk-margin-small-top" style="background-image: url('/media/{{collection.header}}');">
+    <div class="hero-container">
+      <!-- Left Column: Text Content -->
+      <div class="hero-text-column">
+        <h1 class="collection-title uk-margin-remove uk-text-bold" id="collection-title">{{ collection.label }}</h1>
         <div class="rx-title-tagline uk-margin-small-top">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
         {% with summary_plain=collection.summary|striptags|unescape_html %}
           {% if summary_plain %}
-            <p class="uk-text-medium uk-margin-top">
-              {% if summary_plain|length > 200 %}
-                {{ summary_plain|truncatechars:200 }}
+            <p class="collection-description uk-margin-top" id="collection-description">
+              {% if summary_plain|length > 300 %}
+                <span class="description-text">{{ summary_plain|truncatechars:300 }}</span>
               {% else %}
-                {{ summary_plain }}
+                <span class="description-text">{{ summary_plain }}</span>
               {% endif %}
             </p>
-            {% if summary_plain|length > 200 %}
-              <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-full">Full Description</button>
-            {% endif %}
-            {% if collection.metadata %}
-              <button class="uk-button metadata-button uk-text-nowrap" uk-toggle="target: #modal-metadata">Metadata</button>
-            {% endif %}
+            <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-collection-full">Full Description</button>
           {% endif %}
         {% endwith %}
+      </div>
 
-        {# TODO: image metadata, style or remove #}
-        {% if collection.collection_image_title %}<p>{{ collection.collection_image_title }}</p>{% endif %}
-        {% if collection.collection_image_summary %}<p>{{ collection.collection_image_summary }}</p>{% endif %}
-        {% if collection.collection_image_summary %}<p>{{ collection.collection_image_creator }}</p>{% endif %}
+      <!-- Right Column: Collection Image with Info Icon -->
+      <div class="hero-image-column">
+        <div class="hero-image-wrapper">
+          <div class="image-placeholder"></div>
+          <button 
+            class="info-icon-button" 
+            uk-toggle="target: #modal-collection-full"
+            uk-tooltip="title: View description and metadata; pos: right"
+            type="button"
+            aria-label="View collection description and metadata">
+            <span uk-icon="icon: info; ratio: 1.5"></span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   {% with summary_plain=collection.summary|striptags %}
-    {% if summary_plain and summary_plain|length > 200 %}
-      <div id="modal-full" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
-        <div
-          class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
-          uk-height-viewport
-          style="background-image: url('/media/{{collection.header}}');"
-        >
-            <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
-            <div class="modal-overlay">
-                <div class="uk-width-1-1 uk-padding-large">
-                    <h2 class="uk-text-bold">{{ collection.label }}</h2>
-                    {{ collection.summary|unescape_html|safe }}
-                </div>
-            </div>
-        </div>
-      </div>
-    {% endif %}
-  {% endwith %}
-
-  {% if collection.metadata %}
-    <div id="modal-metadata" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
+    <div id="modal-collection-full" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
       <div
         class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
         uk-height-viewport
@@ -84,18 +69,38 @@
       >
           <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
           <div class="modal-overlay">
-              <div class="uk-width-1-1 uk-padding-large">
-                  <h2 class="uk-text-bold">Metadata</h2>
-                  {% for label, value in collection.metadata|metadata_items %}
-                      <p><strong>{{ label }}:</strong> {{ value|unescape_html }}</p>
-                  {% empty %}
-                      <p>No metadata available.</p>
-                  {% endfor %}
+              <div class="uk-width-1-1 uk-padding-large modal-content">
+                  <div class="modal-grid">
+                    <!-- Description Section -->
+                    <div class="modal-section modal-description-section">
+                      <h2 class="uk-text-bold">{{ collection.label }}</h2>
+                      <div class="volume-count">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
+                      <div class="modal-description">
+                        {{ collection.summary|unescape_html|safe }}
+                      </div>
+                    </div>
+
+                    <!-- Metadata Section -->
+                    {% if collection.metadata %}
+                      <div class="modal-section modal-metadata-section">
+                        <h3 class="uk-text-bold">Metadata</h3>
+                        <div class="metadata-content">
+                          {% for label, value in collection.metadata|metadata_items %}
+                              <div class="metadata-item">
+                                <strong>{{ label }}:</strong> <span>{{ value|unescape_html }}</span>
+                              </div>
+                          {% empty %}
+                              <p>No metadata available.</p>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
               </div>
           </div>
       </div>
     </div>
-  {% endif %}
+  {% endwith %}
 
   <div class="uk-container">
     {% include "snippets/_volumes_page_information.html" %}

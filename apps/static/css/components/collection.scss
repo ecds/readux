@@ -1,15 +1,6 @@
 @import '../partials/colors';
 @import '../partials/_mixin.scss';
 
-#modal-full p {
-    color: $color-white;
-    ;
-}
-
-#modal-full h2 {
-    font-size: xx-large;
-}
-
 .full-width-bg {
     background-size: cover;
     background-position: center;
@@ -18,66 +9,244 @@
     color: $color-white;
 }
 
-.overlay {
-    background: linear-gradient(to right, rgba($color-black, 0.8) 0%, rgba($color-black, 0.6) 100%);
-    width: 33%;
-    position: relative;
-    height: auto;
-    min-height: 0;
+/* Hero Container - Two Column Layout */
+.hero-container {
+    display: flex;
+    align-items: stretch;
+    min-height: 400px;
+    
+    @media (max-width: 768px) {
+        flex-direction: column;
+        min-height: auto;
+    }
+}
+
+/* Left Column - Text Content */
+.hero-text-column {
+    flex: 1;
+    background: linear-gradient(to right, rgba($color-black, 0.85) 0%, rgba($color-black, 0.7) 100%);
     padding: 50px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     color: $color-white;
+    position: relative;
+    z-index: 2;
+    
+    @media (max-width: 768px) {
+        padding: 30px;
+        min-height: auto;
+    }
 }
 
-.overlay h1 {
-    font-size: 2rem;
-    /* Reduced title size */
+/* Collection Title - Responsive Font Size */
+.collection-title {
+    font-size: 2.5rem;
     margin-bottom: 15px;
     color: $color-white;
-
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+    
+    @media (max-width: 1200px) {
+        font-size: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+        font-size: 1.75rem;
+    }
+    
+    /* When title is very long, reduce font size */
+    &.title-long {
+        font-size: 1.75rem;
+        
+        @media (max-width: 1200px) {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* When title is truncated */
+    &.title-truncated {
+        font-size: 1.5rem;
+        
+        @media (max-width: 1200px) {
+            font-size: 1.25rem;
+        }
+    }
 }
 
-.overlay p {
+.rx-title-tagline {
     font-size: 1rem;
-    /* Adjusted font size */
-    line-height: 1.5;
-    /* Reduced line-height */
-    color: $color-white;
+    color: rgba($color-white, 0.9);
+    font-weight: 500;
 }
 
+/* Collection Description */
+.collection-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba($color-white, 0.95);
+    margin-top: 20px;
+    margin-bottom: 25px;
+    flex-grow: 1;
+    
+    .description-text {
+        display: block;
+    }
+    
+    /* When description is truncated */
+    &.description-truncated .description-text::after {
+        content: '';
+    }
+}
+
+/* Description Button */
 .description-button {
-    margin-top: 20px;
+    margin-top: auto;
     background-color: $rx-color-mario-red;
-    /* Removed gradient background */
     border: none;
     color: $color-white;
     font-weight: bold;
     height: 40px;
+    padding: 0 20px;
     border-radius: 5px;
     font-size: 1em;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s ease;
+    cursor: pointer;
+    width: fit-content;
+    
+    &:hover {
+        background-color: darken($rx-color-mario-red, 10%);
+    }
 }
 
-.metadata-button {
-    margin-top: 20px;
-    background-color: $rx-color-cement-gray;
+/* Right Column - Image and Info Icon */
+.hero-image-column {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    
+    @media (max-width: 768px) {
+        min-height: 300px;
+    }
+}
+
+.hero-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba($color-black, 0.2);
+    z-index: 1;
+}
+
+/* Info Icon Button */
+.info-icon-button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 3;
+    background: transparent;
     border: none;
-    color: $color-white;
-    font-weight: bold;
-    height: 40px;
-    border-radius: 5px;
-    font-size: 1em;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba($color-white, 0.8);
+    
+    span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    &:hover {
+        background: rgba($color-white, 0.25);
+        border: 2px solid rgba($color-white, 0.7);
+        color: $color-white;
+        box-shadow: 0 0 20px rgba($color-white, 0.3);
+    }
+    
+    @media (max-width: 768px) {
+        bottom: 15px;
+        left: 15px;
+        width: 50px;
+        height: 50px;
+        
+        span {
+            font-size: 1.2rem;
+        }
+    }
 }
 
-.description-button + .metadata-button {
-    margin-left: 0.75rem;
+/* Modal Styles */
+.rx-collection-modal {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    div {
+        color: $color-white;
+    }
+
+    h2 {
+        margin-bottom: 0.5rem;
+        font-size: 2rem;
+    }
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    a {
+        color: $rx-color-sky-blue;
+        text-decoration: underline;
+        transition: color 0.3s ease;
+        
+        &:hover,
+        &:active {
+            color: lighten($rx-color-sky-blue, 10%);
+            text-decoration: underline;
+        }
+    }
+
+    .uk-close {
+        color: $color-white;
+        &:hover {
+            color: darken($color-white, 10%);
+        }
+        background: none;
+        border: none;
+    }
 }
 
 .modal-bg {
@@ -91,61 +260,126 @@
 
 .modal-overlay {
     background: rgba($color-black, 0.85);
-    /* Dark overlay adjusted for higher contrast */
     height: 100%;
     width: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    padding: 50px;
+    padding: 30px;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    overflow-y: auto;
+    
+    @media (max-width: 768px) {
+        padding: 20px;
+    }
 }
 
-.modal-overlay h2,
-.modal-overlay p {
-    position: relative;
-    z-index: 1;
+.modal-content {
+    max-width: 1000px;
+    width: 100%;
+    margin-top: 50px;
+    
+    @media (max-width: 768px) {
+        margin-top: 30px;
+    }
 }
 
-.modal-overlay p {
+.modal-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+.modal-description-section {
+    grid-column: 1;
+}
+
+.modal-metadata-section {
+    grid-column: 2;
+    padding-top: 6rem;
+    
+    @media (max-width: 1024px) {
+        grid-column: 1;
+        padding-top: 0;
+    }
+}
+
+.modal-section {
+    margin-bottom: 0;
+}
+
+.volume-count {
+    font-size: 1rem;
+    color: rgba($color-white, 0.8);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.modal-description {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba($color-white, 0.95);
     margin-bottom: 1rem;
+    
+    p {
+        margin-bottom: 1rem;
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
-.rx-collection-modal {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p {
-        color: $color-white;
-    }
+.metadata-section {
+    padding-top: 0;
+    border-top: none;
+}
 
-    h2 {
-        margin-bottom: 1rem;
-    }
+.metadata-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
 
-    a {
-        color: $rx-color-faded-mint;
-        text-decoration: underline;
-        @include link-variant($rx-color-faded-mint, 600, true);
-        &:hover,
-        &:active {
-            color: $color-white;
-            text-decoration: underline;
+.metadata-item {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    
+    strong {
+        color: rgba($color-white, 0.9);
+        min-width: 200px;
+        flex-shrink: 0;
+        
+        @media (max-width: 768px) {
+            min-width: 150px;
         }
     }
-
-    .uk-close {
-        color: $color-white;
-        &:hover {
-            color: darken($color-white, 10%);
-        }
-        background: none;
-        border: none;
+    
+    span {
+        color: rgba($color-white, 0.85);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
+}
+
+#modal-full p {
+    color: $color-white;
+}
+
+#modal-full h2 {
+    font-size: xx-large;
 }

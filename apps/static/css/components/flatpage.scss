@@ -133,15 +133,20 @@ $content-heading-sizes: (
 }
 
 .content a {
-  color: $rx-color-rose-red;
+  color: $rx-color-mario-red;
   text-decoration: underline;
-  &:hover { color: darken($rx-color-rose-red, 10%); }
+  // transition: color 0.3s ease;
+  
+  // &:hover,
+  // &:active {
+  //   color: $rx-color-mario-red;
+  // }
 }
 
 blockquote {
   border-left: 4px solid $rx-color-linen-blue !important;
   padding-left: 1rem !important;
-  color: darken($color-black, 10%) !important;
+  color: lighten($color-black, 20%) !important;
   margin: 1rem 0 !important;
 }
 

@@ -255,7 +255,7 @@ em { color: inherit !important; }
 
 /* Info line / pagination */
 .info-line {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 20px;
   font-weight: 600; color: $rx-color-midnight-blue;
   .info-group, .pagination-controls { display: flex; align-items: center; gap: 5px; }
   a, select { color: $rx-color-mario-red; text-decoration: underline; }

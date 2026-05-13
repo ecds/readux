@@ -93,35 +93,35 @@
                 
                 <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                     <div class="uk-flex uk-flex-between sui-item-heading">
-                        <label>{{ form.collection.label }}</label>
+                        <label for="{{ form.collection.id_for_label }}">{{ form.collection.label }}</label>
                     </div>
                     {{ form.collection }}
                 </fieldset>
 
                 <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                     <div class="uk-flex uk-flex-between sui-item-heading">
-                        <label>{{ form.author.label }}</label>
+                        <label for="{{ form.author.id_for_label }}">{{ form.author.label }}</label>
                     </div>
                     {{ form.author }}
                 </fieldset>
 
                 <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                     <div class="uk-flex uk-flex-between sui-item-heading">
-                        <label>{{ form.language.label }}</label>
+                        <label for="{{ form.language.id_for_label }}">{{ form.language.label }}</label>
                     </div>
                     {{ form.language }}
                 </fieldset>
 
                 <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                     <div class="uk-flex uk-flex-between sui-item-heading">
-                        <label>Filter by Date published</label>
+                        <label for="toggle-date">Filter by Date published</label>
                         <input type="checkbox" name="date-filter" id="toggle-date" class="uk-checkbox uk-margin-remove"/>
                     </div>
                     <div id="date-range-slider"></div>
                     <noscript>
-                        <div class="uk-label">{{ form.start_date.label }}</div>
+                        <label for="{{ form.start_date.id_for_label }}" class="uk-label">{{ form.start_date.label }}</label>
                         {{ form.start_date }}
-                        <div class="uk-label">{{ form.end_date.label }}</div>
+                        <label for="{{ form.end_date.id_for_label }}" class="uk-label">{{ form.end_date.label }}</label>
                         {{ form.end_date }}
                     </noscript>
                 </fieldset>
@@ -130,7 +130,7 @@
                     <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                         {% with form|dict_item:key as field %}
                             <div class="uk-flex uk-flex-between sui-item-heading">
-                                <label>{{ field.label }}</label>
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                             </div>
                             {{ field }}
                         {% endwith %}

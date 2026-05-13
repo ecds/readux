@@ -20,9 +20,13 @@
 <form class="uk-search uk-search-default rx-page-search-container"
   action="{% url 'volumeall' volume.pid %}" method="get" accept-charset="utf-8">
   {% csrf_token %}
-  <span uk-search-icon></span>
-  <input class="uk-search-input" type="text" placeholder="Hit Enter to search" aria-label="Search" name="q"
-    value="{{request.GET.q}}">
+  <label for="volume-search-query" class="uk-hidden">Search this volume</label>
+  <input class="uk-search-input" type="text" placeholder="Hit Enter to search" aria-label="Search this volume" name="q"
+    id="volume-search-query" value="{{request.GET.q}}">
+  <button type="submit" class="uk-search-icon-flip" aria-label="Search">
+    <span uk-search-icon aria-hidden="true"></span>
+    <span class="uk-hidden">Search</span>
+  </button>
 </form>
 {% endif %}
 

@@ -1,10 +1,12 @@
 {% load socialaccount %}
-<p class="uk-margin">
-  Exporting your Jekyll site to GitHub requires access to your GitHub account.
-</p>
-<form action={% provider_login_url "github" next=request.path process="connect" %} method="post">
-  {% csrf_token %}
-  <button class="uk-button uk-button-default sso-button github" type="submit">
-    <span uk-icon="github" class="uk-margin-small-right"></span>Authorize GitHub Access
-  </button>
-</form>
+{% if "github" not in request.user.socialaccount_list %}
+  <div class="uk-margin-top">
+    <p>Exporting your Jekyll site to GitHub requires access to your GitHub account.</p>
+    <form action={% provider_login_url "github" next=request.path process="connect" %} method="post">
+      {% csrf_token %}
+      <button class="uk-button uk-button-primary uk-button-small" type="submit" style="display: inline-flex; align-items: center; gap: 6px;">
+        <span uk-icon="github"></span>Authorize GitHub Access
+      </button>
+    </form>
+  </div>
+{% endif %}

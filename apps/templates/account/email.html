@@ -84,8 +84,16 @@
         <h2 class="text-black static-content-title">{% trans "Add E-mail Address" %}</h2>
         <form method="post" action="{% url 'account_email' %}" class="add_email uk-form-stacked">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button class="uk-button uk-button-primary" name="action_add" type="submit">
+          {% for field in form.visible_fields %}
+            <div class="uk-margin">
+              {{ field.errors }}
+              {{ field }}
+              {% if field.help_text %}
+                <p class="uk-text-small uk-text-muted">{{ field.help_text }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button class="uk-button uk-button-primary uk-button-small" name="action_add" type="submit">
             {% trans "Add E-mail" %}
           </button>
         </form>

@@ -29,48 +29,32 @@
       <div class="section">
         <h2 class="text-black static-content-title">Account Overview</h2>
 
-        <!-- Account info summary -->
-        <dl class="uk-description-list uk-margin-bottom">
-          {% if object.name %}
-            <dt>Display Name</dt>
-            <dd>{{ object.name }}</dd>
-          {% endif %}
-          {% if object.first_name or object.last_name %}
-            <dt>Full Name</dt>
-            <dd>{{ object.first_name }} {{ object.last_name }}</dd>
-          {% endif %}
-          <dt>Username</dt>
-          <dd>{{ object.username }}</dd>
-          <dt>Email</dt>
-          <dd>{{ object.email|default:"—" }}</dd>
-          <dt>Member Since</dt>
-          <dd>{{ object.date_joined|date:"F j, Y" }}</dd>
-          <dt>Connected Accounts</dt>
-          <dd>
-            {% if object.socialaccount_list %}
-              {% for provider in object.socialaccount_list %}
-                <span uk-icon="{{ provider }}" class="uk-margin-small-right" title="{{ provider|capfirst }}"></span>
-              {% endfor %}
-            {% else %}
-              None
-            {% endif %}
-          </dd>
-        </dl>
-
-        <!-- GitHub authorization -->
-        {% if request.user is not None %}
-          {% if "github" not in request.user.socialaccount_list %}
-            <div class="uk-margin-top">
-              <p>Exporting your Jekyll site to GitHub requires access to your GitHub account.</p>
-              <form action={% provider_login_url "github" next=request.path process="connect" %} method="post">
-                {% csrf_token %}
-                <button class="uk-button uk-button-primary" type="submit" style="display: inline-flex; align-items: center; gap: 6px;">
-                  <span uk-icon="github"></span>Authorize GitHub Access
-                </button>
-              </form>
-            </div>
-          {% endif %}
+        {% if object.name %}
+          <h3>Display Name</h3>
+          <p>{{ object.name }}</p>
         {% endif %}
+        {% if object.first_name or object.last_name %}
+          <h3>Full Name</h3>
+          <p>{{ object.first_name }} {{ object.last_name }}</p>
+        {% endif %}
+        <h3>Username</h3>
+        <p>{{ object.username }}</p>
+        <h3>Email</h3>
+        <p>{{ object.email|default:"—" }}</p>
+        <h3>Member Since</h3>
+        <p>{{ object.date_joined|date:"F j, Y" }}</p>
+        <h3>Connected Accounts</h3>
+        <p>
+          {% if object.socialaccount_list %}
+            {% for provider in object.socialaccount_list %}
+              <span uk-icon="{{ provider }}" class="uk-margin-small-right" title="{{ provider|capfirst }}"></span>
+            {% endfor %}
+          {% else %}
+            None
+          {% endif %}
+        </p>
+
+        {% include "../snippets/github_authorize.html" %}
       </div>
 
     </div>

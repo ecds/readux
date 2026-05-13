@@ -46,23 +46,12 @@
               {% endif %}
             </div>
           {% endfor %}
-          <button type="submit" class="uk-button uk-button-primary">
+          <button type="submit" class="uk-button uk-button-primary uk-button-small">
             Update Profile
           </button>
         </form>
 
-        <!-- GitHub authorization -->
-        {% if "github" not in request.user.socialaccount_list %}
-          <div class="uk-margin-top">
-            <p>Exporting your Jekyll site to GitHub requires access to your GitHub account.</p>
-            <form action={% provider_login_url "github" next=request.path process="connect" %} method="post">
-              {% csrf_token %}
-              <button class="uk-button uk-button-primary" type="submit" style="display: inline-flex; align-items: center; gap: 6px;">
-                <span uk-icon="github"></span>Authorize GitHub Access
-              </button>
-            </form>
-          </div>
-        {% endif %}
+        {% include "../snippets/github_authorize.html" %}
       </div>
 
     </div>

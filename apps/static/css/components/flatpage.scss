@@ -9,7 +9,8 @@
   width: auto; /* Fit to content width */
 }
 
-.navigation a {
+.navigation a,
+.navigation .uk-nav-default > li > a {
   color: $rx-color-midnight-blue;
   text-decoration: none;
   display: block;
@@ -19,8 +20,9 @@
   font-size: medium;
 }
 
-.navigation a.active {
-  font-weight: bold; /* Bold text for active item */
+.navigation a.active,
+.navigation .uk-nav-default > li > a.active {
+  font-weight: bold;
   color: $rx-color-midnight-blue;
 
   &:hover {

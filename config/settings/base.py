@@ -295,6 +295,8 @@ SOCIALACCOUNT_ADAPTER = "apps.users.adapters.SocialAccountAdapter"
 
 SOCIALACCOUNT_FORMS = {"signup": "apps.users.forms.ReaduxSocialSignupForm"}
 
+ACCOUNT_FORMS = {"add_email": "apps.users.forms.ReaduxAddEmailForm"}
+
 SOCIALACCOUNT_AUTO_SIGNUP = False
 
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False

@@ -29,7 +29,7 @@
           <p class="collection-summary">{{ collection.summary|striptags|truncatewords:70 }}</p>
         </a>
       {% empty %}
-        <div class="uk-width-1-1">There are no collections available to browse.</div>
+        <div class="uk-width-1-1 uk-margin-large-bottom">There are no collections available to browse.</div>
       {% endfor %}
     </div>
   {% elif page.layout == 'List' %}

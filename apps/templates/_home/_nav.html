@@ -18,7 +18,7 @@
                     {% if request.user.is_authenticated %}
                     <!-- User Account with Icon -->
                     <li>{# URL provided by django-allauth/account/urls.py #}
-                      <a href="{% url 'users:update' %}" class="menu-item" uk-icon="icon: user;" uk-tooltip="My Account"></a>
+                      <a href="{% url 'users:update' %}" class="menu-item" uk-icon="icon: user;" uk-tooltip="My Account" aria-label="My Account"><span class="uk-hidden">My Account</span></a>
                     </li>
                     <!-- Sign out with Icon -->
                     <li>{# URL provided by django-allauth/account/urls.py #}
@@ -37,7 +37,7 @@
                     </li> -->
                     <!-- Search with Icon -->
                     <li class="">
-                        <a href="{% url 'search' %}" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library"></a>
+                        <a href="{% url 'search' %}" class="menu-item" uk-icon="icon: search;" uk-tooltip="Search in this library" aria-label="Search in this library"><span class="uk-hidden">Search in this library</span></a>
                     </li>
                 </ul>
             </div>

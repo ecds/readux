@@ -1,4 +1,5 @@
 @import '../partials/colors';
+@import '../partials/buttons';
 
 /* -------------------------------------------------------------------------- */
 /* SEARCH RESULTS PAGE                                                        */
@@ -101,14 +102,6 @@ form#search-form {
 // —————————————————————————————————————————————
 // UI Kit tweaks
 // —————————————————————————————————————————————
-.uk-button-primary {
-  background-color: $rx-color-midnight-blue;
-
-  &:hover {
-    background-color: darken($rx-color-midnight-blue, 10%); // darker on hover
-  }
-}
-
 .uk-container ul { list-style: none; }
 
 .uk-checkbox:checked,

@@ -1,0 +1,7 @@
+.uk-button-primary {
+  background-color: $rx-color-midnight-blue;
+
+  &:hover {
+    background-color: darken($rx-color-midnight-blue, 10%); // darker on hover
+  }
+}

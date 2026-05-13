@@ -6,19 +6,17 @@
     </div>
 
     <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
-      <span>Overlay OCR on Page</span>
-      <div>
-        <label class="uk-switch" for="ocr-overlay">
-          <input
-            type="checkbox"
-            id="ocr-overlay"
-            v-model="overlayChecked"
-            :disabled="overlayDisabled"
-            @change="onOverlayToggle"
-          >
-          <div class="uk-switch-slider"></div>
-        </label>
-      </div>
+      <label class="uk-switch" for="ocr-overlay">
+        <span>Overlay OCR on Page</span>
+        <input
+          type="checkbox"
+          id="ocr-overlay"
+          v-model="overlayChecked"
+          :disabled="overlayDisabled"
+          @change="onOverlayToggle"
+        >
+        <div class="uk-switch-slider"></div>
+      </label>
     </div>
 
     <div class="rx-info-content-value uk-margin-small-bottom uk-text-italic">

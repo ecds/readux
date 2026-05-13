@@ -5,14 +5,16 @@
 
       <a v-if="fullurl"
           :href="fullurl"
-          target="_blank"
-          rel="noopener"> 
+          :target="icon === 'download' ? '_self' : '_blank'"
+          :rel="icon !== 'download' ? 'noopener' : undefined"
+          :aria-label="icon === 'download' ? `${label} (downloads file)` : `${label} (opens in a new tab)`"
+          :download="icon === 'download' ? true : undefined">
         <span
           class="uk-label rx-label-copy"
           role="button"
           tabindex="0"
         >
-          <span :uk-icon="`icon: ${icon}; ratio: 0.6`"></span>
+          <span :uk-icon="`icon: ${icon}; ratio: 0.6`" aria-hidden="true"></span>
           {{btnlabel}}
         </span>
       </a>
@@ -20,13 +22,14 @@
       <a v-else-if="!!localUrls"
           :href="localUrls"
           target="_blank"
-          rel="noopener"> 
+          rel="noopener"
+          :aria-label="`${label} (opens in a new tab)`">
         <span
           class="uk-label rx-label-copy"
           role="button"
           tabindex="0"
         >
-          <span :uk-icon="`icon: ${icon}; ratio: 0.6`"></span>
+          <span :uk-icon="`icon: ${icon}; ratio: 0.6`" aria-hidden="true"></span>
           {{btnlabel}}
         </span>
       </a>
@@ -37,8 +40,10 @@
         v-if="fullurl"
         :href="fullurl"
         class="rx-anchor"
-        target="_blank"
-        rel="noopener"
+        :target="icon === 'download' ? '_self' : '_blank'"
+        :rel="icon !== 'download' ? 'noopener' : undefined"
+        :aria-label="icon === 'download' ? `${label} (downloads file)` : `${label} (opens in a new tab)`"
+        :download="icon === 'download' ? true : undefined"
       >{{ fullurl }}</a>
       <a
         v-else-if="!!localUrls"
@@ -46,6 +51,7 @@
         class="rx-anchor"
         target="_blank"
         rel="noopener"
+        :aria-label="`${label} (opens in a new tab)`"
       >{{ localUrls }}</a>
     </div>
   </div>

@@ -165,3 +165,9 @@ apps/static/js/main.js
 apps/static/js/main.js.map
 
 snippets/*
+
+
+deploy.sh
+docker*
+Docker*
+entrypoint.sh

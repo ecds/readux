@@ -9,6 +9,7 @@
 @import './components/wagtail.scss';
 @import './components/uk-switch.scss';
 @import './components/footer.scss';
+@import './components/user-form.scss';
 
 /* -------------------------------------------------------------------------- */
 /* 1) ROOT VARIABLES                                                          */
@@ -111,8 +112,23 @@ em { color: inherit !important; }
   padding: 0;
   margin: 0;
 
-  > li { margin-right: 5px; }
-  > li + li::before { content: "/"; margin-right: 5px; color: $rx-color-midnight-blue; }
+  > li {
+    margin-right: 5px;
+
+    &:last-child:empty {
+      display: none;
+    }
+  }
+
+  > li + li::before {
+    content: "/";
+    margin-right: 5px;
+    color: $rx-color-midnight-blue;
+  }
+
+  > li:last-child:empty + li::before {
+    display: none;
+  }
 
   a {
     color: $rx-color-midnight-blue;

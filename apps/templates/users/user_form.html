@@ -6,9 +6,7 @@
   {{ user.username }}
 {% endblock title %}
 
-{% block breadcrumb %}
-  Update Profile
-{% endblock breadcrumb %}
+{% block breadcrumb %}Update Profile{% endblock breadcrumb %}
 
 {% block content %}
   <form class="uk-form-stacked" method="post" action="{% url 'users:update' %}">
@@ -24,7 +22,7 @@
         {{ field.errors }}
         {{ field }}
       {% endfor %}
-      <button type="submit" class="uk-button uk-button-default uk-button-primary uk-margin-top">
+      <button type="submit" class="uk-button uk-button-primary uk-button-small">
         Update Name
       </button>
     </div>

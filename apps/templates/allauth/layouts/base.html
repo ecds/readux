@@ -16,8 +16,8 @@
   <div class="uk-container content-page">
 
     {% with request.resolver_match.url_name as url_name %}
-      <nav aria-label="Breadcrumb">
-        <ul class="uk-breadcrumb uk-text-truncate uk-margin-small-top">
+      <nav aria-label="breadcrumb" class="uk-margin-small-top">
+        <ul class="breadcrumb">
           <li>
             <a href={% url "wagtail_serve" "" %}>Home</a>
           </li>
@@ -28,10 +28,7 @@
               My Account
             {% endif %}
           </li>
-          <li>
-            {% block breadcrumb %}
-            {% endblock breadcrumb %}
-          </li>
+          <li>{% block breadcrumb %}{% endblock breadcrumb %}</li>
         </ul>
       </nav>
     {% endwith %}

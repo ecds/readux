@@ -6,6 +6,8 @@
   User: {{ object.username }}
 {% endblock title %}
 
+{% block breadcrumb %}{% endblock breadcrumb %}
+
 {% block content %}
   {% if request.user is not None %}
     {% if "github" not in request.user.socialaccount_list %}

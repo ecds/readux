@@ -494,6 +494,13 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
   }
 /* End */
 
+.uk-notification-message {
+  background-color: $rx-color-faded-mint;
+  color: $rx-color-midnight-blue;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba($rx-color-midnight-blue, 0.15);
+}
+
 .rx-line-height-lg {
   line-height: 1.15em;
 }

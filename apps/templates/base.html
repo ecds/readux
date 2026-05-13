@@ -106,10 +106,14 @@
         {# Django errors and alerts #}
         {% if messages %}
           {% for message in messages %}
-            <div class="uk-alert-{{ message.tags }}" uk-alert>
-              <a class="uk-alert-close" uk-close></a>
-              <p>{{ message }}</p>
-            </div>
+            {% if message.tags == 'info' or message.tags == 'success' %}
+              <span class="rx-notify-message" data-message="{{ message }}" hidden></span>
+            {% else %}
+              <div class="uk-alert-{{ message.tags }}" uk-alert>
+                <a class="uk-alert-close" uk-close></a>
+                <p>{{ message }}</p>
+              </div>
+            {% endif %}
           {% endfor %}
         {% endif %}
 
@@ -159,5 +163,14 @@
     {% block extra_javascript %}
     {% endblock extra_javascript %}
     {% csrf_token %}
+    <script>
+      document.querySelectorAll('.rx-notify-message').forEach(function(el) {
+        UIkit.notification({
+          message: el.dataset.message,
+          pos: 'top-center',
+          timeout: 5000,
+        });
+      });
+    </script>
   </body>
 </html>

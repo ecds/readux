@@ -10,7 +10,7 @@
     {% include "snippets/_volumes_grid.html" %}
   {% elif page.layout == 'List' %}
     <!-- Volume List -->
-    <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
+    <table class="uk-table uk-table-divider list-view-table">
       <thead>
         <tr>
           <th>Volume</th>
@@ -35,5 +35,7 @@
       </tbody>
     </table>
   {% endif %}
+
+  {% include "snippets/_volumes_page_information.html" %}
 
 {% endblock content %}

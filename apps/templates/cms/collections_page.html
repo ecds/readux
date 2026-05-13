@@ -5,8 +5,9 @@
   {% include "snippets/_collections_page_information.html" %}
 
   {% if page.layout == 'Grid' %}
+
     <!-- Collection Grid -->
-    <div class="uk-grid-match uk-child-width-1-4@m uk-margin-large-bottom" uk-grid>
+    <div class="uk-grid-match uk-child-width-1-4@m" uk-grid>
       {% for collection in collections %}
         <!-- Collection Item -->
         <a class="grid-item" href="{% url 'collection' collection.pid %}">
@@ -33,7 +34,7 @@
     </div>
   {% elif page.layout == 'List' %}
     <!-- Collection List -->
-    <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
+    <table class="uk-table uk-table-divider list-view-table">
       <thead>
         <tr>
           <th>Collection</th>
@@ -64,4 +65,6 @@
       </tbody>
     </table>
   {% endif %}
+
+  {% include "snippets/_collections_page_information.html" %}
 {% endblock content %}

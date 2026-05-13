@@ -9,13 +9,14 @@ progress
 python-memcached==1.59
 pyld==1.0.5
 hocr-spec==0.2.0
-# edtf
+# edtf<6
 git+https://github.com/ecds/python-edtf@214972b
+
 
 # Django
 # ------------------------------------------------------------------------------
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django>=3.2.0,<4.0  # https://www.djangoproject.com/
+Django>=3.2.0,<5.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
 # git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
@@ -36,7 +37,7 @@ django-summernote>=0.8.11.6 # https://github.com/summernote/django-summernote
 
 # SCSS Support
 #--------------------------------------------------------------------------------
-# libsass
+# libsass==0.23.0
 django-compressor
 django-sass-processor
 
@@ -60,6 +61,7 @@ django-storages==1.14.2  # https://github.com/jschneier/django-storages
 
 # SFTP Uploads
 pysftp==0.2.9 # https://pysftp.readthedocs.io/
+paramiko<4.0.0
 
 # Python function to stream unzip all the files in a ZIP archive, without loading the entire ZIP file into memory or any of its uncompressed files.
 stream-unzip>=0.0.58
@@ -86,9 +88,8 @@ psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
 # ------------------------------------------------------------------------------
 mypy==1.8.0  # https://github.com/python/mypy
 pytest>=7.4.3  # https://github.com/pytest-dev/pytest
-pytest-sugar==0.9.7  # https://github.com/Frozenball/pytest-sugar
-pytest-cov==4.1.0
-pytest-django==4.7.0  # https://github.com/pytest-dev/pytest-django
+pytest-sugar  # https://github.com/Frozenball/pytest-sugar
+pytest-django  # https://github.com/pytest-dev/pytest-django
 py==1.11.0 # https://github.com/pytest-dev/pytest/issues/10420
 requests~=2.31.0
 iiif-prezi~=0.3.0 # https://github.com/iiif-prezi/iiif-prezi
@@ -99,15 +100,11 @@ moto==5.0.12 # https://github.com/spulec/moto
 factory-boy~=3.2.1  # https://github.com/FactoryBoy/factory_boy
 faker~=20.1.0
 
-# Code quality
-# ------------------------------------------------------------------------------
-coverage==7.4.0  # https://github.com/nedbat/coveragepy
 
 # Django
 # ------------------------------------------------------------------------------
 django-debug-toolbar~=4.2.0  # https://github.com/jazzband/django-debug-toolbar
 django-extensions~=3.2.3  # https://github.com/django-extensions/django-extensions
-django-coverage-plugin~=3.1.0  # https://github.com/nedbat/django_coverage_plugin
 pyopenssl # for running dev server under https
 
 celery~=5.3.4

@@ -15,9 +15,9 @@
     <div class="uk-width-1-4@m navigation-wrapper">
       <nav class="navigation sidebar-sticky" uk-sticky="offset: 20; media: @m;">
         <ul class="uk-nav uk-nav-default">
-          <li><a href="{% url 'users:detail' object.username %}" class="active" data-section="overview">Overview</a></li>
-          <li><a href="{% url 'users:update' %}" data-section="profile">My Profile</a></li>
-          <li><a href="{% url 'account_email' %}" data-section="email">My Email</a></li>
+          <li><a href="{% url 'users:detail' object.username %}" class="active" data-section="overview">Account Overview</a></li>
+          <li><a href="{% url 'users:update' %}" data-section="profile">Update Username</a></li>
+          <li><a href="{% url 'account_email' %}" data-section="email">Email Settings</a></li>
           <li><a href="{% url 'socialaccount_connections' %}" data-section="connections">Account Connections</a></li>
         </ul>
       </nav>

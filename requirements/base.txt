@@ -9,14 +9,14 @@ progress
 python-memcached==1.59
 pyld==1.0.5
 hocr-spec==0.2.0
-# edtf<6
-git+https://github.com/ecds/python-edtf@214972b
+edtf
+# git+https://github.com/ecds/python-edtf@214972b
 
 
 # Django
 # ------------------------------------------------------------------------------
 # TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django>=3.2.0,<5.0  # https://www.djangoproject.com/
+Django>=4.0,<5.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
 # git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
@@ -45,7 +45,7 @@ django-sass-processor
 pylint-django==2.5.5
 
 # Wagtail
-wagtail==4.2.4
+wagtail==5.2.8
 wagtailmenus==3.1.9
 #git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 wagtail-autocomplete==0.10.0

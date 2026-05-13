@@ -168,6 +168,7 @@ class Manifest(IiifBase):
     date_edtf = EDTFField(  # Read-only EDTF field that handles fuzzy date calculations
         "Date of publication (EDTF)",
         natural_text_field="published_date_edtf",
+        direct_input_field="published_date_edtf",
         lower_fuzzy_field="date_earliest",
         upper_fuzzy_field="date_latest",
         lower_strict_field="date_sort_ascending",

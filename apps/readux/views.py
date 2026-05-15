@@ -13,6 +13,8 @@ from django.db.models import Max, Count, F
 from django.urls import reverse
 from elasticsearch_dsl import Q, NestedFacet, TermsFacet
 from elasticsearch_dsl.query import MultiMatch
+from edtf.convert import date_to_jd
+from datetime import date
 import config.settings.local as settings
 from apps.iiif.manifests.documents import ManifestDocument
 from apps.readux.forms import AllVolumesForm, ManifestSearchForm
@@ -609,10 +611,12 @@ class VolumeSearchView(ListView, FormMixin):
         # filter on date published
         min_date_filter = form_data.get("start_date") or ""
         if min_date_filter:
-            volumes = volumes.filter("range", date_earliest={"gte": min_date_filter})
+            min_jd = date_to_jd(date(int(min_date_filter), 1, 1))
+            volumes = volumes.filter("range", date_earliest={"gte": min_jd})
         max_date_filter = form_data.get("end_date") or ""
         if max_date_filter:
-            volumes = volumes.filter("range", date_latest={"lte": max_date_filter})
+            max_jd = date_to_jd(date(int(max_date_filter), 12, 31))
+            volumes = volumes.filter("range", date_latest={"lte": max_jd})
 
         # filter on custom metadata fields
         if hasattr(settings, "CUSTOM_METADATA") and isinstance(

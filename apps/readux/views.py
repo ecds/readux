@@ -492,7 +492,7 @@ class VolumeSearchView(ListView, FormMixin):
                     if start is None:
                         start = m.canvas_set.order_by("position").first()
                     v.start_canvas = start
-                    
+
         return context_data
 
     def get_queryset(self):
@@ -611,11 +611,11 @@ class VolumeSearchView(ListView, FormMixin):
         # filter on date published
         min_date_filter = form_data.get("start_date")
         if min_date_filter:
-            min_jd = date_to_jd(date(date(min_date_filter), 1, 1))
+            min_jd = date_to_jd(date(min_date_filter.year, 1, 1))
             volumes = volumes.filter("range", date_earliest={"gte": min_jd})
         max_date_filter = form_data.get("end_date") or ""
         if max_date_filter:
-            max_jd = date_to_jd(date(date(max_date_filter), 12, 31))
+            max_jd = date_to_jd(date(max_date_filter.year, 12, 31))
             volumes = volumes.filter("range", date_latest={"lte": max_jd})
 
         # filter on custom metadata fields

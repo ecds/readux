@@ -3,6 +3,7 @@ from uuid import uuid4
 from dirtyfields import DirtyFieldsMixin
 from django.db import models
 from django.utils import timezone
+from datetime import timezone as dt_timezone
 import config.settings.local as settings
 from modelcluster.models import ClusterableModel
 from apps.utils.noid import encode_noid
@@ -63,7 +64,7 @@ class IiifBase(DirtyFieldsMixin, ClusterableModel):
     @staticmethod
     def __js_isoformat(date):
         return date.astimezone(
-            timezone.utc).isoformat(
+            dt_timezone.utc).isoformat(
                 timespec="milliseconds").replace("+00:00", "Z")
 
     def clean_pid(self):

@@ -3,7 +3,6 @@ from modelcluster.fields import ParentalManyToManyField
 from wagtail.models import Page
 from wagtail.fields import RichTextField, StreamField
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtailautocomplete.edit_handlers import AutocompletePanel
 from django.db import models
 from apps.cms.blocks import BaseStreamBlock
 from apps.readux.forms import AllCollectionsForm, AllVolumesForm
@@ -237,7 +236,12 @@ class VolumesPage(Page):
 
 
 class HomePage(Page):
-    """Home page"""
+    """
+    Home page
+
+    NOTE: If the HomePage admin panel becomes unwieldy (collections or manifests lists grow large), the proper Wagtail 6 replacement is to register Collection and Manifest as snippets and use a SnippetChooserPanel or implement a custom ChooserWidget. But that's a separate improvement — for now this unblocks manage.py check. Give it another run.
+    """
+
     tagline = RichTextField(blank=True)
     content_display = models.CharField(
         max_length=20,
@@ -313,9 +317,9 @@ class HomePage(Page):
         FieldPanel('tagline', classname="full"),
         FieldPanel('background_image', classname="full"),
         FieldPanel('content_display', classname="full"),
-        AutocompletePanel('featured_collections', target_model="kollections.Collection"),
+        FieldPanel('featured_collections'),
         FieldPanel('featured_collections_sort_order', classname="full"),
-        AutocompletePanel('featured_volumes', target_model="manifests.Manifest"),
+        FieldPanel('featured_volumes'),
         FieldPanel('featured_volumes_sort_order', classname="full"),
         MultiFieldPanel(children=[
             FieldPanel('featured_story_title'),

@@ -31,8 +31,6 @@ LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
@@ -71,7 +69,7 @@ DJANGO_APPS = [
     "modeltranslation",
     "django.contrib.admin",
     "import_export",
-    "django_summernote",
+    "tinymce",
 ]
 THIRD_PARTY_APPS = [
     "allauth",
@@ -100,9 +98,10 @@ THIRD_PARTY_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail",
-    "wagtailautocomplete",
-    "wagtail.contrib.modeladmin",  # Don't repeat if it's there already
+    "wagtail_modeladmin",  # replaces wagtail.contrib.modeladmin (removed in Wagtail 6)
     "wagtailmenus",
+    "wagtail.contrib.settings",
+    "crispy_bootstrap4",
 ]
 LOCAL_APPS = [
     "apps.users.apps.UsersAppConfig",
@@ -344,12 +343,17 @@ ELASTICSEARCH_DSL = {
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
-# django-summernote rich text editor settings. see https://github.com/hackerwins/django-summernote
-# NOTE: consider replacing after django 4 upgrade
-SUMMERNOTE_CONFIG = {
-    "iframe": False,
+# TinyMCE rich text editor — minimal toolbar focused on link creation
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 300,
+    "menubar": False,
+    "plugins": "link lists",
+    "toolbar": "bold italic | link | bullist numlist | removeformat",
+    "link_assume_external_targets": True,
+    "relative_urls": False,
+    "remove_script_host": False,
 }
-SUMMERNOTE_THEME = "lite"
 
 # Background image URL configuration
 BACKGROUND_IMAGE_URL = "/static/images/bg.jpg"  # Background image for the homepage; when it doesn't exist, it will fall back to a default solid color

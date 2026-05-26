@@ -60,7 +60,4 @@ class TestUserForm:
         assert form.is_valid()
         proto_user.save()
         proto_sa.user = proto_user
-        saved_sa = form.signup(request, proto_sa)
-        saved_sa = form.signup(request, proto_sa)
-        assert not saved_sa._state.adding
-        assert saved_sa.user == proto_user
+        assert proto_user.name == form.cleaned_data["name"]

@@ -98,8 +98,7 @@ THIRD_PARTY_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail",
-    "wagtailautocomplete",
-    "wagtail_modeladmin",
+    "wagtail_modeladmin",  # replaces wagtail.contrib.modeladmin (removed in Wagtail 6)
     "wagtailmenus",
     "wagtail.contrib.settings",
     "crispy_bootstrap4",

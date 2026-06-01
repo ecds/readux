@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DATABASE_URL: postgres://user:password@localhost:5432/readux
+  DATABASE_URL: postgres://user:password@localhost:5432/readux_test
   DJANGO_ENV: test
 
 jobs:

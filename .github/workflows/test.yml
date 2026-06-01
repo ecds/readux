@@ -32,7 +32,7 @@ jobs:
           - 9200:9200
 
       postgres:
-        image: postgres:12
+        image: postgres:16
         env:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: user
@@ -87,15 +87,15 @@ jobs:
       #   run: pytest apps/export/
 
       - name: Test IIIF
-        run: DJANGO_ENV=test pytest apps/iiif/
+        run: pytest apps/iiif/
 
       - name: Test Readux
-        run: DJANGO_ENV=test pytest apps/readux/
+        run: pytest apps/readux/
 
       - name: Test Users
-        run: DJANGO_ENV=test pytest apps/users/
+        run: pytest apps/users/
 
-      # - name: Test Webpack build
-      #   run: |
-      #     npm install
-      #     npx webpack
+      - name: Test Vite build
+        run: |
+          npm install
+          npm run build

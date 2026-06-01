@@ -1,3 +1,4 @@
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from allauth.socialaccount.models import SocialLogin
 from apps.users.adapters import AccountAdapter, SocialAccountAdapter
@@ -9,6 +10,10 @@ class AdapterTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.request = self.factory.get('/')
+        # RequestFactory skips middleware; allauth needs request.session
+        # (used by setup_user_email inside SocialLogin.save).
+        SessionMiddleware(get_response=lambda r: None).process_request(self.request)
+        self.request.session.save()
 
     def test_account_adapter_signup(self):
         aa = AccountAdapter()

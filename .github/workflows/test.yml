@@ -16,9 +16,9 @@ jobs:
 
     services:
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
         env:
-          STACK_VERSION: 7.17.5
+          STACK_VERSION: 8.13.4
           xpack.security.enabled: false
           cluster.name: readux-elasticsearch
           http.port: 9200
@@ -62,7 +62,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Install system requirements
         run: |
@@ -86,14 +86,14 @@ jobs:
       # - name: Test Export
       #   run: pytest apps/export/
 
-      # - name: Test IIIF
-      #   run: pytest apps/iiif/
+      - name: Test IIIF
+        run: DJANGO_ENV=test pytest apps/iiif/
 
-      # - name: Test Readux
-      #   run: pytest apps/readux/
+      - name: Test Readux
+        run: DJANGO_ENV=test pytest apps/readux/
 
-      # - name: Test Users
-      #   run: pytest apps/users/
+      - name: Test Users
+        run: DJANGO_ENV=test pytest apps/users/
 
       # - name: Test Webpack build
       #   run: |

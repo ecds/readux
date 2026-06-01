@@ -1,6 +1,5 @@
 """Forms for Readux search"""
 
-from dateutil import parser
 from django import forms
 from django.forms import widgets
 from django.conf import settings
@@ -212,11 +211,14 @@ class ManifestSearchForm(forms.Form):
                 )
 
     def set_date(self, min_date, max_date):
-        """Use min and max aggregations from Elasticsearch to populate date range fields"""
-        min_date_object = parser.isoparse(min_date)
-        self.fields["start_date"].set_initial(min_date_object.strftime("%Y-%m-%d"))
-        max_date_object = parser.isoparse(max_date)
-        self.fields["end_date"].set_initial(max_date_object.strftime("%Y-%m-%d"))
+        """Use min and max aggregations from Elasticsearch to populate date range fields.
+
+        Expects pre-formatted YYYY-MM-DD strings with zero-padded 4-digit years.
+        Avoid re-formatting via strftime here — strftime does not zero-pad years < 1000
+        on all platforms, which breaks the JS date slider.
+        """
+        self.fields["start_date"].set_initial(min_date)
+        self.fields["end_date"].set_initial(max_date)
 
 
 class CustomDropdownSelect(widgets.ChoiceWidget):

@@ -57,12 +57,26 @@ class ManifestDocument(Document):
         """Settings for Elasticsearch"""
 
         name = f"{settings.INDEX_PREFIX}_manifests"
+        settings = {
+            "analysis": {
+                "analyzer": {
+                    "en": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "stop", "porter_stem"],
+                    }
+                }
+            }
+        }
 
     class Django:
         """Settings for automatically pulling data from Django"""
 
         model = Manifest
         ignore_signals = True
+        # Django 4.2+ requires chunk_size when calling iterator() on a queryset
+        # that uses prefetch_related(). This value is passed through as chunk_size.
+        queryset_pagination = 2000
 
         # fields to map dynamically in Elasticsearch
         fields = [

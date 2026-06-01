@@ -336,10 +336,22 @@ WAGTAILADMIN_BASE_URL = "https://localhost"
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Elasticsearch
-
+# ES 8.x has security (HTTPS + auth) enabled by default in official packages.
+# For servers with security disabled, only ELASTICSEARCH_URL is needed.
+# For servers with security enabled, also set ELASTICSEARCH_USER + ELASTICSEARCH_PASSWORD
+# (basic auth) or ELASTICSEARCH_API_KEY (base64-encoded id:api_key string).
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": env("ELASTICSEARCH_URL", default="http://localhost:9200")},
+    "default": {
+        "hosts": env("ELASTICSEARCH_URL", default="http://localhost:9200"),
+    }
 }
+_es_user = env("ELASTICSEARCH_USER", default="")
+_es_password = env("ELASTICSEARCH_PASSWORD", default="")
+_es_api_key = env("ELASTICSEARCH_API_KEY", default="")
+if _es_api_key:
+    ELASTICSEARCH_DSL["default"]["api_key"] = _es_api_key
+elif _es_user and _es_password:
+    ELASTICSEARCH_DSL["default"]["basic_auth"] = (_es_user, _es_password)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 

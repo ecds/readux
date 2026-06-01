@@ -309,25 +309,24 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         with patch("apps.readux.views.VolumeSearchView.get_queryset") as mock_queryset:
             volume_search_view.queryset = mock_queryset
             volume_search_view.object_list = mock_queryset
-            mock_queryset.return_value.execute.return_value = Mock()
-            response = mock_queryset.return_value.execute.return_value
+            # The view calls get_queryset()[:0].execute() for aggregations, so the
+            # response comes through __getitem__, not directly from .execute().
+            response = Mock()
+            mock_queryset.return_value.__getitem__.return_value.execute.return_value = response
 
             # these are not nested facets, so delete "inner" attributes
             del response.aggregations.language.inner
             del response.aggregations.author.inner
 
-            volume_search_view.get_context_data()
-            mock_set_facets.assert_called_with(
-                {
-                    "language": response.aggregations.language.buckets,
-                    "author": response.aggregations.author.buckets,
-                    # collections IS nested, so it should have "inner" attribute
-                    "collections": response.aggregations.collections.inner.buckets,
-                }
-            )
-
-            # should call set_date with the aggregated min and max dates (as strings)
-            mock_set_date.assert_called_with(
-                response.aggregations.min_date.value_as_string,
-                response.aggregations.max_date.value_as_string,
-            )
+            from datetime import date
+            with patch("apps.readux.views.jd_to_date", side_effect=[date(1800, 1, 1), date(2022, 12, 31)]):
+                volume_search_view.get_context_data()
+                mock_set_facets.assert_called_with(
+                    {
+                        "language": response.aggregations.language.buckets,
+                        "author": response.aggregations.author.buckets,
+                        # collections IS nested, so it should have "inner" attribute
+                        "collections": response.aggregations.collections.inner.buckets,
+                    }
+                )
+                mock_set_date.assert_called_with("1800-01-01", "2022-12-31")

@@ -36,7 +36,7 @@ export default {
 
     window.addEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
   }
 };

@@ -150,7 +150,7 @@ export default {
     window.addEventListener("popstate", this._onHistoryChange);
     this._updateVisibility(this.canvas);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("canvasUpdate", this._onCanvasUpdate);
     if (this._onHistoryChange) {
       window.removeEventListener("popstate", this._onHistoryChange);

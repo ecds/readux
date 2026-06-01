@@ -249,7 +249,7 @@ export default {
     };
     window.addEventListener("ocrLoaded", this._onOcrLoaded);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("ocrLoaded", this._onOcrLoaded);
     const nodes = this.getOcrNodes();
     for (let i = 0; i < nodes.length; i++) this.removeBlockHandlers(nodes[i]);

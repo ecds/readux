@@ -345,6 +345,8 @@ ELASTICSEARCH_DSL = {
         "hosts": env("ELASTICSEARCH_URL", default="http://localhost:9200"),
     }
 }
+INDEX_PREFIX = "readux"
+
 _es_user = env("ELASTICSEARCH_USER", default="")
 _es_password = env("ELASTICSEARCH_PASSWORD", default="")
 _es_api_key = env("ELASTICSEARCH_API_KEY", default="")

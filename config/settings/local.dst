@@ -166,12 +166,6 @@ LOGGING = {
  },
 }
 
-# Elasticsearch
-# ------------------------------------------------------------------------------
-
-# Must be configured to the host and port running Elasticsearch
-ELASTICSEARCH_DSL['default']['hosts'] = 'user:pass@localhost:9200'
-INDEX_PREFIX = "readux_test"
 
 # Custom metadata fields configuration. Metadata in this list will appear under
 # "Advanced" in each volume's metadata. Must be a dict with key names

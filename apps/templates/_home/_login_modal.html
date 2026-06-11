@@ -33,6 +33,30 @@
         {% endif %}
       {% endfor %}
     </div>
+    <!-- Divider -->
+    <hr class="uk-divider-icon uk-margin-top">
+    <p class="uk-text-center uk-text-muted uk-text-small uk-margin-small-bottom">Or sign in with your local account:</p>
+    <!-- Local Login Form -->
+    <form class="uk-form-stacked" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}" />
+      <div class="uk-margin-small">
+        <label class="uk-form-label" for="modal-login-username">Username</label>
+        <input id="modal-login-username" name="login" type="text" class="uk-input" placeholder="Username" autocomplete="username" required />
+      </div>
+      <div class="uk-margin-small">
+        <label class="uk-form-label" for="modal-login-password">Password</label>
+        <input id="modal-login-password" name="password" type="password" class="uk-input" placeholder="Password" autocomplete="current-password" required />
+      </div>
+      <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">
+        <label class="uk-flex uk-flex-middle" style="gap: 0.4rem; font-size: 0.875rem;">
+          <input type="checkbox" name="remember" class="uk-checkbox" />
+          <span>Remember me</span>
+        </label>
+        <a href="{% url 'account_reset_password' %}" class="uk-text-small uk-link-muted">Forgot password?</a>
+      </div>
+      <button class="uk-button uk-width-1-1 uk-margin-small-top" style="background-color:#1D3557;color:#fff;border:none;" type="submit">Sign In</button>
+    </form>
     <!-- Help Link -->
     <div class="uk-text-center uk-margin-top">
       Need help? <a href="#" class="text-anchor-blue">Contact us</a>

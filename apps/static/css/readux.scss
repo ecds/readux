@@ -185,8 +185,9 @@ em { color: inherit !important; }
 /* Buttons */
 .uk-button-default { @include interactive-border($rx-color-midnight-blue); }
 .uk-button-primary {
-  background-color: var(--link-color);
-  &:hover, &:active { background-color: var(--link-color); filter: contrast(var(--contrast)); }
+  background-color: var(--link-color) !important;
+  color: #fff !important;
+  &:hover, &:active { background-color: var(--link-color) !important; color: #fff !important; filter: contrast(var(--contrast)); }
 }
 
 /* Close icon */

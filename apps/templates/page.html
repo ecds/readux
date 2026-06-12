@@ -117,6 +117,38 @@ window.onload = function() {
   {% endif %}
 
   ECDSAnnotator.init(options);
+
+  // The r6o editor lives inside OSD's viewer element. OSD's MouseTracker
+  // registers bubble-phase pointerdown/mousedown handlers on viewer.element
+  // that call preventDefault(), which cancels focus transfer to Jodit.
+  //
+  // The r6o editor is rendered immediately at init (opacity:0, not added/removed
+  // from DOM), so we query it directly after a short React render delay.
+  // stopImmediatePropagation() stops the event from bubbling to OSD's handler
+  // without calling preventDefault(), so the browser's focus transfer still fires.
+  // An open UIkit modal fights the annotation editor: its focus trap pulls
+  // focus back into the modal on every focusin, and the resulting focus
+  // tug-of-war can drive Jodit's toolbar into an infinite update loop that
+  // freezes the page. Two defenses:
+  //
+  // 1. Close any open reader modal as soon as the user interacts with the
+  //    viewer, so the annotation editor never opens beneath a live modal.
+  var _readerModalIds = ['#modal-search', '#modal-info', '#modal-urls', '#modal-ocr'];
+  document.getElementById('rdx-viewer').addEventListener('pointerdown', function() {
+    _readerModalIds.forEach(function(id) {
+      var el = document.querySelector(id);
+      if (el && el.classList.contains('uk-open')) UIkit.modal(id).hide();
+    });
+  }, true);
+
+  // 2. Hide editor focus events from UIkit's focus trap (capture phase runs
+  //    before UIkit's document-level focusin listener), so typing keeps
+  //    working even if a modal is somehow opened while the editor is up.
+  document.addEventListener('focusin', function(e) {
+    if (e.target.closest && e.target.closest('.r6o-editor')) {
+      e.stopImmediatePropagation();
+    }
+  }, true);
 }
 </script>
 

@@ -142,7 +142,15 @@ class SearchManifestCanvas(View):
             anno_queries_exact.append({"bool": {"should": [nested_exact]}})
 
         # combine exact and partial with bool: { should, must }
-        q = Q("bool", should=anno_queries, must=anno_queries_exact)
+        # NOTE: because we apply `.filter()` (owner + manifest), the bool query has a
+        # filter context. When there is no `must` clause, Elasticsearch defaults
+        # minimum_should_match to 0, which would return *every* annotation in the volume
+        # regardless of the keyword. Require at least one `should` match when there are no
+        # exact (must) queries to enforce the keyword.
+        bool_kwargs = {"should": anno_queries, "must": anno_queries_exact}
+        if not anno_queries_exact:
+            bool_kwargs["minimum_should_match"] = 1
+        q = Q("bool", **bool_kwargs)
         annotations = annotations.query(q)
         annotations = annotations.highlight("content")
 
@@ -154,11 +162,16 @@ class SearchManifestCanvas(View):
         annotation_matches = []
         if annotation_match_count:
             for anno in anno_response.hits:
+                # skip hits without a highlight (no actual keyword match); accessing
+                # missing highlight data would otherwise raise an AttributeError
+                highlight = getattr(anno.meta, "highlight", None)
+                if not highlight or "content" not in highlight:
+                    continue
                 annotation_matches.append(
                     {
                         "canvas_index": anno["canvas_index"],
                         "canvas_pid": anno["canvas_pid"],
-                        "context": list(anno.meta.highlight.content),
+                        "context": list(highlight.content),
                     }
                 )
 
@@ -171,10 +184,11 @@ class SearchManifestCanvas(View):
         annotation_matches_on_canvas = 0
         annotation_matches_in_volume = 0
         for k, v in groupby(annotation_matches, key=group_key):
-            canvas_matches = list(flatten([match["context"] for match in v]))
+            group = list(v)
+            canvas_matches = list(flatten([match["context"] for match in group]))
             annotation_matches_grouped.append(
                 {
-                    "canvas_index": anno["canvas_index"],
+                    "canvas_index": group[0]["canvas_index"],
                     "canvas_match_count": len(canvas_matches),
                     "canvas_pid": k,
                     "context": canvas_matches,

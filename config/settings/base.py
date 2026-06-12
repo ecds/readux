@@ -101,7 +101,7 @@ THIRD_PARTY_APPS = [
     "wagtail.admin",
     "wagtail",
     "wagtailautocomplete",
-    "wagtail.contrib.modeladmin",  # Don't repeat if it's there already
+    "wagtail_modeladmin",
     "wagtailmenus",
 ]
 LOCAL_APPS = [

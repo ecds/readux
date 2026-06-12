@@ -15,7 +15,7 @@
         </div>
       </a>
 
-      {% with full_title=volume.label|default:"[no title]" year=volume|manifest_year %}
+      {% with full_title=volume.label|default:"[no title]"|unescape_html year=volume|manifest_year %}
         {% if full_title|length > 50 %}
           <h2 class="volume-title-inline" uk-tooltip="mode: click" title="{{ full_title }}{% if year %} ({{ year }}){% endif %}">
             <a class="volume-title__link" href="{% url 'volumeall' volume.pid %}">
@@ -33,7 +33,7 @@
 
       <!-- Authors -->
       {% if volume.authors and "[no author]" not in volume.authors %}
-        {% with authors_display=volume.authors|join:" | " %}
+        {% with authors_display=volume.authors|join:" | "|unescape_html %}
           {% if authors_display|length > 50 %}
             <div class="author-line cursor-default" uk-tooltip="mode: click" title="{{ authors_display }}">
               {{ authors_display }}

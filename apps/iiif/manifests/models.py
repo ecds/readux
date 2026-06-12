@@ -168,6 +168,7 @@ class Manifest(IiifBase):
     date_edtf = EDTFField(  # Read-only EDTF field that handles fuzzy date calculations
         "Date of publication (EDTF)",
         natural_text_field="published_date_edtf",
+        direct_input_field="published_date_edtf",
         lower_fuzzy_field="date_earliest",
         upper_fuzzy_field="date_latest",
         lower_strict_field="date_sort_ascending",
@@ -176,8 +177,8 @@ class Manifest(IiifBase):
         null=True,
     )
     # use for filtering
-    date_earliest = models.DateField(blank=True, null=True)
-    date_latest = models.DateField(blank=True, null=True)
+    date_earliest = models.FloatField(blank=True, null=True)
+    date_latest = models.FloatField(blank=True, null=True)
     # use for sorting
     date_sort_ascending = models.FloatField(blank=True, null=True)
     date_sort_descending = models.FloatField(blank=True, null=True)

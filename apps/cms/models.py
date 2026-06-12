@@ -16,7 +16,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 class ContentPage(Page):
     """Content page"""
     body = StreamField(
-        BaseStreamBlock(), verbose_name="Page body", blank=True, use_json_field=False
+        BaseStreamBlock(), verbose_name="Page body", blank=True, use_json_field=True
     )
 
     content_panels = Page.content_panels + [

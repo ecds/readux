@@ -40,8 +40,8 @@ class ManifestDocument(Document):
         }
     )  # canvas_set.result = OCR annotation text on each canvas
     collections = fields.NestedField(properties={"label": fields.KeywordField()})
-    date_earliest = fields.DateField()
-    date_latest = fields.DateField()
+    date_earliest = fields.FloatField()
+    date_latest = fields.FloatField()
     has_pdf = fields.BooleanField()
     label = fields.TextField(analyzer=stemmer)
     label_alphabetical = fields.KeywordField()

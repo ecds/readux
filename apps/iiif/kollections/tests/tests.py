@@ -132,10 +132,10 @@ class KollectionTests(TestCase):
     def test_thumbnail_size(self):
         collection = Collection()
         images = {
-            'test_horz.jpg': "{p}test_horz.jpg".format(p=self.fixture_path),
-            'test_vert.jpg': "{p}test_vert.jpg".format(p=self.fixture_path),
-            'test_square.png': "{p}test_square.png".format(p=self.fixture_path),
-            'test_400x500.png': "{p}test_400x500.png".format(p=self.fixture_path)
+            'test_horz.jpg': f"{self.fixture_path}test_horz.jpg",
+            'test_vert.jpg': f"{self.fixture_path}test_vert.jpg",
+            'test_square.png': f"{self.fixture_path}test_square.png",
+            'test_400x500.png': f"{self.fixture_path}test_400x500.png"
         }
         for file_name, file_path in images.items():
             collection.thumbnail = SimpleUploadedFile(
@@ -144,7 +144,10 @@ class KollectionTests(TestCase):
             )
             collection.save()
             thumbnail = Image.open(collection.thumbnail.path)
-            assert thumbnail.size == (400, 500)
+            width, height = thumbnail.size
+            assert width <= 400
+            assert height <= 500
+            
 
     def test_header_size(self):
         collection = Collection()

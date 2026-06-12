@@ -94,7 +94,18 @@
     .description-text {
         display: block;
     }
-    
+
+    /* Links need a light color for contrast against the dark hero background */
+    a {
+        color: $rx-color-sky-blue;
+        text-decoration: underline;
+
+        &:hover,
+        &:focus {
+            color: $rx-color-faded-mint;
+        }
+    }
+
     /* When description is truncated */
     &.description-truncated .description-text::after {
         content: '';

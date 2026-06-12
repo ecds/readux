@@ -29,15 +29,15 @@
       <div class="hero-text-column">
         <h1 class="collection-title uk-margin-remove uk-text-bold" id="collection-title">{{ collection.label }}</h1>
         <div class="rx-title-tagline uk-margin-small-top">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
-        {% with summary_plain=collection.summary|striptags|unescape_html %}
+        {% with summary_plain=collection.summary|striptags|unescape_html summary_html=collection.summary|unescape_html %}
           {% if summary_plain %}
-            <p class="collection-description uk-margin-top" id="collection-description">
+            <div class="collection-description uk-margin-top" id="collection-description">
               {% if summary_plain|length > 300 %}
-                <span class="description-text">{{ summary_plain|truncatechars:300 }}</span>
+                <span class="description-text">{{ summary_html|truncatechars_html:300|safe }}</span>
               {% else %}
-                <span class="description-text">{{ summary_plain }}</span>
+                <span class="description-text">{{ summary_html|safe }}</span>
               {% endif %}
-            </p>
+            </div>
             <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-collection-full">Full Description</button>
           {% endif %}
         {% endwith %}

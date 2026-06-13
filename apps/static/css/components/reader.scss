@@ -96,3 +96,19 @@
 .uk-search {
   padding-right: 10px;
 }
+
+.rx-annotation-index-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  a {
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .rx-label-copy {
+    vertical-align: middle;
+  }
+}

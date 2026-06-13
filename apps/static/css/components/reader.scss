@@ -112,3 +112,13 @@
     vertical-align: middle;
   }
 }
+
+.rx-search-result-list {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0 !important;
+  padding-left: 1.25rem !important;
+
+  .rx-search-result-item {
+    margin-top: 0.2rem;
+  }
+}

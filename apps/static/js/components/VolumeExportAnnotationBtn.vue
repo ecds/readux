@@ -19,25 +19,44 @@ export default {
   mounted() {
     this.isExportVisible = this.localManifestCount >= 1;
 
-    this._onUserAnnotationsUpdate = (event) => {
+    // "canvasswitch" carries canvas + annotationAdded/annotationDeleted;
+    // the flags are only trustworthy while staying on the same canvas (on
+    // page navigation they compare counts of two different pages).
+    this._currentCanvas = null;
+    this._prevPageCount = null;
+    this._onCanvasSwitch = (event) => {
       if (!event) return;
       const detail = event.detail || {};
+      const sameCanvas = detail.canvas && detail.canvas === this._currentCanvas;
+      const newPageCount = typeof detail.annotationsOnPage === "number" ? detail.annotationsOnPage : null;
 
-      if (detail.annotationsOnPage) {
-        if (detail.annotationAdded) this.localManifestCount++;
-        if (detail.annotationDeleted) this.localManifestCount--;
-        this.isExportVisible = this.localManifestCount >= 1;
+      if (sameCanvas && newPageCount !== null && this._prevPageCount !== null) {
+        const delta = newPageCount - this._prevPageCount;
+        if (delta !== 0) {
+          this.localManifestCount += delta;
+          this.isExportVisible = this.localManifestCount >= 1;
+        }
       }
 
-      if (detail.canvas && !location.pathname.includes(detail.canvas)) {
-        history.pushState({}, "", detail.canvas);
+      if (newPageCount !== null && sameCanvas) {
+        this._prevPageCount = newPageCount;
+      }
+
+      if (detail.canvas) {
+        if (!location.pathname.includes(detail.canvas)) {
+          history.pushState({}, "", detail.canvas);
+        }
+        if (detail.canvas !== this._currentCanvas) {
+          this._prevPageCount = newPageCount;
+        }
+        this._currentCanvas = detail.canvas;
       }
     };
 
-    window.addEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
+    window.addEventListener("canvasswitch", this._onCanvasSwitch);
   },
   beforeDestroy() {
-    window.removeEventListener("userAnnotationsUpdate", this._onUserAnnotationsUpdate);
+    window.removeEventListener("canvasswitch", this._onCanvasSwitch);
   }
 };
 </script>

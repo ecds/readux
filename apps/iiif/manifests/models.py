@@ -12,8 +12,10 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from datetime import date as _date
 from edtf.fields import EDTFField
 from apps.iiif.manifests.validators import validate_edtf
+from apps.utils.dates import date_to_jd, jd_to_date
 from ..choices import Choices
 from ..kollections.models import Collection
 from ..models import IiifBase
@@ -423,6 +425,32 @@ class Manifest(IiifBase):
             self.start_canvas = None
 
         super().save(*args, **kwargs)
+
+        # EDTFField.pre_save() runs inside super().save() and can write extreme JD
+        # values for imprecise strings like "186X" — upper bounds reaching year 9999,
+        # lower bounds falling before year 1 AD. Clamp after the fact using a direct
+        # queryset update() to avoid triggering another recursive save().
+        today_jd = date_to_jd(_date.today())
+        min_jd = date_to_jd(_date(1, 1, 1))
+        # Read the raw float values EDTFField wrote during super().save() without
+        # going through EDTFField.from_db_value (which can recurse). .values() returns
+        # plain Python values, bypassing field descriptors entirely.
+        date_fields = ("date_earliest", "date_latest", "date_sort_ascending", "date_sort_descending")
+        db_dates = type(self).objects.filter(pk=self.pk).values(*date_fields).first() or {}
+
+        update_fields = {}
+        for field in ("date_earliest", "date_sort_ascending"):
+            val = db_dates.get(field)
+            if val is not None and (jd_to_date(val) is None or val < min_jd):
+                update_fields[field] = None
+        for field in ("date_latest", "date_sort_descending"):
+            val = db_dates.get(field)
+            if val is not None and val > today_jd:
+                update_fields[field] = today_jd
+        if update_fields:
+            type(self).objects.filter(pk=self.pk).update(**update_fields)
+            for field, val in update_fields.items():
+                setattr(self, field, val)
 
         for collection in self.collections.all():  # pylint: disable = no-member
             collection.modified_at = self.modified_at

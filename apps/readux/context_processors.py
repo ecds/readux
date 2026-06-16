@@ -27,18 +27,35 @@ def current_version(_=None):
     """
     repo = Repo(settings.ROOT_DIR.path())
 
-    version_info = {"DJANGO_ENV": environ["DJANGO_ENV"], "APP_VERSION": __version__}
+    # Prefer the Django setting (which has a default) over os.environ directly,
+    # to avoid KeyError when DJANGO_ENV is not exported to the shell environment.
+    django_env = getattr(settings, "DJANGO_ENV", environ.get("DJANGO_ENV", "develop"))
 
-    if environ["DJANGO_ENV"] == "production":
+    version_info = {"DJANGO_ENV": django_env, "APP_VERSION": __version__}
+
+    if django_env == "production":
         return version_info
-    return {
-        **version_info,
-        "BRANCH": repo.active_branch.name,
-        "COMMIT": repo.active_branch.commit.hexsha,
-        "COMMIT_DATE": repo.active_branch.commit.committed_datetime.strftime(
-            "%m/%d/%Y, %H:%M:%S"
-        ),
-    }
+
+    try:
+        branch = repo.active_branch
+        return {
+            **version_info,
+            "BRANCH": branch.name,
+            "COMMIT": branch.commit.hexsha,
+            "COMMIT_DATE": branch.commit.committed_datetime.strftime(
+                "%m/%d/%Y, %H:%M:%S"
+            ),
+        }
+    except TypeError:
+        # HEAD is detached — e.g. during a git rebase or a CI checkout of a
+        # specific commit.  Fall back to commit-level info without a branch name.
+        commit = repo.head.commit
+        return {
+            **version_info,
+            "BRANCH": commit.hexsha[:12],
+            "COMMIT": commit.hexsha,
+            "COMMIT_DATE": commit.committed_datetime.strftime("%m/%d/%Y, %H:%M:%S"),
+        }
 
 
 def footer_template(_):

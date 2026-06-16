@@ -5,7 +5,7 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from apps.iiif.manifests.admin import SummernoteMixin
+from apps.iiif.manifests.admin import RichTextMixin
 from .models import Collection
 from ..manifests.models import Manifest
 
@@ -38,7 +38,7 @@ class ManifestInline(admin.TabularInline):
 
     manifest_pid.short_description = 'Manifest Local ID'
 
-class CollectionAdmin(ImportExportModelAdmin, SummernoteMixin, admin.ModelAdmin):
+class CollectionAdmin(ImportExportModelAdmin, RichTextMixin, admin.ModelAdmin):
     """Django admin configuration for a collection."""
     inlines = [
         ManifestInline,
@@ -46,6 +46,6 @@ class CollectionAdmin(ImportExportModelAdmin, SummernoteMixin, admin.ModelAdmin)
     resource_class = CollectionResource
     list_display = ('id', 'pid', 'metadata', 'summary', 'label')
     search_fields = ('label', 'summary', 'pid')
-    summernote_fields = ('summary', 'summary_en',)
+    rich_text_fields = ('summary', 'summary_en',)
 
 admin.site.register(Collection, CollectionAdmin)

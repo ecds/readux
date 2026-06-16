@@ -22,7 +22,11 @@ class Annotations(View):
     """
 
     def get_queryset(self):
-        return Canvas.objects.filter(pid=self.kwargs["canvas"], manifest__pid=self.kwargs["vol"])
+        # Two URL patterns point to this view:
+        #   user_annotations → annotations/<username>/<volume>/list/<canvas>  (kwarg: "volume")
+        #   user_comments    → iiif/<version>/<vol>/annotations/<canvas>/...  (kwarg: "vol")
+        manifest_pid = self.kwargs.get("volume") or self.kwargs.get("vol")
+        return Canvas.objects.filter(pid=self.kwargs["canvas"], manifest__pid=manifest_pid)
 
     def get(self, request, *args, **kwargs):
         username = kwargs["username"]

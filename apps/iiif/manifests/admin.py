@@ -6,7 +6,7 @@ from django.urls.conf import path
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ManyToManyWidget, ForeignKeyWidget
-from django_summernote.admin import SummernoteModelAdmin
+from tinymce.widgets import TinyMCE
 from .models import Manifest, Note, ImageServer, RelatedLink, Language
 from .forms import ManifestAdminForm
 from .views import AddToCollectionsView, MetadataImportView
@@ -64,21 +64,18 @@ class RelatedLinksInline(admin.TabularInline):
     min_num = 0
 
 
-class SummernoteMixin(SummernoteModelAdmin):
-    class Media:
-        # NOTE: have to include these js and css dependencies for summernote when not using iframe
-        js = (
-            "//code.jquery.com/jquery-3.7.1.min.js",
-            "//cdn.jsdelivr.net/npm/jquery.ui.widget@1.10.3/jquery.ui.widget.min.js",
-        )
-        css = {
-            "all": [
-                "//cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css"
-            ],
-        }
+class RichTextMixin:
+    """Mixin that applies a TinyMCE widget to fields listed in rich_text_fields."""
+
+    rich_text_fields = ()
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name in self.rich_text_fields:
+            kwargs["widget"] = TinyMCE()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
-class ManifestAdmin(ImportExportModelAdmin, SummernoteMixin, admin.ModelAdmin):
+class ManifestAdmin(ImportExportModelAdmin, RichTextMixin, admin.ModelAdmin):
     """Django admin configuration for manifests"""
 
     resource_class = ManifestResource
@@ -95,7 +92,7 @@ class ManifestAdmin(ImportExportModelAdmin, SummernoteMixin, admin.ModelAdmin):
         "publisher",
     )
     search_fields = ("id", "pid", "label", "author", "published_date")
-    summernote_fields = ("summary",)
+    rich_text_fields = ("summary",)
     form = ManifestAdminForm
     actions = ["add_to_collections_action"]
     inlines = [RelatedLinksInline]

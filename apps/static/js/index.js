@@ -1,11 +1,18 @@
-window.$ = require('jquery');
-window.axios = require('axios');
-window.noUiSlider = require('nouislider');
-require('@selectize/selectize');
-require('/apps/static/js/vue-readux.js');
+import $ from 'jquery'
+import axios from 'axios'
+import noUiSlider from 'nouislider'
+import '@selectize/selectize'
+import UIkit from 'uikit'
+import UIkitIcons from 'uikit/dist/js/uikit-icons'
+import ECDSAnnotator from 'ecds-annotator/dist/ecds-annotator.min.js'
+import './vue-readux.js'
 
-// UIkit
-window.UIkit = require('uikit');
-window.UIkitIcons = require('uikit/dist/js/uikit-icons');
-// require('/apps/static/js/project.js');
-window.ECDSAnnotator = require('../../../node_modules/ecds-annotator/dist/ecds-annotator.min.js');
+// Expose globals for non-module scripts (search.js, project.js, etc.)
+window.$ = $
+window.jQuery = $
+window.axios = axios
+window.noUiSlider = noUiSlider
+UIkit.use(UIkitIcons)
+window.UIkit = UIkit
+window.UIkitIcons = UIkitIcons
+window.ECDSAnnotator = ECDSAnnotator

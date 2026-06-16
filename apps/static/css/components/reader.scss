@@ -86,6 +86,39 @@
   right: 240px;
 }
 
+/* .ecds-annotator sets color:white globally; reset text color for annotation
+   content popups and the Jodit editor which both have white backgrounds. */
+.rdx-annotation-content,
+.jodit-container {
+  color: $rx-color-dark-charcoal;
+}
+
 .uk-search {
   padding-right: 10px;
+}
+
+.rx-annotation-index-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  a {
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .rx-label-copy {
+    vertical-align: middle;
+  }
+}
+
+.rx-search-result-list {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0 !important;
+  padding-left: 1.25rem !important;
+
+  .rx-search-result-item {
+    margin-top: 0.2rem;
+  }
 }

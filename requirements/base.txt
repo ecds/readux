@@ -37,7 +37,7 @@ django-summernote>=0.8.11.6 # https://github.com/summernote/django-summernote
 
 # SCSS Support
 #--------------------------------------------------------------------------------
-# libsass==0.23.0
+libsass==0.23.0
 django-compressor
 django-sass-processor
 
@@ -47,6 +47,7 @@ pylint-django==2.5.5
 # Wagtail
 wagtail==5.2.8
 wagtailmenus==3.1.9
+wagtail-modeladmin==2.0.0  # replaces deprecated wagtail.contrib.modeladmin
 #git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
 wagtail-autocomplete==0.10.0
 wagtail-cache==2.3.0

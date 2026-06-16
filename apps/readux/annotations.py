@@ -22,7 +22,7 @@ class Annotations(View):
     """
 
     def get_queryset(self):
-        return Canvas.objects.filter(pid=self.kwargs["canvas"])
+        return Canvas.objects.filter(pid=self.kwargs["canvas"], manifest__pid=self.kwargs["vol"])
 
     def get(self, request, *args, **kwargs):
         username = kwargs["username"]
@@ -54,19 +54,20 @@ class Annotations(View):
                     )
 
             if "3" in kwargs["version"]:
+                canvas = queryset.first()
                 annotations = []
 
                 if username == "ocr":
-                    annotations = queryset.first().annotation_set.all()
+                    annotations = canvas.annotation_set.all()
                 elif owner.username == username:
-                    annotations = queryset.first().userannotation_set.filter(
-                        owner=owner
-                    )
+                    annotations = canvas.userannotation_set.filter(owner=owner)
 
                 return JsonResponse(
                     json.loads(
                         serialize(
-                            "annotation_page_v3", queryset, annotations=annotations
+                            "annotation_page_v3",
+                            Canvas.objects.filter(pk=canvas.pk),
+                            annotations=annotations,
                         )
                     )
                 )

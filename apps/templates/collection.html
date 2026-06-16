@@ -29,15 +29,15 @@
       <div class="hero-text-column">
         <h1 class="collection-title uk-margin-remove uk-text-bold" id="collection-title">{{ collection.label }}</h1>
         <div class="rx-title-tagline uk-margin-small-top">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
-        {% with summary_plain=collection.summary|striptags|unescape_html %}
+        {% with summary_plain=collection.summary|striptags|unescape_html summary_html=collection.summary|unescape_html %}
           {% if summary_plain %}
-            <p class="collection-description uk-margin-top" id="collection-description">
+            <div class="collection-description uk-margin-top" id="collection-description">
               {% if summary_plain|length > 300 %}
-                <span class="description-text">{{ summary_plain|truncatechars:300 }}</span>
+                <span class="description-text">{{ summary_html|truncatechars_html:300|safe }}</span>
               {% else %}
-                <span class="description-text">{{ summary_plain }}</span>
+                <span class="description-text">{{ summary_html|safe }}</span>
               {% endif %}
-            </p>
+            </div>
             <button class="uk-button description-button uk-text-nowrap" uk-toggle="target: #modal-collection-full">Full Description</button>
           {% endif %}
         {% endwith %}
@@ -47,14 +47,16 @@
       <div class="hero-image-column">
         <div class="hero-image-wrapper">
           <div class="image-placeholder"></div>
-          <button 
-            class="info-icon-button" 
-            uk-toggle="target: #modal-collection-full"
-            uk-tooltip="title: View description and metadata; pos: right"
-            type="button"
-            aria-label="View collection description and metadata">
-            <span uk-icon="icon: info; ratio: 1.5"></span>
-          </button>
+          {% if collection.metadata %}
+            <button
+              class="info-icon-button"
+              uk-toggle="target: #modal-metadata"
+              uk-tooltip="title: View image information; pos: right"
+              type="button"
+              aria-label="View image information">
+              <span uk-icon="icon: info; ratio: 1.5"></span>
+            </button>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -70,31 +72,13 @@
           <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
           <div class="modal-overlay">
               <div class="uk-width-1-1 uk-padding-large modal-content">
-                  <div class="modal-grid">
-                    <!-- Description Section -->
-                    <div class="modal-section modal-description-section">
-                      <h2 class="uk-text-bold">{{ collection.label }}</h2>
-                      <div class="volume-count">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
-                      <div class="modal-description">
-                        {{ collection.summary|unescape_html|safe }}
-                      </div>
+                  <!-- Description Section -->
+                  <div class="modal-section">
+                    <h2 class="uk-text-bold">{{ collection.label }}</h2>
+                    <div class="volume-count">{{ volumes.paginator.count }} volume{{ volumes.paginator.count|pluralize }}</div>
+                    <div class="modal-description">
+                      {{ collection.summary|unescape_html|safe }}
                     </div>
-
-                    <!-- Metadata Section -->
-                    {% if collection.metadata %}
-                      <div class="modal-section modal-metadata-section">
-                        <h3 class="uk-text-bold">Metadata</h3>
-                        <div class="metadata-content">
-                          {% for label, value in collection.metadata|metadata_items %}
-                              <div class="metadata-item">
-                                <strong>{{ label }}:</strong> <span>{{ value|unescape_html }}</span>
-                              </div>
-                          {% empty %}
-                              <p>No metadata available.</p>
-                          {% endfor %}
-                        </div>
-                      </div>
-                    {% endif %}
                   </div>
               </div>
           </div>
@@ -103,23 +87,15 @@
   {% endwith %}
 
   {% if collection.metadata %}
-    <div id="modal-metadata" class="uk-modal-full uk-modal rx-collection-modal" uk-modal>
-      <div
-        class="uk-modal-dialog uk-flex uk-flex-center uk-flex-middle modal-bg"
-        uk-height-viewport
-        style="background-image: url('/media/{{collection.header}}');"
-      >
-          <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
-          <div class="modal-overlay">
-              <div class="uk-width-1-1 uk-padding-large">
-                  <h2 class="uk-text-bold">Metadata</h2>
-                  {% for label, value in collection.metadata|metadata_items %}
-                      <p><strong>{{ label }}:</strong> {{ value|unescape_html }}</p>
-                  {% empty %}
-                      <p>No metadata available.</p>
-                  {% endfor %}
-              </div>
-          </div>
+    <div id="modal-metadata" class="uk-modal" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+          <button class="uk-modal-close-default" type="button" uk-close></button>
+          <h2 class="uk-modal-title uk-text-bold">Metadata and Image Information</h2>
+          {% for label, value in collection.metadata|metadata_items %}
+              <p><strong>{{ label }}:</strong> {{ value|unescape_html }}</p>
+          {% empty %}
+              <p>No image information available.</p>
+          {% endfor %}
       </div>
     </div>
   {% endif %}

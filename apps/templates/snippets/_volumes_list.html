@@ -5,7 +5,7 @@
         <div class="uk-width-auto@m thumbnail-container grid-item">
             {% if volume.pid and volume.start_canvas.thumbnail_crop_volume %}
                 <a href="{% url 'volumeall' volume.pid %}" class="cover-square">
-                    <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="{{ volume.label }}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
+                    <img src="{{ volume.start_canvas.thumbnail_crop_volume }}" alt="{{ volume.label|unescape_html }}" onerror="this.onerror=null;this.src='{% static 'images/image_not_found.jpg' %}';">
                 </a>
             {% endif %}
         </div>
@@ -17,7 +17,7 @@
                             <h2 class="uk-margin-remove">{{ fragment|safe }}</h2>
                             {% endfor %}
                         {% else %}
-                            <h2 class="uk-margin-remove">{{ volume.label|default:"[no title]" }}</h2>
+                            <h2 class="uk-margin-remove">{{ volume.label|default:"[no title]"|unescape_html }}</h2>
                         {% endif %}
                     </a>
                 {% else %}
@@ -26,7 +26,7 @@
                             <h2 class="uk-margin-remove">{{ fragment|safe }}</h2>
                         {% endfor %}
                     {% else %}
-                        <h2>{{ volume.label|default:"[no title]" }}</h2>
+                        <h2>{{ volume.label|default:"[no title]"|unescape_html }}</h2>
                     {% endif %}
                 {% endif %}
             <dl class="uk-margin-remove">
@@ -57,7 +57,7 @@
                             {% endwith %}
                             {% else %}
                             {# --- Normal Author Rendering --- #}
-                            {% with authors_plain=volume.authors|join:" | " %}
+                            {% with authors_plain=volume.authors|join:" | "|unescape_html %}
                                 {% if authors_plain|length > 100 %}
                                 <ul>
                                     <li uk-tooltip="mode: click; pos: left; " title="{{ authors_plain }}" class="cursor-default">
@@ -150,7 +150,7 @@
                     <div class="uk-margin-remove">
                         {% for collection in volume.collections %}
                             {% if not forloop.first %} | {% endif %}
-                            {{ collection.label }}
+                            {{ collection.label|unescape_html }}
                         {% endfor %}
                     </div>
                 {% endif %}

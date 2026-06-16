@@ -127,7 +127,7 @@ export default {
 
     window.addEventListener("canvasswitch", this._onCanvasSwitch);
   },
-  beforeUnmount() {
+  beforeDestroy() {
     window.removeEventListener("canvasswitch", this._onCanvasSwitch);
   }
 };

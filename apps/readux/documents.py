@@ -26,7 +26,7 @@ class UserAnnotationDocument(Document):
     class Index:
         """Settings for Elasticsearch"""
 
-        name = f"{settings.INDEX_PREFIX}_annotations"
+        name = f"{settings.INDEX_PREFIX}_annotations" if settings.INDEX_PREFIX else "annotations"
         settings = {
             "analysis": {
                 "analyzer": {

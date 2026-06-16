@@ -3,18 +3,7 @@
 <info-export label="Open Page Image" :pageonly="true" pagelink="{{ pagelink }}" icon="link-external" btnlabel="Open"></info-export>
 
 {% if volume.pdf %}
-  <div class="rx-info-content">
-    <div class="rx-info-content-label uk-flex-between rx-flex">
-      <a class="rx-action-btn" href="{{volume.pdf}}" target="_blank" aria-label="View Volume PDF (opens in a new tab)">
-        <div class="uk-label rx-label-copy">
-          PDF
-        </div>
-        <span class="uk-margin-small-left">View Volume PDF</span> 
-      </a>
-    </div> 
-    <div class="rx-info-content-value">
-    </div>
-  </div>
+  <info-export label="View Volume PDF" fullurl="{{ volume.pdf }}" icon="link-external" btnlabel="Open"></info-export>
 {% endif %}
 
 <info-export label="Export Citation in RIS" fullurl="https://{{ request.META.HTTP_HOST }}{% url 'ris' volume.pid %}" icon="download" btnlabel="Download"></info-export>

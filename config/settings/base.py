@@ -98,7 +98,8 @@ THIRD_PARTY_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail",
-    "wagtail_modeladmin",  # replaces wagtail.contrib.modeladmin (removed in Wagtail 6)
+    "wagtailautocomplete",
+    "wagtail_modeladmin",
     "wagtailmenus",
     "wagtail.contrib.settings",
     "crispy_bootstrap4",
@@ -282,9 +283,9 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_LOGIN_METHODS = {"username"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "none"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html

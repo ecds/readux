@@ -5,9 +5,8 @@
       This page does not have any usable OCR.
     </div>
 
-    <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
-      <label class="uk-switch" for="ocr-overlay">
-        <span>Overlay OCR on Page</span>
+    <div class="rx-info-content-label uk-flex uk-flex-middle" style="gap: 1rem; align-items:center;">
+      <label class="uk-switch" for="ocr-overlay" style="margin: 0; flex-shrink: 0;">
         <input
           type="checkbox"
           id="ocr-overlay"
@@ -17,6 +16,7 @@
         >
         <div class="uk-switch-slider"></div>
       </label>
+      <span style="flex: 1;">Overlay OCR on Page</span>
     </div>
 
     <div class="rx-info-content-value uk-margin-small-bottom uk-text-italic">

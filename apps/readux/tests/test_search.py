@@ -147,6 +147,21 @@ class TestReaduxPageDetailSearch(ESTestCase, TestCase):
             # should be in canvas indices 1 and 2
             assert match["canvas_index"] in [1, 2]
 
+    def test_manifest_canvas_user_annotation_partial_search_no_results(self):
+        # a partial (non-exact) keyword that matches none of the user's annotations should
+        # return zero matches. Regression test: a filter context with only `should` clauses
+        # caused Elasticsearch to default minimum_should_match to 0 and return every
+        # annotation in the volume regardless of the keyword.
+        query_params = {'volume_id': self.volume.pid, 'keyword': 'nonexistentword'}
+        request = self.request.get(
+            self.url, query_params
+        )
+        request.user = self.user
+        response = self.search_manifest_view(request)
+        search_results = self.load_results(response)
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0
+        assert len(search_results['matches_in_annotations']['volume_matches']) == 0
+
     def test_manifest_canvas_user_annotation_exact_search(self):
         query_params = {'volume_id': self.volume.pid, 'keyword': '"outcasts"'}
         request = self.request.get(

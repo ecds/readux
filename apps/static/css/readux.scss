@@ -40,8 +40,14 @@ html, body {
 
 main { flex-grow: 1; }
 
-/* Home page navigation transparent */
-.home-nav { nav { background-color: transparent !important; } }
+/* Home page navigation transparent, light text/icons over dark hero */
+.home-nav {
+  nav { background-color: transparent !important; }
+  a, .brand-logo, .brand-tagline { color: $color-white !important; }
+  svg line, svg path, svg circle, svg polygon, svg polyline, svg rect {
+    stroke: $color-white !important;
+  }
+}
 
 /* Overlay & content shell */
 .overlay {
@@ -185,8 +191,9 @@ em { color: inherit !important; }
 /* Buttons */
 .uk-button-default { @include interactive-border($rx-color-midnight-blue); }
 .uk-button-primary {
-  background-color: var(--link-color);
-  &:hover, &:active { background-color: var(--link-color); filter: contrast(var(--contrast)); }
+  background-color: var(--link-color) !important;
+  color: #fff !important;
+  &:hover, &:active { background-color: var(--link-color) !important; color: #fff !important; filter: contrast(var(--contrast)); }
 }
 
 /* Close icon */
@@ -342,9 +349,6 @@ button.google, button.github { color: $color-white; }
   padding: 0; margin: 0; user-select: auto;
 }
 .rx-action-btn { letter-spacing: 0.1em; font-size: small; }
-.rx-action-btn:hover { 
-  .rx-label-copy { background-color: $rx-color-midnight-blue !important; color: $color-white !important; }
-}
 
 .rx-breadcrumb-item > a, .rx-action-btn, .rx-icon-btn, .uk-dropdown-nav > li > a:hover {
   color: var(--link-color) !important; opacity: 0.75; transition: all 100ms ease-in-out;
@@ -356,12 +360,26 @@ button.google, button.github { color: $color-white; }
 .rx-anchor { color: var(--link-color) !important; opacity: 0.75; word-break: break-all; transition: all 100ms; &:hover { color: var(--link-color); opacity: 1; } }
 
 .rx-label-copy {
-  background: $color-white;
-  color: var(--link-color) !important;
-  border: var(--link-color) 1px solid;
-  font-size: 0.75rem; letter-spacing: 0.1rem; cursor: pointer; transition: all 100ms ease-in-out; font-weight: 600; font-family: 'Consolas','Monaco','Andale Mono','Ubuntu Mono','monospace' !important;
-  &:active { background-color: $rx-color-midnight-blue !important; border: 1px solid $rx-color-midnight-blue !important; opacity: 1; }
-  &:hover { background: $rx-color-midnight-blue; border-color: $rx-color-midnight-blue; color: $color-white !important; }
+  background: $rx-color-midnight-blue !important;
+  color: $color-white !important;
+  border: none !important;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  transition: background 150ms ease-in-out, opacity 150ms ease-in-out;
+  font-weight: 600;
+  font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace !important;
+
+  &:hover {
+    background: darken($rx-color-midnight-blue, 12%) !important;
+    color: $color-white !important;
+    opacity: 0.9;
+  }
+
+  &:active {
+    background: darken($rx-color-midnight-blue, 20%) !important;
+    opacity: 1;
+  }
 }
 
 /* Navigation & bars */

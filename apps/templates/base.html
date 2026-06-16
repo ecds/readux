@@ -136,12 +136,14 @@
     </div>
 
     <!-- Matomo Image Tracker-->
+    {% if MATOMO_ID %}
     <img referrerpolicy="no-referrer-when-downgrade"
          src="https://matomo.ecdsdev.org/matomo.php?idsite={{ MATOMO_ID }}&amp;rec=1"
          hidden
          alt=""
          height="0"
          width="0" />
+    {% endif %}
     <!-- End Matomo -->
 
     {% block javascript %}

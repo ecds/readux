@@ -1,0 +1,89 @@
+{% extends "account/base.html" %}
+{% load i18n account socialaccount %}
+
+{% block head_title %}Sign In{% endblock %}
+{% block account_breadcrumb %}Sign In{% endblock %}
+
+{% block content %}
+<div class="uk-flex uk-flex-center uk-margin-top uk-margin-large-bottom">
+  <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-width-2-3@s">
+
+    <h2 class="uk-card-title uk-text-center uk-margin-bottom">Log in to {{ request.site.name }}</h2>
+
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+      <p class="uk-text-center uk-text-muted uk-margin-small-bottom sso-text">
+        Continue with one of the following services:
+      </p>
+
+      <div class="sso-buttons uk-margin-bottom">
+        {% for provider in socialaccount_providers %}
+          {% if provider.id not in user.socialaccount_list or user.is_anonymous %}
+            <form action="{% provider_login_url provider.id next=request.path process="login" %}" method="post">
+              {% csrf_token %}
+              <button class="uk-button sso-button sso-button--{{ provider.id }}" type="submit">
+                <span uk-icon="{{ provider.id }}" class="sso-button__icon"></span>
+                <span>Continue with {{ provider.name }}</span>
+              </button>
+            </form>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <hr class="uk-divider-icon">
+
+      <p class="uk-text-center uk-text-muted uk-text-small uk-margin-small-bottom">
+        Or sign in with your local account:
+      </p>
+    {% endif %}
+
+    <form class="uk-form-stacked uk-margin-top" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div class="uk-margin">
+          {% if field.field.widget.input_type != 'checkbox' %}
+            <label class="uk-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% endif %}
+          <div class="uk-form-controls">
+            {% if field.field.widget.input_type == 'checkbox' %}
+              <label class="uk-flex uk-flex-middle" style="gap: 0.5rem;">
+                {{ field }}
+                <span>{{ field.label }}</span>
+              </label>
+            {% else %}
+              <input
+                id="{{ field.id_for_label }}"
+                name="{{ field.html_name }}"
+                type="{{ field.field.widget.input_type }}"
+                class="uk-input{% if field.errors %} uk-form-danger{% endif %}"
+                {% if field.field.required %}required{% endif %}
+                autocomplete="{{ field.html_name }}"
+                placeholder="{{ field.label }}"
+              />
+            {% endif %}
+            {% if field.errors %}
+              <p class="uk-text-danger uk-text-small uk-margin-small-top">{{ field.errors|join:", " }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+
+      <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-top">
+        <a class="uk-link-muted uk-text-small" href="{% url 'account_reset_password' %}">Forgot Password?</a>
+        <button class="uk-button uk-button-primary" type="submit">Sign In</button>
+      </div>
+    </form>
+
+    <hr class="uk-divider-small uk-margin-top">
+    <p class="uk-text-center uk-text-small uk-text-muted">
+      Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a>
+    </p>
+
+  </div>
+</div>
+{% endblock content %}

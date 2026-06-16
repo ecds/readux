@@ -56,7 +56,7 @@ class ManifestDocument(Document):
     class Index:
         """Settings for Elasticsearch"""
 
-        name = f"{settings.INDEX_PREFIX}_manifests"
+        name = f"{settings.INDEX_PREFIX}_manifests" if settings.INDEX_PREFIX else "manifests"
         settings = {
             "analysis": {
                 "analyzer": {

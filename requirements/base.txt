@@ -39,7 +39,7 @@ django-tinymce>=4.0  # https://github.com/jazzband/django-tinymce
 
 # SCSS Support
 #--------------------------------------------------------------------------------
-# libsass==0.23.0
+libsass==0.23.0
 django-compressor
 django-sass-processor
 

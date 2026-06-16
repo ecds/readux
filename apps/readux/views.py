@@ -13,7 +13,7 @@ from django.db.models import Max, Count, F
 from django.urls import reverse
 from elasticsearch_dsl import Q, NestedFacet, TermsFacet
 from elasticsearch_dsl.query import MultiMatch
-from apps.utils.dates import date_to_jd
+from apps.utils.dates import date_to_jd, jd_to_date
 from datetime import date
 import config.settings.local as settings
 from apps.iiif.manifests.documents import ManifestDocument
@@ -250,7 +250,9 @@ class PageDetail(TemplateView):
             custom_metadata = {}
             for key, metadata in settings.CUSTOM_METADATA.items():
                 # Extract multi flag
-                multi = metadata.get("multi", False)  # Default to False if not specified
+                multi = metadata.get(
+                    "multi", False
+                )  # Default to False if not specified
 
                 # Attempt to get this manifest's value for each key
                 value = self.get_metadatum(manifest, key)
@@ -430,7 +432,9 @@ class VolumeSearchView(ListView, FormMixin):
             else []
         )
 
-        volumes_response = self.get_queryset().execute()
+        # size=0: return aggregations only — no hits, no highlighting, much faster.
+        # The actual paginated hits come from the ListView machinery above.
+        volumes_response = self.get_queryset()[:0].execute()
         # populate a dict with "buckets" of extant categories for each facet
         facets = {}
         for facet, _ in self.facets:
@@ -447,18 +451,32 @@ class VolumeSearchView(ListView, FormMixin):
                 )
         context_data["form"].set_facets(facets)
 
-        # get min and max date aggregations and set on form
-        if hasattr(volumes_response.aggregations, "min_date"):
-            min_date = getattr(volumes_response.aggregations, "min_date")
-            if hasattr(volumes_response.aggregations, "max_date"):
-                max_date = getattr(volumes_response.aggregations, "max_date")
-                if hasattr(min_date, "value_as_string") and hasattr(
-                    max_date, "value_as_string"
-                ):
-                    context_data["form"].set_date(
-                        getattr(min_date, "value_as_string"),
-                        getattr(max_date, "value_as_string"),
-                    )
+        # get min and max date aggregations and set on form.
+        # these are nested under filter buckets (dated_earliest / dated_latest) so that
+        # undated volumes are excluded from the aggregation range.
+        aggs = volumes_response.aggregations
+        dated_earliest = getattr(aggs, "dated_earliest", None)
+        dated_latest = getattr(aggs, "dated_latest", None)
+        if dated_earliest and dated_latest:
+            min_date = getattr(dated_earliest, "min_date", None)
+            max_date = getattr(dated_latest, "max_date", None)
+            # value_as_string on a FloatField metric is the raw JD float as a string,
+            # not an ISO date — convert via jd_to_date instead.
+            min_jd = getattr(min_date, "value", None) if min_date else None
+            max_jd = getattr(max_date, "value", None) if max_date else None
+            if min_jd is not None and max_jd is not None:
+                # jd_to_date returns None for pre-CE dates (year 0 / 1 BC) because
+                # Python's date.MINYEAR = 1. Clamp to date(1, 1, 1) so the slider
+                # has a valid lower bound; BCE volumes remain indexed and searchable.
+                from datetime import date as _date
+                min_d = jd_to_date(min_jd) or _date(1, 1, 1)
+                max_d = jd_to_date(max_jd)
+                if max_d:
+                    # strftime("%Y") does not zero-pad years < 1000 on all platforms,
+                    # so format manually to guarantee isoparse-compatible 4-digit years.
+                    def _fmt(d):
+                        return f"{d.year:04d}-{d.month:02d}-{d.day:02d}"
+                    context_data["form"].set_date(_fmt(min_d), _fmt(max_d))
 
         # Attach start_canvas to each volume in the current page.
         # Handle both: paginator page and raw list-like.
@@ -472,32 +490,45 @@ class VolumeSearchView(ListView, FormMixin):
             pids = [getattr(v, "pid", None) for v in items if getattr(v, "pid", None)]
 
             if pids:
-                # Use the default reverse name: canvas_set
-                manifests = {
-                    m.pid: m
-                    for m in Manifest.objects
-                            .filter(pid__in=pids)
-                            .prefetch_related("canvas_set")
-                }
+                # Two targeted queries instead of prefetch_related("canvas_set"), which
+                # would load every canvas for every result just to find one per manifest.
+                canvas_map = {}
+
+                # Query 1: manifests with an explicitly marked starting page.
+                # DISTINCT ON (manifest_id) returns exactly one row per manifest at the
+                # DB level — no Python-side deduplication, no dirtyfields deep-copy storm.
+                for c in (
+                    Canvas.objects.filter(manifest__pid__in=pids, is_starting_page=True)
+                    .order_by("manifest_id", "position")
+                    .distinct("manifest_id")
+                    .select_related("manifest")
+                ):
+                    canvas_map[c.manifest.pid] = c
+
+                # Query 2: first canvas by position for the remainder
+                remaining = [p for p in pids if p not in canvas_map]
+                if remaining:
+                    for c in (
+                        Canvas.objects.filter(manifest__pid__in=remaining)
+                        .order_by("manifest_id", "position")
+                        .distinct("manifest_id")
+                        .select_related("manifest")
+                    ):
+                        canvas_map[c.manifest.pid] = c
 
                 for v in items:
-                    pid = getattr(v, "pid", None)
-                    m = manifests.get(pid)
-                    if not m:
-                        v.start_canvas = None
-                        continue
-
-                    # Prefer an explicitly marked starting page, else first by position
-                    start = m.canvas_set.filter(is_starting_page=True).order_by("position").first()
-                    if start is None:
-                        start = m.canvas_set.order_by("position").first()
-                    v.start_canvas = start
+                    v.start_canvas = canvas_map.get(getattr(v, "pid", None))
 
         return context_data
 
     def get_queryset(self):
         form = self.get_form()
         volumes = ManifestDocument.search()
+
+        # canvas_set contains full OCR text for every page — potentially megabytes per volume.
+        # Exclude it from _source so ES doesn't serialize and return it for every hit.
+        # inner_hits (per-page match context) are fetched separately and are unaffected.
+        volumes = volumes.source(excludes=["canvas_set"])
 
         if not form.is_valid():
             # empty result on invalid form
@@ -609,14 +640,22 @@ class VolumeSearchView(ListView, FormMixin):
             )
 
         # filter on date published
+        # Date range overlap logic: include a document if its date window overlaps the
+        # filter window. A document [earliest, latest] overlaps [start, end] when:
+        #   latest >= start  AND  earliest <= end
+        # Using the opposite bound for each filter handles null bounds gracefully —
+        # if date_earliest is null we can't exclude the document from an end_date filter,
+        # and if date_latest is null we can't confirm it falls after a start_date.
         min_date_filter = form_data.get("start_date")
         if min_date_filter:
             min_jd = date_to_jd(date(min_date_filter.year, 1, 1))
-            volumes = volumes.filter("range", date_earliest={"gte": min_jd})
+            volumes = volumes.filter("exists", field="date_latest")
+            volumes = volumes.filter("range", date_latest={"gte": min_jd})
         max_date_filter = form_data.get("end_date") or ""
         if max_date_filter:
             max_jd = date_to_jd(date(max_date_filter.year, 12, 31))
-            volumes = volumes.filter("range", date_latest={"lte": max_jd})
+            volumes = volumes.filter("exists", field="date_earliest")
+            volumes = volumes.filter("range", date_earliest={"lte": max_jd})
 
         # filter on custom metadata fields
         if hasattr(settings, "CUSTOM_METADATA") and isinstance(
@@ -640,9 +679,16 @@ class VolumeSearchView(ListView, FormMixin):
         for facet_name, facet in self.facets:
             volumes.aggs.bucket(facet_name, facet.get_aggregation())
 
-        # get min and max date published values
-        volumes.aggs.metric("min_date", "min", field="date_earliest")
-        volumes.aggs.metric("max_date", "max", field="date_latest")
+        # get min and max date published values, excluding volumes with no dates.
+        # Some undated volumes store 0 rather than null, so an exists filter is not
+        # enough — use a range filter requiring a positive JD value (JD > 0 means
+        # after 4713 BC; any plausible publication date will satisfy this).
+        volumes.aggs.bucket(
+            "dated_earliest", "filter", filter={"exists": {"field": "date_earliest"}}
+        ).metric("min_date", "min", field="date_earliest")
+        volumes.aggs.bucket(
+            "dated_latest", "filter", filter={"exists": {"field": "date_latest"}}
+        ).metric("max_date", "max", field="date_latest")
 
         # sort
         volumes = volumes.sort(form_data["sort"])

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import VolumeSearch from './components/VolumeSearch.vue'
 import VolumeAnnotations from './components/VolumeAnnotations.vue'
 import OcrInspector from './components/OcrInspector.vue'
@@ -9,42 +9,51 @@ import InfoExport from './components/InfoExport.vue'
 import InfoUrlExternal from './components/InfoUrlExternal.vue'
 import VolumeExportAnnotationBtn from './components/VolumeExportAnnotationBtn.vue'
 
-var readux = new Vue({
-  el: "#v-readux",
-  delimiters: ["[[", "]]"],
-  components: { 
-    VolumeSearch, VolumeAnnotations, OcrInspector, InfoUrlUnit, InfoUrlSingle, InfoUrlMultiple, InfoExport, InfoUrlExternal, VolumeExportAnnotationBtn
+const app = createApp({
+  components: {
+    VolumeSearch,
+    VolumeAnnotations,
+    OcrInspector,
+    InfoUrlUnit,
+    InfoUrlSingle,
+    InfoUrlMultiple,
+    InfoExport,
+    InfoUrlExternal,
+    VolumeExportAnnotationBtn,
   },
-  data: {
-    options: ["title", "author", "date published", "date added"],
-    searchPrefix: "?sort=",
-    currentSelection: null,
-    itemNotFound: false,
-    showMoreInfo: false,
-    manifestCount: 0,
+  data() {
+    return {
+      options: ["title", "author", "date published", "date added"],
+      searchPrefix: "?sort=",
+      currentSelection: null,
+      itemNotFound: false,
+      showMoreInfo: false,
+      manifestCount: 0,
+    }
   },
   methods: {
-    sortBy: function (selection) {
-      var value = this.searchPrefix + selection;
+    sortBy(selection) {
+      const value = this.searchPrefix + selection
       if (window.location !== value) {
-        window.location = value;
+        window.location = value
       }
     },
-
-    toggleMoreInfo: function () {
+    toggleMoreInfo() {
       this.showMoreInfo = !this.showMoreInfo
+    },
+  },
+  mounted() {
+    if (this.$refs["v-attr-sort"]) {
+      this.currentSelection = this.$refs["v-attr-sort"].getAttribute("data-sort")
+    }
+    if (window.location.href.includes("?q=")) {
+      this.showMoreInfo = true
     }
   },
+})
 
-  mounted: function () {
-    if (this.$refs["v-attr-sort"]) {
-      this.currentSelection = this.$refs["v-attr-sort"].getAttribute(
-        "data-sort"
-      );
-    }
+// Custom delimiters so Vue expressions don't clash with Django template tags.
+// Must be set before mount().
+app.config.compilerOptions.delimiters = ['[[', ']]']
 
-    if (window.location.href.includes("?q=")) {
-      this.showMoreInfo = true;
-    }
-  }
-});
+app.mount('#v-readux')

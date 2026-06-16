@@ -52,8 +52,8 @@ class TestManifestSearchForm:
     @patch("apps.readux.forms.MinMaxDateField.set_initial")
     def test_set_date(self, mock_set_initial):
         """Should call set_initial on start_date and end_date form fields with formatted dates"""
-        min_date = "2022-01-01T00:00:00.000Z"
-        max_date = "2022-12-31T00:00:00.000Z"
+        min_date = "2022-01-01"
+        max_date = "2022-12-31"
         form = forms.ManifestSearchForm()
         form.set_date(min_date, max_date)
         mock_set_initial.assert_has_calls([call("2022-01-01"), call("2022-12-31")], any_order=True)

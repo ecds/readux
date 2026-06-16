@@ -45,6 +45,8 @@ class SearchManifestCanvas(View):
         volumes = ManifestDocument.search()
         # filter to only volume matching pid
         volumes = volumes.filter("term", pid=volume_pid)
+        # inner_hits carry the per-page match context; canvas_set _source is not needed
+        volumes = volumes.source(excludes=["canvas_set"])
 
         # build query for nested fields (i.e. canvas position and text)
         nested_kwargs = {

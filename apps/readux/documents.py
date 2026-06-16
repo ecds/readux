@@ -27,6 +27,17 @@ class UserAnnotationDocument(Document):
         """Settings for Elasticsearch"""
 
         name = f"{settings.INDEX_PREFIX}_annotations" if settings.INDEX_PREFIX else "annotations"
+        settings = {
+            "analysis": {
+                "analyzer": {
+                    "en": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "stop", "porter_stem"],
+                    }
+                }
+            }
+        }
 
     class Django:
         """Settings for automatically pulling data from Django"""

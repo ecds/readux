@@ -1,8 +1,9 @@
+urllib3>=2  # required by elastic-transport; compatible with requests 2.31+
 pytz==2023.3  # https://github.com/stub42/pytz
 python-slugify==8.0.1  # https://github.com/un33k/python-slugify
-Pillow==9.4.0 # wagtail 4.2.4 depends on Pillow<10.0.0 and >=4.0.0
+Pillow  # unpinned after Wagtail 6 upgrade
 argon2-cffi==23.1.0  # https://github.com/hynek/argon2_cffi
-beautifulsoup4==4.9.3 # CANNOT UPDATE DUE TO WAGTAIL
+beautifulsoup4  # unpinned after Wagtail 6 upgrade
 lxml==4.9.3
 pyyaml
 progress
@@ -15,16 +16,17 @@ edtf
 
 # Django
 # ------------------------------------------------------------------------------
-# TODO: When we get to update, check this re: summernote https://github.com/summernote/django-summernote/issues/449
-Django>=4.0,<5.0  # https://www.djangoproject.com/
+# Replaced django-summernote with django-tinymce (see issue #449 — summernote not compatible with Django 5)
+Django>=5.2,<6.0  # https://www.djangoproject.com/
 django-environ==0.11.2  # https://github.com/joke2k/django-environ
 # git+https://github.com/joke2k/django-environ@develop
 django-model-utils==4.2.0  # https://github.com/jazzband/django-model-utils
 django-dirtyfields>=1.7.0 # https://github.com/romgar/django-dirtyfields
-django-allauth>=0.63.6  # https://github.com/pennersr/django-allauth
+django-allauth>=65.0  # https://github.com/pennersr/django-allauth
 pyjwt>=2.8.0
 requests-oauthlib>=1.3.1
-django-crispy-forms==1.14.0  # https://github.com/django-crispy-forms/django-crispy-forms
+django-crispy-forms>=2.0  # https://github.com/django-crispy-forms/django-crispy-forms
+crispy-bootstrap4  # template pack now a separate package in crispy-forms 2.x
 django-redis==5.4.0  # https://github.com/niwinz/django-redis
 # beta version required for Django 2.x
 django-modeltranslation>=0.17.2 # https://github.com/deschler/django-modeltranslation
@@ -33,7 +35,7 @@ django-taggit>=1.5.0 # https://github.com/jazzband/django-taggit
 django-cors-headers>=3.8.0 # https://github.com/ottoyiu/django-cors-headers
 
 #wysiwyg
-django-summernote>=0.8.11.6 # https://github.com/summernote/django-summernote
+django-tinymce>=4.0  # https://github.com/jazzband/django-tinymce
 
 # SCSS Support
 #--------------------------------------------------------------------------------
@@ -45,15 +47,14 @@ django-sass-processor
 pylint-django==2.5.5
 
 # Wagtail
-wagtail==5.2.8
-wagtailmenus==3.1.9
-wagtail-modeladmin==2.0.0  # replaces deprecated wagtail.contrib.modeladmin
-#git+https://github.com/jcmundy/wagtail-autocomplete.git@master#egg=wagtail-autocomplete
-wagtail-autocomplete==0.10.0
-wagtail-cache==2.3.0
+wagtail>=6.0
+wagtail-modeladmin  # standalone package replacing wagtail.contrib.modeladmin removed in Wagtail 6
+wagtailmenus>=4.0
+# wagtail-autocomplete removed — replaced by FieldPanel(autocomplete=True) built into Wagtail 4+
+wagtail-cache  # verify Wagtail 6 compat
 
 # Import/Export
-django-import-export==2.8.0
+django-import-export>=4.0  # review admin import classes for 4.x API changes
 gitpython==3.1.40
 
 # S3 Uploads
@@ -74,13 +75,13 @@ stream-unzip>=0.0.58
 bcp47==0.0.4 # https://github.com/highfestiva/bcp47.py
 
 # Elasticsearch
-django-elasticsearch-dsl>7.0,<8.0
-elasticsearch<7.14.0
+django-elasticsearch-dsl>=8.0,<9.0
+elasticsearch-dsl>=8.0,<9.0
+elasticsearch>=8.13.0,<9.0
 # used to unaccent strings for sorting
 unidecode
 
-# TODO: Upgrade after https://github.com/django-extensions/django-extensions/issues/1715 is fixed
-Werkzeug<2.4.0  # https://github.com/pallets/werkzeug
+Werkzeug  # https://github.com/pallets/werkzeug — cap removed, was only needed for Django 3
 ipdb~=0.13.13  # https://github.com/gotcha/ipdb
 # TODO: Upgrade after moving to Django 3
 psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2

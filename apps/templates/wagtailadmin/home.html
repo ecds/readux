@@ -11,14 +11,13 @@
     <link type="text/css" href="{% sass_src 'css/readux.scss' %}" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.13.7/js/uikit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.13.7/js/uikit-icons.min.js"></script>
-    <link rel="stylesheet" href="{% static 'wagtailadmin/css/layouts/home.css' %}" type="text/css" />
 {% endblock %}
 
 {% block content %}
     <header class="merged nice-padding">
         <div class="row row-flush">
             <div class="col1">
-                <div class="avatar"><img src="{% avatar_url user %}" alt="" /></div>
+                <div class="avatar">{% avatar user %}</div>
             </div>
             <div class="col9">
                 <h1>{% block branding_welcome %}{% blocktrans %}Welcome to the {{ site_name }} Wagtail CMS{% endblocktrans %}{% endblock %}&nbsp;&nbsp;<a href="/admin"><span class="uk-user" uk-icon="icon: cog" uk-tooltip="title: Django admin; pos: bottom"></span></a></h1>

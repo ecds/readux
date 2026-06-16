@@ -12,6 +12,7 @@ window.$ = $
 window.jQuery = $
 window.axios = axios
 window.noUiSlider = noUiSlider
+UIkit.use(UIkitIcons)
 window.UIkit = UIkit
 window.UIkitIcons = UIkitIcons
 window.ECDSAnnotator = ECDSAnnotator

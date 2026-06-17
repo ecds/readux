@@ -1,0 +1,305 @@
+.full-width-bg {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  height: auto;
+  color: #ffffff; }
+
+/* Hero Container - Two Column Layout */
+.hero-container {
+  display: flex;
+  align-items: stretch;
+  min-height: 400px; }
+  @media (max-width: 768px) {
+    .hero-container {
+      flex-direction: column;
+      min-height: auto; } }
+/* Left Column - Text Content */
+.hero-text-column {
+  flex: 1;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.7) 100%);
+  padding: 50px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: #ffffff;
+  position: relative;
+  z-index: 2; }
+  @media (max-width: 768px) {
+    .hero-text-column {
+      padding: 30px;
+      min-height: auto; } }
+/* Collection Title - Responsive Font Size */
+.collection-title {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #ffffff;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.2;
+  /* When title is very long, reduce font size */
+  /* When title is truncated */ }
+  @media (max-width: 1200px) {
+    .collection-title {
+      font-size: 2rem; } }
+  @media (max-width: 768px) {
+    .collection-title {
+      font-size: 1.75rem; } }
+  .collection-title.title-long {
+    font-size: 1.75rem; }
+    @media (max-width: 1200px) {
+      .collection-title.title-long {
+        font-size: 1.5rem; } }
+  .collection-title.title-truncated {
+    font-size: 1.5rem; }
+    @media (max-width: 1200px) {
+      .collection-title.title-truncated {
+        font-size: 1.25rem; } }
+.rx-title-tagline {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500; }
+
+/* Collection Description */
+.collection-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.95);
+  margin-top: 20px;
+  margin-bottom: 25px;
+  flex-grow: 1;
+  /* Links need a light color for contrast against the dark hero background */
+  /* When description is truncated */ }
+  .collection-description .description-text {
+    display: block; }
+  .collection-description a {
+    color: #77caff;
+    text-decoration: underline; }
+    .collection-description a:hover, .collection-description a:focus {
+      color: #F1FAEE; }
+  .collection-description.description-truncated .description-text::after {
+    content: ''; }
+
+/* Description Button */
+.description-button {
+  margin-top: auto;
+  background-color: #E60000;
+  border: none;
+  color: #ffffff;
+  font-weight: bold;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  width: fit-content; }
+  .description-button:hover {
+    background-color: #b30000; }
+
+/* Right Column - Image and Info Icon */
+.hero-image-column {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; }
+  @media (max-width: 768px) {
+    .hero-image-column {
+      min-height: 300px; } }
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1; }
+
+/* Info Icon Button */
+.info-icon-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 3;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.8); }
+  .info-icon-button span {
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+  .info-icon-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+  @media (max-width: 768px) {
+    .info-icon-button {
+      bottom: 15px;
+      left: 15px;
+      width: 50px;
+      height: 50px; }
+      .info-icon-button span {
+        font-size: 1.2rem; } }
+/* Modal Styles */
+.rx-collection-modal h1,
+.rx-collection-modal h2,
+.rx-collection-modal h3,
+.rx-collection-modal h4,
+.rx-collection-modal h5,
+.rx-collection-modal h6,
+.rx-collection-modal p,
+.rx-collection-modal div {
+  color: #ffffff; }
+
+.rx-collection-modal h2 {
+  margin-bottom: 0.5rem;
+  font-size: 2rem; }
+
+.rx-collection-modal h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem; }
+
+.rx-collection-modal a {
+  color: #77caff;
+  text-decoration: underline;
+  transition: color 0.3s ease; }
+  .rx-collection-modal a:hover, .rx-collection-modal a:active {
+    color: #aadeff;
+    text-decoration: underline; }
+
+.rx-collection-modal .uk-close {
+  color: #ffffff;
+  background: none;
+  border: none; }
+  .rx-collection-modal .uk-close:hover {
+    color: #e6e6e6; }
+
+.modal-bg {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  color: #ffffff; }
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.85);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 30px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto; }
+  @media (max-width: 768px) {
+    .modal-overlay {
+      padding: 20px; } }
+.modal-content {
+  max-width: 1000px;
+  width: 100%;
+  margin-top: 50px; }
+  @media (max-width: 768px) {
+    .modal-content {
+      margin-top: 30px; } }
+.modal-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 3rem; }
+  @media (max-width: 1024px) {
+    .modal-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem; } }
+  @media (max-width: 768px) {
+    .modal-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem; } }
+.modal-description-section {
+  grid-column: 1; }
+
+.modal-metadata-section {
+  grid-column: 2;
+  padding-top: 6rem; }
+  @media (max-width: 1024px) {
+    .modal-metadata-section {
+      grid-column: 1;
+      padding-top: 0; } }
+.modal-section {
+  margin-bottom: 0; }
+
+.volume-count {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1.5rem;
+  font-weight: 500; }
+
+.modal-description {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 1rem; }
+  .modal-description p {
+    margin-bottom: 1rem; }
+    .modal-description p:last-child {
+      margin-bottom: 0; }
+
+.metadata-section {
+  padding-top: 0;
+  border-top: none; }
+
+.metadata-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem; }
+
+.metadata-item {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.95rem; }
+  .metadata-item strong {
+    color: rgba(255, 255, 255, 0.9);
+    min-width: 200px;
+    flex-shrink: 0; }
+    @media (max-width: 768px) {
+      .metadata-item strong {
+        min-width: 150px; } }
+  .metadata-item span {
+    color: rgba(255, 255, 255, 0.85);
+    word-wrap: break-word;
+    overflow-wrap: break-word; }
+
+#modal-full p {
+  color: #ffffff; }
+
+#modal-full h2 {
+  font-size: xx-large; }

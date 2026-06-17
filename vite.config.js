@@ -1,16 +1,20 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), react({ include: /\.(jsx|js)$/ })],
 
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "apps/static/js"),
+      "react-draggable": path.resolve(__dirname, "apps/static/js/react-draggable-stub.js"),
       // Full (runtime + compiler) build needed because the root Vue instance
       // mounts to a Django-rendered DOM template rather than an SFC template.
       vue: "vue/dist/vue.esm-bundler.js",
+      // Use local ecds-annotator source directly to avoid double-bundling.
+      "ecds-annotator": path.resolve(__dirname, "../ecds-annotator/src/index.jsx"),
     },
   },
 
@@ -23,15 +27,11 @@ export default defineConfig({
     rollupOptions: {
       input: "./apps/static/js/index.js",
       output: {
+        format: "iife",
         entryFileNames: "main.js",
-        // Keep chunk names stable so cached builds stay valid.
-        chunkFileNames: "[name]-[hash].js",
         assetFileNames: "[name][extname]",
       },
     },
     sourcemap: true,
-  },
-  optimizeDeps: {
-    exclude: ["ecds-annotator"],
   },
 });

@@ -9,7 +9,7 @@
   "dependencies": {
     "@selectize/selectize": "^0.15.2",
     "axios": "^1.7.0",
-    "ecds-annotator": "github:ecds/ecds-annotator#develop",
+    "ecds-annotator": "file:../ecds-annotator",
     "jquery": "^3.6.0",
     "nouislider": "^15.8.1",
     "vue": "^3.4.0"
@@ -22,7 +22,8 @@
   },
   "scripts": {
     "build": "vite build",
-    "dev": "vite build --watch"
+    "dev": "vite build --watch",
+    "postinstall": "cp node_modules/ecds-annotator/dist/style.css apps/static/css/ecds-annotator.min.css"
   },
   "repository": {
     "type": "git",

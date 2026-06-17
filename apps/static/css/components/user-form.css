@@ -1,0 +1,14 @@
+.uk-button-primary {
+  background-color: #1D3557; }
+  .uk-button-primary:hover {
+    background-color: #101e31; }
+
+.unverified {
+  background-color: #f0506e;
+  color: white;
+  margin: 1rem;
+  padding: 0.25rem;
+  border-radius: 8px; }
+
+.uk-alert-info {
+  background-color: #F1FAEE; }

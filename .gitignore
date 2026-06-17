@@ -171,3 +171,4 @@ deploy.sh
 docker*
 Docker*
 entrypoint.sh
+dev.py

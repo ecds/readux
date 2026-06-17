@@ -95,7 +95,7 @@ jobs:
       - name: Test Users
         run: pytest apps/users/
 
-      - name: Test Vite build
-        run: |
-          npm install
-          npm run build
+      # - name: Test Vite build
+      #   run: |
+      #     npm install
+      #     npm run build

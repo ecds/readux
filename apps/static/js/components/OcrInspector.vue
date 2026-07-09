@@ -10,11 +10,13 @@
         <input
           type="checkbox"
           id="ocr-overlay"
+          aria-label="Overlay OCR on Page"
           v-model="overlayChecked"
           :disabled="overlayDisabled"
           @change="onOverlayToggle"
         >
         <div class="uk-switch-slider"></div>
+        <span class="sr-only">Overlay OCR on Page</span>
       </label>
       <span style="flex: 1;">Overlay OCR on Page</span>
     </div>

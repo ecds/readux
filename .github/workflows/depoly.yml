@@ -20,6 +20,12 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
+      - name: Checkout ecds-annotator
+        uses: actions/checkout@v4
+        with:
+          repository: ecds/ecds-annotator
+          path: ecds-annotator
+
       - name: Checkout Docker configs
         run: |
           eval `ssh-agent -s`

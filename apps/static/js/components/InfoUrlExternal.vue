@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="rx-info-content-value">
-      <a :href="localUrl" class="rx-anchor" target="_blank">{{ localUrl }}</a>
+      <a :href="localUrl" class="rx-anchor" target="_blank" rel="noopener" :aria-label="`${label} (opens in a new tab)`">{{ localUrl }}</a>
     </div>
   </div>
 </template>

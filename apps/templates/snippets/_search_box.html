@@ -1,7 +1,7 @@
 <div class="search-bar uk-padding-small">
   <form action="{% url 'search' %}" method="get">
-    <label for="q" class="uk-hidden">Search</label>
-    <input class="uk-input" type="text" name="q" id="q" placeholder="Search for a volume in the library">
+    <label for="q" class="sr-only">Search for a volume in the library</label>
+    <input class="uk-input" type="text" name="q" id="q" placeholder="Search for a volume in the library" aria-label="Search for a volume in the library">
     <button type="submit" class="uk-button">
         Search
     </button>

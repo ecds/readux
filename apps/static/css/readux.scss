@@ -40,8 +40,11 @@ html, body {
 
 main { flex-grow: 1; }
 
-/* Home page navigation transparent, light text/icons over dark hero */
+/* Home page navigation: light text/icons over a dark scrim so the text keeps
+   sufficient contrast (a scrim WAVE can detect, since the hero background is an
+   image the checker cannot evaluate). */
 .home-nav {
+  background-color: rgba($rx-color-midnight-blue, 0.85);
   nav { background-color: transparent !important; }
   a, .brand-logo, .brand-tagline { color: $color-white !important; }
   svg line, svg path, svg circle, svg polygon, svg polyline, svg rect {
@@ -73,7 +76,7 @@ main { flex-grow: 1; }
 /* Text & headings */
 .paragraph { color: $rx-color-midnight-blue; line-height: normal; }
 .title { color: $rx-color-midnight-blue; font-size: x-large; font-weight: bold; }
-.hero { padding-top: 15vh; color: $color-white; }
+.hero { padding-top: 15vh; padding-bottom: 2rem; color: $color-white; background-color: rgba($rx-color-midnight-blue, 0.85); }
 .uk-container h2 { margin-bottom: 0.35rem;}
 
 /* Utilities */

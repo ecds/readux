@@ -1,12 +1,13 @@
 <template>
   <div class="rx-volume-search">
     <div class="uk-search uk-search-default rx-page-search-container">
-      <span uk-search-icon></span>
+      <span uk-search-icon aria-hidden="true"></span>
       <input
         class="uk-search-input"
         type="search"
         id="volume-search"
         placeholder="Search in volume text or annotations"
+        aria-label="Search in volume text or annotations"
         name="q"
         v-model="keyword"
         @keypress.enter="getSearchResults"

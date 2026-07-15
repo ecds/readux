@@ -47,7 +47,7 @@
       <div class="hero-image-column">
         <div class="hero-image-wrapper">
           <div class="image-placeholder"></div>
-          {% if collection.metadata %}
+          {% if collection.collection_image_title or collection.collection_image_creator or collection.collection_image_summary %}
             <button
               class="info-icon-button"
               uk-toggle="target: #modal-metadata"
@@ -86,16 +86,19 @@
     </div>
   {% endwith %}
 
-  {% if collection.metadata %}
+  {% if collection.collection_image_title or collection.collection_image_creator or collection.collection_image_summary %}
     <div id="modal-metadata" class="uk-modal" uk-modal>
       <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
           <button class="uk-modal-close-default" type="button" uk-close></button>
-          <h2 class="uk-modal-title uk-text-bold">Metadata and Image Information</h2>
-          {% for label, value in collection.metadata|metadata_items %}
-              <p><strong>{{ label }}:</strong> {{ value|unescape_html }}</p>
-          {% empty %}
-              <p>No image information available.</p>
-          {% endfor %}
+          {% if collection.collection_image_title %}
+              <p><strong>Title:</strong> {{ collection.collection_image_title|unescape_html }}</p>
+          {% endif %}
+          {% if collection.collection_image_creator %}
+              <p><strong>Creator:</strong> {{ collection.collection_image_creator|unescape_html }}</p>
+          {% endif %}
+          {% if collection.collection_image_summary %}
+              <p><strong>Summary:</strong> {{ collection.collection_image_summary|unescape_html }}</p>
+          {% endif %}
       </div>
     </div>
   {% endif %}

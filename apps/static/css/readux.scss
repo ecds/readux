@@ -22,6 +22,12 @@
 /* -------------------------------------------------------------------------- */
 /* 2) BASE / LAYOUT                                                           */
 /* -------------------------------------------------------------------------- */
+// Hides the raw, un-mounted Vue markup (custom component tags, [[ ]]
+// interpolations) that briefly flashes on page load before Vue finishes
+// mounting on #v-readux and removes this attribute. Must be a plain CSS
+// rule (not conditional on JS) so it applies during the very first paint.
+[v-cloak] { display: none; }
+
 .sr-only { @include sr-only(); }
 
 html, body {

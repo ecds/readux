@@ -33,7 +33,7 @@
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </div>
           {% endif %}
-          <p class="collection-summary">{{ collection.summary|striptags|truncatewords:70|safe }}</p>
+          {% include "snippets/_collection_summary.html" with collection=collection tag="p" css_class="collection-summary" %}
         </a>
       {% empty %}
         <div class="uk-width-1-1 uk-margin-large-bottom">There are no collections available to browse.</div>
@@ -63,7 +63,7 @@
                   {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
                 </div>
               {% endif %}
-              <p class="collection-summary uk-margin-small-top">{{ collection.summary|striptags|truncatewords:70|safe }}</p>
+              {% include "snippets/_collection_summary.html" with collection=collection tag="p" css_class="collection-summary uk-margin-small-top" %}
             </div>
           </div>
         </a>
@@ -95,7 +95,7 @@
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </td>
             <td class="uk-table-expand">
-              <div class="collection-summary">{{ collection.summary|striptags|truncatewords:70|safe }}</div>
+              {% include "snippets/_collection_summary.html" with collection=collection tag="div" css_class="collection-summary" %}
             </td>
           </tr>
         {% empty %}

@@ -825,6 +825,10 @@ ul.listing-thumbs > li > img.thumbnail-image {
 .rx-fieldset {
   border: none; }
 
+/* Space between label and input */
+span.fieldname {
+    margin-right: 0.5rem; }
+
 /* Titles & banners */
 .rx-sticky {
   position: sticky;

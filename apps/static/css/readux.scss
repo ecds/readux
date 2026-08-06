@@ -417,6 +417,9 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
 /* Fieldsets */
 .rx-fieldset { border: none; }
 
+/* Space between label and input */
+span.fieldname { margin-right: 0.25rem; }
+
 /* Titles & banners */
 .rx-sticky { position: sticky; top: 0; z-index: 1; }
 .rx-title-container { background: $color-white; padding: 1em 0; position: sticky; top: 0; z-index: 3; }

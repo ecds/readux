@@ -452,11 +452,15 @@ class VolumeSearchView(ListView, FormMixin):
         context_data["form"].set_facets(facets)
 
         # get min and max date aggregations and set on form.
-        # these are nested under filter buckets (dated_earliest / dated_latest) so that
-        # undated volumes are excluded from the aggregation range.
-        aggs = volumes_response.aggregations
-        dated_earliest = getattr(aggs, "dated_earliest", None)
-        dated_latest = getattr(aggs, "dated_latest", None)
+        # nested under date_range_scope.in_scope (see get_queryset) so the range
+        # reflects every active filter except the date range itself, and further
+        # under dated_earliest/dated_latest filter buckets so undated volumes are
+        # excluded from the aggregation range.
+        date_range_scope = getattr(volumes_response.aggregations, "date_range_scope", None)
+        in_scope = getattr(date_range_scope, "in_scope", None) if date_range_scope else None
+        dated_earliest = getattr(in_scope, "dated_earliest", None) if in_scope else None
+        dated_latest = getattr(in_scope, "dated_latest", None) if in_scope else None
+        context_data["date_range_has_bce"] = False
         if dated_earliest and dated_latest:
             min_date = getattr(dated_earliest, "min_date", None)
             max_date = getattr(dated_latest, "max_date", None)
@@ -468,8 +472,12 @@ class VolumeSearchView(ListView, FormMixin):
                 # jd_to_date returns None for pre-CE dates (year 0 / 1 BC) because
                 # Python's date.MINYEAR = 1. Clamp to date(1, 1, 1) so the slider
                 # has a valid lower bound; BCE volumes remain indexed and searchable.
+                # Flag this on context so the template/JS can tell the user their
+                # "1" option actually stands in for "1 or earlier (BCE included)".
                 from datetime import date as _date
-                min_d = jd_to_date(min_jd) or _date(1, 1, 1)
+                clamped_min_d = jd_to_date(min_jd)
+                context_data["date_range_has_bce"] = clamped_min_d is None
+                min_d = clamped_min_d or _date(1, 1, 1)
                 max_d = jd_to_date(max_jd)
                 if max_d:
                     # strftime("%Y") does not zero-pad years < 1000 on all platforms,
@@ -477,6 +485,11 @@ class VolumeSearchView(ListView, FormMixin):
                     def _fmt(d):
                         return f"{d.year:04d}-{d.month:02d}-{d.day:02d}"
                     context_data["form"].set_date(_fmt(min_d), _fmt(max_d))
+
+        # count of volumes with no published date at all (matching every other
+        # active filter), for the "show volumes without a date" checkbox label
+        undated = getattr(in_scope, "undated", None) if in_scope else None
+        context_data["undated_volume_count"] = getattr(undated, "doc_count", 0) if undated else 0
 
         # Attach start_canvas to each volume in the current page.
         # Handle both: paginator page and raw list-like.
@@ -639,6 +652,18 @@ class VolumeSearchView(ListView, FormMixin):
                 query=Q("terms", **{"collections.label": collection_filter}),
             )
 
+        # Capture the query/filter state *before* the date-range filter below is
+        # applied — Elasticsearch scopes all non-global aggregations by the final
+        # request's full query+filter body, regardless of the Python call order
+        # used to build it, so simply adding the aggs earlier doesn't exempt them
+        # from a date filter added later. Reusing this captured query inside a
+        # "global" aggregation (which ignores query context entirely on its own)
+        # is what actually lets the min/max date aggregation reflect the full
+        # available range — respecting every other active filter (search terms,
+        # author, language, collection) but not the date range filter itself —
+        # so a "reset to full range" control has something real to reset to.
+        pre_date_query = volumes.to_dict().get("query", {"match_all": {}})
+
         # filter on date published
         # Date range overlap logic: include a document if its date window overlaps the
         # filter window. A document [earliest, latest] overlaps [start, end] when:
@@ -647,15 +672,34 @@ class VolumeSearchView(ListView, FormMixin):
         # if date_earliest is null we can't exclude the document from an end_date filter,
         # and if date_latest is null we can't confirm it falls after a start_date.
         min_date_filter = form_data.get("start_date")
-        if min_date_filter:
-            min_jd = date_to_jd(date(min_date_filter.year, 1, 1))
-            volumes = volumes.filter("exists", field="date_latest")
-            volumes = volumes.filter("range", date_latest={"gte": min_jd})
         max_date_filter = form_data.get("end_date") or ""
-        if max_date_filter:
-            max_jd = date_to_jd(date(max_date_filter.year, 12, 31))
-            volumes = volumes.filter("exists", field="date_earliest")
-            volumes = volumes.filter("range", date_earliest={"lte": max_jd})
+        if min_date_filter or max_date_filter:
+            date_range_clauses = []
+            if min_date_filter:
+                min_jd = date_to_jd(date(min_date_filter.year, 1, 1))
+                date_range_clauses.append(Q("exists", field="date_latest"))
+                date_range_clauses.append(Q("range", date_latest={"gte": min_jd}))
+            if max_date_filter:
+                max_jd = date_to_jd(date(max_date_filter.year, 12, 31))
+                date_range_clauses.append(Q("exists", field="date_earliest"))
+                date_range_clauses.append(Q("range", date_earliest={"lte": max_jd}))
+            date_range_query = Q("bool", must=date_range_clauses)
+
+            if form_data.get("include_undated"):
+                # let volumes with no date at all through too, alongside anything
+                # that actually overlaps the selected range
+                undated_query = Q(
+                    "bool",
+                    must_not=[
+                        Q("exists", field="date_earliest"),
+                        Q("exists", field="date_latest"),
+                    ],
+                )
+                volumes = volumes.filter(
+                    Q("bool", should=[date_range_query, undated_query], minimum_should_match=1)
+                )
+            else:
+                volumes = volumes.filter(date_range_query)
 
         # filter on custom metadata fields
         if hasattr(settings, "CUSTOM_METADATA") and isinstance(
@@ -680,15 +724,34 @@ class VolumeSearchView(ListView, FormMixin):
             volumes.aggs.bucket(facet_name, facet.get_aggregation())
 
         # get min and max date published values, excluding volumes with no dates.
-        # Some undated volumes store 0 rather than null, so an exists filter is not
-        # enough — use a range filter requiring a positive JD value (JD > 0 means
-        # after 4713 BC; any plausible publication date will satisfy this).
-        volumes.aggs.bucket(
+        # Wrapped in a "global" bucket so it ignores the query context entirely,
+        # then re-scoped via `pre_date_query` (captured above) to respect every
+        # other active filter except the date range itself. See the comment
+        # above `pre_date_query` for why this can't just be plain aggs.
+        volumes.aggs.bucket("date_range_scope", "global").bucket(
+            "in_scope", "filter", filter=pre_date_query
+        )
+        in_scope_aggs = volumes.aggs["date_range_scope"]["in_scope"]
+        in_scope_aggs.bucket(
             "dated_earliest", "filter", filter={"exists": {"field": "date_earliest"}}
         ).metric("min_date", "min", field="date_earliest")
-        volumes.aggs.bucket(
+        in_scope_aggs.bucket(
             "dated_latest", "filter", filter={"exists": {"field": "date_latest"}}
         ).metric("max_date", "max", field="date_latest")
+        # count of volumes with no published date at all, matching every other
+        # active filter — powers the "N volumes without a published date" label
+        in_scope_aggs.bucket(
+            "undated",
+            "filter",
+            filter={
+                "bool": {
+                    "must_not": [
+                        {"exists": {"field": "date_earliest"}},
+                        {"exists": {"field": "date_latest"}},
+                    ]
+                }
+            },
+        )
 
         # sort
         volumes = volumes.sort(form_data["sort"])

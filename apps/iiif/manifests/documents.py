@@ -9,6 +9,9 @@ from django.utils.html import strip_tags
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 
+from edtf import parse_edtf
+from edtf.convert import struct_time_to_jd
+from edtf.natlang import text_to_edtf
 from elasticsearch_dsl import MetaField, Keyword, analyzer
 from unidecode import unidecode
 
@@ -22,6 +25,32 @@ stemmer = analyzer(
     tokenizer="standard",
     filter=["lowercase", "stop", "porter_stem"],
 )
+
+
+def _published_date_fallback_jd(instance, bound):
+    """date_earliest/date_latest are derived from published_date_edtf, a
+    separate field cataloguers are expected to fill in alongside the
+    display-only published_date. In practice a lot of records only ever get
+    published_date set, which silently excludes them from date-published
+    filtering/sorting and miscounts them as "no date" even though they show
+    a real date on screen. Fall back to parsing published_date itself so the
+    search filter reflects what's actually displayed.
+    """
+    if not instance.published_date:
+        return None
+    try:
+        edtf_string = text_to_edtf(instance.published_date)
+        if not edtf_string:
+            return None
+        edtf_obj = parse_edtf(edtf_string, fail_silently=True)
+        if not edtf_obj:
+            return None
+        struct_time = edtf_obj.lower_fuzzy() if bound == "lower" else edtf_obj.upper_fuzzy()
+        return struct_time_to_jd(struct_time)
+    except Exception:  # pylint: disable=broad-except
+        # published_date is free-text catalog data; malformed/unparseable
+        # values should degrade to "no fallback date", not break indexing.
+        return None
 
 
 @registry.register_document
@@ -123,6 +152,20 @@ class ManifestDocument(Document):
     def prepare_has_pdf(self, instance):
         """convert pdf field into boolean"""
         return bool(instance.pdf)
+
+    def prepare_date_earliest(self, instance):
+        """Fall back to parsing the display-only published_date when
+        date_earliest is unset (see _published_date_fallback_jd)"""
+        if instance.date_earliest is not None:
+            return instance.date_earliest
+        return _published_date_fallback_jd(instance, "lower")
+
+    def prepare_date_latest(self, instance):
+        """Fall back to parsing the display-only published_date when
+        date_latest is unset (see _published_date_fallback_jd)"""
+        if instance.date_latest is not None:
+            return instance.date_latest
+        return _published_date_fallback_jd(instance, "upper")
 
     def prepare_label_alphabetical(self, instance):
         """get the first 64 chars of a label, just for sorting purposes"""

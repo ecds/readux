@@ -22,7 +22,6 @@
     <script src="{% static 'js/search.js' %}"></script>
 {% endblock %}
 {% block extra_css %}
-    <link href="https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.css" rel="stylesheet">
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
@@ -88,7 +87,7 @@
 
                 <fieldset class="uk-align-center uk-text-center uk-margin-remove">
                     <button type="button" class="reset-filters uk-button uk-button-default uk-button-small">Reset</button>
-                    <button class="uk-button uk-button-primary uk-button-small" type="submit">Apply</button>
+                    <button class="uk-button uk-button-primary uk-button-small uk-margin-small-left" type="submit">Apply</button>
                 </fieldset>
                 
                 <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
@@ -117,13 +116,39 @@
                         <label for="toggle-date">Filter by Date published</label>
                         <input type="checkbox" name="date-filter" id="toggle-date" class="uk-checkbox uk-margin-remove"/>
                     </div>
-                    <div id="date-range-slider"></div>
-                    <noscript>
-                        <label for="{{ form.start_date.id_for_label }}" class="uk-label">{{ form.start_date.label }}</label>
-                        {{ form.start_date }}
-                        <label for="{{ form.end_date.id_for_label }}" class="uk-label">{{ form.end_date.label }}</label>
-                        {{ form.end_date }}
-                    </noscript>
+                    <div
+                        id="date-range-filter"
+                        data-min-date="{{ form.start_date.field.widget.date_initial|default:'' }}"
+                        data-max-date="{{ form.end_date.field.widget.date_initial|default:'' }}"
+                        data-has-bce="{% if date_range_has_bce %}true{% else %}false{% endif %}"
+                    >
+                        <div class="date-range-filter-fields">
+                            <div class="date-range-filter-field">
+                                <label for="id_start_year" class="date-range-filter-label">{{ form.start_date.label }}</label>
+                                <select id="id_start_year" name="start_date" aria-label="Filter by start year published"></select>
+                            </div>
+                            <div class="date-range-filter-field">
+                                <label for="id_end_year" class="date-range-filter-label">{{ form.end_date.label }}</label>
+                                <select id="id_end_year" name="end_date" aria-label="Filter by end year published"></select>
+                            </div>
+                        </div>
+                        <p class="date-range-bce-note">
+                            Volumes dated before year 1 CE (BCE) can't be shown individually here — they're grouped under the earliest year in the list above{% if date_range_has_bce %}, labeled "1 or earlier"{% endif %}.
+                        </p>
+                        <button
+                            type="button"
+                            id="reset-date-range"
+                            class="date-range-reset-link"
+                            hidden
+                        >Reset Date Range</button>
+                        <div class="date-range-filter-label uk-flex uk-flex-middle date-range-undated-toggle">
+                            <input type="checkbox" name="include_undated" id="id_include_undated" class="uk-checkbox uk-margin-small-right"/>
+                            <label for="id_include_undated">
+                                {{ form.include_undated.label }}
+                                <span class="date-range-undated-count">({{ undated_volume_count }} volume{{ undated_volume_count|pluralize }} with no recorded date)</span>
+                            </label>
+                        </div>
+                    </div>
                 </fieldset>
 
                 {% for key in CUSTOM_METADATA_KEYS %}
@@ -139,7 +164,7 @@
 
                 <fieldset uk-margin class="uk-align-center uk-text-center">
                     <button type="button" class="reset-filters uk-button uk-button-default uk-button-small">Reset</button>
-                    <button class="uk-button uk-button-primary uk-button-small" type="submit">Apply</button>
+                    <button class="uk-button uk-button-primary uk-button-small uk-margin-small-left" type="submit">Apply</button>
                 </fieldset>
             </div>
             

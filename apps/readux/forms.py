@@ -169,6 +169,11 @@ class ManifestSearchForm(forms.Form):
             format="%Y-%m-%d",
         ),
     )
+    include_undated = forms.BooleanField(
+        label="Show volumes without a published date",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "uk-checkbox"}),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

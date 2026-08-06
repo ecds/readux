@@ -164,6 +164,18 @@ apps/static/css/project.css
 apps/static/js/main.js
 apps/static/js/main.js.map
 
+# django-sass-processor compiles these from the adjacent .scss at request time
+# (or via `manage.py compilescss` for production). A committed .css here would
+# shadow that compilation, since FileSystemFinder is checked before CssFinder.
+apps/static/css/readux.css
+apps/static/css/components/collection.css
+apps/static/css/components/flatpage.css
+apps/static/css/components/login.css
+apps/static/css/components/menu-inverse.css
+apps/static/css/components/reader.css
+apps/static/css/components/search.css
+apps/static/css/components/user-form.css
+
 snippets/*
 
 

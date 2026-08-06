@@ -9,6 +9,31 @@
     color: $color-white;
 }
 
+/* All-collections page, Banner layout */
+.collection-banner-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.collection-banner-item {
+    display: block;
+    text-decoration: none;
+    color: $color-white;
+    opacity: 0.9;
+    transition: opacity 0.15s ease;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &:hover, &:focus {
+        opacity: 1;
+        text-decoration: none;
+        color: $color-white;
+    }
+
+    .hero-container { min-height: 250px; }
+}
+
 /* Hero Container - Two Column Layout */
 .hero-container {
     display: flex;

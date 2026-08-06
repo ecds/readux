@@ -16,12 +16,18 @@
 /* -------------------------------------------------------------------------- */
 :root {
   --contrast: 200%;
-  --link-color: $rx-color-midnight-blue;
+  --link-color: #{$rx-color-midnight-blue};
 }
 
 /* -------------------------------------------------------------------------- */
 /* 2) BASE / LAYOUT                                                           */
 /* -------------------------------------------------------------------------- */
+// Hides the raw, un-mounted Vue markup (custom component tags, [[ ]]
+// interpolations) that briefly flashes on page load before Vue finishes
+// mounting on #v-readux and removes this attribute. Must be a plain CSS
+// rule (not conditional on JS) so it applies during the very first paint.
+[v-cloak] { display: none; }
+
 .sr-only { @include sr-only(); }
 
 html, body {
@@ -292,6 +298,10 @@ em { color: inherit !important; }
   font-weight: 600; color: $rx-color-midnight-blue;
   .info-group, .pagination-controls { display: flex; align-items: center; gap: 5px; }
   a, select { color: $rx-color-mario-red; text-decoration: underline; }
+  // UIkit's uk-dropdown strips the whitespace text node between this label
+  // and its dropdown toggle link when it enhances the toggle client-side,
+  // so the source's natural whitespace can't be relied on for spacing here.
+  .fieldname { margin-right: 0.25rem; }
 }
 
 .pagination-controls { .uk-icon-button { color: $rx-color-midnight-blue; } .uk-icon-button[disabled] { color: $rx-color-light-pearl; cursor: not-allowed; } }

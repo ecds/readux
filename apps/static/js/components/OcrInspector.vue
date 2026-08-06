@@ -22,7 +22,7 @@
     </div>
 
     <div class="rx-info-content-value uk-margin-small-bottom uk-text-italic">
-      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
+      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to the image but some text may be missing or out of place.
     </div>
 
     <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">

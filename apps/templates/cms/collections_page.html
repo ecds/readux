@@ -1,5 +1,12 @@
 {% extends "cms/base.html" %}
-{% load static %}
+{% load static sass_tags %}
+
+{% block extra_css %}
+  {{ block.super }}
+  {% if page.layout == 'Banner' %}
+    <link type="text/css" href="{% sass_src 'css/components/collection.scss' %}" rel="stylesheet" />
+  {% endif %}
+{% endblock extra_css %}
 
 {% block content %}
   {% include "snippets/_collections_page_information.html" %}
@@ -26,7 +33,39 @@
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </div>
           {% endif %}
-          <p class="collection-summary">{{ collection.summary|striptags|truncatewords:70|safe }}</p>
+          {% include "snippets/_collection_summary.html" with collection=collection tag="p" css_class="collection-summary" %}
+        </a>
+      {% empty %}
+        <div class="uk-width-1-1 uk-margin-large-bottom">There are no collections available to browse.</div>
+      {% endfor %}
+    </div>
+  {% elif page.layout == 'Banner' %}
+    <!-- Collection Banner -->
+    <div class="collection-banner-list">
+      {% for collection in collections %}
+        <!-- Collection Item -->
+        <a
+          class="full-width-bg collection-banner-item"
+          href="{% url 'collection' collection.pid %}"
+          style="background-image: url('/media/{{ collection.header }}');"
+        >
+          <div class="hero-container">
+            <div class="hero-text-column">
+              {% with full_label=collection.label|default:"[no title]" %}
+                {% if full_label|length > 70 %}
+                  <h2 class="collection-title uk-margin-remove" uk-tooltip="title: {{ full_label }}; pos: top">{{ full_label|truncatechars:70 }}</h2>
+                {% else %}
+                  <h2 class="collection-title uk-margin-remove">{{ full_label }}</h2>
+                {% endif %}
+              {% endwith %}
+              {% if collection.manifests.all %}
+                <div class="rx-title-tagline">
+                  {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
+                </div>
+              {% endif %}
+              {% include "snippets/_collection_summary.html" with collection=collection tag="p" css_class="collection-summary uk-margin-small-top" %}
+            </div>
+          </div>
         </a>
       {% empty %}
         <div class="uk-width-1-1 uk-margin-large-bottom">There are no collections available to browse.</div>
@@ -56,7 +95,7 @@
               {{ collection.manifests.all|length }} volume{{ collection.manifests.all|length|pluralize }}
             </td>
             <td class="uk-table-expand">
-              <div class="collection-summary">{{ collection.summary|striptags|truncatewords:70|safe }}</div>
+              {% include "snippets/_collection_summary.html" with collection=collection tag="div" css_class="collection-summary" %}
             </td>
           </tr>
         {% empty %}

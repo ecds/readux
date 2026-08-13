@@ -65,7 +65,7 @@ main { flex-grow: 1; }
   width: 100%;
   height: 80vh;
   min-height: 500px;
-  background-color: rgba($rx-color-midnight-blue, 0.8);
+  background-color: rgba($rx-color-midnight-blue, 0.85);
 }
 
 .content {
@@ -82,7 +82,11 @@ main { flex-grow: 1; }
 /* Text & headings */
 .paragraph { color: $rx-color-midnight-blue; line-height: normal; }
 .title { color: $rx-color-midnight-blue; font-size: x-large; font-weight: bold; }
-.hero { padding-top: 15vh; padding-bottom: 2rem; color: $color-white; background-color: rgba($rx-color-midnight-blue, 0.85); }
+/* No background-color here: .hero sits on top of .overlay (see above), which
+   already provides the scrim over the hero image. Giving .hero its own
+   background would double-stack with .overlay and make the hero area visibly
+   more opaque than the surrounding .home-nav / .overlay-only regions. */
+.hero { padding-top: 15vh; padding-bottom: 2rem; color: $color-white; }
 .uk-container h2 { margin-bottom: 0.35rem;}
 
 /* Utilities */

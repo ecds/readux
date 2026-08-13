@@ -82,6 +82,31 @@
     <meta name="twitter:site" content="@emorycds" />
     <meta name="twitter:creator" content="@emorycds" />
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
+    <style>
+      /* Critical CSS to prevent a flash of unstyled nav on slow connections.
+         The top nav's submenus (e.g. "About") are rendered inline in the raw
+         HTML via {% main_menu add_sub_menus_inline=True %} so the dropdown
+         works even without JS — but that means they're hidden/positioned as
+         an overlay purely by the external UIkit/readux stylesheets below. On
+         a slow connection those stylesheets can still be loading when the
+         browser's render-blocking timeout expires and it paints anyway, so
+         the submenu briefly renders in normal document flow: a wide-open
+         plain list sitting under the nav instead of a hidden dropdown. This
+         duplicates just enough of UIkit's own navbar/dropdown rules, inline
+         and dependency-free, to avoid that flash until the full stylesheets
+         arrive. */
+      [uk-navbar], .uk-navbar-left, .uk-navbar-right, .uk-navbar-nav {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .uk-navbar-dropdown {
+        display: none;
+        position: absolute;
+      }
+    </style>
     {% block css %}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.17.0/css/uikit.min.css" />
       <link type="text/css" href="{% sass_src 'css/readux.scss' %}" rel="stylesheet" />

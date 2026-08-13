@@ -70,38 +70,50 @@ export default {
     // counts of two different pages get compared. Track the current canvas
     // and only treat add/delete as real when the canvas hasn't changed.
     //
-    // "canvasswitch" can also fire more than once in quick succession for
-    // the SAME canvas while its annotation list is still loading — e.g. a
-    // transient "0 on page" read before the async fetch resolves, followed
-    // by the real count moments later. Diffing against a running
-    // _prevPageCount on every event mistakes that settle-in transition for
-    // a real add/delete and double-counts it against localManifestCount
-    // (which already reflects the server-rendered total as of page load).
-    // Debounce: only diff once the count for the current canvas has stopped
-    // changing for SETTLE_MS, so we always compare against a stable reading.
-    const SETTLE_MS = 250;
+    // The annotator (ecds-annotator) also dispatches a synthetic RESET
+    // "canvasswitch" — {canvas: "all", annotationsOnPage: 0, ...} — before
+    // the real per-canvas event for whatever canvas is loading. That's not
+    // a timing race to be debounced away; it's a deliberate, deterministic
+    // placeholder event that never represents a real page's annotation
+    // count. Treating it like any other canvas (as the old code did) let it
+    // poison _prevPageCount with 0, so the next real event for the actual
+    // canvas got diffed against that bogus 0 and double-counted an
+    // annotation that was already included in the server-rendered total.
+    // Fix: ignore canvas === "all" outright rather than guess a settle time.
+    const RESET_CANVAS = "all";
     this._currentCanvas = null;
     this._prevPageCount = null;
-    this._settleTimer = null;
 
-    this._commitSettledCount = (canvas, newPageCount) => {
-      if (this._prevPageCount !== null) {
+    this._onCanvasSwitch = (event) => {
+      const detail = event && event.detail ? event.detail : {};
+      const newPageCount = typeof detail.annotationsOnPage === "number" ? detail.annotationsOnPage : null;
+
+      if (!detail.canvas || detail.canvas === RESET_CANVAS) {
+        // Synthetic reset event: carries no real per-canvas count. Ignore
+        // it entirely — don't touch localPageCount, _currentCanvas, or
+        // _prevPageCount from it.
+        return;
+      }
+
+      const sameCanvas = detail.canvas === this._currentCanvas;
+
+      if (sameCanvas && newPageCount !== null && this._prevPageCount !== null) {
         const delta = newPageCount - this._prevPageCount;
         if (delta > 0) {
           // annotation(s) added
           let createNewPage = true;
           for (let i = 0; i < this.annotationData.length; i++) {
-            if (this.annotationData[i].canvas__pid === canvas) {
+            if (this.annotationData[i].canvas__pid === detail.canvas) {
               this.annotationData[i].canvas__position__count = newPageCount;
               createNewPage = false;
               break;
             }
           }
           if (createNewPage) {
-            const canvasPidNum = (canvas.match(/\d+/g) || []).pop();
+            const canvasPidNum = (detail.canvas.match(/\d+/g) || []).pop();
             this.annotationData = this.annotationData.concat({
               canvas__manifest__label: this.annotationData[0]?.canvas__manifest__label,
-              canvas__pid: canvas,
+              canvas__pid: detail.canvas,
               canvas__position: parseInt(canvasPidNum, 10) + 1,
               canvas__position__count: newPageCount
             });
@@ -110,7 +122,7 @@ export default {
         } else if (delta < 0) {
           // annotation(s) deleted
           for (let i = 0; i < this.annotationData.length; i++) {
-            if (this.annotationData[i].canvas__pid === canvas) {
+            if (this.annotationData[i].canvas__pid === detail.canvas) {
               this.annotationData[i].canvas__position__count = newPageCount;
               break;
             }
@@ -118,53 +130,37 @@ export default {
           this.localManifestCount += delta;
         }
       }
-      this._prevPageCount = newPageCount;
-    };
-
-    this._onCanvasSwitch = (event) => {
-      const detail = event && event.detail ? event.detail : {};
-      const newPageCount = typeof detail.annotationsOnPage === "number" ? detail.annotationsOnPage : null;
 
       if (newPageCount !== null) {
         this.localPageCount = newPageCount;
-      }
-
-      if (!detail.canvas) {
-        return;
-      }
-
-      if (detail.canvas !== this._currentCanvas) {
-        // Navigated to a different canvas: reset the baseline so we never
-        // diff this canvas's count against the previous canvas's count.
-        this._currentCanvas = detail.canvas;
-        this._prevPageCount = null;
-        if (this._settleTimer) {
-          clearTimeout(this._settleTimer);
-          this._settleTimer = null;
+        if (sameCanvas) {
+          this._prevPageCount = newPageCount;
         }
       }
 
-      if (newPageCount === null) {
-        return;
+      if (detail.canvas !== this._currentCanvas) {
+        // First sighting of this canvas (or a switch to it). Don't trust
+        // this event's own annotationsOnPage as the baseline — it can be a
+        // transient/incomplete read fired before the annotator's async
+        // fetch for this canvas has resolved, and a later event for the
+        // SAME canvas with the real count would then get diffed against
+        // that bogus baseline and double-count an annotation that's already
+        // included in the server-rendered totals. annotationData (seeded
+        // from the server-rendered json_data) already has the authoritative
+        // per-canvas count for anything with existing annotations, so use
+        // that as the baseline instead. Only fall back to this event's
+        // value for a canvas annotationData has never heard of (a page with
+        // zero annotations, where 0 is correct either way).
+        const known = this.annotationData.find((a) => a.canvas__pid === detail.canvas);
+        this._prevPageCount = known ? known.canvas__position__count : newPageCount;
       }
-
-      const canvas = detail.canvas;
-      if (this._settleTimer) {
-        clearTimeout(this._settleTimer);
-      }
-      this._settleTimer = setTimeout(() => {
-        this._settleTimer = null;
-        this._commitSettledCount(canvas, newPageCount);
-      }, SETTLE_MS);
+      this._currentCanvas = detail.canvas;
     };
 
     window.addEventListener("canvasswitch", this._onCanvasSwitch);
   },
   beforeDestroy() {
     window.removeEventListener("canvasswitch", this._onCanvasSwitch);
-    if (this._settleTimer) {
-      clearTimeout(this._settleTimer);
-    }
   }
 };
 </script>

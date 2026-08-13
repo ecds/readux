@@ -13,7 +13,6 @@
 {% endblock nav %}
 
 {% block content %}
-{{ json_data|json_script:"context" }}
 {% block inner %}
 
 <!-- uiAction search -->
@@ -75,6 +74,21 @@
 -->
 {% endif %}
 {% endblock viewer %}
+
+{% block javascript %}
+{% comment %}
+Rendered here (outside #v-readux, before main.js loads) rather than inside
+the content block: Vue 3 strips <script> tags when it compiles an in-DOM
+template, so a json_script tag placed anywhere inside the #v-readux mount
+target never survives to be read by VolumeAnnotations.vue's mounted() hook —
+document.getElementById("context") comes back null every time, even though
+the server renders this tag correctly on every request. Keeping it outside
+Vue's mount target (and before main.js, so it's already in the DOM by the
+time Vue mounts) is what makes it actually readable.
+{% endcomment %}
+{{ json_data|json_script:"context" }}
+{{ block.super }}
+{% endblock javascript %}
 
 {% block extra_javascript %}
 <script type="text/javascript">

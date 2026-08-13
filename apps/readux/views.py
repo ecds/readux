@@ -224,20 +224,17 @@ class PageDetail(TemplateView):
             .count()
         )
 
-        user_annotation_index = UserAnnotation.objects.all()
-
-        user_annotation_index = user_annotation_index.filter(
-            canvas__manifest__label=manifest.label
-        )
-
-        user_annotation_index = user_annotation_index.filter(
-            owner_id=self.request.user.id
-        ).distinct()
-
+        # Filter by manifest id (not label — labels aren't guaranteed unique,
+        # so filtering by label risks mixing in annotations from a different
+        # manifest that happens to share a title). Grouping happens via
+        # .values().annotate(Count(...)); an upstream .distinct() on the
+        # un-grouped queryset is unnecessary here (the GROUP BY already
+        # collapses to one row per canvas__position) and was masking/dropping
+        # canvases from the index in practice, so it's been removed.
         user_annotation_index = (
-            user_annotation_index.values(
-                "canvas__position", "canvas__manifest__label", "canvas__pid"
-            )
+            UserAnnotation.objects.filter(canvas__manifest__id=manifest.id)
+            .filter(owner_id=self.request.user.id)
+            .values("canvas__position", "canvas__manifest__label", "canvas__pid")
             .annotate(Count("canvas__position"))
             .order_by("canvas__position")
         )

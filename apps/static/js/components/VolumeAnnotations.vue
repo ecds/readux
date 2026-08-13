@@ -69,30 +69,39 @@ export default {
     // navigation, where added/deleted can be spuriously true because the
     // counts of two different pages get compared. Track the current canvas
     // and only treat add/delete as real when the canvas hasn't changed.
+    //
+    // "canvasswitch" can also fire more than once in quick succession for
+    // the SAME canvas while its annotation list is still loading — e.g. a
+    // transient "0 on page" read before the async fetch resolves, followed
+    // by the real count moments later. Diffing against a running
+    // _prevPageCount on every event mistakes that settle-in transition for
+    // a real add/delete and double-counts it against localManifestCount
+    // (which already reflects the server-rendered total as of page load).
+    // Debounce: only diff once the count for the current canvas has stopped
+    // changing for SETTLE_MS, so we always compare against a stable reading.
+    const SETTLE_MS = 250;
     this._currentCanvas = null;
     this._prevPageCount = null;
-    this._onCanvasSwitch = (event) => {
-      const detail = event && event.detail ? event.detail : {};
-      const sameCanvas = detail.canvas && detail.canvas === this._currentCanvas;
-      const newPageCount = typeof detail.annotationsOnPage === "number" ? detail.annotationsOnPage : null;
+    this._settleTimer = null;
 
-      if (sameCanvas && newPageCount !== null && this._prevPageCount !== null) {
+    this._commitSettledCount = (canvas, newPageCount) => {
+      if (this._prevPageCount !== null) {
         const delta = newPageCount - this._prevPageCount;
         if (delta > 0) {
           // annotation(s) added
           let createNewPage = true;
           for (let i = 0; i < this.annotationData.length; i++) {
-            if (this.annotationData[i].canvas__pid === detail.canvas) {
+            if (this.annotationData[i].canvas__pid === canvas) {
               this.annotationData[i].canvas__position__count = newPageCount;
               createNewPage = false;
               break;
             }
           }
           if (createNewPage) {
-            const canvasPidNum = (detail.canvas.match(/\d+/g) || []).pop();
+            const canvasPidNum = (canvas.match(/\d+/g) || []).pop();
             this.annotationData = this.annotationData.concat({
               canvas__manifest__label: this.annotationData[0]?.canvas__manifest__label,
-              canvas__pid: detail.canvas,
+              canvas__pid: canvas,
               canvas__position: parseInt(canvasPidNum, 10) + 1,
               canvas__position__count: newPageCount
             });
@@ -101,7 +110,7 @@ export default {
         } else if (delta < 0) {
           // annotation(s) deleted
           for (let i = 0; i < this.annotationData.length; i++) {
-            if (this.annotationData[i].canvas__pid === detail.canvas) {
+            if (this.annotationData[i].canvas__pid === canvas) {
               this.annotationData[i].canvas__position__count = newPageCount;
               break;
             }
@@ -109,26 +118,53 @@ export default {
           this.localManifestCount += delta;
         }
       }
+      this._prevPageCount = newPageCount;
+    };
+
+    this._onCanvasSwitch = (event) => {
+      const detail = event && event.detail ? event.detail : {};
+      const newPageCount = typeof detail.annotationsOnPage === "number" ? detail.annotationsOnPage : null;
 
       if (newPageCount !== null) {
         this.localPageCount = newPageCount;
-        if (sameCanvas) {
-          this._prevPageCount = newPageCount;
+      }
+
+      if (!detail.canvas) {
+        return;
+      }
+
+      if (detail.canvas !== this._currentCanvas) {
+        // Navigated to a different canvas: reset the baseline so we never
+        // diff this canvas's count against the previous canvas's count.
+        this._currentCanvas = detail.canvas;
+        this._prevPageCount = null;
+        if (this._settleTimer) {
+          clearTimeout(this._settleTimer);
+          this._settleTimer = null;
         }
       }
 
-      if (detail.canvas) {
-        if (detail.canvas !== this._currentCanvas) {
-          this._prevPageCount = newPageCount;
-        }
-        this._currentCanvas = detail.canvas;
+      if (newPageCount === null) {
+        return;
       }
+
+      const canvas = detail.canvas;
+      if (this._settleTimer) {
+        clearTimeout(this._settleTimer);
+      }
+      this._settleTimer = setTimeout(() => {
+        this._settleTimer = null;
+        this._commitSettledCount(canvas, newPageCount);
+      }, SETTLE_MS);
     };
 
     window.addEventListener("canvasswitch", this._onCanvasSwitch);
   },
   beforeDestroy() {
     window.removeEventListener("canvasswitch", this._onCanvasSwitch);
+    if (this._settleTimer) {
+      clearTimeout(this._settleTimer);
+    }
   }
 };
 </script>

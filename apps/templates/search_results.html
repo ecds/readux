@@ -132,7 +132,14 @@
                                 <select id="id_end_year" name="end_date" aria-label="Filter by end year published"></select>
                             </div>
                         </div>
-                        <p class="date-range-bce-note">
+                        {% comment %}
+                        Element stays in the DOM (just visually hidden) even when there's nothing
+                        BCE-dated in the current results, rather than being removed with {% if %} —
+                        search.js toggles an "is-disabled" class on this element by selector with
+                        no null check, so removing it outright would throw when the date filter is
+                        switched on/off.
+                        {% endcomment %}
+                        <p class="date-range-bce-note"{% if not date_range_has_bce %} hidden{% endif %}>
                             Volumes dated before year 1 CE (BCE) can't be shown individually here — they're grouped under the earliest year in the list above{% if date_range_has_bce %}, labeled "1 or earlier"{% endif %}.
                         </p>
                         <button
@@ -141,7 +148,12 @@
                             class="date-range-reset-link"
                             hidden
                         >Reset Date Range</button>
-                        <div class="date-range-filter-label uk-flex uk-flex-middle date-range-undated-toggle">
+                        {% comment %}
+                        Same reasoning as the BCE note above: kept in the DOM and just hidden when
+                        there's nothing for it to control, since search.js reads this checkbox
+                        unconditionally (id_include_undated.checked, etc.) on every page load.
+                        {% endcomment %}
+                        <div class="date-range-filter-label uk-flex uk-flex-middle date-range-undated-toggle"{% if not undated_volume_count %} hidden{% endif %}>
                             <input type="checkbox" name="include_undated" id="id_include_undated" class="uk-checkbox uk-margin-small-right"/>
                             <label for="id_include_undated">
                                 {{ form.include_undated.label }}

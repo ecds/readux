@@ -236,6 +236,17 @@ form#search-form {
   background-color: $rx-color-faded-mint !important;
 }
 
+// Scoped to the date range filter only (its selectize dropdowns render inline
+// within #date-range-filter, since no dropdownParent is set in search.js) —
+// the start/end year selects are single-select, so "selected" here means the
+// currently chosen year, not a multi-select tag like the collection/author/
+// language facets above. Use the same dark blue as those facet chips instead
+// of selectize's default light blue, to match the rest of the design.
+#date-range-filter .selectize-dropdown .option.selected {
+  background-color: $rx-color-midnight-blue !important;
+  color: $color-white !important;
+}
+
 .selectize-control.plugin-clear_button .clear {
   height: 85%;
   top: -3px !important;

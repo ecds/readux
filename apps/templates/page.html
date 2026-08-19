@@ -20,7 +20,7 @@
   <div class="uk-modal-dialog uk-padding-small">
     <button class="uk-modal-close-full uk-padding-small uk-margin-small-top uk-close-small" type="button" uk-close></button>
     <volume-search pid="{{ volume.pid }}"></volume-search>
-    <volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" annotation-index="{{user_annotation_index}}"></volume-annotations>
+    <volume-annotations class="uk-margin-small-top" :manifest-count="{{ user_annotation_count }}" :page-count="{{ user_annotation_page_count }}" :is-all="{{ is_all|yesno:'true,false' }}"></volume-annotations>
   </div>
 </div>
 <!-- uiAction search -->

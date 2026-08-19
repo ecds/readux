@@ -216,6 +216,10 @@ em { color: inherit !important; }
 .uk-slider-items { gap: 4rem; }
 
 /* Tabs */
+/* Inactive tabs: readable neutral (7:1 on white) instead of UIkit's faint #999.
+   Active is set apart by hue + underline below, not by darkness — so bumping
+   inactive contrast doesn't blur the active/inactive distinction. */
+.uk-tab > * > a { color: $rx-color-cement-gray !important; }
 .uk-tab > .uk-active > a { border-color: var(--link-color) !important; color: var(--link-color) !important; }
 
 /* Form controls */

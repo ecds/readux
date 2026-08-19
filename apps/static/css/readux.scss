@@ -377,6 +377,9 @@ button.google, button.github { color: $color-white; }
 .rx-anchor { color: var(--link-color) !important; opacity: 0.75; word-break: break-all; transition: all 100ms; &:hover { color: var(--link-color); opacity: 1; } }
 
 .rx-label-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   background: $rx-color-midnight-blue !important;
   color: $color-white !important;
   border: none !important;

@@ -216,6 +216,10 @@ em { color: inherit !important; }
 .uk-slider-items { gap: 4rem; }
 
 /* Tabs */
+/* Inactive tabs: readable neutral (7:1 on white) instead of UIkit's faint #999.
+   Active is set apart by hue + underline below, not by darkness — so bumping
+   inactive contrast doesn't blur the active/inactive distinction. */
+.uk-tab > * > a { color: $rx-color-cement-gray !important; }
 .uk-tab > .uk-active > a { border-color: var(--link-color) !important; color: var(--link-color) !important; }
 
 /* Form controls */
@@ -377,6 +381,9 @@ button.google, button.github { color: $color-white; }
 .rx-anchor { color: var(--link-color) !important; opacity: 0.75; word-break: break-all; transition: all 100ms; &:hover { color: var(--link-color); opacity: 1; } }
 
 .rx-label-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   background: $rx-color-midnight-blue !important;
   color: $color-white !important;
   border: none !important;

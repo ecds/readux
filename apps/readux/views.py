@@ -202,12 +202,12 @@ class PageDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         manifest = Manifest.objects.get(pid=kwargs["volume"])
-        if "page" in kwargs:
+        is_all = "page" not in kwargs
+        if not is_all:
             canvas = Canvas.objects.filter(pid=kwargs["page"]).first()
         else:
             canvas = manifest.canvas_set.all().first()
-        # if 'page' in kwargs and kwargs['page'] == 'all':
-        #     context['all'] = True
+        context["is_all"] = is_all
         context["page"] = canvas
         context["volume"] = manifest
         context["pagelink"] = manifest.image_server

@@ -5,7 +5,7 @@
         <a class="uk-accordion-title uk-label rx-accordion-head" href>Annotation Counts</a>
         <div class="uk-accordion-content rx-accordion-content uk-margin-small-left uk-margin-small-top">
           <div class="rx-info-content-value rx-annotation-badge">{{ localManifestCount }} in manifest</div>
-          <div v-if="localPageCount > 0" class="rx-info-content-value rx-annotation-badge">{{ localPageCount }} on page</div>
+          <div v-if="!isAll && localPageCount > 0" class="rx-info-content-value rx-annotation-badge">{{ localPageCount }} on page</div>
         </div>
       </li>
     </ul>
@@ -39,6 +39,7 @@ export default {
   props: {
     manifestCount: { type: Number, default: 0 },
     pageCount: { type: Number, default: 0 },
+    isAll: { type: Boolean, default: false },
     // Element whose textContent holds JSON { json_data: [...] }
     contextElId: { type: String, default: "context" }
   },

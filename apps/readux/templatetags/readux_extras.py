@@ -1,4 +1,5 @@
 import re
+from html import unescape
 from django.template import Library
 
 register = Library()
@@ -129,6 +130,36 @@ def spaced_semicolons(value):
         return re.sub(r";\s*", "; ", str(value))
     except TypeError:
         return value
+
+
+@register.filter
+def unescape_html(value):
+    """Decode HTML entities to their corresponding characters."""
+    try:
+        return unescape(str(value))
+    except Exception:
+        return value
+
+
+@register.filter
+def metadata_items(value):
+    """Normalize collection metadata for template display."""
+    if not value:
+        return []
+
+    if isinstance(value, list):
+        items = []
+        for entry in value:
+            if isinstance(entry, dict):
+                label = entry.get("label", "")
+                content = entry.get("value", "")
+                items.append((label, content))
+        return items
+
+    if isinstance(value, dict):
+        return list(value.items())
+
+    return []
 
 
 @register.filter

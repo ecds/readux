@@ -6,23 +6,57 @@
   User: {{ object.username }}
 {% endblock title %}
 
-{% block content %}
-  {% if request.user is not None %}
-    {% if "github" not in request.user.socialaccount_list %}
-      {% include "../snippets/github_authorize.html" %}
-    {% endif %}
+{% block breadcrumb %}{% endblock breadcrumb %}
 
-    <p class="uk-margin-remove-top">You may update your personal information or E-mail below.</p>
-    <ul class="uk-list uk-list-collapse">
-      <li>
-        <a class="uk-block" href="{% url 'users:update' %}" role="button">My Profile</a>
-      </li>
-      <li>
-        <a href="{% url 'account_email' %}">My Email</a>
-      </li>
-      <li>
-        <a href="{% url 'socialaccount_connections' %}">Mange Account Connections</a>
-      </li>
-    </ul>
-  {% endif %}
+{% block content %}
+  <div class="uk-grid-collapse uk-child-width-expand content-wrapper" uk-grid>
+
+    <!-- Left Column: Navigation -->
+    <div class="uk-width-1-4@m navigation-wrapper">
+      <nav class="navigation sidebar-sticky" uk-sticky="offset: 20; media: @m;">
+        <ul class="uk-nav uk-nav-default">
+          <li><a href="{% url 'users:detail' object.username %}" class="active" data-section="overview">Account Overview</a></li>
+          <li><a href="{% url 'users:update' %}" data-section="profile">Update Username</a></li>
+          <li><a href="{% url 'account_email' %}" data-section="email">Email Settings</a></li>
+          <li><a href="{% url 'socialaccount_connections' %}" data-section="connections">Account Connections</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Right Column: Content -->
+    <div class="uk-width-expand@m content uk-padding-remove-top">
+
+      <div class="section">
+        <h2 class="text-black static-content-title">Account Overview</h2>
+
+        {% if object.name %}
+          <h3>Display Name</h3>
+          <p>{{ object.name }}</p>
+        {% endif %}
+        {% if object.first_name or object.last_name %}
+          <h3>Full Name</h3>
+          <p>{{ object.first_name }} {{ object.last_name }}</p>
+        {% endif %}
+        <h3>Username</h3>
+        <p>{{ object.username }}</p>
+        <h3>Email</h3>
+        <p>{{ object.email|default:"—" }}</p>
+        <h3>Member Since</h3>
+        <p>{{ object.date_joined|date:"F j, Y" }}</p>
+        <h3>Connected Accounts</h3>
+        <p>
+          {% if object.socialaccount_list %}
+            {% for provider in object.socialaccount_list %}
+              <span uk-icon="{{ provider }}" class="uk-margin-small-right" title="{{ provider|capfirst }}"></span>
+            {% endfor %}
+          {% else %}
+            None
+          {% endif %}
+        </p>
+
+        {% include "../snippets/github_authorize.html" %}
+      </div>
+
+    </div>
+  </div>
 {% endblock content %}

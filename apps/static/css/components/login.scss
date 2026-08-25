@@ -27,27 +27,56 @@
 .uk-divider {
   margin: 20px 0;
 }
-.sso-buttons .uk-button {
-  margin-bottom: 10px;
-  width: 100%;
+.sso-text {
+  margin-bottom: 16px;
+  text-align: center;
 }
+
 .help-link {
   color: $rx-color-midnight-blue;
   display: block;
   text-align: center;
   margin-top: 20px;
 }
-.sso-text {
-  margin-bottom: 20px;
-  text-align: center;
-}
-.sso-buttons .uk-grid {
+
+.sso-buttons {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+
+  form { width: 100%; }
 }
 
 .sso-button {
-  padding: 0 1rem;
-  text-align: center;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 1.25rem;
+  height: 44px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: $color-white;
+  background-color: $rx-color-midnight-blue;
+  border: none;
+  transition: filter 0.15s ease;
+
+  &:hover { filter: brightness(1.15); color: $color-white; }
+
+  .sso-button__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  span:last-child { flex: 1; text-align: center; }
+
+  // Provider brand colors
+  &.sso-button--github    { background-color: #24292e; }
+  &.sso-button--google    { background-color: #4285F4; }
+  &.sso-button--twitter   { background-color: #1DA1F2; }
+  &.sso-button--facebook  { background-color: #1877F2; }
 }
 
 .action-buttons {

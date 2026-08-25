@@ -10,7 +10,7 @@
     {% include "snippets/_volumes_grid.html" %}
   {% elif page.layout == 'List' %}
     <!-- Volume List -->
-    <table class="uk-table uk-table-divider list-view-table uk-margin-large-bottom">
+    <table class="uk-table uk-table-divider list-view-table">
       <thead>
         <tr>
           <th>Volume</th>
@@ -30,10 +30,12 @@
             </tr>
           {% endif %}
         {% empty %}
-          <div class="uk-width-1-1">There are no volumes available to browse.</div>
+          <div class="uk-width-1-1 uk-margin-large-bottom">There are no volumes available to browse.</div>
         {% endfor %}
       </tbody>
     </table>
   {% endif %}
+
+  {% include "snippets/_volumes_page_information.html" %}
 
 {% endblock content %}

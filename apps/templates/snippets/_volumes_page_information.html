@@ -1,6 +1,7 @@
 {% load url_replace %}
+{% if volumes.paginator.count > 0 %}
 <!-- Information Line -->
-<div class="info-line">
+<div class="info-line uk-margin-bottom">
   <div class="info-group">
     {# numeric pagination #}
     <span>Showing {{ volumes.start_index }}-{{ volumes.end_index }} of {{ volumes.paginator.count }} volumes</span>
@@ -69,3 +70,4 @@
     </a>
   </div>
 </div>
+{% endif %}

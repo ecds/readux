@@ -22,7 +22,11 @@ class Annotations(View):
     """
 
     def get_queryset(self):
-        return Canvas.objects.filter(pid=self.kwargs["canvas"])
+        # Two URL patterns point to this view:
+        #   user_annotations → annotations/<username>/<volume>/list/<canvas>  (kwarg: "volume")
+        #   user_comments    → iiif/<version>/<vol>/annotations/<canvas>/...  (kwarg: "vol")
+        manifest_pid = self.kwargs.get("volume") or self.kwargs.get("vol")
+        return Canvas.objects.filter(pid=self.kwargs["canvas"], manifest__pid=manifest_pid)
 
     def get(self, request, *args, **kwargs):
         username = kwargs["username"]
@@ -54,19 +58,20 @@ class Annotations(View):
                     )
 
             if "3" in kwargs["version"]:
+                canvas = queryset.first()
                 annotations = []
 
                 if username == "ocr":
-                    annotations = queryset.first().annotation_set.all()
+                    annotations = canvas.annotation_set.all()
                 elif owner.username == username:
-                    annotations = queryset.first().userannotation_set.filter(
-                        owner=owner
-                    )
+                    annotations = canvas.userannotation_set.filter(owner=owner)
 
                 return JsonResponse(
                     json.loads(
                         serialize(
-                            "annotation_page_v3", queryset, annotations=annotations
+                            "annotation_page_v3",
+                            Canvas.objects.filter(pk=canvas.pk),
+                            annotations=annotations,
                         )
                     )
                 )

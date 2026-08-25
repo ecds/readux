@@ -3,7 +3,7 @@
 <!-- Login Modal -->
 <div id="login-modal" uk-modal>
   <div class="uk-modal-dialog custom-modal uk-padding">
-    <button class="uk-modal-close-default uk-close-large uk-padding-small" type="button" uk-close>
+    <button class="uk-modal-close-default uk-close-large uk-padding-small" type="button" uk-close aria-label="Close">
     </button>
     <!-- Modal Header -->
     <div class="modal-header">
@@ -13,26 +13,50 @@
     <div class="sso-text color-black uk-text-medium">Login via one of the following services:</div>
     <!-- SSO Buttons -->
     <div class="sso-buttons">
-      <div class="uk-grid uk-child-width-expand@s " uk-grid>
-        {% for provider in socialaccount_providers %}
-          {% if provider.id not in user.socialaccount_list or user.is_anonymous %}
-            <form action="{% provider_login_url provider.id next=request.path process="login" %}" method="post">
-              {% csrf_token %}
-              <button class="uk-button uk-button-default sso-button {{ provider.id }}" type="submit">
-                <span uk-icon="{{ provider.id }}" class="uk-margin-small-right"></span>{{ provider.name }}
-              </button>
-            </form>
-          {% elif provider.id not in user.socialaccount_list and user.is_authenticated %}
-            <form action="{% provider_login_url provider.id next=request.path process="connect" %}" method="post">
-              {% csrf_token %}
-              <button class="uk-button uk-button-default sso-button {{ provider.id }}" type="submit">
-                <span uk-icon="{{ provider.id }}" class="uk-margin-small-right"></span>{{ provider.name }}
-              </button>
-            </form>
-          {% endif %}
-        {% endfor %}
-      </div>
+      {% for provider in socialaccount_providers %}
+        {% if provider.id not in user.socialaccount_list or user.is_anonymous %}
+          <form action="{% provider_login_url provider.id next=request.path process="login" %}" method="post">
+            {% csrf_token %}
+            <button class="uk-button sso-button sso-button--{{ provider.id }}" type="submit">
+              <span uk-icon="{{ provider.id }}" class="sso-button__icon"></span>
+              <span>Continue with {{ provider.name }}</span>
+            </button>
+          </form>
+        {% elif provider.id not in user.socialaccount_list and user.is_authenticated %}
+          <form action="{% provider_login_url provider.id next=request.path process="connect" %}" method="post">
+            {% csrf_token %}
+            <button class="uk-button sso-button sso-button--{{ provider.id }}" type="submit">
+              <span uk-icon="{{ provider.id }}" class="sso-button__icon"></span>
+              <span>Continue with {{ provider.name }}</span>
+            </button>
+          </form>
+        {% endif %}
+      {% endfor %}
     </div>
+    <!-- Divider -->
+    <hr class="uk-divider-icon uk-margin-top">
+    <p class="uk-text-center uk-text-muted uk-text-small uk-margin-small-bottom">Or sign in with your local account:</p>
+    <!-- Local Login Form -->
+    <form class="uk-form-stacked" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}" />
+      <div class="uk-margin-small">
+        <label class="uk-form-label" for="modal-login-username">Username</label>
+        <input id="modal-login-username" name="login" type="text" class="uk-input" placeholder="Username" autocomplete="username" required />
+      </div>
+      <div class="uk-margin-small">
+        <label class="uk-form-label" for="modal-login-password">Password</label>
+        <input id="modal-login-password" name="password" type="password" class="uk-input" placeholder="Password" autocomplete="current-password" required />
+      </div>
+      <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-small-top">
+        <label class="uk-flex uk-flex-middle" style="gap: 0.4rem; font-size: 0.875rem;">
+          <input type="checkbox" name="remember" class="uk-checkbox" />
+          <span>Remember me</span>
+        </label>
+        <a href="{% url 'account_reset_password' %}" class="uk-text-small uk-link-muted">Forgot password?</a>
+      </div>
+      <button class="uk-button uk-width-1-1 uk-margin-small-top" style="background-color:#1D3557;color:#fff;border:none;" type="submit">Sign In</button>
+    </form>
     <!-- Help Link -->
     <div class="uk-text-center uk-margin-top">
       Need help? <a href="#" class="text-anchor-blue">Contact us</a>

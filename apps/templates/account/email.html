@@ -1,26 +1,37 @@
 {% extends "allauth/layouts/base.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
+{% load socialaccount %}
 
 {% block title %}
   {% trans "Account" %}
 {% endblock title %}
 
-{% block breadcrumb %}
-  Manage Email
-{% endblock breadcrumb %}
+{% block breadcrumb %}Manage Email{% endblock breadcrumb %}
 
 {% block content %}
-  <div class="uk-margin-bottom">
-    <p class="uk-margin-remove-top">You may update your E-mail preferences below.</p>
+  <div class="uk-grid-collapse uk-child-width-expand content-wrapper" uk-grid>
 
-    <div class="rx-title-2">{% trans "E-mail Addresses" %}</div>
-    <div class="uk-grid-match" uk-grid>
-      <div>
+    <!-- Left Column: Navigation -->
+    <div class="uk-width-1-4@m navigation-wrapper">
+      <nav class="navigation sidebar-sticky" uk-sticky="offset: 20; media: @m;">
+        <ul class="uk-nav uk-nav-default">
+          <li><a href="{% url 'users:detail' user.username %}" data-section="overview">Account Overview</a></li>
+          <li><a href="{% url 'users:update' %}" data-section="profile">Update Username</a></li>
+          <li><a href="{% url 'account_email' %}" class="active" data-section="email">Email Settings</a></li>
+          <li><a href="{% url 'socialaccount_connections' %}" data-section="connections">Account Connections</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Right Column: Content -->
+    <div class="uk-width-expand@m content uk-padding-remove-top">
+
+      <div class="section">
+        <h2 class="text-black static-content-title">Verify E-mail Address</h2>
+
         {% if user.emailaddress_set.all %}
-          <p class="uk-margin-remove">
-            {% trans "The following e-mail addresses are associated with your account:" %}
-          </p>
+          <div>{% trans "The following e-mail addresses are associated with your account:" %}</div>
 
           <form action="{% url 'account_email' %}" class="email_list" method="post">
             {% csrf_token %}
@@ -28,9 +39,7 @@
               {% for emailaddress in user.emailaddress_set.all %}
                 <div class="radio uk-margin-small uk-margin-small-top">
                   <label for="email_radio_{{ forloop.counter }}"
-                         class="{% if emailaddress.primary %}
-                                  primary_email
-                                {% endif %}">
+                         class="{% if emailaddress.primary %}primary_email{% endif %}">
                     <input id="email_radio_{{ forloop.counter }}"
                            type="radio"
                            name="email"
@@ -60,7 +69,6 @@
                   {% trans "Remove" %}
                 </button>
               </div>
-
             </fieldset>
           </form>
 
@@ -71,22 +79,28 @@
           </p>
         {% endif %}
       </div>
+
+      <div class="section">
+        <h2 class="text-black static-content-title">{% trans "Add E-mail Address" %}</h2>
+        <form method="post" action="{% url 'account_email' %}" class="add_email uk-form-stacked">
+          {% csrf_token %}
+          {% for field in form.visible_fields %}
+            <div class="uk-margin">
+              {{ field.errors }}
+              {{ field }}
+              {% if field.help_text %}
+                <p class="uk-text-small uk-text-muted">{{ field.help_text }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button class="uk-button uk-button-primary uk-button-small" name="action_add" type="submit">
+            {% trans "Add E-mail" %}
+          </button>
+        </form>
+      </div>
+
     </div>
   </div>
-
-  <hr class="uk-divider-icon" />
-
-  <div class="uk-margin-bottom">
-    <div class="rx-title-2">{% trans "You may add additional E-mails below" %}</div>
-    <form method="post" action="{% url 'account_email' %}" class="add_email">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button class="uk-button uk-button-primary uk-button-small" name="action_add" type="submit">
-        {% trans "Add E-mail" %}
-      </button>
-    </form>
-  </div>
-
 {% endblock content %}
 
 {% block extra_javascript %}

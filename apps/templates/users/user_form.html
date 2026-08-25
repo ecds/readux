@@ -1,44 +1,59 @@
 {% extends "allauth/layouts/base.html" %}
-
+{% load static %}
+{% load socialaccount %}
 {% load crispy_forms_tags %}
 
 {% block title %}
   {{ user.username }}
 {% endblock title %}
 
-{% block breadcrumb %}
-  Update Profile
-{% endblock breadcrumb %}
+{% block breadcrumb %}Update Profile{% endblock breadcrumb %}
 
 {% block content %}
-  <form class="uk-form-stacked" method="post" action="{% url 'users:update' %}">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {% for hidden_field in form.hidden_fields %}
-      {{ hidden_field.errors }}
-      {{ hidden_field }}
-    {% endfor %}
-    <div>
-      {% for field in form.visible_fields %}
-        <p>{{ field.help_text }}</p>
-        {{ field.errors }}
-        {{ field }}
-      {% endfor %}
-      <button type="submit" class="uk-button uk-button-default uk-button-primary uk-margin-top">
-        Update Name
-      </button>
+  <div class="uk-grid-collapse uk-child-width-expand content-wrapper" uk-grid>
+
+    <!-- Left Column: Navigation -->
+    <div class="uk-width-1-4@m navigation-wrapper">
+      <nav class="navigation sidebar-sticky" uk-sticky="offset: 20; media: @m;">
+        <ul class="uk-nav uk-nav-default">
+          <li><a href="{% url 'users:detail' user.username %}" data-section="overview">Account Overview</a></li>
+          <li><a href="{% url 'users:update' %}" class="active" data-section="profile">Update Username</a></li>
+          <li><a href="{% url 'account_email' %}" data-section="email">Email Settings</a></li>
+          <li><a href="{% url 'socialaccount_connections' %}" data-section="connections">Account Connections</a></li>
+        </ul>
+      </nav>
     </div>
-  </form>
-  <hr />
-  <div class="uk-flex uk-flex-column">
-    {% if "github" not in request.user.socialaccount_list %}
-      {% include "../snippets/github_authorize.html" %}
-    {% endif %}
-    <p>
-      <a href="{% url 'account_email' %}">Manage Email</a>
-    </p>
-    <p>
-      <a href="{% url 'socialaccount_connections' %}">Mange Account Connections</a>
-    </p>
+
+    <!-- Right Column: Content -->
+    <div class="uk-width-expand@m content uk-padding-remove-top">
+
+      <div class="section">
+        <h2 class="text-black static-content-title">Update Username</h2>
+
+        <form class="uk-form-stacked" method="post" action="{% url 'users:update' %}">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field.errors }}
+            {{ hidden_field }}
+          {% endfor %}
+          {% for field in form.visible_fields %}
+            <div class="uk-margin">
+              {{ field.errors }}
+              {{ field }}
+              {% if field.help_text %}
+                <p class="uk-text-small uk-text-muted">{{ field.help_text }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="uk-button uk-button-primary uk-button-small">
+            Update Profile
+          </button>
+        </form>
+
+        {% include "../snippets/github_authorize.html" %}
+      </div>
+
+    </div>
   </div>
 {% endblock content %}

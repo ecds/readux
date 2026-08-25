@@ -9,18 +9,25 @@
 @import './components/wagtail.scss';
 @import './components/uk-switch.scss';
 @import './components/footer.scss';
+@import './components/user-form.scss';
 
 /* -------------------------------------------------------------------------- */
 /* 1) ROOT VARIABLES                                                          */
 /* -------------------------------------------------------------------------- */
 :root {
   --contrast: 200%;
-  --link-color: $rx-color-midnight-blue;
+  --link-color: #{$rx-color-midnight-blue};
 }
 
 /* -------------------------------------------------------------------------- */
 /* 2) BASE / LAYOUT                                                           */
 /* -------------------------------------------------------------------------- */
+// Hides the raw, un-mounted Vue markup (custom component tags, [[ ]]
+// interpolations) that briefly flashes on page load before Vue finishes
+// mounting on #v-readux and removes this attribute. Must be a plain CSS
+// rule (not conditional on JS) so it applies during the very first paint.
+[v-cloak] { display: none; }
+
 .sr-only { @include sr-only(); }
 
 html, body {
@@ -30,10 +37,26 @@ html, body {
   flex-direction: column;
 }
 
+/* #v-readux is the direct child of body; it must stretch and pass height down to main */
+#v-readux {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 main { flex-grow: 1; }
 
-/* Home page navigation transparent */
-.home-nav { nav { background-color: transparent !important; } }
+/* Home page navigation: light text/icons over a dark scrim so the text keeps
+   sufficient contrast (a scrim WAVE can detect, since the hero background is an
+   image the checker cannot evaluate). */
+.home-nav {
+  background-color: rgba($rx-color-midnight-blue, 0.85);
+  nav { background-color: transparent !important; }
+  a, .brand-logo, .brand-tagline { color: $color-white !important; }
+  svg line, svg path, svg circle, svg polygon, svg polyline, svg rect {
+    stroke: $color-white !important;
+  }
+}
 
 /* Overlay & content shell */
 .overlay {
@@ -42,7 +65,7 @@ main { flex-grow: 1; }
   width: 100%;
   height: 80vh;
   min-height: 500px;
-  background-color: rgba($rx-color-midnight-blue, 0.8);
+  background-color: rgba($rx-color-midnight-blue, 0.85);
 }
 
 .content {
@@ -59,7 +82,11 @@ main { flex-grow: 1; }
 /* Text & headings */
 .paragraph { color: $rx-color-midnight-blue; line-height: normal; }
 .title { color: $rx-color-midnight-blue; font-size: x-large; font-weight: bold; }
-.hero { padding-top: 15vh; color: $color-white; }
+/* No background-color here: .hero sits on top of .overlay (see above), which
+   already provides the scrim over the hero image. Giving .hero its own
+   background would double-stack with .overlay and make the hero area visibly
+   more opaque than the surrounding .home-nav / .overlay-only regions. */
+.hero { padding-top: 15vh; padding-bottom: 2rem; color: $color-white; }
 .uk-container h2 { margin-bottom: 0.35rem;}
 
 /* Utilities */
@@ -111,8 +138,23 @@ em { color: inherit !important; }
   padding: 0;
   margin: 0;
 
-  > li { margin-right: 5px; }
-  > li + li::before { content: "/"; margin-right: 5px; color: $rx-color-midnight-blue; }
+  > li {
+    margin-right: 5px;
+
+    &:last-child:empty {
+      display: none;
+    }
+  }
+
+  > li + li::before {
+    content: "/";
+    margin-right: 5px;
+    color: $rx-color-midnight-blue;
+  }
+
+  > li:last-child:empty + li::before {
+    display: none;
+  }
 
   a {
     color: $rx-color-midnight-blue;
@@ -162,8 +204,9 @@ em { color: inherit !important; }
 /* Buttons */
 .uk-button-default { @include interactive-border($rx-color-midnight-blue); }
 .uk-button-primary {
-  background-color: var(--link-color);
-  &:hover, &:active { background-color: var(--link-color); filter: contrast(var(--contrast)); }
+  background-color: var(--link-color) !important;
+  color: #fff !important;
+  &:hover, &:active { background-color: var(--link-color) !important; color: #fff !important; filter: contrast(var(--contrast)); }
 }
 
 /* Close icon */
@@ -173,6 +216,10 @@ em { color: inherit !important; }
 .uk-slider-items { gap: 4rem; }
 
 /* Tabs */
+/* Inactive tabs: readable neutral (7:1 on white) instead of UIkit's faint #999.
+   Active is set apart by hue + underline below, not by darkness — so bumping
+   inactive contrast doesn't blur the active/inactive distinction. */
+.uk-tab > * > a { color: $rx-color-cement-gray !important; }
 .uk-tab > .uk-active > a { border-color: var(--link-color) !important; color: var(--link-color) !important; }
 
 /* Form controls */
@@ -255,10 +302,14 @@ em { color: inherit !important; }
 
 /* Info line / pagination */
 .info-line {
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 20px;
   font-weight: 600; color: $rx-color-midnight-blue;
   .info-group, .pagination-controls { display: flex; align-items: center; gap: 5px; }
   a, select { color: $rx-color-mario-red; text-decoration: underline; }
+  // UIkit's uk-dropdown strips the whitespace text node between this label
+  // and its dropdown toggle link when it enhances the toggle client-side,
+  // so the source's natural whitespace can't be relied on for spacing here.
+  .fieldname { margin-right: 0.25rem; }
 }
 
 .pagination-controls { .uk-icon-button { color: $rx-color-midnight-blue; } .uk-icon-button[disabled] { color: $rx-color-light-pearl; cursor: not-allowed; } }
@@ -290,7 +341,7 @@ em { color: inherit !important; }
 .video-thumbnail, iframe, .transparent-overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
 .video-thumbnail { object-fit: cover; }
 .transparent-overlay { background-color: rgba($color-black, 0.5); z-index: 1; }
-iframe { display: none; }
+// iframe { display: none; }
 
 /* -------------------------------------------------------------------------- */
 /* 10) SECTIONS / HIGHLIGHTS                                                  */
@@ -319,9 +370,6 @@ button.google, button.github { color: $color-white; }
   padding: 0; margin: 0; user-select: auto;
 }
 .rx-action-btn { letter-spacing: 0.1em; font-size: small; }
-.rx-action-btn:hover { 
-  .rx-label-copy { background-color: $rx-color-midnight-blue !important; color: $color-white !important; }
-}
 
 .rx-breadcrumb-item > a, .rx-action-btn, .rx-icon-btn, .uk-dropdown-nav > li > a:hover {
   color: var(--link-color) !important; opacity: 0.75; transition: all 100ms ease-in-out;
@@ -333,12 +381,29 @@ button.google, button.github { color: $color-white; }
 .rx-anchor { color: var(--link-color) !important; opacity: 0.75; word-break: break-all; transition: all 100ms; &:hover { color: var(--link-color); opacity: 1; } }
 
 .rx-label-copy {
-  background: $color-white;
-  color: var(--link-color) !important;
-  border: var(--link-color) 1px solid;
-  font-size: 0.75rem; letter-spacing: 0.1rem; cursor: pointer; transition: all 100ms ease-in-out; font-weight: 600; font-family: 'Consolas','Monaco','Andale Mono','Ubuntu Mono','monospace' !important;
-  &:active { background-color: $rx-color-midnight-blue !important; border: 1px solid $rx-color-midnight-blue !important; opacity: 1; }
-  &:hover { background: $rx-color-midnight-blue; border-color: $rx-color-midnight-blue; color: $color-white !important; }
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  background: $rx-color-midnight-blue !important;
+  color: $color-white !important;
+  border: none !important;
+  font-size: 0.75rem;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  transition: background 150ms ease-in-out, opacity 150ms ease-in-out;
+  font-weight: 600;
+  font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace !important;
+
+  &:hover {
+    background: darken($rx-color-midnight-blue, 12%) !important;
+    color: $color-white !important;
+    opacity: 0.9;
+  }
+
+  &:active {
+    background: darken($rx-color-midnight-blue, 20%) !important;
+    opacity: 1;
+  }
 }
 
 /* Navigation & bars */
@@ -362,6 +427,9 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
 
 /* Fieldsets */
 .rx-fieldset { border: none; }
+
+/* Space between label and input */
+span.fieldname { margin-right: 0.25rem; }
 
 /* Titles & banners */
 .rx-sticky { position: sticky; top: 0; z-index: 1; }
@@ -478,6 +546,13 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
   }
 /* End */
 
+.uk-notification-message {
+  background-color: $rx-color-faded-mint;
+  color: $rx-color-midnight-blue;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba($rx-color-midnight-blue, 0.15);
+}
+
 .rx-line-height-lg {
   line-height: 1.15em;
 }
@@ -488,4 +563,8 @@ ul.listing-thumbs > li > img.thumbnail-image { height: 150px; }
 
 .rx-line-height-sm {
   line-height: 0.85em;
+}
+
+.theme-toggle {
+  display: none;
 }

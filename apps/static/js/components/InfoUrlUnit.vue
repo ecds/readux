@@ -1,6 +1,6 @@
 <template>
   <div class="rx-info-content-value uk-flex-between rx-flex">
-    <a :href="url" class="rx-anchor" target="_blank">{{ url }}</a>
+    <a :href="url" class="rx-anchor" target="_blank" rel="noopener" :aria-label="`${label} (opens in a new tab)`">{{ url }}</a>
     <div>
       <span class="uk-label rx-label-copy" @click="copyText">
         <span uk-icon="icon: copy; ratio: 0.5"></span>
@@ -14,7 +14,8 @@
 export default {
   name: "InfoUrlUnit",
   props: {
-    url: { type: String, required: true }
+    url: { type: String, required: true },
+    label: { type: String, default: "External link" }
   },
   methods: {
     async copyText() {

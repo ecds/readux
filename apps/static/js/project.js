@@ -118,6 +118,58 @@ const documentReady = function() {
       }
     })
   }
+
+  // Handle collection title and description truncation with tooltips
+  const titleElement = document.getElementById('collection-title');
+  if (titleElement) {
+    const fullTitle = titleElement.textContent.trim();
+    const titleLength = fullTitle.length;
+    
+    // Title is "really long" - reduce font size
+    if (titleLength > 60) {
+      titleElement.classList.add('title-long');
+    }
+    
+    // Title is "super long" - truncate and add tooltip
+    if (titleLength > 100) {
+      titleElement.classList.add('title-truncated');
+      const truncatedTitle = fullTitle.substring(0, 80) + '...';
+      titleElement.textContent = truncatedTitle;
+      titleElement.setAttribute('uk-tooltip', `title: ${fullTitle}; pos: bottom; delay: 500`);
+      // Reinitialize UIKit tooltip
+      if (window.UIkit) {
+        window.UIkit.util.ready(() => {
+          window.UIkit.tooltip(titleElement);
+        });
+      }
+    }
+  }
+
+  // Handle collection description truncation with tooltip
+  const descriptionElement = document.getElementById('collection-description');
+  if (descriptionElement) {
+    const descriptionTextSpan = descriptionElement.querySelector('.description-text');
+    if (descriptionTextSpan) {
+      const fullDescription = descriptionTextSpan.textContent.trim();
+      const descriptionLength = fullDescription.length;
+      
+      // Description is long - check if it's already truncated or add tooltip
+      if (descriptionLength > 300) {
+        descriptionElement.classList.add('description-truncated');
+        // Check if text ends with ellipsis (already truncated by Django template)
+        if (fullDescription.endsWith('...')) {
+          // Already truncated, add tooltip with full text
+          const untruncatedText = fullDescription.replace(/\.\.\.$/, '');
+          descriptionElement.setAttribute('uk-tooltip', `title: ${untruncatedText}; pos: top; delay: 500`);
+          if (window.UIkit) {
+            window.UIkit.util.ready(() => {
+              window.UIkit.tooltip(descriptionElement);
+            });
+          }
+        }
+      }
+    }
+  }
 }
 
 if (document.readyState === 'loading') {

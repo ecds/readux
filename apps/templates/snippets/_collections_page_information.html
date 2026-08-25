@@ -1,6 +1,7 @@
 {% load url_replace %}
+{% if collections.paginator.count > 0 %}
 <!-- Information Line -->
-<div class="info-line">
+<div class="info-line uk-margin-bottom">
   <div class="info-group">
     {# numeric pagination #}
     <span>Showing {{ collections.start_index }}-{{ collections.end_index }} of {{ collections.paginator.count }} collections</span>
@@ -69,3 +70,4 @@
     </a>
   </div>
 </div>
+{% endif %}

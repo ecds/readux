@@ -31,8 +31,6 @@ LANGUAGE_CODE = "en-us"
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
-USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
@@ -71,7 +69,7 @@ DJANGO_APPS = [
     "modeltranslation",
     "django.contrib.admin",
     "import_export",
-    "django_summernote",
+    "tinymce",
 ]
 THIRD_PARTY_APPS = [
     "allauth",
@@ -100,9 +98,10 @@ THIRD_PARTY_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail",
-    "wagtailautocomplete",
-    "wagtail.contrib.modeladmin",  # Don't repeat if it's there already
+    "wagtail_modeladmin",  # replaces wagtail.contrib.modeladmin (removed in Wagtail 6)
     "wagtailmenus",
+    "wagtail.contrib.settings",
+    "crispy_bootstrap4",
 ]
 LOCAL_APPS = [
     "apps.users.apps.UsersAppConfig",
@@ -283,9 +282,9 @@ MANAGERS = ADMINS
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_LOGIN_METHODS = {"username"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "none"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -294,6 +293,8 @@ ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "apps.users.adapters.SocialAccountAdapter"
 
 SOCIALACCOUNT_FORMS = {"signup": "apps.users.forms.ReaduxSocialSignupForm"}
+
+ACCOUNT_FORMS = {"add_email": "apps.users.forms.ReaduxAddEmailForm"}
 
 SOCIALACCOUNT_AUTO_SIGNUP = False
 
@@ -335,19 +336,38 @@ WAGTAILADMIN_BASE_URL = "https://localhost"
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Elasticsearch
-
+# ES 8.x has security (HTTPS + auth) enabled by default in official packages.
+# For servers with security disabled, only ELASTICSEARCH_URL is needed.
+# For servers with security enabled, also set ELASTICSEARCH_USER + ELASTICSEARCH_PASSWORD
+# (basic auth) or ELASTICSEARCH_API_KEY (base64-encoded id:api_key string).
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": env("ELASTICSEARCH_URL", default="http://localhost:9200")},
+    "default": {
+        "hosts": env("ELASTICSEARCH_URL", default="http://localhost:9200"),
+    }
 }
+INDEX_PREFIX = "readux"
+
+_es_user = env("ELASTICSEARCH_USER", default="")
+_es_password = env("ELASTICSEARCH_PASSWORD", default="")
+_es_api_key = env("ELASTICSEARCH_API_KEY", default="")
+if _es_api_key:
+    ELASTICSEARCH_DSL["default"]["api_key"] = _es_api_key
+elif _es_user and _es_password:
+    ELASTICSEARCH_DSL["default"]["basic_auth"] = (_es_user, _es_password)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
-# django-summernote rich text editor settings. see https://github.com/hackerwins/django-summernote
-# NOTE: consider replacing after django 4 upgrade
-SUMMERNOTE_CONFIG = {
-    "iframe": False,
+# TinyMCE rich text editor — minimal toolbar focused on link creation
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 300,
+    "menubar": False,
+    "plugins": "link lists",
+    "toolbar": "bold italic | link | bullist numlist | removeformat",
+    "link_assume_external_targets": True,
+    "relative_urls": False,
+    "remove_script_host": False,
 }
-SUMMERNOTE_THEME = "lite"
 
 # Background image URL configuration
 BACKGROUND_IMAGE_URL = "/static/images/bg.jpg"  # Background image for the homepage; when it doesn't exist, it will fall back to a default solid color

@@ -9,7 +9,8 @@
   width: auto; /* Fit to content width */
 }
 
-.navigation a {
+.navigation a,
+.navigation .uk-nav-default > li > a {
   color: $rx-color-midnight-blue;
   text-decoration: none;
   display: block;
@@ -19,8 +20,9 @@
   font-size: medium;
 }
 
-.navigation a.active {
-  font-weight: bold; /* Bold text for active item */
+.navigation a.active,
+.navigation .uk-nav-default > li > a.active {
+  font-weight: bold;
   color: $rx-color-midnight-blue;
 
   &:hover {
@@ -132,10 +134,15 @@ $content-heading-sizes: (
   list-style: decimal !important; 
 }
 
+.content a {
+  color: $rx-color-mario-red;
+  text-decoration: underline;
+}
+
 blockquote {
   border-left: 4px solid $rx-color-linen-blue !important;
   padding-left: 1rem !important;
-  color: darken($color-black, 10%) !important;
+  color: lighten($color-black, 20%) !important;
   margin: 1rem 0 !important;
 }
 

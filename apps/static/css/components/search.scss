@@ -1,4 +1,5 @@
 @import '../partials/colors';
+@import '../partials/buttons';
 
 /* -------------------------------------------------------------------------- */
 /* SEARCH RESULTS PAGE                                                        */
@@ -12,6 +13,7 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap; // wrap on smaller screens
+  margin-top: 2rem;
   margin-bottom: 20px;
   font-weight: 600;
   color: $rx-color-midnight-blue;
@@ -94,20 +96,105 @@ form#search-form {
     overflow-x: auto;
   }
 
-  .noUi-target { margin: 45px 21px 10px; }
+}
+
+#date-range-filter {
+  margin-top: 0.5rem;
+
+  .date-range-filter-fields {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .date-range-filter-field {
+    flex: 1;
+    min-width: 0; // let the selectize control shrink below its content width
+
+    // selectize's own ".disabled" class barely changes the control's look —
+    // make it unmistakably inactive when the date filter is switched off.
+    .selectize-input.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      background: #F5F5F5;
+    }
+  }
+
+  .date-range-filter-label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: $rx-color-dark-charcoal;
+    margin-bottom: 0.25rem;
+    transition: color 0.15s ease, opacity 0.15s ease;
+
+    &.is-disabled {
+      color: $rx-color-dark-charcoal;
+      opacity: 0.4;
+    }
+  }
+
+  .date-range-reset-link {
+    display: block;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 0.4rem;
+    font-size: .75rem;
+    color: $rx-color-midnight-blue;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .date-range-bce-note {
+    margin: 0.5rem 0 0;
+    padding: 0.5rem 0.6rem;
+    font-size: .7rem;
+    line-height: 1.4;
+    color: $rx-color-dark-charcoal;
+    background: $rx-color-faded-mint;
+    border-radius: 3px;
+    transition: opacity 0.15s ease;
+
+    &.is-disabled {
+      opacity: 0.4;
+    }
+  }
+
+  .date-range-undated-toggle {
+    margin-top: 0.6rem;
+    margin-bottom: 0;
+
+    label {
+      margin-bottom: 0;
+      text-transform: none;
+      font-weight: normal;
+      letter-spacing: normal;
+      font-size: .8rem;
+    }
+
+    input[type="checkbox"]:disabled {
+      cursor: not-allowed;
+      opacity: 0.35;
+    }
+  }
+
+  .date-range-undated-count {
+    display: block;
+    font-size: .7rem;
+    color: $rx-color-dark-charcoal;
+    opacity: 0.7;
+  }
 }
 
 // —————————————————————————————————————————————
 // UI Kit tweaks
 // —————————————————————————————————————————————
-.uk-button-primary {
-  background-color: $rx-color-midnight-blue;
-
-  &:hover {
-    background-color: darken($rx-color-midnight-blue, 10%); // darker on hover
-  }
-}
-
 .uk-container ul { list-style: none; }
 
 .uk-checkbox:checked,
@@ -149,30 +236,20 @@ form#search-form {
   background-color: $rx-color-faded-mint !important;
 }
 
+// Scoped to the date range filter only (its selectize dropdowns render inline
+// within #date-range-filter, since no dropdownParent is set in search.js) —
+// the start/end year selects are single-select, so "selected" here means the
+// currently chosen year, not a multi-select tag like the collection/author/
+// language facets above. Use the same dark blue as those facet chips instead
+// of selectize's default light blue, to match the rest of the design.
+#date-range-filter .selectize-dropdown .option.selected {
+  background-color: $rx-color-midnight-blue !important;
+  color: $color-white !important;
+}
+
 .selectize-control.plugin-clear_button .clear {
   height: 85%;
   top: -3px !important;
-}
-
-// —————————————————————————————————————————————
-// noUi Slider (date slider)
-// —————————————————————————————————————————————
-.noUi-connect {
-  background: $rx-color-midnight-blue !important;
-
-  [disabled] & {
-    background: $rx-color-midnight-blue !important;
-    opacity: 0.2;
-  }
-}
-
-.noUi-tooltip {
-  font-size: .875rem;
-  font-family: monospace;
-  font-weight: normal;
-  padding: 0.125rem 0.25rem !important;
-  background-color: none;
-  border: none !important;
 }
 
 // —————————————————————————————————————————————

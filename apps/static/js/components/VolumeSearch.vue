@@ -1,12 +1,13 @@
 <template>
   <div class="rx-volume-search">
     <div class="uk-search uk-search-default rx-page-search-container">
-      <span uk-search-icon></span>
+      <span uk-search-icon aria-hidden="true"></span>
       <input
         class="uk-search-input"
         type="search"
         id="volume-search"
         placeholder="Search in volume text or annotations"
+        aria-label="Search in volume text or annotations"
         name="q"
         v-model="keyword"
         @keypress.enter="getSearchResults"
@@ -36,20 +37,18 @@
             :key="`text-${index}`"
             class="rx-padding-extra-small"
           >
-            <div class="uk-text-small">
+            <div class="rx-annotation-index-row uk-text-small">
               <a :href="`/volume/${pid}/page/${match.canvas_pid}`">
-                <div class="uk-label rx-label-copy">Page {{ match.canvas_index }}</div>
+                <span class="uk-label rx-label-copy">Page {{ match.canvas_index }}</span>
               </a>
-              <div class="uk-inline-block" style="vertical-align: middle">
-                · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span>
-              </div>
+              <span>· {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></span>
             </div>
-            <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
+            <ul class="uk-text-small uk-margin-small-bottom uk-list uk-list-bullet rx-search-result-list">
               <li
                 v-for="(context, cIdx) in match.context"
                 :key="`textctx-${cIdx}`"
                 v-html="context"
-                class="uk-margin-small-top"
+                class="rx-search-result-item"
               ></li>
             </ul>
           </div>
@@ -64,20 +63,18 @@
             :key="`anno-${index}`"
             class="rx-padding-extra-small"
           >
-            <div class="uk-text-small">
+            <div class="rx-annotation-index-row uk-text-small">
               <a :href="`/volume/${pid}/page/${match.canvas_pid}`">
-                <div class="uk-label rx-label-copy">Page {{ match.canvas_index }}</div>
+                <span class="uk-label rx-label-copy">Page {{ match.canvas_index }}</span>
               </a>
-              <div class="uk-inline-block" style="vertical-align: middle">
-                · {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span>
-              </div>
+              <span>· {{ match.canvas_match_count }} match<span v-if="match.canvas_match_count > 1">es</span></span>
             </div>
-            <ul class="uk-text-small rx-line-height-sm uk-margin-small-bottom uk-list uk-list-bullet">
+            <ul class="uk-text-small uk-margin-small-bottom uk-list uk-list-bullet rx-search-result-list">
               <li
                 v-for="(context, cIdx) in match.context"
                 :key="`annctx-${cIdx}`"
                 v-html="context"
-                class="uk-margin-small-top"
+                class="rx-search-result-item"
               ></li>
             </ul>
           </div>

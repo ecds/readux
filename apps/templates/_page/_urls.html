@@ -4,7 +4,7 @@
 
 <info-url-multiple label="Collection Manifest">
   {% for col in volume.collections.all %}
-  <info-url-unit url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
+  <info-url-unit label="Collection Manifest" url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
   </info-url-unit>
   {% endfor %}
 </info-url-multiple>
@@ -26,7 +26,7 @@
 {% if volume.external_links.see_also %}
 <info-url-multiple label="See Also">
   {% for link in volume.external_links.see_also %}
-    <info-url-unit url="{{ link }}">
+    <info-url-unit label="See Also" url="{{ link }}">
     </info-url-unit>
   {% endfor %}
 </info-url-multiple>
@@ -35,7 +35,7 @@
 {% if volume.external_links.related %}
 <info-url-multiple label="External Links">
   {% for link in volume.external_links.related %}
-    <info-url-unit url="{{ link }}">
+    <info-url-unit label="External Links" url="{{ link }}">
     </info-url-unit>
   {% endfor %}
 </info-url-multiple>

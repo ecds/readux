@@ -4,7 +4,7 @@
 
 gunicorn==21.2.0  # https://github.com/benoitc/gunicorn
 Collectfast==2.2.0  # https://github.com/antonagestam/collectfast
-raven==6.10.0  # https://github.com/getsentry/raven-python
+sentry-sdk[django]  # replaces unmaintained raven
 
 # Django
 # ------------------------------------------------------------------------------

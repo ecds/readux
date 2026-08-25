@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="rx-info-content-value">
-      <a :href="url" class="rx-anchor" target="_blank">{{ url }}</a>
+      <a :href="url" class="rx-anchor" target="_blank" rel="noopener" :aria-label="`${label} (opens in a new tab)`">{{ url }}</a>
     </div>
   </div>
 </template>

@@ -7,7 +7,12 @@ let displayElement;
 let relevanceSortOption;
 let defaultSortOption;
 let form;
-let slider;
+let startYearSelect;
+let endYearSelect;
+let includeUndatedCheckbox;
+let resetDateRangeButton;
+let fullMinYear;
+let fullMaxYear;
 let resetFiltersButton;
 let allFilters;
 let dateToggleSwitch;
@@ -17,7 +22,6 @@ let queryMinYear;
 let queryMaxYear;
 let authorsFilter;
 let authorsMultiselect;
-let dateRange;
 
 window.addEventListener("DOMContentLoaded", () => {
     // Get URL params
@@ -35,7 +39,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // initialize elements
     form = document.querySelector("form#search-form");
     dateToggleSwitch = document.querySelector("input[type='checkbox']#toggle-date");
-    dateRange = document.querySelector(".noUi-tooltip");
+    startYearSelect = document.getElementById("id_start_year");
+    endYearSelect = document.getElementById("id_end_year");
+    includeUndatedCheckbox = document.getElementById("id_include_undated");
+    resetDateRangeButton = document.getElementById("reset-date-range");
     sortElement = document.querySelector("select#id_sort");
     displayElement = document.querySelector("select#id_display");
     relevanceSortOption = sortElement.querySelector("option[value='_score']");
@@ -59,60 +66,137 @@ window.addEventListener("DOMContentLoaded", () => {
     // Attach event listener to filter author multiselect options
     // authorsFilter.addEventListener("input", handleAuthorsFilter);
 
-    // Set up slider
-    slider = document.getElementById("date-range-slider");
-    setUpSlider(slider);
+    // Set up start/end year dropdowns
+    setUpYearDropdowns();
 
-    // Initialize date toggle switch and add event listener
+    // "Show volumes without a published date" is a standing preference, not a
+    // one-off filter: once someone turns it on they almost always want it on
+    // for every future search, so it's stuck in localStorage rather than reset
+    // whenever filters are cleared or a new search is run. An explicit
+    // include_undated=on in the URL (e.g. a shared link) still wins and keeps
+    // localStorage in sync.
+    const urlHasIncludeUndated = Boolean(urlParams) && urlParams.get("include_undated") === "on";
+    const storedIncludeUndated = localStorage.getItem("readux:includeUndated") === "true";
+    includeUndatedCheckbox.checked = urlHasIncludeUndated || storedIncludeUndated;
+    includeUndatedCheckbox.addEventListener("change", () => {
+        localStorage.setItem("readux:includeUndated", includeUndatedCheckbox.checked);
+    });
+
+    resetDateRangeButton.addEventListener("click", resetDateRange);
+
+    // Initialize date toggle switch and add event listener. The checkbox
+    // itself isn't a bound Django form field, so its checked state has to be
+    // synced here explicitly — otherwise a URL carrying start_date/end_date
+    // (e.g. from a shared link) leaves the controls enabled while the
+    // checkbox still visually reads "off".
+    dateToggleSwitch.checked = dateToggleState;
     setDateFieldToggleState(dateToggleState);
     dateToggleSwitch.addEventListener("change", toggleDate);
- 
+
     // Add reset filters event listener
     allFilters = document.querySelectorAll("#search-filters select");
     document.querySelectorAll("button.reset-filters").forEach(button => {
         button.addEventListener("click", resetFilters);
     });
-    // Attach event listeners to form to handle slider input
-    form.addEventListener("submit", handleSubmit);
-    form.addEventListener("formdata", handleFormData);
 });
 
-function setUpSlider(slider) {
-    // Prepare the date range slider based on available data
+function setUpYearDropdowns() {
+    // Prepare the start/end year dropdowns based on available data
 
-    // Get min and max from data attribute on Django form inputs
-    const minDate = document.querySelector("input[name='start_date']").getAttribute("data-date-initial");
-    const maxDate = document.querySelector("input[name='end_date']").getAttribute("data-date-initial");
-    // Get year for slider purposes
-    let minYear = parseInt(minDate.split("-")[0]); 
-    let maxYear = parseInt(maxDate.split("-")[0]); 
+    // Get min and max from data attributes set from Elasticsearch aggregations
+    const container = document.getElementById("date-range-filter");
+    const minDate = container.getAttribute("data-min-date");
+    const maxDate = container.getAttribute("data-max-date");
+    let minYear = minDate ? parseInt(minDate.split("-")[0]) : 0;
+    let maxYear = maxDate ? parseInt(maxDate.split("-")[0]) : 0;
 
     // If there is no min and max (i.e. query returned 0 results), use query params for date
     if (!maxYear && !minYear && urlParams) {
         if (queryMinYear) minYear = parseInt(queryMinYear.split("-")[0]);
         if (queryMaxYear) maxYear = parseInt(queryMaxYear.split("-")[0]);
     }
-    
-    // setup noUISlider
-    noUiSlider.create(slider, {
-        // fallback to range [1, current year] if necessary
-        start: [minYear || 1, maxYear || new Date().getFullYear()],
-        connect: true,
-        range: {
-            "min": minYear || 1,
-            "max": maxYear || new Date().getFullYear()
-        },
-        step: 1,
-        tooltips: true,
-        format: {
-            from: function(value) {
-                return parseInt(value);
-            },
-            to: function(value) {
-                return parseInt(value);
-            }
-        },
+    minYear = minYear || 1;
+    maxYear = maxYear || new Date().getFullYear();
+    fullMinYear = minYear;
+    fullMaxYear = maxYear;
+
+    const selectedStartYear = queryMinYear ? parseInt(queryMinYear.split("-")[0]) : minYear;
+    const selectedEndYear = queryMaxYear ? parseInt(queryMaxYear.split("-")[0]) : maxYear;
+
+    // Volumes dated before year 1 CE get clamped to year 1 on the backend
+    // (there's no way to represent BCE with a plain JS/Python date), so make
+    // that clear on the option itself rather than silently showing "1".
+    const hasBce = container.getAttribute("data-has-bce") === "true";
+    const minYearLabel = hasBce && minYear === 1 ? "1 or earlier (BCE)" : null;
+
+    populateYearSelect(startYearSelect, minYear, maxYear, selectedStartYear, "01-01", minYearLabel);
+    populateYearSelect(endYearSelect, minYear, maxYear, selectedEndYear, "12-31");
+
+    // Turn the long year lists into type-to-filter dropdowns instead of
+    // plain scrolling selects, which get unwieldy over a multi-century range.
+    // Selectize propagates value changes via jQuery's synthetic "change"
+    // event, which native addEventListener listeners never see — so the
+    // start/end sync below has to be bound through jQuery too.
+    [startYearSelect, endYearSelect].forEach((select) => {
+        $(select).selectize({
+            maxItems: 1,
+            allowEmptyOption: false,
+        });
     });
+
+    // Keep start year <= end year at all times
+    $(startYearSelect).on("change", () => {
+        const startYear = parseInt(startYearSelect.value);
+        if (startYear > parseInt(endYearSelect.value)) {
+            setYearSelectValue(endYearSelect, `${String(startYear).padStart(4, "0")}-12-31`);
+        }
+        updateResetDateRangeVisibility();
+    });
+    $(endYearSelect).on("change", () => {
+        const endYear = parseInt(endYearSelect.value);
+        if (endYear < parseInt(startYearSelect.value)) {
+            setYearSelectValue(startYearSelect, `${String(endYear).padStart(4, "0")}-01-01`);
+        }
+        updateResetDateRangeVisibility();
+    });
+
+    updateResetDateRangeVisibility();
+}
+
+function updateResetDateRangeVisibility() {
+    // Only offer the shortcut once the selection is actually narrower than
+    // the full available range
+    const isFullRange =
+        parseInt(startYearSelect.value) === fullMinYear &&
+        parseInt(endYearSelect.value) === fullMaxYear;
+    resetDateRangeButton.hidden = isFullRange || !dateToggleState;
+}
+
+function resetDateRange() {
+    // Restore the start/end dropdowns to the full available range
+    setYearSelectValue(startYearSelect, `${String(fullMinYear).padStart(4, "0")}-01-01`);
+    setYearSelectValue(endYearSelect, `${String(fullMaxYear).padStart(4, "0")}-12-31`);
+    form.submit();
+}
+
+function setYearSelectValue(select, value) {
+    // Update a year <select>'s value whether or not selectize has wrapped it
+    if (select.selectize) {
+        select.selectize.setValue(value);
+    } else {
+        select.value = value;
+    }
+}
+
+function populateYearSelect(select, minYear, maxYear, selectedYear, monthDay, firstYearLabel) {
+    select.innerHTML = "";
+    for (let year = minYear; year <= maxYear; year++) {
+        const option = document.createElement("option");
+        option.value = `${String(year).padStart(4, "0")}-${monthDay}`;
+        option.textContent = year === minYear && firstYearLabel ? firstYearLabel : year;
+        if (year === selectedYear) option.selected = true;
+        select.appendChild(option);
+    }
 }
 
 function autoUpdateSort() {
@@ -152,9 +236,14 @@ function disableRelevanceSort() {
 
 function resetFilters() {
     // Clear filters and submit the search
-    allFilters.forEach((filter) => { 
+    allFilters.forEach((filter) => {
         filter.selectedIndex = -1;
     });
+    // start/end year selects should fall back to the full range, not blank
+    setYearSelectValue(startYearSelect, startYearSelect.options[0].value);
+    setYearSelectValue(endYearSelect, endYearSelect.options[endYearSelect.options.length - 1].value);
+    // "Show volumes without a published date" is a standing preference — leave
+    // it as-is rather than clearing it along with the rest of the filters.
     dateToggleState = false;
     setDateFieldToggleState(false);
     form.submit();
@@ -167,14 +256,21 @@ function toggleDate(e) {
 }
 
 function setDateFieldToggleState(state) {
-    // Change the date toggle switch and slider to match toggle state
-    if (state === false) {
-        // dateToggleSwitch.removeAttribute("checked");
-        slider.setAttribute("disabled", true);
-    } else {
-        // dateToggleSwitch.setAttribute("checked", true);
-        slider.removeAttribute("disabled");
-    }
+    // Change the year dropdowns (and their labels) to match toggle state.
+    // Disabled fields are automatically excluded from form submission.
+    [startYearSelect, endYearSelect].forEach((select) => {
+        if (select.selectize) {
+            state ? select.selectize.enable() : select.selectize.disable();
+        } else {
+            select.disabled = !state;
+        }
+    });
+    includeUndatedCheckbox.disabled = !state;
+    document.querySelectorAll("#date-range-filter .date-range-filter-label").forEach((label) => {
+        label.classList.toggle("is-disabled", !state);
+    });
+    document.querySelector("#date-range-filter .date-range-bce-note").classList.toggle("is-disabled", !state);
+    updateResetDateRangeVisibility();
 }
 
 function handleSort(e) {
@@ -196,25 +292,6 @@ function handleAuthorsFilter(e) {
             authorsMultiselect.options[i].style.display = 'block';
         }
 
-    }
-}
-
-function handleSubmit() {
-    // construct a FormData object, which fires the formdata event
-    new FormData(form);
-}
-
-function handleFormData(e) {
-    const formData = e.formData; 
-    if (dateToggleState === false) {
-        // unset start and end date
-        formData.delete("start_date");
-        formData.delete("end_date");
-    } else {
-        // set start and end date on form, from slider values (year only)
-        const dateRange = slider.noUiSlider.get();
-        formData.set("start_date", `${String(dateRange[0]).padStart(4, "0")}-01-01`);
-        formData.set("end_date", `${String(dateRange[1]).padStart(4, "0")}-12-31`);
     }
 }
 

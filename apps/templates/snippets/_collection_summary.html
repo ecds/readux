@@ -1,0 +1,17 @@
+{% comment %}
+Renders a collection's truncated summary, with the full text available via
+the native `title` attribute when truncation actually happens.
+
+Uses a plain `title` attribute rather than `uk-tooltip` here: UIkit's
+`uk-tooltip` options string is split on `;`, so free-text descriptions
+(which often contain semicolons) would get silently cut off mid-tooltip.
+
+Usage: {% include "snippets/_collection_summary.html" with collection=collection tag="p" css_class="collection-summary" %}
+{% endcomment %}
+{% with full_summary=collection.summary|striptags truncated_summary=collection.summary|striptags|truncatewords:70 %}
+  {% if truncated_summary != full_summary %}
+    <{{ tag }} class="{{ css_class }}" title="{{ full_summary }}">{{ truncated_summary|safe }}</{{ tag }}>
+  {% else %}
+    <{{ tag }} class="{{ css_class }}">{{ truncated_summary|safe }}</{{ tag }}>
+  {% endif %}
+{% endwith %}

@@ -7,6 +7,8 @@
   <link type="text/css" href="{% sass_src 'css/components/login.scss' %}" rel="stylesheet" />
   <link type="text/css" href="{% sass_src 'css/components/menu-inverse.scss' %}" rel="stylesheet" />
   <link type="text/css" href="{% sass_src 'css/components/flatpage.scss' %}" rel="stylesheet" />
+  <link type="text/css" href="{% sass_src 'css/components/user-form.scss' %}" rel="stylesheet" />
+
 {% endblock extra_css %}
 
 {% block nav %}
@@ -16,8 +18,8 @@
   <div class="uk-container content-page">
 
     {% with request.resolver_match.url_name as url_name %}
-      <nav aria-label="Breadcrumb">
-        <ul class="uk-breadcrumb uk-text-truncate uk-margin-small-top">
+      <nav aria-label="breadcrumb" class="uk-margin-small-top uk-margin-small-bottom">
+        <ul class="breadcrumb">
           <li>
             <a href={% url "wagtail_serve" "" %}>Home</a>
           </li>
@@ -28,20 +30,10 @@
               My Account
             {% endif %}
           </li>
-          <li>
-            {% block breadcrumb %}
-            {% endblock breadcrumb %}
-          </li>
+          <li>{% block breadcrumb %}{% endblock breadcrumb %}</li>
         </ul>
       </nav>
     {% endwith %}
-    {% if request.user %}
-      <div class="rx-head-container">
-        <div class="rx-title-container">
-          <div class="rx-title">Hello, {{ request.user.name }}</div>
-        </div>
-      </div>
-    {% endif %}
     {% block content %}
     {% endblock content %}
   </div>

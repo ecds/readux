@@ -220,6 +220,67 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total["value"] == 1
 
+    def test_get_queryset_date_range_excludes_undated_by_default(self):
+        """A date filter should exclude volumes with no published date unless
+        include_undated is set"""
+        undated = Manifest(
+            pid="uniquepid-undated",
+            label="undated volume",
+            summary="test",
+            author="Ben",
+        )
+        undated.save()
+        ManifestDocument().update(undated, True, "index")
+
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+
+        # date filter active, include_undated not set: undated volume excluded
+        volume_search_view.request.GET = {
+            "start_date": "2020-01-01",
+            "end_date": "2024-01-01",
+        }
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        pids = {hit["pid"] for hit in response.hits}
+        assert response.hits.total["value"] == 2
+        assert undated.pid not in pids
+
+        # date filter active, include_undated set: undated volume included
+        # alongside anything actually within the date range
+        volume_search_view.request.GET = {
+            "start_date": "2020-01-01",
+            "end_date": "2024-01-01",
+            "include_undated": "on",
+        }
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        pids = {hit["pid"] for hit in response.hits}
+        assert response.hits.total["value"] == 3
+        assert undated.pid in pids
+
+    def test_get_queryset_date_aggregation_unaffected_by_date_filter(self):
+        """The min/max date aggregation used to populate the year dropdowns
+        should reflect the full available range, not shrink to whatever date
+        filter is currently applied — otherwise a "reset to full range"
+        control could never recover the original bounds."""
+        volume_search_view = views.VolumeSearchView()
+        volume_search_view.request = Mock()
+
+        volume_search_view.request.GET = {
+            "start_date": "2022-01-01",
+            "end_date": "2022-12-31",
+        }
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        # aggregation should span all three dated volumes (1900-2022), not
+        # just the ones matching the applied 2022 date filter
+        in_scope = response.aggregations.date_range_scope.in_scope
+        assert in_scope.dated_earliest.min_date.value is not None
+        assert in_scope.dated_latest.max_date.value is not None
+        span_days = in_scope.dated_latest.max_date.value - in_scope.dated_earliest.min_date.value
+        assert span_days > 365 * 100  # spans well over a century (1900-2022)
+
     def test_get_queryset_sorting(self):
         """Should sort according to default or chosen sort"""
         volume_search_view = views.VolumeSearchView()
@@ -309,25 +370,58 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         with patch("apps.readux.views.VolumeSearchView.get_queryset") as mock_queryset:
             volume_search_view.queryset = mock_queryset
             volume_search_view.object_list = mock_queryset
-            mock_queryset.return_value.execute.return_value = Mock()
-            response = mock_queryset.return_value.execute.return_value
+            # The view calls get_queryset()[:0].execute() for aggregations, so the
+            # response comes through __getitem__, not directly from .execute().
+            response = Mock()
+            mock_queryset.return_value.__getitem__.return_value.execute.return_value = response
 
             # these are not nested facets, so delete "inner" attributes
             del response.aggregations.language.inner
             del response.aggregations.author.inner
+            response.aggregations.date_range_scope.in_scope.undated.doc_count = 5
 
-            volume_search_view.get_context_data()
-            mock_set_facets.assert_called_with(
-                {
-                    "language": response.aggregations.language.buckets,
-                    "author": response.aggregations.author.buckets,
-                    # collections IS nested, so it should have "inner" attribute
-                    "collections": response.aggregations.collections.inner.buckets,
-                }
-            )
+            from datetime import date
+            with patch("apps.readux.views.jd_to_date", side_effect=[date(1800, 1, 1), date(2022, 12, 31)]):
+                context_data = volume_search_view.get_context_data()
+                mock_set_facets.assert_called_with(
+                    {
+                        "language": response.aggregations.language.buckets,
+                        "author": response.aggregations.author.buckets,
+                        # collections IS nested, so it should have "inner" attribute
+                        "collections": response.aggregations.collections.inner.buckets,
+                    }
+                )
+                mock_set_date.assert_called_with("1800-01-01", "2022-12-31")
+                # min date resolved to a real (non-None) date, so no BCE clamping happened
+                assert context_data["date_range_has_bce"] is False
+                assert context_data["undated_volume_count"] == 5
 
-            # should call set_date with the aggregated min and max dates (as strings)
-            mock_set_date.assert_called_with(
-                response.aggregations.min_date.value_as_string,
-                response.aggregations.max_date.value_as_string,
-            )
+    @patch("apps.readux.forms.ManifestSearchForm.set_facets")
+    @patch("apps.readux.forms.ManifestSearchForm.set_date")
+    def test_get_context_data_flags_bce_clamping(self, mock_set_date, mock_set_facets):
+        """Should flag when the earliest date had to be clamped to year 1
+        because the true minimum is BCE (unrepresentable as a Python date)"""
+        volume_search_view = views.VolumeSearchView(kwargs={})
+        volume_search_view.request = Mock()
+        volume_search_view.request.GET = {}
+        volume_search_view.facets = [
+            ("language", Mock()),
+            ("author", Mock()),
+            ("collections", Mock()),
+        ]
+        with patch("apps.readux.views.VolumeSearchView.get_queryset") as mock_queryset:
+            volume_search_view.queryset = mock_queryset
+            volume_search_view.object_list = mock_queryset
+            response = Mock()
+            mock_queryset.return_value.__getitem__.return_value.execute.return_value = response
+            del response.aggregations.language.inner
+            del response.aggregations.author.inner
+            response.aggregations.date_range_scope.in_scope.undated.doc_count = 0
+
+            from datetime import date
+            # jd_to_date returns None for the min (BCE, unrepresentable), a real
+            # date for the max
+            with patch("apps.readux.views.jd_to_date", side_effect=[None, date(2022, 12, 31)]):
+                context_data = volume_search_view.get_context_data()
+                mock_set_date.assert_called_with("0001-01-01", "2022-12-31")
+                assert context_data["date_range_has_bce"] is True

@@ -94,6 +94,42 @@ class ManifestDocumentTest(ESTestCase, TestCase):
         manifest.summary = "<p><strong>Has</strong> HTML tags</p>"
         assert self.doc.prepare_summary(instance=manifest) == "Has HTML tags"
 
+    def test_prepare_date_earliest_and_latest_use_model_value_when_set(self):
+        """Should use the model's own date_earliest/date_latest when present,
+        not the published_date fallback"""
+        manifest = ManifestFactory.create(published_date_edtf="2022-04-14")
+        manifest.refresh_from_db()
+        assert manifest.date_earliest is not None
+        assert self.doc.prepare_date_earliest(instance=manifest) == manifest.date_earliest
+        assert self.doc.prepare_date_latest(instance=manifest) == manifest.date_latest
+
+    def test_prepare_date_earliest_and_latest_fall_back_to_published_date(self):
+        """A manifest with only the display-only published_date set (no
+        published_date_edtf) should still get real date_earliest/date_latest
+        values for search, instead of being silently excluded/miscounted as
+        undated"""
+        manifest = ManifestFactory.create(published_date="1997-07-20")
+        manifest.refresh_from_db()
+        assert manifest.date_earliest is None
+        assert manifest.date_latest is None
+
+        earliest = self.doc.prepare_date_earliest(instance=manifest)
+        latest = self.doc.prepare_date_latest(instance=manifest)
+        assert earliest is not None
+        assert latest is not None
+        assert earliest == latest  # exact single date, no fuzziness
+
+    def test_prepare_date_earliest_and_latest_none_for_unparseable_or_missing(self):
+        """Should return None (not raise) when published_date is missing or
+        can't be parsed as a date at all"""
+        manifest = ManifestFactory.create(published_date=None)
+        assert self.doc.prepare_date_earliest(instance=manifest) is None
+        assert self.doc.prepare_date_latest(instance=manifest) is None
+
+        manifest.published_date = "S.l. : s.n."
+        assert self.doc.prepare_date_earliest(instance=manifest) is None
+        assert self.doc.prepare_date_latest(instance=manifest) is None
+
     def test_get_queryset(self):
         """Test prefetching"""
         manifest = ManifestFactory.create()

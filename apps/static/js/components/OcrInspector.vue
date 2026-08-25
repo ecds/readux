@@ -5,24 +5,24 @@
       This page does not have any usable OCR.
     </div>
 
-    <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
-      <span>Overlay OCR on Page</span>
-      <div>
-        <label class="uk-switch" for="ocr-overlay">
-          <input
-            type="checkbox"
-            id="ocr-overlay"
-            v-model="overlayChecked"
-            :disabled="overlayDisabled"
-            @change="onOverlayToggle"
-          >
-          <div class="uk-switch-slider"></div>
-        </label>
-      </div>
+    <div class="rx-info-content-label uk-flex uk-flex-middle" style="gap: 1rem; align-items:center;">
+      <label class="uk-switch" for="ocr-overlay" style="margin: 0; flex-shrink: 0;">
+        <input
+          type="checkbox"
+          id="ocr-overlay"
+          aria-label="Overlay OCR on Page"
+          v-model="overlayChecked"
+          :disabled="overlayDisabled"
+          @change="onOverlayToggle"
+        >
+        <div class="uk-switch-slider"></div>
+        <span class="sr-only">Overlay OCR on Page</span>
+      </label>
+      <span style="flex: 1;">Overlay OCR on Page</span>
     </div>
 
     <div class="rx-info-content-value uk-margin-small-bottom uk-text-italic">
-      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to image but some may miss.
+      Superimpose OCR text as a layer on top of the scanned volume image. We try our best to align the text to the image but some text may be missing or out of place.
     </div>
 
     <div class="rx-info-content-label uk-flex-between rx-flex" style="align-items:center;">
@@ -251,7 +251,7 @@ export default {
     };
     window.addEventListener("ocrLoaded", this._onOcrLoaded);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("ocrLoaded", this._onOcrLoaded);
     const nodes = this.getOcrNodes();
     for (let i = 0; i < nodes.length; i++) this.removeBlockHandlers(nodes[i]);

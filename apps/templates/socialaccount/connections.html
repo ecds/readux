@@ -1,7 +1,73 @@
-{% extends "socialaccount/connections.html" %}
-{% load allauth %}
+{% extends "allauth/layouts/base.html" %}
 {% load i18n %}
+{% load socialaccount %}
 
-{% block breadcrumb %}
-  Connections
-{% endblock breadcrumb %}
+{% block title %}{% trans "Account Connections" %}{% endblock title %}
+
+{% block breadcrumb %}Account Connections{% endblock breadcrumb %}
+
+{% block content %}
+  <div class="uk-grid-collapse uk-child-width-expand content-wrapper" uk-grid>
+
+    <!-- Left Column: Navigation -->
+    <div class="uk-width-1-4@m navigation-wrapper">
+      <nav class="navigation sidebar-sticky" uk-sticky="offset: 20; media: @m;">
+        <ul class="uk-nav uk-nav-default">
+          <li><a href="{% url 'users:detail' user.username %}" data-section="overview">Account Overview</a></li>
+          <li><a href="{% url 'users:update' %}" data-section="profile">Update Username</a></li>
+          <li><a href="{% url 'account_email' %}" data-section="email">Email Settings</a></li>
+          <li><a href="{% url 'socialaccount_connections' %}" class="active" data-section="connections">Account Connections</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Right Column: Content -->
+    <div class="uk-width-expand@m content uk-padding-remove-top">
+
+      <div class="section">
+        <h2 class="text-black static-content-title">{% trans "Account Connections" %}</h2>
+
+        {% if form.accounts %}
+          <p>{% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}</p>
+
+          <form method="post" action="{% url 'socialaccount_connections' %}">
+            {% csrf_token %}
+            <fieldset class="uk-padding-remove">
+              {% if form.non_field_errors %}
+                <div class="uk-alert-danger uk-margin-small-bottom">{{ form.non_field_errors }}</div>
+              {% endif %}
+
+              {% for base_account in form.accounts %}
+                {% with base_account.get_provider_account as account %}
+                  <div class="uk-margin-small">
+                    <label for="id_account_{{ base_account.id }}">
+                      <input id="id_account_{{ base_account.id }}" type="radio" name="account" value="{{ base_account.id }}" />
+                      <span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">{{ account.get_brand.name }}</span>
+                      {{ account }}
+                    </label>
+                  </div>
+                {% endwith %}
+              {% endfor %}
+
+              <div class="uk-margin-small">
+                <button class="uk-button uk-button-primary uk-button-small" type="submit">{% trans "Remove" %}</button>
+              </div>
+            </fieldset>
+          </form>
+
+        {% else %}
+          <p>{% trans "You currently have no social network accounts connected to this account." %}</p>
+        {% endif %}
+      </div>
+
+      <div class="section">
+        <h2 class="text-black static-content-title">{% trans "Add a Third-Party Account" %}</h2>
+        <ul class="socialaccount_providers uk-list">
+          {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+        </ul>
+        {% include "socialaccount/snippets/login_extra.html" %}
+      </div>
+
+    </div>
+  </div>
+{% endblock content %}

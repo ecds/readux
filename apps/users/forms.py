@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model, forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 from allauth.socialaccount.forms import SignupForm
-from django.forms import CharField, BooleanField, TextInput
+from allauth.account.forms import AddEmailForm
+from django.forms import CharField, BooleanField, TextInput, EmailField
 
 User = get_user_model()
 
@@ -52,6 +53,13 @@ class UserCreationForm(forms.UserCreationForm):
             return username
 
         raise ValidationError(self.error_messages["duplicate_username"])
+
+
+class ReaduxAddEmailForm(AddEmailForm):
+    email = EmailField(
+        widget=TextInput(attrs={"class": "rdx-input uk-input", "type": "email"}),
+        help_text="E-mail address to associate with your account",
+    )
 
 
 class ReaduxSocialSignupForm(SignupForm):

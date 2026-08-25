@@ -230,7 +230,7 @@ class CanvasTests(TestCase):
         )
         assert (
             canvas.thumbnail_crop_volume
-            == "%s/%s/pct:25,15,50,85/,600/0/default.jpg"
+            == "%s/%s/full/600,/0/default.jpg"
             % (canvas.manifest.image_server.server_base, canvas.resource)
         )
 

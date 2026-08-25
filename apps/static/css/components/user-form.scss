@@ -1,0 +1,14 @@
+@import '../partials/colors';
+@import '../partials/buttons';
+
+.unverified {
+  background-color: $rx-color-rose-red;
+  color: white;
+  margin: 1rem;
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.uk-alert-info {
+  background-color: $rx-color-faded-mint;
+}

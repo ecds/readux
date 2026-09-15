@@ -259,6 +259,20 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         assert response.hits.total["value"] == 3
         assert undated.pid in pids
 
+        # no date range, box unchecked (a real search): undated still excluded
+        volume_search_view.request.GET = {"q": ""}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        pids = {hit["pid"] for hit in response.hits}
+        assert undated.pid not in pids
+
+        # no query params at all (bare landing): undated included by default
+        volume_search_view.request.GET = {}
+        search_results = volume_search_view.get_queryset()
+        response = search_results.execute(ignore_cache=True)
+        pids = {hit["pid"] for hit in response.hits}
+        assert undated.pid in pids
+
     def test_get_queryset_date_aggregation_unaffected_by_date_filter(self):
         """The min/max date aggregation used to populate the year dropdowns
         should reflect the full available range, not shrink to whatever date

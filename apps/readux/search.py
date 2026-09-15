@@ -7,6 +7,7 @@ from elasticsearch_dsl import Q
 from more_itertools import flatten
 
 from apps.iiif.manifests.documents import ManifestDocument
+from apps.iiif.manifests.models import Manifest
 from apps.readux.documents import UserAnnotationDocument
 from apps.readux.templatetags.readux_extras import has_inner_hits, group_by_canvas
 
@@ -30,6 +31,13 @@ class SearchManifestCanvas(View):
         volume_pid = self.request.GET.get("volume_id") or ""
         canvas_pid = self.request.GET.get("canvas_id") or ""
         search_query = self.request.GET.get("keyword") or ""
+
+        # Results are labeled with each canvas's 1-indexed rank (the reader's
+        # navigation number / annotation-index number), not the raw indexed
+        # `position` — see Manifest.canvas_rank_map(). Display-only: result links
+        # use canvas_pid. Relabeling here avoids an Elasticsearch reindex.
+        manifest = Manifest.objects.filter(pid=volume_pid).first()
+        pid_to_rank = manifest.canvas_rank_map() if manifest else {}
 
         # find exact match queries (words or phrases in double quotes)
         exact_queries = self.re_exact_match.findall(search_query)
@@ -104,7 +112,9 @@ class SearchManifestCanvas(View):
                 for canvas in group_by_canvas(volume.meta.inner_hits, limit=100):
                     volume_matches.append(
                         {
-                            "canvas_index": canvas["position"],
+                            "canvas_index": pid_to_rank.get(
+                                canvas["pid"], canvas["position"]
+                            ),
                             "canvas_match_count": len(canvas["highlights"]),
                             "canvas_pid": canvas["pid"],
                             "context": canvas["highlights"],
@@ -171,7 +181,9 @@ class SearchManifestCanvas(View):
                     continue
                 annotation_matches.append(
                     {
-                        "canvas_index": anno["canvas_index"],
+                        "canvas_index": pid_to_rank.get(
+                            anno["canvas_pid"], anno["canvas_index"]
+                        ),
                         "canvas_pid": anno["canvas_pid"],
                         "context": list(highlight.content),
                     }

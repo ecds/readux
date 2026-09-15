@@ -231,23 +231,10 @@ class PageDetail(TemplateView):
         # un-grouped queryset is unnecessary here (the GROUP BY already
         # collapses to one row per canvas__position) and was masking/dropping
         # canvases from the index in practice, so it's been removed.
-        # Page number shown to users is the canvas's 1-indexed RANK in the
-        # volume (its ordinal in position order) — the same value the reader's
-        # navigation ("16 of 50") uses. We deliberately do NOT show the raw
-        # `position` field: its base is inconsistent (imported canvases are
-        # 0-indexed, app-created ones are 1-indexed via canvas_set.count()+1),
-        # so `position` (or a naive position+1) is off-by-one on some volumes.
-        # Rank is defined purely by ordering, so it matches navigation for every
-        # volume regardless of the raw position base, gaps, or pid style.
-        pid_to_rank = {
-            pid: rank
-            for rank, pid in enumerate(
-                manifest.canvas_set.order_by("position").values_list(
-                    "pid", flat=True
-                ),
-                start=1,
-            )
-        }
+        # Page numbers shown in the index are the canvas's 1-indexed rank (the
+        # reader's navigation number), not the raw `position` field — see
+        # Manifest.canvas_rank_map().
+        pid_to_rank = manifest.canvas_rank_map()
 
         user_annotation_index = list(
             UserAnnotation.objects.filter(canvas__manifest__id=manifest.id)

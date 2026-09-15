@@ -1,10 +1,10 @@
-<info-url-single label="Manifest"
+<info-url-single label="Volume"
   url="https://{{ request.META.HTTP_HOST }}{% url 'ManifestRender' 'v2' volume.pid %}">
 </info-url-single>
 
-<info-url-multiple label="Collection Manifest">
+<info-url-multiple label="Collection">
   {% for col in volume.collections.all %}
-  <info-url-unit label="Collection Manifest" url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
+  <info-url-unit label="Collection" url="https://{{ request.META.HTTP_HOST }}{% url 'CollectionRender' 'v2' col.pid %}">
   </info-url-unit>
   {% endfor %}
 </info-url-multiple>

@@ -75,6 +75,21 @@ export default {
       }
     }
 
+    // pid -> page-number (rank) map for every canvas in the volume, matching
+    // the reader's navigation number. Used to label a freshly-created
+    // annotation's page correctly: the pid's numeric suffix is NOT the page
+    // number (its offset from the real ordinal varies per volume, and some pids
+    // carry letter suffixes), and the canvasswitch event doesn't carry it.
+    this._canvasPositions = {};
+    const posEl = document.getElementById("canvas-positions");
+    if (posEl && posEl.textContent) {
+      try {
+        this._canvasPositions = JSON.parse(posEl.textContent) || {};
+      } catch (e) {
+        console.error("[VolumeAnnotations] Failed to parse canvas positions:", e);
+      }
+    }
+
     // Counts come only from the annotator's "canvasswitch" events, which are
     // NOT a clean per-action stream:
     //   - a page's annotations load in two async steps (points, then text),
@@ -112,11 +127,17 @@ export default {
       if (row) {
         row.canvas__position__count = count;
       } else {
-        const pidNum = (detail.canvas.match(/\d+/g) || []).pop();
+        // Authoritative position from the server map; fall back to the pid's
+        // numeric suffix only if this canvas is somehow absent from it.
+        let position = this._canvasPositions[detail.canvas];
+        if (position == null) {
+          const pidNum = (detail.canvas.match(/\d+/g) || []).pop();
+          position = pidNum != null ? parseInt(pidNum, 10) : 0;
+        }
         this.annotationData = this.annotationData.concat({
           canvas__manifest__label: this.annotationData[0]?.canvas__manifest__label,
           canvas__pid: detail.canvas,
-          canvas__position: pidNum != null ? parseInt(pidNum, 10) : 0,
+          canvas__position: position,
           canvas__position__count: count
         });
       }

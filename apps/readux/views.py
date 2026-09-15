@@ -231,16 +231,44 @@ class PageDetail(TemplateView):
         # un-grouped queryset is unnecessary here (the GROUP BY already
         # collapses to one row per canvas__position) and was masking/dropping
         # canvases from the index in practice, so it's been removed.
-        user_annotation_index = (
+        # Page number shown to users is the canvas's 1-indexed RANK in the
+        # volume (its ordinal in position order) — the same value the reader's
+        # navigation ("16 of 50") uses. We deliberately do NOT show the raw
+        # `position` field: its base is inconsistent (imported canvases are
+        # 0-indexed, app-created ones are 1-indexed via canvas_set.count()+1),
+        # so `position` (or a naive position+1) is off-by-one on some volumes.
+        # Rank is defined purely by ordering, so it matches navigation for every
+        # volume regardless of the raw position base, gaps, or pid style.
+        pid_to_rank = {
+            pid: rank
+            for rank, pid in enumerate(
+                manifest.canvas_set.order_by("position").values_list(
+                    "pid", flat=True
+                ),
+                start=1,
+            )
+        }
+
+        user_annotation_index = list(
             UserAnnotation.objects.filter(canvas__manifest__id=manifest.id)
             .filter(owner_id=self.request.user.id)
             .values("canvas__position", "canvas__manifest__label", "canvas__pid")
             .annotate(Count("canvas__position"))
             .order_by("canvas__position")
         )
+        # Relabel each row's page number with the rank (keep the key name so the
+        # template/component don't need to change).
+        for row in user_annotation_index:
+            row["canvas__position"] = pid_to_rank.get(
+                row["canvas__pid"], row["canvas__position"]
+            )
 
         context["user_annotation_index"] = user_annotation_index
-        context["json_data"] = {"json_data": list(user_annotation_index)}
+        context["json_data"] = {"json_data": user_annotation_index}
+
+        # pid -> rank map so the client can label a freshly-created annotation's
+        # page with the same rank (the canvasswitch event carries only the pid).
+        context["canvas_positions"] = pid_to_rank
 
         # add custom metadata from django settings to context
         if hasattr(settings, "CUSTOM_METADATA"):

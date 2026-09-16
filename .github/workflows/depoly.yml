@@ -16,12 +16,12 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Checkout ecds-annotator
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ecds/ecds-annotator
           path: ecds-annotator
@@ -47,7 +47,7 @@ jobs:
           BRANCH: ${{ github.event.workflow_run.head_branch }}
 
       - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_DEV }}
           aws-region: us-east-1
@@ -63,5 +63,4 @@ jobs:
           DATABASE_URL_PROD: ${{ secrets.DATABASE_URL_PROD}}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY}}
         run: ./deploy.sh

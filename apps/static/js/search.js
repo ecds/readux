@@ -15,8 +15,6 @@ let fullMinYear;
 let fullMaxYear;
 let resetFiltersButton;
 let allFilters;
-let dateToggleSwitch;
-let dateToggleState;
 let urlParams;
 let queryMinYear;
 let queryMaxYear;
@@ -29,16 +27,10 @@ window.addEventListener("DOMContentLoaded", () => {
         urlParams = new URLSearchParams(window.location.search);
         queryMinYear = urlParams.get('start_date');
         queryMaxYear = urlParams.get('end_date');
-        // If there's a min or max year, assume date toggle is on
-        dateToggleState = Boolean(queryMinYear || queryMaxYear);
-    } else {
-        // If there's no search at all, turn date toggle off
-        dateToggleState = false;
     }
 
     // initialize elements
     form = document.querySelector("form#search-form");
-    dateToggleSwitch = document.querySelector("input[type='checkbox']#toggle-date");
     startYearSelect = document.getElementById("id_start_year");
     endYearSelect = document.getElementById("id_end_year");
     includeUndatedCheckbox = document.getElementById("id_include_undated");
@@ -69,29 +61,21 @@ window.addEventListener("DOMContentLoaded", () => {
     // Set up start/end year dropdowns
     setUpYearDropdowns();
 
-    // "Show volumes without a published date" is a standing preference, not a
-    // one-off filter: once someone turns it on they almost always want it on
-    // for every future search, so it's stuck in localStorage rather than reset
-    // whenever filters are cleared or a new search is run. An explicit
-    // include_undated=on in the URL (e.g. a shared link) still wins and keeps
-    // localStorage in sync.
-    const urlHasIncludeUndated = Boolean(urlParams) && urlParams.get("include_undated") === "on";
-    const storedIncludeUndated = localStorage.getItem("readux:includeUndated") === "true";
-    includeUndatedCheckbox.checked = urlHasIncludeUndated || storedIncludeUndated;
-    includeUndatedCheckbox.addEventListener("change", () => {
-        localStorage.setItem("readux:includeUndated", includeUndatedCheckbox.checked);
-    });
+    // "Show volumes without a published date" only exists when the current
+    // result scope actually contains undated volumes (the template omits it
+    // otherwise), so every reference to it has to be null-guarded. When it is
+    // present it defaults to checked; a submitted search wins over that
+    // default, so an unchecked box stays unchecked across page loads.
+    if (includeUndatedCheckbox) {
+        includeUndatedCheckbox.checked = urlParams
+            ? urlParams.get("include_undated") === "on"
+            : true;
+    }
 
-    resetDateRangeButton.addEventListener("click", resetDateRange);
-
-    // Initialize date toggle switch and add event listener. The checkbox
-    // itself isn't a bound Django form field, so its checked state has to be
-    // synced here explicitly — otherwise a URL carrying start_date/end_date
-    // (e.g. from a shared link) leaves the controls enabled while the
-    // checkbox still visually reads "off".
-    dateToggleSwitch.checked = dateToggleState;
-    setDateFieldToggleState(dateToggleState);
-    dateToggleSwitch.addEventListener("change", toggleDate);
+    // Reset button is absent alongside the year selects when nothing is dated.
+    if (resetDateRangeButton) {
+        resetDateRangeButton.addEventListener("click", resetDateRange);
+    }
 
     // Add reset filters event listener
     allFilters = document.querySelectorAll("#search-filters select");
@@ -102,6 +86,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function setUpYearDropdowns() {
     // Prepare the start/end year dropdowns based on available data
+
+    // The year selects are omitted when the current result scope has no dated
+    // volumes at all (template gates them on date_range_has_dated). Nothing to
+    // wire up in that case.
+    if (!startYearSelect || !endYearSelect) return;
 
     // Get min and max from data attributes set from Elasticsearch aggregations
     const container = document.getElementById("date-range-filter");
@@ -164,12 +153,13 @@ function setUpYearDropdowns() {
 }
 
 function updateResetDateRangeVisibility() {
+    if (!resetDateRangeButton || !startYearSelect || !endYearSelect) return;
     // Only offer the shortcut once the selection is actually narrower than
     // the full available range
     const isFullRange =
         parseInt(startYearSelect.value) === fullMinYear &&
         parseInt(endYearSelect.value) === fullMaxYear;
-    resetDateRangeButton.hidden = isFullRange || !dateToggleState;
+    resetDateRangeButton.hidden = isFullRange;
 }
 
 function resetDateRange() {
@@ -240,37 +230,17 @@ function resetFilters() {
         filter.selectedIndex = -1;
     });
     // start/end year selects should fall back to the full range, not blank
-    setYearSelectValue(startYearSelect, startYearSelect.options[0].value);
-    setYearSelectValue(endYearSelect, endYearSelect.options[endYearSelect.options.length - 1].value);
-    // "Show volumes without a published date" is a standing preference — leave
-    // it as-is rather than clearing it along with the rest of the filters.
-    dateToggleState = false;
-    setDateFieldToggleState(false);
+    // (absent when the result scope has no dated volumes)
+    if (startYearSelect && endYearSelect) {
+        setYearSelectValue(startYearSelect, startYearSelect.options[0].value);
+        setYearSelectValue(endYearSelect, endYearSelect.options[endYearSelect.options.length - 1].value);
+    }
+    // "Show volumes without a published date" defaults to on, so restore it to
+    // checked along with the rest of the filters.
+    if (includeUndatedCheckbox) {
+        includeUndatedCheckbox.checked = true;
+    }
     form.submit();
-}
-
-function toggleDate(e) {
-    // Use state of toggle button to turn on/off date filter
-    dateToggleState = e.currentTarget.checked;
-    setDateFieldToggleState(dateToggleState);
-}
-
-function setDateFieldToggleState(state) {
-    // Change the year dropdowns (and their labels) to match toggle state.
-    // Disabled fields are automatically excluded from form submission.
-    [startYearSelect, endYearSelect].forEach((select) => {
-        if (select.selectize) {
-            state ? select.selectize.enable() : select.selectize.disable();
-        } else {
-            select.disabled = !state;
-        }
-    });
-    includeUndatedCheckbox.disabled = !state;
-    document.querySelectorAll("#date-range-filter .date-range-filter-label").forEach((label) => {
-        label.classList.toggle("is-disabled", !state);
-    });
-    document.querySelector("#date-range-filter .date-range-bce-note").classList.toggle("is-disabled", !state);
-    updateResetDateRangeVisibility();
 }
 
 function handleSort(e) {

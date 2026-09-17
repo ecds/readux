@@ -93,6 +93,19 @@
   color: $rx-color-dark-charcoal;
 }
 
+/* The OCR-overlay rule `.openseadragon-container span { color: transparent }`
+   (readux.scss) targets every span in the viewer, including span-wrapped text
+   in the annotation hover popup — which the OSD overlay places inside
+   .openseadragon-container. That turns ordinary comment text invisible (while
+   links, images and the tags <section> keep their own color and still show).
+   Undo it inside the popup only; OCR spans live in the OSD canvas layer, not
+   in .rdx-annotation-content, so this doesn't touch them. */
+.openseadragon-container .rdx-annotation-content span {
+  color: inherit;
+  display: inline !important; // OCR rule sets display:inline-flex !important
+  white-space: normal;
+}
+
 .uk-search {
   padding-right: 10px;
 }

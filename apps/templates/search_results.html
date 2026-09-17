@@ -113,8 +113,7 @@
 
                 <fieldset class="uk-margin-remove-top uk-margin-small-bottom">
                     <div class="uk-flex uk-flex-between sui-item-heading">
-                        <label for="toggle-date">Filter by Date published</label>
-                        <input type="checkbox" name="date-filter" id="toggle-date" class="uk-checkbox uk-margin-remove"/>
+                        <span>Filter by Date published</span>
                     </div>
                     <div
                         id="date-range-filter"
@@ -122,6 +121,7 @@
                         data-max-date="{{ form.end_date.field.widget.date_initial|default:'' }}"
                         data-has-bce="{% if date_range_has_bce %}true{% else %}false{% endif %}"
                     >
+                        {% if date_range_has_dated %}
                         <div class="date-range-filter-fields">
                             <div class="date-range-filter-field">
                                 <label for="id_start_year" class="date-range-filter-label">{{ form.start_date.label }}</label>
@@ -132,34 +132,27 @@
                                 <select id="id_end_year" name="end_date" aria-label="Filter by end year published"></select>
                             </div>
                         </div>
-                        {% comment %}
-                        Element stays in the DOM (just visually hidden) even when there's nothing
-                        BCE-dated in the current results, rather than being removed with {% if %} —
-                        search.js toggles an "is-disabled" class on this element by selector with
-                        no null check, so removing it outright would throw when the date filter is
-                        switched on/off.
-                        {% endcomment %}
-                        <p class="date-range-bce-note"{% if not date_range_has_bce %} hidden{% endif %}>
-                            Volumes dated before year 1 CE (BCE) can't be shown individually here — they're grouped under the earliest year in the list above{% if date_range_has_bce %}, labeled "1 or earlier"{% endif %}.
+                        {% if date_range_has_bce %}
+                        <p class="date-range-bce-note">
+                            Volumes dated before year 1 CE (BCE) can't be shown individually here — they're grouped under the earliest year in the list above, labeled "1 or earlier".
                         </p>
+                        {% endif %}
                         <button
                             type="button"
                             id="reset-date-range"
                             class="date-range-reset-link"
                             hidden
                         >Reset Date Range</button>
-                        {% comment %}
-                        Same reasoning as the BCE note above: kept in the DOM and just hidden when
-                        there's nothing for it to control, since search.js reads this checkbox
-                        unconditionally (id_include_undated.checked, etc.) on every page load.
-                        {% endcomment %}
-                        <div class="date-range-filter-label uk-flex uk-flex-middle date-range-undated-toggle"{% if not undated_volume_count %} hidden{% endif %}>
+                        {% endif %}
+                        {% if undated_volume_count %}
+                        <div class="date-range-filter-label uk-flex uk-flex-middle date-range-undated-toggle">
                             <input type="checkbox" name="include_undated" id="id_include_undated" class="uk-checkbox uk-margin-small-right"/>
                             <label for="id_include_undated">
                                 {{ form.include_undated.label }}
                                 <span class="date-range-undated-count">({{ undated_volume_count }} volume{{ undated_volume_count|pluralize }} with no recorded date)</span>
                             </label>
                         </div>
+                        {% endif %}
                     </div>
                 </fieldset>
 

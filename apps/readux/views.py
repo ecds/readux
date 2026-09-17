@@ -231,16 +231,31 @@ class PageDetail(TemplateView):
         # un-grouped queryset is unnecessary here (the GROUP BY already
         # collapses to one row per canvas__position) and was masking/dropping
         # canvases from the index in practice, so it's been removed.
-        user_annotation_index = (
+        # Page numbers shown in the index are the canvas's 1-indexed rank (the
+        # reader's navigation number), not the raw `position` field — see
+        # Manifest.canvas_rank_map().
+        pid_to_rank = manifest.canvas_rank_map()
+
+        user_annotation_index = list(
             UserAnnotation.objects.filter(canvas__manifest__id=manifest.id)
             .filter(owner_id=self.request.user.id)
             .values("canvas__position", "canvas__manifest__label", "canvas__pid")
             .annotate(Count("canvas__position"))
             .order_by("canvas__position")
         )
+        # Relabel each row's page number with the rank (keep the key name so the
+        # template/component don't need to change).
+        for row in user_annotation_index:
+            row["canvas__position"] = pid_to_rank.get(
+                row["canvas__pid"], row["canvas__position"]
+            )
 
         context["user_annotation_index"] = user_annotation_index
-        context["json_data"] = {"json_data": list(user_annotation_index)}
+        context["json_data"] = {"json_data": user_annotation_index}
+
+        # pid -> rank map so the client can label a freshly-created annotation's
+        # page with the same rank (the canvasswitch event carries only the pid).
+        context["canvas_positions"] = pid_to_rank
 
         # add custom metadata from django settings to context
         if hasattr(settings, "CUSTOM_METADATA"):
@@ -458,6 +473,7 @@ class VolumeSearchView(ListView, FormMixin):
         dated_earliest = getattr(in_scope, "dated_earliest", None) if in_scope else None
         dated_latest = getattr(in_scope, "dated_latest", None) if in_scope else None
         context_data["date_range_has_bce"] = False
+        context_data["date_range_has_dated"] = False
         if dated_earliest and dated_latest:
             min_date = getattr(dated_earliest, "min_date", None)
             max_date = getattr(dated_latest, "max_date", None)
@@ -482,6 +498,7 @@ class VolumeSearchView(ListView, FormMixin):
                     def _fmt(d):
                         return f"{d.year:04d}-{d.month:02d}-{d.day:02d}"
                     context_data["form"].set_date(_fmt(min_d), _fmt(max_d))
+                    context_data["date_range_has_dated"] = True
 
         # count of volumes with no published date at all (matching every other
         # active filter), for the "show volumes without a date" checkbox label
@@ -668,6 +685,15 @@ class VolumeSearchView(ListView, FormMixin):
         # Using the opposite bound for each filter handles null bounds gracefully —
         # if date_earliest is null we can't exclude the document from an end_date filter,
         # and if date_latest is null we can't confirm it falls after a start_date.
+        # "Show volumes without a published date" (include_undated) is checked by
+        # default in the UI, and is an independent filter — not just a modifier on
+        # the date range. Whenever the user has run a search and left the box
+        # unchecked, undated volumes are dropped entirely, even with no date range
+        # set (e.g. an all-undated corpus, where a date filter can't be applied).
+        # A bare landing with no query params includes everything, matching the
+        # default-checked box.
+        exclude_undated = bool(self.request.GET) and not form_data.get("include_undated")
+
         min_date_filter = form_data.get("start_date")
         max_date_filter = form_data.get("end_date") or ""
         if min_date_filter or max_date_filter:
@@ -682,7 +708,11 @@ class VolumeSearchView(ListView, FormMixin):
                 date_range_clauses.append(Q("range", date_earliest={"lte": max_jd}))
             date_range_query = Q("bool", must=date_range_clauses)
 
-            if form_data.get("include_undated"):
+            if exclude_undated:
+                # date_range_query already requires the date fields to exist, so
+                # undated volumes are excluded by it.
+                volumes = volumes.filter(date_range_query)
+            else:
                 # let volumes with no date at all through too, alongside anything
                 # that actually overlaps the selected range
                 undated_query = Q(
@@ -695,8 +725,17 @@ class VolumeSearchView(ListView, FormMixin):
                 volumes = volumes.filter(
                     Q("bool", should=[date_range_query, undated_query], minimum_should_match=1)
                 )
-            else:
-                volumes = volumes.filter(date_range_query)
+        elif exclude_undated:
+            # No date range, but the box is unchecked: keep only volumes that
+            # actually have a published date.
+            volumes = volumes.filter(
+                "bool",
+                should=[
+                    Q("exists", field="date_earliest"),
+                    Q("exists", field="date_latest"),
+                ],
+                minimum_should_match=1,
+            )
 
         # filter on custom metadata fields
         if hasattr(settings, "CUSTOM_METADATA") and isinstance(

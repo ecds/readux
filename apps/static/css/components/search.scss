@@ -127,12 +127,6 @@ form#search-form {
     text-transform: uppercase;
     color: $rx-color-dark-charcoal;
     margin-bottom: 0.25rem;
-    transition: color 0.15s ease, opacity 0.15s ease;
-
-    &.is-disabled {
-      color: $rx-color-dark-charcoal;
-      opacity: 0.4;
-    }
   }
 
   .date-range-reset-link {
@@ -159,11 +153,6 @@ form#search-form {
     color: $rx-color-dark-charcoal;
     background: $rx-color-faded-mint;
     border-radius: 3px;
-    transition: opacity 0.15s ease;
-
-    &.is-disabled {
-      opacity: 0.4;
-    }
   }
 
   .date-range-undated-toggle {
@@ -176,11 +165,6 @@ form#search-form {
       font-weight: normal;
       letter-spacing: normal;
       font-size: .8rem;
-    }
-
-    input[type="checkbox"]:disabled {
-      cursor: not-allowed;
-      opacity: 0.35;
     }
   }
 

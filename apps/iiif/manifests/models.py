@@ -384,6 +384,26 @@ class Manifest(IiifBase):
             .count()
         )
 
+    def canvas_rank_map(self):
+        """Map each canvas pid to its 1-indexed rank (ordinal in page order).
+
+        Rank is the page number the reader's navigation shows ("16 of 50"); the
+        raw `Canvas.position` field's base is inconsistent (imported canvases are
+        0-indexed, app-created ones 1-indexed), so rank — defined purely by
+        ordering — is the reliable page number to display everywhere. The
+        secondary sort on pid keeps ranks deterministic if two canvases somehow
+        share a position.
+        """
+        return {
+            pid: rank
+            for rank, pid in enumerate(
+                self.canvas_set.order_by("position", "pid").values_list(
+                    "pid", flat=True
+                ),
+                start=1,
+            )
+        }
+
     # update search_vector every time the entry updates
     def save(self, *args, **kwargs):  # pylint: disable = arguments-differ
 

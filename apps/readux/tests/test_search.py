@@ -189,3 +189,20 @@ class TestReaduxPageDetailSearch(ESTestCase, TestCase):
         search_results = self.load_results(response)
         assert search_results['matches_in_text']['total_matches_in_volume'] == 0
         assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0
+
+    def test_manifest_canvas_user_annotation_search_excludes_other_users(self):
+        """Privacy: searching for a keyword that matches another user's
+        annotation content must not surface that annotation. self.user owns
+        the 'outcasts' annotations created in setUp/add_annotations; a
+        different, unrelated user searching the same volume for that same
+        keyword should see zero annotation matches."""
+        other_user = UserFactory.create()
+        query_params = {'volume_id': self.volume.pid, 'keyword': 'outcast'}
+        request = self.request.get(
+            self.url, query_params
+        )
+        request.user = other_user
+        response = self.search_manifest_view(request)
+        search_results = self.load_results(response)
+        assert search_results['matches_in_annotations']['total_matches_in_volume'] == 0
+        assert len(search_results['matches_in_annotations']['volume_matches']) == 0

@@ -6,14 +6,33 @@ from django.contrib import admin
 from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
+from ..manifests.documents import ManifestDocument
 from ..manifests.models import Manifest
 from .models import Canvas
 from .tasks import add_ocr_task
 from . import services
 
 def resave_gethw_admin_action(modeladmin, request, queryset):
-    for canvas in queryset:
-        canvas.save()
+    """Re-run before_save()'s height/width fixup for each selected canvas.
+
+    Calling canvas.save() per canvas would trigger a full-manifest
+    Elasticsearch reindex per canvas (Canvas is a related_model of
+    ManifestDocument) -- for a manifest with many pages selected at once
+    that's an O(n^2) reindex storm. bulk_update() applies the recomputed
+    fields directly, bypassing signals, then each distinct manifest touched
+    is reindexed exactly once.
+    """
+    canvases = list(queryset)
+    for canvas in canvases:
+        canvas.before_save()
+    Canvas.objects.bulk_update(
+        canvases, ["width", "height", "position", "resource", "image_server"]
+    )
+
+    manifest_ids = {canvas.manifest_id for canvas in canvases if canvas.manifest_id}
+    index = ManifestDocument()
+    for manifest in Manifest.objects.filter(pk__in=manifest_ids):
+        index.update(manifest, True, "index")
 resave_gethw_admin_action.short_description = 'Resave for Height Width'
 
 class CanvasResource(resources.ModelResource):

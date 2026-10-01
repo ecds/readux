@@ -220,9 +220,11 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         response = search_results.execute(ignore_cache=True)
         assert response.hits.total["value"] == 1
 
-    def test_get_queryset_date_range_excludes_undated_by_default(self):
-        """A date filter should exclude volumes with no published date unless
-        include_undated is set"""
+    def test_get_queryset_undated_included_by_default(self):
+        """Volumes with no published date are included by default (the "show
+        volumes without a published date" box is checked by default). They are
+        excluded only when the date-filter form was submitted (the hidden
+        undated_choice_made marker is present) with the box left unchecked."""
         undated = Manifest(
             pid="uniquepid-undated",
             label="undated volume",
@@ -235,42 +237,42 @@ class TestVolumeSearchView(ESTestCase, TestCase):
         volume_search_view = views.VolumeSearchView()
         volume_search_view.request = Mock()
 
-        # date filter active, include_undated not set: undated volume excluded
-        volume_search_view.request.GET = {
-            "start_date": "2020-01-01",
-            "end_date": "2024-01-01",
-        }
-        search_results = volume_search_view.get_queryset()
-        response = search_results.execute(ignore_cache=True)
-        pids = {hit["pid"] for hit in response.hits}
-        assert response.hits.total["value"] == 2
-        assert undated.pid not in pids
+        def pids_for(get):
+            volume_search_view.request.GET = get
+            response = volume_search_view.get_queryset().execute(ignore_cache=True)
+            return {hit["pid"] for hit in response.hits}, response.hits.total["value"]
 
-        # date filter active, include_undated set: undated volume included
-        # alongside anything actually within the date range
-        volume_search_view.request.GET = {
-            "start_date": "2020-01-01",
-            "end_date": "2024-01-01",
-            "include_undated": "on",
-        }
-        search_results = volume_search_view.get_queryset()
-        response = search_results.execute(ignore_cache=True)
-        pids = {hit["pid"] for hit in response.hits}
-        assert response.hits.total["value"] == 3
+        # Date filter active but the form wasn't submitted (no marker) — e.g. a
+        # shared link: undated volumes are INCLUDED by default.
+        pids, _ = pids_for({"start_date": "2020-01-01", "end_date": "2024-01-01"})
         assert undated.pid in pids
 
-        # no date range, box unchecked (a real search): undated still excluded
-        volume_search_view.request.GET = {"q": ""}
-        search_results = volume_search_view.get_queryset()
-        response = search_results.execute(ignore_cache=True)
-        pids = {hit["pid"] for hit in response.hits}
+        # Form submitted with the box left unchecked (marker present,
+        # include_undated absent): undated volumes are EXCLUDED.
+        pids, total = pids_for(
+            {
+                "start_date": "2020-01-01",
+                "end_date": "2024-01-01",
+                "undated_choice_made": "1",
+            }
+        )
+        assert total == 2
         assert undated.pid not in pids
 
-        # no query params at all (bare landing): undated included by default
-        volume_search_view.request.GET = {}
-        search_results = volume_search_view.get_queryset()
-        response = search_results.execute(ignore_cache=True)
-        pids = {hit["pid"] for hit in response.hits}
+        # Box checked (include_undated=on): included alongside the date matches.
+        pids, total = pids_for(
+            {
+                "start_date": "2020-01-01",
+                "end_date": "2024-01-01",
+                "undated_choice_made": "1",
+                "include_undated": "on",
+            }
+        )
+        assert total == 3
+        assert undated.pid in pids
+
+        # Bare landing with no query params: included by default.
+        pids, _ = pids_for({})
         assert undated.pid in pids
 
     def test_get_queryset_date_aggregation_unaffected_by_date_filter(self):

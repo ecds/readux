@@ -213,7 +213,26 @@ em { color: inherit !important; }
 .uk-close { color: $rx-color-midnight-blue; &:hover { color: darken($rx-color-midnight-blue, 10%); } }
 
 /* Slider */
-.uk-slider-items { gap: 4rem; }
+// `gap` adds space on top of the uk-child-width percentages, so N items at
+// uk-child-width-1-N overflow the view by (N-1)*gap: the last item is clipped,
+// and UIkit (which decides the next arrow from the width class, not the gap)
+// hides the arrow — leaving no way to reveal it (e.g. exactly 4 featured items).
+// Subtract the gap from each item's width so exactly N fit in one view. Both
+// homepage sliders use uk-child-width 1-2 / 1-3@s / 1-4@m.
+$slider-gap: 4rem;
+.uk-slider-items {
+  gap: $slider-gap;
+
+  > * { width: calc((100% - #{$slider-gap}) / 2); }          // mobile: 2 up
+
+  @media (min-width: 640px) {                                // @s: 3 up
+    > * { width: calc((100% - 2 * #{$slider-gap}) / 3); }
+  }
+
+  @media (min-width: 960px) {                                // @m: 4 up
+    > * { width: calc((100% - 3 * #{$slider-gap}) / 4); }
+  }
+}
 
 /* Tabs */
 /* Inactive tabs: readable neutral (7:1 on white) instead of UIkit's faint #999.

@@ -61,16 +61,10 @@ window.addEventListener("DOMContentLoaded", () => {
     // Set up start/end year dropdowns
     setUpYearDropdowns();
 
-    // "Show volumes without a published date" only exists when the current
-    // result scope actually contains undated volumes (the template omits it
-    // otherwise), so every reference to it has to be null-guarded. When it is
-    // present it defaults to checked; a submitted search wins over that
-    // default, so an unchecked box stays unchecked across page loads.
-    if (includeUndatedCheckbox) {
-        includeUndatedCheckbox.checked = urlParams
-            ? urlParams.get("include_undated") === "on"
-            : true;
-    }
+    // "Show volumes without a published date" is checked by default and its
+    // checked state is rendered server-side (see include_undated_checked /
+    // the undated_choice_made marker), so there's no need to set it here — doing
+    // so previously forced it unchecked on any URL that carried query params.
 
     // Reset button is absent alongside the year selects when nothing is dated.
     if (resetDateRangeButton) {

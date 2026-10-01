@@ -145,8 +145,10 @@
                         >Reset Date Range</button>
                         {% endif %}
                         {% if undated_volume_count %}
+                        {# Marker so the server can tell a deliberate uncheck from "never touched"; checkbox is checked by default. #}
+                        <input type="hidden" name="undated_choice_made" value="1"/>
                         <div class="date-range-filter-label uk-flex uk-flex-middle date-range-undated-toggle">
-                            <input type="checkbox" name="include_undated" id="id_include_undated" class="uk-checkbox uk-margin-small-right"/>
+                            <input type="checkbox" name="include_undated" id="id_include_undated" class="uk-checkbox uk-margin-small-right"{% if include_undated_checked %} checked{% endif %}/>
                             <label for="id_include_undated">
                                 {{ form.include_undated.label }}
                                 <span class="date-range-undated-count">({{ undated_volume_count }} volume{{ undated_volume_count|pluralize }} with no recorded date)</span>

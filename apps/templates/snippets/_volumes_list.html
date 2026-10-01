@@ -37,7 +37,12 @@
                         <dd>
                             {% if 'highlight' in volume.meta and volume.meta.highlight.author %}
                             {# --- Highlighted Author Rendering --- #}
-                            {% with plain_join=volume.meta.highlight.author|join:" | "|striptags %}
+                            {# `join` autoescapes each ES highlight fragment (<em> -> &lt;em&gt;), which
+                               defeats striptags and inflates the length past 100 — pushing short authors
+                               into the plain tooltip branch and leaking literal <em> tags. unescape_html
+                               before striptags restores real tags so they get stripped for the length
+                               check and the plain display. #}
+                            {% with plain_join=volume.meta.highlight.author|join:" | "|unescape_html|striptags %}
                                 {% if plain_join|length > 100 %}
                                 <ul>
                                     <li uk-tooltip="mode: click; pos: left; " title="{{ plain_join }}" class="cursor-default">

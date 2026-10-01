@@ -505,6 +505,18 @@ class VolumeSearchView(ListView, FormMixin):
         undated = getattr(in_scope, "undated", None) if in_scope else None
         context_data["undated_volume_count"] = getattr(undated, "doc_count", 0) if undated else 0
 
+        # "Show volumes without a published date" is checked by default. A bare
+        # checkbox can't tell "never touched" from "deliberately unchecked"
+        # (both submit nothing), so the date-filter form carries a hidden
+        # `undated_choice_made` marker. Checked unless the form was submitted
+        # (marker present) with the box off. Kept in sync with exclude_undated in
+        # get_queryset so the UI and the results always agree.
+        undated_choice_made = "undated_choice_made" in self.request.GET
+        context_data["include_undated_checked"] = (
+            not undated_choice_made
+            or self.request.GET.get("include_undated") == "on"
+        )
+
         # Attach start_canvas to each volume in the current page.
         # Handle both: paginator page and raw list-like.
         vol_page = context_data.get("volumes")
@@ -687,12 +699,16 @@ class VolumeSearchView(ListView, FormMixin):
         # and if date_latest is null we can't confirm it falls after a start_date.
         # "Show volumes without a published date" (include_undated) is checked by
         # default in the UI, and is an independent filter — not just a modifier on
-        # the date range. Whenever the user has run a search and left the box
-        # unchecked, undated volumes are dropped entirely, even with no date range
-        # set (e.g. an all-undated corpus, where a date filter can't be applied).
-        # A bare landing with no query params includes everything, matching the
-        # default-checked box.
-        exclude_undated = bool(self.request.GET) and not form_data.get("include_undated")
+        # the date range. Undated volumes are dropped only when the user actually
+        # submitted the date-filter form (hidden `undated_choice_made` marker)
+        # with the box unchecked. Keyed on the marker rather than bool(GET) so an
+        # ordinary keyword search (or a shared link) doesn't silently exclude
+        # undated — it stays included by default, matching the checked box
+        # (see include_undated_checked in get_context_data).
+        exclude_undated = (
+            "undated_choice_made" in self.request.GET
+            and not form_data.get("include_undated")
+        )
 
         min_date_filter = form_data.get("start_date")
         max_date_filter = form_data.get("end_date") or ""

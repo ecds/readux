@@ -108,10 +108,6 @@
       }
     </style>
     {% block css %}
-      {# Keep this UIkit CSS version in lockstep with the bundled UIkit JS
-         (see package.json "uikit"). A mismatch silently breaks components whose
-         markup/classes changed between versions — e.g. the navbar dropdown,
-         whose 3.25 JS could not un-hide the 3.17 CSS's display:none. #}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.23.13/css/uikit.min.css" />
       <link type="text/css" href="{% sass_src 'css/readux.scss' %}" rel="stylesheet" />
       <link type="text/css" href="{% sass_src 'css/components/login.scss' %}" rel="stylesheet" />

@@ -2,3 +2,4 @@
 
 sftpserver==0.3
 git+https://github.com/ecds/readux-ingest-ecds@develop
+fakeredis==2.38.0  # https://github.com/cunla/fakeredis-py

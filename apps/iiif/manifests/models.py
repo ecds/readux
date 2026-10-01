@@ -13,7 +13,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from datetime import date as _date
-from edtf.fields import EDTFField
+from apps.iiif.manifests.fields import SafeEDTFField
 from apps.iiif.manifests.validators import validate_edtf
 from apps.utils.dates import date_to_jd, jd_to_date
 from ..choices import Choices
@@ -167,7 +167,7 @@ class Manifest(IiifBase):
         will be excluded from sorting and filtering by date of publication.""",
         validators=[validate_edtf],
     )
-    date_edtf = EDTFField(  # Read-only EDTF field that handles fuzzy date calculations
+    date_edtf = SafeEDTFField(  # Read-only EDTF field that handles fuzzy date calculations
         "Date of publication (EDTF)",
         natural_text_field="published_date_edtf",
         direct_input_field="published_date_edtf",

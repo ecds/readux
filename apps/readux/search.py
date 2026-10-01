@@ -3,7 +3,7 @@ from itertools import groupby
 import re
 from django.http import JsonResponse
 from django.views import View
-from elasticsearch_dsl import Q
+from elasticsearch_dsl import MultiSearch, Q
 from more_itertools import flatten
 
 from apps.iiif.manifests.documents import ManifestDocument
@@ -53,8 +53,10 @@ class SearchManifestCanvas(View):
         volumes = ManifestDocument.search()
         # filter to only volume matching pid
         volumes = volumes.filter("term", pid=volume_pid)
-        # inner_hits carry the per-page match context; canvas_set _source is not needed
-        volumes = volumes.source(excludes=["canvas_set"])
+        # only meta.inner_hits (built from the nested query below) is ever read from
+        # this hit -- none of the manifest's own _source fields (label, metadata,
+        # collections, etc.) are used, so skip fetching/deserializing all of them.
+        volumes = volumes.source(False)
 
         # build query for nested fields (i.e. canvas position and text)
         nested_kwargs = {
@@ -99,42 +101,8 @@ class SearchManifestCanvas(View):
         q = Q("bool", should=vol_queries, must=vol_queries_exact)
         volumes = volumes.query(q)
 
-        # execute the search
-        response = volumes.execute()
-
-        # group inner hits by canvas and collect highlighted context
-        volume_matches = []
-        total_matches_on_canvas = 0
-        total_matches_in_volume = 0
-        if int(response.hits.total.value):
-            volume = response.hits[0]
-            if has_inner_hits(volume):
-                for canvas in group_by_canvas(volume.meta.inner_hits, limit=100):
-                    volume_matches.append(
-                        {
-                            "canvas_index": pid_to_rank.get(
-                                canvas["pid"], canvas["position"]
-                            ),
-                            "canvas_match_count": len(canvas["highlights"]),
-                            "canvas_pid": canvas["pid"],
-                            "context": canvas["highlights"],
-                        }
-                    )
-                    total_matches_in_volume += len(canvas["highlights"])
-                    if canvas_pid and canvas["pid"] == canvas_pid:
-                        total_matches_on_canvas = len(canvas["highlights"])
-
-        # JSON-serializable results
-        results = {
-            "matches_in_text": {
-                "total_matches_on_canvas": total_matches_on_canvas,
-                "total_matches_in_volume": total_matches_in_volume,
-                "volume_matches": volume_matches,
-            }
-        }
-
         # ------------------------------------------------------------
-        # Now, search for UserAnnotations
+        # Build the UserAnnotations query
         annotations = UserAnnotationDocument.search()
 
         # filter to only owner matching user, volume matching pid
@@ -166,8 +134,42 @@ class SearchManifestCanvas(View):
         annotations = annotations.query(q)
         annotations = annotations.highlight("content")
 
-        # execute the search
-        anno_response = annotations.execute()
+        # ------------------------------------------------------------
+        # Both searches are independent (different indices, no shared state) -- send
+        # them as a single _msearch request instead of two sequential round-trips.
+        multi_search = MultiSearch().add(volumes).add(annotations)
+        response, anno_response = multi_search.execute()
+
+        # group inner hits by canvas and collect highlighted context
+        volume_matches = []
+        total_matches_on_canvas = 0
+        total_matches_in_volume = 0
+        if int(response.hits.total.value):
+            volume = response.hits[0]
+            if has_inner_hits(volume):
+                for canvas in group_by_canvas(volume.meta.inner_hits, limit=100):
+                    volume_matches.append(
+                        {
+                            "canvas_index": pid_to_rank.get(
+                                canvas["pid"], canvas["position"]
+                            ),
+                            "canvas_match_count": len(canvas["highlights"]),
+                            "canvas_pid": canvas["pid"],
+                            "context": canvas["highlights"],
+                        }
+                    )
+                    total_matches_in_volume += len(canvas["highlights"])
+                    if canvas_pid and canvas["pid"] == canvas_pid:
+                        total_matches_on_canvas = len(canvas["highlights"])
+
+        # JSON-serializable results
+        results = {
+            "matches_in_text": {
+                "total_matches_on_canvas": total_matches_on_canvas,
+                "total_matches_in_volume": total_matches_in_volume,
+                "volume_matches": volume_matches,
+            }
+        }
 
         # collect metadata and highlighted context from hits
         annotation_match_count = int(anno_response.hits.total.value)

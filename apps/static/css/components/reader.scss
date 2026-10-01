@@ -135,3 +135,69 @@
     margin-top: 0.2rem;
   }
 }
+/* "Show more" link for truncated metadata values (MetadataField.vue). */
+.rx-info-read-more {
+  color: $rx-color-midnight-blue;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    color: $rx-color-midnight-blue;
+    opacity: 0.8;
+  }
+}
+
+/* Modal for full metadata content, teleported to <body> by MetadataField.vue.
+   Styled to match the info panel (white dialog, same label/value typography). */
+.rx-meta-modal-overlay {
+  position: fixed;
+  inset: 0;
+  // Above the UIkit info-panel modal (#modal-info, z-index ~1010, which UIkit
+  // can bump higher when modals stack) so "Show more" always opens on top.
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  overflow-y: auto;
+}
+
+.rx-meta-modal-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  background: $color-white;
+  border-radius: 3px;
+  padding: 2rem 1.5rem 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.rx-meta-modal-close {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.6rem;
+  border: none;
+  background: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: $rx-color-cement-gray;
+  cursor: pointer;
+
+  &:hover {
+    color: $rx-color-midnight-blue;
+  }
+}
+
+.rx-meta-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+body.rx-meta-modal-open {
+  overflow: hidden;
+}

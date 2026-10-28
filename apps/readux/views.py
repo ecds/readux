@@ -517,47 +517,8 @@ class VolumeSearchView(ListView, FormMixin):
             or self.request.GET.get("include_undated") == "on"
         )
 
-        # Attach start_canvas to each volume in the current page.
-        # Handle both: paginator page and raw list-like.
-        vol_page = context_data.get("volumes")
-
-        if vol_page is not None:
-            # Get the underlying sequence (Paginator Page vs list)
-            items = getattr(vol_page, "object_list", vol_page)
-
-            # ES hits should have a "pid"; collect them
-            pids = [getattr(v, "pid", None) for v in items if getattr(v, "pid", None)]
-
-            if pids:
-                # Two targeted queries instead of prefetch_related("canvas_set"), which
-                # would load every canvas for every result just to find one per manifest.
-                canvas_map = {}
-
-                # Query 1: manifests with an explicitly marked starting page.
-                # DISTINCT ON (manifest_id) returns exactly one row per manifest at the
-                # DB level — no Python-side deduplication, no dirtyfields deep-copy storm.
-                for c in (
-                    Canvas.objects.filter(manifest__pid__in=pids, is_starting_page=True)
-                    .order_by("manifest_id", "position")
-                    .distinct("manifest_id")
-                    .select_related("manifest")
-                ):
-                    canvas_map[c.manifest.pid] = c
-
-                # Query 2: first canvas by position for the remainder
-                remaining = [p for p in pids if p not in canvas_map]
-                if remaining:
-                    for c in (
-                        Canvas.objects.filter(manifest__pid__in=remaining)
-                        .order_by("manifest_id", "position")
-                        .distinct("manifest_id")
-                        .select_related("manifest")
-                    ):
-                        canvas_map[c.manifest.pid] = c
-
-                for v in items:
-                    v.start_canvas = canvas_map.get(getattr(v, "pid", None))
-
+        # Each hit's thumbnail comes from its indexed start_canvas
+        # (ManifestDocument.prepare_start_canvas).
         return context_data
 
     def get_queryset(self):

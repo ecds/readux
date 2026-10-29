@@ -11,6 +11,7 @@ from ...tasks import add_ocr_task
 from ...models import Canvas
 from ... import services
 from ....annotations.models import Annotation
+from ....manifests.documents import ManifestDocument
 from ....manifests.models import Manifest
 
 USER = get_user_model()
@@ -39,7 +40,13 @@ class Command(BaseCommand):
             try:
                 manifest = Manifest.objects.get(pid=options["manifest"])
                 for canvas in manifest.canvas_set.all():
-                    self.__rebuild(canvas)
+                    self.__rebuild(canvas, reindex=False)
+                # One reindex for the whole manifest instead of one per
+                # canvas -- canvas.save() triggers a full-manifest
+                # Elasticsearch reindex each time (Canvas is a
+                # related_model of ManifestDocument), which is O(n^2) work
+                # across a manifest's pages if done per canvas.
+                ManifestDocument().update(manifest, True, "index")
                 self.stdout.write(
                     self.style.SUCCESS(
                         "OCR rebuilt for manifest {m}".format(m=options["manifest"])
@@ -77,11 +84,11 @@ class Command(BaseCommand):
                 self.style.ERROR("ERROR: your must provide a manifest or canvas pid")
             )
 
-    def __rebuild(self, canvas, testing=False):
+    def __rebuild(self, canvas, testing=False, reindex=True):
         print(canvas.annotation_set.exists())
         if not canvas.annotation_set.exists():
             if environ["DJANGO_ENV"] != "test":
-                add_ocr_task(canvas.id)
+                add_ocr_task(canvas.id, reindex=reindex)
             else:
                 ocr = services.get_ocr(canvas)
 
@@ -129,5 +136,6 @@ class Command(BaseCommand):
                     anno.content = word["content"]
                     anno.save()
                     prog_bar.next()
-                canvas.save()
+                if reindex:
+                    canvas.save()
                 prog_bar.finish()

@@ -9,14 +9,20 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(name='adding_ocr_to_canvas', autoretry_for=(Canvas.DoesNotExist,), retry_backoff=5)
-def add_ocr_task(canvas_id, *args, **kwargs):
-    """Function for parsing and adding OCR."""
+def add_ocr_task(canvas_id, reindex=True, *args, **kwargs):
+    """Function for parsing and adding OCR.
+
+    reindex=False lets a caller processing many canvases for the same
+    manifest (e.g. rebuild_ocr --manifest) skip the per-canvas
+    full-manifest reindex and do it once after the whole batch instead.
+    """
     canvas = Canvas.objects.get(pk=canvas_id)
     ocr = get_ocr(canvas)
 
     if ocr is not None:
         add_ocr_annotations(canvas, ocr)
-        canvas.save()  # trigger reindex
+        if reindex:
+            canvas.save()  # trigger reindex
 
 @app.task(name='adding_oa_ocr_to_canvas', retry_backoff=5)
 def add_oa_ocr_task(annotation_list_url):

@@ -161,9 +161,13 @@ class AnnotationCrud(View):
         else:
             deserialized_annotation, tags = deserialize("annotation_v3", self.payload)
             annotation = UserAnnotation(**deserialized_annotation)
-            annotation.pre_save()
-            UserAnnotation.objects.bulk_create([annotation])
-            annotation.refresh_from_db()
+            # Use save() (not bulk_create) so Django's post_save signal fires and
+            # the elasticsearch RealTimeSignalProcessor indexes the annotation —
+            # bulk_create skips that signal, so annotations created this way were
+            # never added to the search index (invisible to volume search until a
+            # full reindex). force_insert keeps it a clean INSERT for the UUID pk;
+            # save() runs pre_save() itself, so no manual pre_save() call is needed.
+            annotation.save(force_insert=True)
             for tag in tags:
                 annotation.tags.add(tag)
         return JsonResponse(

@@ -87,6 +87,7 @@ Vue's mount target (and before main.js, so it's already in the DOM by the
 time Vue mounts) is what makes it actually readable.
 {% endcomment %}
 {{ json_data|json_script:"context" }}
+{{ canvas_positions|json_script:"canvas-positions" }}
 {{ block.super }}
 {% endblock javascript %}
 

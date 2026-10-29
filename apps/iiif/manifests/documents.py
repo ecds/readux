@@ -80,6 +80,15 @@ class ManifestDocument(Document):
     pid = fields.KeywordField()
     published_city = fields.TextField()
     publisher = fields.TextField()
+    # Named like the Canvas properties the volume templates read, so they
+    # work for search hits and Manifest objects alike. URLs only, not searched.
+    start_canvas = fields.ObjectField(
+        properties={
+            "pid": fields.KeywordField(),
+            "resource_id": fields.KeywordField(index=False),
+            "thumbnail_crop_volume": fields.KeywordField(index=False),
+        }
+    )
     summary = fields.TextField(analyzer=stemmer)
 
     class Index:
@@ -217,6 +226,18 @@ class ManifestDocument(Document):
 
         return custom_metadata
 
+    def prepare_start_canvas(self, instance):
+        """The page used as the volume's thumbnail: the start canvas a curator
+        chose, or the first page when none is set."""
+        canvas = instance.start_canvas or next(iter(instance.canvas_set.all()), None)
+        if canvas is None or canvas.resource_id is None:
+            return None
+        return {
+            "pid": canvas.pid,
+            "resource_id": canvas.resource_id,
+            "thumbnail_crop_volume": canvas.thumbnail_crop_volume,
+        }
+
     def prepare_summary(self, instance):
         """Strip HTML tags from summary"""
         return unescape(strip_tags(instance.summary))
@@ -226,6 +247,7 @@ class ManifestDocument(Document):
         return (
             super()
             .get_queryset()
+            .select_related("start_canvas", "start_canvas__image_server")
             .prefetch_related(
                 "collections",
                 "image_server",

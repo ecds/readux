@@ -213,7 +213,10 @@ em { color: inherit !important; }
 .uk-close { color: $rx-color-midnight-blue; &:hover { color: darken($rx-color-midnight-blue, 10%); } }
 
 /* Slider */
-.uk-slider-items { gap: 4rem; }
+// Item spacing comes from UIkit's own grid gutter (`uk-grid uk-grid-large` on
+// `.uk-slider-items`), which is padding on each item. UIkit measures item widths
+// to decide whether the prev/next arrows are needed, so spacing must live inside
+// those widths (a flex `gap` is invisible to it and clips the last item).
 
 /* Tabs */
 /* Inactive tabs: readable neutral (7:1 on white) instead of UIkit's faint #999.

@@ -59,6 +59,20 @@ import axios from "axios";
 
 const OVERLAY_PREF_KEY = "ocrOverlayChecked"; // persist only USER-initiated preference
 
+// Events whose propagation we stop on visible OCR words so the user can select
+// the text there without OpenSeadragon hijacking the gesture. OSD drives
+// pan/zoom from POINTER events (and sets touch-action:none), so stopping
+// pointerdown/move/up is what actually turns a drag into a text selection
+// instead of a pan; the mouse* entries cover legacy handling. We deliberately
+// never preventDefault — that is what suppresses native selection, and
+// selecting OCR text is exactly how a text annotation is created (the annotator
+// builds its RangeSelector from the DOM selection). Without this, OCR text can
+// never be both visible AND selectable, so text annotations can't be made.
+const BLOCK_EVENTS = [
+  "mousedown", "mousemove", "mouseup",
+  "pointerdown", "pointermove", "pointerup"
+];
+
 export default {
   name: "OcrInspector",
   props: {
@@ -117,22 +131,14 @@ export default {
     },
     addBlockHandlers(node) {
       if (this.nodeHandlers.has(node)) return;
-      const handlers = {
-        mouseup: (e) => { e.stopPropagation(); e.preventDefault(); },
-        mousemove: (e) => { e.stopPropagation(); e.preventDefault(); },
-        mousedown: (e) => { e.stopPropagation(); e.preventDefault(); }
-      };
-      node.addEventListener("mouseup", handlers.mouseup);
-      node.addEventListener("mousemove", handlers.mousemove);
-      node.addEventListener("mousedown", handlers.mousedown);
-      this.nodeHandlers.set(node, handlers);
+      const stop = (e) => { e.stopPropagation(); };
+      for (const type of BLOCK_EVENTS) node.addEventListener(type, stop);
+      this.nodeHandlers.set(node, stop);
     },
     removeBlockHandlers(node) {
-      const h = this.nodeHandlers.get(node);
-      if (!h) return;
-      node.removeEventListener("mouseup", h.mouseup);
-      node.removeEventListener("mousemove", h.mousemove);
-      node.removeEventListener("mousedown", h.mousedown);
+      const stop = this.nodeHandlers.get(node);
+      if (!stop) return;
+      for (const type of BLOCK_EVENTS) node.removeEventListener(type, stop);
       this.nodeHandlers.delete(node);
     },
     applyOverlay(enabled) {

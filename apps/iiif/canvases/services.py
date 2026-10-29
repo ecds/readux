@@ -555,6 +555,21 @@ def parse_xml_ocr(result):
 
 
 def add_ocr_annotations(canvas, ocr):
+    # Make OCR ingestion idempotent. This is triggered on every admin save of
+    # a canvas (see CanvasAdmin.save_model) as well as by rebuild_ocr, with
+    # no guard against OCR already existing. Since this function always
+    # inserted brand-new Annotation rows with no dedup check, any repeat
+    # trigger (an unrelated admin edit, a retried Celery task, a manual
+    # rebuild) stacked a full duplicate set of word annotations on top of
+    # whatever already existed. Canvas.result concatenates all owner="ocr"
+    # annotations for the canvas, so those duplicates flowed straight into
+    # the search index: the same word showing up several times in
+    # genuinely different (and wrong-looking) surrounding context, since
+    # each duplicate pass's words landed at different offsets in the
+    # concatenated text. Clearing existing OCR annotations first makes this
+    # function safe to call any number of times for the same canvas.
+    canvas.annotation_set.filter(owner__username="ocr").delete()
+
     word_order = 1
     for word in ocr:
         # A quick check to make sure the header row didn't slip through.

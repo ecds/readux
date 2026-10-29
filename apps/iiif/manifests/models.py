@@ -13,7 +13,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from datetime import date as _date
-from edtf.fields import EDTFField
+from apps.iiif.manifests.fields import SafeEDTFField
 from apps.iiif.manifests.validators import validate_edtf
 from apps.utils.dates import date_to_jd, jd_to_date
 from ..choices import Choices
@@ -167,7 +167,7 @@ class Manifest(IiifBase):
         will be excluded from sorting and filtering by date of publication.""",
         validators=[validate_edtf],
     )
-    date_edtf = EDTFField(  # Read-only EDTF field that handles fuzzy date calculations
+    date_edtf = SafeEDTFField(  # Read-only EDTF field that handles fuzzy date calculations
         "Date of publication (EDTF)",
         natural_text_field="published_date_edtf",
         direct_input_field="published_date_edtf",
@@ -383,6 +383,26 @@ class Manifest(IiifBase):
             .filter(canvas__manifest=self)
             .count()
         )
+
+    def canvas_rank_map(self):
+        """Map each canvas pid to its 1-indexed rank (ordinal in page order).
+
+        Rank is the page number the reader's navigation shows ("16 of 50"); the
+        raw `Canvas.position` field's base is inconsistent (imported canvases are
+        0-indexed, app-created ones 1-indexed), so rank — defined purely by
+        ordering — is the reliable page number to display everywhere. The
+        secondary sort on pid keeps ranks deterministic if two canvases somehow
+        share a position.
+        """
+        return {
+            pid: rank
+            for rank, pid in enumerate(
+                self.canvas_set.order_by("position", "pid").values_list(
+                    "pid", flat=True
+                ),
+                start=1,
+            )
+        }
 
     # update search_vector every time the entry updates
     def save(self, *args, **kwargs):  # pylint: disable = arguments-differ

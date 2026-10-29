@@ -7,7 +7,6 @@ from taggit.models import TaggedItemBase
 from django.db import models
 from apps.iiif.annotations.models import AbstractAnnotation, Annotation
 from apps.iiif.canvases.models import Canvas
-from apps.iiif.manifests.documents import ManifestDocument
 
 
 class TaggedUserAnnotations(TaggedItemBase):
@@ -108,16 +107,10 @@ class UserAnnotation(AbstractAnnotation):
 
     def save(self, *args, **kwargs):
         self.pre_save()
-        if self.canvas:
-            index = ManifestDocument()
-            index.update(self.canvas.manifest, True, "index")
         super().save(*args, **kwargs)
         self.post_save()
 
     def delete(self, *args, **kwargs):
-        if self.canvas:
-            index = ManifestDocument()
-            index.update(self.canvas.manifest, True, "delete")
         super().delete(*args, **kwargs)
 
     def update(self, attrs=None, tags=None):

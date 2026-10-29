@@ -4,7 +4,7 @@
       <li class="uk-open">
         <a class="uk-accordion-title uk-label rx-accordion-head" href>Annotation Counts</a>
         <div class="uk-accordion-content rx-accordion-content uk-margin-small-left uk-margin-small-top">
-          <div class="rx-info-content-value rx-annotation-badge">{{ localManifestCount }} in manifest</div>
+          <div class="rx-info-content-value rx-annotation-badge">{{ localManifestCount }} in this volume</div>
           <div v-if="!isAll && localPageCount > 0" class="rx-info-content-value rx-annotation-badge">{{ localPageCount }} on page</div>
         </div>
       </li>
@@ -45,10 +45,23 @@ export default {
   },
   data() {
     return {
-      localManifestCount: this.manifestCount,
       localPageCount: this.pageCount,
       annotationData: []
     };
+  },
+  computed: {
+    // Manifest total is DERIVED from state — the sum of every page's current
+    // count — never accumulated from deltas. This is the core fix: a transient,
+    // duplicated, split, or out-of-order canvasswitch event can no longer
+    // permanently corrupt the total (which is how it drifted, went negative,
+    // and over-counted). The next authoritative event for a page overwrites its
+    // entry and the sum simply recomputes.
+    localManifestCount() {
+      return this.annotationData.reduce(
+        (sum, a) => sum + (a.canvas__position__count || 0),
+        0
+      );
+    }
   },
   mounted() {
     // Initialize from embedded JSON
@@ -62,105 +75,80 @@ export default {
       }
     }
 
-    // The "userAnnotationsUpdated" event only carries a reliable
-    // annotationsOnPage (its added/deleted flags are computed after the
-    // comparison ref has already been updated, so they are always false).
-    // "canvasswitch" carries the full detail (canvas, annotationAdded,
-    // annotationDeleted, annotationsOnPage) — but it also fires on page
-    // navigation, where added/deleted can be spuriously true because the
-    // counts of two different pages get compared. Track the current canvas
-    // and only treat add/delete as real when the canvas hasn't changed.
-    //
-    // The annotator (ecds-annotator) also dispatches a synthetic RESET
-    // "canvasswitch" — {canvas: "all", annotationsOnPage: 0, ...} — before
-    // the real per-canvas event for whatever canvas is loading. That's not
-    // a timing race to be debounced away; it's a deliberate, deterministic
-    // placeholder event that never represents a real page's annotation
-    // count. Treating it like any other canvas (as the old code did) let it
-    // poison _prevPageCount with 0, so the next real event for the actual
-    // canvas got diffed against that bogus 0 and double-counted an
-    // annotation that was already included in the server-rendered total.
-    // Fix: ignore canvas === "all" outright rather than guess a settle time.
+    // pid -> page-number (rank) map for every canvas in the volume, matching
+    // the reader's navigation number. Used to label a freshly-created
+    // annotation's page correctly: the pid's numeric suffix is NOT the page
+    // number (its offset from the real ordinal varies per volume, and some pids
+    // carry letter suffixes), and the canvasswitch event doesn't carry it.
+    this._canvasPositions = {};
+    const posEl = document.getElementById("canvas-positions");
+    if (posEl && posEl.textContent) {
+      try {
+        this._canvasPositions = JSON.parse(posEl.textContent) || {};
+      } catch (e) {
+        console.error("[VolumeAnnotations] Failed to parse canvas positions:", e);
+      }
+    }
+
+    // Counts come only from the annotator's "canvasswitch" events, which are
+    // NOT a clean per-action stream:
+    //   - a page's annotations load in two async steps (points, then text),
+    //     so one page load emits two count events;
+    //   - on navigation A->B the effect fires immediately with B's pid but A's
+    //     still-loaded count (a transient), before the refetch resolves;
+    //   - every point change also dispatches a synthetic reset
+    //     {canvas: "all", annotationsOnPage: 0}.
+    // The old code accumulated deltas across these events, so any transient or
+    // out-of-order event corrupted the manifest total for good. Instead we
+    // treat each event's annotationsOnPage as the AUTHORITATIVE current count
+    // for that page and just record it; the manifest total is the sum (see the
+    // localManifestCount computed). That is self-correcting: a wrong transient
+    // value is overwritten by the next event for the same page, and a revisit
+    // always restores the truth. No deltas, so no drift and no negatives.
     const RESET_CANVAS = "all";
     this._currentCanvas = null;
-    this._prevPageCount = null;
 
     this._onCanvasSwitch = (event) => {
       const detail = event && event.detail ? event.detail : {};
-      const newPageCount = typeof detail.annotationsOnPage === "number" ? detail.annotationsOnPage : null;
+      const count =
+        typeof detail.annotationsOnPage === "number"
+          ? detail.annotationsOnPage
+          : null;
 
-      if (!detail.canvas || detail.canvas === RESET_CANVAS) {
-        // Synthetic reset event: carries no real per-canvas count. Ignore
-        // it entirely — don't touch localPageCount, _currentCanvas, or
-        // _prevPageCount from it.
+      // Ignore the synthetic reset and any event without a real per-page count.
+      if (!detail.canvas || detail.canvas === RESET_CANVAS || count === null) {
         return;
       }
 
-      const sameCanvas = detail.canvas === this._currentCanvas;
-
-      if (sameCanvas && newPageCount !== null && this._prevPageCount !== null) {
-        const delta = newPageCount - this._prevPageCount;
-        if (delta > 0) {
-          // annotation(s) added
-          let createNewPage = true;
-          for (let i = 0; i < this.annotationData.length; i++) {
-            if (this.annotationData[i].canvas__pid === detail.canvas) {
-              this.annotationData[i].canvas__position__count = newPageCount;
-              createNewPage = false;
-              break;
-            }
-          }
-          if (createNewPage) {
-            const canvasPidNum = (detail.canvas.match(/\d+/g) || []).pop();
-            this.annotationData = this.annotationData.concat({
-              canvas__manifest__label: this.annotationData[0]?.canvas__manifest__label,
-              canvas__pid: detail.canvas,
-              canvas__position: parseInt(canvasPidNum, 10) + 1,
-              canvas__position__count: newPageCount
-            });
-          }
-          this.localManifestCount += delta;
-        } else if (delta < 0) {
-          // annotation(s) deleted
-          for (let i = 0; i < this.annotationData.length; i++) {
-            if (this.annotationData[i].canvas__pid === detail.canvas) {
-              this.annotationData[i].canvas__position__count = newPageCount;
-              break;
-            }
-          }
-          this.localManifestCount += delta;
+      // Record this page's current count (authoritative SET, never a delta).
+      const row = this.annotationData.find(
+        (a) => a.canvas__pid === detail.canvas
+      );
+      if (row) {
+        row.canvas__position__count = count;
+      } else {
+        // Authoritative position from the server map; fall back to the pid's
+        // numeric suffix only if this canvas is somehow absent from it.
+        let position = this._canvasPositions[detail.canvas];
+        if (position == null) {
+          const pidNum = (detail.canvas.match(/\d+/g) || []).pop();
+          position = pidNum != null ? parseInt(pidNum, 10) : 0;
         }
+        this.annotationData = this.annotationData.concat({
+          canvas__manifest__label: this.annotationData[0]?.canvas__manifest__label,
+          canvas__pid: detail.canvas,
+          canvas__position: position,
+          canvas__position__count: count
+        });
       }
 
-      if (newPageCount !== null) {
-        this.localPageCount = newPageCount;
-        if (sameCanvas) {
-          this._prevPageCount = newPageCount;
-        }
-      }
-
-      if (detail.canvas !== this._currentCanvas) {
-        // First sighting of this canvas (or a switch to it). Don't trust
-        // this event's own annotationsOnPage as the baseline — it can be a
-        // transient/incomplete read fired before the annotator's async
-        // fetch for this canvas has resolved, and a later event for the
-        // SAME canvas with the real count would then get diffed against
-        // that bogus baseline and double-count an annotation that's already
-        // included in the server-rendered totals. annotationData (seeded
-        // from the server-rendered json_data) already has the authoritative
-        // per-canvas count for anything with existing annotations, so use
-        // that as the baseline instead. Only fall back to this event's
-        // value for a canvas annotationData has never heard of (a page with
-        // zero annotations, where 0 is correct either way).
-        const known = this.annotationData.find((a) => a.canvas__pid === detail.canvas);
-        this._prevPageCount = known ? known.canvas__position__count : newPageCount;
-      }
+      this.localPageCount = count;
       this._currentCanvas = detail.canvas;
     };
 
     window.addEventListener("canvasswitch", this._onCanvasSwitch);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("canvasswitch", this._onCanvasSwitch);
   }
 };

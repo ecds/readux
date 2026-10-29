@@ -8,6 +8,7 @@ import InfoUrlMultiple from './components/InfoUrlMultiple.vue'
 import InfoExport from './components/InfoExport.vue'
 import InfoUrlExternal from './components/InfoUrlExternal.vue'
 import VolumeExportAnnotationBtn from './components/VolumeExportAnnotationBtn.vue'
+import MetadataField from './components/MetadataField.vue'
 
 const app = createApp({
   components: {
@@ -20,6 +21,7 @@ const app = createApp({
     InfoExport,
     InfoUrlExternal,
     VolumeExportAnnotationBtn,
+    MetadataField,
   },
   data() {
     return {
